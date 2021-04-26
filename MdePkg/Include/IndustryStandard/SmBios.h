@@ -92,6 +92,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define SMBIOS_TYPE_ONBOARD_DEVICES_EXTENDED_INFORMATION 41
 #define SMBIOS_TYPE_MANAGEMENT_CONTROLLER_HOST_INTERFACE 42
 #define SMBIOS_TYPE_TPM_DEVICE                           43
+#define SMBIOS_TYPE_PROCESSOR_ADDITIONAL_INFORMATION     44
 
 ///
 /// Inactive type is added from SMBIOS 2.2. Reference SMBIOS 2.6, chapter 3.3.43.
@@ -727,7 +728,10 @@ typedef enum {
   ProcessorFamilyMII                   = 0x012E,
   ProcessorFamilyWinChip               = 0x0140,
   ProcessorFamilyDSP                   = 0x015E,
-  ProcessorFamilyVideoProcessor        = 0x01F4
+  ProcessorFamilyVideoProcessor        = 0x01F4,
+  ProcessorFamilyRiscvRV32             = 0x0200,
+  ProcessorFamilyRiscVRV64             = 0x0201,
+  ProcessorFamilyRiscVRV128            = 0x0202
 } PROCESSOR_FAMILY2_DATA;
 
 ///
@@ -855,6 +859,33 @@ typedef struct {
   UINT32  ProcessorTm        :1;
   UINT32  ProcessorReserved4 :2;
 } PROCESSOR_FEATURE_FLAGS;
+
+typedef struct {
+  UINT16  ProcessorReserved1              :1;
+  UINT16  ProcessorUnknown                :1;
+  UINT16  Processor64BitCapable           :1;
+  UINT16  ProcessorMultiCore              :1;
+  UINT16  ProcessorHardwareThread         :1;
+  UINT16  ProcessorExecuteProtection      :1;
+  UINT16  ProcessorEnhancedVirtualization :1;
+  UINT16  ProcessorPowerPerformanceCtrl   :1;
+  UINT16  Processor128BitCapable          :1;
+  UINT16  ProcessorArm64SocId             :1;
+  UINT16  ProcessorReserved2              :6;
+} PROCESSOR_CHARACTERISTIC_FLAGS;
+
+///
+/// Processor Information - Status
+///
+typedef union {
+  struct {
+    UINT8 CpuStatus       :3; ///< Indicates the status of the processor.
+    UINT8 Reserved1       :3; ///< Reserved for future use. Must be set to zero.
+    UINT8 SocketPopulated :1; ///< Indicates if the processor socket is populated or not.
+    UINT8 Reserved2       :1; ///< Reserved for future use. Must be set to zero.
+  } Bits;
+  UINT8 Data;
+} PROCESSOR_STATUS_DATA;
 
 typedef struct {
   PROCESSOR_SIGNATURE     Signature;
@@ -1289,7 +1320,13 @@ typedef enum {
   SlotTypePciExpressGen3X2             = 0xB3,
   SlotTypePciExpressGen3X4             = 0xB4,
   SlotTypePciExpressGen3X8             = 0xB5,
-  SlotTypePciExpressGen3X16            = 0xB6
+  SlotTypePciExpressGen3X16            = 0xB6,
+  SlotTypePciExpressGen4               = 0xB8,
+  SlotTypePciExpressGen4X1             = 0xB9,
+  SlotTypePciExpressGen4X2             = 0xBA,
+  SlotTypePciExpressGen4X4             = 0xBB,
+  SlotTypePciExpressGen4X8             = 0xBC,
+  SlotTypePciExpressGen4X16            = 0xBD
 } MISC_SLOT_TYPE;
 
 ///
@@ -1689,7 +1726,11 @@ typedef enum {
   MemoryTypeLpddr2                         = 0x1C,
   MemoryTypeLpddr3                         = 0x1D,
   MemoryTypeLpddr4                         = 0x1E,
-  MemoryTypeLogicalNonVolatileDevice       = 0x1F
+  MemoryTypeLogicalNonVolatileDevice       = 0x1F,
+  MemoryTypeHBM                            = 0x20,
+  MemoryTypeHBM2                           = 0x21,
+  MemoryTypeDdr5                           = 0x22,
+  MemoryTypeLpddr5                         = 0x23
 } MEMORY_DEVICE_TYPE;
 
 ///
@@ -2508,6 +2549,34 @@ typedef struct {
   UINT8                             InterfaceTypeSpecificData[4];   ///< This field has a minimum of four bytes
 } SMBIOS_TABLE_TYPE42;
 
+
+///
+/// Processor Specific Block - Processor Architecture Type
+///
+typedef enum{
+  ProcessorSpecificBlockArchTypeReserved   = 0x00,
+  ProcessorSpecificBlockArchTypeIa32       = 0x01,
+  ProcessorSpecificBlockArchTypeX64        = 0x02,
+  ProcessorSpecificBlockArchTypeItanium    = 0x03,
+  ProcessorSpecificBlockArchTypeAarch32    = 0x04,
+  ProcessorSpecificBlockArchTypeAarch64    = 0x05,
+  ProcessorSpecificBlockArchTypeRiscVRV32  = 0x06,
+  ProcessorSpecificBlockArchTypeRiscVRV64  = 0x07,
+  ProcessorSpecificBlockArchTypeRiscVRV128 = 0x08
+} PROCESSOR_SPECIFIC_BLOCK_ARCH_TYPE;
+
+///
+/// Processor Specific Block is the standard container of processor-specific data.
+///
+typedef struct {
+  UINT8                              Length;
+  UINT8                              ProcessorArchType;
+  ///
+  /// Below followed by Processor-specific data
+  ///
+  ///
+} PROCESSOR_SPECIFIC_BLOCK;
+
 ///
 /// TPM Device (Type 43).
 ///
@@ -2522,6 +2591,30 @@ typedef struct {
   UINT64                            Characteristics;
   UINT32                            OemDefined;
 } SMBIOS_TABLE_TYPE43;
+
+///
+/// Processor Additional Information(Type 44).
+///
+/// The information in this structure defines the processor additional information in case
+/// SMBIOS type 4 is not sufficient to describe processor characteristics.
+/// The SMBIOS type 44 structure has a reference handle field to link back to the related
+/// SMBIOS type 4 structure. There may be multiple SMBIOS type 44 structures linked to the
+/// same SMBIOS type 4 structure. For example, when cores are not identical in a processor,
+/// SMBIOS type 44 structures describe different core-specific information.
+///
+/// SMBIOS type 44 defines the standard header for the processor-specific block, while the
+/// contents of processor-specific data are maintained by processor
+/// architecture workgroups or vendors in separate documents.
+///
+typedef struct {
+  SMBIOS_STRUCTURE                  Hdr;
+  SMBIOS_HANDLE                     RefHandle;                 ///< This field refer to associated SMBIOS type 4
+  ///
+  /// Below followed by Processor-specific block
+  ///
+  PROCESSOR_SPECIFIC_BLOCK          ProcessorSpecificBlock;
+} SMBIOS_TABLE_TYPE44;
+
 
 ///
 /// Inactive (Type 126)
@@ -2586,6 +2679,7 @@ typedef union {
   SMBIOS_TABLE_TYPE41   *Type41;
   SMBIOS_TABLE_TYPE42   *Type42;
   SMBIOS_TABLE_TYPE43   *Type43;
+  SMBIOS_TABLE_TYPE44   *Type44;
   SMBIOS_TABLE_TYPE126  *Type126;
   SMBIOS_TABLE_TYPE127  *Type127;
   UINT8                 *Raw;
