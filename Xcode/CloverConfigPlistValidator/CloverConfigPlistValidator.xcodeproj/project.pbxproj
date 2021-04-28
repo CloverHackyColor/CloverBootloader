@@ -19,6 +19,7 @@
 		9A2755782639E0500095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755672639E0500095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755792639E0500095D456 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755682639E0500095D456 /* Config_ACPI_DSDT.cpp */; };
 		9A27557A2639E0500095D456 /* SMBIOSPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27556C2639E0500095D456 /* SMBIOSPlist.cpp */; };
+		9A27557F263A02600095D456 /* CloverVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27557D263A02600095D456 /* CloverVersion.cpp */; };
 		9A358B3D25CF117A00A3850D /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */; };
 		9A358B3E25CF117A00A3850D /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */; };
 		9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E4DB24F3B536007A1107 /* TagString8.cpp */; };
@@ -246,6 +247,9 @@
 		9A27556F2639E0500095D456 /* Config_Devices_AddProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_AddProperties.h; sourceTree = "<group>"; };
 		9A2755702639E0500095D456 /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
 		9A2755712639E0500095D456 /* Self.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Self.cpp; sourceTree = "<group>"; };
+		9A27557C263A02420095D456 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
+		9A27557D263A02600095D456 /* CloverVersion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloverVersion.cpp; sourceTree = "<group>"; };
+		9A27557E263A02600095D456 /* CloverVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloverVersion.h; sourceTree = "<group>"; };
 		9A358B3725CF117A00A3850D /* XmlLiteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteParser.h; sourceTree = "<group>"; };
 		9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteCompositeTypes.cpp; sourceTree = "<group>"; };
 		9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteParser.cpp; sourceTree = "<group>"; };
@@ -5225,6 +5229,8 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A27557D263A02600095D456 /* CloverVersion.cpp */,
+				9A27557E263A02600095D456 /* CloverVersion.h */,
 				9AA9240D25CD5B2D00BD5E8B /* AcpiPatcher.cpp */,
 				9AA9240825CD5B2C00BD5E8B /* AcpiPatcher.h */,
 				9AA923FB25CD5B2900BD5E8B /* AmlGenerator.cpp */,
@@ -5551,6 +5557,7 @@
 		9A9223242402FD1000483CBA = {
 			isa = PBXGroup;
 			children = (
+				9A27557C263A02420095D456 /* Version.h */,
 				9A879205261882D9000B9362 /* PosixCompilation */,
 				9AA9185625CD465800BD5E8B /* Clover */,
 				9A92232F2402FD1000483CBA /* Main */,
@@ -15799,6 +15806,7 @@
 				9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9AFDD0A525CE731000EEAF06 /* all_tests.cpp in Sources */,
 				9AFDD0AD25CE731000EEAF06 /* XArray_tests.cpp in Sources */,
+				9A27557F263A02600095D456 /* CloverVersion.cpp in Sources */,
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,
 				9A8792CB261882DA000B9362 /* PrintLib.c in Sources */,
 				9A3BA385261E7CE8009E8B0F /* SwapBytes16.c in Sources */,

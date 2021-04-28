@@ -15,7 +15,7 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
-static const char* opencore_revision __attribute__((used)) = "CloverConfigPlistValidator revision: 0.1";
+#include "../../../rEFIt_UEFI/Platform/CloverVersion.h"
 
 #ifndef MIN
 #define MIN(a,b)    ((a) < (b) ? (a) : (b))
@@ -52,7 +52,7 @@ extern "C" int main(int argc, const char * argv[])
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
   const char* path = NULL;
-  #ifdef DEBUG
+  #ifdef JIEF_DEBUG
       path = "config-nowarning-noerror.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/Matgen84/EFI_github/CLOVER/config.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/BS.plist";
@@ -66,6 +66,8 @@ extern "C" int main(int argc, const char * argv[])
       if ( argc == 2 ) {
           path = argv[1];
       }else{
+          fprintf(stderr, "ConfigPlistValidator for '%s'\n", gRevisionStr);
+          fprintf(stderr, "Build id is '%s'\n", gBuildId.c_str());
           fprintf(stderr, "Usage ConfigPlistValidator path_to_config.plist\n");
           return -1;
       }
