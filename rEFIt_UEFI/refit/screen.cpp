@@ -41,6 +41,7 @@
 #include "../Platform/BasicIO.h"
 #include "menu.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../Platform/CloverVersion.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1

@@ -28,8 +28,9 @@
 #include "platformdata.h"
 #include "smbios.h"
 #include "cpu.h"
-#include "Self.h"
-#include "SelfOem.h"
+#include "../Settings/Self.h"
+#include "../Settings/SelfOem.h"
+#include "Settings.h"
 
 #define EBDA_BASE_ADDRESS            0x40E
 

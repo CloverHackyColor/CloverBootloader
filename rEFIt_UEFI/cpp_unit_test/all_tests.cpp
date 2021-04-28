@@ -22,6 +22,8 @@
 #include "MacOsVersion_test.h"
 #include "xml_lite-test.h"
 #include "config-test.h"
+#include "XToolsCommon_test.h"
+#include "../Platform/guid.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -40,12 +42,29 @@ bool all_tests()
 
 
 #if defined(JIEF_DEBUG)
+
+
   int ret;
-//  ret = xml_lite_tests();
-//  if ( ret != 0 ) {
-//    printf("xml_lite_tests() failed at test %d\n", ret);
-//    all_ok = false;
-//  }
+  ret = XString_tests();
+  if ( ret != 0 ) {
+    printf("XString_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XStringArray_tests();
+  if ( ret != 0 ) {
+    printf("XStringArray_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XToolsCommon_tests();
+  if ( ret != 0 ) {
+    printf("XToolsCommon_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+ret = xml_lite_tests();
+if ( ret != 0 ) {
+  printf("xml_lite_tests() failed at test %d\n", ret);
+  all_ok = false;
+}
 ret = strcasecmp_tests();
 if ( ret != 0 ) {
   printf("strncmp_tests() failed at test %d\n", ret);
@@ -64,7 +83,7 @@ if ( ret != 0 ) {
 //  }
 #endif
 
-#if defined(JIEF_DEBUGxxx)
+#if defined(JIEF_DEBUG)
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
     ret = printlib_tests();

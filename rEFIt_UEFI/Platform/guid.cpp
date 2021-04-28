@@ -156,14 +156,25 @@ public:
 
 EFI_GUID nullGuid = {0,0,0,{0,0,0,0,0,0,0,0}};
 
-//Slice - I need GuidBEToStr :(
-XStringW GuidBeToStr(const EFI_GUID& Guid)
+XStringW GuidBeToXStringW(const EFI_GUID& Guid)
 {
   UINT8 *GuidData = (UINT8 *)&Guid;
   XStringW Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-                          GuidData[3], GuidData[2], GuidData[1], GuidData[0],
-                          GuidData[5], GuidData[4],
-                          GuidData[7], GuidData[6],
+                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
+                          GuidData[4], GuidData[5],
+                          GuidData[6], GuidData[7],
+                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
+                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
+  return Str;
+}
+
+XString8 GuidBeToXString8(const EFI_GUID& Guid)
+{
+  UINT8 *GuidData = (UINT8 *)&Guid;
+  XString8 Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
+                          GuidData[4], GuidData[5],
+                          GuidData[6], GuidData[7],
                           GuidData[8], GuidData[9], GuidData[10], GuidData[11],
                           GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
   return Str;

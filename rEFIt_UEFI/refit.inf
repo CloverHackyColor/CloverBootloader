@@ -19,8 +19,8 @@
   BASE_NAME                     = CLOVERX64
   FILE_GUID                     = 8F7D7B1E-0E1C-4C98-B12E-4EC99C4081AC
   MODULE_TYPE                   = UEFI_APPLICATION
-  EDK_RELEASE_VERSION			= 0x00020000
-  EFI_SPECIFICATION_VERSION		= 0x00010000
+  EDK_RELEASE_VERSION     = 0x00020000
+  EFI_SPECIFICATION_VERSION   = 0x00010000
   VERSION_STRING                = 1.0
   ENTRY_POINT                   = RefitMain
 
@@ -50,6 +50,18 @@
   cpp_foundation/XStringArray.h
   cpp_foundation/XToolsCommon.h
   cpp_lib/undefinable.h
+  cpp_lib/XmlLiteArrayTypes.cpp
+  cpp_lib/XmlLiteArrayTypes.h
+  cpp_lib/XmlLiteCompositeTypes.cpp
+  cpp_lib/XmlLiteCompositeTypes.h
+  cpp_lib/XmlLiteDictTypes.cpp
+  cpp_lib/XmlLiteDictTypes.h
+  cpp_lib/XmlLiteParser.cpp
+  cpp_lib/XmlLiteParser.h
+  cpp_lib/XmlLiteSimpleTypes.cpp
+  cpp_lib/XmlLiteSimpleTypes.h
+  cpp_lib/XmlLiteUnionTypes.cpp
+  cpp_lib/XmlLiteUnionTypes.h
   cpp_unit_test/all_tests.cpp
   cpp_unit_test/all_tests.h
   cpp_unit_test/find_replace_mask_Clover_tests.cpp
@@ -80,6 +92,10 @@
   cpp_unit_test/XArray_tests.h
   cpp_unit_test/XBuffer_tests.cpp
   cpp_unit_test/XBuffer_tests.h
+  cpp_unit_test/xml_lite-reapeatingdict-test.cpp
+  cpp_unit_test/xml_lite-reapeatingdict-test.h
+  cpp_unit_test/xml_lite-test.cpp
+  cpp_unit_test/xml_lite-test.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
   cpp_unit_test/XStringArray_test.cpp
@@ -126,6 +142,7 @@
   include/Efi.h
   include/Handle.h
   include/Languages.h
+  include/Net.h
   include/OC.h
   include/OneLinerMacros.h
   include/OSFlags.h
@@ -189,6 +206,8 @@
   Platform/BootOptions.h
   Platform/card_vlist.cpp
   Platform/card_vlist.h
+  Platform/CloverVersion.cpp
+  Platform/CloverVersion.h
   Platform/Console.cpp
   Platform/Console.h
   Platform/cpu.cpp
@@ -198,7 +217,6 @@
   Platform/DataHubCpu.cpp
   Platform/DataHubCpu.h
   Platform/DataHubExt.h
-  Platform/DevicePath.cpp
   Platform/device_inject.cpp
   Platform/device_inject.h
   Platform/Edid.cpp
@@ -237,8 +255,6 @@
   Platform/MemoryOperation.c
   Platform/MemoryOperation.h
   Platform/memvendors.h
-  Platform/Net.cpp
-  Platform/Net.h
   Platform/nvidia.cpp
   Platform/nvidia.h
   Platform/Nvram.cpp
@@ -271,14 +287,14 @@
   Platform/plist/TagString8.h
   Platform/plist/xml.cpp
   Platform/plist/xml.h
-  Platform/Self.cpp
-  Platform/Self.h
-  Platform/SelfOem.cpp
-  Platform/SelfOem.h
   Platform/Settings.cpp
   Platform/Settings.h
+  Platform/SettingsUtils.cpp
+  Platform/SettingsUtils.h
   Platform/smbios.cpp
   Platform/smbios.h
+  Platform/SmbiosFillPatchingValues.cpp
+  Platform/SmbiosFillPatchingValues.h
   Platform/sound.cpp
   Platform/spd.cpp
   Platform/spd.h
@@ -294,6 +310,8 @@
   Platform/Utils.h
   Platform/VersionString.cpp
   Platform/VersionString.h
+  Platform/Volume.cpp
+  Platform/Volume.h
   Platform/Volumes.cpp
   Platform/Volumes.h
   PlatformEFI/BasicIO.cpp
@@ -337,6 +355,41 @@
   refit/menu.h
   refit/screen.cpp
   refit/screen.h
+  Settings/ConfigManager.cpp
+  Settings/ConfigManager.h
+  Settings/ConfigPlist/ConfigPlistAbstract.cpp
+  Settings/ConfigPlist/ConfigPlistAbstract.h
+  Settings/ConfigPlist/ConfigPlistClass.cpp
+  Settings/ConfigPlist/ConfigPlistClass.h
+  Settings/ConfigPlist/Config_ACPI.cpp
+  Settings/ConfigPlist/Config_ACPI.h
+  Settings/ConfigPlist/Config_ACPI_DSDT.cpp
+  Settings/ConfigPlist/Config_ACPI_DSDT.h
+  Settings/ConfigPlist/Config_ACPI_SSDT.h
+  Settings/ConfigPlist/Config_Boot.h
+  Settings/ConfigPlist/Config_BootGraphics.h
+  Settings/ConfigPlist/Config_CPU.h
+  Settings/ConfigPlist/Config_Devices.h
+  Settings/ConfigPlist/Config_Devices_AddProperties.h
+  Settings/ConfigPlist/Config_Devices_Arbitrary.h
+  Settings/ConfigPlist/Config_Devices_Audio.h
+  Settings/ConfigPlist/Config_Devices_FakeID.h
+  Settings/ConfigPlist/Config_Devices_Properties.h
+  Settings/ConfigPlist/Config_Devices_USB.h
+  Settings/ConfigPlist/Config_Graphics.h
+  Settings/ConfigPlist/Config_GUI.cpp
+  Settings/ConfigPlist/Config_GUI.h
+  Settings/ConfigPlist/Config_KernelAndKextPatches.h
+  Settings/ConfigPlist/Config_Quirks.cpp
+  Settings/ConfigPlist/Config_Quirks.h
+  Settings/ConfigPlist/Config_RtVariables.h
+  Settings/ConfigPlist/Config_SystemParameters.h
+  Settings/ConfigPlist/SMBIOSPlist.cpp
+  Settings/ConfigPlist/SMBIOSPlist.h
+  Settings/Self.cpp
+  Settings/Self.h
+  Settings/SelfOem.cpp
+  Settings/SelfOem.h
 
 [Sources.IA32]
   PlatformIA32/ftol.asm | MSFT
@@ -450,14 +503,14 @@
   gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
   gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiLegacy8259ProtocolGuid					## PROTOCOL SOMETIMES_CONSUMES
+  gEfiLegacy8259ProtocolGuid          ## PROTOCOL SOMETIMES_CONSUMES
   gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
   gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
   gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES
   gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
   gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
-  gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
+  gEfiStatusCodeRuntimeProtocolGuid       # PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
   gEfiManagedNetworkServiceBindingProtocolGuid
 

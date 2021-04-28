@@ -14,6 +14,8 @@
 
 #define WILL_WORK 0
 
+#include "device_inject.h"
+
 /*
  ============== Information ===============
  https://en.wikipedia.org/wiki/List_of_Intel_chipsets
@@ -957,7 +959,7 @@ CONST CHAR8 *get_gma_model(UINT16 id)
 }
 
 
-BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
+BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev)
 {
   UINTN           j;
   UINTN           i;
@@ -967,7 +969,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
   UINT32          DualLink = 1;
-//  UINT64          os_version = AsciiOSVersionToUint64(Entry->macOSVersion);
+//  UINT64          os_version = AsciiOSVersionToUint64(macOSVersion);
   BOOLEAN         SetUGAWidth = FALSE;
   BOOLEAN         SetUGAHeight = FALSE;
   BOOLEAN         Injected = FALSE;
@@ -981,10 +983,10 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
   model = get_gma_model(gma_dev->device_id);
 
-  for (j = 0; j < NGFX; j++) {
-    if ((gGraphics[j].Vendor == Intel) &&
-        (gGraphics[j].DeviceID == gma_dev->device_id)) {
-      model = gGraphics[j].Model;
+  for (j = 0; j < gConf.GfxPropertiesArray.size(); j++) {
+    if ((gConf.GfxPropertiesArray[j].Vendor == Intel) &&
+        (gConf.GfxPropertiesArray[j].DeviceID == gma_dev->device_id)) {
+      model = gConf.GfxPropertiesArray[j].Model.c_str();
       break;
     }
   }
@@ -2545,7 +2547,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       }
 
       // if wakes up with an HDMI connected, sometimes this value causes force reboot in 10.14+
-      if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.14"_XS8) ) {
+      if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8) ) {
         devprop_add_value(device, "AAPL,GfxYTile", skylake_hd_vals[1], 4);
       }
       break;
@@ -2597,7 +2599,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (gma_dev->device_id) {
         case 0x5902:
         case 0x5906:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8) ) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8) ) {
             if (!SetFake) {
               FakeID = 0x19028086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2624,7 +2626,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x5912:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19128086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2652,7 +2654,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x5916:
         case 0x5917:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19168086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2681,7 +2683,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x591A:
         case 0x591B:
         case 0x591D:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2709,7 +2711,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x591C:
         case 0x591E:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191E8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2736,7 +2738,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x5923:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19168086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2763,7 +2765,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x5926:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19268086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2790,8 +2792,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x5927:
-          if (Entry->macOSVersion.notEmpty() &&
-              Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if (macOSVersion.notEmpty() &&
+              macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19278086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2819,7 +2821,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x87C0:
         case 0x87CA:
-          if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191E8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2831,7 +2833,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[8], 4);
               DBG("  Found ig-platform-id = 0x191E0000\n");
             }
-          } else if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.14"_XS8)) {
+          } else if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8)) {
             if (!SetFake) {
               FakeID = 0x591E8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2902,7 +2904,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       }
 
       // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
-      if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.14"_XS8)) {
+      if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8)) {
         devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
       }
       break;
@@ -2961,8 +2963,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (gma_dev->device_id) {
         case 0x3E90:
         case 0x3E93:
-          if (( Entry->macOSVersion >= MacOsVersion("10.14"_XS8)) || (( Entry->macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
-              (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+          if (( macOSVersion >= MacOsVersion("10.14"_XS8)) || (( macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
+              (BuildVersion.contains("17G2") || FileExists(RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -2989,8 +2991,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3E91:
-          if (( Entry->macOSVersion >= MacOsVersion("10.14"_XS8)) || (( Entry->macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
-              (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+          if (( macOSVersion >= MacOsVersion("10.14"_XS8)) || (( macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
+              (BuildVersion.contains("17G2") || FileExists(RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -3018,8 +3020,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         case 0x3E92:
         case 0x3E98:
-          if (( Entry->macOSVersion >= MacOsVersion("10.14"_XS8)) || (( Entry->macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
-              (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+          if (( macOSVersion >= MacOsVersion("10.14"_XS8)) || (( macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
+              (BuildVersion.contains("17G2") || FileExists(RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -3049,8 +3051,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x3EA0:
         case 0x9B41:
         case 0x9BCA:
-          if (( Entry->macOSVersion >= MacOsVersion("10.14"_XS8)) || (( Entry->macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
-              (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+          if (( macOSVersion >= MacOsVersion("10.14"_XS8)) || (( macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
+              (BuildVersion.contains("17G2") || FileExists(RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -3077,8 +3079,8 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x3EA5:
-          if (( Entry->macOSVersion >= MacOsVersion("10.14"_XS8)) || (( Entry->macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
-              (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
+          if (( macOSVersion >= MacOsVersion("10.14"_XS8)) || (( macOSVersion == MacOsVersion("10.13.6"_XS8)) &&
+              (BuildVersion.contains("17G2") || FileExists(RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
               DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
@@ -3143,7 +3145,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       }
 
       // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
-      if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.14"_XS8)) {
+      if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8)) {
         devprop_add_value(device, "AAPL,GfxYTile", coffeelake_hd_vals[1], 4);
       }
       break;
@@ -3308,7 +3310,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       }*/
 
       // if wakes up with an HDMI connected, sometimes this value causes force reboot in 10.14+
-      if ( Entry->macOSVersion.notEmpty() && Entry->macOSVersion < MacOsVersion("10.14"_XS8)) {
+      if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8)) {
         devprop_add_value(device, "AAPL,GfxYTile", cannonlake_hd_vals[1], 4);
       }
       break;

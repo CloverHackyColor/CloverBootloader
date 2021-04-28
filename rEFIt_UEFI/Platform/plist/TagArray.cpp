@@ -116,11 +116,8 @@ void TagArray::FreeTag()
 const TagStruct* TagArray::elementAt(size_t idx) const
 {
   if ( idx >= _arrayContent.size() ) {
-#ifdef DEBUG
-    panic("TagArray::elementAt(%zu) -> trying to access element at %zu, but array has only %zu element(s)\n", idx, idx, _arrayContent.size());
-#else
+    log_technical_bug("TagArray::elementAt(%zu) -> trying to access element at %zu, but array has only %zu element(s)\n", idx, idx, _arrayContent.size());
     return 0;
-#endif
   }
   return &_arrayContent[idx];
 }
@@ -130,11 +127,10 @@ const TagDict* TagArray::dictElementAt(size_t idx, const XString8& currentTag) c
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isDict() ) {
-#ifdef DEBUG
-    panic("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
-#else
+    // At first, I though it was a mistake, but it's easier to use if this method returns NULL is the element exists but is not a dict.
+    // That way, no need to test before calling that the element is a dict.
+    //panic("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
     return 0;
-#endif
   }
   return _arrayContent[idx].getDict();
 }
@@ -143,11 +139,10 @@ const TagArray* TagArray::arrayElementAt(size_t idx, const XString8& currentTag)
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isArray() ) {
-#ifdef DEBUG
-    panic("MALFORMED PLIST in '%s' : TagArray::arrayElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
-#else
+    // At first, I though it was a mistake, but it's easier to use if this method returns NULL is the element exists but is not an array.
+    // That way, no need to test before calling that the element is an array.
+    //panic("MALFORMED PLIST in '%s' : TagArray::arrayElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
     return 0;
-#endif
   }
   return _arrayContent[idx].getArray();
 }

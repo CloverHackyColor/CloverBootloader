@@ -1,0 +1,8 @@
+#this is sourced.
+
+#gcc_path="$SCRIPT_DIR"/../../../../../../toolchain.gcc92/cross
+gcc_path=/Volumes/Build-gcc-710-osx/x86_64-apple-darwin
+gcc_prefix=x86_64-apple-darwin14.5.0-
+gcc_suffix=-7.1.0
+#only bin_path is used bt the caller
+bin_path="$gcc_path"/bin/"$gcc_prefix""$1""$gcc_suffix"

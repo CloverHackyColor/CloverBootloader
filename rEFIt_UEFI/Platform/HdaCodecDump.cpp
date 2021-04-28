@@ -29,7 +29,7 @@
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
 #include "../Platform/Settings.h"
-#include "Self.h"
+#include "../Settings/Self.h"
 
 CONST CHAR8 *gWidgetNames[HDA_WIDGET_TYPE_VENDOR + 1] = {
 	"Audio Output", "Audio Input", "Audio Mixer",

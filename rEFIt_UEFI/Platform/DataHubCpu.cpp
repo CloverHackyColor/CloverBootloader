@@ -44,6 +44,7 @@
 #include "smbios.h"
 #include "cpu.h"
 #include "DataHubCpu.h"
+#include "../Platform/CloverVersion.h"
 
 #include <Guid/DataHubRecords.h>
 
@@ -215,7 +216,6 @@ EFI_STATUS EFIAPI
 SetVariablesForOSX(LOADER_ENTRY *Entry)
 {
   // The variable names used should be made global constants to prevent them being allocated multiple times
-
   UINT32  Attributes;
   UINT32  Color;
   CONST CHAR8   *None;
@@ -227,7 +227,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 //  UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8   *PlatformLang;
 
-  EFI_GUID uuid;
+  EFI_GUIDClass uuid;
   gSettings.getUUID(&uuid);
 
   //
@@ -268,15 +268,15 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   SetNvramVariable(L"FirmwareFeatures",
                    &gEfiAppleNvramGuid,
                    Attributes,
-                   sizeof(gSettings.Smbios.gFwFeatures),
-                   &gSettings.Smbios.gFwFeatures);
+                   sizeof(gSettings.Smbios.FirmwareFeatures),
+                   &gSettings.Smbios.FirmwareFeatures);
 
   // Download-Fritz: Should be added to SMBIOS or at least to some other config section
   AddNvramVariable(L"FirmwareFeaturesMask",
                    &gEfiAppleNvramGuid,
                    Attributes,
-                   sizeof(gSettings.Smbios.gFwFeaturesMask),
-                   &gSettings.Smbios.gFwFeaturesMask);
+                   sizeof(gSettings.Smbios.FirmwareFeaturesMask),
+                   &gSettings.Smbios.FirmwareFeaturesMask);
 
   // HW_MLB and HW_ROM are also around on some Macs with the same values as MLB and ROM
   AddNvramXString8(L"HW_BID", &gEfiAppleNvramGuid, Attributes, gSettings.Smbios.BoardNumber);
@@ -529,7 +529,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHubXStringW(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   SerialNumber);
 
     if (gSettings.ShouldInjectSystemID()) {
-      EFI_GUID uuid;
+      EFI_GUIDClass uuid;
       gSettings.getUUID(&uuid);
       LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &uuid, sizeof(uuid));
     }

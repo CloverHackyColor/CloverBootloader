@@ -1,0 +1,38 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+#echo `pwd`
+#echo BASH_SOURCE="${BASH_SOURCE[@]}"
+#echo "$0" "$@"
+
+me=`basename "$0"`   # get invocation name (not the name of the target of the link)
+#echo me=$me
+
+name="${me##*-}"
+#echo name=$name
+
+prefix=${me%-$name}
+#echo prefix=$prefix
+
+#clang doesn't know -Wno-unused-but-set-variable
+args=( "$@" )
+#args=( "${args[@]/-Wno-unused-but-set-variable/}" ) # doesn't work, it generates an empty arg
+#for i in "${args[@]}"; do echo $i; done
+
+source "$SCRIPT_DIR"/"$prefix"-path g++
+ps_dir="$SCRIPT_DIR"/../compilation_project_specific
+
+liblist1=()
+[ -f "$ps_dir"/all-all-all-liblist ] && liblist1=( $("$ps_dir"/all-all-all-liblist) )
+
+liblist2=()
+[ -f "$ps_dir"/"$prefix"-liblist ] && liblist2=( $("$ps_dir"/"$prefix"-liblist) )
+
+
+cmdArgs=()
+cmdArgs=( "$bin_path"  $("$ps_dir"/"$prefix"-"$name"flags)  "${liblist1[@]}"  "${liblist2[@]}"  "${args[@]}" )
+ 
+echo "${cmdArgs[@]}"
+
+exec "${cmdArgs[@]}"

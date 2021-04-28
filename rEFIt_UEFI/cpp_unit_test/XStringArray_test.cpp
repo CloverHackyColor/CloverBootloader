@@ -42,6 +42,26 @@ int XStringArray_tests()
         if ( !array1.containsIC(L"oTHer2"_XSW) ) return 6;
     }
     
+  {
+    XStringWArray arrayW1;
+    arrayW1.Add(L"word1"_XSW);
+    arrayW1.Add(L"other2"_XSW);
+
+    XStringWArray arrayW1bis;
+    arrayW1bis = arrayW1;
+    if ( arrayW1bis != arrayW1 ) return 11;
+
+    {
+      XString8Array array81bis;
+      array81bis = arrayW1;
+      if ( array81bis != arrayW1 ) return 11;
+    }
+    {
+      XString8Array array81bis(arrayW1);
+      if ( array81bis != arrayW1 ) return 11;
+    }
+  }
+
 	// Test == and !=
 	{
         

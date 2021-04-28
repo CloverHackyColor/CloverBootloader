@@ -6,6 +6,8 @@
 //  Copyright © 2020 JF Knudsen. All rights reserved.
 //
 
+#include <ProcessorBind.h>
+#include <Base.h>
 #include <Library/BaseLib.h>
 
 #include "../../../rEFIt_UEFI/PlatformPOSIX/posix/abort.h"

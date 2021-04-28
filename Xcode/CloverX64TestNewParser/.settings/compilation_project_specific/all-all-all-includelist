@@ -4,7 +4,22 @@ prefix=$1
 
 echo "
 
-../src
+../../../PosixCompilation/UefiMock
+../../../PosixCompilation/CloverMock/Include
+../../../Include
+../../../IntelFrameworkPkg/Include
+../../../UefiCpuPkg/Include
+../../../OpenCorePkg/Include/Apple
+../../../OpenCorePkg/Include/Intel
+../../../OpenCorePkg/Include/Acidanthera
+../../../OpenCorePkg
+../../../MdePkg/Include
+../../../MdePkg/Include/X64
+../../../MdePkg/Include/Register/Intel
+../../../MdeModulePkg/Include
+../../../rEFIT_UEFI/PlatformPOSIX
+../../../rEFIT_UEFI/PlatformPOSIX/include
+../../../rEFIT_UEFI/include
 
 " | awk '$0!=""{ printf " -I'"${prefix}"'%s", $0; }'
 

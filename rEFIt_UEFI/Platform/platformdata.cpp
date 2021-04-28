@@ -560,15 +560,8 @@ PLATFORMDATA ApplePlatformData[] =
     0x02, 0x11, 0x0f, 0, 0, 0x16, "d8"_XS8, "d8"_XS8, 0x79006 },
 };
 
-/*
- * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
- * and is passed by non-const reference.
- * This temporary during the refactoring
- * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
- */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-
+// Firmware info for 10.13+
+// by Sherlocks
 uint32_t GetFwFeatures(MACHINE_TYPES Model)
 {
   // Firmware info for 10.13+
@@ -714,7 +707,7 @@ uint32_t GetFwFeatures(MACHINE_TYPES Model)
     }
 }
 
-bool GetMobile(MACHINE_TYPES Model, bool defaultValue)
+bool GetMobile(MACHINE_TYPES Model)
 {
   // Mobile: the battery tab in Energy Saver
   switch ( Model )
@@ -730,16 +723,6 @@ bool GetMobile(MACHINE_TYPES Model, bool defaultValue)
     case MacBook81:
     case MacBook91:
     case MacBook101:
-    case MacBookAir11:
-    case MacBookAir21:
-    case MacBookAir31:
-    case MacBookAir32:
-    case MacBookAir41:
-    case MacBookAir42:
-    case MacBookAir51:
-    case MacBookAir52:
-    case MacBookAir61:
-    case MacBookAir62:
     case MacBookPro11:
     case MacBookPro12:
     case MacBookPro21:
@@ -781,12 +764,34 @@ bool GetMobile(MACHINE_TYPES Model, bool defaultValue)
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
+    case MacBookAir11:
+    case MacBookAir21:
+    case MacBookAir31:
+    case MacBookAir32:
+    case MacBookAir41:
+    case MacBookAir42:
+    case MacBookAir51:
+    case MacBookAir52:
+    case MacBookAir61:
+    case MacBookAir62:
     case MacBookAir71:
     case MacBookAir72:
     case MacBookAir81:
     case MacBookAir82:
     case MacBookAir91:
       return TRUE;
+    case MacMini11:
+    case MacMini21:
+    case MacMini31:
+    case MacMini41:
+    case MacMini51:
+    case MacMini52:
+    case MacMini53:
+    case MacMini61:
+    case MacMini62:
+    case MacMini71:
+    case MacMini81:
+      return FALSE;
     case iMac41:
     case iMac42:
     case iMac51:
@@ -821,40 +826,31 @@ bool GetMobile(MACHINE_TYPES Model, bool defaultValue)
     case iMac202:
     case iMacPro11:
       return FALSE;
-    case MacMini11:
-    case MacMini21:
-    case MacMini31:
-    case MacMini41:
-    case MacMini51:
-    case MacMini52:
-    case MacMini53:
-    case MacMini61:
-    case MacMini62:
-    case MacMini71:
-    case MacMini81:
-      return FALSE;
-    case MacPro41:
-    case MacPro51:
-    case MacPro71:
     case MacPro11:
     case MacPro21:
     case MacPro31:
+    case MacPro41:
+    case MacPro51:
     case MacPro61:
+    case MacPro71:
       return FALSE;
     case Xserve11:
     case Xserve21:
     case Xserve31:
       return FALSE;
-    default: //unknown - use oem SMBIOS value to be default
-      return defaultValue;
+    case MaxMachineType: // currently a copy of iMac132
+      return FALSE;
+    default: // bug, unknown Apple model
+      log_technical_bug("%s : cannot find model %d\n", __PRETTY_FUNCTION__, Model);
+      return false;
     }
 }
 
-UINT64 GetPlatformFeature(MACHINE_TYPES Model)
-{
   // PlatformFeature
   // the memory tab in About This Mac
   // by TheRacerMaster
+UINT64 GetPlatformFeature(MACHINE_TYPES Model)
+{
   switch ( Model )
     {
     // Verified list from ioreg
@@ -1096,17 +1092,10 @@ void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
   }
 }
 
-void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine)
+bool isReleaseDateWithYear20(MACHINE_TYPES Model)
 {
-#pragma GCC diagnostic pop
-
-  const CHAR8  *i;
-
-  gSettings.Smbios.BiosVendor = AppleBiosVendor;
-  GlobalConfig.RomVersionUsed = ApplePlatformData[Model].firmwareVersion;
-
-  // AppleReleaseDate
-  switch (Model) {
+  switch ( Model )
+  {
     case MacBook11:
     case MacBook21:
     case MacBook31:
@@ -1161,75 +1150,60 @@ void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLE
     case MacPro51:
     case Xserve11:
     case Xserve21:
-    case Xserve31:
-      i = ApplePlatformData[Model].firmwareVersion.c_str();
-      i += AsciiStrLen(i);
-
-      while (*i != '.') {
-        i--;
-      }
-      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
-      break;
-
-    default:
-      i = ApplePlatformData[Model].firmwareVersion.c_str();
-      i += AsciiStrLen(i);
-
-      while (*i != '.') {
-        i--;
-      }
-      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
-      break;
+    case Xserve31: {
+      return false;
+    }
+    default: {
+      return true;
+    }
   }
+}
 
+// AppleReleaseDate
+XString8 GetReleaseDate(MACHINE_TYPES Model)
+{
+  XString8 returnValue;
+
+  const char* i = ApplePlatformData[Model].firmwareVersion.c_str();
+  i += AsciiStrLen(i);
+  while ( *i != '.' ) i--;
+  if ( isReleaseDateWithYear20(Model) ) {
+    returnValue.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
+  }else{
+    returnValue.S8Printf("%c%c/%c%c/%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
+  }
+  return returnValue;
+}
+
+void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData)
+{
+  GlobalConfig.BiosVersionUsed = ApplePlatformData[Model].firmwareVersion;
+  GlobalConfig.ReleaseDateUsed = GetReleaseDate(Model); // AppleReleaseDate
   GlobalConfig.EfiVersionUsed.takeValueFrom(ApplePlatformData[Model].efiversion);
-  gSettings.Smbios.ManufactureName = gSettings.Smbios.BiosVendor;
-  if (Redefine) {
-    gSettings.Smbios.ProductName = ApplePlatformData[Model].productName;
-  }
-  gSettings.Smbios.VersionNr = ApplePlatformData[Model].systemVersion;
-  gSettings.Smbios.SerialNr = ApplePlatformData[Model].serialNumber;
-  gSettings.Smbios.FamilyName = ApplePlatformData[Model].productFamily;
-  gSettings.Smbios.BoardManufactureName = gSettings.Smbios.BiosVendor;
-  gSettings.Smbios.BoardSerialNumber = AppleBoardSN;
-  gSettings.Smbios.BoardNumber = ApplePlatformData[Model].boardID;
-  gSettings.Smbios.BoardVersion = ApplePlatformData[Model].productName;
-  gSettings.Smbios.LocationInChassis = AppleBoardLocation;
-  gSettings.Smbios.ChassisManufacturer = gSettings.Smbios.BiosVendor;
-  gSettings.Smbios.ChassisAssetTag = ApplePlatformData[Model].chassisAsset;
 
-  // Firmware info for 10.13+
-  // by Sherlocks
-  // FirmwareFeatures
-  gSettings.Smbios.gFwFeatures = GetFwFeatures(Model);
-
-  // FirmwareFeaturesMask
-  gSettings.Smbios.gFwFeaturesMask = GetFwFeaturesMaskFromModel(Model);
-  
-  // PlatformFeature
-  // the memory tab in About This Mac
-  // by TheRacerMaster
-  gSettings.Smbios.gPlatformFeature = GetPlatformFeature(Model);
-
+  settingsData->Smbios.BiosVendor = AppleBiosVendor;
+  settingsData->Smbios.ManufactureName = settingsData->Smbios.BiosVendor;
+  settingsData->Smbios.ProductName = ApplePlatformData[Model].productName;
+  settingsData->Smbios.SystemVersion = ApplePlatformData[Model].systemVersion;
+  settingsData->Smbios.SerialNr = ApplePlatformData[Model].serialNumber;
+  settingsData->Smbios.FamilyName = ApplePlatformData[Model].productFamily;
+  settingsData->Smbios.BoardManufactureName = settingsData->Smbios.BiosVendor;
+  settingsData->Smbios.BoardSerialNumber = AppleBoardSN;
+  settingsData->Smbios.BoardNumber = ApplePlatformData[Model].boardID;
+  settingsData->Smbios.BoardVersion = ApplePlatformData[Model].productName;
+  settingsData->Smbios.LocationInChassis = AppleBoardLocation;
+  settingsData->Smbios.ChassisManufacturer = settingsData->Smbios.BiosVendor;
+  settingsData->Smbios.ChassisAssetTag = ApplePlatformData[Model].chassisAsset;
+  settingsData->Smbios.FirmwareFeatures = GetFwFeatures(Model);
+  settingsData->Smbios.FirmwareFeaturesMask = GetFwFeaturesMaskFromModel(Model);
+  settingsData->Smbios.gPlatformFeature = GetPlatformFeature(Model);
   if ((Model > MacPro31) && (Model < MacPro71)) {
-    gSettings.Smbios.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
+    settingsData->Smbios.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
   } else {
-    gSettings.Smbios.BoardType = BaseBoardTypeMotherBoard; //0xA;
+    settingsData->Smbios.BoardType = BaseBoardTypeMotherBoard; //0xA;
   }
-
-  gSettings.Smbios.ChassisType = GetChassisTypeFromModel(Model);
-
-  // Mobile: the battery tab in Energy Saver
-  gSettings.Smbios.Mobile = GetMobile(Model, gMobile);
-
-//  //RBr helper
-//  getRBr(Model, gSettings.Smbios.RBr);
-//
-//  //RPlt helper
-//  getRPlt(Model, gSettings.Smbios.RPlt);
-//
-//  CopyMem(gSettings.Smbios.REV,  ApplePlatformData[Model].smcRevision, 6);
-//  CopyMem(gSettings.Smbios.EPCI, &ApplePlatformData[Model].smcConfig,  4);
+  settingsData->Smbios.ChassisType = GetChassisTypeFromModel(Model);
+  settingsData->Smbios.Mobile = GetMobile(Model); // Mobile: the battery tab in Energy Saver
 }
 
 MACHINE_TYPES GetModelFromString(const XString8& ProductName)
@@ -1244,55 +1218,55 @@ MACHINE_TYPES GetModelFromString(const XString8& ProductName)
   // return ending enum as "not found"
   return MaxMachineType;
 }
-
-void GetDefaultSettings()
-{
-  DbgHeader("GetDefaultSettings");
-
-  //gLanguage         = english;
-
-  //default values will be overritten by config.plist
-  //use explicitly settings TRUE or FALSE (Yes or No)
-
-  gSettings.Graphics.InjectAsDict.InjectIntel          = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
-
-  gSettings.Graphics.InjectAsDict.InjectATI            = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
-                                    ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
-
-  gSettings.Graphics.InjectAsDict.InjectNVidia         = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].Family < 0xE0)) ||
-                                    ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
-
-//  gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
-  CopyMem(gSettings.Graphics.NVCAP.data(), default_NVCAP, 20);
-  CopyMem(gSettings.Graphics.Dcfg.data(), default_dcfg_0, 4);
-  CopyMem(&gSettings.Graphics.Dcfg[4], default_dcfg_1, 4);
-  //gSettings.Graphics.EDID.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
-  gSettings.Graphics.DualLink             = 0xA; // A(auto): DualLink auto-detection
-  gSettings.Devices.Audio.HDAInjection         = FALSE;
-  //gSettings.Devices.Audio.HDALayoutId          = 0;
-  gSettings.Devices.USB.USBInjection         = TRUE; // enabled by default to have the same behavior as before
-  gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
-  gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
-  gSettings.SystemParameters.BacklightLevelConfig = FALSE;
-  gSettings.Smbios.TrustSMBIOS          = TRUE;
-
-  gSettings.Smbios.SmUUID = nullGuidAsString;
-  gSettings.BootGraphics.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
-  GlobalConfig.RtROM.setEmpty();
-  gSettings.RtVariables.CsrActiveConfig      = 0xFFFF;
-  gSettings.RtVariables.BooterConfig         = 0;
-//  MemSet(gSettings.RtVariables.BooterCfgStr, 64, 0);
-//  AsciiStrCpyS(gSettings.RtVariables.BooterCfgStr, 64, "log=0");
-  CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
-  if (OldCfgStr) {
-    gSettings.RtVariables.BooterCfgStr.takeValueFrom(OldCfgStr);
-    FreePool(OldCfgStr);
-  }
-  gSettings.Boot.DisableCloverHotkeys = FALSE;
-  gSettings.BootGraphics.UIScale              = 1;
-  
-  ResumeFromCoreStorage          = FALSE;
-}
+//
+//void GetDefaultSettings()
+//{
+//  DbgHeader("GetDefaultSettings");
+//
+//  //gLanguage         = english;
+//
+//  //default values will be overritten by config.plist
+//  //use explicitly settings TRUE or FALSE (Yes or No)
+//
+//  //gSettings.Graphics.InjectAsDict.InjectIntel          = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
+//
+//  //gSettings.Graphics.InjectAsDict.InjectATI            = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
+//  //                                  ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
+//
+//  //gSettings.Graphics.InjectAsDict.InjectNVidia         = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].Family < 0xE0)) ||
+//  //                                  ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
+//
+////  gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
+//  //CopyMem(gSettings.Graphics.NVCAP.data(), default_NVCAP, 20);
+//  //CopyMem(gSettings.Graphics.Dcfg.data(), default_dcfg_0, 4);
+//  //CopyMem(&gSettings.Graphics.Dcfg[4], default_dcfg_1, 4);
+//  //gSettings.Graphics.EDID.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
+//  //gSettings.Graphics.DualLink             = 0xA; // A(auto): DualLink auto-detection
+//  //gSettings.Devices.Audio.HDAInjection         = FALSE;
+//  //gSettings.Devices.Audio.HDALayoutId          = 0;
+//  //gSettings.Devices.USB.USBInjection         = TRUE; // enabled by default to have the same behavior as before
+//  //gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
+//  //gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
+//  //gSettings.SystemParameters.BacklightLevelConfig = FALSE;
+//  //gSettings.Smbios.TrustSMBIOS          = TRUE;
+//
+//  //gSettings.Smbios.SmUUID = nullGuidAsString;
+//  //gSettings.BootGraphics.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
+//  //GlobalConfig.RtROM.setEmpty();
+////  gSettings.RtVariables.CsrActiveConfig      = 0xFFFF;
+//  //gSettings.RtVariables.BooterConfig         = 0;
+////  MemSet(gSettings.RtVariables.BooterCfgStr, 64, 0);
+////  AsciiStrCpyS(gSettings.RtVariables.BooterCfgStr, 64, "log=0");
+//  //CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
+//  //if (OldCfgStr) {
+//    //gSettings.RtVariables.BooterCfgStr.takeValueFrom(OldCfgStr);
+//    //FreePool(OldCfgStr);
+//  //}
+//  //gSettings.Boot.DisableCloverHotkeys = FALSE;
+//  //gSettings.BootGraphics.UIScale              = 1; // new default value 0x80000000
+//
+//  //ResumeFromCoreStorage          = FALSE;
+//}
 
 /*
  * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
@@ -1308,9 +1282,9 @@ void GetDefaultCpuSettings(SETTINGS_DATA& gSettings)
   DbgHeader("GetDefaultCpuSettings");
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
-  Model             = GetDefaultModel(gMobile);
+  Model             = GetDefaultModel();
   gSettings.CPU.CpuType  = GetAdvancedCpuType();
-  SetDMISettingsForModel(gSettings, Model, TRUE);
+  SetDMISettingsForModel(Model, &gSettings);
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.ACPI.SSDT.Generate.GeneratePStates    = TRUE;
@@ -1655,3 +1629,195 @@ uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model)
       break;
   }
 }
+
+/*
+ * parameters MUST contains at least a dot, followed by at lest 6 chars
+ */
+int compareBiosVersion(const XString8& version1, const XString8& version2)
+{
+  const CHAR8* v1p = version1.c_str();
+  const CHAR8* v2p = version2.c_str();
+
+  v1p += AsciiStrLen(v1p);
+  while (*v1p != '.') {
+    v1p--;
+  }
+
+  v2p += AsciiStrLen(v2p);
+  while (*v2p != '.') {
+    v2p--;
+  }
+  if ( strlen(v1p) < 7 ) {
+    log_technical_bug("strlen(v1p) < 7");
+    return false;
+  }
+  if ( strlen(v2p) < 7 ) {
+    log_technical_bug("strlen(v2p) < 7");
+    return false;
+  }
+
+  if (((v1p[1] > '0') && (v2p[1] == '0')) || ((v1p[1] >= v2p[1]) && (v1p[2] > v2p[2]))) {
+    return 1;
+  } else if ((v1p[1] == v2p[1]) && (v1p[2] == v2p[2])) {
+    if (((v1p[3] > '0') && (v2p[3] == '0')) || ((v1p[3] >= v2p[3]) && (v1p[4] > v2p[4]))) {
+      return 1;
+    } else if ((v1p[3] == v2p[3]) && (v1p[4] == v2p[4])) {
+      if (((v1p[5] > '0') && (v2p[5] == '0')) || ((v1p[5] > '1') && (v2p[5] == '1')) ||
+          ((v1p[5] > '2') && (v2p[5] == '2')) || ((v1p[5] >= v2p[5]) && (v1p[6] > v2p[6]))) {
+        return 1;
+      } else if ((v1p[5] == v2p[5]) && (v1p[6] == v2p[6])) {
+        // equal
+        return 0;
+      } else {
+        return -1;
+      }
+    } else {
+      return -1;
+    }
+  } else {
+    return -1;
+  }
+}
+
+bool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2)
+{
+  return compareBiosVersion(version1, version2) <= 0;
+}
+bool isBiosVersionEquel(const XString8& version1, const XString8& version2)
+{
+  return compareBiosVersion(version1, version2) == 0;
+}
+
+
+int compareReleaseDate(const XString8& date1, const XString8& date2)
+{
+  const CHAR8* i = date1.c_str();
+  const CHAR8* j = date2.c_str();
+
+  if ( (AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8) )
+  {
+    if ( ((i[6] > '0') && (j[6] == '0')) || ((i[6] >= j[6]) && (i[7] > j[7])) )
+    {
+      return 1;
+    } else if ( (i[6] == j[6]) && (i[7] == j[7]) )
+    {
+      if ( ((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1])) )
+      {
+        return 1;
+      } else if ( (i[0] == j[0]) && (i[1] == j[1]) )
+      {
+        if ( ((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) || ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4])) )
+        {
+          return 1;
+        } else if ( (i[3] == j[3]) && (i[4] == j[4]) )
+        {
+          return 0;
+        } else
+        {
+          return -1;
+        }
+      } else
+      {
+        return -1;
+      }
+    } else
+    {
+      return -1;
+    }
+  } else if ( (AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10) )
+  {
+    if ( ((i[6] > '0') && (j[8] == '0')) || ((i[6] >= j[8]) && (i[7] > j[9])) )
+    {
+      return 1;
+    } else if ( (i[6] == j[8]) && (i[7] == j[9]) )
+    {
+      if ( ((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1])) )
+      {
+        return 1;
+      } else if ( (i[0] == j[0]) && (i[1] == j[1]) )
+      {
+        if ( ((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) || ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4])) )
+        {
+          return 1;
+        } else if ( (i[3] == j[3]) && (i[4] == j[4]) )
+        {
+          return 0;
+        } else
+        {
+          return -1;
+        }
+      } else
+      {
+        return -1;
+      }
+    } else
+    {
+      return -1;
+    }
+  } else if ( (AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 10) )
+  {
+    if ( ((i[8] > '0') && (j[8] == '0')) || ((i[8] >= j[8]) && (i[9] > j[9])) )
+    {
+      return 1;
+    } else if ( (i[8] == j[8]) && (i[9] == j[9]) )
+    {
+      if ( ((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1])) )
+      {
+        return 1;
+      } else if ( (i[0] == j[0]) && (i[1] == j[1]) )
+      {
+        if ( ((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) || ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4])) )
+        {
+          return 1;
+        } else if ( (i[3] == j[3]) && (i[4] == j[4]) )
+        {
+          return 0;
+        } else
+        {
+          return -1;
+        }
+      } else
+      {
+        return -1;
+      }
+    } else
+    {
+      return -1;
+    }
+  } else if ( (AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8) )
+  {
+    if ( ((i[8] > '0') && (j[6] == '0')) || ((i[8] >= j[6]) && (i[9] > j[7])) )
+    {
+      return 1;
+    } else if ( (i[8] == j[6]) && (i[9] == j[7]) )
+    {
+      if ( ((i[0] > '0') && (j[0] == '0')) || ((i[0] >= j[0]) && (i[1] > j[1])) )
+      {
+        return 1;
+      } else if ( (i[0] == j[0]) && (i[1] == j[1]) )
+      {
+        if ( ((i[3] > '0') && (j[3] == '0')) || ((i[3] > '1') && (j[3] == '1')) || ((i[3] > '2') && (j[3] == '2')) || ((i[3] >= j[3]) && (i[4] > j[4])) )
+        {
+          return 1;
+        } else if ( (i[3] == j[3]) && (i[4] == j[4]) )
+        {
+          return 0;
+        } else
+        {
+          return -1;
+        }
+      } else
+      {
+        return -1;
+      }
+    } else
+    {
+      return -1;
+    }
+  } else
+  {
+    return -2;
+  }
+}
+
+

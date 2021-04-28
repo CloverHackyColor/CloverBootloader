@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SMBIOS</key>
+	<dict>
+		<key>FirmwareFeatures</key>
+		<string>0xFD8FF576</string>
+		<key>Board-ID</key>
+		<string>Mac-AA95B1DDAB278B95</string>
+		<key>Trust</key>
+		<true/>
+		<key>FirmwareFeaturesMask</key>
+		<string>0xFFDFFF7F</string>
+		<key>BoardVersion</key>
+		<string>1.0</string>
+		<key>Manufacturer</key>
+		<string>Apple Inc.</string>
+		<key>ChassisType</key>
+		<string>0x09</string>
+		<key>BiosVersion</key>
+		<string>IM191.88Z.F000.B00.0004232100</string>
+		<key>BoardManufacturer</key>
+		<string>Apple Inc.</string>
+		<key>ChassisAssetTag</key>
+		<string>iMac-Aluminum</string>
+		<key>PlatformFeature</key>
+		<string>0x20</string>
+		<key>Family</key>
+		<string>iMac</string>
+		<key>ChassisManufacturer</key>
+		<string>Apple Inc.</string>
+		<key>SmUUID</key>
+		<string>527657B7-A757-46E3-AEDD-5FDBB1121BED</string>
+		<key>BiosVendor</key>
+		<string>Apple Inc.</string>
+		<key>ProductName</key>
+		<string>iMac19,1</string>
+		<key>Mobile</key>
+		<false/>
+		<key>BoardType</key>
+		<integer>10</integer>
+		<key>EfiVersion</key>
+		<string>1037.120.79.0.0</string>
+		<key>SerialNumber</key>
+		<string>C02ZJTYKJV3S</string>
+		<key>LocationInChassis</key>
+		<string>Part Component</string>
+		<key>BiosReleaseDate</key>
+		<string>04/26/2020</string>
+		<key>Version</key>
+		<string>1.0</string>
+	</dict>
+</dict>
+</plist>

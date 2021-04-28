@@ -36,15 +36,8 @@
 #define DBG(...) DebugLog(DEBUG_SPD, __VA_ARGS__)
 #endif
 
-//extern EFI_DATA_HUB_PROTOCOL			*gDataHub;
 
-//extern DMI*					gDMI;
-
-//==>
-extern UINT16 TotalCount;
-//<==
-
-BOOLEAN             smbIntel;
+BOOLEAN     smbIntel;
 UINT8				smbPage;
 
 CONST CHAR8 *spd_memory_types[] =
@@ -682,12 +675,6 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
 
   spdbuf = (__typeof__(spdbuf))AllocateZeroPool(MAX_SPD_SIZE);
 
-  // Search MAX_RAM_SLOTS slots
-  //==>
-  /*  TotalSlotsCount = (UINT8) TotalCount;
-   if (!TotalSlotsCount) {
-   TotalSlotsCount = MAX_RAM_SLOTS;
-   } */
   TotalSlotsCount = 8; //MAX_RAM_SLOTS;  -- spd can read only 8 slots
   DBG("Slots to scan [%d]...\n", TotalSlotsCount);
   for (i = 0; i <  TotalSlotsCount; i++){

@@ -1,5 +1,15 @@
 echo "
 
+UNIT_TESTS
+UNIT_TESTS_MACOS
+JCONST=const
+___NOT___ENABLE_SECURE_BOOT
+_UINTPTR_T
 
 " | awk '$0!=""{ printf " -D%s", $0; }'
 
+#sprintf=__sprintf_is_disabled__
+#wcscmp=__wcsncmp_is_disabled__
+#wcslen=wcslen_fixed
+#wcsncmp=wcsncmp_fixed
+#wcsstr=wcsstr_fixed

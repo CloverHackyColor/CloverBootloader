@@ -9,6 +9,8 @@
 #define LOADER_H_
 
 #include "../cpp_foundation/XString.h"
+#include "../Platform/MacOsVersion.h"
+#include "../Platform/Volume.h"
 
 //#define DUMP_KERNEL_KEXT_PATCHES 1
 
@@ -31,5 +33,13 @@ UINT8       GetOSTypeFromPath(IN CONST XStringW& Path);
 void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #endif
 
+
+CONST XStringW
+GetOSIconName (
+  const MacOsVersion& OSVersion
+  );
+
+MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr);
+MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE& dir, const XStringW& path);
 
 #endif

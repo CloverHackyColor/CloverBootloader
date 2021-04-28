@@ -674,11 +674,11 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
   if (AnimeArray != NULL) {
     INTN   Count = AnimeArray->arrayContent().size();
     for (INTN i = 0; i < Count; i++) {
-      Dict3 = AnimeArray->dictElementAt(i, "Anime"_XS8);
-      if ( !Dict3->isDict() ) {
-        MsgLog("MALFORMED PLIST : Anime must be an array of dict");
+      if ( !AnimeArray->elementAt(i)->isDict() ) {
+        MsgLog("MALFORMED PLIST : Anime must be an array of dict\n");
         continue;
       }
+      Dict3 = AnimeArray->dictElementAt(i, "Anime"_XS8);
 
       FILM *NewFilm = new FILM();
 

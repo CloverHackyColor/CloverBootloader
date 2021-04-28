@@ -56,8 +56,8 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "../Platform/Settings.h"
-#include "Self.h"
-#include "SelfOem.h"
+#include "../Settings/Self.h"
+#include "../Settings/SelfOem.h"
 
 #ifndef DEBUG_NVIDIA
 #ifndef DEBUG_ALL
@@ -93,13 +93,13 @@ UINT8 default_NVCAP[]= {
 
 #define NVCAP_LEN ( sizeof(default_NVCAP) / sizeof(UINT8) )
 
-UINT8 default_dcfg_0[]= {0x03, 0x01, 0x03, 0x00};
-UINT8 default_dcfg_1[]= {0xff, 0xff, 0x00, 0x01};
+const UINT8 default_dcfg_0[]= {0x03, 0x01, 0x03, 0x00};
+const UINT8 default_dcfg_1[]= {0xff, 0xff, 0x00, 0x01};
 
 #define DCFG0_LEN ( sizeof(default_dcfg_0) / sizeof(UINT8) )
 #define DCFG1_LEN ( sizeof(default_dcfg_1) / sizeof(UINT8) )
 
-UINT8 default_NVPM[]= {
+const UINT8 default_NVPM[]= {
   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -108,7 +108,7 @@ UINT8 default_NVPM[]= {
 
 #define NVPM_LEN ( sizeof(default_NVPM) / sizeof(UINT8) )
 
-UINT8  pwm_info[] = {
+const UINT8  pwm_info[] = {
   /* 0000 */  0x01, 0x14, 0x00, 0x64, 0xA8, 0x61, 0x00, 0x00,
   /* 0008 */  0x08, 0x52, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
   /* 0010 */  0x00, 0x04, 0x00, 0x00
@@ -116,7 +116,7 @@ UINT8  pwm_info[] = {
 };
 #define PWM_LEN ( sizeof(pwm_info) / sizeof(UINT8) )
 
-static nvidia_pci_info_t nvidia_card_vendors[] = {
+static const nvidia_pci_info_t nvidia_card_vendors[] = {
   { 0x10190000,  "Elitegroup" },
   { 0x10250000,  "Acer" },
   { 0x10280000,  "Dell" },
@@ -170,7 +170,7 @@ static nvidia_pci_info_t nvidia_card_vendors[] = {
   { 0x73770000,  "Colorful" },
 };
 
-static nvidia_pci_info_t nvidia_card_generic[] = {
+static const nvidia_pci_info_t nvidia_card_generic[] = {
   // 0000 - 0040
   { 0x10DE0000,  "Unknown" },
   // 0040 - 004F
@@ -2012,20 +2012,15 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
   return (has_lvds ? PATCH_ROM_SUCCESS_HAS_LVDS : PATCH_ROM_SUCCESS);
 }
 
-CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD * nvcard)
+CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 {
   UINTN i, j;
   //DBG("get_nvidia_model for (%08X, %08X)\n", device_id, subsys_id);
 
   //ErmaC added selector for nVidia "old" style in System Profiler
   //DBG("NvidiaGeneric = %ls\n", gSettings.Graphics.NvidiaGeneric?L"YES":L"NO");
-  if (gSettings.Graphics.NvidiaGeneric == FALSE) {
-    // First check in the plist, (for e.g this can override any hardcoded devices)
-    //CARDLIST * nvcard = FindCardWithIds(device_id, subsys_id);
-    if (nvcard && (nvcard->Id == device_id) && (nvcard->SubId == subsys_id)) {
-      return nvcard->Model.c_str();
-    }
-
+  if (gSettings.Graphics.NvidiaGeneric == FALSE)
+  {
     // Then check the exceptions table
     if (subsys_id) {
       for (i = 0; i < (sizeof(nvidia_card_exceptions) / sizeof(nvidia_card_exceptions[0])); i++) {
@@ -2240,18 +2235,18 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     // Get Model from the PCI
     //    model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id), subsystem);
     if (model == NULL) { // !nvcard->Model
-      model = get_nvidia_model(device_id, subsys_id, NULL);
+      model = get_nvidia_model(device_id, subsys_id);
     }
   } else {
 
-    for (j = 0; j < NGFX; j++) {
-      if ((gGraphics[j].Vendor == Nvidia) && (gGraphics[j].DeviceID == nvda_dev->device_id)) {
-        model = gGraphics[j].Model; //menu setting
+    for (j = 0; j < gConf.GfxPropertiesArray.size(); j++) {
+      if ((gConf.GfxPropertiesArray[j].Vendor == Nvidia) && (gConf.GfxPropertiesArray[j].DeviceID == nvda_dev->device_id)) {
+        model = gConf.GfxPropertiesArray[j].Model.c_str(); //menu setting
         if (n_ports == 0) { // !nvcard->VideoPorts
-          n_ports = gGraphics[j].Ports;
+          n_ports = gConf.GfxPropertiesArray[j].Ports;
         }
         if (load_vbios == FALSE) { // !nvcard->LoadVBios
-          load_vbios = gGraphics[j].LoadVBios;
+          load_vbios = gConf.GfxPropertiesArray[j].LoadVBios;
         }
         break;
       }
@@ -2348,7 +2343,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     if (rom_pci_header->signature == 0x52494350) {
       if (rom_pci_header->device_id != nvda_dev->device_id) {
         // Get Model from the OpROM
-        model = get_nvidia_model(((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id), subsys_id, nvcard);
+        if (  nvcard &&
+              ( nvcard->Id == ((uint32_t)(rom_pci_header->vendor_id << 16) | rom_pci_header->device_id) )  && // we have to cast to uint32 because operator << promote to int (which is annoying :-)
+              ( nvcard->SubId == subsys_id )
+            ) {
+          model = nvcard->Model.c_str();
+        }else{
+          model = get_nvidia_model(((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id), subsys_id);
+        }
         //        DBG(model);
       }
     } else {

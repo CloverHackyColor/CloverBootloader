@@ -1,10 +1,10 @@
-//
-//  XToolsCommon.h
-//  cpp_tests
-//
-//  Created by jief on 25.04.20.
-//  Copyright © 2020 jief_machack. All rights reserved.
-//
+/*
+ *
+ * Created by jief in 1997.
+ * Copyright (c) 2020 Jief
+ * All rights reserved.
+ *
+ */
 
 #ifndef XToolsCommon_h
 #define XToolsCommon_h

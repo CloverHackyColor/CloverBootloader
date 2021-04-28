@@ -44,7 +44,7 @@
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../gui/menu_items/menu_items.h"
 #include "secureboot.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../refit/screen.h"
 #include "../libeg/XTheme.h"
 

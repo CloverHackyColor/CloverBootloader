@@ -5,7 +5,7 @@
 #include "../Platform/plist/plist.h"
 #include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
-#include "../Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../Settings/ConfigPlist/ConfigPlistClass.h"
 
 
 static const char* config_all = "\n\n\n\n\n\n\n\n\n\n\n"

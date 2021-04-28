@@ -49,7 +49,7 @@
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../gui/REFIT_MAINMENU_SCREEN.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../include/OSTypes.h"
 #include "../Platform/BootOptions.h"
 #include "../Platform/Volumes.h"
@@ -446,6 +446,441 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
     }
   }
   return Status;
+}
+
+
+MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr)
+{
+  XString8   OSVersion;
+  XString8   BuildVersion;
+  EFI_STATUS Status      = EFI_NOT_FOUND;
+  CHAR8*     PlistBuffer = NULL;
+  UINTN      PlistLen;
+  TagDict*     Dict        = NULL;
+  const TagDict*     DictPointer = NULL;
+  const TagStruct*     Prop        = NULL;
+
+  if ( !Volume ) {
+    return NullXString8;
+  }
+
+  if (OSTYPE_IS_OSX(LoaderType))
+  {
+    XString8 uuidPrefix;
+    if ( APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", APFSTargetUUID.wc_str());
+
+    XStringW plist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", uuidPrefix.c_str());
+    if ( !FileExists(Volume->RootDir, plist) ) {
+      plist = SWPrintf("%s\\System\\Library\\CoreServices\\ServerVersion.plist", uuidPrefix.c_str());
+      if ( !FileExists(Volume->RootDir, plist) ) {
+        plist.setEmpty();
+      }
+    }
+
+    if ( plist.notEmpty() ) { // found macOS System
+      Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+        Prop = Dict->propertyForKey("ProductVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductVersion\n");
+          }else{
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              OSVersion = Prop->getString()->stringValue();
+            }
+          }
+        }
+        Prop = Dict->propertyForKey("ProductBuildVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
+          }else{
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              BuildVersion = Prop->getString()->stringValue();
+            }
+          }
+        }
+        Dict->FreeTag();
+      }
+    }
+  }
+
+  if (OSTYPE_IS_OSX_INSTALLER (LoaderType)) {
+    // Detect exact version for 2nd stage Installer (thanks to dmazar for this idea)
+    // This should work for most installer cases. Rest cases will be read from boot.efi before booting.
+    // Reworked by Sherlocks. 2018.04.12
+
+    // 1st stage - 1
+    // Check for plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
+
+    XStringW InstallerPlist;
+
+    if ( APFSTargetUUID.notEmpty() ) {
+      InstallerPlist = SWPrintf("%ls\\System\\Library\\CoreServices\\SystemVersion.plist", APFSTargetUUID.wc_str());
+      if ( !FileExists(Volume->RootDir, InstallerPlist) ) InstallerPlist.setEmpty();
+    }
+
+    if ( InstallerPlist.isEmpty() ) {
+      InstallerPlist = SWPrintf("\\.IABootFilesSystemVersion.plist"); // 10.9 - 10.13.3
+      if (!FileExists(Volume->RootDir, InstallerPlist) && FileExists (Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
+          ((FileExists(Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
+           FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
+           FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
+           FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
+           FileExists(Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4+
+        InstallerPlist = SWPrintf("\\System\\Library\\CoreServices\\SystemVersion.plist");
+      }
+    }
+    if (FileExists (Volume->RootDir, InstallerPlist)) {
+      Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+        Prop = Dict->propertyForKey("ProductVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductVersion\n");
+          }else{
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              OSVersion = Prop->getString()->stringValue();
+            }
+          }
+        }
+        Prop = Dict->propertyForKey("ProductBuildVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
+          }else{
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              BuildVersion = Prop->getString()->stringValue();
+            }
+          }
+        }
+        Dict->FreeTag();
+      }
+    }
+
+//    if ( OSVersion.isEmpty() )
+//    {
+//      if ( FileExists(Volume->RootDir, SWPrintf("\\%ls\\com.apple.installer\\BridgeVersion.plist", APFSTargetUUID.wc_str()).wc_str()) ) {
+//        OSVersion = "11.0"_XS8;
+//        // TODO so far, is there is a BridgeVersion.plist, it's version 11.0. Has to be improved with next releases.
+//      }
+//    }
+
+    // 1st stage - 2
+    // Check for plist - createinstallmedia/NetInstall
+    if (OSVersion.isEmpty()) {
+      InstallerPlist = SWPrintf("\\.IABootFiles\\com.apple.Boot.plist"); // 10.9 - ...
+      if (FileExists (Volume->RootDir, InstallerPlist)) {
+        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = Dict->propertyForKey("Kernel Flags");
+          if ( Prop != NULL ) {
+            if ( !Prop->isString() ) {
+              MsgLog("ATTENTION : property not string in Kernel Flags\n");
+            }else{
+              if ( Prop->getString()->stringValue().contains("Install%20macOS%20BigSur") || Prop->getString()->stringValue().contains("Install%20macOS%2011.0")) {
+                OSVersion = "11"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
+                OSVersion = "10.16"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
+                OSVersion = "10.15"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Mojave") || Prop->getString()->stringValue().contains("Install%20macOS%2010.14")) {
+                OSVersion = "10.14"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20High%20Sierra") || Prop->getString()->stringValue().contains("Install%20macOS%2010.13")) {
+                OSVersion = "10.13"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sierra") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.12")) {
+                OSVersion = "10.12"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20El%20Capitan") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.11")) {
+                OSVersion = "10.11"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Yosemite") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.10")) {
+                OSVersion = "10.10"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Mavericks.app")) {
+                OSVersion = "10.9"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Mountain%20Lion")) {
+                OSVersion = "10.8"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20Mac%20OS%20hhX%20Lion")) {
+                OSVersion = "10.7"_XS8;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 2nd stage - 1
+    // Check for plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
+    if (OSVersion.isEmpty()) {
+      InstallerPlist = SWPrintf("\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"); // 10.12.4+
+      if (!FileExists (Volume->RootDir, InstallerPlist)) {
+        InstallerPlist = SWPrintf("\\macOS Install Data\\InstallInfo.plist"); // 10.12+
+        if (!FileExists (Volume->RootDir, InstallerPlist)) {
+          InstallerPlist = SWPrintf("\\com.apple.boot.R\\SystemVersion.plist)"); // 10.12+
+          if (!FileExists (Volume->RootDir, InstallerPlist)) {
+            InstallerPlist = SWPrintf("\\com.apple.boot.P\\SystemVersion.plist"); // 10.12+
+            if (!FileExists (Volume->RootDir, InstallerPlist)) {
+              InstallerPlist = SWPrintf("\\com.apple.boot.S\\SystemVersion.plist"); // 10.12+
+              if (!FileExists (Volume->RootDir, InstallerPlist) &&
+                  (FileExists (Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
+                   FileExists (Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
+                InstallerPlist = SWPrintf("\\System\\Library\\CoreServices\\SystemVersion.plist"); // 10.11
+              }
+            }
+          }
+        }
+      }
+      if (FileExists (Volume->RootDir, InstallerPlist)) {
+        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = Dict->propertyForKey("ProductVersion");
+          if ( Prop != NULL ) {
+            if ( !Prop->isString() ) {
+              MsgLog("ATTENTION : property not string in ProductVersion\n");
+            }else{
+              if( Prop->getString()->stringValue().notEmpty() ) {
+                OSVersion = Prop->getString()->stringValue();
+              }
+            }
+          }
+          Prop = Dict->propertyForKey("ProductBuildVersion");
+          if ( Prop != NULL ) {
+            if ( !Prop->isString() ) {
+              MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
+            }else{
+              if( Prop->getString()->stringValue().notEmpty() ) {
+                BuildVersion = Prop->getString()->stringValue();
+              }
+            }
+          }
+          // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
+          // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
+          DictPointer = Dict->dictPropertyForKey("System Image Info"); // 10.12+
+          if (DictPointer != NULL) {
+            Prop = DictPointer->propertyForKey("version");
+            if ( Prop != NULL ) {
+              if ( !Prop->isString() ) {
+                MsgLog("ATTENTION : property not string in version\n");
+              }else{
+                OSVersion = Prop->getString()->stringValue();
+              }
+            }
+          }
+          Dict->FreeTag();
+        }
+      }
+    }
+
+    // 2nd stage - 2
+    // Check for ia.log - InstallESD/createinstallmedia/startosinstall
+    // Implemented by Sherlocks
+    if (OSVersion.isEmpty()) {
+      CONST CHAR8  *s, *fileBuffer;
+//      CHAR8  *Res5 = (__typeof__(Res5))AllocateZeroPool(5);
+//      CHAR8  *Res6 = (__typeof__(Res6))AllocateZeroPool(6);
+//      CHAR8  *Res7 = (__typeof__(Res7))AllocateZeroPool(7);
+//      CHAR8  *Res8 = (__typeof__(Res8))AllocateZeroPool(8);
+      UINTN  fileLen = 0;
+      XStringW InstallerLog;
+      InstallerLog = L"\\Mac OS X Install Data\\ia.log"_XSW; // 10.7
+      if (!FileExists (Volume->RootDir, InstallerLog)) {
+        InstallerLog = L"\\OS X Install Data\\ia.log"_XSW; // 10.8 - 10.11
+        if (!FileExists (Volume->RootDir, InstallerLog)) {
+          InstallerLog = L"\\macOS Install Data\\ia.log"_XSW; // 10.12+
+        }
+      }
+      if (FileExists (Volume->RootDir, InstallerLog)) {
+        Status = egLoadFile(Volume->RootDir, InstallerLog.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
+        if (!EFI_ERROR(Status)) {
+          XString8 targetString;
+          targetString.strncpy(fileBuffer, fileLen);
+      //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
+          s = AsciiStrStr(targetString.c_str(), "Running OS Build: Mac OS X ");
+          if (s[31] == ' ') {
+            OSVersion.S8Printf("%c%c.%c\n", s[27], s[28], s[30]);
+            if (s[38] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
+            } else if (s[39] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
+            }
+          } else if (s[31] == '.') {
+            OSVersion.S8Printf("%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
+            if (s[40] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
+            } else if (s[41] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
+            }
+          } else if (s[32] == ' ') {
+            OSVersion.S8Printf("%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
+            if (s[39] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
+            } else if (s[40] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
+            } else if (s[41] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
+            }
+          } else if (s[32] == '.') {
+            OSVersion.S8Printf("%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
+            if (s[41] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
+            } else if (s[42] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
+            } else if (s[43] == ')') {
+              BuildVersion.S8Printf("%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
+            }
+          }
+          FreePool(fileBuffer);
+        }
+      }
+    }
+
+    // 2nd stage - 3
+    // Check for plist - Preboot of APFS
+    if ( OSVersion.isEmpty() )
+    {
+      XStringW plist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"_XSW;
+      if ( !FileExists(Volume->RootDir, plist) ) {
+        plist.setEmpty();
+      }
+
+      if ( plist.notEmpty() ) { // found macOS System
+
+        Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+          Prop = Dict->propertyForKey("ProductVersion");
+          if ( Prop != NULL ) {
+            if ( !Prop->isString() ) {
+              MsgLog("ATTENTION : property not string in ProductVersion\n");
+            }else{
+              OSVersion = Prop->getString()->stringValue();
+            }
+          }
+          Prop = Dict->propertyForKey("ProductBuildVersion");
+          if ( Prop != NULL ) {
+            if ( !Prop->isString() ) {
+              MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
+            }else{
+              BuildVersion = Prop->getString()->stringValue();
+            }
+          }
+        }
+        Dict->FreeTag();
+      }
+    }
+  }
+
+  if (OSTYPE_IS_OSX_RECOVERY (LoaderType)) {
+
+    XString8 uuidPrefix;
+    if ( APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", APFSTargetUUID.wc_str());
+
+    XStringW plist = SWPrintf("%s\\SystemVersion.plist", uuidPrefix.c_str());
+    if ( !FileExists(Volume->RootDir, plist) ) {
+      plist = SWPrintf("%s\\ServerVersion.plist", uuidPrefix.c_str());
+      if ( !FileExists(Volume->RootDir, plist) ) {
+        plist = L"\\com.apple.recovery.boot\\SystemVersion.plist"_XSW;
+        if ( !FileExists(Volume->RootDir, plist) ) {
+          plist = L"\\com.apple.recovery.boot\\ServerVersion.plist"_XSW;
+          if ( !FileExists(Volume->RootDir, plist) ) {
+            plist.setEmpty();
+          }
+        }
+      }
+    }
+
+    // Detect exact version for OS X Recovery
+    if ( plist.notEmpty() ) { // found macOS System
+      Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+        Prop = Dict->propertyForKey("ProductVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductVersion\n");
+          }else{
+            OSVersion = Prop->getString()->stringValue();
+          }
+        }
+        Prop = Dict->propertyForKey("ProductBuildVersion");
+        if ( Prop != NULL ) {
+          if ( !Prop->isString() ) {
+            MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
+          }else{
+            BuildVersion = Prop->getString()->stringValue();
+          }
+        }
+      }
+      Dict->FreeTag();
+    } else if (FileExists (Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
+      // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
+      OSVersion = "10.9"_XS8;
+    }
+  }
+
+  if (PlistBuffer != NULL) {
+    FreePool(PlistBuffer);
+  }
+  (*BuildVersionPtr).stealValueFrom(&BuildVersion);
+  return OSVersion;
+}
+
+inline MacOsVersion GetOSVersion (IN LOADER_ENTRY *Entry) { return GetOSVersion(Entry->LoaderType, Entry->APFSTargetUUID, Entry->Volume, &Entry->BuildVersion); };
+
+//constexpr XStringW iconMac = L"mac"_XSW;
+CONST XStringW
+GetOSIconName (const MacOsVersion& OSVersion)
+{
+  XStringW OSIconName;
+  if (OSVersion.isEmpty()) {
+    OSIconName = L"mac"_XSW;
+  } else if ( (OSVersion.elementAt(0) == 10 && OSVersion.elementAt(1) == 16 ) ||
+              (OSVersion.elementAt(0) == 11 /*&& OSVersion.elementAt(1) == 0*/ )
+            ) {
+    // Big Sur
+    OSIconName = L"bigsur,mac"_XSW;
+  }else if ( OSVersion.elementAt(0) == 10 ) {
+    if ( OSVersion.elementAt(1) == 15 ) {
+      // Catalina
+      OSIconName = L"cata,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 14 ) {
+      // Mojave
+      OSIconName = L"moja,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 13 ) {
+      // High Sierra
+      OSIconName = L"hsierra,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 12 ) {
+      // Sierra
+      OSIconName = L"sierra,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 11 ) {
+      // El Capitan
+      OSIconName = L"cap,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 10 ) {
+      // Yosemite
+      OSIconName = L"yos,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 9 ) {
+      // Mavericks
+      OSIconName = L"mav,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 8 ) {
+      // Mountain Lion
+      OSIconName = L"cougar,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 7 ) {
+      // Lion
+      OSIconName = L"lion,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 6 ) {
+      // Snow Leopard
+      OSIconName = L"snow,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 5 ) {
+      // Leopard
+      OSIconName = L"leo,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 4 ) {
+      // Tiger
+      OSIconName = L"tiger,mac"_XSW;
+    } else {
+      OSIconName = L"mac"_XSW;
+    }
+  } else {
+    OSIconName = L"mac"_XSW;
+  }
+
+  return OSIconName;
 }
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
@@ -1326,6 +1761,83 @@ void AddPRSEntry(REFIT_VOLUME *Volume)
 #undef Paper
 #undef Rock
 #undef Scissor
+
+XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path)
+{
+  XString8 returnValue;
+
+  XStringW plist = SWPrintf("%ls\\com.apple.Boot.plist", path.wc_str());
+  if ( !FileExists(dir, plist) ) return NullXString8;
+
+  CHAR8*     PlistBuffer = NULL;
+  UINTN      PlistLen;
+  TagDict*     Dict        = NULL;
+  const TagStruct*     Prop        = NULL;
+
+  EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+  if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS)
+  {
+    Prop = Dict->propertyForKey("Kernel Flags");
+    if ( Prop != NULL ) {
+      if ( !Prop->isString() ) {
+        MsgLog("ATTENTION : Kernel Flags not string in ProductVersion\n");
+      }else{
+        if( Prop->getString()->stringValue().notEmpty() ) {
+          const XString8& kernelFlags = Prop->getString()->stringValue();
+          size_t idx = kernelFlags.indexOf("auth-root-dmg");
+          if ( idx == MAX_XSIZE ) return NullXString8;
+          idx += strlen("auth-root-dmg");
+          while ( idx < kernelFlags.length()  &&  IS_BLANK(kernelFlags[idx]) ) ++idx;
+          if ( kernelFlags[idx] == '=' ) ++idx;
+          else return NullXString8;
+          while ( idx < kernelFlags.length()  &&  IS_BLANK(kernelFlags[idx]) ) ++idx;
+          if ( kernelFlags.isEqualAtIC(idx, "file://"_XS8) ) idx += strlen("file://");
+          size_t idxEnd = idx;
+          while ( idxEnd < kernelFlags.length()  &&  !IS_BLANK(kernelFlags[idxEnd]) ) ++idxEnd;
+          returnValue = kernelFlags.subString(idx, idxEnd - idx);
+        }
+      }
+    }
+  }
+  if ( PlistBuffer ) FreePool(PlistBuffer);
+  return returnValue;
+}
+
+MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE& dir, const XStringW& path)
+{
+  MacOsVersion macOSVersion;
+
+  XStringW plist = SWPrintf("%ls\\SystemVersion.plist", path.wc_str());
+  if ( !FileExists(dir, plist) ) {
+    plist = SWPrintf("%ls\\ServerVersion.plist", path.wc_str());
+    if ( !FileExists(dir, plist) ) {
+      plist.setEmpty();
+    }
+  }
+
+  if ( plist.notEmpty() ) { // found macOS System
+    CHAR8*     PlistBuffer = NULL;
+    UINTN      PlistLen;
+    TagDict*     Dict        = NULL;
+    const TagStruct*     Prop        = NULL;
+
+    EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+    if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+      Prop = Dict->propertyForKey("ProductVersion");
+      if ( Prop != NULL ) {
+        if ( !Prop->isString() ) {
+          MsgLog("ATTENTION : property not string in ProductVersion\n");
+        }else{
+          if( Prop->getString()->stringValue().notEmpty() ) {
+            macOSVersion = Prop->getString()->stringValue();
+          }
+        }
+      }
+    }
+    if ( PlistBuffer ) FreePool(PlistBuffer);
+  }
+  return macOSVersion;
+}
 
 void ScanLoader(void)
 {
@@ -2251,9 +2763,14 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
                                 Custom.settings.Type, newCustomFlags, Custom.settings.Hotkey, Custom.settings.BootBgColor, Custom.CustomLogoType, Custom.CustomLogoImage,
                                 /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
       if (Entry != NULL) {
-        if ( Custom.settings.Settings.notEmpty() ) DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");
+        if ( Custom.settings.Settings.notEmpty() ) {
+          DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");
+        }
         if (!Custom.settings.CommonSettings) {
           Entry->Settings = DefaultEntrySettings;
+        }
+        if (Custom.settings.ForceTextMode) {
+          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
         }
         if (OSFLAG_ISUNSET(newCustomFlags, OSFLAG_NODEFAULTMENU)) {
           Entry->AddDefaultMenu();

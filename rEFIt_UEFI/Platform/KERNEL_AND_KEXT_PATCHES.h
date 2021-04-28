@@ -11,6 +11,8 @@
 #include "../cpp_foundation/XBuffer.h"
 #include "../libeg/libeg.h"
 #include "MacOsVersion.h"
+#include "../Settings/ConfigPlist/ConfigPlistClass.h"
+#include "../Platform/SettingsUtils.h"
 
 extern "C" {
 #  include <Library/OcConfigurationLib.h>
@@ -61,6 +63,23 @@ public:
     if ( !(Label == other.Label ) ) return false;
     return true;
   }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_AbstractPatch_Class& other)
+  {
+    Disabled = other.dgetDisabled();
+    Find = other.dgetFind();
+    Replace = other.dgetReplace();
+    MaskFind = other.dgetMaskFind();
+    MaskReplace = other.dgetMaskReplace();
+    StartPattern = other.dgetStartPattern();
+    StartMask = other.dgetStartMask();
+    SearchLen = other.dgetSearchLen();
+    Count = other.dgetCount();
+    Skip = other.dgetSkip();
+    MatchOS = other.dgetMatchOS();
+    MatchBuild = other.dgetMatchBuild();
+    MenuItem.BValue = !other.dgetDisabled();
+    Label = other.dgetLabel();
+  }
 
 /** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
   bool IsPatchEnabledByBuildNumber(const XString8& Build);
@@ -71,6 +90,7 @@ public:
 
 class ABSTRACT_KEXT_OR_KERNEL_PATCH : public ABSTRACT_PATCH
 {
+  using super = ABSTRACT_PATCH;
 public:
   XString8         ProcedureName = XString8(); //procedure len will be StartPatternLen
 
@@ -80,8 +100,14 @@ public:
 	#endif
   bool isEqual(const ABSTRACT_KEXT_OR_KERNEL_PATCH& other) const
   {
-    if ( !ABSTRACT_PATCH::isEqual (other) ) return false;
+    if ( !super::isEqual (other) ) return false;
     if ( !(ProcedureName == other.ProcedureName ) ) return false;
+    return true;
+  }
+  bool takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::ABSTRACT_KEXT_OR_KERNEL_PATCH& other)
+  {
+    super::takeValueFrom(other);
+    ProcedureName = other.dgetProcedureName();
     return true;
   }
 };
@@ -90,6 +116,7 @@ public:
 
 class KEXT_PATCH : public ABSTRACT_KEXT_OR_KERNEL_PATCH
 {
+  using super = ABSTRACT_KEXT_OR_KERNEL_PATCH;
 public:
   XString8         Name = XString8();
   bool             IsPlistPatch = BOOLEAN();
@@ -102,14 +129,22 @@ public:
 	#endif
   bool isEqual(const KEXT_PATCH& other) const
   {
-    if ( !ABSTRACT_KEXT_OR_KERNEL_PATCH::isEqual (other) ) return false;
+    if ( !super::isEqual (other) ) return false;
+    if ( !(Name == other.Name ) ) return false;
     if ( !(IsPlistPatch == other.IsPlistPatch ) ) return false;
     return true;
+  }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KextsToPatch_Class& other)
+  {
+    super::takeValueFrom(other);
+    Name = other.dgetName();
+    IsPlistPatch = other.dgetIsPlistPatch();
   }
 };
 
 class KERNEL_PATCH : public ABSTRACT_KEXT_OR_KERNEL_PATCH
 {
+  using super = ABSTRACT_KEXT_OR_KERNEL_PATCH;
 public:
   
   virtual XString8 getName() const { return "kernel"_XS8; }
@@ -119,13 +154,18 @@ public:
 	#endif
   bool isEqual(const KERNEL_PATCH& other) const
   {
-    if ( !ABSTRACT_KEXT_OR_KERNEL_PATCH::isEqual (other) ) return false;
+    if ( !super::isEqual (other) ) return false;
     return true;
+  }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KernelToPatch_Class& other)
+  {
+    super::takeValueFrom(other);
   }
 };
 
 class BOOT_PATCH : public ABSTRACT_PATCH
 {
+  using super = ABSTRACT_PATCH;
 public:
   
   virtual XString8 getName() const { return "boot.efi"_XS8; }
@@ -135,8 +175,12 @@ public:
 	#endif
   bool isEqual(const BOOT_PATCH& other) const
   {
-    if ( !ABSTRACT_PATCH::isEqual (other) ) return false;
+    if ( !super::isEqual (other) ) return false;
     return true;
+  }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_BootPatch_Class& other)
+  {
+    super::takeValueFrom(other);
   }
 };
 
@@ -157,9 +201,9 @@ public:
   XBuffer<UINT8> KPATIConnectorsData = XBuffer<UINT8>();
   XBuffer<UINT8> KPATIConnectorsPatch = XBuffer<UINT8>();
   XStringWArray ForceKextsToLoad/* = XStringWArray()*/;
-  XObjArray<KEXT_PATCH> KextPatches/* = XObjArray<KEXT_PATCH>()*/;
-  XObjArray<KERNEL_PATCH> KernelPatches/* = XObjArray<KERNEL_PATCH>()*/;
-  XObjArray<BOOT_PATCH> BootPatches/* = XObjArray<BOOT_PATCH>()*/;
+  XObjArrayWithTakeValueFromXmlArray<KEXT_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KextsToPatch_Class> KextPatches/* = XObjArrayWithTakeValueFromXmlArray<KEXT_PATCH>()*/;
+  XObjArrayWithTakeValueFromXmlArray<KERNEL_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KernelToPatch_Class> KernelPatches/* = XObjArrayWithTakeValueFromXmlArray<KERNEL_PATCH>()*/;
+  XObjArrayWithTakeValueFromXmlArray<BOOT_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_BootPatch_Class> BootPatches/* = XObjArrayWithTakeValueFromXmlArray<BOOT_PATCH>()*/;
   
   KERNEL_AND_KEXT_PATCHES() : ForceKextsToLoad(), KextPatches(), KernelPatches(), BootPatches() {}
   
@@ -186,6 +230,26 @@ public:
     if ( !KernelPatches.isEqual(other.KernelPatches) ) return false;
     if ( !BootPatches.isEqual(other.BootPatches) ) return false;
     return true;
+  }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class& other)
+  {
+    KPDebug = other.dgetKPDebug();
+    KPKernelLapic = other.dgetKPKernelLapic();
+    KPKernelXCPM = other.dgetKPKernelXCPM();
+    _KPKernelPm = other.dget_KPKernelPm();
+    KPPanicNoKextDump = other.dgetKPPanicNoKextDump();
+    _KPAppleIntelCPUPM = other.dget_KPAppleIntelCPUPM();
+    KPAppleRTC = other.dgetKPAppleRTC();
+    EightApple = other.dgetEightApple();
+    KPDELLSMBIOS = other.dgetKPDELLSMBIOS();
+    FakeCPUID = other.dgetFakeCPUID();
+    KPATIConnectorsController = other.dgetKPATIConnectorsController();
+    KPATIConnectorsData = other.dgetKPATIConnectorsData();
+    KPATIConnectorsPatch = other.dgetKPATIConnectorsPatch();
+    ForceKextsToLoad = other.dgetForceKextsToLoad();
+    KextPatches.takeValueFrom(other.KextsToPatch);
+    KernelPatches.takeValueFrom(other.KernelToPatch);
+    BootPatches.takeValueFrom(other.BootPatches);
   }
 } ;
 

@@ -10,7 +10,7 @@ extern "C" {
 #include "../Platform/plist/plist.h"
 #include "../Platform/Settings.h"
 #include "../Platform/guid.h"
-#include "../Platform/SelfOem.h"
+#include "../Settings/SelfOem.h"
 #include "../Platform/KextList.h"
 #include "MemoryOperation.h"
 #include "../include/OSTypes.h"

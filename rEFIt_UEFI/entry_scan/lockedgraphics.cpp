@@ -34,7 +34,7 @@
 
 #include <Platform.h>
 #include "entry_scan.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LOCK_BOOT_SCREEN 1

@@ -14,8 +14,6 @@
 #define CARDLIST_SIGNATURE SIGNATURE_32('C','A','R','D')
 
 
-void FillCardList(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
-
 const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD*
 FindCardWithIds (
   UINT32 Id,

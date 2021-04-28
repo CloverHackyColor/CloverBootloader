@@ -111,11 +111,12 @@ struct DevPropString {
 
 typedef struct DevPropString  DevPropString;
 
+#ifndef DONT_DEFINE_GLOBALS
 extern UINT32                          devices_number;
 extern DevPropString *device_inject_string;
 extern UINT8 *device_inject_stringdata;
 extern UINT32 device_inject_stringlength;
-
+#endif
 
 DevPropString	*devprop_create_string(void);
 //DevPropDevice	*devprop_add_device(DevPropString *string, char *path);

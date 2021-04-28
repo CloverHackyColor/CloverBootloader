@@ -13,8 +13,8 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "../Platform/Settings.h"
-#include "Self.h"
-#include "SelfOem.h"
+#include "../Settings/Self.h"
+#include "../Settings/SelfOem.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_ATI 1
@@ -33,7 +33,7 @@ static value_t aty_nameparent;
 card_t *card;
 //static value_t aty_model;
 
-card_config_t card_configs[] = {
+const card_config_t card_configs[] = {
   {NULL,  0},
   /* OLDController */
   {"Wormy", 2},
@@ -145,7 +145,7 @@ card_config_t card_configs[] = {
   {"Radeon",4},
 };
 
-radeon_card_info_t radeon_cards[] = {
+const radeon_card_info_t radeon_cards[] = {
 
   // Earlier cards are not supported
   //
@@ -504,7 +504,6 @@ radeon_card_info_t radeon_cards[] = {
   { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",        kNull },
 
   { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",        kNull },
-  { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",        kNull },
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
    6901 Topaz PRO [Radeon R5 M255]
@@ -1952,12 +1951,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     break;
   }
 
-  for (j = 0; j < NGFX; j++) {
-    if ((gGraphics[j].Vendor == Ati) &&
-        (gGraphics[j].DeviceID == pci_dev->device_id)) {
-      //      model = gGraphics[j].Model;
-      n_ports = gGraphics[j].Ports;
-      add_vbios = gGraphics[j].LoadVBios;
+  for (j = 0; j < gConf.GfxPropertiesArray.size(); j++) {
+    if ((gConf.GfxPropertiesArray[j].Vendor == Ati) &&
+        (gConf.GfxPropertiesArray[j].DeviceID == pci_dev->device_id)) {
+      //      model = gConf.GfxPropertiesArray[j].Model;
+      n_ports = gConf.GfxPropertiesArray[j].Ports;
+      add_vbios = gConf.GfxPropertiesArray[j].LoadVBios;
       break;
     }
   }

@@ -791,7 +791,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
    EFI_GUID TmpGuid;
    CHAR16 *Ptr = GuidLEToStr(&Volume->RootUUID);
    DBG("got str=%ls\n", Ptr);
-   Status = StrToGuidLE (Ptr, &TmpGuid);
+   Status = StrToGuidBE (Ptr, &TmpGuid);
    if (EFI_ERROR(Status)) {
    DBG("    cant convert Str %ls to GUID\n", Ptr);
    } else {
@@ -909,7 +909,9 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               
               ResumeFromCoreStorage = TRUE;
               //         DBG("got str=%ls\n", Ptr);
-              Status = StrToGuidLE(Ptr, &TmpGuid);
+              XString8 xs8;
+              xs8.takeValueFrom(Ptr);
+              Status = StrToGuidBE(xs8, &TmpGuid);
               if (EFI_ERROR(Status)) {
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {

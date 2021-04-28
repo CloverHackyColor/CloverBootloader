@@ -7,7 +7,7 @@
 *~
 .cache
 /Conf
-toolchain/
+/toolchain/
 
 # /CloverPackage/
 /CloverPackage/sym/
@@ -24,6 +24,7 @@ toolchain/
 /CloverPackage/CloverV2/BootSectors/Installation.txt
 /CloverPackage/CloverV2/Bootloaders/ia32/
 /CloverPackage/CloverV2/Bootloaders/x64/
+/CloverPackage/CloverV2/Bootloaders/X64/
 /CloverPackage/CloverV2/EFI/BOOT/BOOTIA32.efi
 /CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
@@ -92,9 +93,6 @@ toolchain/
 # /
 /Version.h
 
-# /rEFIt_UEFI/
-/rEFIt_UEFI/Version.h
-
 # XCode files/directories
 *~.nib
 DerivedData/
@@ -122,9 +120,14 @@ CloverPackage/version
 tools
 
 
+#EdkII build folder
+/Build
+
 #Eclipse build folder
-/DEBUG_*/
-/RELEASE_*/
+DEBUG-*/
+DEBUG_*/
+RELEASE_*/
 
 #copy I make sometimes
-/rEFIt_UEFI copy*/
+*copy
+*copy [0-9]*

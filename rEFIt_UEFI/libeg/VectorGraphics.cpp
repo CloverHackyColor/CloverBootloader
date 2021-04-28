@@ -22,7 +22,7 @@
 #include "../refit/screen.h"
 #include "../cpp_foundation/XString.h"
 #include "../refit/lib.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1

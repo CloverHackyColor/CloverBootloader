@@ -12,7 +12,7 @@
 #include "cpu.h"
 #include "../include/Pci.h"
 #include "../include/Devices.h"
-
+#include "Settings.h"
 
 extern "C" {
 #include <IndustryStandard/PciCommand.h>
@@ -5354,7 +5354,8 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   GFXHDAFIX = TRUE;
   USBIDFIX = TRUE;
 
-  DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
+  EFI_ACPI_DESCRIPTION_HEADER* efi_acpi_description_header = (EFI_ACPI_DESCRIPTION_HEADER*)temp;
+  DsdtLen = efi_acpi_description_header->Length;
   if ((DsdtLen < 20) || (DsdtLen > 1000000)) { //fool proof (some ASUS dsdt > 300kb?). Up to 1Mb
     MsgLog("DSDT length out of range\n");
     return;

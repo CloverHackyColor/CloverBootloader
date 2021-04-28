@@ -12,7 +12,7 @@
 //#include <Library/MemLogLib.h>
 #include "../Platform/DataHubCpu.h"
 #include "../Platform/Settings.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../Platform/guid.h"
 
 //Slice - if I set NEW_LOG to 0 then I will work with debug.log as in 5103

@@ -51,7 +51,7 @@
 #define __LIBSAIO_NVIDIA_H
 
 //#include "device_inject.h"
-#include "card_vlist.h"
+//#include "card_vlist.h"
 #include "../include/Pci.h"
 
 extern CHAR8* gDeviceProperties;
@@ -172,21 +172,19 @@ struct bios {
 #define CHIPSET_C512        0x03D0
 #define CHIPSET_G73_BRIDGED 0x02E0
 
+#ifndef DONT_DEFINE_GLOBALS
 extern UINT8 default_NVCAP[];
-extern UINT8 default_NVPM[];
-extern UINT8 default_dcfg_0[];
-extern UINT8 default_dcfg_1[];
+#endif
+
+extern const UINT8 default_NVPM[];
+extern const UINT8 default_dcfg_0[];
+extern const UINT8 default_dcfg_1[];
 
 BOOLEAN
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev
   );
 
-CONST CHAR8
-*get_nvidia_model (
-  UINT32 device_id,
-  UINT32 subsys_id,
-                   const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD * nvcard
-  );
+CONST CHAR8* get_nvidia_model(UINT32 device_id, UINT32 subsys_id);
 
 #endif /* !__LIBSAIO_NVIDIA_H */

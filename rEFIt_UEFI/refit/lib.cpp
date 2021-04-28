@@ -45,8 +45,8 @@
 #include "../Platform/APFS.h"
 #include "../refit/lib.h"
 #include "../Platform/Settings.h"
-#include "../Platform/Self.h"
-#include "../Platform/SelfOem.h"
+#include "../Settings/Self.h"
+#include "../Settings/SelfOem.h"
 #include "../Platform/Volumes.h"
 #include "../libeg/XTheme.h"
 

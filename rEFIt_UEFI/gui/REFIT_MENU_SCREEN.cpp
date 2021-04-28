@@ -56,7 +56,7 @@
 #include "../Platform/Nvram.h"
 #include "../refit/screen.h"
 #include "../Platform/Events.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../Platform/Volumes.h"
 #include "../include/OSFlags.h"
 

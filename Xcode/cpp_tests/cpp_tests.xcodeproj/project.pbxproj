@@ -7,7 +7,51 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A071C0B26196C200007CC44 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FCBA26184686006F973B /* xml_lite-test.cpp */; };
+		9A071C0C26196C200007CC44 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FCBA26184686006F973B /* xml_lite-test.cpp */; };
+		9A071C0D26196C200007CC44 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FCBA26184686006F973B /* xml_lite-test.cpp */; };
+		9A071C0E26196C210007CC44 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FCBA26184686006F973B /* xml_lite-test.cpp */; };
+		9A071C1726196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */; };
+		9A071C1826196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */; };
+		9A071C1926196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */; };
+		9A071C1A26196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */; };
+		9A071C1B26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */; };
+		9A071C1C26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */; };
+		9A071C1D26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */; };
+		9A071C1E26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */; };
+		9A071C1F26196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */; };
+		9A071C2026196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */; };
+		9A071C2126196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */; };
+		9A071C2226196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */; };
+		9A071C2526196C7D0007CC44 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2326196C7C0007CC44 /* Utils.cpp */; };
+		9A071C2626196C7D0007CC44 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2326196C7C0007CC44 /* Utils.cpp */; };
+		9A071C2726196C7D0007CC44 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2326196C7C0007CC44 /* Utils.cpp */; };
+		9A071C2826196C7D0007CC44 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2326196C7C0007CC44 /* Utils.cpp */; };
+		9A071C2B26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */; };
+		9A071C2C26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */; };
+		9A071C2D26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */; };
+		9A071C2E26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */; };
+		9A071C312619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */; };
+		9A071C322619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */; };
+		9A071C332619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */; };
+		9A071C342619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */; };
+		9A071C372619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */; };
+		9A071C382619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */; };
+		9A071C392619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */; };
+		9A071C3A2619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */; };
+		9A071C3D2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
+		9A071C3E2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
+		9A071C3F2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
+		9A071C402619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
 		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A27552E2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
+		9A27552F2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
+		9A2755302639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
+		9A2755312639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
+		9A2755442639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
+		9A2755452639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
+		9A2755462639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
+		9A2755472639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
 		9A2A7C7324576CCE00422263 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A3D2C57261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
@@ -29,6 +73,10 @@
 		9A3D2C692618594400F0D7A1 /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A82F1AD26184668006F973B /* printf_lite.c */; };
 		9A3D2C6A2618594500F0D7A1 /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A82F1AD26184668006F973B /* printf_lite.c */; };
 		9A57C21B2418B9A00029A39F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A77BA9E26333138000FFF8A /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A77BA9C26333138000FFF8A /* guid.cpp */; };
+		9A77BA9F2633313B000FFF8A /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A77BA9C26333138000FFF8A /* guid.cpp */; };
+		9A77BAA02633313B000FFF8A /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A77BA9C26333138000FFF8A /* guid.cpp */; };
+		9A77BAA12633313C000FFF8A /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A77BA9C26333138000FFF8A /* guid.cpp */; };
 		9A82002526184688006F973B /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FDD426184687006F973B /* FloatLib.cpp */; };
 		9A82002626184688006F973B /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FDD426184687006F973B /* FloatLib.cpp */; };
 		9A82002726184688006F973B /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A82FDD426184687006F973B /* FloatLib.cpp */; };
@@ -227,6 +275,10 @@
 		9A8791FF261878EA000B9362 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A8791FC261878EA000B9362 /* BaseLib.c */; };
 		9A879200261878EA000B9362 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A8791FC261878EA000B9362 /* BaseLib.c */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9AB73A1D261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */; };
+		9AB73A1E261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */; };
+		9AB73A1F261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */; };
+		9AB73A20261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -269,7 +321,29 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9A071C1026196C4A0007CC44 /* XmlLiteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteParser.h; sourceTree = "<group>"; };
+		9A071C1126196C4A0007CC44 /* XmlLiteSimpleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteSimpleTypes.h; sourceTree = "<group>"; };
+		9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteCompositeTypes.cpp; sourceTree = "<group>"; };
+		9A071C1326196C4A0007CC44 /* undefinable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undefinable.h; sourceTree = "<group>"; };
+		9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteParser.cpp; sourceTree = "<group>"; };
+		9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteSimpleTypes.cpp; sourceTree = "<group>"; };
+		9A071C1626196C4A0007CC44 /* XmlLiteCompositeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteCompositeTypes.h; sourceTree = "<group>"; };
+		9A071C2326196C7C0007CC44 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		9A071C2426196C7C0007CC44 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		9A071C2926196CA40007CC44 /* xml_lite-reapeatingdict-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "xml_lite-reapeatingdict-test.h"; sourceTree = "<group>"; };
+		9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "xml_lite-reapeatingdict-test.cpp"; sourceTree = "<group>"; };
+		9A071C2F2619FC940007CC44 /* XmlLiteUnionTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteUnionTypes.h; sourceTree = "<group>"; };
+		9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteUnionTypes.cpp; sourceTree = "<group>"; };
+		9A071C352619FDA20007CC44 /* XmlLiteDictTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteDictTypes.h; sourceTree = "<group>"; };
+		9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteDictTypes.cpp; sourceTree = "<group>"; };
+		9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteArrayTypes.cpp; sourceTree = "<group>"; };
+		9A071C3C2619FF840007CC44 /* XmlLiteArrayTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteArrayTypes.h; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2754F22639A1FA0095D456 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		9A2755042639A1FA0095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
+		9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistAbstract.cpp; sourceTree = "<group>"; };
+		9A2755422639CE530095D456 /* platformdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platformdata.cpp; sourceTree = "<group>"; };
+		9A2755432639CE540095D456 /* platformdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platformdata.h; sourceTree = "<group>"; };
 		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = posix_additions.cpp; sourceTree = "<group>"; };
@@ -282,6 +356,8 @@
 		9A3D2C55261855D000F0D7A1 /* operatorNewDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operatorNewDelete.h; sourceTree = "<group>"; };
 		9A3D2C56261855D000F0D7A1 /* globals_ctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_ctor.h; sourceTree = "<group>"; };
 		9A57C22F2418B9A00029A39F /* cpp_tests UTF16 unsigned char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 unsigned char"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A77BA9C26333138000FFF8A /* guid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guid.cpp; sourceTree = "<group>"; };
+		9A77BA9D26333138000FFF8A /* guid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guid.h; sourceTree = "<group>"; };
 		9A82EAC326184660006F973B /* PiPei.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiPei.h; sourceTree = "<group>"; };
 		9A82EAC426184660006F973B /* PiMm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiMm.h; sourceTree = "<group>"; };
 		9A82EAC526184660006F973B /* Uefi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uefi.h; sourceTree = "<group>"; };
@@ -4392,7 +4468,7 @@
 		9A82FCC926184686006F973B /* strncmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strncmp_test.cpp; sourceTree = "<group>"; };
 		9A82FCCA26184686006F973B /* printf_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test.h"; sourceTree = "<group>"; };
 		9A82FCCB26184686006F973B /* config-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "config-test.cpp"; sourceTree = "<group>"; };
-		9A82FCCC26184686006F973B /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
+		9A82FCCC26184686006F973B /* XString_test.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = XString_test.cpp; sourceTree = "<group>"; };
 		9A82FCCD26184686006F973B /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A82FCCE26184686006F973B /* XToolsCommon_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon_test.cpp; sourceTree = "<group>"; };
 		9A82FCCF26184686006F973B /* all_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_tests.h; sourceTree = "<group>"; };
@@ -4572,6 +4648,7 @@
 		9A8791FC261878EA000B9362 /* BaseLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BaseLib.c; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clover_strlen.cpp; path = "../../../../Clover--CloverHackyColor--master.2/rEFIt_UEFI/PlatformPOSIX/posix/clover_strlen.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4606,6 +4683,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A071C0F26196C4A0007CC44 /* cpp_lib */ = {
+			isa = PBXGroup;
+			children = (
+				9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */,
+				9A071C3C2619FF840007CC44 /* XmlLiteArrayTypes.h */,
+				9A071C1326196C4A0007CC44 /* undefinable.h */,
+				9A071C1226196C4A0007CC44 /* XmlLiteCompositeTypes.cpp */,
+				9A071C1626196C4A0007CC44 /* XmlLiteCompositeTypes.h */,
+				9A071C362619FDA30007CC44 /* XmlLiteDictTypes.cpp */,
+				9A071C352619FDA20007CC44 /* XmlLiteDictTypes.h */,
+				9A071C1426196C4A0007CC44 /* XmlLiteParser.cpp */,
+				9A071C1026196C4A0007CC44 /* XmlLiteParser.h */,
+				9A071C1526196C4A0007CC44 /* XmlLiteSimpleTypes.cpp */,
+				9A071C1126196C4A0007CC44 /* XmlLiteSimpleTypes.h */,
+				9A071C302619FC960007CC44 /* XmlLiteUnionTypes.cpp */,
+				9A071C2F2619FC940007CC44 /* XmlLiteUnionTypes.h */,
+			);
+			path = cpp_lib;
+			sourceTree = "<group>";
+		};
+		9A2754EF2639A1FA0095D456 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				9A2754F52639A1FA0095D456 /* ConfigPlist */,
+				9A2754F22639A1FA0095D456 /* Readme.md */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		9A2754F52639A1FA0095D456 /* ConfigPlist */ = {
+			isa = PBXGroup;
+			children = (
+				9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */,
+				9A2755042639A1FA0095D456 /* ConfigPlistAbstract.h */,
+			);
+			path = ConfigPlist;
+			sourceTree = "<group>";
+		};
 		9A3D2C4926184AB900F0D7A1 /* PlatformPOSIX */ = {
 			isa = PBXGroup;
 			children = (
@@ -4621,11 +4736,12 @@
 		9A3D2C4C261855D000F0D7A1 /* posix */ = {
 			isa = PBXGroup;
 			children = (
-				9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */,
 				9A3D2C4E261855D000F0D7A1 /* abort.cpp */,
-				9A3D2C4F261855D000F0D7A1 /* posix.h */,
-				9A3D2C50261855D000F0D7A1 /* posix_additions.h */,
 				9A3D2C51261855D000F0D7A1 /* abort.h */,
+				9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */,
+				9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */,
+				9A3D2C50261855D000F0D7A1 /* posix_additions.h */,
+				9A3D2C4F261855D000F0D7A1 /* posix.h */,
 			);
 			path = posix;
 			sourceTree = "<group>";
@@ -10967,69 +11083,69 @@
 		9A82F9CF26184672006F973B /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				9A82F9EE26184672006F973B /* DuetBdsLib */,
+				9A82FAFF26184673006F973B /* DuetTimerLib */,
+				9A82FACA26184673006F973B /* OcAcpiLib */,
+				9A82FB0226184673006F973B /* OcAfterBootCompatLib */,
+				9A82FA0F26184672006F973B /* OcApfsLib */,
+				9A82FAC426184673006F973B /* OcAppleBootPolicyLib */,
+				9A82FA2426184672006F973B /* OcAppleChunklistLib */,
+				9A82FAE826184673006F973B /* OcAppleDiskImageLib */,
+				9A82FA0726184672006F973B /* OcAppleEventLib */,
+				9A82FA3126184672006F973B /* OcAppleImageConversionLib */,
+				9A82FA2E26184672006F973B /* OcAppleImageVerificationLib */,
+				9A82FA5026184672006F973B /* OcAppleImg4Lib */,
+				9A82FB3026184673006F973B /* OcAppleKernelLib */,
+				9A82FA9B26184673006F973B /* OcAppleKeyMapLib */,
+				9A82FAC126184673006F973B /* OcAppleKeysLib */,
+				9A82FB8226184674006F973B /* OcAppleRamDiskLib */,
+				9A82FAB426184673006F973B /* OcAppleSecureBootLib */,
+				9A82FAC726184673006F973B /* OcAppleUserInterfaceThemeLib */,
+				9A82FB2126184673006F973B /* OcAudioLib */,
+				9A82FA6A26184673006F973B /* OcBootManagementLib */,
+				9A82FAFA26184673006F973B /* OcBootServicesTableLib */,
+				9A82FB7426184674006F973B /* OcCompilerIntrinsicsLib */,
+				9A82FA7C26184673006F973B /* OcCompressionLib */,
+				9A82FB5B26184674006F973B /* OcConfigurationLib */,
+				9A82FA2A26184672006F973B /* OcConsoleControlEntryModeLib */,
+				9A82F9F626184672006F973B /* OcConsoleLib */,
+				9A82FB4F26184673006F973B /* OcCpuLib */,
+				9A82FA3426184672006F973B /* OcCryptoLib */,
+				9A82F9E926184672006F973B /* OcDataHubLib */,
+				9A82FB1926184673006F973B /* OcDebugLogLib */,
+				9A82FB6226184674006F973B /* OcDebugLogLibOc2Clover */,
+				9A82FB1526184673006F973B /* OcDevicePathLib */,
+				9A82FB6B26184674006F973B /* OcDevicePropertyLib */,
+				9A82FA1626184672006F973B /* OcDeviceTreeLib */,
+				9A82FB5F26184674006F973B /* OcDriverConnectionLib */,
+				9A82FB4426184673006F973B /* OcFileLib */,
+				9A82FAE426184673006F973B /* OcFirmwarePasswordLib */,
+				9A82FB1026184673006F973B /* OcFirmwareVolumeLib */,
+				9A82FAB726184673006F973B /* OcGuardLib */,
+				9A82FA2026184672006F973B /* OcHashServicesLib */,
+				9A82FAF626184673006F973B /* OcHdaDevicesLib */,
+				9A82FA2726184672006F973B /* OcHeciLib */,
+				9A82FAA926184673006F973B /* OcHiiDatabaseLib */,
+				9A82FACE26184673006F973B /* OcInputLib */,
 				9A82F9D026184672006F973B /* OcMachoLib */,
 				9A82F9D826184672006F973B /* OcMacInfoLib */,
-				9A82F9DD26184672006F973B /* OcStringLib */,
-				9A82F9E126184672006F973B /* OcPngLib */,
-				9A82F9E626184672006F973B /* OcSerializeLib */,
-				9A82F9E926184672006F973B /* OcDataHubLib */,
-				9A82F9EE26184672006F973B /* DuetBdsLib */,
-				9A82F9F626184672006F973B /* OcConsoleLib */,
-				9A82FA0226184672006F973B /* OcRtcLib */,
-				9A82FA0726184672006F973B /* OcAppleEventLib */,
-				9A82FA0F26184672006F973B /* OcApfsLib */,
-				9A82FA1626184672006F973B /* OcDeviceTreeLib */,
-				9A82FA1926184672006F973B /* OcUnicodeCollationEngLib */,
-				9A82FA2026184672006F973B /* OcHashServicesLib */,
-				9A82FA2426184672006F973B /* OcAppleChunklistLib */,
-				9A82FA2726184672006F973B /* OcHeciLib */,
-				9A82FA2A26184672006F973B /* OcConsoleControlEntryModeLib */,
-				9A82FA2E26184672006F973B /* OcAppleImageVerificationLib */,
-				9A82FA3126184672006F973B /* OcAppleImageConversionLib */,
-				9A82FA3426184672006F973B /* OcCryptoLib */,
-				9A82FA4626184672006F973B /* OcMiscLib */,
-				9A82FA4D26184672006F973B /* OcTimerLib */,
-				9A82FA5026184672006F973B /* OcAppleImg4Lib */,
-				9A82FA6A26184673006F973B /* OcBootManagementLib */,
-				9A82FA7C26184673006F973B /* OcCompressionLib */,
-				9A82FA9B26184673006F973B /* OcAppleKeyMapLib */,
-				9A82FA9E26184673006F973B /* OcSmbiosLib */,
-				9A82FAA626184673006F973B /* OcStorageLib */,
-				9A82FAA926184673006F973B /* OcHiiDatabaseLib */,
-				9A82FAB426184673006F973B /* OcAppleSecureBootLib */,
-				9A82FAB726184673006F973B /* OcGuardLib */,
-				9A82FAC126184673006F973B /* OcAppleKeysLib */,
-				9A82FAC426184673006F973B /* OcAppleBootPolicyLib */,
-				9A82FAC726184673006F973B /* OcAppleUserInterfaceThemeLib */,
-				9A82FACA26184673006F973B /* OcAcpiLib */,
-				9A82FACE26184673006F973B /* OcInputLib */,
-				9A82FAE426184673006F973B /* OcFirmwarePasswordLib */,
-				9A82FAE826184673006F973B /* OcAppleDiskImageLib */,
-				9A82FAEE26184673006F973B /* OcRngLib */,
-				9A82FAF626184673006F973B /* OcHdaDevicesLib */,
-				9A82FAFA26184673006F973B /* OcBootServicesTableLib */,
-				9A82FAFF26184673006F973B /* DuetTimerLib */,
-				9A82FB0226184673006F973B /* OcAfterBootCompatLib */,
-				9A82FB1026184673006F973B /* OcFirmwareVolumeLib */,
-				9A82FB1526184673006F973B /* OcDevicePathLib */,
-				9A82FB1926184673006F973B /* OcDebugLogLib */,
-				9A82FB2126184673006F973B /* OcAudioLib */,
-				9A82FB2926184673006F973B /* OcVirtualFsLib */,
-				9A82FB3026184673006F973B /* OcAppleKernelLib */,
-				9A82FB4126184673006F973B /* OcPeCoffLib */,
-				9A82FB4426184673006F973B /* OcFileLib */,
-				9A82FB4F26184673006F973B /* OcCpuLib */,
-				9A82FB5B26184674006F973B /* OcConfigurationLib */,
-				9A82FB5F26184674006F973B /* OcDriverConnectionLib */,
-				9A82FB6226184674006F973B /* OcDebugLogLibOc2Clover */,
-				9A82FB6826184674006F973B /* OcXmlLib */,
-				9A82FB6B26184674006F973B /* OcDevicePropertyLib */,
-				9A82FB6E26184674006F973B /* OcOSInfoLib */,
-				9A82FB7126184674006F973B /* OcTemplateLib */,
-				9A82FB7426184674006F973B /* OcCompilerIntrinsicsLib */,
 				9A82FB7826184674006F973B /* OcMemoryLib */,
-				9A82FB8226184674006F973B /* OcAppleRamDiskLib */,
+				9A82FA4626184672006F973B /* OcMiscLib */,
+				9A82FB6E26184674006F973B /* OcOSInfoLib */,
+				9A82FB4126184673006F973B /* OcPeCoffLib */,
+				9A82F9E126184672006F973B /* OcPngLib */,
+				9A82FAEE26184673006F973B /* OcRngLib */,
+				9A82FA0226184672006F973B /* OcRtcLib */,
+				9A82F9E626184672006F973B /* OcSerializeLib */,
+				9A82FA9E26184673006F973B /* OcSmbiosLib */,
 				9A82FB8526184674006F973B /* OcSmcLib */,
+				9A82FAA626184673006F973B /* OcStorageLib */,
+				9A82F9DD26184672006F973B /* OcStringLib */,
+				9A82FB7126184674006F973B /* OcTemplateLib */,
+				9A82FA4D26184672006F973B /* OcTimerLib */,
+				9A82FA1926184672006F973B /* OcUnicodeCollationEngLib */,
+				9A82FB2926184673006F973B /* OcVirtualFsLib */,
+				9A82FB6826184674006F973B /* OcXmlLib */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -12672,6 +12788,7 @@
 			isa = PBXGroup;
 			children = (
 				9A82FE1826184687006F973B /* cpp_foundation */,
+				9A071C0F26196C4A0007CC44 /* cpp_lib */,
 				9A82FCA726184686006F973B /* cpp_unit_test */,
 				9A82FDFA26184687006F973B /* gui */,
 				9A82FCDC26184686006F973B /* include */,
@@ -12679,6 +12796,7 @@
 				9A82FCF026184686006F973B /* Platform */,
 				9A3D2C4926184AB900F0D7A1 /* PlatformPOSIX */,
 				9A82FDBE26184687006F973B /* refit.inf */,
+				9A2754EF2639A1FA0095D456 /* Settings */,
 			);
 			path = rEFIt_UEFI;
 			sourceTree = "<group>";
@@ -12686,6 +12804,8 @@
 		9A82FCA726184686006F973B /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */,
+				9A071C2926196CA40007CC44 /* xml_lite-reapeatingdict-test.h */,
 				9A82FCC526184686006F973B /* all_tests.cpp */,
 				9A82FCCF26184686006F973B /* all_tests.h */,
 				9A82FCCB26184686006F973B /* config-test.cpp */,
@@ -12759,6 +12879,12 @@
 		9A82FCF026184686006F973B /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A2755422639CE530095D456 /* platformdata.cpp */,
+				9A2755432639CE540095D456 /* platformdata.h */,
+				9A77BA9C26333138000FFF8A /* guid.cpp */,
+				9A77BA9D26333138000FFF8A /* guid.h */,
+				9A071C2326196C7C0007CC44 /* Utils.cpp */,
+				9A071C2426196C7C0007CC44 /* Utils.h */,
 				9A878CAF26187477000B9362 /* b64cdecode.cpp */,
 				9A878CB026187478000B9362 /* b64cdecode.h */,
 				9A82FD5726184686006F973B /* MacOsVersion.cpp */,
@@ -12822,22 +12948,22 @@
 		9A82FE1826184687006F973B /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9A82FE1E26184687006F973B /* shared_ptr.cpp */,
+				9A82FE2026184687006F973B /* shared_ptr.h */,
+				9A82FE2226184687006F973B /* unicode_conversions.cpp */,
 				9A82FE1926184687006F973B /* unicode_conversions.h */,
-				9A82FE1A26184687006F973B /* XStringArray.cpp */,
+				9A82FE2726184687006F973B /* XArray.h */,
+				9A82FE2526184687006F973B /* XBuffer.cpp */,
+				9A82FE1F26184687006F973B /* XBuffer.h */,
+				9A82FE2826184687006F973B /* XObjArray.h */,
+				9A82FE2326184687006F973B /* XRBuffer.cpp */,
 				9A82FE1B26184687006F973B /* XRBuffer.h */,
+				9A82FE2426184687006F973B /* XString.cpp */,
+				9A82FE2626184687006F973B /* XString.h */,
+				9A82FE2126184687006F973B /* XStringAbstract.h */,
+				9A82FE1A26184687006F973B /* XStringArray.cpp */,
 				9A82FE1C26184687006F973B /* XStringArray.h */,
 				9A82FE1D26184687006F973B /* XToolsCommon.h */,
-				9A82FE1E26184687006F973B /* shared_ptr.cpp */,
-				9A82FE1F26184687006F973B /* XBuffer.h */,
-				9A82FE2026184687006F973B /* shared_ptr.h */,
-				9A82FE2126184687006F973B /* XStringAbstract.h */,
-				9A82FE2226184687006F973B /* unicode_conversions.cpp */,
-				9A82FE2326184687006F973B /* XRBuffer.cpp */,
-				9A82FE2426184687006F973B /* XString.cpp */,
-				9A82FE2526184687006F973B /* XBuffer.cpp */,
-				9A82FE2626184687006F973B /* XString.h */,
-				9A82FE2726184687006F973B /* XArray.h */,
-				9A82FE2826184687006F973B /* XObjArray.h */,
 			);
 			path = cpp_foundation;
 			sourceTree = "<group>";
@@ -13236,12 +13362,15 @@
 				9A82FE6226184688006F973B /* XObjArray_tests.cpp in Sources */,
 				9A82FE8E26184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB326187478000B9362 /* b64cdecode.cpp in Sources */,
+				9A071C1D26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
 				9A82FE6A26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5626184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A82FEA626184688006F973B /* TagDate.cpp in Sources */,
 				9A82FEB226184688006F973B /* xml.cpp in Sources */,
+				9A071C2126196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878F7626187672000B9362 /* DataPatcher.c in Sources */,
 				9A82FE3E26184688006F973B /* strcasecmp_test.cpp in Sources */,
+				9A77BAA02633313B000FFF8A /* guid.cpp in Sources */,
 				9A8200AA26184688006F973B /* XRBuffer.cpp in Sources */,
 				9A8200A626184688006F973B /* unicode_conversions.cpp in Sources */,
 				9A82FE7626184688006F973B /* XToolsCommon_test.cpp in Sources */,
@@ -13253,8 +13382,10 @@
 				9A82FE5E26184688006F973B /* all_tests.cpp in Sources */,
 				9A82009E26184688006F973B /* XStringArray.cpp in Sources */,
 				9A3D2C682618594400F0D7A1 /* printf_lite.c in Sources */,
+				9A071C3F2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A82FE5226184688006F973B /* printlib-test.cpp in Sources */,
 				9A82FE4626184688006F973B /* plist_tests.cpp in Sources */,
+				9AB73A1F261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */,
 				9A82FE7A26184688006F973B /* strlen_test.cpp in Sources */,
 				9A82FE9E26184688006F973B /* TagData.cpp in Sources */,
 				9A82FE2A26184688006F973B /* global_test.cpp in Sources */,
@@ -13268,21 +13399,29 @@
 				9A3D2C5C261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C60261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
+				9A071C2D26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A82FE7226184688006F973B /* XString_test.cpp in Sources */,
 				9A82FE3226184688006F973B /* LoadOptions_test.cpp in Sources */,
 				9A87876F26186302000B9362 /* MemoryAllocationLib.c in Sources */,
+				9A071C2726196C7D0007CC44 /* Utils.cpp in Sources */,
 				9A8791FF261878EA000B9362 /* BaseLib.c in Sources */,
 				9A8200A226184688006F973B /* shared_ptr.cpp in Sources */,
 				9A82FE5A26184688006F973B /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A82FEAE26184688006F973B /* TagInt64.cpp in Sources */,
+				9A2755302639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */,
 				9A82FF3626184688006F973B /* MacOsVersion.cpp in Sources */,
 				9A82FE9226184688006F973B /* TagArray.cpp in Sources */,
+				9A071C392619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877326186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAA26184688006F973B /* plist.cpp in Sources */,
+				9A2755462639CE540095D456 /* platformdata.cpp in Sources */,
+				9A071C1926196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3626184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE7E26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A87876726186302000B9362 /* xcode_utf_fixed.cpp in Sources */,
+				9A071C332619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */,
 				9A82FEB626184688006F973B /* TagBool.cpp in Sources */,
+				9A071C0D26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6626184688006F973B /* XArray_tests.cpp in Sources */,
 				9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */,
 			);
@@ -13298,12 +13437,15 @@
 				9A82FE6426184688006F973B /* XObjArray_tests.cpp in Sources */,
 				9A82FE9026184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB426187478000B9362 /* b64cdecode.cpp in Sources */,
+				9A071C1E26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
 				9A82FE6C26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5826184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A82FEA826184688006F973B /* TagDate.cpp in Sources */,
 				9A82FEB426184688006F973B /* xml.cpp in Sources */,
+				9A071C2226196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878F7726187672000B9362 /* DataPatcher.c in Sources */,
 				9A82FE4026184688006F973B /* strcasecmp_test.cpp in Sources */,
+				9A77BA9F2633313B000FFF8A /* guid.cpp in Sources */,
 				9A8200AC26184688006F973B /* XRBuffer.cpp in Sources */,
 				9A8200A826184688006F973B /* unicode_conversions.cpp in Sources */,
 				9A82FE7826184688006F973B /* XToolsCommon_test.cpp in Sources */,
@@ -13315,8 +13457,10 @@
 				9A82FE6026184688006F973B /* all_tests.cpp in Sources */,
 				9A8200A026184688006F973B /* XStringArray.cpp in Sources */,
 				9A3D2C692618594400F0D7A1 /* printf_lite.c in Sources */,
+				9A071C402619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A82FE5426184688006F973B /* printlib-test.cpp in Sources */,
 				9A82FE4826184688006F973B /* plist_tests.cpp in Sources */,
+				9AB73A20261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */,
 				9A82FE7C26184688006F973B /* strlen_test.cpp in Sources */,
 				9A82FEA026184688006F973B /* TagData.cpp in Sources */,
 				9A82FE2C26184688006F973B /* global_test.cpp in Sources */,
@@ -13330,21 +13474,29 @@
 				9A3D2C5E261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C62261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A2A7C7324576CCE00422263 /* main.cpp in Sources */,
+				9A071C2E26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A82FE7426184688006F973B /* XString_test.cpp in Sources */,
 				9A82FE3426184688006F973B /* LoadOptions_test.cpp in Sources */,
 				9A87877126186302000B9362 /* MemoryAllocationLib.c in Sources */,
+				9A071C2826196C7D0007CC44 /* Utils.cpp in Sources */,
 				9A879200261878EA000B9362 /* BaseLib.c in Sources */,
 				9A8200A426184688006F973B /* shared_ptr.cpp in Sources */,
 				9A82FE5C26184688006F973B /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A82FEB026184688006F973B /* TagInt64.cpp in Sources */,
+				9A2755312639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */,
 				9A82FF3826184688006F973B /* MacOsVersion.cpp in Sources */,
 				9A82FE9426184688006F973B /* TagArray.cpp in Sources */,
+				9A071C3A2619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877526186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAC26184688006F973B /* plist.cpp in Sources */,
+				9A2755472639CE540095D456 /* platformdata.cpp in Sources */,
+				9A071C1A26196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3826184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE8026184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A87876926186302000B9362 /* xcode_utf_fixed.cpp in Sources */,
+				9A071C342619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */,
 				9A82FEB826184688006F973B /* TagBool.cpp in Sources */,
+				9A071C0E26196C210007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6826184688006F973B /* XArray_tests.cpp in Sources */,
 				9A3D2C5A261855D000F0D7A1 /* BootLog.cpp in Sources */,
 			);
@@ -13360,12 +13512,15 @@
 				9A82FE6326184688006F973B /* XObjArray_tests.cpp in Sources */,
 				9A82FE8F26184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB226187478000B9362 /* b64cdecode.cpp in Sources */,
+				9A071C1C26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
 				9A82FE6B26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5726184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A82FEA726184688006F973B /* TagDate.cpp in Sources */,
 				9A82FEB326184688006F973B /* xml.cpp in Sources */,
+				9A071C2026196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878F7526187672000B9362 /* DataPatcher.c in Sources */,
 				9A82FE3F26184688006F973B /* strcasecmp_test.cpp in Sources */,
+				9A77BAA12633313C000FFF8A /* guid.cpp in Sources */,
 				9A8200AB26184688006F973B /* XRBuffer.cpp in Sources */,
 				9A8200A726184688006F973B /* unicode_conversions.cpp in Sources */,
 				9A82FE7726184688006F973B /* XToolsCommon_test.cpp in Sources */,
@@ -13377,8 +13532,10 @@
 				9A82FE5F26184688006F973B /* all_tests.cpp in Sources */,
 				9A82009F26184688006F973B /* XStringArray.cpp in Sources */,
 				9A3D2C6A2618594500F0D7A1 /* printf_lite.c in Sources */,
+				9A071C3E2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A82FE5326184688006F973B /* printlib-test.cpp in Sources */,
 				9A82FE4726184688006F973B /* plist_tests.cpp in Sources */,
+				9AB73A1E261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */,
 				9A82FE7B26184688006F973B /* strlen_test.cpp in Sources */,
 				9A82FE9F26184688006F973B /* TagData.cpp in Sources */,
 				9A82FE2B26184688006F973B /* global_test.cpp in Sources */,
@@ -13392,21 +13549,29 @@
 				9A3D2C5D261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C61261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A57C21B2418B9A00029A39F /* main.cpp in Sources */,
+				9A071C2C26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A82FE7326184688006F973B /* XString_test.cpp in Sources */,
 				9A82FE3326184688006F973B /* LoadOptions_test.cpp in Sources */,
 				9A87877026186302000B9362 /* MemoryAllocationLib.c in Sources */,
+				9A071C2626196C7D0007CC44 /* Utils.cpp in Sources */,
 				9A8791FE261878EA000B9362 /* BaseLib.c in Sources */,
 				9A8200A326184688006F973B /* shared_ptr.cpp in Sources */,
 				9A82FE5B26184688006F973B /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A82FEAF26184688006F973B /* TagInt64.cpp in Sources */,
+				9A27552F2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */,
 				9A82FF3726184688006F973B /* MacOsVersion.cpp in Sources */,
 				9A82FE9326184688006F973B /* TagArray.cpp in Sources */,
+				9A071C382619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877426186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAB26184688006F973B /* plist.cpp in Sources */,
+				9A2755452639CE540095D456 /* platformdata.cpp in Sources */,
+				9A071C1826196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3726184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE7F26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A87876826186302000B9362 /* xcode_utf_fixed.cpp in Sources */,
+				9A071C322619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */,
 				9A82FEB726184688006F973B /* TagBool.cpp in Sources */,
+				9A071C0C26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6726184688006F973B /* XArray_tests.cpp in Sources */,
 				9A3D2C59261855D000F0D7A1 /* BootLog.cpp in Sources */,
 			);
@@ -13422,12 +13587,15 @@
 				9A82FE6526184688006F973B /* XArray_tests.cpp in Sources */,
 				9A82009D26184688006F973B /* XStringArray.cpp in Sources */,
 				9A82FEA126184688006F973B /* TagDict.cpp in Sources */,
+				9A071C1B26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
 				9A82FE3526184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A878CB126187478000B9362 /* b64cdecode.cpp in Sources */,
 				9A82FF3526184688006F973B /* MacOsVersion.cpp in Sources */,
 				9A82FE9D26184688006F973B /* TagData.cpp in Sources */,
+				9A071C1F26196C4B0007CC44 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878F7426187672000B9362 /* DataPatcher.c in Sources */,
 				9A82FEB526184688006F973B /* TagBool.cpp in Sources */,
+				9A77BA9E26333138000FFF8A /* guid.cpp in Sources */,
 				9A82FEAD26184688006F973B /* TagInt64.cpp in Sources */,
 				9A8200A926184688006F973B /* XRBuffer.cpp in Sources */,
 				9A87877626186302000B9362 /* DebugLib.c in Sources */,
@@ -13439,8 +13607,10 @@
 				9A82FEA526184688006F973B /* TagDate.cpp in Sources */,
 				9A82FE9526184688006F973B /* base64.cpp in Sources */,
 				9A82FE5926184688006F973B /* find_replace_mask_Clover_tests.cpp in Sources */,
+				9A071C3D2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A82FE4926184688006F973B /* MacOsVersion_test.cpp in Sources */,
 				9A82FE5D26184688006F973B /* all_tests.cpp in Sources */,
+				9AB73A1D261DAD1D00EEBB9F /* clover_strlen.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
 				9A87860A26186301000B9362 /* MemLogLib.c in Sources */,
 				9A82FE6926184688006F973B /* strncmp_test.cpp in Sources */,
@@ -13454,21 +13624,29 @@
 				9A82FE4D26184688006F973B /* strcmp_test.cpp in Sources */,
 				9A3D2C5B261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A82FE5126184688006F973B /* printlib-test.cpp in Sources */,
+				9A071C2B26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A87876E26186302000B9362 /* MemoryAllocationLib.c in Sources */,
 				9A82FE7526184688006F973B /* XToolsCommon_test.cpp in Sources */,
 				9A82FEB926184688006F973B /* TagString8.cpp in Sources */,
+				9A071C2526196C7D0007CC44 /* Utils.cpp in Sources */,
 				9A8791FD261878EA000B9362 /* BaseLib.c in Sources */,
 				9A82FE3D26184688006F973B /* strcasecmp_test.cpp in Sources */,
 				9A82FE5526184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A87877226186302000B9362 /* PrintLib.c in Sources */,
+				9A27552E2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */,
 				9A82FE2926184688006F973B /* global_test.cpp in Sources */,
 				9A82FE3126184688006F973B /* LoadOptions_test.cpp in Sources */,
+				9A071C372619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A82FE7D26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A8200A126184688006F973B /* shared_ptr.cpp in Sources */,
+				9A2755442639CE540095D456 /* platformdata.cpp in Sources */,
+				9A071C1726196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A87876626186302000B9362 /* xcode_utf_fixed.cpp in Sources */,
 				9A82FE7926184688006F973B /* strlen_test.cpp in Sources */,
 				9A87858F26185FE3000B9362 /* printf_lite.c in Sources */,
+				9A071C312619FC970007CC44 /* XmlLiteUnionTypes.cpp in Sources */,
 				9A82FE9126184688006F973B /* TagArray.cpp in Sources */,
+				9A071C0B26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A8200AD26184688006F973B /* XString.cpp in Sources */,
 				9A3D2C63261855D000F0D7A1 /* BasicIO.cpp in Sources */,
 			);

@@ -31,24 +31,19 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Library/MemLogLibDefault</locationURI>
 		</link>
 		<link>
-			<name>Posix</name>
+			<name>OpenCorePkg</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/Platform/Posix</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/OpenCorePkg</locationURI>
 		</link>
 		<link>
-			<name>cpp_foundation</name>
+			<name>PosixCompilation</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_foundation</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/PosixCompilation</locationURI>
 		</link>
 		<link>
-			<name>cpp_unit_test</name>
+			<name>rEFIt_UEFI</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_unit_test</locationURI>
-		</link>
-		<link>
-			<name>cpp_util</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_util</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

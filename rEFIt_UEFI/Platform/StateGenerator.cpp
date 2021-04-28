@@ -8,6 +8,7 @@
 #include "cpu.h"
 #include "smbios.h"
 #include "AcpiPatcher.h"
+#include "Settings.h"
 
 extern "C" {
 #include <IndustryStandard/CpuId.h> // for CPUID_FEATURE_MSR

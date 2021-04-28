@@ -140,10 +140,10 @@ BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
   }
 
   // iterate over all GFX devices and check for sibling
-  for (Index = 0; Index < NGFX; Index++) {
-    if (gGraphics[Index].Segment == Segment
-        && gGraphics[Index].Bus == Bus
-        && gGraphics[Index].Device == Device) {
+  for (Index = 0; Index < gConf.GfxPropertiesArray.size(); Index++) {
+    if (gConf.GfxPropertiesArray[Index].Segment == Segment
+        && gConf.GfxPropertiesArray[Index].Bus == Bus
+        && gConf.GfxPropertiesArray[Index].Device == Device) {
       return TRUE;
     }
   }
@@ -255,4 +255,86 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
   }
   return TRUE;
 }
+
+
+
+
+void ResetHDA()
+{
+  EFI_STATUS          Status;
+  UINTN               HandleCount  = 0;
+  EFI_HANDLE          *HandleArray = NULL;
+  EFI_PCI_IO_PROTOCOL *PciIo;
+  PCI_TYPE00          Pci;
+  UINTN               Index;
+  UINTN               Segment      = 0;
+  UINTN               Bus          = 0;
+  UINTN               Device       = 0;
+  UINTN               Function     = 0;
+
+  XStringW GopDevicePathStr;
+
+
+  // Get GOP handle, in order to check to which GPU the monitor is currently connected
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &HandleCount, &HandleArray);
+  if (!EFI_ERROR(Status)) {
+    GopDevicePathStr = DevicePathToXStringW(DevicePathFromHandle(HandleArray[0]));
+    DBG("GOP found at: %ls\n", GopDevicePathStr.wc_str());
+  }
+
+  // Scan PCI handles
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleArray
+                                    );
+
+  if (!EFI_ERROR(Status)) {
+    for (Index = 0; Index < HandleCount; ++Index) {
+      Status = gBS->HandleProtocol(HandleArray[Index], &gEfiPciIoProtocolGuid, (void **)&PciIo);
+      if (!EFI_ERROR(Status)) {
+        // Read PCI BUS
+        PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        Status = PciIo->Pci.Read (
+                                  PciIo,
+                                  EfiPciIoWidthUint32,
+                                  0,
+                                  sizeof (Pci) / sizeof (UINT32),
+                                  &Pci
+                                  );
+
+//        DBG("PCI (%02llX|%02llX:%02llX.%02llX) : %04hX %04hX class=%02hhX%02hhX%02hhX\n",
+//             Segment,
+//             Bus,
+//             Device,
+//             Function,
+//             Pci.Hdr.VendorId,
+//             Pci.Hdr.DeviceId,
+//             Pci.Hdr.ClassCode[2],
+//             Pci.Hdr.ClassCode[1],
+//             Pci.Hdr.ClassCode[0]
+//             );
+
+        if ( Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA &&
+                  ( Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA || Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO )
+                )
+        {
+          //Slice method from VoodooHDA
+          //PCI_HDA_TCSEL_OFFSET = 0x44
+          UINT8 Value = 0;
+          Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
+
+          if ( !EFI_ERROR(Status) ) {
+            Value &= 0xf8;
+            PciIo->Pci.Write(PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
+          }
+          //ResetControllerHDA();
+        }
+      }
+    }
+  }
+}
+
 

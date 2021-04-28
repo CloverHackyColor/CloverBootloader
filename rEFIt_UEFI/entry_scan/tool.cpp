@@ -41,7 +41,7 @@
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../gui/REFIT_MAINMENU_SCREEN.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../Platform/Volumes.h"
 #include "../libeg/XTheme.h"
 #include "../include/OSFlags.h"

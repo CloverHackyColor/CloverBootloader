@@ -296,6 +296,8 @@ EFI_STATUS InitializeUnicodeCollationProtocol (void);
 //extern INTN FontWidth;
 //extern INTN FontHeight;
 
+#ifndef DONT_DEFINE_GLOBALS
+
 extern const INTN BCSMargin;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel;
 extern const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel;
@@ -315,6 +317,8 @@ extern CHAR16 *BlankLine;
 extern INTN UGAWidth;
 extern INTN UGAHeight;
 extern BOOLEAN AllowGraphicsMode;
+
+#endif
 
 #if REFIT_DEBUG > 0
 void DebugPause(void);

@@ -7,7 +7,7 @@
 
 #include "KextList.h"
 #include <Platform.h>
-#include "SelfOem.h"
+#include "../Settings/SelfOem.h"
 #include "../libeg/libeg.h"
 
 

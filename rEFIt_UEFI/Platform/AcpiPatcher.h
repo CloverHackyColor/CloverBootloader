@@ -8,7 +8,8 @@
 #ifndef PLATFORM_ACPIPATCHER_H_
 #define PLATFORM_ACPIPATCHER_H_
 
-#include "../Platform/Settings.h"
+#include "../Platform/Volume.h"
+#include "../Platform/MacOsVersion.h"
 
 #pragma pack(push)
 #pragma pack(1)

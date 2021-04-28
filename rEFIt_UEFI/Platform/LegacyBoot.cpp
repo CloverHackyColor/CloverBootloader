@@ -14,7 +14,8 @@ Copyright (c) 2006 JLA
 #include <Efi.h>
 #include "LegacyBiosThunk.h"
 #include "AcpiPatcher.h"
-#include "Self.h"
+#include "../Settings/Self.h"
+#include "../refit/lib.h"
 
 
 #ifndef DEBUG_ALL

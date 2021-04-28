@@ -1,0 +1,44 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+#echo `pwd`
+#echo BASH_SOURCE="${BASH_SOURCE[@]}"
+#echo "$0" "$@"
+
+me=`basename "$0"`   # get invocation name (not the name of the target of the link)
+#echo me=$me
+
+name="${me##*-}"
+#echo name=$name
+
+prefix=${me%-$name}
+#echo prefix=$prefix
+
+#clang doesn't know -Wno-unused-but-set-variable
+args=( "$@" )
+#args=( "${args[@]/-Wno-unused-but-set-variable/}" ) # doesn't work, it generates an empty arg
+#for i in "${args[@]}"; do echo $i; done
+
+source "$SCRIPT_DIR"/"$prefix"-path "$name"
+ps_dir="$SCRIPT_DIR"/../compilation_project_specific
+
+macrolist1=()
+[ -f "$ps_dir"/all-all-all-macrolist ] && macrolist1=( $("$ps_dir"/all-all-all-macrolist) )
+
+macrolist2=()
+[ -f "$ps_dir"/"$prefix"-macrolist ] && macrolist2=( $("$ps_dir"/"$prefix"-macrolist) )
+
+includelist1=()
+[ -f "$ps_dir"/all-all-all-includelist ] && includelist1=( $("$ps_dir"/all-all-all-includelist) )
+
+includelist2=()
+[ -f "$ps_dir"/"$prefix"-includelist ] && includelist2=( $("$ps_dir"/"$prefix"-includelist) )
+
+
+cmdArgs=()
+cmdArgs=( "$bin_path"  $("$ps_dir"/"$prefix"-"$name"flags)  $("$ps_dir"/"$prefix"-c-c++flags)  "${macrolist1[@]}"  "${macrolist2[@]}"  "${includelist1[@]}"  "${includelist2[@]}"  "${args[@]}" )
+ 
+echo "${cmdArgs[@]}"
+
+exec "${cmdArgs[@]}"

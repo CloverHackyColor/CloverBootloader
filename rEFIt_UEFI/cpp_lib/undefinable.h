@@ -1,8 +1,8 @@
 /*
- * def_types.h
  *
- *  Created on: Mar 19, 2021
- *      Author: jief
+ * Copyright (c) 2020 Jief
+ * All rights reserved.
+ *
  */
 
 #ifndef CPP_LIB_DEF_TYPES_H_
@@ -54,6 +54,15 @@ public:
     undefinable_bool() { }
     explicit undefinable_bool(bool newValue) { super::operator=(newValue); }
     undefinable_bool& operator = (bool newValue) { super::operator=(newValue); return *this; }
+};
+
+class undefinable_uint8 : public undefinable<uint8_t>
+{
+  using super = undefinable<uint8_t>;
+public:
+    undefinable_uint8() { }
+    explicit undefinable_uint8(uint16_t newValue) { super::operator=(newValue); }
+    undefinable_uint8& operator = (uint8_t newValue) { super::operator=(newValue); return *this; }
 };
 
 class undefinable_uint16 : public undefinable<uint16_t>

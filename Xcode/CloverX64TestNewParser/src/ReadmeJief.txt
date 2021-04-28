@@ -1,2 +1,0 @@
-
-wcslen=wcslen_fixed wcscmp=__wcscmp_is_disabled__ wcsncmp=wcsncmp_fixed wcsstr=wcsstr_fixed  sprintf=__sprintf_is_disabled__

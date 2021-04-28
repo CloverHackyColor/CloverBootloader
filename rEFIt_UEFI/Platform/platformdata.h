@@ -192,16 +192,24 @@ public:
 
 extern PLATFORMDATA ApplePlatformData[];
 
-void SetDMISettingsForModel (SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine);
+void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData);
 MACHINE_TYPES GetModelFromString (const XString8& ProductName);
-void GetDefaultSettings(void);
+//void GetDefaultSettings(void);
 void GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
+bool isReleaseDateWithYear20(MACHINE_TYPES Model);
+XString8 GetReleaseDate (MACHINE_TYPES Model);
 uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeatures(MACHINE_TYPES Model);
-bool GetMobile(MACHINE_TYPES Model, bool defaultValue);
+bool GetMobile(MACHINE_TYPES Model);
 UINT64 GetPlatformFeature(MACHINE_TYPES Model);
 void getRBr(MACHINE_TYPES Model, char RBr[8]);
 void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8]);
+
+int compareBiosVersion(const XString8& version1, const XString8& version2);
+bool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2);
+bool isBiosVersionEquel(const XString8& version1, const XString8& version2);
+
+int compareReleaseDate(const XString8& date1, const XString8& date2);
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

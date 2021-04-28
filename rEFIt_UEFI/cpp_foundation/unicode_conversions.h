@@ -1,10 +1,10 @@
 /*
-*  unicode_conversions.cpp
-*
-*  Created by jief the 24 Feb 2020.
-*
-*  version 1.0
-*/
+ *
+ * Created by jief the 24 Feb 2020.
+ * Copyright (c) 2020 Jief
+ * All rights reserved.
+ *
+ */
 
 #ifndef __unicode_conversions_h__
 #define __unicode_conversions_h__

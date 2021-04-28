@@ -45,7 +45,7 @@ extern "C" {
 #include "VectorGraphics.h"
 #include "XTheme.h"
 #include "../Platform/Settings.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 
 //#include "egemb_font.h"
 //#define FONT_CELL_WIDTH (7)

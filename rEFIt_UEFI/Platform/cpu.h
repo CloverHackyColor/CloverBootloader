@@ -393,17 +393,16 @@ typedef struct {
 
 } CPU_STRUCTURE;
 
-
-
+#ifndef DONT_DEFINE_GLOBALS
 extern UINT64                         TurboMsr;
 extern CPU_STRUCTURE                  gCPUStructure;
-
+#endif
 
 void
 GetCPUProperties (void);
 
 MACHINE_TYPES
-GetDefaultModel (bool gMobile);
+GetDefaultModel ();
 
 UINT16
 GetAdvancedCpuType (void);

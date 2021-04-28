@@ -3,7 +3,7 @@
 
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "libeg.h"
 #include "XImage.h"
 #include "XIcon.h"

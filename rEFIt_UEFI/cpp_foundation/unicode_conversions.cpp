@@ -1,9 +1,9 @@
 /*
- *  unicode_conversions.cpp
  *
- *  Created by jief the 24 Feb 2020.
+ * Created by jief the 24 Feb 2020.
+ * Copyright (c) 2020 Jief
+ * All rights reserved.
  *
- *  version 1.0
  */
 
 #include "unicode_conversions.h"

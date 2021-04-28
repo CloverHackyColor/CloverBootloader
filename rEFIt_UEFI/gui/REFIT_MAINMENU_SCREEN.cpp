@@ -56,9 +56,10 @@
 #include "../Platform/Nvram.h"
 #include "../refit/screen.h"
 #include "../Platform/Events.h"
-#include "../Platform/Self.h"
+#include "../Settings/Self.h"
 #include "../Platform/Volumes.h"
 #include "../include/OSFlags.h"
+#include "../Platform/CloverVersion.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -181,12 +182,12 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
       Text = L"F1:Help"_XSW;
       break;
     case TEXT_CORNER_OPTIMUS:
-      if (gGraphics[0].Vendor != Intel) {
+      if (gConf.GfxPropertiesArray.size() > 0 && gConf.GfxPropertiesArray[0].Vendor != Intel) {
         Text = L"Discrete"_XSW;
       } else {
         Text = L"Intel"_XSW;
       }
-      //      Text = (NGFX == 2)?L"Intel":L"Discrete";
+      //      Text = (gConf.GfxPropertiesArray.size() == 2)?L"Intel":L"Discrete";
       break;
     default:
       return;

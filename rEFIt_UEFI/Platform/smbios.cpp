@@ -19,14 +19,16 @@
  SmbiosGen.c
  **/
 
+#define DONT_DEFINE_GLOBALS
+
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <Efi.h>
 
 #include "smbios.h"
-#include "cpu.h"
 #include "platformdata.h"
 #include "AcpiPatcher.h"
 #include "guid.h"
+#include "../Platform/CloverVersion.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SMBIOS 1
@@ -51,6 +53,12 @@
 EFI_GUID            *gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
 
 constexpr LString8 unknown = "unknown"_XS8;
+
+SmbiosDiscoveredSettings g_SmbiosDiscoveredSettings;
+SmbiosInjectedSettings g_SmbiosInjectedSettings;
+const RAM_SLOT_INFO nullRAM_SLOT_INFO;
+const SLOT_DEVICE nullSLOT_DEVICE;
+
 //
 // syscl: implement Dell truncate fix
 // remap EFI_SMBIOS_TABLE_1 to new guid to fix Dell
@@ -74,9 +82,7 @@ EFI_SMBIOS_TYPE             Type;
 
 UINTN       stringNumber;
 UINTN       TableSize;
-UINTN       Index, Size, NewSize, MaxSize;
 UINT16      CoreCache = 0;
-UINT16      TotalCount = 0;
 UINT16      L1, L2, L3;
 UINT32      MaxMemory = 0;
 UINT32      mTotalSystemMemory;
@@ -93,8 +99,6 @@ UINT8       gBootStatus;
 BOOLEAN     Once;
 
 MEM_STRUCTURE    gRAM;
-//DMI*              gDMI;
-UINT8 gRAMCount = 0;
 
 
 #define MAX_HANDLE        0xFEFF
@@ -422,7 +426,7 @@ void UniquifySmbiosTableStr (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS
 }
 
 /* Patching Functions */
-void PatchTableType0()
+void PatchTableType0(const SmbiosInjectedSettings& smbiosSettings)
 {
   // BIOS information
   //
@@ -462,33 +466,30 @@ void PatchTableType0()
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE0_STR_IDX);
 
-  gSettings.Smbios.BiosVendor.trim();
-  if( gSettings.Smbios.BiosVendor.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->Vendor, gSettings.Smbios.BiosVendor);
+  if ( smbiosSettings.BiosVendor.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->Vendor, smbiosSettings.BiosVendor);
   }
-  GlobalConfig.RomVersionUsed.trim();
-  if( GlobalConfig.RomVersionUsed.notEmpty() ) {
-    if( GlobalConfig.EfiVersionUsed.notEmpty() ) {
-      DBG("UpdateSmbiosString : BiosVersion=EfiVersion=%s\n", GlobalConfig.EfiVersionUsed.c_str());
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, GlobalConfig.EfiVersionUsed);
+  if( smbiosSettings.BiosVersionUsed.notEmpty() ) {
+    if( smbiosSettings.EfiVersionUsed.notEmpty() ) {
+      DBG("UpdateSmbiosString : BiosVersion=EfiVersion=%s\n", smbiosSettings.EfiVersionUsed.c_str());
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, smbiosSettings.EfiVersionUsed);
     } else {
-      DBG("UpdateSmbiosString : BiosVersion=RomVersion=%s\n", GlobalConfig.RomVersionUsed.c_str());
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, GlobalConfig.RomVersionUsed);
+      DBG("UpdateSmbiosString : BiosVersion=RomVersion=%s\n", smbiosSettings.BiosVersionUsed.c_str());
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, smbiosSettings.BiosVersionUsed);
     }
   }else{
       DBG("UpdateSmbiosString : BiosVersion no update\n");
   }
-  GlobalConfig.ReleaseDateUsed.trim();
-  if( GlobalConfig.ReleaseDateUsed.notEmpty() ) {
-    DBG("UpdateSmbiosString : ReleaseDate=%s\n", GlobalConfig.ReleaseDateUsed.c_str());
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosReleaseDate, GlobalConfig.ReleaseDateUsed);
+  if( smbiosSettings.ReleaseDateUsed.notEmpty() ) {
+    DBG("UpdateSmbiosString : ReleaseDate=%s\n", smbiosSettings.ReleaseDateUsed.c_str());
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosReleaseDate, smbiosSettings.ReleaseDateUsed);
   }else{
     DBG("UpdateSmbiosString : ReleaseDate no update\n");
   }
   Handle = LogSmbiosTable(newSmbiosTable);
 }
 
-void GetTableType1()
+void GetTableType1(SmbiosDiscoveredSettings* smbiosSettings)
 {
   CHAR8* s;
   // System Information
@@ -499,15 +500,28 @@ void GetTableType1()
     return;
   }
 
-  gSettings.Smbios.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid);
+  //smbiosSettings.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid); // is this is a bug, this uuid might be BE, not LE, or should we use the "variant" field
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
-  GlobalConfig.OEMProductFromSmbios.strncpy(s, iStrLen(s, 64)); //strncpy take care of ending zero
+  smbiosSettings->OEMProductFromSmbios.strncpy(s, iStrLen(s, 64)); //strncpy take care of ending zero
 
   return;
 }
+XString8 getSmUUIDFromSmbios()
+{
+  // System Information
+  //
+  SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
+  if (SmbiosTable.Raw == NULL) {
+    DBG("SmbiosTable: Type 1 (System Information) not found!\n");
+    return nullGuidAsString;
+  }
 
+//  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
+  XString8 g = GuidLEToXString8(SmbiosTable.Type1->Uuid); // 2021-04 : this is a bug, the UUID will be swapped (read as a LE, sent as a BE). I leave for now because it doesn't really matter.
+  return g;
+}
 
-void PatchTableType1()
+void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)
 {
   // System Information
   //
@@ -517,9 +531,9 @@ void PatchTableType1()
   }
 
   //Increase table size
-  Size = SmbiosTable.Type1->Hdr.Length; //old size
+  UINTN Size = SmbiosTable.Type1->Hdr.Length; //old size
   TableSize = SmbiosTableLength(SmbiosTable); //including strings
-  NewSize = 27; //sizeof(SMBIOS_TABLE_TYPE1);
+  UINTN NewSize = 27; //sizeof(SMBIOS_TABLE_TYPE1);
   ZeroMem((void*)newSmbiosTable.Type1, MAX_TABLE_SIZE);
   CopyMem((void*)newSmbiosTable.Type1, (void*)SmbiosTable.Type1, Size); //copy main table
   CopyMem((CHAR8*)newSmbiosTable.Type1+NewSize, (CHAR8*)SmbiosTable.Type1+Size, TableSize - Size); //copy strings
@@ -531,43 +545,38 @@ void PatchTableType1()
   Once = TRUE;
 
   EFI_GUID SmUUID;
-  StrToGuidLE(gSettings.Smbios.SmUUID, &SmUUID);
+  // macOs take all guid as BE guid, irrespective to the variant.
+  StrToGuidBE(smbiosSettings.SmUUID, &SmUUID);
   if((SmUUID.Data3 & 0xF000) != 0) {
     CopyMem((void*)&newSmbiosTable.Type1->Uuid, (void*)&SmUUID, sizeof(SmUUID));
   }
 
-  gSettings.Smbios.ManufactureName.trim();
-  if( gSettings.Smbios.ManufactureName.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Manufacturer, gSettings.Smbios.ManufactureName);
+  if( smbiosSettings.ManufactureName.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Manufacturer, smbiosSettings.ManufactureName);
   }
-  gSettings.Smbios.ProductName.trim();
-  if( gSettings.Smbios.ProductName.notEmpty() ){
-DBG("%s : UpdateSmbiosString ProductName=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.ProductName.c_str());
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->ProductName, gSettings.Smbios.ProductName);
+  if( smbiosSettings.ProductName.notEmpty() ){
+DBG("%s : UpdateSmbiosString ProductName=%s\n", __PRETTY_FUNCTION__, smbiosSettings.ProductName.c_str());
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->ProductName, smbiosSettings.ProductName);
   }
-  gSettings.Smbios.VersionNr.trim();
-  if(  gSettings.Smbios.VersionNr.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Version, gSettings.Smbios.VersionNr);
+  if(  smbiosSettings.SystemVersion.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Version, smbiosSettings.SystemVersion);
   }
-  gSettings.Smbios.SerialNr.trim();
-  if( gSettings.Smbios.SerialNr.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SerialNumber, gSettings.Smbios.SerialNr);
-//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
+  if( smbiosSettings.SerialNr.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SerialNumber, smbiosSettings.SerialNr);
+//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, smbiosSettings.SerialNr.c_str());
   }
-  gSettings.Smbios.BoardNumber.trim();
-  if( gSettings.Smbios.BoardNumber.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SKUNumber, gSettings.Smbios.BoardNumber); //iMac17,1 - there is nothing
+  if( smbiosSettings.BoardNumber.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SKUNumber, smbiosSettings.BoardNumber); //iMac17,1 - there is nothing
   }
-  gSettings.Smbios.FamilyName.trim();
-  if( gSettings.Smbios.FamilyName.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Family, gSettings.Smbios.FamilyName);
+  if( smbiosSettings.FamilyName.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->Family, smbiosSettings.FamilyName);
   }
 
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
 
-void GetTableType2()
+void GetTableType2(SmbiosDiscoveredSettings* smbiosSettings)
 {
   CHAR8* s;
   // System Information
@@ -578,17 +587,17 @@ void GetTableType2()
   }
 
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type2->ProductName);
-  GlobalConfig.OEMBoardFromSmbios.strncpy(s, iStrLen(s, 64) + 1);
+  smbiosSettings->OEMBoardFromSmbios.strncpy(s, iStrLen(s, 64) + 1);
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type2->Manufacturer);
-  GlobalConfig.OEMVendorFromSmbios.strncpy(s, iStrLen(s, 64) + 1);
+  smbiosSettings->OEMVendorFromSmbios.strncpy(s, iStrLen(s, 64) + 1);
 }
 
 
-void PatchTableType2()
+void PatchTableType2(const SmbiosInjectedSettings& smbiosSettings)
 {
   // BaseBoard Information
   //
-  NewSize = 0x10; //sizeof(SMBIOS_TABLE_TYPE2);
+  UINTN NewSize = 0x10; //sizeof(SMBIOS_TABLE_TYPE2);
   ZeroMem((void*)newSmbiosTable.Type2, MAX_TABLE_SIZE);
 
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
@@ -599,7 +608,7 @@ void PatchTableType2()
     newSmbiosTable.Type2->Hdr.Handle = 0x0200; //common rule
 
   } else {
-    Size = SmbiosTable.Type2->Hdr.Length; //old size
+    UINTN Size = SmbiosTable.Type2->Hdr.Length; //old size
     TableSize = SmbiosTableLength(SmbiosTable); //including strings
 
     if (NewSize > Size) {
@@ -612,38 +621,33 @@ void PatchTableType2()
 
   newSmbiosTable.Type2->Hdr.Length = (UINT8)NewSize;
   newSmbiosTable.Type2->ChassisHandle = mHandle3;  //from GetTableType3
-  newSmbiosTable.Type2->BoardType = gSettings.Smbios.BoardType;
+  newSmbiosTable.Type2->BoardType = smbiosSettings.BoardType;
   ZeroMem((void*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
   newSmbiosTable.Type2->FeatureFlag.Motherboard = 1;
   newSmbiosTable.Type2->FeatureFlag.Replaceable = 1;
-  if (gSettings.Smbios.BoardType == 11) {
+  if (smbiosSettings.BoardType == 11) {
     newSmbiosTable.Type2->FeatureFlag.Removable = 1;
   }
   Once = TRUE;
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE2_STR_IDX);
 
-  gSettings.Smbios.BoardManufactureName.trim();
-  if( gSettings.Smbios.BoardManufactureName.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Manufacturer, gSettings.Smbios.BoardManufactureName);
+  if( smbiosSettings.BoardManufactureName.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Manufacturer, smbiosSettings.BoardManufactureName);
   }
-  gSettings.Smbios.BoardNumber.trim();
-  if( gSettings.Smbios.BoardNumber.notEmpty() ){
-DBG("%s : UpdateSmbiosString ProductName=BoardNumber=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.BoardNumber.c_str());
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->ProductName, gSettings.Smbios.BoardNumber);
+  if( smbiosSettings.BoardNumber.notEmpty() ){
+DBG("%s : UpdateSmbiosString ProductName=BoardNumber=%s\n", __PRETTY_FUNCTION__, smbiosSettings.BoardNumber.c_str());
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->ProductName, smbiosSettings.BoardNumber);
   }
-  gSettings.Smbios.BoardVersion.trim();
-  if(  gSettings.Smbios.BoardVersion.notEmpty() ){
-DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.BoardVersion.c_str());
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.Smbios.BoardVersion); //iMac17,1 - there is ProductName
+  if(  smbiosSettings.BoardVersion.notEmpty() ){
+DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, smbiosSettings.BoardVersion.c_str());
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, smbiosSettings.BoardVersion); //iMac17,1 - there is ProductName
   }
-  gSettings.Smbios.BoardSerialNumber.trim();
-  if( gSettings.Smbios.BoardSerialNumber.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->SerialNumber, gSettings.Smbios.BoardSerialNumber);
+  if( smbiosSettings.BoardSerialNumber.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->SerialNumber, smbiosSettings.BoardSerialNumber);
   }
-  gSettings.Smbios.LocationInChassis.trim();
-  if( gSettings.Smbios.LocationInChassis.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->LocationInChassis, gSettings.Smbios.LocationInChassis);
+  if( smbiosSettings.LocationInChassis.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->LocationInChassis, smbiosSettings.LocationInChassis);
   }
   //what about Asset Tag??? Not used in real mac. till now.
 
@@ -660,7 +664,20 @@ DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, gS
   return;
 }
 
-void GetTableType3()
+bool getMobileFromSmbios()
+{
+  // System Chassis Information
+  //
+  SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
+  if (SmbiosTable.Raw == NULL) {
+    //DBG("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
+    return false;
+  }
+  mHandle3 = SmbiosTable.Type3->Hdr.Handle;
+  return ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D); //iMac is desktop!
+}
+
+void GetTableType3(SmbiosDiscoveredSettings* smbiosSettings)
 {
   // System Chassis Information
   //
@@ -676,7 +693,7 @@ void GetTableType3()
   return;
 }
 
-void PatchTableType3()
+void PatchTableType3(const SmbiosInjectedSettings& smbiosSettings)
 {
   // System Chassis Information
   //
@@ -685,9 +702,9 @@ void PatchTableType3()
     //    DBG("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
     return;
   }
-  Size = SmbiosTable.Type3->Hdr.Length; //old size
+  UINTN Size = SmbiosTable.Type3->Hdr.Length; //old size
   TableSize = SmbiosTableLength(SmbiosTable); //including strings
-  NewSize = 0x15; //sizeof(SMBIOS_TABLE_TYPE3);
+  UINTN NewSize = 0x15; //sizeof(SMBIOS_TABLE_TYPE3);
   ZeroMem((void*)newSmbiosTable.Type3, MAX_TABLE_SIZE);
 
   if (NewSize > Size) {
@@ -709,34 +726,30 @@ void PatchTableType3()
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE3_STR_IDX);
 
-  if (gSettings.Smbios.ChassisType != 0) {
-    newSmbiosTable.Type3->Type = gSettings.Smbios.ChassisType;
+  if (smbiosSettings.ChassisType != 0) {
+    newSmbiosTable.Type3->Type = smbiosSettings.ChassisType;
   }
 
-  gSettings.Smbios.ChassisManufacturer.trim();
-  if( gSettings.Smbios.ChassisManufacturer.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->Manufacturer, gSettings.Smbios.ChassisManufacturer);
+  if( smbiosSettings.ChassisManufacturer.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->Manufacturer, smbiosSettings.ChassisManufacturer);
   }
   //SIC! According to iMac there must be the BoardNumber
-  gSettings.Smbios.BoardNumber.trim();
-  if( gSettings.Smbios.BoardNumber.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->Version, gSettings.Smbios.BoardNumber);
+  if( smbiosSettings.BoardNumber.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->Version, smbiosSettings.BoardNumber);
   }
-  gSettings.Smbios.SerialNr.trim();
-  if( gSettings.Smbios.SerialNr.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->SerialNumber, gSettings.Smbios.SerialNr);
-//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
+  if( smbiosSettings.SerialNr.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->SerialNumber, smbiosSettings.SerialNr);
+//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, smbiosSettings.SerialNr.c_str());
   }
-  gSettings.Smbios.ChassisAssetTag.trim();
-  if( gSettings.Smbios.ChassisAssetTag.notEmpty() ){
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->AssetTag, gSettings.Smbios.ChassisAssetTag);
+  if( smbiosSettings.ChassisAssetTag.notEmpty() ){
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->AssetTag, smbiosSettings.ChassisAssetTag);
   }
 
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
 
-void GetTableType4()
+void GetTableType4(SmbiosDiscoveredSettings* smbiosSettings)
 {
   // Processor Information
   //
@@ -755,27 +768,27 @@ void GetTableType4()
     res = SmbiosTable.Type4->ExternalClock % 10;
   }
 
-  gCPUStructure.ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz
+  smbiosSettings->ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz
 
-  //snwprintf(gSettings.BusSpeed, 10, "%d", gCPUStructure.ExternalClock);
-  //gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
-  gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
-  gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
+  //snwprintf(gSettings.BusSpeed, 10, "%d", smbiosSettings.ExternalClock);
+  //gSettings.BusSpeed = smbiosSettings.ExternalClock; //why duplicate??
+  smbiosSettings->CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
+  smbiosSettings->MaxSpeed = SmbiosTable.Type4->MaxSpeed;
 
   size_t off = OFFSET_OF(SMBIOS_TABLE_TYPE4, EnabledCoreCount);
   if (SmbiosTable.Type4->Hdr.Length > off) {  //Smbios >= 2.5
-    GlobalConfig.EnabledCores = SmbiosTable.Type4->EnabledCoreCount;
+    smbiosSettings->EnabledCores = SmbiosTable.Type4->EnabledCoreCount;
   } else {
-    GlobalConfig.EnabledCores = 0; //to change later
+    smbiosSettings->EnabledCores = 0; //to change later
   }
 
-  //snwprintf(gSettings.CpuFreqMHz, 10, "%d", gCPUStructure.CurrentSpeed);
-  //gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed;
+  //snwprintf(gSettings.CpuFreqMHz, 10, "%d", smbiosSettings.CurrentSpeed);
+  //gSettings.CpuFreqMHz = smbiosSettings.CurrentSpeed;
 
   return;
 }
 
-void PatchTableType4()
+void PatchTableType4(const SmbiosInjectedSettings& smbiosSettings)
 {
   // Processor Information
   //
@@ -786,26 +799,26 @@ void PatchTableType4()
   UINTN    CpuNumber;
 
   //  DBG("BrandString=%s\n", BrandStr);
-  for (CpuNumber = 0; CpuNumber < gCPUStructure.Cores; CpuNumber++) {
+  for (CpuNumber = 0; CpuNumber < smbiosSettings.Cores; CpuNumber++) {
     // Get Table Type4
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, CpuNumber);
     if (SmbiosTable.Raw == NULL) {
       break;
     }
     // we make SMBios v2.4 while it may be older so we have to increase size
-    Size = SmbiosTable.Type4->Hdr.Length; //old size
+    UINTN Size = SmbiosTable.Type4->Hdr.Length; //old size
     TableSize = SmbiosTableLength(SmbiosTable); //including strings
     AddBrand = 0;
     if (SmbiosTable.Type4->ProcessorVersion == 0) { //if no BrandString we can add
       AddBrand = 48;
     }
-    NewSize = sizeof(SMBIOS_TABLE_TYPE4);
+    UINTN NewSize = sizeof(SMBIOS_TABLE_TYPE4);
     ZeroMem((void*)newSmbiosTable.Type4, MAX_TABLE_SIZE);
     CopyMem((void*)newSmbiosTable.Type4, (void*)SmbiosTable.Type4, Size); //copy main table
     CopyMem((CHAR8*)newSmbiosTable.Type4+NewSize, (CHAR8*)SmbiosTable.Type4+Size, TableSize - Size); //copy strings
     newSmbiosTable.Type4->Hdr.Length = (UINT8)NewSize;
 
-    newSmbiosTable.Type4->MaxSpeed = (UINT16)gCPUStructure.MaxSpeed;
+    newSmbiosTable.Type4->MaxSpeed = (UINT16)smbiosSettings.MaxSpeed;
     //old version has no such fields. Fill now
     if (Size <= 0x20){
       //sanity check and clear
@@ -814,102 +827,102 @@ void PatchTableType4()
       newSmbiosTable.Type4->PartNumber = 0;
     }
     if (Size <= 0x23) {  //Smbios <=2.3
-      newSmbiosTable.Type4->CoreCount = gCPUStructure.Cores;
-      newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
-      newSmbiosTable.Type4->ProcessorCharacteristics = (UINT16)gCPUStructure.Features;
+      newSmbiosTable.Type4->CoreCount = smbiosSettings.Cores;
+      newSmbiosTable.Type4->ThreadCount = smbiosSettings.Threads;
+      newSmbiosTable.Type4->ProcessorCharacteristics = (UINT16)smbiosSettings.Features;
     } //else we propose DMI data is better then cpuid().
     //    if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
-    //      newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
+    //      newSmbiosTable.Type4->EnabledCoreCount = smbiosSettings.Cores;
     //    }
 
-    //DBG("insert ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
-    newSmbiosTable.Type4->ExternalClock = (UINT16)DivU64x32 (gCPUStructure.ExternalClock, Kilo);
-    newSmbiosTable.Type4->EnabledCoreCount = GlobalConfig.EnabledCores;
+    //DBG("insert ExternalClock: %d MHz\n", (INT32)(DivU64x32(smbiosSettings.ExternalClock, Kilo)));
+    newSmbiosTable.Type4->ExternalClock = (UINT16)DivU64x32 (smbiosSettings.ExternalClock, Kilo);
+    newSmbiosTable.Type4->EnabledCoreCount = smbiosSettings.EnabledCores;
     //some verifications
     if ((newSmbiosTable.Type4->ThreadCount < newSmbiosTable.Type4->CoreCount) ||
         newSmbiosTable.Type4->ThreadCount > newSmbiosTable.Type4->CoreCount * 2) {
-      newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
+      newSmbiosTable.Type4->ThreadCount = smbiosSettings.Threads;
     }
 
     UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE4_STR_IDX);
 
     // TODO: Set SmbiosTable.Type4->ProcessorFamily for all implemented CPU models
     Once = TRUE;
-    if (gCPUStructure.Model == CPU_MODEL_ATOM) {
+    if (smbiosSettings.Model == CPU_MODEL_ATOM) {
       newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelAtom;
     }
-    if ((gCPUStructure.Model == CPU_MODEL_DOTHAN) ||
-        (gCPUStructure.Model == CPU_MODEL_YONAH)) {
-      if (gCPUStructure.Mobile) {
+    if ((smbiosSettings.Model == CPU_MODEL_DOTHAN) ||
+        (smbiosSettings.Model == CPU_MODEL_YONAH)) {
+      if (smbiosSettings.Mobile) {
         newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocket478;
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSoloMobile;
-        if (gCPUStructure.Cores == 2) {
+        if (smbiosSettings.Cores == 2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuoMobile;
         }
       } else {
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
-        if (gCPUStructure.Cores == 2) {
+        if (smbiosSettings.Cores == 2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuo;
         }
       }
     }
-    if (gCPUStructure.Model == CPU_MODEL_MEROM) {
-      if (gCPUStructure.Mobile) {
-        if (gCPUStructure.Cores==2) {
+    if (smbiosSettings.Model == CPU_MODEL_MEROM) {
+      if (smbiosSettings.Mobile) {
+        if (smbiosSettings.Cores==2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2DuoMobile;
         }
-        if (gCPUStructure.Cores==1) {
+        if (smbiosSettings.Cores==1) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2SoloMobile;
         }
       } else {  // Conroe
         newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocketLGA775;
-        if (gCPUStructure.Cores>2) {
+        if (smbiosSettings.Cores>2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Quad;
         } else
-          if (gCPUStructure.Cores==2) {
+          if (smbiosSettings.Cores==2) {
             newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
           }
-        if (gCPUStructure.Cores==1) {
+        if (smbiosSettings.Cores==1) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Solo;
         }
       }
     }
-    if (gCPUStructure.Model == CPU_MODEL_PENRYN) {
-      if (gCPUStructure.Mobile) {
-        if (gCPUStructure.Cores>2) {
+    if (smbiosSettings.Model == CPU_MODEL_PENRYN) {
+      if (smbiosSettings.Mobile) {
+        if (smbiosSettings.Cores>2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2ExtremeMobile;
         }
-        if (gCPUStructure.Cores==2) {
+        if (smbiosSettings.Cores==2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2DuoMobile;
         }
 
       } else {
         newSmbiosTable.Type4->ProcessorUpgrade = ProcessorUpgradeSocketLGA775;
-        if (gCPUStructure.Cores>2) {
+        if (smbiosSettings.Cores>2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Quad;
-        } else if (gCPUStructure.Cores==2) {
+        } else if (smbiosSettings.Cores==2) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2;
         } else {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Solo;
         }
-        if (AsciiStrStr(gCPUStructure.BrandString, "Celeron")) {
+        if ( smbiosSettings.BrandString.contains("Celeron") ) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyDualCoreIntelCeleron;
-        } else if (AsciiStrStr(gCPUStructure.BrandString, "Extreme")) {
+        } else if ( smbiosSettings.BrandString.contains("Extreme") ) {
           newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
         }
       }
     }
-    if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
-      if (AsciiStrStr(gCPUStructure.BrandString, "i3"))
+    if (smbiosSettings.Model >= CPU_MODEL_NEHALEM) {
+      if ( smbiosSettings.BrandString.contains("i3") )
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI3;
-      if (AsciiStrStr(gCPUStructure.BrandString, "i5"))
+      if ( smbiosSettings.BrandString.contains("i5") )
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI5;
-      if (AsciiStrStr(gCPUStructure.BrandString, "i7"))
+      if ( smbiosSettings.BrandString.contains("i7") )
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI7;
     }
     //spec 2.7 page 48 note 3
     if ((newSmbiosTable.Type4->ProcessorFamily == ProcessorFamilyIntelCore2)
-        && gCPUStructure.Mobile) {
+        && smbiosSettings.Mobile) {
       newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2DuoMobile;
     }
 
@@ -918,40 +931,40 @@ void PatchTableType4()
     newSmbiosTable.Type4->L2CacheHandle = L2;
     newSmbiosTable.Type4->L3CacheHandle = L3;
     newSmbiosTable.Type4->ProcessorType = CentralProcessor;
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorSteppingId = gCPUStructure.Stepping;
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorModel    = (gCPUStructure.Model & 0xF);
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorFamily    = gCPUStructure.Family;
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType    = gCPUStructure.Type;
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel    = gCPUStructure.Extmodel;
-    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily  = gCPUStructure.Extfamily;
-    //    CopyMem((void*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (void*)&gCPUStructure.Features, 4);
-    //    newSmbiosTable.Type4->ProcessorId.FeatureFlags = (PROCESSOR_FEATURE_FLAGS)(UINT32)gCPUStructure.Features;
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorSteppingId = smbiosSettings.Stepping;
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorModel    = (smbiosSettings.Model & 0xF);
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorFamily    = smbiosSettings.Family;
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType    = smbiosSettings.Type;
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel    = smbiosSettings.Extmodel;
+    newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily  = smbiosSettings.Extfamily;
+    //    CopyMem((void*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (void*)&smbiosSettings.Features, 4);
+    //    newSmbiosTable.Type4->ProcessorId.FeatureFlags = (PROCESSOR_FEATURE_FLAGS)(UINT32)smbiosSettings.Features;
     if (Size <= 0x26) {
       newSmbiosTable.Type4->ProcessorFamily2 = newSmbiosTable.Type4->ProcessorFamily;
-      ProcChar |= (gCPUStructure.ExtFeatures & CPUID_EXTFEATURE_EM64T)?0x04:0;
-      ProcChar |= (gCPUStructure.Cores > 1)?0x08:0;
-      ProcChar |= (gCPUStructure.Cores < gCPUStructure.Threads)?0x10:0;
-      ProcChar |= (gCPUStructure.ExtFeatures & CPUID_EXTFEATURE_XD)?0x20:0;
-      ProcChar |= (gCPUStructure.Features & CPUID_FEATURE_VMX)?0x40:0;
-      ProcChar |= (gCPUStructure.Features & CPUID_FEATURE_EST)?0x80:0;
+      ProcChar |= (smbiosSettings.ExtFeatures & CPUID_EXTFEATURE_EM64T)?0x04:0;
+      ProcChar |= (smbiosSettings.Cores > 1)?0x08:0;
+      ProcChar |= (smbiosSettings.Cores < smbiosSettings.Threads)?0x10:0;
+      ProcChar |= (smbiosSettings.ExtFeatures & CPUID_EXTFEATURE_XD)?0x20:0;
+      ProcChar |= (smbiosSettings.Features & CPUID_FEATURE_VMX)?0x40:0;
+      ProcChar |= (smbiosSettings.Features & CPUID_FEATURE_EST)?0x80:0;
       newSmbiosTable.Type4->ProcessorCharacteristics = ProcChar;
     }
 
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->Socket, "U2E1"_XS8);
 
     XString8 BrandStr;
-    BrandStr.takeValueFrom(gCPUStructure.BrandString);
+    BrandStr.takeValueFrom(smbiosSettings.BrandString);
     if (AddBrand) {
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->ProcessorVersion, BrandStr);
     }
 
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
     // looks to be MicroCode revision
-    if(gCPUStructure.MicroCode > 0){
-      BrandStr.S8Printf("%llX", gCPUStructure.MicroCode);
+    if(smbiosSettings.MicroCode > 0){
+      BrandStr.S8Printf("%llX", smbiosSettings.MicroCode);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
-    
+
 #ifdef JIEF_DEBUG
 DBG("newSmbiosTable.Type4->AssetTag=%d\n", newSmbiosTable.Type4->AssetTag);
 DBG("newSmbiosTable.Type4->CoreCount=%d\n", newSmbiosTable.Type4->CoreCount);
@@ -987,7 +1000,7 @@ DBG("newSmbiosTable.Type4->Voltage=%d\n", *(UINT8*)&newSmbiosTable.Type4->Voltag
   return;
 }
 
-void PatchTableType6()
+void PatchTableType6(const SmbiosInjectedSettings& smbiosSettings)
 {
   UINT8 SizeField = 0;
   //
@@ -996,7 +1009,7 @@ void PatchTableType6()
   // This table is obsolete accoding to Spec but Apple still using it so
   // copy existing table if found, no patches will be here
   // we can have more then 1 module.
-  for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+  for (size_t Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_MODULE_INFORMATON,Index);
     if (SmbiosTable.Raw == NULL) {
       //      MsgLog("SMBIOS Table 6 index %d not found\n", Index);
@@ -1009,7 +1022,7 @@ void PatchTableType6()
       mInstalled[Index]  = 0;
     } else
       mInstalled[Index]  =  4096ULL * (1024ULL * 1024ULL);
-	  MsgLog("Table 6 MEMORY_MODULE %llu Installed %llX ", Index, mInstalled[Index]);
+    MsgLog("Table 6 MEMORY_MODULE %zu Installed %llX ", Index, mInstalled[Index]);
     if (SizeField >= 0x7D) {
       mEnabled[Index]    = 0;
     } else
@@ -1021,7 +1034,7 @@ void PatchTableType6()
   return;
 }
 
-void PatchTableType7()
+void PatchTableType7(const SmbiosInjectedSettings& smbiosSettings)
 {
   // Cache Information
   //
@@ -1039,7 +1052,7 @@ void PatchTableType7()
   L3 = 0xFFFF; // L3 Cache
 
   // Get Table Type7 and set CPU Caches
-  for (Index = 0; Index < MAX_CACHE_COUNT; Index++) {
+  for (size_t Index = 0; Index < MAX_CACHE_COUNT; Index++) {
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_CACHE_INFORMATION, Index);
     if (SmbiosTable.Raw == NULL) {
       break;
@@ -1075,7 +1088,7 @@ void PatchTableType7()
   return;
 }
 
-void PatchTableType9()
+void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
 {
   //
   // System Slots (Type 9)
@@ -1103,41 +1116,41 @@ void PatchTableType9()
   // real PC -> PCI, real Mac -> PCIe
 
 #ifdef JIEF_DEBUG
-  for (Index = 0; Index <= 15; Index++) {
-    DBG("SlotDevice[%lld].BusNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].BusNum : 0);
-    DBG("SlotDevice[%lld].DevFuncNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].DevFuncNum : 0);
-    DBG("SlotDevice[%lld].SegmentGroupNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SegmentGroupNum : 0);
-    DBG("SlotDevice[%lld].SlotID = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotID : 0);
-    DBG("SlotDevice[%lld].SlotType = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotType : 0);
-    DBG("SlotDevice[%lld].SlotName = %s\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotName.c_str() : "");
-    DBG("SlotDevice[%lld].Valid = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid);
+  for (uint64_t Index = 0; Index <= 15; Index++) {
+    DBG("SlotDevice[%lld].BusNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum);
+    DBG("SlotDevice[%lld].DevFuncNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum);
+    DBG("SlotDevice[%lld].SegmentGroupNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum);
+    DBG("SlotDevice[%lld].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
+    DBG("SlotDevice[%lld].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
+    DBG("SlotDevice[%lld].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
+    DBG("SlotDevice[%lld].Valid = %d\n", Index, smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
   }
 #endif
 
-  for (Index = 0; Index < 15; Index++) {
-    if (gSettings.Smbios.SlotDevices[Index].Valid) {
+  for (size_t Index = 0; Index < 15; Index++) {
+    if (smbiosSettings.SlotDevices.isSlotForIndexValid(Index)) {
       INTN Dev, Func;
       ZeroMem((void*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
       newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
       newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
       newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
       newSmbiosTable.Type9->SlotDesignation = 1;
-      newSmbiosTable.Type9->SlotType = gSettings.Smbios.SlotDevices[Index].SlotType;
+      newSmbiosTable.Type9->SlotType = smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType;
       newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
       newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
       newSmbiosTable.Type9->SlotLength = SlotLengthShort;
-      newSmbiosTable.Type9->SlotID = gSettings.Smbios.SlotDevices[Index].SlotID;
+      newSmbiosTable.Type9->SlotID = smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID;
       newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
       newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
       // take this from PCI bus for WiFi card
-      newSmbiosTable.Type9->SegmentGroupNum = gSettings.Smbios.SlotDevices[Index].SegmentGroupNum;
-      newSmbiosTable.Type9->BusNum = gSettings.Smbios.SlotDevices[Index].BusNum;
-      newSmbiosTable.Type9->DevFuncNum = gSettings.Smbios.SlotDevices[Index].DevFuncNum;
+      newSmbiosTable.Type9->SegmentGroupNum = smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum;
+      newSmbiosTable.Type9->BusNum = smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum;
+      newSmbiosTable.Type9->DevFuncNum = smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum;
       //
-      Dev = gSettings.Smbios.SlotDevices[Index].DevFuncNum >> 3;
-      Func = gSettings.Smbios.SlotDevices[Index].DevFuncNum & 7;
+      Dev = smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum >> 3;
+      Func = smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum & 7;
 		DBG("insert table 9 for dev %llX:%llX\n", Dev, Func);
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, gSettings.Smbios.SlotDevices[Index].SlotName);
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName);
       LogSmbiosTable(newSmbiosTable);
     }
   }
@@ -1145,7 +1158,7 @@ void PatchTableType9()
   return;
 }
 
-void PatchTableType11()
+void PatchTableType11(const SmbiosInjectedSettings& smbiosSettings)
 {
   //  CHAR8    *OEMString = "Apple inc. uses Clover"; //something else here?
   // System Information
@@ -1166,17 +1179,17 @@ void PatchTableType11()
 //  ZeroMem(OEMString, MAX_OEM_STRING);
 //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "Apple ROM Version.\n");
 //  //AsciiStrCatS(OEMString, MAX_OEM_STRING, "  BIOS ID:");
-//  //AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.Smbios.RomVersion, iStrLen(gSettings.Smbios.RomVersion, 64));
+//  //AsciiStrnCatS(OEMString, MAX_OEM_STRING, smbiosSettings.RomVersion, iStrLen(smbiosSettings.RomVersion, 64));
 //  //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "\n  EFI Version:");
-//  //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.Smbios.EfiVersion, iStrLen(gSettings.Smbios.EfiVersion, 64));
+//  //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, smbiosSettings.EfiVersion, iStrLen(smbiosSettings.EfiVersion, 64));
 //  AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
-//  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.Smbios.BoardNumber, iStrLen(gSettings.Smbios.BoardNumber, 64));
+//  AsciiStrnCatS(OEMString, MAX_OEM_STRING, smbiosSettings.BoardNumber, iStrLen(smbiosSettings.BoardNumber, 64));
 //	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", gRevisionStr);
 //  AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 #ifdef JIEF_DEBUG
   XString8 OEMString = S8Printf("⌘  Powered by %s\n", gBuildId.c_str());
 #else
-  XString8 OEMString = S8Printf("Apple ROM Version.\nBoard-ID : %s\n⌘  Powered by %s\n", gSettings.Smbios.BoardNumber.c_str(), gRevisionStr);
+  XString8 OEMString = S8Printf("Apple ROM Version.\nBoard-ID : %s\n⌘  Powered by %s\n", smbiosSettings.BoardNumber.c_str(), gRevisionStr);
 #endif
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
 
@@ -1191,7 +1204,7 @@ const UINT8 tableTypes[] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 41, 129, 217,
 void PatchTableTypeSome()
 {
   for (UINTN IndexType = 0; IndexType < sizeof(tableTypes); IndexType++) {
-    for (Index = 0; Index < 32; Index++) {
+    for (size_t Index = 0; Index < 32; Index++) {
       SmbiosTable = GetSmbiosTableFromType(EntryPoint, tableTypes[IndexType], Index);
       if (SmbiosTable.Raw == NULL) {
         continue;
@@ -1202,31 +1215,37 @@ void PatchTableTypeSome()
   return;
 }
 
-void GetTableType16()
+void GetTableType16(SmbiosDiscoveredSettings* smbiosSettings)
 {
   // Physical Memory Array
   //
   mTotalSystemMemory = 0; //later we will add to the value, here initialize it
-  TotalCount = 0;
-  for (Index = 0; Index < 8; Index++) {  //how many tables there may be?
+  smbiosSettings->RamSlotCount = 0;
+  for (size_t Index = 0; Index < 8; Index++) {  //how many tables there may be?
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, Index);
     if (SmbiosTable.Raw == NULL) {
       //      DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
       continue;
     }
-	  DBG("Type 16 Index = %llu\n", Index);
-    TotalCount += SmbiosTable.Type16->NumberOfMemoryDevices;
+	  DBG("Type 16 Index = %zu\n", Index);
+    smbiosSettings->RamSlotCount += SmbiosTable.Type16->NumberOfMemoryDevices;
   }
-  if (!TotalCount) {
-    TotalCount = MAX_RAM_SLOTS;
+  if ( smbiosSettings->RamSlotCount == 0 ) {
+    DBG("Total Memory Slots Count is adjusted from 0 to %d\n", MAX_RAM_SLOTS);
+    smbiosSettings->RamSlotCount = MAX_RAM_SLOTS;
+  }else{
+    //Jief_Machak: VMWare report 64 memory slots !!! MAX_RAM_SLOTS is currently 24. Crash is PatchTable17.
+    if ( smbiosSettings->RamSlotCount > MAX_RAM_SLOTS ) {
+      DBG("Total Memory Slots Count is adjusted from %d to %d\n", smbiosSettings->RamSlotCount, MAX_RAM_SLOTS);
+      smbiosSettings->RamSlotCount = MAX_RAM_SLOTS;
+    }else{
+      DBG("Total Memory Slots Count = %d\n", smbiosSettings->RamSlotCount);
+    }
   }
-  //Jief_Machak: VMWare report 64 memory slots !!! MAX_RAM_SLOTS is currently 24. Crash is PatchTable17.
-  if ( TotalCount > MAX_RAM_SLOTS ) TotalCount = MAX_RAM_SLOTS;
-  DBG("Total Memory Slots Count = %d\n", TotalCount);
 }
 
 
-void PatchTableType16()
+void PatchTableType16(const SmbiosInjectedSettings& smbiosSettings)
 {
   // Physical Memory Array
   //
@@ -1247,27 +1266,26 @@ void PatchTableType16()
   // newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
   // MemoryErrorInformationHandle
   newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
-  newSmbiosTable.Type16->NumberOfMemoryDevices = gRAMCount;
-  DBG("NumberOfMemoryDevices = %d\n", gRAMCount);
+  newSmbiosTable.Type16->NumberOfMemoryDevices = MIN(smbiosSettings.RamSlotCount, MAX_RAM_SLOTS);
+  DBG("NumberOfMemoryDevices = %d\n", MIN(smbiosSettings.RamSlotCount, MAX_RAM_SLOTS));
   LogSmbiosTable(newSmbiosTable);
 }
 
-void GetTableType17()
+void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
 {
   // Memory Device
   //
   BOOLEAN Found;
 
   // Get Table Type17 and count Size
-  gRAMCount = 0;
-  for (Index = 0; Index < TotalCount; Index++) {  //how many tables there may be?
+  for (size_t Index = 0; Index < smbiosSettings->RamSlotCount; Index++) {  //how many tables there may be?
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
     if (SmbiosTable.Raw == NULL) {
       //      DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
       continue;
     }
 #ifndef JIEF_DEBUG // it's all 0 in VMWare
-	  DBG("Type 17 Index = %llu\n", Index);
+	  DBG("Type 17 Index = %zu\n", Index);
 #endif
     //gDMI->CntMemorySlots++;
     if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
@@ -1365,7 +1383,7 @@ void GetTableType17()
   }
 }
 
-void PatchTableType17()
+void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings)
 {
   XString8   deviceLocator;
   XString8   bankLocator;
@@ -1373,65 +1391,68 @@ void PatchTableType17()
   UINT8   expectedCount = 0;
   UINT8   channels = 2;
   BOOLEAN insertingEmpty = TRUE;
-  BOOLEAN trustSMBIOS = ((gRAM.SPDInUse == 0) || gSettings.Smbios.TrustSMBIOS);
+  BOOLEAN trustSMBIOS = ((gRAM.SPDInUse == 0) || smbiosSettings.TrustSMBIOS);
   BOOLEAN wrongSMBIOSBanks = FALSE;
   BOOLEAN isMacPro = FALSE;
-  MACHINE_TYPES Model = GetModelFromString(gSettings.Smbios.ProductName);
+  MACHINE_TYPES Model = GetModelFromString(smbiosSettings.ProductName);
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61)) {
     isMacPro = TRUE;
   }
   // Inject user memory tables
-  if (gSettings.Smbios.InjectMemoryTables) {
+  if (smbiosSettings.InjectMemoryTables)
+  {
     DBG("Injecting user memory modules to SMBIOS\n");
-    if (gSettings.Smbios.Memory.SlotCounts == 0) {
+    if (smbiosSettings.Memory.SlotCounts == 0) {
       DBG("User SMBIOS contains no memory modules\n");
       return;
     }
     // Check channels
-    if ((gSettings.Smbios.Memory.UserChannels == 0) || (gSettings.Smbios.Memory.UserChannels > 8)) {
-      gSettings.Smbios.Memory.UserChannels = 1;
+    auto UserChannels = smbiosSettings.Memory.UserChannels;
+    if ( UserChannels == 0 || UserChannels > 8 ) {
+      UserChannels = 1;
     }
-    if (gSettings.Smbios.Memory.SlotCounts >= MAX_RAM_SLOTS) {
-      gSettings.Smbios.Memory.SlotCounts = MAX_RAM_SLOTS;
+    auto SlotCounts = smbiosSettings.Memory.SlotCounts;
+    if ( SlotCounts >= MAX_RAM_SLOTS ) {
+      SlotCounts = MAX_RAM_SLOTS;
     }
-    DBG("Channels: %d\n", gSettings.Smbios.Memory.UserChannels);
+    DBG("Channels: %d\n", UserChannels);
     // Setup interleaved channel map
     if (channels >= 2) {
-      UINT8 doubleChannels = (UINT8)gSettings.Smbios.Memory.UserChannels << 1;
-      for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      UINT8 doubleChannels = (UINT8)UserChannels << 1;
+      for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
         channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
-                                    ((Index / gSettings.Smbios.Memory.UserChannels) % 2) + ((Index % gSettings.Smbios.Memory.UserChannels) << 1));
+                                    ((Index / UserChannels) % 2) + ((Index % UserChannels) << 1));
       }
     } else {
-      for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
         channelMap[Index] = (UINT8)Index;
       }
     }
     DBG("Interleave:");
-    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
       DBG(" %d", channelMap[Index]);
     }
     DBG("\n");
     // Memory Device
     //
-    gRAMCount = 0;
     // Inject tables
 #ifdef JIEF_DEBUG
-DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", gSettings.Smbios.Memory.SlotCounts);
-DBG("gSettings.Smbios.Memory.UserChannels=%d\n", gSettings.Smbios.Memory.UserChannels);
-for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
-  DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, gSettings.Smbios.Memory.User[Index].Frequency);
-  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, gSettings.Smbios.Memory.User[Index].InUse);
-  DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, gSettings.Smbios.Memory.User[Index].ModuleSize);
-  DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, gSettings.Smbios.Memory.User[Index].PartNo.c_str());
-  DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, gSettings.Smbios.Memory.User[Index].SerialNo.c_str());
-  DBG("gSettings.Smbios.Memory.User[%lld].Type=%d\n", Index, gSettings.Smbios.Memory.User[Index].Type);
-  DBG("gSettings.Smbios.Memory.User[%lld].Vendor=%s\n", Index, gSettings.Smbios.Memory.User[Index].Vendor.c_str());
+DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", smbiosSettings.Memory.SlotCounts);
+DBG("gSettings.Smbios.Memory.UserChannels=%d\n", smbiosSettings.Memory.UserChannels);
+for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
+  DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Frequency);
+  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
+  DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).ModuleSize);
+  DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).PartNo.c_str());
+  DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).SerialNo.c_str());
+  DBG("gSettings.Smbios.Memory.User[%lld].Type=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Type);
+  DBG("gSettings.Smbios.Memory.User[%lld].Vendor=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Vendor.c_str());
 }
 #endif
-    for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
+
+    for (size_t Index = 0; Index < SlotCounts; Index++) {
       UINTN UserIndex = channelMap[Index];
-      UINT8 bank = (UINT8)(Index / gSettings.Smbios.Memory.UserChannels);
+      UINT8 bank = (UINT8)(Index / UserChannels);
       ZeroMem((void*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
@@ -1443,45 +1464,45 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
       newSmbiosTable.Type17->DeviceSet = bank + 1;
       newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
       if (isMacPro) {
-        deviceLocator.S8Printf("DIMM%d", gRAMCount + 1);
+        deviceLocator.S8Printf("DIMM%zd", Index + 1);
       } else {
         deviceLocator.S8Printf("DIMM%d", bank);
-        bankLocator.S8Printf("BANK %llu", Index % channels);
+        bankLocator.S8Printf("BANK %zu", Index % channels);
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, bankLocator);
       }
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, deviceLocator);
-      if ((gSettings.Smbios.Memory.User[UserIndex].InUse) && (gSettings.Smbios.Memory.User[UserIndex].ModuleSize > 0)) {
+      if ((smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).InUse) && (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize > 0)) {
         DBG("user SMBIOS data:\n");
-        DBG("SmbiosTable.Type17->Vendor = %s\n", gSettings.Smbios.Memory.User[UserIndex].Vendor.c_str());
-        DBG("SmbiosTable.Type17->SerialNumber = %s\n", gSettings.Smbios.Memory.User[UserIndex].SerialNo.c_str());
-        DBG("SmbiosTable.Type17->PartNumber = %s\n", gSettings.Smbios.Memory.User[UserIndex].PartNo.c_str());
+        DBG("SmbiosTable.Type17->Vendor = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor.c_str());
+        DBG("SmbiosTable.Type17->SerialNumber = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).SerialNo.c_str());
+        DBG("SmbiosTable.Type17->PartNumber = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).PartNo.c_str());
 
-        if (gSettings.Smbios.Memory.User[UserIndex].Vendor.notEmpty()) {
-          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gSettings.Smbios.Memory.User[UserIndex].Vendor);
+        if (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor.notEmpty()) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor);
         } else {
 
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
         }
-        if (gSettings.Smbios.Memory.User[UserIndex].SerialNo.notEmpty()) {
-          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gSettings.Smbios.Memory.User[UserIndex].SerialNo);
+        if (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).SerialNo.notEmpty()) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).SerialNo);
         } else {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
         }
-        if (gSettings.Smbios.Memory.User[UserIndex].PartNo.notEmpty()) {
-          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gSettings.Smbios.Memory.User[UserIndex].PartNo);
+        if (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).PartNo.notEmpty()) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).PartNo);
         } else {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
         }
-        newSmbiosTable.Type17->Speed = (UINT16)gSettings.Smbios.Memory.User[UserIndex].Frequency;
-        if (gSettings.Smbios.Memory.User[UserIndex].ModuleSize > 0x7FFF) {
+        newSmbiosTable.Type17->Speed = (UINT16)smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Frequency;
+        if (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize > 0x7FFF) {
           newSmbiosTable.Type17->Size = 0x7FFF;
-          newSmbiosTable.Type17->ExtendedSize = gSettings.Smbios.Memory.User[UserIndex].ModuleSize;
+          newSmbiosTable.Type17->ExtendedSize = smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize;
           mTotalSystemMemory += newSmbiosTable.Type17->ExtendedSize; //Mb
         } else {
-          newSmbiosTable.Type17->Size = (UINT16)gSettings.Smbios.Memory.User[UserIndex].ModuleSize;
+          newSmbiosTable.Type17->Size = (UINT16)smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize;
           mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
         }
-        newSmbiosTable.Type17->MemoryType = gSettings.Smbios.Memory.User[UserIndex].Type;
+        newSmbiosTable.Type17->MemoryType = smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Type;
         if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
@@ -1489,13 +1510,13 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
         }
         DBG("%s %s %dMHz %dMB(Ext:%dMB)\n", bankLocator.c_str(), deviceLocator.c_str(), newSmbiosTable.Type17->Speed,
           newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
-        mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
+        mMemory17[Index] = (UINT16)mTotalSystemMemory;
         //        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
       } else {
         DBG("%s %s EMPTY\n", bankLocator.c_str(), deviceLocator.c_str());
       }
       newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
-      mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
+      mHandle17[Index] = LogSmbiosTable(newSmbiosTable);
     }
     if (mTotalSystemMemory > 0) {
       DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
@@ -1553,16 +1574,20 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
     DBG("Trusting SMBIOS...\n");
   }
   // Determine expected slot count
-  expectedCount = (gSettings.Smbios.Memory.SlotCounts != 0) ? gSettings.Smbios.Memory.SlotCounts : gRAM.SPDInUse;
+  expectedCount = (smbiosSettings.Memory.SlotCounts != 0) ? smbiosSettings.Memory.SlotCounts : gRAM.SPDInUse;
   if (trustSMBIOS) {
     // Use the smbios in use count
     if (expectedCount < gRAM.SMBIOSInUse) {
       expectedCount = gRAM.SMBIOSInUse;
     }
     // Check if smbios has a good total count
-    if ((!gMobile || (TotalCount == 2)) &&
-        (expectedCount < TotalCount)) {
-      expectedCount = (UINT8)TotalCount;
+    if ( (!gMobile || smbiosSettings.RamSlotCount == 2)  &&  expectedCount < smbiosSettings.RamSlotCount ) {
+      if ( smbiosSettings.RamSlotCount > MAX_UINT8 ) {
+        log_technical_bug("smbiosSettings.RamSlotCount > MAX_UINT8");
+        expectedCount = MAX_RAM_SLOTS;
+      }else{
+        expectedCount = (UINT8)smbiosSettings.RamSlotCount;
+      }
     }
   } else {
     // Use default value of two for mobile or four for desktop
@@ -1583,8 +1608,8 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
     DBG("Detected alternating SMBIOS channel banks\n");
   }
   // Determine if using triple or quadruple channel
-  if (gSettings.Smbios.Memory.UserChannels != 0) {
-    channels = gSettings.Smbios.Memory.UserChannels;
+  if (smbiosSettings.Memory.UserChannels != 0) {
+    channels = smbiosSettings.Memory.UserChannels;
   } else if (gRAM.SPDInUse == 0) {
     if (trustSMBIOS) {
       if ((gRAM.SMBIOSInUse % 4) == 0) {
@@ -1654,28 +1679,27 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
   // Setup interleaved channel map
   if (channels >= 2) {
     UINT8 doubleChannels = (UINT8)channels << 1;
-    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
       channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
                                   ((Index / channels) % 2) + ((Index % channels) << 1));
     }
   } else {
-    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
       channelMap[Index] = (UINT8)Index;
     }
   }
   DBG("Interleave:");
-  for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+  for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
     DBG(" %d", channelMap[Index]);
   }
   DBG("\n");
   // Memory Device
   //
-  gRAMCount = 0;
-  for (Index = 0; Index < TotalCount; Index++) {
+  for (size_t Index = 0; Index < smbiosSettings.RamSlotCount; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = channelMap[Index];
     UINT8 bank = (UINT8)Index / channels;
-    if (!insertingEmpty && (gRAMCount > expectedCount) &&
+    if (!insertingEmpty && (Index > expectedCount) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
@@ -1787,11 +1811,11 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
-      deviceLocator.S8Printf("DIMM%d", gRAMCount + 1);
+      deviceLocator.S8Printf("DIMM%zd", Index + 1);
       bankLocator.setEmpty();
     } else {
       deviceLocator.S8Printf("DIMM%d", bank);
-		  bankLocator.S8Printf("BANK %llu", Index % channels);
+		  bankLocator.S8Printf("BANK %zu", Index % channels);
     }
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, deviceLocator);
     if (isMacPro) {
@@ -1799,7 +1823,7 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
     } else {
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, bankLocator);
     }
-	  DBG("SMBIOS Type 17 Index = %d => %llu %llu:\n", gRAMCount, SMBIOSIndex, SPDIndex);
+	  DBG("SMBIOS Type 17 Index = %zd => %llu %llu:\n", Index, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("%s %s EMPTY\n", bankLocator.c_str(), deviceLocator.c_str());
       newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
@@ -1812,14 +1836,14 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
       } else {
         mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
       }
-      mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
+      mMemory17[Index] = (UINT16)mTotalSystemMemory;
       //      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
-    if (gSettings.Smbios.Attribute != -1) {
-      newSmbiosTable.Type17->Attributes = gSettings.Smbios.Attribute;
+    if (smbiosSettings.Attribute != -1) {
+      newSmbiosTable.Type17->Attributes = smbiosSettings.Attribute;
     }
-    mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
+    mHandle17[Index] = LogSmbiosTable(newSmbiosTable);
   }
   if (mTotalSystemMemory > 0) {
     DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
@@ -1827,7 +1851,7 @@ for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
 }
 
 void
-PatchTableType19 ()
+PatchTableType19 (const SmbiosInjectedSettings& smbiosSettings)
 {
   //
   // Generate Memory Array Mapped Address info (TYPE 19)
@@ -1849,7 +1873,7 @@ PatchTableType19 ()
   UINT32  TotalEnd = 0;
   UINT8  PartWidth = 1;
   UINT16  SomeHandle = 0x1300; //as a common rule handle=(type<<8 + index)
-  for (Index = 0; Index < TotalCount; Index++) {
+  for (size_t Index = 0; Index < smbiosSettings.RamSlotCount; Index++) {
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
     if (SmbiosTable.Raw == NULL) {
       continue;
@@ -1876,14 +1900,14 @@ PatchTableType19 ()
   return ;
 }
 
-void PatchTableType20 ()
+void PatchTableType20 (const SmbiosInjectedSettings& smbiosSettings)
 {
   UINTN  j = 0, k = 0, m = 0;
   //
   // Generate Memory Array Mapped Address info (TYPE 20)
   // not needed neither for Apple nor for EFI
   m = 0;
-  for (Index = 0; Index < TotalCount; Index++) {
+  for (size_t Index = 0; Index < smbiosSettings.RamSlotCount; Index++) {
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE_MAPPED_ADDRESS, Index);
     if (SmbiosTable.Raw == NULL) {
       return ;
@@ -1891,13 +1915,13 @@ void PatchTableType20 ()
     TableSize = SmbiosTableLength(SmbiosTable);
     ZeroMem((void*)newSmbiosTable.Type20, MAX_TABLE_SIZE);
     CopyMem((void*)newSmbiosTable.Type20, (void*)SmbiosTable.Type20, TableSize);
-    for (j=0; j < TotalCount; j++) {
+    for (j=0; j < smbiosSettings.RamSlotCount; j++) {
       //EndingAddress in kb while mMemory in Mb
       if ((UINT32)(mMemory17[j] << 10) > newSmbiosTable.Type20->EndingAddress) {
         newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
         k = newSmbiosTable.Type20->EndingAddress;
         m += mMemory17[j];
-		  DBG("Type20[%llu]->End = 0x%llX, Type17[%llu] = %llX\n",
+		  DBG("Type20[%zu]->End = 0x%llX, Type17[%llu] = %llX\n",
             Index, k, j, m);
         //        DBG(" MemoryDeviceHandle = 0x%X\n", newSmbiosTable.Type20->MemoryDeviceHandle);
         mMemory17[j] = 0; // used
@@ -1915,7 +1939,7 @@ void PatchTableType20 ()
   return ;
 }
 
-void GetTableType32()
+void GetTableType32(SmbiosDiscoveredSettings* smbiosSettings)
 {
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_BOOT_INFORMATION, 0);
   if (SmbiosTable.Raw == NULL) {
@@ -1928,7 +1952,7 @@ void GetTableType32()
  * Apple Specific Structures.
  * Firmware Table, FirmwareVolume (TYPE 128).
  */
-void PatchTableType128()
+void PatchTableType128(const SmbiosInjectedSettings& smbiosSettings)
 {
   /**
    * Useful information.
@@ -1954,9 +1978,9 @@ void PatchTableType128()
   newSmbiosTable.Type128->Hdr.Handle = 0x8000;
 
   // set firmware-features, example: 0x80001417, imac11,2 -> 0x1403.
-  newSmbiosTable.Type128->FirmwareFeatures = gSettings.Smbios.gFwFeatures;
+  newSmbiosTable.Type128->FirmwareFeatures = smbiosSettings.FirmwareFeatures;
   // set firmware-features mask
-  newSmbiosTable.Type128->FirmwareFeaturesMask = gSettings.Smbios.gFwFeaturesMask;
+  newSmbiosTable.Type128->FirmwareFeaturesMask = smbiosSettings.FirmwareFeaturesMask;
 
   /**
    * TODO: I have an idea that region should be the same as Efivar.bin
@@ -1979,7 +2003,7 @@ void PatchTableType128()
   return ;
 }
 
-void PatchTableType130()
+void PatchTableType130(const SmbiosInjectedSettings& smbiosSettings)
 {
   //
   // MemorySPD (TYPE 130)
@@ -1998,13 +2022,13 @@ void PatchTableType130()
 
 
 
-void PatchTableType131()
+void PatchTableType131(const SmbiosInjectedSettings& smbiosSettings)
 {
   // Get Table Type131
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
   if (SmbiosTable.Raw != NULL) {
 	  MsgLog("Table 131 is present, CPUType=%hX\n", SmbiosTable.Type131->ProcessorType.Type);
-	  MsgLog("Change to: %hX\n", gSettings.CPU.CpuType);
+	  MsgLog("Change to: %hX\n", smbiosSettings.CpuType);
   }
 
   ZeroMem((void*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
@@ -2012,14 +2036,14 @@ void PatchTableType131()
   newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2;
   newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
   // Patch ProcessorType
-  newSmbiosTable.Type131->ProcessorType.Type = gSettings.CPU.CpuType;
+  newSmbiosTable.Type131->ProcessorType.Type = smbiosSettings.CpuType;
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
 
-void PatchTableType132()
+void PatchTableType132(const SmbiosInjectedSettings& smbiosSettings)
 {
-  if (!GlobalConfig.SetTable132) {
+  if (!smbiosSettings.SetTable132) {
     //DBG("disabled Table 132\n");
     return;
   }
@@ -2028,7 +2052,7 @@ void PatchTableType132()
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 132, 0);
   if (SmbiosTable.Raw != NULL) {
 	  MsgLog("Table 132 is present, QPI=%hX\n", SmbiosTable.Type132->ProcessorBusSpeed);
-	  MsgLog("Change to: %hX\n", gSettings.CPU.QPI);
+	  MsgLog("Change to: %hX\n", smbiosSettings.QPI);
   }
 
   ZeroMem((void*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
@@ -2037,38 +2061,38 @@ void PatchTableType132()
   newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
 
   // Patch ProcessorBusSpeed
-  if(gSettings.CPU.QPI){
-    newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.CPU.QPI;
+  if(smbiosSettings.QPI){
+    newSmbiosTable.Type132->ProcessorBusSpeed = smbiosSettings.QPI;
   } else {
-    newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, Kilo), 2));
+    newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(smbiosSettings.ExternalClock, Kilo), 2));
   }
 
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
 
-void PatchTableType133()
+void PatchTableType133(const SmbiosInjectedSettings& smbiosSettings)
 {
-  if (gSettings.Smbios.gPlatformFeature == 0xFFFF) {
+  if (smbiosSettings.gPlatformFeature == 0xFFFF) {
     return;
   }
   // Get Table Type133
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 133, 0);
   if (SmbiosTable.Raw != NULL) {
 	  MsgLog("Table 133 is present, PlatformFeature=%llX\n", SmbiosTable.Type133->PlatformFeature);
-	  MsgLog("Change to: %llX\n", gSettings.Smbios.gPlatformFeature);
+	  MsgLog("Change to: %llX\n", smbiosSettings.gPlatformFeature);
   }
   ZeroMem((void*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
   newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
-  //  newSmbiosTable.Type133->PlatformFeature = gSettings.Smbios.gPlatformFeature;
-  CopyMem((void*)&newSmbiosTable.Type133->PlatformFeature, (void*)&gSettings.Smbios.gPlatformFeature, 8);
+  //  newSmbiosTable.Type133->PlatformFeature = smbiosSettings.gPlatformFeature;
+  CopyMem((void*)&newSmbiosTable.Type133->PlatformFeature, (void*)&smbiosSettings.gPlatformFeature, 8);
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
 
-EFI_STATUS PrepatchSmbios()
+EFI_STATUS PrepatchSmbios(SmbiosDiscoveredSettings* smbiosSettings)
 {
   EFI_STATUS        Status = EFI_SUCCESS;
   UINTN          BufferLen;
@@ -2131,9 +2155,9 @@ EFI_STATUS PrepatchSmbios()
   Current = (UINT8*)Smbios; //begin fill tables from here
   SmbiosEpsNew->TableAddress = (UINT32)(UINTN)Current;
   SmbiosEpsNew->EntryPointLength = sizeof(SMBIOS_TABLE_ENTRY_POINT); // no matter on other versions
-  if (gSettings.Smbios.SmbiosVersion != 0) {
-    SmbiosEpsNew->MajorVersion = (UINT8)(gSettings.Smbios.SmbiosVersion >> 8);
-    SmbiosEpsNew->MinorVersion = (UINT8)(gSettings.Smbios.SmbiosVersion & 0xFF);
+  if (smbiosSettings->SmbiosVersion != 0) {
+    SmbiosEpsNew->MajorVersion = (UINT8)(smbiosSettings->SmbiosVersion >> 8);
+    SmbiosEpsNew->MinorVersion = (UINT8)(smbiosSettings->SmbiosVersion & 0xFF);
     SmbiosEpsNew->SmbiosBcdRevision = (SmbiosEpsNew->MajorVersion << 4) + SmbiosEpsNew->MinorVersion;
   }
   else {
@@ -2143,51 +2167,47 @@ EFI_STATUS PrepatchSmbios()
     SmbiosEpsNew->SmbiosBcdRevision = 0x24; //Slice - we want to have v2.6 but Apple still uses 2.4, let it be default value
   }
 
-  //Create space for SPD
-  //gRAM = (__typeof__(gRAM))AllocateZeroPool(sizeof(MEM_STRUCTURE));
-  //gDMI = (__typeof__(gDMI))AllocateZeroPool(sizeof(DMI));
-
   //Collect information for use in menu
-  GetTableType1();
-  GetTableType2();
-  GetTableType3();
-  GetTableType4();
-  GetTableType16();
-  GetTableType17();
-  GetTableType32(); //get BootStatus here to decide what to do
+  GetTableType1(smbiosSettings);
+  GetTableType2(smbiosSettings);
+  GetTableType3(smbiosSettings);
+  GetTableType4(smbiosSettings);
+  GetTableType16(smbiosSettings);
+  GetTableType17(smbiosSettings);
+  GetTableType32(smbiosSettings); //get BootStatus here to decide what to do
   MsgLog("Boot status=%hhX\n", gBootStatus);
   //for example the bootloader may go to Recovery is BootStatus is Fail
   return   Status;
 }
 
-void PatchSmbios(void) //continue
+void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
 {
 
   DbgHeader("PatchSmbios");
 
   newSmbiosTable.Raw = (UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
   //Slice - order of patching is significant
-  PatchTableType0();
-  PatchTableType1();
-  PatchTableType2();
-  PatchTableType3();
-  PatchTableType7(); //we should know handles before patch Table4
-  PatchTableType4();
-  //  PatchTableType6();
-  PatchTableType9();
-  if (!gSettings.Smbios.NoRomInfo) {
-    PatchTableType11();
+  PatchTableType0(smbiosSettings);
+  PatchTableType1(smbiosSettings);
+  PatchTableType2(smbiosSettings);
+  PatchTableType3(smbiosSettings);
+  PatchTableType7(smbiosSettings); //we should know handles before patch Table4
+  PatchTableType4(smbiosSettings);
+  //  PatchTableType6(smbiosSettings);
+  PatchTableType9(smbiosSettings);
+  if (!smbiosSettings.NoRomInfo) {
+    PatchTableType11(smbiosSettings);
   }
   PatchTableTypeSome();
-  PatchTableType17();
-  PatchTableType16();
-  PatchTableType19();
-  PatchTableType20();
-  PatchTableType128();
-  PatchTableType130();
-  PatchTableType131();
-  PatchTableType132();
-  PatchTableType133();
+  PatchTableType17(smbiosSettings);
+  PatchTableType16(smbiosSettings);
+  PatchTableType19(smbiosSettings);
+  PatchTableType20(smbiosSettings);
+  PatchTableType128(smbiosSettings);
+  PatchTableType130(smbiosSettings);
+  PatchTableType131(smbiosSettings);
+  PatchTableType132(smbiosSettings);
+  PatchTableType133(smbiosSettings);
   AddSmbiosEndOfTable();
   if(MaxStructureSize > MAX_TABLE_SIZE){
     //    DBG("Too long SMBIOS!\n");
@@ -2198,7 +2218,7 @@ void PatchSmbios(void) //continue
   // neither by specs nor by AppleSmbios.kext
 }
 
-void FinalizeSmbios() //continue
+void FinalizeSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
 {
   EFI_PEI_HOB_POINTERS  GuidHob;
   EFI_PEI_HOB_POINTERS  HobStart;
@@ -2211,7 +2231,7 @@ void FinalizeSmbios() //continue
 
   if (HobStart.Raw != NULL) {
     // find SMBIOS in hob
-    for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
+    for (size_t Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
       GuidHob.Raw = (__typeof_am__(HobStart.Raw))GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
       if (GuidHob.Raw != NULL) {
         Table = (__typeof_am__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
@@ -2272,7 +2292,7 @@ void FinalizeSmbios() //continue
   //
   // to fix Dell's SMBIOS truncate credit David Passmore
   //
-  if (gSettings.KernelAndKextPatches.KPDELLSMBIOS)
+  if (smbiosSettings.KPDELLSMBIOS)
   {
     //
     // syscl: remap smbios table 1 guid
@@ -2308,4 +2328,5 @@ void FinalizeSmbios() //continue
   //  egSaveFile(NULL, SWPrintf("%ls\\misc\\smbios.bin", self.getCloverDirFullPath().wc_str()).wc_str(), (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
   return;
 }
+
 

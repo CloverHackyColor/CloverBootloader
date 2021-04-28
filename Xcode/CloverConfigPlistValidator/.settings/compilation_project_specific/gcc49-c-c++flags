@@ -1,0 +1,7 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+echo -g -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Wno-array-bounds -ffunction-sections -fdata-sections \
+     -fno-common -m64 -fno-stack-protector -mabi=ms -maccumulate-outgoing-args -mno-red-zone -Wno-address -mcmodel=small -fpie -fno-asynchronous-unwind-tables \
+     -Wno-address -flto -Wno-unused-but-set-variable -fno-omit-frame-pointer -Wno-unknown-pragmas -Wno-unused-label

@@ -3,7 +3,7 @@
 //  cpp_tests
 //
 //  Created by jief on 23.02.20.
-//  Copyright © 2020 JF Knudsen. All rights reserved.
+//  Copyright © 2020 Jief_Machak. All rights reserved.
 //
 
 #include "Platform.h"

@@ -103,8 +103,8 @@ VOID
 EFIAPI
 HdaCodecGetName(IN UINT32 CodecID, IN UINT16 RevisionId, OUT CHAR16 **Name);
 
-BOOLEAN 
-EFIAPI
-IsHDMIAudio(EFI_HANDLE PciDevHandle);
+//BOOLEAN
+//EFIAPI
+//IsHDMIAudio(EFI_HANDLE PciDevHandle);
 
 #endif

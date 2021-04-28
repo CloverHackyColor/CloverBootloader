@@ -1434,13 +1434,14 @@ UINT16 GetAdvancedCpuType()
   return GetStandardCpuType();
 }
 
-MACHINE_TYPES GetDefaultModel(bool isMobile)
+MACHINE_TYPES GetDefaultModel()
 {
   MACHINE_TYPES DefaultType = iMac132;
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
     return MacPro61;
   }
   // TODO: Add more CPU models and configure the correct machines per CPU/GFX model
+  bool isMobile = getMobileFromSmbios();
   if(isMobile) {
     switch (gCPUStructure.Model)
     {
@@ -1459,8 +1460,7 @@ MACHINE_TYPES GetDefaultModel(bool isMobile)
         DefaultType = MacBook21;
         break;
       case CPU_MODEL_PENRYN:
-        if ((gGraphics[0].Vendor == Nvidia) ||
-            (gGraphics[1].Vendor == Nvidia)) {
+        if ( gConf.GfxPropertiesArray.hasNvidia() ) {
           DefaultType = MacBookPro51;
         } else
           DefaultType = MacBook41;
@@ -1520,8 +1520,7 @@ MACHINE_TYPES GetDefaultModel(bool isMobile)
         DefaultType = MacBookPro143;
         break;
       default:
-        if ((gGraphics[0].Vendor == Nvidia) ||
-            (gGraphics[1].Vendor == Nvidia)) {
+        if ( gConf.GfxPropertiesArray.hasNvidia() ) {
           DefaultType = MacBookPro51;
         } else
           DefaultType = MacBookPro83;
@@ -1570,7 +1569,7 @@ MACHINE_TYPES GetDefaultModel(bool isMobile)
         DefaultType = MacPro51;
         break;
       case CPU_MODEL_SANDY_BRIDGE:
-        if (gGraphics[0].Vendor == Intel) {
+        if ( gConf.GfxPropertiesArray.isCardAtPosIntel(0) ) {
           DefaultType = MacMini51;
           break;
         }
@@ -1588,7 +1587,7 @@ MACHINE_TYPES GetDefaultModel(bool isMobile)
       case CPU_MODEL_IVY_BRIDGE:
       case CPU_MODEL_IVY_BRIDGE_E5:
         DefaultType = iMac132;
-        if (gGraphics[0].Vendor == Intel) {
+        if ( gConf.GfxPropertiesArray.isCardAtPosIntel(0) ) {
           DefaultType = MacMini62;
           break;
         }
