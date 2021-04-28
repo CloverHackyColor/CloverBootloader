@@ -951,6 +951,36 @@ void PatchTableType4()
       BrandStr.S8Printf("%llX", gCPUStructure.MicroCode);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
+    
+#ifdef JIEF_DEBUG
+DBG("newSmbiosTable.Type4->AssetTag=%d\n", newSmbiosTable.Type4->AssetTag);
+DBG("newSmbiosTable.Type4->CoreCount=%d\n", newSmbiosTable.Type4->CoreCount);
+DBG("newSmbiosTable.Type4->CoreCount2=%d\n", newSmbiosTable.Type4->CoreCount2);
+DBG("newSmbiosTable.Type4->CurrentSpeed=%d\n", newSmbiosTable.Type4->CurrentSpeed);
+DBG("newSmbiosTable.Type4->EnabledCoreCount=%d\n", newSmbiosTable.Type4->EnabledCoreCount);
+DBG("newSmbiosTable.Type4->EnabledCoreCount2=%d\n", newSmbiosTable.Type4->EnabledCoreCount2);
+DBG("newSmbiosTable.Type4->ExternalClock=%d\n", newSmbiosTable.Type4->ExternalClock);
+DBG("newSmbiosTable.Type4->L1CacheHandle=%d\n", newSmbiosTable.Type4->L1CacheHandle);
+DBG("newSmbiosTable.Type4->L2CacheHandle=%d\n", newSmbiosTable.Type4->L2CacheHandle);
+DBG("newSmbiosTable.Type4->L3CacheHandle=%d\n", newSmbiosTable.Type4->L3CacheHandle);
+DBG("newSmbiosTable.Type4->MaxSpeed=%d\n", newSmbiosTable.Type4->MaxSpeed);
+DBG("newSmbiosTable.Type4->PartNumber=%d\n", newSmbiosTable.Type4->PartNumber);
+DBG("newSmbiosTable.Type4->ProcessorCharacteristics=%d\n", newSmbiosTable.Type4->ProcessorCharacteristics);
+DBG("newSmbiosTable.Type4->ProcessorFamily=%d\n", newSmbiosTable.Type4->ProcessorFamily);
+DBG("newSmbiosTable.Type4->ProcessorFamily2=%d\n", newSmbiosTable.Type4->ProcessorFamily2);
+DBG("newSmbiosTable.Type4->ProcessorId.FeatureFlags=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags);
+DBG("newSmbiosTable.Type4->ProcessorId.Signatur=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.Signature);
+DBG("newSmbiosTable.Type4->ProcessorManufacture=%d\n", newSmbiosTable.Type4->ProcessorManufacture);
+DBG("newSmbiosTable.Type4->ProcessorType=%d\n", newSmbiosTable.Type4->ProcessorType);
+DBG("newSmbiosTable.Type4->ProcessorUpgrade=%d\n", newSmbiosTable.Type4->ProcessorUpgrade);
+DBG("newSmbiosTable.Type4->ProcessorVersion=%d\n", newSmbiosTable.Type4->ProcessorVersion);
+DBG("newSmbiosTable.Type4->SerialNumber=%d\n", newSmbiosTable.Type4->SerialNumber);
+DBG("newSmbiosTable.Type4->Socket=%d\n", newSmbiosTable.Type4->Socket);
+DBG("newSmbiosTable.Type4->Status=%d\n", newSmbiosTable.Type4->Status);
+DBG("newSmbiosTable.Type4->ThreadCount=%d\n", newSmbiosTable.Type4->ThreadCount);
+DBG("newSmbiosTable.Type4->ThreadCount2=%d\n", newSmbiosTable.Type4->ThreadCount2);
+DBG("newSmbiosTable.Type4->Voltage=%d\n", *(UINT8*)&newSmbiosTable.Type4->Voltage);
+#endif
 
     Handle = LogSmbiosTable(newSmbiosTable);
   }
@@ -1071,6 +1101,18 @@ void PatchTableType9()
   // SlotDesignation == name to "AAPL,slot-name"
   // SlotType = 32bit PCI/SlotTypePciExpressX1/x4/x16
   // real PC -> PCI, real Mac -> PCIe
+
+#ifdef JIEF_DEBUG
+  for (Index = 0; Index <= 15; Index++) {
+    DBG("SlotDevice[%lld].BusNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].BusNum : 0);
+    DBG("SlotDevice[%lld].DevFuncNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].DevFuncNum : 0);
+    DBG("SlotDevice[%lld].SegmentGroupNum = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SegmentGroupNum : 0);
+    DBG("SlotDevice[%lld].SlotID = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotID : 0);
+    DBG("SlotDevice[%lld].SlotType = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotType : 0);
+    DBG("SlotDevice[%lld].SlotName = %s\n", Index, gSettings.Smbios.SlotDevices[Index].Valid ? gSettings.Smbios.SlotDevices[Index].SlotName.c_str() : "");
+    DBG("SlotDevice[%lld].Valid = %d\n", Index, gSettings.Smbios.SlotDevices[Index].Valid);
+  }
+#endif
 
   for (Index = 0; Index < 15; Index++) {
     if (gSettings.Smbios.SlotDevices[Index].Valid) {
@@ -1374,6 +1416,19 @@ void PatchTableType17()
     //
     gRAMCount = 0;
     // Inject tables
+#ifdef JIEF_DEBUG
+DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", gSettings.Smbios.Memory.SlotCounts);
+DBG("gSettings.Smbios.Memory.UserChannels=%d\n", gSettings.Smbios.Memory.UserChannels);
+for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
+  DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, gSettings.Smbios.Memory.User[Index].Frequency);
+  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, gSettings.Smbios.Memory.User[Index].InUse);
+  DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, gSettings.Smbios.Memory.User[Index].ModuleSize);
+  DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, gSettings.Smbios.Memory.User[Index].PartNo.c_str());
+  DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, gSettings.Smbios.Memory.User[Index].SerialNo.c_str());
+  DBG("gSettings.Smbios.Memory.User[%lld].Type=%d\n", Index, gSettings.Smbios.Memory.User[Index].Type);
+  DBG("gSettings.Smbios.Memory.User[%lld].Vendor=%s\n", Index, gSettings.Smbios.Memory.User[Index].Vendor.c_str());
+}
+#endif
     for (Index = 0; Index < gSettings.Smbios.Memory.SlotCounts; Index++) {
       UINTN UserIndex = channelMap[Index];
       UINT8 bank = (UINT8)(Index / gSettings.Smbios.Memory.UserChannels);

@@ -8,6 +8,7 @@ int XStringArray_tests()
 //	printf("XStringWArray_tests -> Enter\n");
 #endif
 
+    // Test ConstXStringWArray
     {
         ConstXStringWArray constArray;
         constArray.Add(L"aa");
@@ -25,6 +26,7 @@ int XStringArray_tests()
         if ( !b ) return 5;
     }
 
+    // test contains
     {
         XStringWArray array1;
 
@@ -104,6 +106,7 @@ int XStringArray_tests()
         XString8Array array3bis = Split<XString8Array>(c);
         if ( array != array3bis ) return 20;
     }
+    
     // Test Split char[64]
     {
         char buf[64];
@@ -115,6 +118,7 @@ int XStringArray_tests()
         if ( array[2] != "3333"_XS8 ) return 33;
         if ( array[3] != "4th_item"_XS8 ) return 34;
     }
+    
     // Test concat and Split @Pene
     {
         XString8Array array;
@@ -140,7 +144,8 @@ int XStringArray_tests()
         LoadOptions2 = array;
         if ( LoadOptions2 != array ) return 22;
     }
-    //
+    
+    // test == versus Same
     {
         XStringWArray array;
         array.Add(L"word1"_XSW);
@@ -158,6 +163,8 @@ int XStringArray_tests()
         if ( !array.Same(array2) ) return 41; // Arrays are the same
 
     }
+    
+    // Test AddNoNull and AddID
     {
         XStringWArray array1;
         array1.Add(L"word1"_XSW);
@@ -172,6 +179,8 @@ int XStringArray_tests()
         array1.AddID(L"other2"_XSW);
         if ( array1.size() != 4 ) return 53;
     }
+    
+    // Test operator =
     {
         XString8Array array;
         array.Add(L"word1");
@@ -184,7 +193,14 @@ int XStringArray_tests()
         XString8Array* array2Ptr = &array2;
         *array2Ptr = array2;
         if ( array2 != array ) return 22;
+        
+        XStringWArray warray1;
+        warray1 = array;
+        XString8Array array3 = warray1;
+        if ( array3 != array ) return 24;
 	  }
+   
+    // test remove() and removeIC()
     {
         XString8Array array;
         array.Add(L"word1");
@@ -192,42 +208,31 @@ int XStringArray_tests()
         array.Add(L"3333");
         array.Add(L"4th_item");
 		
-        XString8Array array2 = array;
-        if ( array2 != array ) return 22;
-        XString8Array* array2Ptr = &array2;
-        *array2Ptr = array2;
-        if ( array2 != array ) return 22;
-	  }
-    {
-        XString8Array array;
-        array.Add(L"word1");
-        array.Add(L"other2");
-        array.Add(L"3333");
-        array.Add(L"4th_item");
-		
-		array.remove("WOrd1"_XS8);
+        array.remove("WOrd1"_XS8);
         if ( !array.contains("word1"_XS8) ) return 22;
-		array.remove("word1"_XS8);
+        array.remove("word1"_XS8);
         if ( array.contains("word1"_XS8) ) return 22;
-		array.removeIC("oTHEr2"_XS8);
+        array.removeIC("oTHEr2"_XS8);
         if ( array.contains("other2"_XS8) ) return 22;
-		array.removeIC("4th_ITEM"_XS8);
+        array.removeIC("4th_ITEM"_XS8);
         if ( array.contains("4th_item"_XS8) ) return 22;
-		XString8 c = array.ConcatAll();
-//		printf("c=%s\n", c.c_str());
-	}
+        //XString8 c = array.ConcatAll();
+        //printf("c=%s\n", c.c_str());
+    }
+    
+    // test remove until array is empty
     {
         XString8Array array;
         array.Add(L"splash");
         array.Add(L"quiet");
 
-		array.remove("splash"_XS8);
+        array.remove("splash"_XS8);
         if ( array.contains("splash﻿"_XS8) ) return 22;
-		array.removeIC("quiet"_XS8);
+        array.removeIC("quiet"_XS8);
         if ( array.contains("quiet"_XS8) ) return 22;
         if ( array.size() != 0 ) return 22;
-		XString8 c = array.ConcatAll();
-//		printf("c=%s\n", c.c_str());
+        //XString8 c = array.ConcatAll();
+        //printf("c=%s\n", c.c_str());
 	}
 
 
