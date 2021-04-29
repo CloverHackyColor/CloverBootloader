@@ -1056,6 +1056,8 @@ void LOADER_ENTRY::StartLoader()
     size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
     pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "FakeSMC.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
