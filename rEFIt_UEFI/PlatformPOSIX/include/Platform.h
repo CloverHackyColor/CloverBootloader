@@ -101,7 +101,7 @@ typedef unsigned long long  uintptr_t;
 extern "C" {
 #endif
 
-#include "../../Build/Clover/DEBUGMACOS_XCODE8/X64/rEFIt_UEFI/refit/DEBUG/AutoGen.h"
+//#include "../../Build/Clover/DEBUGMACOS_XCODE8/X64/rEFIt_UEFI/refit/DEBUG/AutoGen.h"
 EFI_STATUS
 EFIAPI
 RefitMain (IN EFI_HANDLE           ImageHandle,

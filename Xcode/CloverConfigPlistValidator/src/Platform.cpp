@@ -25,3 +25,12 @@
 //{
 //	exit(1);
 //}
+
+VOID
+EFIAPI
+CpuPause (
+  VOID
+  )
+{
+  exit(1);
+}

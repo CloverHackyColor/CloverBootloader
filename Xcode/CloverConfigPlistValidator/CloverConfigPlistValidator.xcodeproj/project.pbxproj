@@ -58,15 +58,12 @@
 		9A3BA387261E7CE8009E8B0F /* SwapBytes64.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AA90DA725CD451700BD5E8B /* SwapBytes64.c */; };
 		9A3BA388261E7D10009E8B0F /* CpuDeadLoop.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AA90CD425CD451700BD5E8B /* CpuDeadLoop.c */; };
 		9A3BA389261E7D4A009E8B0F /* MemLogLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87920B261882D9000B9362 /* MemLogLib.c */; };
+		9A409C46263B1F00005A0772 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87926D261882D9000B9362 /* MemoryAllocationLib.c */; };
 		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
 		9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */; };
 		9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */; };
 		9A838CB425347C36008303F5 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB325347C36008303F5 /* MemoryOperation.c */; };
-		9A8792C9261882DA000B9362 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87926C261882D9000B9362 /* BaseMemoryLib.c */; };
-		9A8792CA261882DA000B9362 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87926D261882D9000B9362 /* MemoryAllocationLib.c */; };
-		9A8792CB261882DA000B9362 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87926E261882D9000B9362 /* PrintLib.c */; };
-		9A8792CC261882DA000B9362 /* DebugLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A87926F261882D9000B9362 /* DebugLib.c */; };
 		9A8792F6261886F6000B9362 /* posix_additions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8792E6261886F5000B9362 /* posix_additions.cpp */; };
 		9A8792F7261886F6000B9362 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8792E7261886F5000B9362 /* abort.cpp */; };
 		9A8792F8261886F6000B9362 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8792F0261886F5000B9362 /* BootLog.cpp */; };
@@ -78,90 +75,6 @@
 		9AA925B325CD79AB00BD5E8B /* icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA925AB25CD79AA00BD5E8B /* icns.cpp */; };
 		9AB67BE4261834F300CC853A /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB67BE2261834F300CC853A /* xml_lite-reapeatingdict-test.cpp */; };
 		9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */; };
-		9AF4D9CF2632D23500487D15 /* OcDataHubLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9752632D23400487D15 /* OcDataHubLib.lib */; };
-		9AF4D9D02632D23500487D15 /* OcXmlLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9762632D23400487D15 /* OcXmlLib.lib */; };
-		9AF4D9D12632D23500487D15 /* OcConfigurationLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9772632D23400487D15 /* OcConfigurationLib.lib */; };
-		9AF4D9D22632D23600487D15 /* OcFirmwareVolumeLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9782632D23400487D15 /* OcFirmwareVolumeLib.lib */; };
-		9AF4D9D32632D23600487D15 /* OcStorageLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9792632D23400487D15 /* OcStorageLib.lib */; };
-		9AF4D9D42632D23600487D15 /* OcVirtualFsLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97A2632D23400487D15 /* OcVirtualFsLib.lib */; };
-		9AF4D9D52632D23600487D15 /* OcAppleEventLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97B2632D23400487D15 /* OcAppleEventLib.lib */; };
-		9AF4D9D62632D23600487D15 /* OcCryptoLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97C2632D23400487D15 /* OcCryptoLib.lib */; };
-		9AF4D9D72632D23600487D15 /* OcAudioLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97D2632D23400487D15 /* OcAudioLib.lib */; };
-		9AF4D9D82632D23600487D15 /* OcDevicePropertyLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97E2632D23400487D15 /* OcDevicePropertyLib.lib */; };
-		9AF4D9D92632D23600487D15 /* OcAppleChunklistLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D97F2632D23400487D15 /* OcAppleChunklistLib.lib */; };
-		9AF4D9DA2632D23600487D15 /* OcStringLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9802632D23500487D15 /* OcStringLib.lib */; };
-		9AF4D9DB2632D23600487D15 /* OcTemplateLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9812632D23500487D15 /* OcTemplateLib.lib */; };
-		9AF4D9DC2632D23600487D15 /* OcUnicodeCollationEngGenericLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9822632D23500487D15 /* OcUnicodeCollationEngGenericLib.lib */; };
-		9AF4D9DD2632D23600487D15 /* ControlMsrE2.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9832632D23500487D15 /* ControlMsrE2.lib */; };
-		9AF4D9DE2632D23600487D15 /* OcAppleKeyMapLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9842632D23500487D15 /* OcAppleKeyMapLib.lib */; };
-		9AF4D9DF2632D23600487D15 /* OcConsoleLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9852632D23500487D15 /* OcConsoleLib.lib */; };
-		9AF4D9E02632D23600487D15 /* OcRtcLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9862632D23500487D15 /* OcRtcLib.lib */; };
-		9AF4D9E12632D23600487D15 /* OcDebugLogLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9872632D23500487D15 /* OcDebugLogLib.lib */; };
-		9AF4D9E22632D23600487D15 /* OcCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9882632D23500487D15 /* OcCpuLib.lib */; };
-		9AF4D9E32632D23600487D15 /* OcGuardLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9892632D23500487D15 /* OcGuardLib.lib */; };
-		9AF4D9E42632D23600487D15 /* OcDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98A2632D23500487D15 /* OcDevicePathLib.lib */; };
-		9AF4D9E52632D23600487D15 /* OcAppleKernelLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98B2632D23500487D15 /* OcAppleKernelLib.lib */; };
-		9AF4D9E62632D23600487D15 /* OcAppleKeysLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98C2632D23500487D15 /* OcAppleKeysLib.lib */; };
-		9AF4D9E72632D23600487D15 /* OcInputLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98D2632D23500487D15 /* OcInputLib.lib */; };
-		9AF4D9E82632D23600487D15 /* OpenRuntime.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98E2632D23500487D15 /* OpenRuntime.lib */; };
-		9AF4D9E92632D23600487D15 /* OcAppleRamDiskLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D98F2632D23500487D15 /* OcAppleRamDiskLib.lib */; };
-		9AF4D9EA2632D23600487D15 /* OcPeCoffLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9902632D23500487D15 /* OcPeCoffLib.lib */; };
-		9AF4D9EB2632D23600487D15 /* OcApfsLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9912632D23500487D15 /* OcApfsLib.lib */; };
-		9AF4D9EC2632D23600487D15 /* OcSmbiosLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9922632D23500487D15 /* OcSmbiosLib.lib */; };
-		9AF4D9ED2632D23600487D15 /* OcSerializeLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9932632D23500487D15 /* OcSerializeLib.lib */; };
-		9AF4D9EE2632D23600487D15 /* OcRngLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9942632D23500487D15 /* OcRngLib.lib */; };
-		9AF4D9EF2632D23600487D15 /* OcAfterBootCompatLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9952632D23500487D15 /* OcAfterBootCompatLib.lib */; };
-		9AF4D9F02632D23600487D15 /* OcCompressionLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9962632D23500487D15 /* OcCompressionLib.lib */; };
-		9AF4D9F12632D23600487D15 /* OcAppleImageVerificationLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9972632D23500487D15 /* OcAppleImageVerificationLib.lib */; };
-		9AF4D9F22632D23600487D15 /* OcMemoryLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9982632D23500487D15 /* OcMemoryLib.lib */; };
-		9AF4D9F32632D23600487D15 /* OcMacInfoLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9992632D23500487D15 /* OcMacInfoLib.lib */; };
-		9AF4D9F42632D23600487D15 /* OcBootManagementLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99A2632D23500487D15 /* OcBootManagementLib.lib */; };
-		9AF4D9F52632D23600487D15 /* OcAppleImg4Lib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99B2632D23500487D15 /* OcAppleImg4Lib.lib */; };
-		9AF4D9F62632D23600487D15 /* OcAcpiLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99C2632D23500487D15 /* OcAcpiLib.lib */; };
-		9AF4D9F72632D23600487D15 /* OcAppleDiskImageLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99D2632D23500487D15 /* OcAppleDiskImageLib.lib */; };
-		9AF4D9F82632D23600487D15 /* OcMachoLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99E2632D23500487D15 /* OcMachoLib.lib */; };
-		9AF4D9F92632D23600487D15 /* OcSmcLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D99F2632D23500487D15 /* OcSmcLib.lib */; };
-		9AF4D9FA2632D23600487D15 /* OcFileLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A02632D23500487D15 /* OcFileLib.lib */; };
-		9AF4D9FB2632D23600487D15 /* OcAppleUserInterfaceThemeLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A12632D23500487D15 /* OcAppleUserInterfaceThemeLib.lib */; };
-		9AF4D9FC2632D23600487D15 /* OcDeviceTreeLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A22632D23500487D15 /* OcDeviceTreeLib.lib */; };
-		9AF4D9FD2632D23600487D15 /* OcOSInfoLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A32632D23500487D15 /* OcOSInfoLib.lib */; };
-		9AF4D9FE2632D23600487D15 /* OcDriverConnectionLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A42632D23500487D15 /* OcDriverConnectionLib.lib */; };
-		9AF4D9FF2632D23600487D15 /* OpenCore.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A52632D23500487D15 /* OpenCore.lib */; };
-		9AF4DA002632D23600487D15 /* OcHashServicesLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A62632D23500487D15 /* OcHashServicesLib.lib */; };
-		9AF4DA012632D23600487D15 /* OcMiscLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A72632D23500487D15 /* OcMiscLib.lib */; };
-		9AF4DA022632D23600487D15 /* OcAppleBootPolicyLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A82632D23500487D15 /* OcAppleBootPolicyLib.lib */; };
-		9AF4DA032632D23600487D15 /* OcAppleSecureBootLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9A92632D23500487D15 /* OcAppleSecureBootLib.lib */; };
-		9AF4DA042632D23600487D15 /* VideoBiosPatchLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9AB2632D23500487D15 /* VideoBiosPatchLib.lib */; };
-		9AF4DA052632D23600487D15 /* VBoxPeCoffLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9AC2632D23500487D15 /* VBoxPeCoffLib.lib */; };
-		9AF4DA062632D23600487D15 /* DuetTimerLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9AD2632D23500487D15 /* DuetTimerLib.lib */; };
-		9AF4DA072632D23600487D15 /* OpensslLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9AE2632D23500487D15 /* OpensslLib.lib */; };
-		9AF4DA082632D23600487D15 /* HdaDevicesLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9AF2632D23500487D15 /* HdaDevicesLib.lib */; };
-		9AF4DA092632D23600487D15 /* WaveLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B02632D23500487D15 /* WaveLib.lib */; };
-		9AF4DA0A2632D23600487D15 /* BasePciCf8Lib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B22632D23500487D15 /* BasePciCf8Lib.lib */; };
-		9AF4DA0B2632D23600487D15 /* UefiApplicationEntryPoint.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B32632D23500487D15 /* UefiApplicationEntryPoint.lib */; };
-		9AF4DA0C2632D23600487D15 /* BaseLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B42632D23500487D15 /* BaseLib.lib */; };
-		9AF4DA0D2632D23600487D15 /* UefiRuntimeServicesTableLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B52632D23500487D15 /* UefiRuntimeServicesTableLib.lib */; };
-		9AF4DA0E2632D23600487D15 /* BaseMemoryLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B62632D23500487D15 /* BaseMemoryLib.lib */; };
-		9AF4DA0F2632D23600487D15 /* BaseIoLibIntrinsic.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B72632D23500487D15 /* BaseIoLibIntrinsic.lib */; };
-		9AF4DA102632D23600487D15 /* DxeServicesLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B82632D23500487D15 /* DxeServicesLib.lib */; };
-		9AF4DA112632D23600487D15 /* BaseCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9B92632D23500487D15 /* BaseCpuLib.lib */; };
-		9AF4DA122632D23600487D15 /* UefiLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BA2632D23500487D15 /* UefiLib.lib */; };
-		9AF4DA132632D23600487D15 /* PeCoffExtraActionLibNull.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BB2632D23500487D15 /* PeCoffExtraActionLibNull.lib */; };
-		9AF4DA142632D23600487D15 /* UefiMemoryAllocationLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BC2632D23500487D15 /* UefiMemoryAllocationLib.lib */; };
-		9AF4DA152632D23600487D15 /* UefiFileHandleLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BD2632D23500487D15 /* UefiFileHandleLib.lib */; };
-		9AF4DA162632D23600487D15 /* DxeHobLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BE2632D23500487D15 /* DxeHobLib.lib */; };
-		9AF4DA172632D23600487D15 /* UefiBootServicesTableLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9BF2632D23500487D15 /* UefiBootServicesTableLib.lib */; };
-		9AF4DA182632D23600487D15 /* BaseDebugLibSerialPort.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C02632D23500487D15 /* BaseDebugLibSerialPort.lib */; };
-		9AF4DA192632D23600487D15 /* DxeServicesTableLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C12632D23500487D15 /* DxeServicesTableLib.lib */; };
-		9AF4DA1A2632D23600487D15 /* BasePciLibCf8.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C22632D23500487D15 /* BasePciLibCf8.lib */; };
-		9AF4DA1B2632D23600487D15 /* BasePrintLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C32632D23500487D15 /* BasePrintLib.lib */; };
-		9AF4DA1C2632D23600487D15 /* UefiDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C42632D23500487D15 /* UefiDevicePathLib.lib */; };
-		9AF4DA1D2632D23600487D15 /* BaseDebugPrintErrorLevelLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C52632D23500487D15 /* BaseDebugPrintErrorLevelLib.lib */; };
-		9AF4DA1E2632D23600487D15 /* MtrrLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C72632D23500487D15 /* MtrrLib.lib */; };
-		9AF4DA1F2632D23600487D15 /* BasePlatformHookLibNull.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9C92632D23500487D15 /* BasePlatformHookLibNull.lib */; };
-		9AF4DA202632D23600487D15 /* BaseSerialPortLib16550.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9CA2632D23500487D15 /* BaseSerialPortLib16550.lib */; };
-		9AF4DA212632D23600487D15 /* FrameBufferBltLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF4D9CB2632D23500487D15 /* FrameBufferBltLib.lib */; };
-		9AF4DA222632D23600487D15 /* AutoGen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D9CE2632D23500487D15 /* AutoGen.c */; };
 		9AFDD05425CDBC1800EEAF06 /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AA91E2625CD59F100BD5E8B /* printf_lite.c */; };
 		9AFDD07D25CE731000EEAF06 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AFDD05C25CE730F00EEAF06 /* global_test.cpp */; };
 		9AFDD08125CE731000EEAF06 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AFDD06025CE730F00EEAF06 /* XBuffer_tests.cpp */; };
@@ -4935,91 +4848,6 @@
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
 		9AD7B14E26079F5C00E850D1 /* REFIT_MAINMENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MAINMENU_SCREEN.h; sourceTree = "<group>"; };
 		9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MAINMENU_SCREEN.cpp; sourceTree = "<group>"; };
-		9AF4D9752632D23400487D15 /* OcDataHubLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDataHubLib.lib; sourceTree = "<group>"; };
-		9AF4D9762632D23400487D15 /* OcXmlLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcXmlLib.lib; sourceTree = "<group>"; };
-		9AF4D9772632D23400487D15 /* OcConfigurationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcConfigurationLib.lib; sourceTree = "<group>"; };
-		9AF4D9782632D23400487D15 /* OcFirmwareVolumeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcFirmwareVolumeLib.lib; sourceTree = "<group>"; };
-		9AF4D9792632D23400487D15 /* OcStorageLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcStorageLib.lib; sourceTree = "<group>"; };
-		9AF4D97A2632D23400487D15 /* OcVirtualFsLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcVirtualFsLib.lib; sourceTree = "<group>"; };
-		9AF4D97B2632D23400487D15 /* OcAppleEventLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleEventLib.lib; sourceTree = "<group>"; };
-		9AF4D97C2632D23400487D15 /* OcCryptoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCryptoLib.lib; sourceTree = "<group>"; };
-		9AF4D97D2632D23400487D15 /* OcAudioLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAudioLib.lib; sourceTree = "<group>"; };
-		9AF4D97E2632D23400487D15 /* OcDevicePropertyLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDevicePropertyLib.lib; sourceTree = "<group>"; };
-		9AF4D97F2632D23400487D15 /* OcAppleChunklistLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleChunklistLib.lib; sourceTree = "<group>"; };
-		9AF4D9802632D23500487D15 /* OcStringLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcStringLib.lib; sourceTree = "<group>"; };
-		9AF4D9812632D23500487D15 /* OcTemplateLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcTemplateLib.lib; sourceTree = "<group>"; };
-		9AF4D9822632D23500487D15 /* OcUnicodeCollationEngGenericLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcUnicodeCollationEngGenericLib.lib; sourceTree = "<group>"; };
-		9AF4D9832632D23500487D15 /* ControlMsrE2.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = ControlMsrE2.lib; sourceTree = "<group>"; };
-		9AF4D9842632D23500487D15 /* OcAppleKeyMapLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKeyMapLib.lib; sourceTree = "<group>"; };
-		9AF4D9852632D23500487D15 /* OcConsoleLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcConsoleLib.lib; sourceTree = "<group>"; };
-		9AF4D9862632D23500487D15 /* OcRtcLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcRtcLib.lib; sourceTree = "<group>"; };
-		9AF4D9872632D23500487D15 /* OcDebugLogLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDebugLogLib.lib; sourceTree = "<group>"; };
-		9AF4D9882632D23500487D15 /* OcCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCpuLib.lib; sourceTree = "<group>"; };
-		9AF4D9892632D23500487D15 /* OcGuardLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcGuardLib.lib; sourceTree = "<group>"; };
-		9AF4D98A2632D23500487D15 /* OcDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDevicePathLib.lib; sourceTree = "<group>"; };
-		9AF4D98B2632D23500487D15 /* OcAppleKernelLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKernelLib.lib; sourceTree = "<group>"; };
-		9AF4D98C2632D23500487D15 /* OcAppleKeysLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKeysLib.lib; sourceTree = "<group>"; };
-		9AF4D98D2632D23500487D15 /* OcInputLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcInputLib.lib; sourceTree = "<group>"; };
-		9AF4D98E2632D23500487D15 /* OpenRuntime.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenRuntime.lib; sourceTree = "<group>"; };
-		9AF4D98F2632D23500487D15 /* OcAppleRamDiskLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleRamDiskLib.lib; sourceTree = "<group>"; };
-		9AF4D9902632D23500487D15 /* OcPeCoffLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcPeCoffLib.lib; sourceTree = "<group>"; };
-		9AF4D9912632D23500487D15 /* OcApfsLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcApfsLib.lib; sourceTree = "<group>"; };
-		9AF4D9922632D23500487D15 /* OcSmbiosLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSmbiosLib.lib; sourceTree = "<group>"; };
-		9AF4D9932632D23500487D15 /* OcSerializeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSerializeLib.lib; sourceTree = "<group>"; };
-		9AF4D9942632D23500487D15 /* OcRngLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcRngLib.lib; sourceTree = "<group>"; };
-		9AF4D9952632D23500487D15 /* OcAfterBootCompatLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAfterBootCompatLib.lib; sourceTree = "<group>"; };
-		9AF4D9962632D23500487D15 /* OcCompressionLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCompressionLib.lib; sourceTree = "<group>"; };
-		9AF4D9972632D23500487D15 /* OcAppleImageVerificationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleImageVerificationLib.lib; sourceTree = "<group>"; };
-		9AF4D9982632D23500487D15 /* OcMemoryLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMemoryLib.lib; sourceTree = "<group>"; };
-		9AF4D9992632D23500487D15 /* OcMacInfoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMacInfoLib.lib; sourceTree = "<group>"; };
-		9AF4D99A2632D23500487D15 /* OcBootManagementLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcBootManagementLib.lib; sourceTree = "<group>"; };
-		9AF4D99B2632D23500487D15 /* OcAppleImg4Lib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleImg4Lib.lib; sourceTree = "<group>"; };
-		9AF4D99C2632D23500487D15 /* OcAcpiLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAcpiLib.lib; sourceTree = "<group>"; };
-		9AF4D99D2632D23500487D15 /* OcAppleDiskImageLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleDiskImageLib.lib; sourceTree = "<group>"; };
-		9AF4D99E2632D23500487D15 /* OcMachoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMachoLib.lib; sourceTree = "<group>"; };
-		9AF4D99F2632D23500487D15 /* OcSmcLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSmcLib.lib; sourceTree = "<group>"; };
-		9AF4D9A02632D23500487D15 /* OcFileLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcFileLib.lib; sourceTree = "<group>"; };
-		9AF4D9A12632D23500487D15 /* OcAppleUserInterfaceThemeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleUserInterfaceThemeLib.lib; sourceTree = "<group>"; };
-		9AF4D9A22632D23500487D15 /* OcDeviceTreeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDeviceTreeLib.lib; sourceTree = "<group>"; };
-		9AF4D9A32632D23500487D15 /* OcOSInfoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcOSInfoLib.lib; sourceTree = "<group>"; };
-		9AF4D9A42632D23500487D15 /* OcDriverConnectionLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDriverConnectionLib.lib; sourceTree = "<group>"; };
-		9AF4D9A52632D23500487D15 /* OpenCore.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenCore.lib; sourceTree = "<group>"; };
-		9AF4D9A62632D23500487D15 /* OcHashServicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcHashServicesLib.lib; sourceTree = "<group>"; };
-		9AF4D9A72632D23500487D15 /* OcMiscLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMiscLib.lib; sourceTree = "<group>"; };
-		9AF4D9A82632D23500487D15 /* OcAppleBootPolicyLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleBootPolicyLib.lib; sourceTree = "<group>"; };
-		9AF4D9A92632D23500487D15 /* OcAppleSecureBootLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleSecureBootLib.lib; sourceTree = "<group>"; };
-		9AF4D9AB2632D23500487D15 /* VideoBiosPatchLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = VideoBiosPatchLib.lib; sourceTree = "<group>"; };
-		9AF4D9AC2632D23500487D15 /* VBoxPeCoffLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = VBoxPeCoffLib.lib; sourceTree = "<group>"; };
-		9AF4D9AD2632D23500487D15 /* DuetTimerLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DuetTimerLib.lib; sourceTree = "<group>"; };
-		9AF4D9AE2632D23500487D15 /* OpensslLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpensslLib.lib; sourceTree = "<group>"; };
-		9AF4D9AF2632D23500487D15 /* HdaDevicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = HdaDevicesLib.lib; sourceTree = "<group>"; };
-		9AF4D9B02632D23500487D15 /* WaveLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = WaveLib.lib; sourceTree = "<group>"; };
-		9AF4D9B22632D23500487D15 /* BasePciCf8Lib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePciCf8Lib.lib; sourceTree = "<group>"; };
-		9AF4D9B32632D23500487D15 /* UefiApplicationEntryPoint.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiApplicationEntryPoint.lib; sourceTree = "<group>"; };
-		9AF4D9B42632D23500487D15 /* BaseLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseLib.lib; sourceTree = "<group>"; };
-		9AF4D9B52632D23500487D15 /* UefiRuntimeServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiRuntimeServicesTableLib.lib; sourceTree = "<group>"; };
-		9AF4D9B62632D23500487D15 /* BaseMemoryLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseMemoryLib.lib; sourceTree = "<group>"; };
-		9AF4D9B72632D23500487D15 /* BaseIoLibIntrinsic.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseIoLibIntrinsic.lib; sourceTree = "<group>"; };
-		9AF4D9B82632D23500487D15 /* DxeServicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeServicesLib.lib; sourceTree = "<group>"; };
-		9AF4D9B92632D23500487D15 /* BaseCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseCpuLib.lib; sourceTree = "<group>"; };
-		9AF4D9BA2632D23500487D15 /* UefiLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiLib.lib; sourceTree = "<group>"; };
-		9AF4D9BB2632D23500487D15 /* PeCoffExtraActionLibNull.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PeCoffExtraActionLibNull.lib; sourceTree = "<group>"; };
-		9AF4D9BC2632D23500487D15 /* UefiMemoryAllocationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiMemoryAllocationLib.lib; sourceTree = "<group>"; };
-		9AF4D9BD2632D23500487D15 /* UefiFileHandleLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiFileHandleLib.lib; sourceTree = "<group>"; };
-		9AF4D9BE2632D23500487D15 /* DxeHobLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeHobLib.lib; sourceTree = "<group>"; };
-		9AF4D9BF2632D23500487D15 /* UefiBootServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiBootServicesTableLib.lib; sourceTree = "<group>"; };
-		9AF4D9C02632D23500487D15 /* BaseDebugLibSerialPort.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseDebugLibSerialPort.lib; sourceTree = "<group>"; };
-		9AF4D9C12632D23500487D15 /* DxeServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeServicesTableLib.lib; sourceTree = "<group>"; };
-		9AF4D9C22632D23500487D15 /* BasePciLibCf8.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePciLibCf8.lib; sourceTree = "<group>"; };
-		9AF4D9C32632D23500487D15 /* BasePrintLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePrintLib.lib; sourceTree = "<group>"; };
-		9AF4D9C42632D23500487D15 /* UefiDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiDevicePathLib.lib; sourceTree = "<group>"; };
-		9AF4D9C52632D23500487D15 /* BaseDebugPrintErrorLevelLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseDebugPrintErrorLevelLib.lib; sourceTree = "<group>"; };
-		9AF4D9C72632D23500487D15 /* MtrrLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = MtrrLib.lib; sourceTree = "<group>"; };
-		9AF4D9C92632D23500487D15 /* BasePlatformHookLibNull.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePlatformHookLibNull.lib; sourceTree = "<group>"; };
-		9AF4D9CA2632D23500487D15 /* BaseSerialPortLib16550.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseSerialPortLib16550.lib; sourceTree = "<group>"; };
-		9AF4D9CB2632D23500487D15 /* FrameBufferBltLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = FrameBufferBltLib.lib; sourceTree = "<group>"; };
-		9AF4D9CD2632D23500487D15 /* AutoGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoGen.h; sourceTree = "<group>"; };
-		9AF4D9CE2632D23500487D15 /* AutoGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AutoGen.c; sourceTree = "<group>"; };
 		9AFDD04B25CDB52600EEAF06 /* ConfigSample1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigSample1.h; sourceTree = "<group>"; };
 		9AFDD05925CE730F00EEAF06 /* XToolsCommon_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon_test.h; sourceTree = "<group>"; };
 		9AFDD05A25CE730F00EEAF06 /* XString_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString_test.h; sourceTree = "<group>"; };
@@ -5064,89 +4892,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9AF4D9DA2632D23600487D15 /* OcStringLib.lib in Frameworks */,
-				9AF4DA1F2632D23600487D15 /* BasePlatformHookLibNull.lib in Frameworks */,
-				9AF4DA0E2632D23600487D15 /* BaseMemoryLib.lib in Frameworks */,
-				9AF4D9F12632D23600487D15 /* OcAppleImageVerificationLib.lib in Frameworks */,
-				9AF4D9F82632D23600487D15 /* OcMachoLib.lib in Frameworks */,
-				9AF4DA082632D23600487D15 /* HdaDevicesLib.lib in Frameworks */,
-				9AF4D9FA2632D23600487D15 /* OcFileLib.lib in Frameworks */,
-				9AF4D9EE2632D23600487D15 /* OcRngLib.lib in Frameworks */,
-				9AF4DA112632D23600487D15 /* BaseCpuLib.lib in Frameworks */,
-				9AF4DA0B2632D23600487D15 /* UefiApplicationEntryPoint.lib in Frameworks */,
-				9AF4DA002632D23600487D15 /* OcHashServicesLib.lib in Frameworks */,
-				9AF4DA092632D23600487D15 /* WaveLib.lib in Frameworks */,
-				9AF4D9D32632D23600487D15 /* OcStorageLib.lib in Frameworks */,
-				9AF4DA1B2632D23600487D15 /* BasePrintLib.lib in Frameworks */,
-				9AF4DA212632D23600487D15 /* FrameBufferBltLib.lib in Frameworks */,
-				9AF4DA062632D23600487D15 /* DuetTimerLib.lib in Frameworks */,
-				9AF4D9F72632D23600487D15 /* OcAppleDiskImageLib.lib in Frameworks */,
-				9AF4DA022632D23600487D15 /* OcAppleBootPolicyLib.lib in Frameworks */,
-				9AF4D9EF2632D23600487D15 /* OcAfterBootCompatLib.lib in Frameworks */,
-				9AF4D9E22632D23600487D15 /* OcCpuLib.lib in Frameworks */,
-				9AF4DA142632D23600487D15 /* UefiMemoryAllocationLib.lib in Frameworks */,
-				9AF4D9F22632D23600487D15 /* OcMemoryLib.lib in Frameworks */,
-				9AF4D9DC2632D23600487D15 /* OcUnicodeCollationEngGenericLib.lib in Frameworks */,
-				9AF4D9E72632D23600487D15 /* OcInputLib.lib in Frameworks */,
-				9AF4DA192632D23600487D15 /* DxeServicesTableLib.lib in Frameworks */,
-				9AF4D9D12632D23500487D15 /* OcConfigurationLib.lib in Frameworks */,
-				9AF4D9EB2632D23600487D15 /* OcApfsLib.lib in Frameworks */,
-				9AF4D9E12632D23600487D15 /* OcDebugLogLib.lib in Frameworks */,
-				9AF4DA052632D23600487D15 /* VBoxPeCoffLib.lib in Frameworks */,
-				9AF4D9EC2632D23600487D15 /* OcSmbiosLib.lib in Frameworks */,
-				9AF4D9D42632D23600487D15 /* OcVirtualFsLib.lib in Frameworks */,
-				9AF4D9FB2632D23600487D15 /* OcAppleUserInterfaceThemeLib.lib in Frameworks */,
-				9AF4DA072632D23600487D15 /* OpensslLib.lib in Frameworks */,
-				9AF4D9F52632D23600487D15 /* OcAppleImg4Lib.lib in Frameworks */,
-				9AF4D9EA2632D23600487D15 /* OcPeCoffLib.lib in Frameworks */,
-				9AF4D9FD2632D23600487D15 /* OcOSInfoLib.lib in Frameworks */,
-				9AF4D9CF2632D23500487D15 /* OcDataHubLib.lib in Frameworks */,
-				9AF4D9DB2632D23600487D15 /* OcTemplateLib.lib in Frameworks */,
-				9AF4DA202632D23600487D15 /* BaseSerialPortLib16550.lib in Frameworks */,
-				9AF4D9D22632D23600487D15 /* OcFirmwareVolumeLib.lib in Frameworks */,
-				9AF4D9D02632D23500487D15 /* OcXmlLib.lib in Frameworks */,
-				9AF4DA042632D23600487D15 /* VideoBiosPatchLib.lib in Frameworks */,
-				9AF4DA0D2632D23600487D15 /* UefiRuntimeServicesTableLib.lib in Frameworks */,
-				9AF4D9D62632D23600487D15 /* OcCryptoLib.lib in Frameworks */,
-				9AF4D9D72632D23600487D15 /* OcAudioLib.lib in Frameworks */,
-				9AF4DA152632D23600487D15 /* UefiFileHandleLib.lib in Frameworks */,
-				9AF4D9DE2632D23600487D15 /* OcAppleKeyMapLib.lib in Frameworks */,
-				9AF4DA102632D23600487D15 /* DxeServicesLib.lib in Frameworks */,
-				9AF4DA182632D23600487D15 /* BaseDebugLibSerialPort.lib in Frameworks */,
-				9AF4D9F32632D23600487D15 /* OcMacInfoLib.lib in Frameworks */,
-				9AF4DA132632D23600487D15 /* PeCoffExtraActionLibNull.lib in Frameworks */,
-				9AF4D9E62632D23600487D15 /* OcAppleKeysLib.lib in Frameworks */,
-				9AF4D9E42632D23600487D15 /* OcDevicePathLib.lib in Frameworks */,
-				9AF4DA1A2632D23600487D15 /* BasePciLibCf8.lib in Frameworks */,
-				9AF4DA1C2632D23600487D15 /* UefiDevicePathLib.lib in Frameworks */,
-				9AF4D9D92632D23600487D15 /* OcAppleChunklistLib.lib in Frameworks */,
-				9AF4D9FC2632D23600487D15 /* OcDeviceTreeLib.lib in Frameworks */,
-				9AF4DA0A2632D23600487D15 /* BasePciCf8Lib.lib in Frameworks */,
-				9AF4D9DF2632D23600487D15 /* OcConsoleLib.lib in Frameworks */,
-				9AF4D9ED2632D23600487D15 /* OcSerializeLib.lib in Frameworks */,
-				9AF4D9FE2632D23600487D15 /* OcDriverConnectionLib.lib in Frameworks */,
-				9AF4DA032632D23600487D15 /* OcAppleSecureBootLib.lib in Frameworks */,
-				9AF4D9F42632D23600487D15 /* OcBootManagementLib.lib in Frameworks */,
-				9AF4D9E92632D23600487D15 /* OcAppleRamDiskLib.lib in Frameworks */,
-				9AF4D9E32632D23600487D15 /* OcGuardLib.lib in Frameworks */,
-				9AF4DA172632D23600487D15 /* UefiBootServicesTableLib.lib in Frameworks */,
-				9AF4D9F62632D23600487D15 /* OcAcpiLib.lib in Frameworks */,
-				9AF4D9DD2632D23600487D15 /* ControlMsrE2.lib in Frameworks */,
-				9AF4DA122632D23600487D15 /* UefiLib.lib in Frameworks */,
-				9AF4DA0C2632D23600487D15 /* BaseLib.lib in Frameworks */,
-				9AF4D9D82632D23600487D15 /* OcDevicePropertyLib.lib in Frameworks */,
-				9AF4D9E82632D23600487D15 /* OpenRuntime.lib in Frameworks */,
-				9AF4D9E52632D23600487D15 /* OcAppleKernelLib.lib in Frameworks */,
-				9AF4D9FF2632D23600487D15 /* OpenCore.lib in Frameworks */,
-				9AF4DA0F2632D23600487D15 /* BaseIoLibIntrinsic.lib in Frameworks */,
-				9AF4DA1D2632D23600487D15 /* BaseDebugPrintErrorLevelLib.lib in Frameworks */,
-				9AF4DA012632D23600487D15 /* OcMiscLib.lib in Frameworks */,
-				9AF4DA162632D23600487D15 /* DxeHobLib.lib in Frameworks */,
-				9AF4D9F92632D23600487D15 /* OcSmcLib.lib in Frameworks */,
-				9AF4DA1E2632D23600487D15 /* MtrrLib.lib in Frameworks */,
-				9AF4D9D52632D23600487D15 /* OcAppleEventLib.lib in Frameworks */,
-				9AF4D9F02632D23600487D15 /* OcCompressionLib.lib in Frameworks */,
-				9AF4D9E02632D23600487D15 /* OcRtcLib.lib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5444,7 +5189,6 @@
 		9A879205261882D9000B9362 /* PosixCompilation */ = {
 			isa = PBXGroup;
 			children = (
-				9AF4D9732632D23400487D15 /* DEBUG_Libs */,
 				9A879206261882D9000B9362 /* CloverMock */,
 				9A87920C261882D9000B9362 /* ReadmeJief.txt */,
 				9A879269261882D9000B9362 /* xcode_utf_fixed.cpp */,
@@ -15537,146 +15281,6 @@
 			path = gui;
 			sourceTree = "<group>";
 		};
-		9AF4D9732632D23400487D15 /* DEBUG_Libs */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9742632D23400487D15 /* OC */,
-				9AF4D9AA2632D23500487D15 /* Library */,
-				9AF4D9B12632D23500487D15 /* MdePkg */,
-				9AF4D9C62632D23500487D15 /* CloverEFI */,
-				9AF4D9C82632D23500487D15 /* MdeModulePkg */,
-				9AF4D9CC2632D23500487D15 /* Autogen */,
-			);
-			path = DEBUG_Libs;
-			sourceTree = "<group>";
-		};
-		9AF4D9742632D23400487D15 /* OC */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9752632D23400487D15 /* OcDataHubLib.lib */,
-				9AF4D9762632D23400487D15 /* OcXmlLib.lib */,
-				9AF4D9772632D23400487D15 /* OcConfigurationLib.lib */,
-				9AF4D9782632D23400487D15 /* OcFirmwareVolumeLib.lib */,
-				9AF4D9792632D23400487D15 /* OcStorageLib.lib */,
-				9AF4D97A2632D23400487D15 /* OcVirtualFsLib.lib */,
-				9AF4D97B2632D23400487D15 /* OcAppleEventLib.lib */,
-				9AF4D97C2632D23400487D15 /* OcCryptoLib.lib */,
-				9AF4D97D2632D23400487D15 /* OcAudioLib.lib */,
-				9AF4D97E2632D23400487D15 /* OcDevicePropertyLib.lib */,
-				9AF4D97F2632D23400487D15 /* OcAppleChunklistLib.lib */,
-				9AF4D9802632D23500487D15 /* OcStringLib.lib */,
-				9AF4D9812632D23500487D15 /* OcTemplateLib.lib */,
-				9AF4D9822632D23500487D15 /* OcUnicodeCollationEngGenericLib.lib */,
-				9AF4D9832632D23500487D15 /* ControlMsrE2.lib */,
-				9AF4D9842632D23500487D15 /* OcAppleKeyMapLib.lib */,
-				9AF4D9852632D23500487D15 /* OcConsoleLib.lib */,
-				9AF4D9862632D23500487D15 /* OcRtcLib.lib */,
-				9AF4D9872632D23500487D15 /* OcDebugLogLib.lib */,
-				9AF4D9882632D23500487D15 /* OcCpuLib.lib */,
-				9AF4D9892632D23500487D15 /* OcGuardLib.lib */,
-				9AF4D98A2632D23500487D15 /* OcDevicePathLib.lib */,
-				9AF4D98B2632D23500487D15 /* OcAppleKernelLib.lib */,
-				9AF4D98C2632D23500487D15 /* OcAppleKeysLib.lib */,
-				9AF4D98D2632D23500487D15 /* OcInputLib.lib */,
-				9AF4D98E2632D23500487D15 /* OpenRuntime.lib */,
-				9AF4D98F2632D23500487D15 /* OcAppleRamDiskLib.lib */,
-				9AF4D9902632D23500487D15 /* OcPeCoffLib.lib */,
-				9AF4D9912632D23500487D15 /* OcApfsLib.lib */,
-				9AF4D9922632D23500487D15 /* OcSmbiosLib.lib */,
-				9AF4D9932632D23500487D15 /* OcSerializeLib.lib */,
-				9AF4D9942632D23500487D15 /* OcRngLib.lib */,
-				9AF4D9952632D23500487D15 /* OcAfterBootCompatLib.lib */,
-				9AF4D9962632D23500487D15 /* OcCompressionLib.lib */,
-				9AF4D9972632D23500487D15 /* OcAppleImageVerificationLib.lib */,
-				9AF4D9982632D23500487D15 /* OcMemoryLib.lib */,
-				9AF4D9992632D23500487D15 /* OcMacInfoLib.lib */,
-				9AF4D99A2632D23500487D15 /* OcBootManagementLib.lib */,
-				9AF4D99B2632D23500487D15 /* OcAppleImg4Lib.lib */,
-				9AF4D99C2632D23500487D15 /* OcAcpiLib.lib */,
-				9AF4D99D2632D23500487D15 /* OcAppleDiskImageLib.lib */,
-				9AF4D99E2632D23500487D15 /* OcMachoLib.lib */,
-				9AF4D99F2632D23500487D15 /* OcSmcLib.lib */,
-				9AF4D9A02632D23500487D15 /* OcFileLib.lib */,
-				9AF4D9A12632D23500487D15 /* OcAppleUserInterfaceThemeLib.lib */,
-				9AF4D9A22632D23500487D15 /* OcDeviceTreeLib.lib */,
-				9AF4D9A32632D23500487D15 /* OcOSInfoLib.lib */,
-				9AF4D9A42632D23500487D15 /* OcDriverConnectionLib.lib */,
-				9AF4D9A52632D23500487D15 /* OpenCore.lib */,
-				9AF4D9A62632D23500487D15 /* OcHashServicesLib.lib */,
-				9AF4D9A72632D23500487D15 /* OcMiscLib.lib */,
-				9AF4D9A82632D23500487D15 /* OcAppleBootPolicyLib.lib */,
-				9AF4D9A92632D23500487D15 /* OcAppleSecureBootLib.lib */,
-			);
-			path = OC;
-			sourceTree = "<group>";
-		};
-		9AF4D9AA2632D23500487D15 /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9AB2632D23500487D15 /* VideoBiosPatchLib.lib */,
-				9AF4D9AC2632D23500487D15 /* VBoxPeCoffLib.lib */,
-				9AF4D9AD2632D23500487D15 /* DuetTimerLib.lib */,
-				9AF4D9AE2632D23500487D15 /* OpensslLib.lib */,
-				9AF4D9AF2632D23500487D15 /* HdaDevicesLib.lib */,
-				9AF4D9B02632D23500487D15 /* WaveLib.lib */,
-			);
-			path = Library;
-			sourceTree = "<group>";
-		};
-		9AF4D9B12632D23500487D15 /* MdePkg */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9B22632D23500487D15 /* BasePciCf8Lib.lib */,
-				9AF4D9B32632D23500487D15 /* UefiApplicationEntryPoint.lib */,
-				9AF4D9B42632D23500487D15 /* BaseLib.lib */,
-				9AF4D9B52632D23500487D15 /* UefiRuntimeServicesTableLib.lib */,
-				9AF4D9B62632D23500487D15 /* BaseMemoryLib.lib */,
-				9AF4D9B72632D23500487D15 /* BaseIoLibIntrinsic.lib */,
-				9AF4D9B82632D23500487D15 /* DxeServicesLib.lib */,
-				9AF4D9B92632D23500487D15 /* BaseCpuLib.lib */,
-				9AF4D9BA2632D23500487D15 /* UefiLib.lib */,
-				9AF4D9BB2632D23500487D15 /* PeCoffExtraActionLibNull.lib */,
-				9AF4D9BC2632D23500487D15 /* UefiMemoryAllocationLib.lib */,
-				9AF4D9BD2632D23500487D15 /* UefiFileHandleLib.lib */,
-				9AF4D9BE2632D23500487D15 /* DxeHobLib.lib */,
-				9AF4D9BF2632D23500487D15 /* UefiBootServicesTableLib.lib */,
-				9AF4D9C02632D23500487D15 /* BaseDebugLibSerialPort.lib */,
-				9AF4D9C12632D23500487D15 /* DxeServicesTableLib.lib */,
-				9AF4D9C22632D23500487D15 /* BasePciLibCf8.lib */,
-				9AF4D9C32632D23500487D15 /* BasePrintLib.lib */,
-				9AF4D9C42632D23500487D15 /* UefiDevicePathLib.lib */,
-				9AF4D9C52632D23500487D15 /* BaseDebugPrintErrorLevelLib.lib */,
-			);
-			path = MdePkg;
-			sourceTree = "<group>";
-		};
-		9AF4D9C62632D23500487D15 /* CloverEFI */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9C72632D23500487D15 /* MtrrLib.lib */,
-			);
-			path = CloverEFI;
-			sourceTree = "<group>";
-		};
-		9AF4D9C82632D23500487D15 /* MdeModulePkg */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9C92632D23500487D15 /* BasePlatformHookLibNull.lib */,
-				9AF4D9CA2632D23500487D15 /* BaseSerialPortLib16550.lib */,
-				9AF4D9CB2632D23500487D15 /* FrameBufferBltLib.lib */,
-			);
-			path = MdeModulePkg;
-			sourceTree = "<group>";
-		};
-		9AF4D9CC2632D23500487D15 /* Autogen */ = {
-			isa = PBXGroup;
-			children = (
-				9AF4D9CD2632D23500487D15 /* AutoGen.h */,
-				9AF4D9CE2632D23500487D15 /* AutoGen.c */,
-			);
-			path = Autogen;
-			sourceTree = "<group>";
-		};
 		9AFDCEB225CD9BB000EEAF06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -15794,6 +15398,7 @@
 			files = (
 				9A36E50424F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A409C46263B1F00005A0772 /* MemoryAllocationLib.c in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A2755742639E0500095D456 /* Config_GUI.cpp in Sources */,
 				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
@@ -15808,7 +15413,6 @@
 				9AFDD0AD25CE731000EEAF06 /* XArray_tests.cpp in Sources */,
 				9A27557F263A02600095D456 /* CloverVersion.cpp in Sources */,
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,
-				9A8792CB261882DA000B9362 /* PrintLib.c in Sources */,
 				9A3BA385261E7CE8009E8B0F /* SwapBytes16.c in Sources */,
 				9AFDD05425CDBC1800EEAF06 /* printf_lite.c in Sources */,
 				9AFDD0C125CE731000EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */,
@@ -15817,7 +15421,6 @@
 				9AFDD09525CE731000EEAF06 /* strcmp_test.cpp in Sources */,
 				9AFDD09125CE731000EEAF06 /* MacOsVersion_test.cpp in Sources */,
 				9A838CB425347C36008303F5 /* MemoryOperation.c in Sources */,
-				9A8792C9261882DA000B9362 /* BaseMemoryLib.c in Sources */,
 				9A3BA376261E7AF7009E8B0F /* b64cdecode.cpp in Sources */,
 				9A3BA37A261E7CCE009E8B0F /* LShiftU64.c in Sources */,
 				9AFDD08525CE731000EEAF06 /* LoadOptions_test.cpp in Sources */,
@@ -15851,10 +15454,8 @@
 				9A3BA37F261E7CD9009E8B0F /* MultS64x64.c in Sources */,
 				9A36E4F824F3B537007A1107 /* xml.cpp in Sources */,
 				9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */,
-				9AF4DA222632D23600487D15 /* AutoGen.c in Sources */,
 				9A3BA375261E7A5E009E8B0F /* guid.cpp in Sources */,
 				9A3BA372261E7931009E8B0F /* platformdata.cpp in Sources */,
-				9A8792CC261882DA000B9362 /* DebugLib.c in Sources */,
 				9A3BA389261E7D4A009E8B0F /* MemLogLib.c in Sources */,
 				9A2755752639E0500095D456 /* Config_Quirks.cpp in Sources */,
 				9A3BA37D261E7CD9009E8B0F /* Math64.c in Sources */,
@@ -15865,7 +15466,6 @@
 				9AB67BE4261834F300CC853A /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9AFDD09925CE731000EEAF06 /* printlib-test.cpp in Sources */,
 				9AFDD0B125CE731000EEAF06 /* strncmp_test.cpp in Sources */,
-				9A8792CA261882DA000B9362 /* MemoryAllocationLib.c in Sources */,
 				9A3BA37E261E7CD9009E8B0F /* ModU64x32.c in Sources */,
 				9A3BA383261E7CD9009E8B0F /* RRotU64.c in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,

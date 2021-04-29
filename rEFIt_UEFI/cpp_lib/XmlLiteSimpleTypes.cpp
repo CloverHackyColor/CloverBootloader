@@ -473,7 +473,7 @@ if ( xmlPath.contains("CsrActiveConfig") ) {
     if ( decoded ) {
       if (decodedSize > sizeof(result) ) decodedSize = sizeof(result);
       result = 0;
-      CopyMem(&result, decoded, decodedSize); // decodedSize can be < 8 bytes, but that works because of litlle endian.
+      memcpy(&result, decoded, decodedSize); // decodedSize can be < 8 bytes, but that works because of litlle endian.
       FreePool(decoded);
     }else{
       xmlLiteParser->addWarning(generateErrors, S8Printf("Tag '%s:%d' should be an integer. It's currently a data with conversion problem. Setting value to 0.", xmlPath.c_str(), pos.getLine()));
