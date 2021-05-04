@@ -440,7 +440,9 @@ bool XmlLiteParser::getKeyTagValue(const char** value, size_t* valueLength, XmlP
 {
   const char* tag;
   size_t tagLength;
-  
+#ifdef DEBUG_TRACE
+#endif
+  moveForwardUntilSignificant(); // to get the position more accurate
   *xmlParserPosition = getPosition();
   bool b = getSimpleTag(&tag, &tagLength, value, valueLength, "key", generateErrors);
   if ( !b ) {

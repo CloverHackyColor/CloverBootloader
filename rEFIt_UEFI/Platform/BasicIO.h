@@ -10,7 +10,7 @@
 
 
 BOOLEAN ReadAllKeyStrokes(void);
-void PauseForKey(CONST CHAR16* msg);
+void PauseForKey(const XString8& msg);
 
 //void DebugPause(void);
 void EndlessIdleLoop(void);

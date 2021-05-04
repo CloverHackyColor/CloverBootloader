@@ -800,7 +800,7 @@ void ApplyInputs(void)
     // to serve as default
     Model = GetModelFromString(gSettings.Smbios.ProductName);
     if (Model != MaxMachineType) {
-      SetDMISettingsForModel(Model, &gSettings);
+      SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
     }
   }
 

@@ -54,12 +54,12 @@ extern "C" int main(int argc, const char * argv[])
   const char* path = NULL;
   #ifdef JIEF_DEBUG
       path = "config-nowarning-noerror.plist";
+      path = "config-test2.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/Matgen84/EFI_github/CLOVER/config.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/BS.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/maclinuxG4/config.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/MICKHAEL/EFI_Github/CLOVER/config.plist";
-//      path = "/JiefLand/5.Devel/Clover/user config/MacKonsti/config.lenovo.plist";
-      path = "config-test2.plist";
+      path = "/JiefLand/5.Devel/Clover/user config/Slice/2021-04-29/config.plist";
   #endif
   
   if ( !path ) {

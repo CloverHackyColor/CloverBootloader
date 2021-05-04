@@ -494,9 +494,9 @@ SetupDataForOSX(BOOLEAN Hibernate)
   gSettings.CPU.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
 
   char RBr[8];
-  getRBr(GlobalConfig.CurrentModel, RBr);
+  getRBr(GlobalConfig.CurrentModel, gCPUStructure.Model, gSettings.Smbios.Mobile, RBr);
   char RPlt[8];
-  getRPlt(GlobalConfig.CurrentModel, gSettings.Smbios.Mobile, RPlt);
+  getRPlt(GlobalConfig.CurrentModel, gCPUStructure.Model, gSettings.Smbios.Mobile, RPlt);
 
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (void**)&gDataHub);

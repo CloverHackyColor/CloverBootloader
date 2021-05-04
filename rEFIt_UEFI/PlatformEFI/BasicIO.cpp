@@ -39,13 +39,14 @@ BOOLEAN ReadAllKeyStrokes(void)
     return GotKeyStrokes;
 }
 
-void PauseForKey(CONST CHAR16* msg)
+void PauseForKey(const XString8& msg)
 {
     UINTN index;
-    if (msg) {
-      printf("\n %ls", msg);
+    if ( msg.notEmpty() ) {
+      printf("%s", msg.c_str());
     }
-    printf("\n* Hit any key to continue *");
+    if ( msg.lastChar() != '\n' ) printf(" ");
+    printf("Hit any key to continue...\n");
 
     if (ReadAllKeyStrokes()) {  // remove buffered key strokes
         gBS->Stall(5000000);     // 5 seconds delay

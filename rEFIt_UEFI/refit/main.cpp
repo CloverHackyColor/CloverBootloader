@@ -171,16 +171,19 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
     ReturnStatus = Status = gBS->LoadImage(FALSE, self.getSelfImageHandle(), DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
-    DBG("  status=%s", efiStrError(Status));
+    DBG(" status=%s", efiStrError(Status));
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
-  XStringW ErrorInfo =  SWPrintf("while loading %ls", ImageTitle.wc_str());
+  XStringW ErrorInfo =  SWPrintf(" while loading %ls", ImageTitle.wc_str());
   if (CheckError(Status, ErrorInfo.wc_str())) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
-    PauseForKey(L"press any key");
+    PauseForKey(NullXString8);
     goto bailout;
+  }else{
+    DBG("\n");
+    DBG("ChildImaheHandle=%llx\n", uintptr_t(ChildImageHandle));
   }
 
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
@@ -190,7 +193,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 #ifdef JIEF_DEBUG
     EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
     if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
-    DBG("%S : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+    DBG("%ls : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
     }else{
       DBG("Can't get loaded image protocol");
     }
@@ -201,7 +204,6 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // unload the image, we don't care if it works or not...
   Status = gBS->UnloadImage(ChildImageHandle);
 bailout:
-  DBG("\n");
   return ReturnStatus;
 }
 
@@ -807,17 +809,18 @@ void LOADER_ENTRY::StartLoader()
 
   if ( OSTYPE_IS_OSX(LoaderType) || OSTYPE_IS_OSX_RECOVERY(LoaderType) || OSTYPE_IS_OSX_INSTALLER(LoaderType) ) {
 
-    {
-      EFI_HANDLE Interface = NULL;
-      Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
-      if ( !EFI_ERROR(Status) ) {
-#ifdef DEBUG
-        panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
-#else
-        DBG("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
-#endif
-      }
-    }
+      // These 2 drivers are now filtered and won't load. This check is currentmy useless.
+//    {
+//      EFI_HANDLE Interface = NULL;
+//      Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
+//      if ( !EFI_ERROR(Status) ) {
+//#ifdef DEBUG
+//        panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
+//#else
+//        DBG("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
+//#endif
+//      }
+//    }
 
 
   // if OC is NOT initialized with OcMain, we need the following
@@ -1631,9 +1634,35 @@ void LOADER_ENTRY::StartLoader()
 //    }
   }
 
-  // point to OcStartImage from OC
-  Status = gBS->StartImage (ImageHandle, 0, NULL);
-  if ( EFI_ERROR(Status) ) return; // TODO message ?
+#ifdef JIEF_DEBUG
+    //Status = EFI_NOT_FOUND;
+    Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
+#else
+    Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
+#endif
+
+    if ( EFI_ERROR(Status) ) {
+      // Ideally, we would return to the menu, displaying an error message
+      // Truth is that we get a black screen before seeing the menu again.
+      // If I remember well, we get a freeze in BdsLibConnectAllEfi()
+      // I'm guessing there is a lot of patching done for booting.
+      // To be able to go back to the menu and boot another thing,
+      // we must undo all the patching...
+      // Here is a quick, not as bad as a black screen solution : a text message and a reboot !
+      DBG("StartImage failed : %s\n", efiStrError(Status));
+      SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
+      egSetGraphicsModeEnabled(false);
+      printf("StartImage failed : %s\n", efiStrError(Status));
+      PauseForKey("Reboot needed."_XS8);
+      // Attempt warm reboot
+      gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+      // Warm reboot may not be supported attempt cold reboot
+      gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+      // Terminate the screen and just exit
+
+      return;
+    }
+
 }else{
 //  DBG("StartEFIImage\n");
 //  StartEFIImage(DevicePath, LoadOptions,
@@ -2709,6 +2738,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    }
     if ( !EFI_ERROR(Status) ) {
       DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+      DBG("Clover ImageHandle = %llx\n", (uintptr_t)ImageHandle);
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step3");
   PauseForKey(L"press any key\n");
@@ -2961,7 +2991,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   Status = ReinitRefitLib();
   if (EFI_ERROR(Status)){
     DebugLog(2, " %s", efiStrError(Status));
-    PauseForKey(L"Error reinit refit\n");
+    PauseForKey("Error reinit refit."_XS8);
 #ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
 #endif // ENABLE_SECURE_BOOT

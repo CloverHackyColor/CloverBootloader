@@ -938,14 +938,14 @@ UINT64 GetPlatformFeature(MACHINE_TYPES Model)
     }
 }
 
-void getRBr(MACHINE_TYPES Model, char RBr[8])
+void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RBr[8])
 {
   memset(RBr, 0, 8);
   if (ApplePlatformData[Model].smcBranch[0] != 'N') {
 //    snprintf(RBr, 8, "%s", ApplePlatformData[Model].smcBranch.c_str());
     memcpy(RBr, ApplePlatformData[Model].smcBranch.c_str(), MIN(8, ApplePlatformData[Model].smcBranch.sizeInBytesIncludingTerminator()));
   } else {
-    switch (gCPUStructure.Model) {
+    switch (CPUModel) {
     case CPU_MODEL_PENTIUM_M:
     case CPU_MODEL_CELERON:
       snprintf(RBr, 8, "%s", "m70");
@@ -960,7 +960,7 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
       break;
       
     case CPU_MODEL_PENRYN:
-      if (gSettings.Smbios.Mobile) {
+      if (isMobile) {
         snprintf(RBr, 8, "%s", "m82");
       } else {
         snprintf(RBr, 8, "%s", "k36");
@@ -968,7 +968,7 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
       break;
       
     case CPU_MODEL_SANDY_BRIDGE:
-      if (gSettings.Smbios.Mobile) {
+      if (isMobile) {
         snprintf(RBr, 8, "%s", "k90i");
       } else {
         snprintf(RBr, 8, "%s", "k60");
@@ -1016,14 +1016,14 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
   }
 }
 
-void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
+void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RPlt[8])
 {
   memset(RPlt, 0, 8);
   if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
     snprintf(RPlt, 8, "%s", ApplePlatformData[Model].smcPlatform.c_str());
 //    memcpy(RPlt, ApplePlatformData[Model].smcPlatform.c_str(), 8);
   } else {
-    switch (gCPUStructure.Model) {
+    switch (CPUModel) {
     case CPU_MODEL_PENTIUM_M:
     case CPU_MODEL_CELERON:
       snprintf(RPlt, 8, "m70");
@@ -1038,7 +1038,7 @@ void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
       break;
       
     case CPU_MODEL_PENRYN:
-      if (Mobile) {
+      if (isMobile) {
         snprintf(RPlt, 8, "m82");
       } else {
         snprintf(RPlt, 8, "k36");
@@ -1046,7 +1046,7 @@ void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
       break;
       
     case CPU_MODEL_SANDY_BRIDGE:
-      if (Mobile) {
+      if (isMobile) {
         snprintf(RPlt, 8, "k90i");
       } else {
         snprintf(RPlt, 8, "k60");
@@ -1165,7 +1165,7 @@ XString8 GetReleaseDate(MACHINE_TYPES Model)
   XString8 returnValue;
 
   const char* i = ApplePlatformData[Model].firmwareVersion.c_str();
-  i += AsciiStrLen(i);
+  i += strlen(i);
   while ( *i != '.' ) i--;
   if ( isReleaseDateWithYear20(Model) ) {
     returnValue.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
@@ -1175,11 +1175,11 @@ XString8 GetReleaseDate(MACHINE_TYPES Model)
   return returnValue;
 }
 
-void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData)
+void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData, REFIT_CONFIG* liveConfig)
 {
-  GlobalConfig.BiosVersionUsed = ApplePlatformData[Model].firmwareVersion;
-  GlobalConfig.ReleaseDateUsed = GetReleaseDate(Model); // AppleReleaseDate
-  GlobalConfig.EfiVersionUsed.takeValueFrom(ApplePlatformData[Model].efiversion);
+  liveConfig->BiosVersionUsed = ApplePlatformData[Model].firmwareVersion;
+  liveConfig->ReleaseDateUsed = GetReleaseDate(Model); // AppleReleaseDate
+  liveConfig->EfiVersionUsed.takeValueFrom(ApplePlatformData[Model].efiversion);
 
   settingsData->Smbios.BiosVendor = AppleBiosVendor;
   settingsData->Smbios.ManufactureName = settingsData->Smbios.BiosVendor;
@@ -1218,139 +1218,6 @@ MACHINE_TYPES GetModelFromString(const XString8& ProductName)
   // return ending enum as "not found"
   return MaxMachineType;
 }
-//
-//void GetDefaultSettings()
-//{
-//  DbgHeader("GetDefaultSettings");
-//
-//  //gLanguage         = english;
-//
-//  //default values will be overritten by config.plist
-//  //use explicitly settings TRUE or FALSE (Yes or No)
-//
-//  //gSettings.Graphics.InjectAsDict.InjectIntel          = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
-//
-//  //gSettings.Graphics.InjectAsDict.InjectATI            = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
-//  //                                  ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
-//
-//  //gSettings.Graphics.InjectAsDict.InjectNVidia         = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].Family < 0xE0)) ||
-//  //                                  ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
-//
-////  gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
-//  //CopyMem(gSettings.Graphics.NVCAP.data(), default_NVCAP, 20);
-//  //CopyMem(gSettings.Graphics.Dcfg.data(), default_dcfg_0, 4);
-//  //CopyMem(&gSettings.Graphics.Dcfg[4], default_dcfg_1, 4);
-//  //gSettings.Graphics.EDID.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
-//  //gSettings.Graphics.DualLink             = 0xA; // A(auto): DualLink auto-detection
-//  //gSettings.Devices.Audio.HDAInjection         = FALSE;
-//  //gSettings.Devices.Audio.HDALayoutId          = 0;
-//  //gSettings.Devices.USB.USBInjection         = TRUE; // enabled by default to have the same behavior as before
-//  //gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
-//  //gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
-//  //gSettings.SystemParameters.BacklightLevelConfig = FALSE;
-//  //gSettings.Smbios.TrustSMBIOS          = TRUE;
-//
-//  //gSettings.Smbios.SmUUID = nullGuidAsString;
-//  //gSettings.BootGraphics.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
-//  //GlobalConfig.RtROM.setEmpty();
-////  gSettings.RtVariables.CsrActiveConfig      = 0xFFFF;
-//  //gSettings.RtVariables.BooterConfig         = 0;
-////  MemSet(gSettings.RtVariables.BooterCfgStr, 64, 0);
-////  AsciiStrCpyS(gSettings.RtVariables.BooterCfgStr, 64, "log=0");
-//  //CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
-//  //if (OldCfgStr) {
-//    //gSettings.RtVariables.BooterCfgStr.takeValueFrom(OldCfgStr);
-//    //FreePool(OldCfgStr);
-//  //}
-//  //gSettings.Boot.DisableCloverHotkeys = FALSE;
-//  //gSettings.BootGraphics.UIScale              = 1; // new default value 0x80000000
-//
-//  //ResumeFromCoreStorage          = FALSE;
-//}
-
-/*
- * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
- * and is passed by non-const reference.
- * This temporary during the refactoring
- * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
- */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-void GetDefaultCpuSettings(SETTINGS_DATA& gSettings)
-{
-#pragma GCC diagnostic pop
-  DbgHeader("GetDefaultCpuSettings");
-  MACHINE_TYPES  Model;
-  //UINT64         msr = 0;
-  Model             = GetDefaultModel();
-  gSettings.CPU.CpuType  = GetAdvancedCpuType();
-  SetDMISettingsForModel(Model, &gSettings);
-  
-  if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
-    gSettings.ACPI.SSDT.Generate.GeneratePStates    = TRUE;
-    gSettings.ACPI.SSDT.Generate.GenerateCStates    = TRUE;
-    // backward compatibility, APFS, APLF, PluginType follow PStates
-    gSettings.ACPI.SSDT.Generate.GenerateAPSN = gSettings.ACPI.SSDT.Generate.GeneratePStates;
-    gSettings.ACPI.SSDT.Generate.GenerateAPLF = gSettings.ACPI.SSDT.Generate.GeneratePStates;
-    gSettings.ACPI.SSDT.Generate.GeneratePluginType = gSettings.ACPI.SSDT.Generate.GeneratePStates;
-    //  gSettings.ACPI.SSDT.EnableISS          = FALSE;
-    //  gSettings.ACPI.SSDT.EnableC2           = TRUE;
-    gSettings.ACPI.SSDT._EnableC6           = TRUE;
-    gSettings.ACPI.SSDT.PluginType         = 1;
-    
-    if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
-      gSettings.ACPI.SSDT.MinMultiplier    = 7;
-    }
-    //  gSettings.ACPI.SSDT.DoubleFirstState   = FALSE;
-    //gSettings.ACPI.SSDT.DropSSDT           = TRUE;    //why drop all???
-    gSettings.ACPI.SSDT._C3Latency          = 0x00FA;
-  }
-//  gSettings.CPU.Turbo                = gCPUStructure.Turbo;
-  gSettings.CPU.SavingMode           = 0xFF;  //means not set
-  
-  if (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D) {
-    gSettings.CPU.UseARTFreq = true;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model)
 {
@@ -1638,12 +1505,12 @@ int compareBiosVersion(const XString8& version1, const XString8& version2)
   const CHAR8* v1p = version1.c_str();
   const CHAR8* v2p = version2.c_str();
 
-  v1p += AsciiStrLen(v1p);
+  v1p += strlen(v1p);
   while (*v1p != '.') {
     v1p--;
   }
 
-  v2p += AsciiStrLen(v2p);
+  v2p += strlen(v2p);
   while (*v2p != '.') {
     v2p--;
   }
@@ -1694,7 +1561,7 @@ int compareReleaseDate(const XString8& date1, const XString8& date2)
   const CHAR8* i = date1.c_str();
   const CHAR8* j = date2.c_str();
 
-  if ( (AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8) )
+  if ( (strlen(i) == 8) && (strlen(j) == 8) )
   {
     if ( ((i[6] > '0') && (j[6] == '0')) || ((i[6] >= j[6]) && (i[7] > j[7])) )
     {
@@ -1724,7 +1591,7 @@ int compareReleaseDate(const XString8& date1, const XString8& date2)
     {
       return -1;
     }
-  } else if ( (AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10) )
+  } else if ( (strlen(i) == 8) && (strlen(j) == 10) )
   {
     if ( ((i[6] > '0') && (j[8] == '0')) || ((i[6] >= j[8]) && (i[7] > j[9])) )
     {
@@ -1754,7 +1621,7 @@ int compareReleaseDate(const XString8& date1, const XString8& date2)
     {
       return -1;
     }
-  } else if ( (AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 10) )
+  } else if ( (strlen(i) == 10) && (strlen(j) == 10) )
   {
     if ( ((i[8] > '0') && (j[8] == '0')) || ((i[8] >= j[8]) && (i[9] > j[9])) )
     {
@@ -1784,7 +1651,7 @@ int compareReleaseDate(const XString8& date1, const XString8& date2)
     {
       return -1;
     }
-  } else if ( (AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8) )
+  } else if ( (strlen(i) == 10) && (strlen(j) == 8) )
   {
     if ( ((i[8] > '0') && (j[6] == '0')) || ((i[8] >= j[6]) && (i[9] > j[7])) )
     {

@@ -45,6 +45,7 @@ XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class
         return ACPI_DSDT_Fixe_Array[idx].oldEnabled;
       }
     }
+    *keyFound = false;
     return nullXmlType;
 }
 

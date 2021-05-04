@@ -189,9 +189,9 @@ if ( ret != 0 ) {
   
 #if defined(CLOVER_BUILD) && defined(JIEF_DEBUG)
   if ( all_ok ) {
-//    PauseForKey(L"press");
+//    PauseForKey(NullXString8);
   }else{
-    PauseForKey(L"press");
+    PauseForKey(NullXString8);
   }
 #endif
 
