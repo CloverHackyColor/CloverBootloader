@@ -179,7 +179,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   if (CheckError(Status, ErrorInfo.wc_str())) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
-    PauseForKey(L"press any key");
+    PauseForKey(NullXString8);
     goto bailout;
   }
 
@@ -2961,7 +2961,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   Status = ReinitRefitLib();
   if (EFI_ERROR(Status)){
     DebugLog(2, " %s", efiStrError(Status));
-    PauseForKey(L"Error reinit refit\n");
+    PauseForKey("Error reinit refit."_XS8);
 #ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
 #endif // ENABLE_SECURE_BOOT

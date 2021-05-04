@@ -1,16 +1,17 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
+#include <stdlib.h> // for abort()
 
-#if defined(CLOVER_BUILD) || !defined(_MSC_VER)
-void abort(void)
-{
-  printf("A fatal error happened. System halted\n");
-  while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
-    CpuDeadLoop();
-  }
-}
-#endif
+//#if defined(CLOVER_BUILD) || !defined(_MSC_VER)
+//void abort(void)
+//{
+//  printf("A fatal error happened. System halted\n");
+//  while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
+//    abort();
+//  }
+//}
+//#endif
 
 bool stop_at_panic = true;
 bool i_have_panicked = false;
@@ -33,9 +34,7 @@ static void panic_(const char* format, VA_LIST va)
     vprintf(format, va);
   }
   printf(FATAL_ERROR_MSG);
-  while (1) { // this will avoid warning : Function declared 'noreturn' should not return
-    CpuDeadLoop();
-  }
+  abort();
 }
 
 void panic(const char* format, ...)

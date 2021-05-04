@@ -13,6 +13,7 @@
 //#include "../Platform/Settings.h"
 
 class SETTINGS_DATA;
+class REFIT_CONFIG;
 
 typedef enum {
 
@@ -192,10 +193,9 @@ public:
 
 extern PLATFORMDATA ApplePlatformData[];
 
-void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData);
+void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData, REFIT_CONFIG* liveConfig);
 MACHINE_TYPES GetModelFromString (const XString8& ProductName);
-//void GetDefaultSettings(void);
-void GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
+
 bool isReleaseDateWithYear20(MACHINE_TYPES Model);
 XString8 GetReleaseDate (MACHINE_TYPES Model);
 uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model);
@@ -203,8 +203,8 @@ uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeatures(MACHINE_TYPES Model);
 bool GetMobile(MACHINE_TYPES Model);
 UINT64 GetPlatformFeature(MACHINE_TYPES Model);
-void getRBr(MACHINE_TYPES Model, char RBr[8]);
-void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8]);
+void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RBr[8]);
+void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RPlt[8]);
 
 int compareBiosVersion(const XString8& version1, const XString8& version2);
 bool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2);

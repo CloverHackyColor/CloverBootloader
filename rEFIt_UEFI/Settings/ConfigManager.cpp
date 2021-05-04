@@ -732,6 +732,8 @@ void ConfigManager::applySettings() const
       if ( !configPlist.ACPI.SSDT.getC3Latency().isDefined() )
         gSettings.ACPI.SSDT._C3Latency = 0x00FA;
     }
+    //gSettings.CPU.Turbo                = gCPUStructure.Turbo;
+    gSettings.CPU.SavingMode           = 0xFF;  //means not set
     if ( gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D )
     {
       if ( !configPlist.CPU.getUseARTFreq().isDefined() )
@@ -898,7 +900,7 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
     gSettings.takeValueFrom(configPlist);
     // TODO improve this (avoid to delete settings to re-import them !)
     // restore default value for SMBIOS (delete values from configPlist)
-    SetDMISettingsForModel(Model, &gSettings);
+    SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
     // import values from configPlist if they are defined
     FillSmbiosWithDefaultValue(Model, configPlist.getSMBIOS());
     if ( smbiosPlist.SMBIOS.isDefined() ) {
@@ -1006,7 +1008,6 @@ EFI_STATUS ConfigManager::InitialisePlatform()
   gCPUStructure.MaxSpeed = g_SmbiosDiscoveredSettings.MaxSpeed;
 
   GetCPUProperties();
-  GetDefaultCpuSettings(gSettings); //split from GetDefaultSettings() because it should be after GetCPUProperties()
   DiscoverDevices();
 //  GetMacAddress(&gConf.LanCardArrayNonConst);
 

@@ -97,7 +97,6 @@ public:
         super::reset();
         for ( size_t idx = 0 ; idx < sizeof(ACPI_DSDT_Fixe_Array)/sizeof(ACPI_DSDT_Fixe_Array[0]) ; idx++ ) {
           ACPI_DSDT_Fixe_Array[idx].reset();
-          ACPI_DSDT_Fixe_Array[idx].reset();
         }
       };
     //  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;

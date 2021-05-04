@@ -204,7 +204,7 @@ void FinishExternalScreen(void)
     if (haveError) {
         // leave error messages on screen in case of error,
         // wait for a key press, and then switch
-        PauseForKey(L"was error, press any key\n");
+        PauseForKey("was error."_XS8);
         SwitchToText(FALSE);
     }
     

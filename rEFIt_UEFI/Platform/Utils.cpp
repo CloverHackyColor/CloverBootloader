@@ -41,7 +41,7 @@ UINT8 hexstrtouint8 (const CHAR8* buf)
 	else if (IS_HEX(buf[0]))
 		i = (buf[0] | 0x20) - 'a' + 10;
 
-	if (AsciiStrLen(buf) == 1) {
+	if (strlen(buf) == 1) {
 		return i;
 	}
 	i <<= 4;

@@ -973,7 +973,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   LegacyBiosFarCall86(0, 0x7c00, &Regs);
   
   //Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
-  PauseForKey(L"save legacy-boot.log ...\n");
+  PauseForKey("save legacy-boot.log ..."_XS8);
   Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");

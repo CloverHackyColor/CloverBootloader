@@ -34,11 +34,12 @@ public:
   XStringArray_(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : array() { *this = other; }
 
   template<typename OtherXStringClass_, class OtherXStringArrayClass>
-  XStringArrayClass& operator = (const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) {
+  XStringArray_& operator = (const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) {
     for ( size_t idx = 0 ; idx < other.size() ; ++idx ) {
       array.AddCopy(other[idx]);
     }
-    return *(XStringArrayClass*)this;
+    return *this;
+//    return *((XStringArrayClass*)this);
   }
 
 //  template<typename OtherXStringClass_, class OtherXStringArrayClass>

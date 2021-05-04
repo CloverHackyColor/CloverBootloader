@@ -281,7 +281,19 @@ bool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlP
 
   XmlParserPosition pos = xmlLiteParser->getPosition();
   RETURN_IF_FALSE( xmlLiteParser->getSimpleTag(&tag, &tagLength, keyValuePtr, keyValueLengthPtr, NULL, generateErrors) );
-  if ( strnIsEqual(tag, tagLength, "key") ) return setStringValue(*keyValuePtr, *keyValueLengthPtr);
+  if ( strnIsEqual(tag, tagLength, "key") ) {
+#ifdef JIEF_DEBUG
+if ( LString8(*keyValuePtr).startWithOrEqualTo("NewWay_80000000"_XS8) ) {
+ printf("%s", "NewWay_80000000");
+}
+#endif
+#ifdef DEBUG_TRACE
+printf("XmlKey::parseFromXmlLite key=%.*s, line=%d, buffer=", (int)*keyValueLengthPtr, *keyValuePtr, pos.getLine());
+for(size_t i=0 ; i<40 ; i++) printf("%c", pos.p[i] < 32 ? 0 : pos.p[i]);
+printf("\n");
+#endif
+    return setStringValue(*keyValuePtr, *keyValueLengthPtr);
+  }
   xmlLiteParser->addXmlError(generateErrors, S8Printf("Expecting a <key> tag in '%s' at line %d.", xmlPath.c_str(), pos.getLine()));
   return false;
 }
@@ -474,7 +486,7 @@ if ( xmlPath.contains("CsrActiveConfig") ) {
       if (decodedSize > sizeof(result) ) decodedSize = sizeof(result);
       result = 0;
       memcpy(&result, decoded, decodedSize); // decodedSize can be < 8 bytes, but that works because of litlle endian.
-      FreePool(decoded);
+      free(decoded);
     }else{
       xmlLiteParser->addWarning(generateErrors, S8Printf("Tag '%s:%d' should be an integer. It's currently a data with conversion problem. Setting value to 0.", xmlPath.c_str(), pos.getLine()));
       result = 0;
