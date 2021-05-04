@@ -2446,6 +2446,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCSR()
   SubScreen->AddMenuCheck("Allow Device Configuration", CSR_ALLOW_DEVICE_CONFIGURATION, 66);
   SubScreen->AddMenuCheck("Allow Any Recovery OS", CSR_ALLOW_ANY_RECOVERY_OS, 66);
   SubScreen->AddMenuCheck("Allow Unapproved Kexts", CSR_ALLOW_UNAPPROVED_KEXTS, 66);
+  SubScreen->AddMenuCheck("Allow Executable Policy Override", CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE, 66);
+  SubScreen->AddMenuCheck("Allow Non-authenticated Root", CSR_ALLOW_NON_AUTHENTICATED_ROOT, 66);
 
   // return
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);

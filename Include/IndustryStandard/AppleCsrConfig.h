@@ -35,6 +35,7 @@
 #define CSR_ALLOW_ANY_RECOVERY_OS             (1U << 8U)
 #define CSR_ALLOW_UNAPPROVED_KEXTS            (1U << 9U)
 #define CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE  (1U << 10U)
+#define CSR_ALLOW_NON_AUTHENTICATED_ROOT      (1U << 11U)
 
 #define CSR_VALID_FLAGS (CSR_ALLOW_UNTRUSTED_KEXTS | \
                          CSR_ALLOW_UNRESTRICTED_FS | \
@@ -46,7 +47,8 @@
                          CSR_ALLOW_DEVICE_CONFIGURATION | \
                          CSR_ALLOW_ANY_RECOVERY_OS | \
                          CSR_ALLOW_UNAPPROVED_KEXTS | \
-                         CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE)
+                         CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE | \
+                         CSR_ALLOW_NON_AUTHENTICATED_ROOT )
 
 #define CSR_ALWAYS_ENFORCED_FLAGS (CSR_ALLOW_DEVICE_CONFIGURATION | CSR_ALLOW_ANY_RECOVERY_OS)
 

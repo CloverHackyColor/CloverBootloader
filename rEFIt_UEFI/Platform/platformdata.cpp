@@ -265,7 +265,7 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro"_XS8, "1.0"_XS8, "C02ZPHACPG8W"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j152f"_XS8, 0 },
   //MacBookPro16,2 / MacBook Pro (13-inch, 2020, Four Thunderbolt 3 ports)
-  { "MacBookPro16,2"_XS8, "MBP162.88Z.F000.B00.2005132210"_XS8, "1037.120.87.0.0"_XS8, "Mac-5F9802EFE386AA28"_XS8, // Intel Core i7-1068NG7 @ 2.30 GHz
+  { "MacBookPro16,2"_XS8, "MBP162.88Z.F000.B00.2005132210"_XS8, "1037.120.87.0.0"_XS8, "Mac-5F9802EFE386AA28"_XS8, // Intel Core i7-1068NG7 @ 2.30 GHz type=0x060b
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CLHACML7H"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j214k"_XS8, 0 },
   //MacBookPro16,3 / MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports)
