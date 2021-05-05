@@ -9,8 +9,8 @@
 #define _CONFIGPLIST_AssignSETTINGS_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/SMBIOSPlist.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/SMBIOSPlist.h"
 
 uint64_t AssignOldNewSettings(SETTINGS_DATA& olDSettings, const ConfigPlistClass& configPlist, const SmbiosPlistClass& smbiosPlist, const XString8& label = ""_XS8);
 

@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_AssignSETTINGSQUIRKS_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignQuirks(const XString8& label, SETTINGS_DATA::QuirksClass& oldS, const ConfigPlistClass::Quirks_Class& newS);
 

@@ -8,7 +8,7 @@
 #include "CompareSettingsBoot.h"
 #include <Platform.h>
 #include "CompareField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareMemoryUserSlot(const XString8& label, const RAM_SLOT_INFO& oldS, const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass& newS)
 {

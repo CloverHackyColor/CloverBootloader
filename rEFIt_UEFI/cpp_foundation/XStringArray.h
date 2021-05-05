@@ -185,12 +185,12 @@ public:
       AddReference(newS, true);
     }
     XTOOLS_VA_START(va, Val1);
-    p = VA_ARG(va, const CharType*);
+    p = XTOOLS_VA_ARG(va, const CharType*);
     while ( p != nullptr ) {
       remove_const(XStringClass)* newS = new remove_const(XStringClass);
       newS->takeValueFrom(p);
       AddReference(newS, true);
-      p = VA_ARG(va, const CharType*);
+      p = XTOOLS_VA_ARG(va, const CharType*);
     }
     XTOOLS_VA_END(va);
   }

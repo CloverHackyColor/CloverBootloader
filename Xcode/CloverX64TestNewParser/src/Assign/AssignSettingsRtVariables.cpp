@@ -8,7 +8,7 @@
 #include "AssignSettingsRtVariables.h"
 #include <Platform.h>
 #include "AssignField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignRT_VARIABLE(const XString8& label, SETTINGS_DATA::RtVariablesClass::RT_VARIABLES& oldS, const ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block& newS)
 {

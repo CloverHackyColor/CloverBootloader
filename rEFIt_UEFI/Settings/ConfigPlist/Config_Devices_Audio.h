@@ -27,6 +27,7 @@ class Devices_Audio_Class : public XmlDict
 //        if ( xmlString8.value().isEqualIC("Detect") ) return true;
         if ( xmlString8.value().isEqualIC("No") ) return true;
         // TODO:check that it's an integer decimal or hex
+        // TODO: check it's < INT32
 //        xmlLiteParser->addWarning(generateErrors, S8Printf("Expecting an integer or \"No\" for tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
 //        return false;
         return true;

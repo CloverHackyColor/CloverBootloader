@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_COMPARESETTINGSDEVICES_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareDevices(const XString8& label, const SETTINGS_DATA::DevicesClass& oldS, const ConfigPlistClass::DevicesClass& newS);
 

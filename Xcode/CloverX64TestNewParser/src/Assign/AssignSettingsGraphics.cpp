@@ -8,7 +8,7 @@
 #include "AssignSettingsGraphics.h"
 #include <Platform.h>
 #include "AssignField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 //void AssignDcfg(const XString8& label, SETTINGS_DATA::GraphicsClass& oldS, const ConfigPlistClass::Graphics_Class& newS)
 //{

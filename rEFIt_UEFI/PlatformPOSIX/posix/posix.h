@@ -12,7 +12,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include "posix_additions.h"
+
+#include "abort.h"
+
+//#include "posix_additions.h"
 
 #if defined(__APPLE__) && defined(__clang__) && __WCHAR_MAX__ <= 0xFFFFu
 // 2020-03 : w... function are broken under macOs and clang with short-wchar.
@@ -23,13 +26,6 @@
 #else
 #   include <wchar.h>
 #endif
-
-//
-//inline void* realloc(void *ptr, size_t newsize, size_t oldsize) // not the posix realloc. For EFI we need oldsize
-//{
-//	(void)oldsize;
-//	return realloc(ptr, newsize);
-//}
 
 
 #endif

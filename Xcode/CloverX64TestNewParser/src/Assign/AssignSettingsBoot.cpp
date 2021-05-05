@@ -8,7 +8,7 @@
 #include "AssignSettingsBoot.h"
 #include <Platform.h>
 #include "AssignField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignBoot(const XString8& label, SETTINGS_DATA::BootClass& oldS, const ConfigPlistClass::Boot_Class& newS)
 {

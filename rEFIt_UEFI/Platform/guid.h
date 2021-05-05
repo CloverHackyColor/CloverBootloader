@@ -242,7 +242,7 @@ StrToGuidBE (
   if ( Status != EFI_SUCCESS ) return Status;
 
   if (Guid) {
-    CopyMem((UINT8*)Guid, &GuidLE[0], sizeof(EFI_GUID));
+    memcpy((UINT8*)Guid, &GuidLE[0], sizeof(EFI_GUID));
   }
 
   return EFI_SUCCESS;

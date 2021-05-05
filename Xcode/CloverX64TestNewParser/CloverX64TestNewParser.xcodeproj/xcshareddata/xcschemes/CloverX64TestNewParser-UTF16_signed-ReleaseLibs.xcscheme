@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9AF4DFED261F04B700365AD2"
-               BuildableName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
-               BlueprintName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
+               BlueprintIdentifier = "9AE2785A2642869E005C8F2F"
+               BuildableName = "CloverX64TestNewParser-UTF16_signed-ReleaseLibs"
+               BlueprintName = "CloverX64TestNewParser-UTF16_signed-ReleaseLibs"
                ReferencedContainer = "container:CloverX64TestNewParser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -41,16 +41,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9AF4DFED261F04B700365AD2"
-            BuildableName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
-            BlueprintName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
-            ReferencedContainer = "container:CloverX64TestNewParser.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
             argument = "&quot;/JiefLand/5.Devel/Clover/user config/Matgen84/2021-04-11/config - Default.plist&quot;"
@@ -84,16 +74,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9AF4DFED261F04B700365AD2"
-            BuildableName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
-            BlueprintName = "CloverX64TestNewParser_UTF16_signed_RELEASE"
+            BlueprintIdentifier = "9AE2785A2642869E005C8F2F"
+            BuildableName = "CloverX64TestNewParser-UTF16_signed-ReleaseLibs"
+            BlueprintName = "CloverX64TestNewParser-UTF16_signed-ReleaseLibs"
             ReferencedContainer = "container:CloverX64TestNewParser.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Release">

@@ -1683,8 +1683,6 @@
 		9A8787E526186896000B9362 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9A2754E626396F2A0095D456 /* SmbiosFillPatchingValues.cpp */,
-				9A2754E726396F2B0095D456 /* SmbiosFillPatchingValues.h */,
 				9A87881226186896000B9362 /* AcpiPatcher.cpp */,
 				9A87880326186896000B9362 /* AcpiPatcher.h */,
 				9A87881726186896000B9362 /* AmlGenerator.cpp */,
@@ -1768,6 +1766,8 @@
 				9AF1EFE92634217800F7C2C0 /* SettingsUtils.h */,
 				9A87885526186896000B9362 /* smbios.cpp */,
 				9A87885426186896000B9362 /* smbios.h */,
+				9A2754E626396F2A0095D456 /* SmbiosFillPatchingValues.cpp */,
+				9A2754E726396F2B0095D456 /* SmbiosFillPatchingValues.h */,
 				9A87884A26186896000B9362 /* sound.cpp */,
 				9A87883D26186896000B9362 /* spd.cpp */,
 				9A87885F26186896000B9362 /* spd.h */,

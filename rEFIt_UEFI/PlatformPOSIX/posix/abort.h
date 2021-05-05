@@ -5,7 +5,7 @@
 #   define __attribute__(x)
 #endif
 
-#ifndef __cplusplus // C doesn't know bool
+#if !defined(__cplusplus) && !defined(bool) // C doesn't know bool
 #define bool unsigned char
 #endif
 

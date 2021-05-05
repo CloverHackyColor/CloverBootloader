@@ -154,10 +154,10 @@ int _fltused=0; // it should be a single underscore since the double one is the 
 //{
 //}
 
-const char* printf_lite_get_timestamp()
-{
-  return "";
-}
+//const char* printf_lite_get_timestamp()
+//{
+//  return "";
+//}
 
 /**
   Prints a log message to memory buffer.

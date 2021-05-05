@@ -8,11 +8,10 @@
 #ifndef PLATFORM_POSIX_POSIX_ADDITIONS_H_
 #define PLATFORM_POSIX_POSIX_ADDITIONS_H_
 
+// This should probably no be here, in posix as it used EFI types
+// This doesn't compile if compile under posix without all EFI sdk. It's the case for compiling the validator
+// It's 2 EFI "utils" that probably shouldn't be here and 
 const char* efiStrError(EFI_STATUS errnum);
 const char* strguid(EFI_GUID* guid);
-
-//int snwprintf(wchar_t*, size_t len, const char *__restrict format, ...) __attribute__((__format__ (__printf__, 3, 4)));
-
-size_t clover_strlen(const char *str);
 
 #endif /* PLATFORM_POSIX_POSIX_ADDITIONS_H_ */

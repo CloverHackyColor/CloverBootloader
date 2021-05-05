@@ -51,6 +51,8 @@ extern "C" int main(int argc, const char * argv[])
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
+//AsciiStrHexToUint64("dwf");
+
   const char* path = NULL;
   #ifdef JIEF_DEBUG
       path = "config-nowarning-noerror.plist";

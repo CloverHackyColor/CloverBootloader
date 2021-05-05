@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_COMPARESETTINGSQUIRKS_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareQuirks(const XString8& label, const SETTINGS_DATA::QuirksClass& oldS, const ConfigPlistClass::Quirks_Class& newS);
 

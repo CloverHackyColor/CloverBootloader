@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_AssignSETTINGSDEVICES_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignDevices(const XString8& label, SETTINGS_DATA::DevicesClass& oldS, const ConfigPlistClass::DevicesClass& newS);
 

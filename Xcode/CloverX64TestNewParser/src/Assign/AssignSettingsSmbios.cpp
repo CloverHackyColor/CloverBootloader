@@ -8,8 +8,8 @@
 #include "AssignSettingsBoot.h"
 #include <Platform.h>
 #include "AssignField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/SMBIOSPlist.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/SMBIOSPlist.h"
 
 void AssignMemoryUserSlot(const XString8& label, RAM_SLOT_INFO& oldS, const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass& newS)
 {

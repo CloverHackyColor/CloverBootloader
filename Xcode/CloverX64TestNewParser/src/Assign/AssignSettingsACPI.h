@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_AssignSETTINGSACPI_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignAcpi(const XString8& label, SETTINGS_DATA::ACPIClass& oldS, const ConfigPlistClass::ACPI_Class& newS);
 

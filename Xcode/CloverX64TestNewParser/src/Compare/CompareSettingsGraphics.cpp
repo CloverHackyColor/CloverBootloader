@@ -8,7 +8,7 @@
 #include "CompareSettingsGraphics.h"
 #include <Platform.h>
 #include "CompareField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 //void CompareDcfg(const XString8& label, const SETTINGS_DATA::GraphicsClass& oldS, const ConfigPlistClass::Graphics_Class& newS)
 //{

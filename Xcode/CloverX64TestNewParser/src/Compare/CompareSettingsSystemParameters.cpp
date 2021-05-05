@@ -8,7 +8,7 @@
 #include "CompareSettingsBoot.h"
 #include <Platform.h>
 #include "CompareField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareSystemParameters(const XString8& label, const SETTINGS_DATA::SystemParametersClass& oldS, const ConfigPlistClass::SystemParameters_Class& newS)
 {

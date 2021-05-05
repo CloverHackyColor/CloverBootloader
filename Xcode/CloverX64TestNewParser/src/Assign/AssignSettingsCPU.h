@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_AssignSETTINGSCPU_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignCPU(const XString8& label, SETTINGS_DATA::CPUClass& oldS, const ConfigPlistClass::CPU_Class& newS);
 

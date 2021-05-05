@@ -21,16 +21,3 @@
 
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 
-//void CpuDeadLoop(void)
-//{
-//	exit(1);
-//}
-
-VOID
-EFIAPI
-CpuPause (
-  VOID
-  )
-{
-  exit(1);
-}

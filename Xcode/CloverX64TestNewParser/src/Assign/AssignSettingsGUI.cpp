@@ -8,7 +8,7 @@
 #include "AssignSettingsBoot.h"
 #include <Platform.h>
 #include "AssignField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignGUI_Mouse(const XString8& label, SETTINGS_DATA::GUIClass::MouseClass& oldS, const ConfigPlistClass::GUI_Class::GUI_Mouse_Class& newS)
 {

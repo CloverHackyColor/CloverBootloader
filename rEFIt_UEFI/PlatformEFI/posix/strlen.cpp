@@ -97,9 +97,3 @@ size_t strlen (const char *str)
         }
     }
 }
-
-/* to be able to call strlen when running in a libc environment. */
-size_t clover_strlen (const char *str)
-{
-	return strlen(str);
-}

@@ -310,7 +310,7 @@ class XmlData : public XmlAbstractType
 {
   using super = XmlAbstractType;
 public:
-  using ValueType = XBuffer<UINT8>;
+  using ValueType = XBuffer<uint8_t>;
   static const ValueType nullValue;
 protected:
   ValueType m_value = ValueType();
@@ -336,7 +336,7 @@ class XmlIntegerAbstract : public XmlAbstractType
 {
 public:
   bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
-  bool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, UINTN* result, bool* negative, INTN minimum, UINTN maximum, bool generateErrors);
+  bool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, uint64_t* result, bool* negative, int64_t minimum, uint64_t maximum, bool generateErrors);
 };
 
 template<typename IntegralType/*, enable_if(is_integral(IntegralType))*/>
@@ -462,7 +462,7 @@ public:
   virtual const char* getDescription() override { return "uint64"; };
 
   bool setUInt64Value(uint64_t ui64) { setDefined(); m_value = ui64; return true; }
-  bool setUInt64Value(UINTN value, bool sign) { if ( sign ) return setUInt64Value(-value); else setUInt64Value(value); return true; }
+  bool setUInt64Value(uint64_t value, bool sign) { if ( sign ) return setUInt64Value(-value); else setUInt64Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -476,7 +476,7 @@ public:
   virtual const char* getDescription() override { return "int64"; };
 
   bool setInt64Value(int64_t i64) { setDefined(); m_value = i64; return true; }
-  bool setInt64Value(UINTN value, bool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
+  bool setInt64Value(uint64_t value, bool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };

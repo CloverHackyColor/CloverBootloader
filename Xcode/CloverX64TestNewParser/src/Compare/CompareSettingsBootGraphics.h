@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_COMPARESETTINGSBOOTGRAPHICS_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareBootGraphics(const XString8& label, const SETTINGS_DATA::BootGraphicsClass& oldS, const ConfigPlistClass::BootGraphics_Class& newS);
 

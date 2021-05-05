@@ -1448,7 +1448,7 @@ size_t utf8_size_of_utf8_string(const char* s)
 	if ( !s ) return 0;
 ////2021 : tested on macOS. With this version, test took 8 seconds.
 //	char32_t char32 = 1;
-//	const char* p = s; // = get_char32_from_utf8_string(s, &char32);
+//	const char* p = s;
 //	while ( char32 ) {
 //		p = get_char32_from_utf8_string(p, &char32);
 //	}

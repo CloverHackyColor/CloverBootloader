@@ -9,7 +9,7 @@
 #define _CONFIGPLIST_AssignSETTINGSBOOT_H_
 
 #include "../../Platform/Settings.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void AssignBoot(const XString8& label, SETTINGS_DATA::BootClass& oldS, const ConfigPlistClass::Boot_Class& newS);
 

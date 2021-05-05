@@ -8,7 +8,7 @@
 #include "CompareSettingsBoot.h"
 #include <Platform.h>
 #include "CompareField.h"
-#include "../../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
+#include "../../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
 
 void CompareCPU(const XString8& label, const SETTINGS_DATA::CPUClass& oldS, const ConfigPlistClass::CPU_Class& newS)
 {
