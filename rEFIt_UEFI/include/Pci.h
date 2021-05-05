@@ -8,6 +8,7 @@
 #ifndef INCLUDE_PCI_H_
 #define INCLUDE_PCI_H_
 
+#include <stdint.h>
 
 /* PCI */
 #define PCI_BASE_ADDRESS_0          0x10    /* 32 bits */
@@ -24,18 +25,18 @@
 
 
 typedef struct {
-	UINT32		:2;
-	UINT32	reg :6;
-	UINT32	func:3;
-	UINT32	dev :5;
-	UINT32	bus :8;
-	UINT32		:7;
-	UINT32	eb	:1;
+	uint32_t		:2;
+	uint32_t	reg :6;
+	uint32_t	func:3;
+	uint32_t	dev :5;
+	uint32_t	bus :8;
+	uint32_t		:7;
+	uint32_t	eb	:1;
 } pci_addr_t;
 
 typedef union {
 	pci_addr_t	bits;
-	UINT32	    addr;
+	uint32_t	    addr;
 } pci_dev_t;
 
 typedef struct pci_dt_t {

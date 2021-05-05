@@ -931,7 +931,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 // DBG("OSType =%d\n", OSType);
   // DBG("prepare the menu entry\n");
   // prepare the menu entry
-  Entry = new LOADER_ENTRY();
+  Entry = new LOADER_ENTRY;
 
   if (!CustomEntry) {
     // Ignore this loader if it's device path is already present in another loader

@@ -61,7 +61,7 @@ TagFloat* TagFloat::getEmptyTag()
 //DBG("tagcachehit=%lld\n", tagcachehit);
     return tag;
   }
-  tag = new TagFloat();
+  tag = new TagFloat;
 //newtagcount += 1;
 //DBG("newtagcount=%lld\n", newtagcount);
   return tag;

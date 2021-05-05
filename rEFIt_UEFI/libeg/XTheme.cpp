@@ -680,7 +680,7 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
       }
       Dict3 = AnimeArray->dictElementAt(i, "Anime"_XS8);
 
-      FILM *NewFilm = new FILM();
+      FILM *NewFilm = new FILM;
 
       Prop = Dict3->propertyForKey("ID");
       NewFilm->SetIndex((UINTN)GetPropertyAsInteger(Prop, 1)); //default=main screen

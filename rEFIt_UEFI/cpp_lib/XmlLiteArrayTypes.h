@@ -69,7 +69,7 @@ bool XmlArray<T>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8&
     xmlSubPath.S8Catf("[%zu]", n);
 
     XmlParserPosition beforePos = xmlLiteParser->getPosition();
-    T* newT = new T();
+    T* newT = new T;
     if ( newT->parseFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors) ) {
       super2::AddReference(newT, true);
     }else{

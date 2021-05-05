@@ -449,7 +449,7 @@ void GetOutputs()
     }
     HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
     for (i = 0; i < OutputPortsCount; i++) {
-      HDA_OUTPUTS* hdaOutputPtr = new HDA_OUTPUTS();
+      HDA_OUTPUTS* hdaOutputPtr = new HDA_OUTPUTS;
       HDA_OUTPUTS& hdaOutput = *hdaOutputPtr;
       //    HdaCodecDev->OutputPorts[i];
       hdaOutput.Name.takeValueFrom(HdaCodecDev->Name);

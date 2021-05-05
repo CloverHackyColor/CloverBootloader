@@ -448,6 +448,11 @@ bool XmlLiteParser::getKeyTagValue(const char** value, size_t* valueLength, XmlP
     currentPos = *xmlParserPosition;
     return false;
   }
+#ifdef DEBUG_TRACE
+printf("XmlLiteParser::getKeyTagValue key=%.*s, line=%d, buffer=", (int)*valueLength, *value, (*xmlParserPosition).getLine());
+for(size_t i=0 ; i<40 ; i++) printf("%c", (*xmlParserPosition).p[i] < 32 ? 0 : (*xmlParserPosition).p[i]);
+printf("\n");
+#endif
   // I think the following cannot happen anymore...
   if ( !strnIsEqualIC(tag, tagLength, "key") ) {
     addXmlError(generateErrors, S8Printf("Expecting a <key> at line %d col %d", (*xmlParserPosition).line, (*xmlParserPosition).col));

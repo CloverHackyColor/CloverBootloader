@@ -356,7 +356,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   if (Dict != NULL) {
     INTN  Count = Get_TagCount (Dict);
     for (INTN i = 0; i < Count; i++) {
-      FILM *NewFilm = new FILM();
+      FILM *NewFilm = new FILM;
       if (EFI_ERROR(GetElement(Dict, i, &Dict3))) {
         continue;
       }

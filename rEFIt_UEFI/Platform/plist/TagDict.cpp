@@ -59,7 +59,7 @@ TagDict* TagDict::getEmptyTag()
 //DBG("tagcachehit=%lld\n", tagcachehit);
     return tag;
   }
-  tag = new TagDict();
+  tag = new TagDict;
 //newtagcount += 1;
 //DBG("newtagcount=%lld\n", newtagcount);
   return tag;

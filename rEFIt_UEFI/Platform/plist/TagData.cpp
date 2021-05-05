@@ -61,7 +61,7 @@ TagData* TagData::getEmptyTag()
 //DBG("tagcachehit=%lld\n", tagcachehit);
     return tag;
   }
-  tag = new TagData();
+  tag = new TagData;
 //newtagcount += 1;
 //DBG("newtagcount=%lld\n", newtagcount);
   return tag;

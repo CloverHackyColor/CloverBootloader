@@ -90,7 +90,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
     return FALSE;
   }
   // Allocate the entry
-  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
+  Entry = new REFIT_MENU_ENTRY_LOADER_TOOL;
 
   if (FullTitle) {
     Entry->Title.takeValueFrom(FullTitle);
@@ -124,7 +124,7 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-  Entry = new REFIT_MENU_ENTRY_CLOVER();
+  Entry = new REFIT_MENU_ENTRY_CLOVER;
   Entry->Title.takeValueFrom(LoaderTitle);
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;

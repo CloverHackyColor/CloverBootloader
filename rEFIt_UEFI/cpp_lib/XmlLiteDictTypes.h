@@ -97,7 +97,7 @@ public:
   virtual const char* getDescription() override { return "dict"; };
   virtual void reset() override { super::reset(); m_valueArray.setEmpty(); };
 
-  virtual XmlValueType* getNewInstance() { return new XmlValueType(); }
+  virtual XmlValueType* getNewInstance() { return new XmlValueType; }
     
   const ValueArrayType& valueArray() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_valueArray; }
 

@@ -47,7 +47,7 @@
 
 REFIT_MENU_ENTRY_CLOVER* REFIT_MENU_ENTRY_CLOVER::getPartiallyDuplicatedEntry() const
 {
-	REFIT_MENU_ENTRY_CLOVER* DuplicateEntry = new REFIT_MENU_ENTRY_CLOVER();
+	REFIT_MENU_ENTRY_CLOVER* DuplicateEntry = new REFIT_MENU_ENTRY_CLOVER;
 
   DuplicateEntry->AtClick      = ActionEnter;
   DuplicateEntry->Volume          = Volume;
@@ -62,7 +62,7 @@ REFIT_MENU_ENTRY_CLOVER* REFIT_MENU_ENTRY_CLOVER::getPartiallyDuplicatedEntry() 
 
 LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
 {
-	LOADER_ENTRY* DuplicateEntry = new LOADER_ENTRY();
+	LOADER_ENTRY* DuplicateEntry = new LOADER_ENTRY;
 
   DuplicateEntry->AtClick      = ActionEnter;
   DuplicateEntry->Volume          = Volume;

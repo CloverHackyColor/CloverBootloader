@@ -27,7 +27,7 @@ class XObjArrayWithTakeValueFromXmlArray: public XObjArray<SettingsClass>
     for ( idx = 0 ; idx < xmlArray.size() ; ++idx ) {
       if ( idx < super::size() ) super::ElementAt(idx).takeValueFrom(xmlArray[idx]);
       else {
-        SettingsClass* s = new SettingsClass();
+        SettingsClass* s = new SettingsClass;
         s->takeValueFrom(xmlArray[idx]);
         super::AddReference(s, true);
       }
@@ -51,7 +51,7 @@ class XObjArrayWithTakeValueFromXmlRepeatingDict: public XObjArray<SettingsClass
     for ( idx = 0 ; idx < xmlRepeatingDict.valueArray().size() ; ++idx ) {
       if ( idx < super::size() ) super::ElementAt(idx).takeValueFrom(xmlRepeatingDict.valueArray()[idx]);
       else {
-        SettingsClass* s = new SettingsClass();
+        SettingsClass* s = new SettingsClass;
         s->takeValueFrom(xmlRepeatingDict.valueArray()[idx]);
         super::AddReference(s, true);
       }

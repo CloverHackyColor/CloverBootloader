@@ -75,7 +75,7 @@ public:
   explicit Shared_ptr(T* ptr = nullptr)
   {
     m_ptr = ptr;
-    m_counter = new Counter();
+    m_counter = new Counter;
     if (ptr) {
       ++(*m_counter);
     }

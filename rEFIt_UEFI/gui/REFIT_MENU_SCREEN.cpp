@@ -387,7 +387,7 @@ void REFIT_MENU_SCREEN::HidePointer()
 EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
 {
 
-  //if ( !mPointer ) mPointer = new XPointer();
+  //if ( !mPointer ) mPointer = new XPointer;
   return mPointer.MouseBirth();
 }
 
@@ -398,7 +398,7 @@ void REFIT_MENU_SCREEN::KillMouse()
 
 void REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
 {
-  XStringW* s = new XStringW();
+  XStringW* s = new XStringW;
   VA_LIST va;
 	VA_START(va, format);
   s->vSWPrintf(format, va);

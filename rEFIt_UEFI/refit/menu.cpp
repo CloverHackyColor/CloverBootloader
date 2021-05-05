@@ -1531,7 +1531,7 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
   Entry->Image =  OptionMenu.TitleImage;
   Entry->AtClick = AtClick;
   // create the submenu
-  *SubScreen = new REFIT_MENU_SCREEN();
+  *SubScreen = new REFIT_MENU_SCREEN;
   (*SubScreen)->Title = Entry->Title;
   (*SubScreen)->TitleImage = Entry->Image;
   (*SubScreen)->ID = ID;
@@ -1542,7 +1542,7 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
 
 REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, const XString8& Title)
 {
-	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS();
+	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS;
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
 }
 
@@ -1797,7 +1797,7 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 	LOADER_ENTRY       *SubEntry;
 	REFIT_MENU_SCREEN  *SubSubScreen;
 
-	SubEntry = new LOADER_ENTRY();
+	SubEntry = new LOADER_ENTRY;
 	NewEntry_(SubEntry, &SubSubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->"_XS8);
 	SubEntry->Flags = Flags;
 	if (macOSVersion.notEmpty()) {

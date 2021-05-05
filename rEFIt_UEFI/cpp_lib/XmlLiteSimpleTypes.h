@@ -270,7 +270,7 @@ class XmlKeyDisablable : public XmlKey
 protected:
   bool Disabled = false;
 public:
-  XmlKeyDisablable() : super() {};
+  XmlKeyDisablable() {};
   ~XmlKeyDisablable() {};
 
   virtual void reset() override { super::reset(); Disabled = false; };

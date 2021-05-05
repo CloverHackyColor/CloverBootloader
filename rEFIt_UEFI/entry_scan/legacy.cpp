@@ -109,7 +109,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
 //DBG("VolDesc=%ls\n", VolDesc);
 
   // prepare the menu entry
-  Entry = new LEGACY_ENTRY();
+  Entry = new LEGACY_ENTRY;
   if ( FullTitle.notEmpty() ) {
     Entry->Title = FullTitle;
   } else {
@@ -181,7 +181,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   }
   
   // create the submenu
-  SubScreen = new REFIT_MENU_SCREEN();
+  SubScreen = new REFIT_MENU_SCREEN;
 //  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
 	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc.wc_str());
 
@@ -189,7 +189,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
   // default entry
-  SubEntry =  new LEGACY_ENTRY();
+  SubEntry =  new LEGACY_ENTRY;
   SubEntry->Title = L"Boot "_XSW + LoaderTitle;
 //  SubEntry->Tag           = TAG_LEGACY;
   SubEntry->Volume           = Entry->Volume;

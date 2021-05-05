@@ -89,7 +89,7 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
 ////DBG("tagcachehit=%lld\n", tagcachehit);
 //    return tag;
 //  }
-//  tag = new TagStruct();
+//  tag = new TagStruct;
 ////newtagcount += 1;
 ////DBG("newtagcount=%lld\n", newtagcount);
 //  return tag;

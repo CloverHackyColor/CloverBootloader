@@ -28,7 +28,7 @@ class PropertiesUnion: public XmlUnion
 //        XmlCompositeField m_fields[1] = { xmlValue };
 //        virtual void getFields(XmlCompositeField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
-        Property() : parent(*new Properties4DeviceClass()) { panic("BUG. define getNewInstance()"); }
+        Property() : parent(*new Properties4DeviceClass) { panic("BUG. define getNewInstance()"); }
         Property(const Properties4DeviceClass& _parent) : parent(_parent) {}
 
         uint8_t dgetBValue() const {

@@ -61,7 +61,7 @@ TagInt64* TagInt64::getEmptyTag()
 //DBG("tagcachehit=%lld\n", tagcachehit);
     return tag;
   }
-  tag = new TagInt64();
+  tag = new TagInt64;
 //newtagcount += 1;
 //DBG("newtagcount=%lld\n", newtagcount);
   return tag;

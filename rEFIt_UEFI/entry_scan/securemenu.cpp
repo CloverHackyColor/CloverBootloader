@@ -75,13 +75,13 @@ void AddSecureBootTool(void)
   }
 //panic("not done yet");
 //  if (gSettings.Boot.SecureBoot) {
-//    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
+//    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT;
 //    Entry->Title.SWPrintf("Clover Secure Boot Configuration");
 ////    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
 //    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
 //
 //  } else {
-//    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG();
+//    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG;
 //    Entry->Title.SWPrintf("Enable Clover Secure Boot");
 ////    Entry->Tag = TAG_SECURE_BOOT;
 //    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);

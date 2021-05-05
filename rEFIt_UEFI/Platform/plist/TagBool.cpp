@@ -59,7 +59,7 @@ TagBool* TagBool::getEmptyTag()
 //DBG("tagcachehit=%lld\n", tagcachehit);
     return tag;
   }
-  tag = new TagBool();
+  tag = new TagBool;
 //newtagcount += 1;
 //DBG("newtagcount=%lld\n", newtagcount);
   return tag;

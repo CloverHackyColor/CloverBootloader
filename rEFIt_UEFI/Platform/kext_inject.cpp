@@ -298,7 +298,7 @@ EFI_STATUS LOADER_ENTRY::AddKext(const EFI_FILE *RootDir, const XString8& FileNa
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
 
-  KextEntry = new KEXT_ENTRY();
+  KextEntry = new KEXT_ENTRY;
   KextEntry->Signature = KEXT_SIGNATURE;
   Status = LoadKext(RootDir, FileName, archCpuType, &KextEntry->kext);
   if(EFI_ERROR(Status)) {

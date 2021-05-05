@@ -1029,7 +1029,7 @@ public:
           for ( idx = 0 ; idx < configPlist.size() ; ++idx ) {
             if ( idx < size() ) ElementAt(idx).takeValueFrom(configPlist.getAtIndex(idx));
             else {
-              ACPI_RENAME_DEVICE* s = new ACPI_RENAME_DEVICE();
+              ACPI_RENAME_DEVICE* s = new ACPI_RENAME_DEVICE;
               s->takeValueFrom(configPlist.getAtIndex(idx));
               AddReference(s, true);
             }
@@ -1048,7 +1048,7 @@ public:
 //          for ( idx = 0 ; idx < configPlist.size() ; ++idx ) {
 //            if ( idx < size() ) ElementAt(idx).takeValueFrom(configPlist[idx]);
 //            else {
-//              ACPIDropTablesClass* s = new ACPIDropTablesClass();
+//              ACPIDropTablesClass* s = new ACPIDropTablesClass;
 //              s->takeValueFrom(configPlist[idx]);
 //              AddReference(s, true);
 //            }
@@ -1994,7 +1994,7 @@ printf("%s", "");
           const ArbitraryPropertyClass& newArb = ArbitraryArray[idx];
           for ( size_t jdx = newArb.CustomPropertyArray.size() ; jdx-- > 0 ;  ) {
             const SimplePropertyClass& newArbProp = newArb.CustomPropertyArray[jdx];
-            DEV_PROPERTY* newProp = new DEV_PROPERTY();
+            DEV_PROPERTY* newProp = new DEV_PROPERTY;
             newProp->Device = newArb.Device;
             newProp->Key = const_cast<char*>(newArbProp.Key.c_str()); // const_cast !!! So ugly. It is just because it's temporary. If ArbProperties is modified after this, a lot a memory problem will happen. I could have done some strdup, but that way I don't use memory and don't have to free it.
             newProp->Value = const_cast<unsigned char*>(newArbProp.Value.data());
@@ -2009,7 +2009,7 @@ printf("%s", "");
         // Non arb : device = 0
         for ( size_t idx = Properties.PropertyArray.size() ; idx-- > 0 ;  ) {
           const PropertiesClass::PropertyClass& Prop = Properties.PropertyArray[idx];
-          DEV_PROPERTY* newProp = new DEV_PROPERTY();
+          DEV_PROPERTY* newProp = new DEV_PROPERTY;
           newProp->Device = 0;
           newProp->Key = 0;
           if ( Prop.Enabled ) newProp->Label = XString8(Prop.DevicePathAsString).forgetDataWithoutFreeing();
@@ -2017,7 +2017,7 @@ printf("%s", "");
           newProp->Child = NULL;
           for ( size_t jdx = Properties.PropertyArray[idx].propertiesArray.size() ; jdx-- > 0  ; ) {
             const SimplePropertyClass& SubProp = Prop.propertiesArray[jdx];
-            DEV_PROPERTY* newSubProp = new DEV_PROPERTY();
+            DEV_PROPERTY* newSubProp = new DEV_PROPERTY;
             newSubProp->Device = 0;
             newSubProp->Key = const_cast<char*>(SubProp.Key.c_str());
 //            newSubProp->Key = NULL;

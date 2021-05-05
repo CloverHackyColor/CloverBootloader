@@ -2144,7 +2144,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
       break;
     }
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
-      break; //end of RTC device and begin of new Device()
+      break; //end of RTC device and begin of new Device
     }
   }
 
@@ -2251,7 +2251,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
     } // offset if
 
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
-      break; //end of TMR device and begin of new Device()
+      break; //end of TMR device and begin of new Device
     }
   } // i loop
 
@@ -2336,7 +2336,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
       sizeoffset = 0;
     } // sizeoffset if
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
-      break; //end of PIC device and begin of new Device()
+      break; //end of PIC device and begin of new Device
     }
   } // i loop
 
