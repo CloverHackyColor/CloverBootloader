@@ -2716,7 +2716,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //#define DEBUG_ERALY_CRASH
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step1");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
 
 #ifdef DEBUG_ON_SERIAL_PORT
@@ -2729,7 +2729,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step2");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
 
 //    if ( !EFI_ERROR(Status) ) {
@@ -2741,7 +2741,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("Clover ImageHandle = %llx\n", (uintptr_t)ImageHandle);
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step3");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
     }
 #ifdef JIEF_DEBUG
@@ -2752,7 +2752,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step4");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
 
 #ifdef CLOVER_BUILD
@@ -2761,7 +2761,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step5");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
 
 #ifdef JIEF_DEBUG
@@ -2777,7 +2777,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step6");
-  PauseForKey(L"press any key\n");
+  PauseForKey("press any key\n"_XS8);
 #endif
 
   // firmware detection
@@ -2946,7 +2946,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #ifdef ENABLE_SECURE_BOOT
   // Install secure boot shim
   if (EFI_ERROR(Status = InstallSecureBoot())) {
-    PauseForKey(L"Secure boot failure!\n");
+    PauseForKey("Secure boot failure!\n"_XS8);
     return Status;
   }
 #endif // ENABLE_SECURE_BOOT

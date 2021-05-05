@@ -378,7 +378,7 @@ LegacyBiosFarCall86 (
 	mThunkContext->RealModeState = &ThunkRegSet;
 	DBG("SS=%hX, ESP=%X, CS=%hX, Eip=%X\n", ThunkRegSet.E.SS, ThunkRegSet.E.ESP, ThunkRegSet.E.CS, ThunkRegSet.E.Eip);
     #if DEBUG_LBTHUNK == 2
-    PauseForKey(L"LegacyBiosFarCall86");
+    PauseForKey("LegacyBiosFarCall86"_XS8);
     #endif
 
   // Save current rate of DXE Timer and disable DXE timer
