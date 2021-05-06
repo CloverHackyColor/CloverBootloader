@@ -126,7 +126,7 @@
 		9A8792EA261886F5000B9362 /* abort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abort.h; sourceTree = "<group>"; };
 		9A8792EC261886F5000B9362 /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9A8792ED261886F5000B9362 /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9A8792EE261886F5000B9362 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		9A8792EE261886F5000B9362 /* Platform.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = Platform.h; sourceTree = "<group>"; };
 		9A8792EF261886F5000B9362 /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
 		9A8792F0261886F5000B9362 /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		9A8792F1261886F5000B9362 /* BasicIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIO.cpp; sourceTree = "<group>"; };
@@ -715,7 +715,7 @@
 		9A9223252402FD1000483CBA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = Jief_Machak;
 				TargetAttributes = {
 					9A92232C2402FD1000483CBA = {
@@ -847,7 +847,6 @@
 					"wcsncmp=wcsncmp_fixed",
 					"wcsstr=wcsstr_fixed",
 					NO_DEBUG_TRACE,
-					_UINTPTR_T,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -893,7 +892,7 @@
 				);
 				INCLUDED_SOURCE_FILE_NAMES = "";
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -976,7 +975,6 @@
 					"wcsncmp=wcsncmp_fixed",
 					"wcsstr=wcsstr_fixed",
 					NO_DEBUG_TRACE,
-					_UINTPTR_T,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -1022,7 +1020,7 @@
 				);
 				INCLUDED_SOURCE_FILE_NAMES = "";
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (

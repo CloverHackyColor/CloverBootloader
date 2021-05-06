@@ -57,10 +57,6 @@
 		9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C59261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C5A261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
-		9A3D2C5B261855D000F0D7A1 /* posix_additions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */; };
-		9A3D2C5C261855D000F0D7A1 /* posix_additions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */; };
-		9A3D2C5D261855D000F0D7A1 /* posix_additions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */; };
-		9A3D2C5E261855D000F0D7A1 /* posix_additions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */; };
 		9A3D2C5F261855D000F0D7A1 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4E261855D000F0D7A1 /* abort.cpp */; };
 		9A3D2C60261855D000F0D7A1 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4E261855D000F0D7A1 /* abort.cpp */; };
 		9A3D2C61261855D000F0D7A1 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4E261855D000F0D7A1 /* abort.cpp */; };
@@ -346,10 +342,8 @@
 		9A2755432639CE540095D456 /* platformdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platformdata.h; sourceTree = "<group>"; };
 		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
-		9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = posix_additions.cpp; sourceTree = "<group>"; };
 		9A3D2C4E261855D000F0D7A1 /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
 		9A3D2C4F261855D000F0D7A1 /* posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
-		9A3D2C50261855D000F0D7A1 /* posix_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix_additions.h; sourceTree = "<group>"; };
 		9A3D2C51261855D000F0D7A1 /* abort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abort.h; sourceTree = "<group>"; };
 		9A3D2C52261855D000F0D7A1 /* BasicIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIO.cpp; sourceTree = "<group>"; };
 		9A3D2C54261855D000F0D7A1 /* globals_dtor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_dtor.h; sourceTree = "<group>"; };
@@ -4739,8 +4733,6 @@
 				9A3D2C4E261855D000F0D7A1 /* abort.cpp */,
 				9A3D2C51261855D000F0D7A1 /* abort.h */,
 				9AB73A1C261DAD1D00EEBB9F /* clover_strlen.cpp */,
-				9A3D2C4D261855D000F0D7A1 /* posix_additions.cpp */,
-				9A3D2C50261855D000F0D7A1 /* posix_additions.h */,
 				9A3D2C4F261855D000F0D7A1 /* posix.h */,
 			);
 			path = posix;
@@ -13396,7 +13388,6 @@
 				9A82FE2E26184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9626184688006F973B /* base64.cpp in Sources */,
 				9A3D2C64261855D000F0D7A1 /* BasicIO.cpp in Sources */,
-				9A3D2C5C261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C60261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
 				9A071C2D26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
@@ -13471,7 +13462,6 @@
 				9A82FE3026184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9826184688006F973B /* base64.cpp in Sources */,
 				9A3D2C66261855D000F0D7A1 /* BasicIO.cpp in Sources */,
-				9A3D2C5E261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C62261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A2A7C7324576CCE00422263 /* main.cpp in Sources */,
 				9A071C2E26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
@@ -13546,7 +13536,6 @@
 				9A82FE2F26184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9726184688006F973B /* base64.cpp in Sources */,
 				9A3D2C65261855D000F0D7A1 /* BasicIO.cpp in Sources */,
-				9A3D2C5D261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A3D2C61261855D000F0D7A1 /* abort.cpp in Sources */,
 				9A57C21B2418B9A00029A39F /* main.cpp in Sources */,
 				9A071C2C26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
@@ -13622,7 +13611,6 @@
 				9A8200A526184688006F973B /* unicode_conversions.cpp in Sources */,
 				9A82FE8D26184688006F973B /* TagFloat.cpp in Sources */,
 				9A82FE4D26184688006F973B /* strcmp_test.cpp in Sources */,
-				9A3D2C5B261855D000F0D7A1 /* posix_additions.cpp in Sources */,
 				9A82FE5126184688006F973B /* printlib-test.cpp in Sources */,
 				9A071C2B26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A87876E26186302000B9362 /* MemoryAllocationLib.c in Sources */,
@@ -13796,7 +13784,6 @@
 					UNIT_TESTS_MACOS,
 					"JCONST=const",
 					"___NOT___ENABLE_SECURE_BOOT",
-					_UINTPTR_T,
 					"sprintf=__sprintf_is_disabled__",
 					"wcscmp=__wcsncmp_is_disabled__",
 				);
@@ -13913,7 +13900,14 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = UNIT_TESTS;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					UNIT_TESTS,
+					UNIT_TESTS_MACOS,
+					"JCONST=const",
+					"___NOT___ENABLE_SECURE_BOOT",
+					"sprintf=__sprintf_is_disabled__",
+					"wcscmp=__wcsncmp_is_disabled__",
+				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;

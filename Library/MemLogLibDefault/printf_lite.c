@@ -565,7 +565,7 @@ extern uint32_t getUptimeInMilliseconds(void);
 #include <mach/mach_time.h>
 #include <time.h>
 
-uint32_t getUptimeInMilliseconds()
+uint32_t getUptimeInMilliseconds(void)
 {
     static mach_timebase_info_data_t s_timebase_info;
 

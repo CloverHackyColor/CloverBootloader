@@ -242,7 +242,8 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = (__typeof__(configBuffer))AllocateZeroPool(bufferSize+1);
+  configBuffer = (__typeof__(configBuffer))malloc(bufferSize+1);
+  memset(configBuffer, 0, bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -858,7 +859,7 @@ GetPropertyAsInteger(
     UINTN Size = Prop->getData()->dataLenValue();
     if (Size > 8) Size = 8;
     INTN Data = 0;
-    CopyMem(&Data, Prop->getData()->dataValue(), Size);
+    memcpy(&Data, Prop->getData()->dataValue(), Size);
     return Data;
   }
   return Default;

@@ -9,12 +9,21 @@
 #ifndef Platform_h_h
 #define Platform_h_h
 
-#ifndef _UINTPTR_T
-#define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
-#endif
-#ifndef _PTRDIFF_T_DECLARED
-#define _PTRDIFF_T_DECLARED // to prevent macOS/GCC definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
-#endif
+
+// Replacing uintptr_t with unsigned long long doesn't work anymore with stdlic++ with xcode 12.5 (or probably some before)
+//
+//#ifndef _UINTPTR_T
+//#define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+//#endif
+//#ifndef _PTRDIFF_T_DECLARED
+//#define _PTRDIFF_T_DECLARED // to prevent macOS/GCC definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+//#endif
+//
+//// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
+//typedef unsigned long long  uintptr_t;
+//#undef PRIuPTR
+//#define PRIuPTR "llu"
+////#define _UINTPTR_T
 
 #ifdef _MSC_VER
 #include <Windows.h>
@@ -32,13 +41,11 @@ extern "C" {
 //#include <Library/BaseMemoryLib.h>
 //#include <Library/MemoryAllocationLib.h>
 #include "../../../../rEFIt_UEFI/Platform/BootLog.h"
-//#include "BootLog.h"
 #include <Library/DebugLib.h> // this is just to define DEBUG, because Slice wrongly did some #ifdef DEBUG
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #include <stdio.h>
 #include <limits.h>
@@ -58,12 +65,6 @@ extern "C" {
 //typedef uint16_t char16_t;
 //typedef uint8_t bool;
 //#endif
-
-// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
-typedef unsigned long long  uintptr_t;
-#undef PRIuPTR
-#define PRIuPTR "llu"
-//#define _UINTPTR_T
 
 #include "./posix/abort.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
