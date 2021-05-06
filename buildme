@@ -130,16 +130,6 @@ else
 fi
 }
 
-buildCPV() {
-if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
-  rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-fi
-  mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-  rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM && open "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-}
-
 buildCCPV() {
 if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
   rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
@@ -276,6 +266,84 @@ cd "${CLOVERROOT}"/BaseTools
 make clean
 }
 
+## Clover Utilities
+buildCPV() {
+if [[ ! -d /Applications/CloverUtils/CloverConfigPlistValidator ]]; then
+	mkdir -p /Applications/CloverUtils/CloverConfigPlistValidator
+fi
+  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR=/Applications/CloverUtils/CloverConfigPlistValidator
+  rm -r /Applications/CloverUtils/CloverConfigPlistValidator/*.dSYM 
+  chmod a+x /Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator && open /Applications/CloverUtils/CloverConfigPlistValidator
+}
+
+X64TestNewParser() {
+	if [[ ! -d /Applications/CloverUtils/X64TestNewParser ]]; then
+		mkdir -p /Applications/CloverUtils/X64TestNewParser
+	fi
+		curl -sLq https://github.com/jief666/CloverCommits/raw/master/CloverX64TestNewParser > /Applications/CloverUtils/X64TestNewParser/X64TestNewParser
+		curl -sLq https://github.com/jief666/CloverCommits/raw/master/libgcc_s.1.dylib > /Applications/CloverUtils/X64TestNewParser/libgcc_s.1.dylib
+		curl -sLq https://github.com/jief666/CloverCommits/raw/master/libstdc%2B%2B.6.dylib > /Applications/CloverUtils/X64TestNewParser/libstdc++.6.dylib
+		chmod a+x /Applications/CloverUtils/X64TestNewParser/X64TestNewParser && open /Applications/CloverUtils/X64TestNewParser
+}
+
+BootLoaderChooser() {
+	if [[ ! -d /Applications/CloverUtils/BootLoaderChooser ]]; then
+		mkdir -p /Applications/CloverUtils/BootLoaderChooser
+	fi
+		curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > /Applications/CloverUtils/BootLoaderChooser/BootX64.efi
+		chmod 775 /Applications/CloverUtils/BootLoaderChooser/BootX64.efi && open /Applications/CloverUtils/BootLoaderChooser
+}
+
+Utilities() {
+echo
+echo '-----------------------------------------------------------------------'
+echo
+echo
+echo '-------------------------- Clover Utilities ---------------------------'
+echo
+echo
+echo '-----------------------------------------------------------------------'
+echo && echo
+echo && echo
+echo && echo
+echo && echo
+echo && echo
+echo && echo
+echo
+PS3='Please enter your choice: '
+options=( 'build CloverConfigPlistValidator'
+          'Get X64TestNewParser'
+          'Get BootLoaderChooser'
+          'back to main')
+select opt in "${options[@]}"
+ do
+    case $opt in
+    "build CloverConfigPlistValidator")
+      buildCPV
+    break
+    ;;
+    "Get X64TestNewParser")
+      X64TestNewParser
+    break
+    ;;
+    "Get BootLoaderChooser")
+      BootLoaderChooser
+    break
+    ;;
+    "back to main")
+      menu
+    break
+    ;;
+    *)
+    echo "invalid option $REPLY"
+    break
+    ;;
+    esac
+  done
+Utilities
+}
+
 menu() {
 echo
 echo '------------------------------------------------------------------------'
@@ -298,14 +366,14 @@ options=( 'build Clover'
           'make app (with Clover)'
           'make iso'
           'build all'
-		  'build CloverConfigPlistValidator'
-          'test build (no autogen, no boot files)'
+		  'test build (no autogen, no boot files)'
           'status'
           'update Clover'
           'show diff'
           'open CloverV2/EFI/CLOVER directory'
           'update Clover (reset changes)'
           'clean BaseTools'
+          'Clover Utilities'
           'quit')
 
 select opt in "${options[@]}"
@@ -342,10 +410,6 @@ do
       buildPkg
       buildIso
       buildApp
-      break
-    ;;
-    "build CloverConfigPlistValidator")
-      buildCPV
       break
     ;;
     "test build (no autogen, no boot files)")
@@ -387,6 +451,13 @@ do
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         cleanBaseTools
       fi
+      break
+    ;;
+    "Clover Utilities")
+	  if [[ ! -d /Applications/CloverUtils ]]; then
+		  mkdir -p /Applications/CloverUtils
+	  fi
+	  Utilities
       break
     ;;
     "quit")
