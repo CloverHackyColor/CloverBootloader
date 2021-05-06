@@ -130,6 +130,26 @@ else
 fi
 }
 
+buildCPV() {
+if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
+  rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+fi
+  mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+  rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM && open "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+}
+
+buildCCPV() {
+if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
+  rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+fi
+  mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+  rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
+}
+
 buildClover() {
 checkTools
 
@@ -278,6 +298,7 @@ options=( 'build Clover'
           'make app (with Clover)'
           'make iso'
           'build all'
+		  'build CloverConfigPlistValidator'
           'test build (no autogen, no boot files)'
           'status'
           'update Clover'
@@ -299,7 +320,8 @@ do
       break
     ;;
     "make pkg")
-      buildPkg
+	  buildCCPV
+	  buildPkg
       break
     ;;
     "make app")
@@ -315,10 +337,15 @@ do
       break
     ;;
     "build all")
+	  buildCCPV
       buildClover
       buildPkg
       buildIso
       buildApp
+      break
+    ;;
+    "build CloverConfigPlistValidator")
+      buildCPV
       break
     ;;
     "test build (no autogen, no boot files)")
@@ -381,6 +408,7 @@ if [[ "$2" == ci ]]; then
   buildPkg
   buildIso
   buildApp
+  buildCPV
 else
   menu
 fi
