@@ -26,6 +26,6 @@ fi
 # Fix chmod attributes
 # ---------------------------------------------
 
-if [[ -d "${DEST_VOL}/Applications/CloverConfigPlistValidator" ]];then
-	chmod a+x "${DEST_VOL}/Applications/CloverConfigPlistValidator/CloverConfigPlistValidator"
+if [[ -d "${DEST_VOL}/Applications/CloverUtils/CloverConfigPlistValidator" ]];then
+	chmod a+x "${DEST_VOL}/Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator"
 fi
