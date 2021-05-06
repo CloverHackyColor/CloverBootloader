@@ -61,7 +61,7 @@ class XmlAddKey : public XmlValueClass
 //      m_key.strncpy(keyValue, keyValueLength);
 //    }
 //          XmlKeyClass& key()       { return m_key; }
-    XmlKeyClass xmlKey() const { return m_key; }
+    const XmlKeyClass& xmlKey() const { return m_key; }
     decltype(m_key.value()) key() const { return m_key.value(); }
 
     void setKey(const XmlKeyClass& aKey) {
