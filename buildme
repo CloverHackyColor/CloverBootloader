@@ -268,31 +268,21 @@ make clean
 
 ## Clover Utilities
 buildCPV() {
-if [[ ! -d /Applications/CloverUtils/CloverConfigPlistValidator ]]; then
-  mkdir -p /Applications/CloverUtils/CloverConfigPlistValidator
+if [[ ! -d $HOME/src/CloverUtils/CloverConfigPlistValidator ]]; then
+	mkdir -p $HOME/src/CloverUtils/CloverConfigPlistValidator
 fi
   cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR=/Applications/CloverUtils/CloverConfigPlistValidator
-  rm -r /Applications/CloverUtils/CloverConfigPlistValidator/*.dSYM 
-  chmod a+x /Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator && open /Applications/CloverUtils/CloverConfigPlistValidator
-}
-
-X64TestNewParser() {
-if [[ ! -d /Applications/CloverUtils/X64TestNewParser ]]; then
-  mkdir -p /Applications/CloverUtils/X64TestNewParser
-fi
-  curl -sLq https://github.com/jief666/CloverCommits/raw/master/CloverX64TestNewParser > /Applications/CloverUtils/X64TestNewParser/X64TestNewParser
-  curl -sLq https://github.com/jief666/CloverCommits/raw/master/libgcc_s.1.dylib > /Applications/CloverUtils/X64TestNewParser/libgcc_s.1.dylib
-  curl -sLq https://github.com/jief666/CloverCommits/raw/master/libstdc%2B%2B.6.dylib > /Applications/CloverUtils/X64TestNewParser/libstdc++.6.dylib
-  chmod a+x /Applications/CloverUtils/X64TestNewParser/X64TestNewParser && open /Applications/CloverUtils/X64TestNewParser
+  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR=$HOME/src/CloverUtils/CloverConfigPlistValidator
+  rm -r $HOME/src/CloverUtils/CloverConfigPlistValidator/*.dSYM 
+  chmod a+x $HOME/src/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator && open $HOME/src/CloverUtils/CloverConfigPlistValidator
 }
 
 BootLoaderChooser() {
-if [[ ! -d /Applications/CloverUtils/BootLoaderChooser ]]; then
-  mkdir -p /Applications/CloverUtils/BootLoaderChooser
-fi
-  curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > /Applications/CloverUtils/BootLoaderChooser/BootX64.efi
-  chmod 775 /Applications/CloverUtils/BootLoaderChooser/BootX64.efi && open /Applications/CloverUtils/BootLoaderChooser
+	if [[ ! -d $HOME/src/CloverUtils/BootLoaderChooser ]]; then
+		mkdir -p $HOME/src/CloverUtils/BootLoaderChooser
+	fi
+		curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > $HOME/src/CloverUtils/BootLoaderChooser/BootX64.efi
+		chmod 775 $HOME/src/CloverUtils/BootLoaderChooser/BootX64.efi && open $HOME/src/CloverUtils/BootLoaderChooser
 }
 
 Utilities() {
@@ -313,7 +303,6 @@ echo && echo
 echo
 PS3='Please enter your choice: '
 options=( 'build CloverConfigPlistValidator'
-          'Get X64TestNewParser'
           'Get BootLoaderChooser'
           'back to main')
 select opt in "${options[@]}"
@@ -321,10 +310,6 @@ select opt in "${options[@]}"
     case $opt in
     "build CloverConfigPlistValidator")
       buildCPV
-    break
-    ;;
-    "Get X64TestNewParser")
-      X64TestNewParser
     break
     ;;
     "Get BootLoaderChooser")
@@ -388,8 +373,8 @@ do
       break
     ;;
     "make pkg")
-      buildCCPV
-      buildPkg
+	  buildCCPV
+	  buildPkg
       break
     ;;
     "make app")
@@ -405,7 +390,7 @@ do
       break
     ;;
     "build all")
-      buildCCPV
+	  buildCCPV
       buildClover
       buildPkg
       buildIso
@@ -454,8 +439,8 @@ do
       break
     ;;
     "Clover Utilities")
-	  if [[ ! -d /Applications/CloverUtils ]]; then
-		  mkdir -p /Applications/CloverUtils
+	  if [[ ! -d $HOME/src/CloverUtils ]]; then
+		  mkdir -p $HOME/src/CloverUtils
 	  fi
 	  Utilities
       break
