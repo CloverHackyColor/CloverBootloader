@@ -269,7 +269,7 @@ make clean
 ## Clover Utilities
 buildCPV() {
 if [[ ! -d /Applications/CloverUtils/CloverConfigPlistValidator ]]; then
-	mkdir -p /Applications/CloverUtils/CloverConfigPlistValidator
+  mkdir -p /Applications/CloverUtils/CloverConfigPlistValidator
 fi
   cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
   xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR=/Applications/CloverUtils/CloverConfigPlistValidator
@@ -278,21 +278,21 @@ fi
 }
 
 X64TestNewParser() {
-	if [[ ! -d /Applications/CloverUtils/X64TestNewParser ]]; then
-		mkdir -p /Applications/CloverUtils/X64TestNewParser
-	fi
-		curl -sLq https://github.com/jief666/CloverCommits/raw/master/CloverX64TestNewParser > /Applications/CloverUtils/X64TestNewParser/X64TestNewParser
-		curl -sLq https://github.com/jief666/CloverCommits/raw/master/libgcc_s.1.dylib > /Applications/CloverUtils/X64TestNewParser/libgcc_s.1.dylib
-		curl -sLq https://github.com/jief666/CloverCommits/raw/master/libstdc%2B%2B.6.dylib > /Applications/CloverUtils/X64TestNewParser/libstdc++.6.dylib
-		chmod a+x /Applications/CloverUtils/X64TestNewParser/X64TestNewParser && open /Applications/CloverUtils/X64TestNewParser
+if [[ ! -d /Applications/CloverUtils/X64TestNewParser ]]; then
+  mkdir -p /Applications/CloverUtils/X64TestNewParser
+fi
+  curl -sLq https://github.com/jief666/CloverCommits/raw/master/CloverX64TestNewParser > /Applications/CloverUtils/X64TestNewParser/X64TestNewParser
+  curl -sLq https://github.com/jief666/CloverCommits/raw/master/libgcc_s.1.dylib > /Applications/CloverUtils/X64TestNewParser/libgcc_s.1.dylib
+  curl -sLq https://github.com/jief666/CloverCommits/raw/master/libstdc%2B%2B.6.dylib > /Applications/CloverUtils/X64TestNewParser/libstdc++.6.dylib
+  chmod a+x /Applications/CloverUtils/X64TestNewParser/X64TestNewParser && open /Applications/CloverUtils/X64TestNewParser
 }
 
 BootLoaderChooser() {
-	if [[ ! -d /Applications/CloverUtils/BootLoaderChooser ]]; then
-		mkdir -p /Applications/CloverUtils/BootLoaderChooser
-	fi
-		curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > /Applications/CloverUtils/BootLoaderChooser/BootX64.efi
-		chmod 775 /Applications/CloverUtils/BootLoaderChooser/BootX64.efi && open /Applications/CloverUtils/BootLoaderChooser
+if [[ ! -d /Applications/CloverUtils/BootLoaderChooser ]]; then
+  mkdir -p /Applications/CloverUtils/BootLoaderChooser
+fi
+  curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > /Applications/CloverUtils/BootLoaderChooser/BootX64.efi
+  chmod 775 /Applications/CloverUtils/BootLoaderChooser/BootX64.efi && open /Applications/CloverUtils/BootLoaderChooser
 }
 
 Utilities() {
@@ -388,8 +388,8 @@ do
       break
     ;;
     "make pkg")
-	  buildCCPV
-	  buildPkg
+      buildCCPV
+      buildPkg
       break
     ;;
     "make app")
@@ -405,7 +405,7 @@ do
       break
     ;;
     "build all")
-	  buildCCPV
+      buildCCPV
       buildClover
       buildPkg
       buildIso
