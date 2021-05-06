@@ -30,3 +30,5 @@ if [[ -d /Applications/CloverUtils/CloverConfigPlistValidator ]];then
 	chmod a+x /Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator
 	mv -f /Applications/CloverUtils $HOME/src/
 fi
+
+chown -R $(whoami) $HOME/src/CloverUtils
