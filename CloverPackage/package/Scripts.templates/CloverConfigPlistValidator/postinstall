@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "==============================================="
-echo "CloverConfigPlistValidator Pre-Install Script"
+echo "CloverConfigPlistValidator Post-Install Script"
 echo "==============================================="
 
 #echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
@@ -26,6 +26,7 @@ fi
 # Fix chmod attributes
 # ---------------------------------------------
 
-if [[ -d "${DEST_VOL}/Applications/CloverUtils/CloverConfigPlistValidator" ]];then
-	chmod a+x "${DEST_VOL}/Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator"
+if [[ -d /Applications/CloverUtils/CloverConfigPlistValidator ]];then
+	chmod a+x /Applications/CloverUtils/CloverConfigPlistValidator/CloverConfigPlistValidator
+	mv -f /Applications/CloverUtils $HOME/src/
 fi
