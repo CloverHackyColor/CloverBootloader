@@ -2340,6 +2340,12 @@ printf("%s", "");
               log_technical_bug("%s : no idx==%hhd", __PRETTY_FUNCTION__, idx2Look4);
               return SlotDeviceClass::NullSlotDevice;
             }
+            const SlotDeviceClass& getSlotForIndexOrNull(uint8_t idx2Look4) const {
+              for ( size_t idx = 0 ; idx < size() ; ++idx ) {
+                if ( ElementAt(idx).SmbiosIndex == idx2Look4 ) return ElementAt(idx);
+              }
+              return SlotDeviceClass::NullSlotDevice;
+            }
         };
 
         class RamSlotInfo {

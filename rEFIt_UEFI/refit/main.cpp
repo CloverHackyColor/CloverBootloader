@@ -2711,6 +2711,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gRT       = SystemTable->RuntimeServices;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (void **) &gDS);
   
+  InitBooterLog();
+
   ConsoleInHandle = SystemTable->ConsoleInHandle;
 
 //#define DEBUG_ERALY_CRASH
@@ -2780,14 +2782,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PauseForKey("press any key\n"_XS8);
 #endif
 
-  // firmware detection
+// firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   if (!gFirmwareRevision) {
 //    gFirmwareRevision = P__oolPrint(L"%d", gST->FirmwareRevision);
   }
   DataHubInstall (ImageHandle, SystemTable);
   InitializeConsoleSim();
-  InitBooterLog();
 
   DbgHeader("Starting Clover");
   if (Now.TimeZone < -1440 || Now.TimeZone > 1440) {
@@ -2850,6 +2851,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gConf.InitialisePlatform();
 
+  /*
+   * saving debug.log works from here
+   */
 
 
   {

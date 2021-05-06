@@ -13,6 +13,7 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "Settings.h"
+#include "../Settings/Self.h"
 
 extern "C" {
 #include <IndustryStandard/PciCommand.h>
@@ -2710,11 +2711,11 @@ Skip_DSM:
         k = FindName(dsdt + i, Size, "_SUN");
         if (k == 0) {
           aml_add_name(gfx0, "_SUN");
-          aml_add_dword(gfx0, SlotDevices[j].SlotID);
+          aml_add_dword(gfx0, SlotDevices.getSlotForIndexOrNull(j).SlotID);
         } else {
           //we have name sun, set the number
           if (dsdt[k + 4] == 0x0A) {
-            dsdt[k + 5] = SlotDevices[j].SlotID;
+            dsdt[k + 5] = SlotDevices.getSlotForIndexOrNull(j).SlotID;
           }
         }
       } else {
@@ -3071,11 +3072,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, gSettings.Smbios.SlotDevices[5].SlotID);
+      aml_add_dword(dev, gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(5).SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-        dsdt[k + 5] = gSettings.Smbios.SlotDevices[5].SlotID;
+        dsdt[k + 5] = gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(5).SlotID;
       }
     }
   }
@@ -3153,6 +3154,12 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
 
 UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
 {
+#if DEBUG_FIX > 0
+DBG("FIXAirport dsdt len=%d\n", len);
+//EFI_STATUS Status = egSaveFile(&self.getCloverDir(), L"misc\\DSDT_before_AIRPORT.bin", dsdt, len);
+//DBG("DSDT_before_AIRPORT.bin saved in misc. Status = %s\n", efiStrError(Status));
+#endif
+
   UINT32  i, k;
   UINT32 ArptADR = 0, BridgeSize, Size, BrdADR = 0;
   UINT32 PCIADR, PCISIZE = 0;
@@ -3262,11 +3269,11 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, gSettings.Smbios.SlotDevices[6].SlotID);
+      aml_add_dword(dev, gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(6).SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-        dsdt[k + 5] = gSettings.Smbios.SlotDevices[6].SlotID;
+        dsdt[k + 5] = gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(6).SlotID;
       }
     }
   } else {
@@ -3700,11 +3707,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(device, "_SUN");
-      aml_add_dword(device, gSettings.Smbios.SlotDevices[12].SlotID);
+      aml_add_dword(device, gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(12).SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-         dsdt[k + 5] = gSettings.Smbios.SlotDevices[12].SlotID;
+         dsdt[k + 5] = gSettings.Smbios.SlotDevices.getSlotForIndexOrNull(12).SlotID;
       }
     }
   } else {
