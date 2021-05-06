@@ -1415,7 +1415,7 @@ fi
 if [[ -d "${SRCROOT}"/CloverConfigPlistValidator && ${NOEXTRAS} != *"CloverConfigPlistValidator"* ]]; then
    echo "=============== CloverConfigPlistValidator ==============="
    local CCPV_Dir="${SRCROOT}"/CloverConfigPlistValidator
-   local CCPV_Dest='/Applications/CloverConfigPlistValidator'
+   local CCPV_Dest='/Applications/CloverUtils/CloverConfigPlistValidator'
    
    packagesidentity="${clover_package_identity}"
    choiceId="CloverConfigPlistValidator"
