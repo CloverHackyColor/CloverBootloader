@@ -16,10 +16,10 @@ echo "preinstall: Root of system folder... $4"
 
 # If target volume root of current system then replace
 # / with volume name.
-if [ "$3" == "/" ]; then
+if [ "$2" == "/" ]; then
     DEST_VOL="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
 else
-    DEST_VOL="$3"
+    DEST_VOL="$2"
 fi
 
 # ---------------------------------------------
