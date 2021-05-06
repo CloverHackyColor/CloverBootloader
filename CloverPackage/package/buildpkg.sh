@@ -1411,6 +1411,27 @@ fi
 # End build theme packages
 #fi
 
+# build CloverConfigPlistValidator package
+if [[ -d "${SRCROOT}"/CloverConfigPlistValidator && ${NOEXTRAS} != *"CloverConfigPlistValidator"* ]]; then
+   echo "=============== CloverConfigPlistValidator ==============="
+   local CCPV_Dir="${SRCROOT}"/CloverConfigPlistValidator
+   local CCPV_Dest='/Applications/CloverConfigPlistValidator'
+   
+   packagesidentity="${clover_package_identity}"
+   choiceId="CloverConfigPlistValidator"
+   packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+
+   ditto --noextattr --noqtn "$CCPV_Dir"  \
+    "${PKG_BUILD_DIR}/${choiceId}/Root/${CCPV_Dest}"/
+   addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                      --subst="INSTALLER_CHOICE=$packageRefId"      \
+                      CloverConfigPlistValidator
+   buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+   addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')" \
+             --pkg-refs="$packageRefId" "${choiceId}"
+# End build CloverConfigPlistValidator packages
+fi
+
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
 if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover && ${NOEXTRAS} != *"Clover Prefpane"* ]]; then
