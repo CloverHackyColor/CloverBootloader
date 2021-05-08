@@ -83,8 +83,8 @@ size_t hex2bin(const T hex, size_t hexlen, uint8_t *out, size_t outlen)
       DebugLog(1, "[ERROR] bin2hex '%.*s' syntax error\n", (int)hexlen, XString8().takeValueFrom(hex).c_str());
       return 0;
     }
-    buf[0] = hex[hexidx++];
-    buf[1] = hex[hexidx++];
+    buf[0] = (char)hex[hexidx++]; // safe cast, it's an hex digit
+    buf[1] = (char)hex[hexidx++]; // safe cast, it's an hex digit
     if ( out != NULL ) {
       if ( outidx == outlen ) {
         DebugLog(1, "[ERROR] bin2hex '%.*s' outbuffer not big enough\n", (int)hexlen, XString8().takeValueFrom(hex).c_str());

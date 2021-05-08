@@ -18,6 +18,8 @@ extern "C" {
 // The maximum number of RAM slots to detect
 // even for 3-channels chipset X58 there are no more then 8 slots
 #define MAX_RAM_SLOTS 24
+static_assert(MAX_RAM_SLOTS < UINT8_MAX, "MAX_RAM_SLOTS < UINT8_MAX"); // Important
+
 // The maximum sane frequency for a RAM module
 #define MAX_RAM_FREQUENCY 5000
 
@@ -163,7 +165,7 @@ class SmbiosInjectedSettings
         void setEmpty() { super::setEmpty(); }
         void AddReference(SLOT_DEVICE* newElement, bool FreeIt) { super::AddReference(newElement, FreeIt); }
 
-        const SLOT_DEVICE& getSlotForIndex(uint8_t Index) const {
+        const SLOT_DEVICE& getSlotForIndex(size_t Index) const {
           if ( Index >= MAX_RAM_SLOTS) {
             log_technical_bug("%s : Index >= MAX_RAM_SLOTS", __PRETTY_FUNCTION__);
           }
@@ -172,7 +174,7 @@ class SmbiosInjectedSettings
           }
           return nullSLOT_DEVICE;
         }
-        SLOT_DEVICE& getOrCreateSlotForIndex(uint8_t Index) {
+        SLOT_DEVICE& getOrCreateSlotForIndex(size_t Index) {
           if ( Index >= MAX_RAM_SLOTS) {
             log_technical_bug("%s : Index >= MAX_RAM_SLOTS", __PRETTY_FUNCTION__);
           }

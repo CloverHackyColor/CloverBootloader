@@ -86,7 +86,7 @@ public:
         }
 
       } Signature = Signature_Class();
-      XmlString8AllowEmpty TableId = XmlString8AllowEmpty();
+      XmlString8AllowEmpty TableId = XmlString8AllowEmpty(); // TODO:chekc that all chars are ASCII
       XmlUInt32  Length = XmlUInt32();
       XmlBool DropForAllOS = XmlBool();
 
@@ -106,7 +106,7 @@ public:
         CHAR8  Id[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         for ( size_t idx = 0 ; idx < TableId.value().length() ; idx++ ) {
           //      DBG("%c", *Str);
-          Id[idx] = TableId.value()[idx];
+          Id[idx] = (char)TableId.value()[idx]; // safe cast when TableId would have been validated !
         }
         return *(UINT64*)&Id;
       };

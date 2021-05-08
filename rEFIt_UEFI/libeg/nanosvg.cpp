@@ -2018,7 +2018,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, char* value)
       // if the fillColor has an alpha value then use it to
       // set the fillOpacity
       if (attr->fillColor & 0xFF000000) {
-        attr->fillOpacity = ((attr->fillColor >> 24) & 0xFF) / 255.0;
+        attr->fillOpacity = (float)(((attr->fillColor >> 24) & 0xFF)) / 255.0f; // safe cast
         // remove the alpha value from the color
         attr->fillColor &= 0x00FFFFFF;
       }
@@ -2047,7 +2047,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, char* value)
       // if the strokeColor has an alpha value then use it to
       // set the strokeOpacity
       if (attr->strokeColor & 0xFF000000) {
-        attr->strokeOpacity = ((attr->strokeColor >> 24) & 0xFF) / 255.0;
+        attr->strokeOpacity = (float)(((attr->strokeColor >> 24) & 0xFF)) / 255.0f; // safe cast
         // remove the alpha value from the color
         attr->strokeColor &= 0x00FFFFFF;
       }
@@ -3336,7 +3336,7 @@ static void parsePattern(NSVGparser* p, char** dict)
     }
   }
 
-  pt = (__typeof__(pt))AllocateZeroPool(sizeof(NSVGpattern));
+  pt = (decltype(pt))AllocateZeroPool(sizeof(NSVGpattern));
   AsciiStrCpyS(pt->id, 64, attr->id);
   pt->width = w;
   pt->height = h;
@@ -3674,7 +3674,7 @@ static void nsvg__parseFont(NSVGparser* p, char** dict)
     return;
   }
 
-  font = (__typeof__(font))AllocateZeroPool(sizeof(*font));
+  font = (decltype(font))AllocateZeroPool(sizeof(*font));
 
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "horiz-adv-x") == 0) {
@@ -3692,7 +3692,7 @@ static void nsvg__parseFont(NSVGparser* p, char** dict)
   }
   DBG("found font id=%s family=%s\n", font->id, font->fontFamily);
 
-  NSVGfontChain* fontChain = (__typeof__(fontChain))AllocatePool(sizeof(*fontChain));
+  NSVGfontChain* fontChain = (decltype(fontChain))AllocatePool(sizeof(*fontChain));
   fontChain->font = font;
   fontChain->next = fontsDB;
   p->font = font;

@@ -1326,8 +1326,12 @@ typedef enum {
   SlotTypePciExpressGen4X2             = 0xBA,
   SlotTypePciExpressGen4X4             = 0xBB,
   SlotTypePciExpressGen4X8             = 0xBC,
-  SlotTypePciExpressGen4X16            = 0xBD
+  SlotTypePciExpressGen4X16            = 0xBD,
+  MaxMiscSlotType
 } MISC_SLOT_TYPE;
+#ifdef __cplusplus
+static_assert(MaxMiscSlotType < MAX_UINT8, "MISC_SLOT_TYPE cannot be safely cast to uint8_t");
+#endif
 
 ///
 /// System Slots - Slot Data Bus Width.

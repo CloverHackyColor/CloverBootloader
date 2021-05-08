@@ -328,7 +328,7 @@ bool XmlData::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xml
   RETURN_IF_FALSE( xmlLiteParser->getSimpleTag(&tag, &tagLength, &value, &valueLength, NULL, generateErrors) );
   if ( strnIsEqual(tag, tagLength, "string") ) {
     size_t allocatedSize = valueLength/2; // number of hex digits
-    uint8_t  *Data = (__typeof__(Data))malloc(allocatedSize);
+    uint8_t *Data = (uint8_t*)malloc(allocatedSize);
     size_t hexLen = hex2bin(value, valueLength, Data, allocatedSize);
     return stealDataValue(Data, hexLen, allocatedSize);
   }
@@ -507,7 +507,7 @@ bool XmlUInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT8_MAX, generateErrors) );
-  return setUInt8Value(value, sign);
+  return setUInt8Value((uint8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlUInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -515,7 +515,7 @@ bool XmlUInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& x
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT16_MAX, generateErrors) );
-  return setUInt16Value(value, sign);
+  return setUInt16Value((uint16_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlUInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -523,7 +523,7 @@ bool XmlUInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& x
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT32_MAX, generateErrors) );
-  return setUInt32Value((uint32_t)value, sign);
+  return setUInt32Value((uint32_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlUInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -531,7 +531,7 @@ bool XmlUInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& x
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT64_MAX, generateErrors) );
-  return setUInt64Value(value, sign);
+  return setUInt64Value((uint64_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -539,7 +539,7 @@ bool XmlInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xml
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT8_MIN, INT8_MAX, generateErrors) );
-  return setInt8Value(value, sign);
+  return setInt8Value((int8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -547,7 +547,7 @@ bool XmlInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT16_MIN, INT16_MAX, generateErrors) );
-  return setInt16Value(value, sign);
+  return setInt16Value((int16_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -555,7 +555,7 @@ bool XmlInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT32_MIN, INT32_MAX, generateErrors) );
-  return setInt32Value((int32_t)value, sign);
+  return setInt32Value((int32_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
 bool XmlInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
@@ -563,5 +563,5 @@ bool XmlInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   UINTN value;
   bool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT64_MIN, INT64_MAX, generateErrors) );
-  return setInt64Value(value, sign);
+  return setInt64Value((int8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }

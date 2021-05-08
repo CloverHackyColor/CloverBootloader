@@ -53,8 +53,12 @@ UINT8 hexstrtouint8 (const CHAR8* buf)
 	return i;
 }
 
-BOOLEAN IsHexDigit (CHAR8 c) {
+BOOLEAN IsHexDigit(char c) {
 	return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
+}
+
+BOOLEAN IsHexDigit(wchar_t c) {
+  return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
 }
 
 //out value is a number of byte.  out = len

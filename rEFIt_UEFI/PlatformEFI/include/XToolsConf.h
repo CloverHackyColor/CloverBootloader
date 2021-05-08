@@ -36,4 +36,8 @@ extern "C" {
 #define XTOOLS_VA_END VA_END
 #define XTOOLS_VA_ARG VA_ARG
 
+#if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 #endif

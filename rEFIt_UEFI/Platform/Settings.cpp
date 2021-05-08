@@ -346,27 +346,18 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 
 
 
-/*
- * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
- * and is passed by non-const reference.
- * This temporary during the refactoring
- * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
- */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-void afterGetUserSettings(SETTINGS_DATA& gSettings)
+void afterGetUserSettings(SETTINGS_DATA& settingsData)
 {
-#pragma GCC diagnostic pop
 
   // Secure boot
   /* this parameter, which should be called SecureBootSetupMode, is ignored if :
    *   it is true
    *   SecureBoot is already true.
    */
-  if ( gSettings.Boot.SecureSetting == 0 ) {
+  if ( settingsData.Boot.SecureSetting == 0 ) {
     // Only disable setup mode, we want always secure boot
     GlobalConfig.SecureBootSetupMode = 0;
-  } else if ( gSettings.Boot.SecureSetting == 1  &&  !GlobalConfig.SecureBoot  ) {
+  } else if ( settingsData.Boot.SecureSetting == 1  &&  !GlobalConfig.SecureBoot  ) {
     // This mode will force boot policy even when no secure boot or it is disabled
     GlobalConfig.SecureBootSetupMode = 1;
     GlobalConfig.SecureBoot          = 1;
@@ -374,20 +365,20 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
 
 
   //set to drop
-  GlobalConfig.DropSSDT = gSettings.ACPI.SSDT.DropSSDTSetting;
+  GlobalConfig.DropSSDT = settingsData.ACPI.SSDT.DropSSDTSetting;
   if (GlobalConfig.ACPIDropTables) {
-    for ( size_t idx = 0 ; idx < gSettings.ACPI.ACPIDropTablesArray.size() ; ++idx)
+    for ( size_t idx = 0 ; idx < settingsData.ACPI.ACPIDropTablesArray.size() ; ++idx)
     {
       ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
-      DBG(" - [%02zd]: Drop table : %08X, %16llx : ", idx, gSettings.ACPI.ACPIDropTablesArray[idx].Signature, gSettings.ACPI.ACPIDropTablesArray[idx].TableId);
+      DBG(" - [%02zd]: Drop table : %08X, %16llx : ", idx, settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
       bool Dropped = FALSE;
       while (DropTable) {
-        if (((gSettings.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
-             (!gSettings.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == gSettings.ACPI.ACPIDropTablesArray[idx].TableId)) &&
-             (!gSettings.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable->Length == gSettings.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
-            (!gSettings.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == gSettings.ACPI.ACPIDropTablesArray[idx].TableId))) {
+        if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
+             (!settingsData.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId)) &&
+             (!settingsData.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable->Length == settingsData.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
+            (!settingsData.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId))) {
           DropTable->MenuItem.BValue = TRUE;
-          DropTable->OtherOS = gSettings.ACPI.ACPIDropTablesArray[idx].OtherOS;
+          DropTable->OtherOS = settingsData.ACPI.ACPIDropTablesArray[idx].OtherOS;
           GlobalConfig.DropSSDT         = FALSE; // if one item=true then dropAll=false by default
           //DBG(" true");
           Dropped = TRUE;
@@ -399,23 +390,23 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
   }
 
   // Whether or not to draw boot screen
-  GlobalConfig.CustomLogoType = gSettings.Boot.CustomLogoType;
-  if ( gSettings.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  gSettings.Boot.CustomLogoAsXString8.notEmpty() ) {
+  GlobalConfig.CustomLogoType = settingsData.Boot.CustomLogoType;
+  if ( settingsData.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  settingsData.Boot.CustomLogoAsXString8.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
       delete GlobalConfig.CustomLogo;
     }
     GlobalConfig.CustomLogo = new XImage;
-    GlobalConfig.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), gSettings.Boot.CustomLogoAsXString8);
+    GlobalConfig.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), settingsData.Boot.CustomLogoAsXString8);
     if (GlobalConfig.CustomLogo->isEmpty()) {
-      DBG("Custom boot logo not found at path '%s'!\n", gSettings.Boot.CustomLogoAsXString8.c_str());
+      DBG("Custom boot logo not found at path '%s'!\n", settingsData.Boot.CustomLogoAsXString8.c_str());
       GlobalConfig.CustomLogoType = CUSTOM_BOOT_DISABLED;
     }
-  } else if ( gSettings.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  gSettings.Boot.CustomLogoAsData.notEmpty() ) {
+  } else if ( settingsData.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  settingsData.Boot.CustomLogoAsData.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
       delete GlobalConfig.CustomLogo;
     }
     GlobalConfig.CustomLogo = new XImage;
-    GlobalConfig.CustomLogo->FromPNG(gSettings.Boot.CustomLogoAsData.data(), gSettings.Boot.CustomLogoAsData.size());
+    GlobalConfig.CustomLogo->FromPNG(settingsData.Boot.CustomLogoAsData.data(), settingsData.Boot.CustomLogoAsData.size());
     if (GlobalConfig.CustomLogo->isEmpty()) {
       DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
       GlobalConfig.CustomLogoType = CUSTOM_BOOT_DISABLED;
@@ -423,46 +414,46 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
   }
   DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(GlobalConfig.CustomLogoType), (uintptr_t)GlobalConfig.CustomLogo);
 
-  GlobalConfig.EnableC6 = gSettings.getEnableC6();
-  GlobalConfig.EnableC4 = gSettings.getEnableC4();
-  GlobalConfig.EnableC2 = gSettings.getEnableC2();
-  GlobalConfig.C3Latency = gSettings.getEnableC6();
+  GlobalConfig.EnableC6 = settingsData.getEnableC6();
+  GlobalConfig.EnableC4 = settingsData.getEnableC4();
+  GlobalConfig.EnableC2 = settingsData.getEnableC2();
+  GlobalConfig.C3Latency = settingsData.getEnableC6();
 
-  if (gSettings.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
+  if (settingsData.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
     GlobalConfig.HWP = TRUE;
     AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
-    if ( gSettings.CPU.HWPValue.isDefined() ) {
-      AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.CPU.HWPValue.value());
+    if ( settingsData.CPU.HWPValue.isDefined() ) {
+      AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, settingsData.CPU.HWPValue.value());
     }
   }
 
-  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomEntriesSettings.size() ; ++idx ) {
-    const CUSTOM_LOADER_ENTRY_SETTINGS& CustomEntrySettings = gSettings.GUI.CustomEntriesSettings[idx];
+  for ( size_t idx = 0 ; idx < settingsData.GUI.CustomEntriesSettings.size() ; ++idx ) {
+    const CUSTOM_LOADER_ENTRY_SETTINGS& CustomEntrySettings = settingsData.GUI.CustomEntriesSettings[idx];
     CUSTOM_LOADER_ENTRY* entry = new CUSTOM_LOADER_ENTRY(CustomEntrySettings);
     GlobalConfig.CustomEntries.AddReference(entry, true);
   }
 
-  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomLegacySettings.size() ; ++idx ) {
-    const CUSTOM_LEGACY_ENTRY_SETTINGS& CustomLegacySettings = gSettings.GUI.CustomLegacySettings[idx];
+  for ( size_t idx = 0 ; idx < settingsData.GUI.CustomLegacySettings.size() ; ++idx ) {
+    const CUSTOM_LEGACY_ENTRY_SETTINGS& CustomLegacySettings = settingsData.GUI.CustomLegacySettings[idx];
     CUSTOM_LEGACY_ENTRY* entry = new CUSTOM_LEGACY_ENTRY(CustomLegacySettings, ThemeX.getThemeDir());
     GlobalConfig.CustomLegacyEntries.AddReference(entry, true);
   }
 
-  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomToolSettings.size() ; ++idx ) {
-    const CUSTOM_TOOL_ENTRY_SETTINGS& CustomToolSettings = gSettings.GUI.CustomToolSettings[idx];
+  for ( size_t idx = 0 ; idx < settingsData.GUI.CustomToolSettings.size() ; ++idx ) {
+    const CUSTOM_TOOL_ENTRY_SETTINGS& CustomToolSettings = settingsData.GUI.CustomToolSettings[idx];
     CUSTOM_TOOL_ENTRY* entry = new CUSTOM_TOOL_ENTRY(CustomToolSettings, ThemeX.getThemeDir());
     GlobalConfig.CustomToolsEntries.AddReference(entry, true);
   }
 
-  if ( gSettings.GUI.Theme.notEmpty() )
+  if ( settingsData.GUI.Theme.notEmpty() )
   {
-    ThemeX.Theme.takeValueFrom(gSettings.GUI.Theme);
-    DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
+    ThemeX.Theme.takeValueFrom(settingsData.GUI.Theme);
+    DBG("Default theme: %ls\n", settingsData.GUI.Theme.wc_str());
 
     OldChosenTheme = 0xFFFF; //default for embedded
     for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
       //now comparison is case sensitive
-      if ( gSettings.GUI.Theme.isEqualIC(ThemeNameArray[i]) ) {
+      if ( settingsData.GUI.Theme.isEqualIC(ThemeNameArray[i]) ) {
         OldChosenTheme = i;
         break;
       }
@@ -471,8 +462,8 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
 
   EFI_TIME          Now;
   gRT->GetTime(&Now, NULL);
-  if (gSettings.GUI.Timezone != 0xFF) {
-    INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+  if (settingsData.GUI.Timezone != 0xFF) {
+    INT32 NowHour = Now.Hour + settingsData.GUI.Timezone;
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
     ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
@@ -480,68 +471,68 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
     ThemeX.Daylight = TRUE;
   }
 
-  ThemeX.DarkEmbedded = gSettings.GUI.getDarkEmbedded(ThemeX.Daylight);
+  ThemeX.DarkEmbedded = settingsData.GUI.getDarkEmbedded(ThemeX.Daylight);
 
-  if ( gSettings.GUI.languageCode == english ) {
+  if ( settingsData.GUI.languageCode == english ) {
     GlobalConfig.Codepage = 0xC0;
     GlobalConfig.CodepageSize = 0;
-  } else if ( gSettings.GUI.languageCode == russian ) {
+  } else if ( settingsData.GUI.languageCode == russian ) {
     GlobalConfig.Codepage = 0x410;
     GlobalConfig.CodepageSize = 0x40;
-  } else if ( gSettings.GUI.languageCode == ukrainian ) {
+  } else if ( settingsData.GUI.languageCode == ukrainian ) {
     GlobalConfig.Codepage = 0x400;
     GlobalConfig.CodepageSize = 0x60;
-  } else if ( gSettings.GUI.languageCode == chinese ) {
+  } else if ( settingsData.GUI.languageCode == chinese ) {
     GlobalConfig.Codepage = 0x3400;
     GlobalConfig.CodepageSize = 0x19C0;
-  } else if ( gSettings.GUI.languageCode == korean ) {
+  } else if ( settingsData.GUI.languageCode == korean ) {
     GlobalConfig.Codepage = 0x1100;
     GlobalConfig.CodepageSize = 0x100;
   }
 
-  if (gSettings.Graphics.EDID.InjectEDID){
+  if (settingsData.Graphics.EDID.InjectEDID){
     //DBG("Inject EDID\n");
-    if ( gSettings.Graphics.EDID.CustomEDID.size() > 0  &&  gSettings.Graphics.EDID.CustomEDID.size() % 128 == 0 ) {
+    if ( settingsData.Graphics.EDID.CustomEDID.size() > 0  &&  settingsData.Graphics.EDID.CustomEDID.size() % 128 == 0 ) {
       InitializeEdidOverride();
     }
   }
 
-  GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm || GlobalConfig.NeedPMfix;
-  GlobalConfig.KPAppleIntelCPUPM = gSettings.KernelAndKextPatches._KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
+  GlobalConfig.KPKernelPm = settingsData.KernelAndKextPatches._KPKernelPm || GlobalConfig.NeedPMfix;
+  GlobalConfig.KPAppleIntelCPUPM = settingsData.KernelAndKextPatches._KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
 
-  if ( gSettings.RtVariables.RtROMAsString.isEqualIC("UseMacAddr0") ) {
+  if ( settingsData.RtVariables.RtROMAsString.isEqualIC("UseMacAddr0") ) {
     if ( gConf.LanCardArray.size() > 0 ) GlobalConfig.RtROM.ncpy(&gConf.LanCardArray[0].MacAddress[0], 6);
     else GlobalConfig.RtROM.memset(0, 6);
-  } else if ( gSettings.RtVariables.RtROMAsString.isEqualIC("UseMacAddr1") ) {
+  } else if ( settingsData.RtVariables.RtROMAsString.isEqualIC("UseMacAddr1") ) {
     if ( gConf.LanCardArray.size() > 1 ) GlobalConfig.RtROM.ncpy(&gConf.LanCardArray[1].MacAddress[0], 6);
     else GlobalConfig.RtROM.memset(0, 6);
   }else{
-    GlobalConfig.RtROM = gSettings.RtVariables.RtROMAsData;
+    GlobalConfig.RtROM = settingsData.RtVariables.RtROMAsData;
   }
   if ( GlobalConfig.RtROM.isEmpty() ) {
     EFI_GUID uuid;
-    StrToGuidBE(gSettings.Smbios.SmUUID, &uuid);
+    StrToGuidBE(settingsData.Smbios.SmUUID, &uuid);
     GlobalConfig.RtROM.ncpy(&uuid.Data4[2], 6);
   }
-  GlobalConfig.RtMLB = gSettings.RtVariables.RtMLBSetting;
+  GlobalConfig.RtMLB = settingsData.RtVariables.RtMLBSetting;
   if ( GlobalConfig.RtMLB.isEmpty() ) {
-    GlobalConfig.RtMLB = gSettings.Smbios.BoardSerialNumber;
+    GlobalConfig.RtMLB = settingsData.Smbios.BoardSerialNumber;
   }
 
   for (size_t idx = 0 ; idx < gConf.GfxPropertiesArrayNonConst.size() ; idx++ ) {
-    gConf.GfxPropertiesArrayNonConst[idx].LoadVBios = gSettings.Graphics.LoadVBios; //default
+    gConf.GfxPropertiesArrayNonConst[idx].LoadVBios = settingsData.Graphics.LoadVBios; //default
   }
 
-  if ( gSettings.CPU.TurboDisabled ) {
+  if ( settingsData.CPU.TurboDisabled ) {
     GlobalConfig.Turbo = false;
   }else{
     GlobalConfig.Turbo = gCPUStructure.Turbo;
   }
 
   // Jief : Shouldn't this injection made at StartLoader only ? And only for macOS ?
-  if ( gSettings.Devices.Properties.propertiesAsString.notEmpty() )
+  if ( settingsData.Devices.Properties.propertiesAsString.notEmpty() )
   {
-    size_t binaryPropSize = hex2bin(gSettings.Devices.Properties.propertiesAsString, NULL, 0); // check of correct length is supposed to have been done when reading settings.
+    size_t binaryPropSize = hex2bin(settingsData.Devices.Properties.propertiesAsString, NULL, 0); // check of correct length is supposed to have been done when reading settings.
     UINTN nbPages = EFI_SIZE_TO_PAGES(binaryPropSize);
     EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     EFI_STATUS Status = gBS->AllocatePages (
@@ -553,7 +544,7 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
 
     if (!EFI_ERROR(Status)) {
       cProperties = (UINT8*)(UINTN)BufferPtr;
-      cPropSize = (UINT32)hex2bin(gSettings.Devices.Properties.propertiesAsString, cProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe hex2bin return  < MAX_UINT32
+      cPropSize = (UINT32)hex2bin(settingsData.Devices.Properties.propertiesAsString, cProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe hex2bin return  < MAX_UINT32
 
       DBG("Injected EFIString of length %d\n", cPropSize);
     }else{
@@ -561,9 +552,9 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
     }
   }
   //---------
-  GlobalConfig.IgPlatform = gSettings.Graphics._IgPlatform;
-  for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size() ; ++idx ) {
-    const SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& arbitraryProperty = gSettings.Devices.ArbitraryArray[idx];
+  GlobalConfig.IgPlatform = settingsData.Graphics._IgPlatform;
+  for ( size_t idx = 0 ; idx < settingsData.Devices.ArbitraryArray.size() ; ++idx ) {
+    const SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& arbitraryProperty = settingsData.Devices.ArbitraryArray[idx];
     for ( size_t jdx = 0 ; jdx < arbitraryProperty.CustomPropertyArray.size() ; ++jdx ) {
       const SETTINGS_DATA::DevicesClass::SimplePropertyClass& customProperty = arbitraryProperty.CustomPropertyArray[jdx];
       if ( customProperty.Key.contains("-platform-id") ) {

@@ -134,7 +134,7 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, size_t EncodedSize, OUT U
 
 	if (DecodedSize != NULL) {
     if ( DecodedSizeInternal < 0 ) {
-      panic_ask("Base64DecodeClover : DecodedSizeInternal < 0");
+      log_technical_bug("Base64DecodeClover : DecodedSizeInternal < 0");
       *DecodedSize = 0; // better 0 than a cast of a negative number
     }else{
       *DecodedSize = (UINTN)DecodedSizeInternal;

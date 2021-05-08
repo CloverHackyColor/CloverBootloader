@@ -1059,7 +1059,7 @@ void ApplyInputs(void)
   }
   i++; //122
   if (InputItems[i].Valid) {
-    gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide = (UINTN)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide = (uint8_t)StrDecimalToUintn(InputItems[i].SValue.wc_str());
     DBG(" set MaxSlide = %hhu\n", gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide);
   }
   i++; //123

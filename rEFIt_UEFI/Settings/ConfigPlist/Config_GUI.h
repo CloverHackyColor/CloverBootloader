@@ -134,56 +134,56 @@ public:
           if ( !ScanAsAsDict.isDefined() ) return 0;
           return ScanAsAsDict.dgetKernel();
         }
-      };
+    };
       // -------------------------------------------------- Scan class end
 
 
 
 
-      // -------------------------------------------------- Custom_Class class end
-      class GUI_Custom_Class : public XmlDict
-      {
-        using super = XmlDict;
-      public:
+    // -------------------------------------------------- Custom_Class class end
+    class GUI_Custom_Class : public XmlDict
+    {
+      using super = XmlDict;
+    public:
 
-          class GUI_Custom_Entry_VolumeType_Class : public XmlUnion
-          {
-            using super = XmlDict;
-         protected:
-            XmlString8AllowEmpty VolumeTypeAsString = XmlString8AllowEmpty();
-            XmlArray<XmlString8AllowEmpty> VolumeTypeAsArray = XmlArray<XmlString8AllowEmpty>();
+        class GUI_Custom_Entry_VolumeType_Class : public XmlUnion
+        {
+          using super = XmlDict;
+        protected:
+          XmlString8AllowEmpty VolumeTypeAsString = XmlString8AllowEmpty();
+          XmlArray<XmlString8AllowEmpty> VolumeTypeAsArray = XmlArray<XmlString8AllowEmpty>();
 
-            XmlUnionField m_fields[2] = { VolumeTypeAsString, VolumeTypeAsArray};
-            virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
+          XmlUnionField m_fields[2] = { VolumeTypeAsString, VolumeTypeAsArray};
+          virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
             
-            static UINT8 CheckVolumeType(UINT8 VolumeType, const XString8& VolumeTypeAsString)
-            {
-              UINT8 VolumeTypeTmp = VolumeType;
-              if (VolumeTypeAsString.isEqualIC("Internal")) {
-                VolumeTypeTmp |= VOLTYPE_INTERNAL;
-              } else if (VolumeTypeAsString.isEqualIC("External")) {
-                VolumeTypeTmp |= VOLTYPE_EXTERNAL;
-              } else if (VolumeTypeAsString.isEqualIC("Optical")) {
-                VolumeTypeTmp |= VOLTYPE_OPTICAL;
-              } else if (VolumeTypeAsString.isEqualIC("FireWire")) {
-                VolumeTypeTmp |= VOLTYPE_FIREWIRE;
-              }
-              return VolumeTypeTmp;
+          static UINT8 CheckVolumeType(UINT8 VolumeType, const XString8& VolumeTypeAsString)
+          {
+            UINT8 VolumeTypeTmp = VolumeType;
+            if (VolumeTypeAsString.isEqualIC("Internal")) {
+              VolumeTypeTmp |= VOLTYPE_INTERNAL;
+            } else if (VolumeTypeAsString.isEqualIC("External")) {
+              VolumeTypeTmp |= VOLTYPE_EXTERNAL;
+            } else if (VolumeTypeAsString.isEqualIC("Optical")) {
+              VolumeTypeTmp |= VOLTYPE_OPTICAL;
+            } else if (VolumeTypeAsString.isEqualIC("FireWire")) {
+              VolumeTypeTmp |= VOLTYPE_FIREWIRE;
             }
+            return VolumeTypeTmp;
+          }
 
-          public:
-            UINT8 dgetVolumeType() const {
-              if ( VolumeTypeAsString.isDefined() ) return CheckVolumeType(0, VolumeTypeAsString.value());
-              if ( VolumeTypeAsArray.isDefined() ) {
-                UINT8 VolumeType = 0;
-                for (size_t idx = 0; idx < VolumeTypeAsArray.size() ; ++idx) {
-                  VolumeType = CheckVolumeType(VolumeType, VolumeTypeAsArray[idx].value());
-                }
-                return VolumeType;
+        public:
+          UINT8 dgetVolumeType() const {
+            if ( VolumeTypeAsString.isDefined() ) return CheckVolumeType(0, VolumeTypeAsString.value());
+            if ( VolumeTypeAsArray.isDefined() ) {
+              UINT8 VolumeType = 0;
+              for (size_t idx = 0; idx < VolumeTypeAsArray.size() ; ++idx) {
+                VolumeType = CheckVolumeType(VolumeType, VolumeTypeAsArray[idx].value());
               }
-              return 0;
+              return VolumeType;
             }
-          };
+            return 0;
+          }
+        };
 
 
           class GUI_Custom_SubEntry_Class;
@@ -292,7 +292,7 @@ public:
             const XBuffer<UINT8>& dgetImageData() const { return ImageData.isDefined() ? ImageData.value() : XBuffer<UINT8>::NullXBuffer; };
             const XStringW& dgetm_DriveImagePath() const { return DriveImagePath.isDefined() ? DriveImagePath.value() : NullXStringW; };
             const XBuffer<UINT8>& dgetDriveImageData() const { return DriveImageData.isDefined() ? DriveImageData.value() : XBuffer<UINT8>::NullXBuffer; };
-            CHAR16 dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
+            char32_t dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
 
             const XString8& dgetCustomLogoAsXString8() const  { return CustomLogo.xmlString8.isDefined() ? CustomLogo.xmlString8.value() : NullXString8; };
             const XBuffer<UINT8>& dgetCustomLogoAsData() const  { return CustomLogo.xmlData.isDefined() ? CustomLogo.xmlData.value() :  XBuffer<UINT8>::NullXBuffer; };
@@ -524,7 +524,7 @@ public:
               const XBuffer<UINT8>& dgetImageData() const { return ImageData.isDefined() ? ImageData.value() : XBuffer<UINT8>::NullXBuffer; };
               const XString8& dgetDriveImagePath() const { return DriveImagePath.isDefined() ? DriveImagePath.value() : NullXString8; };
               const XBuffer<UINT8>& dgetDriveImageData() const { return DriveImageData.isDefined() ? DriveImageData.value() : XBuffer<UINT8>::NullXBuffer; };
-              CHAR16 dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
+              char32_t dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
               bool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : false; };
               bool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
               UINT8 dgetType() const {
@@ -585,7 +585,7 @@ public:
           const XString8& dgetFullTitle() const { return FullTitle.isDefined() ? FullTitle.value() : NullXString8; };
           const XString8& dgetImagePath() const { return ImagePath.isDefined() ? ImagePath.value() : NullXString8; };
           const XBuffer<UINT8>& dgetImageData() const { return ImageData.isDefined() ? ImageData.value() : XBuffer<UINT8>::NullXBuffer; };
-          CHAR16 dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
+          char32_t dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
           bool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : false; };
           bool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
 
@@ -643,8 +643,8 @@ protected:
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
       // TODO Check that resolution is Integer x Integer
       return true;
-      xmlLiteParser->addError(generateErrors, S8Printf("ScreenResolution must be {width}x{height} at line %d.", keyPos.getLine()));
-      return false;
+      //xmlLiteParser->addError(generateErrors, S8Printf("ScreenResolution must be {width}x{height} at line %d.", keyPos.getLine()));
+      //return false;
     }
   } ScreenResolution = ScreenResolutionClass();
 // ProvideConsoleGop
@@ -663,7 +663,7 @@ protected:
         return false;
       }
   } ConsoleMode = ConsoleModeClass();
-// Language
+  // Language
   class LanguageClass: public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
     virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
@@ -692,19 +692,20 @@ protected:
 // KbdPrevLang
   XmlBool KbdPrevLang = XmlBool();
 public:
-// Mouse
+  // Mouse
   GUI_Mouse_Class Mouse = GUI_Mouse_Class();
 // Hide
 protected:
   XmlString8Array Hide = XmlString8Array();
 public:
-// Scan
-  GUI_Scan_Class Scan = GUI_Scan_Class(*this);
-// Custom
+  // Scan
+  GUI_Scan_Class Scan;
+  // Custom
   GUI_Custom_Class Custom = GUI_Custom_Class();
 
 protected:
-  XmlDictField m_fields[16] = {
+
+  XmlDictField m_fields[16] {
     {"Timezone", Timezone},
     {"Theme", Theme},
     {"EmbeddedThemeType", EmbeddedThemeType},
@@ -724,6 +725,9 @@ protected:
   };
   
 public:
+
+  GUI_Class() : Scan(*this) {}
+  
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 //  virtual bool validate(XmlLiteParser* xmlLiteParser, const char* name, XmlAbstractType* xmlTyp, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors) override;
 

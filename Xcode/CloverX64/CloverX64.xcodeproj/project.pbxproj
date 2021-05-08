@@ -67,15 +67,9 @@
 		9A2754B2263802230095D456 /* ConfigPlistAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547B263802230095D456 /* ConfigPlistAbstract.h */; };
 		9A2754B3263802230095D456 /* ConfigPlistAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547B263802230095D456 /* ConfigPlistAbstract.h */; };
 		9A2754B4263802230095D456 /* ConfigPlistAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547B263802230095D456 /* ConfigPlistAbstract.h */; };
-		9A2754B5263802230095D456 /* ConfigPlistClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547C263802230095D456 /* ConfigPlistClass.cpp */; };
-		9A2754B6263802230095D456 /* ConfigPlistClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547C263802230095D456 /* ConfigPlistClass.cpp */; };
-		9A2754B7263802230095D456 /* ConfigPlistClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547C263802230095D456 /* ConfigPlistClass.cpp */; };
 		9A2754B8263802230095D456 /* Config_SystemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547D263802230095D456 /* Config_SystemParameters.h */; };
 		9A2754B9263802230095D456 /* Config_SystemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547D263802230095D456 /* Config_SystemParameters.h */; };
 		9A2754BA263802230095D456 /* Config_SystemParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547D263802230095D456 /* Config_SystemParameters.h */; };
-		9A2754BB263802230095D456 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547E263802230095D456 /* Config_ACPI.cpp */; };
-		9A2754BC263802230095D456 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547E263802230095D456 /* Config_ACPI.cpp */; };
-		9A2754BD263802230095D456 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27547E263802230095D456 /* Config_ACPI.cpp */; };
 		9A2754BE263802230095D456 /* Config_Devices.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547F263802230095D456 /* Config_Devices.h */; };
 		9A2754BF263802230095D456 /* Config_Devices.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547F263802230095D456 /* Config_Devices.h */; };
 		9A2754C0263802230095D456 /* Config_Devices.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A27547F263802230095D456 /* Config_Devices.h */; };
@@ -1017,6 +1011,9 @@
 		9A878CAA26186898000B9362 /* XObjArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788DB26186897000B9362 /* XObjArray.h */; };
 		9A87920326188002000B9362 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87920126188002000B9362 /* Platform.h */; };
 		9A87920426188002000B9362 /* XToolsConf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87920226188002000B9362 /* XToolsConf.h */; };
+		9ACBC043264484A5001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
+		9ACBC044264484A6001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
+		9ACBC045264484A6001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
 		9AF1EFEB2634217800F7C2C0 /* SettingsUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF1EFE92634217800F7C2C0 /* SettingsUtils.h */; };
 		9AF1EFEC2634217800F7C2C0 /* SettingsUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF1EFEA2634217800F7C2C0 /* SettingsUtils.cpp */; };
 		9AF4D937263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D92B263004E100487D15 /* XmlLiteCompositeTypes.cpp */; };
@@ -1084,9 +1081,7 @@
 		9A275479263802230095D456 /* Config_Boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Boot.h; sourceTree = "<group>"; };
 		9A27547A263802230095D456 /* Config_Devices_Arbitrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_Arbitrary.h; sourceTree = "<group>"; };
 		9A27547B263802230095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
-		9A27547C263802230095D456 /* ConfigPlistClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistClass.cpp; sourceTree = "<group>"; };
 		9A27547D263802230095D456 /* Config_SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_SystemParameters.h; sourceTree = "<group>"; };
-		9A27547E263802230095D456 /* Config_ACPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_ACPI.cpp; sourceTree = "<group>"; };
 		9A27547F263802230095D456 /* Config_Devices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices.h; sourceTree = "<group>"; };
 		9A275480263802230095D456 /* Config_CPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_CPU.h; sourceTree = "<group>"; };
 		9A275481263802230095D456 /* Config_BootGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_BootGraphics.h; sourceTree = "<group>"; };
@@ -1459,7 +1454,6 @@
 				9A275483263802230095D456 /* Config_ACPI_DSDT.cpp */,
 				9A275472263802230095D456 /* Config_ACPI_DSDT.h */,
 				9A275484263802230095D456 /* Config_ACPI_SSDT.h */,
-				9A27547E263802230095D456 /* Config_ACPI.cpp */,
 				9A275477263802230095D456 /* Config_ACPI.h */,
 				9A275479263802230095D456 /* Config_Boot.h */,
 				9A275481263802230095D456 /* Config_BootGraphics.h */,
@@ -1481,7 +1475,6 @@
 				9A27547D263802230095D456 /* Config_SystemParameters.h */,
 				9A275482263802230095D456 /* ConfigPlistAbstract.cpp */,
 				9A27547B263802230095D456 /* ConfigPlistAbstract.h */,
-				9A27547C263802230095D456 /* ConfigPlistClass.cpp */,
 				9A275476263802230095D456 /* ConfigPlistClass.h */,
 				9A275487263802230095D456 /* SMBIOSPlist.cpp */,
 				9A27546E263802230095D456 /* SMBIOSPlist.h */,
@@ -1934,22 +1927,22 @@
 		9A8788CB26186897000B9362 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9A8788D126186897000B9362 /* shared_ptr.cpp */,
+				9A8788D326186897000B9362 /* shared_ptr.h */,
+				9A8788D526186897000B9362 /* unicode_conversions.cpp */,
 				9A8788CC26186897000B9362 /* unicode_conversions.h */,
-				9A8788CD26186897000B9362 /* XStringArray.cpp */,
+				9A8788DA26186897000B9362 /* XArray.h */,
+				9A8788D826186897000B9362 /* XBuffer.cpp */,
+				9A8788D226186897000B9362 /* XBuffer.h */,
+				9A8788DB26186897000B9362 /* XObjArray.h */,
+				9A8788D626186897000B9362 /* XRBuffer.cpp */,
 				9A8788CE26186897000B9362 /* XRBuffer.h */,
+				9A8788D726186897000B9362 /* XString.cpp */,
+				9A8788D926186897000B9362 /* XString.h */,
+				9A8788D426186897000B9362 /* XStringAbstract.h */,
+				9A8788CD26186897000B9362 /* XStringArray.cpp */,
 				9A8788CF26186897000B9362 /* XStringArray.h */,
 				9A8788D026186897000B9362 /* XToolsCommon.h */,
-				9A8788D126186897000B9362 /* shared_ptr.cpp */,
-				9A8788D226186897000B9362 /* XBuffer.h */,
-				9A8788D326186897000B9362 /* shared_ptr.h */,
-				9A8788D426186897000B9362 /* XStringAbstract.h */,
-				9A8788D526186897000B9362 /* unicode_conversions.cpp */,
-				9A8788D626186897000B9362 /* XRBuffer.cpp */,
-				9A8788D726186897000B9362 /* XString.cpp */,
-				9A8788D826186897000B9362 /* XBuffer.cpp */,
-				9A8788D926186897000B9362 /* XString.h */,
-				9A8788DA26186897000B9362 /* XArray.h */,
-				9A8788DB26186897000B9362 /* XObjArray.h */,
 			);
 			path = cpp_foundation;
 			sourceTree = "<group>";
@@ -2807,6 +2800,7 @@
 				9A878B6D26186897000B9362 /* egemb_icons_dark.cpp in Sources */,
 				9A878B2226186897000B9362 /* VersionString.cpp in Sources */,
 				9A878B0426186897000B9362 /* MemoryOperation.c in Sources */,
+				9ACBC043264484A5001EB94B /* config-test.cpp in Sources */,
 				9A878A2326186897000B9362 /* xml.cpp in Sources */,
 				9A878AB926186897000B9362 /* kext_inject.cpp in Sources */,
 				9A8788EE26186897000B9362 /* abort.cpp in Sources */,
@@ -2843,7 +2837,6 @@
 				9A878BCD26186898000B9362 /* XImage.cpp in Sources */,
 				9A87895426186897000B9362 /* XBuffer_tests.cpp in Sources */,
 				9A878BA926186898000B9362 /* nanosvgrast.cpp in Sources */,
-				9A2754B5263802230095D456 /* ConfigPlistClass.cpp in Sources */,
 				9AF4D955263004E200487D15 /* XmlLiteDictTypes.cpp in Sources */,
 				9AF4D937263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A878AE026186897000B9362 /* BootOptions.cpp in Sources */,
@@ -2883,7 +2876,6 @@
 				9A878B6126186897000B9362 /* usbfix.cpp in Sources */,
 				9A878B4C26186897000B9362 /* guid.cpp in Sources */,
 				9A7D2E932636B4F300187064 /* CloverVersion.cpp in Sources */,
-				9A2754BB263802230095D456 /* Config_ACPI.cpp in Sources */,
 				9A878A3826186897000B9362 /* TagString8.cpp in Sources */,
 				9A878A7426186897000B9362 /* AcpiPatcher.cpp in Sources */,
 				9A27548E263802230095D456 /* Config_GUI.cpp in Sources */,
@@ -2924,7 +2916,6 @@
 				9A878A2726186897000B9362 /* TagBool.cpp in Sources */,
 				9A878C3D26186898000B9362 /* tool.cpp in Sources */,
 				9A878C5B26186898000B9362 /* REFIT_MENU_SCREEN.cpp in Sources */,
-				9A2754BC263802230095D456 /* Config_ACPI.cpp in Sources */,
 				9A87897626186897000B9362 /* plist_tests.cpp in Sources */,
 				9A27546B263801930095D456 /* Self.cpp in Sources */,
 				9AF4D971263014C600487D15 /* Volume.cpp in Sources */,
@@ -3009,8 +3000,8 @@
 				9AF4D938263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A878AE126186897000B9362 /* BootOptions.cpp in Sources */,
 				9A878AEA26186897000B9362 /* gma.cpp in Sources */,
+				9ACBC044264484A6001EB94B /* config-test.cpp in Sources */,
 				9A2754E926396F2B0095D456 /* SmbiosFillPatchingValues.cpp in Sources */,
-				9A2754B6263802230095D456 /* ConfigPlistClass.cpp in Sources */,
 				9A878C7F26186898000B9362 /* XStringArray.cpp in Sources */,
 				9A8789A026186897000B9362 /* strncmp_test.cpp in Sources */,
 				9A878BBC26186898000B9362 /* XIcon.cpp in Sources */,
@@ -3083,7 +3074,6 @@
 				9A878A2826186897000B9362 /* TagBool.cpp in Sources */,
 				9A878C3E26186898000B9362 /* tool.cpp in Sources */,
 				9A878C5C26186898000B9362 /* REFIT_MENU_SCREEN.cpp in Sources */,
-				9A2754BD263802230095D456 /* Config_ACPI.cpp in Sources */,
 				9A87897726186897000B9362 /* plist_tests.cpp in Sources */,
 				9A27546C263801930095D456 /* Self.cpp in Sources */,
 				9AF4D972263014C600487D15 /* Volume.cpp in Sources */,
@@ -3168,8 +3158,8 @@
 				9AF4D939263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A878AE226186897000B9362 /* BootOptions.cpp in Sources */,
 				9A878AEB26186897000B9362 /* gma.cpp in Sources */,
+				9ACBC045264484A6001EB94B /* config-test.cpp in Sources */,
 				9A2754EA26396F2B0095D456 /* SmbiosFillPatchingValues.cpp in Sources */,
-				9A2754B7263802230095D456 /* ConfigPlistClass.cpp in Sources */,
 				9A878C8026186898000B9362 /* XStringArray.cpp in Sources */,
 				9A8789A126186897000B9362 /* strncmp_test.cpp in Sources */,
 				9A878BBD26186898000B9362 /* XIcon.cpp in Sources */,

@@ -11,12 +11,15 @@
 #include <stdio.h>
 #include "XmlLiteSimpleTypes.h"
 
+
+#if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 #ifndef NOP
 #define NOP do { int i=0 ; (void)i; } while (0) // for debugging
 #endif
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 
 template <class T>
 class XmlArray : public XmlAbstractType, public XObjArray<T>
@@ -45,7 +48,6 @@ class XmlArray : public XmlAbstractType, public XObjArray<T>
     virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
 };
 
-#pragma GCC diagnostic pop
 
 template <class T>
 const typename XmlArray<T>::ValueType XmlArray<T>::nullValue;

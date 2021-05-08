@@ -54,7 +54,7 @@
 //
 
 
-static BOOLEAN IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
+static bool IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
 {
   /* example for valid matches are:
    10.7, only 10.7 (10.7.1 will be skipped)
@@ -62,7 +62,7 @@ static BOOLEAN IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
    10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
    */
 
-  BOOLEAN ret = FALSE;
+  bool ret = FALSE;
 
   if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
     return TRUE; //undefined matched corresponds to old behavior

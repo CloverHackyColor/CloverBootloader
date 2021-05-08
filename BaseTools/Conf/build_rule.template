@@ -330,7 +330,7 @@
     <Command.MSFT, Command.INTEL>
         @"echo" [DLINK] $(MODULE_NAME)
         $(AT)"$(DLINK)" /OUT:${dst} $(DLINK_FLAGS) $(DLINK2_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST)
-        $(AT)"$(DLINK)" /OUT:${dst} $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST)
+#        $(AT)"$(DLINK)" /OUT:${dst} $(DLINK_FLAGS) $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST)
 
     <Command.GCC>
         @"echo" [DLINK] $(MODULE_NAME)

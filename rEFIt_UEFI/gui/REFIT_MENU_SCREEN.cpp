@@ -431,7 +431,7 @@ void REFIT_MENU_SCREEN::FreeMenu()
   InfoLines.setEmpty();
 }
 
-INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
+INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN char32_t Shortcut)
 {
   if (Shortcut >= 'a' && Shortcut <= 'z')
     Shortcut -= ('a' - 'A');

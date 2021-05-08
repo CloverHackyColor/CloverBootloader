@@ -50,9 +50,9 @@ template <> struct _xtools__make_unsigned<unsigned long long> {typedef unsigned 
 // is_integral
 template <class _Tp> struct _xtools__is_integral_st                     : public _xtools__false_type {};
 //template <>          struct _xtools__is_integral_st<bool>               : public _xtools__true_type {};
-//template <>          struct _xtools__is_integral_st<char>               : public _xtools__true_type {};
-//template <>          struct _xtools__is_integral_st<signed char>        : public _xtools__true_type {};
-//template <>          struct _xtools__is_integral_st<unsigned char>      : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<char>               : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<signed char>        : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned char>      : public _xtools__true_type {};
 //template <>          struct _xtools__is_integral_st<wchar_t>            : public _xtools__true_type {};
 template <>          struct _xtools__is_integral_st<short>              : public _xtools__true_type {};
 template <>          struct _xtools__is_integral_st<unsigned short>     : public _xtools__true_type {};

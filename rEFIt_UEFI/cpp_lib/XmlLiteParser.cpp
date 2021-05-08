@@ -14,6 +14,10 @@
 #include "../cpp_foundation/unicode_conversions.h"
 
 
+#ifdef _MSC_VER
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 
 bool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength)
 {

@@ -1,4 +1,4 @@
-@echo off
+@echo on
 set curdir=%cd%
 
 set TARGETDIR=.\x64\Debug
@@ -16,11 +16,11 @@ for %%i in (%TARGETFILENAME%) do @set TARGETBASENAME=%%~ni
 set GENFWPATH=..\..\BaseTools\Bin\Win32\GenFw.exe
 
 
-rem echo curdir=%curdir%
-rem @echo TARGETDIR=%TARGETDIR%
-rem @echo TARGETFILENAME=%TARGETFILENAME%
-rem @echo TARGETBASENAME=%TARGETBASENAME%
-rem @echo GENFWPATH=%GENFWPATH%
+@echo curdir=%curdir%
+@echo TARGETDIR=%TARGETDIR%
+@echo TARGETFILENAME=%TARGETFILENAME%
+@echo TARGETBASENAME=%TARGETBASENAME%
+@echo GENFWPATH=%GENFWPATH%
 
 
 if NOT exist "Clover.vcxproj" (

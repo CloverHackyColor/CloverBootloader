@@ -1,9 +1,12 @@
 #ifndef __CLOVER_STDIO_H__
 #define __CLOVER_STDIO_H__
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <Base.h>
 
 #ifdef _MSC_VER
 #define __attribute__(x)

@@ -231,6 +231,24 @@ constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t len);
 constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t len);
 constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t len);
 
+
+#ifdef _MSC_VER
+// I don't know why it's needed with VS.
+
+template<>
+struct _xstringarray__char_type<XString8, void>
+{
+  static const typename XString8::char_t* getCharPtr(const XString8& t) { return t.s(); }
+};
+
+template<>
+struct _xstringarray__char_type<XStringW, void>
+{
+  static const typename XStringW::char_t* getCharPtr(const XStringW& t) { return t.s(); }
+};
+
+#endif
+
 extern const XString8 NullXString8;
 extern const XStringW NullXStringW;
 

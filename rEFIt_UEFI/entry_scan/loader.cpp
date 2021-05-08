@@ -892,7 +892,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN XIcon *DriveImage,
                                        IN UINT8 OSType,
                                        IN UINT8 Flags,
-                                       IN CHAR16 Hotkey,
+                                       IN char32_t Hotkey,
                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor,
                                        IN UINT8 CustomBoot,
                                        IN const XImage& CustomLogo,
@@ -2202,7 +2202,7 @@ void ScanLoader(void)
       {
         size_t prebootIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
         if ( prebootIdx == SIZE_T_MAX ) {
-        	panic_ask ("%s : prebootIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
+        	log_technical_bug("%s : prebootIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
         }else{
           size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
           if ( idxMain != SIZE_T_MAX && idxMain != prebootIdx+1 ) {
@@ -2234,7 +2234,7 @@ void ScanLoader(void)
       {
         size_t installerIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
         if ( installerIdx == SIZE_T_MAX ) {
-          panic_ask("%s : installerIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
+          log_technical_bug("%s : installerIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
         }else{
           size_t idxPreboot = MainMenu.Entries.getApfsPrebootLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
           if ( idxPreboot != SIZE_T_MAX ) {
@@ -2278,7 +2278,7 @@ void ScanLoader(void)
       {
         size_t recoveryIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
         if ( recoveryIdx == SIZE_T_MAX ) {
-          panic_ask ("%s : recoveryIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
+          log_technical_bug("%s : recoveryIdx == SIZE_T_MAX", __PRETTY_FUNCTION__);
         }else{
           size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
           if ( idxMain != SIZE_T_MAX ) {

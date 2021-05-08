@@ -127,8 +127,8 @@ protected:
   XmlString8AllowEmpty KernelCache = XmlString8AllowEmpty();
   XmlBool ProvideConsoleGopEnable = XmlBool();
 public:
-  OcKernelQuirks_Class OcKernelQuirks = OcKernelQuirks_Class(*this);
-  OcBooterQuirks_Class OcBooterQuirks = OcBooterQuirks_Class(*this);
+  OcKernelQuirks_Class OcKernelQuirks;
+  OcBooterQuirks_Class OcBooterQuirks;
 
   XmlDictField m_fields[30] = {
     {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
@@ -163,6 +163,8 @@ public:
     {"XhciPortLimit", OcKernelQuirks.XhciPortLimit},
   };
 
+  Quirks_Class() : OcKernelQuirks(*this), OcBooterQuirks(*this) {}
+  
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
   virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {

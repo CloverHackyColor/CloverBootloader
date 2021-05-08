@@ -12,6 +12,11 @@
 #include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
 
+
+#if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 bool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength);
 bool strnIsEqual(const char* key, size_t keyLength, const char* value);
 bool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength);

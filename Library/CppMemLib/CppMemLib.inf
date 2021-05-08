@@ -48,3 +48,4 @@
 
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /GL-
+  MSFT:*_*_*_CXX_FLAGS = /GL-

@@ -109,8 +109,8 @@ public:
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	void __setSize(IntegralType size) {
-    if ( size<0 ) { panic_ask("XBuffer::setSize() -> i < 0"); return; }
-    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) { panic_ask("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
+    if ( size<0 ) { log_technical_bug("XBuffer::setSize() -> i < 0"); return; }
+    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) { log_technical_bug("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
     CheckAllocatedSize((unsigned_type(IntegralType))size);
     XBuffer_Super::m_size = (unsigned_type(IntegralType))size;
   };
@@ -118,9 +118,9 @@ public:
   /* add value 0 until size is reached */
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   void setSize(IntegralType size, const T& elementToCopy) {
-    if ( size<0 ) { panic_ask("XBuffer::setSize() -> i < 0"); return; }
+    if ( size<0 ) { log_technical_bug("XBuffer::setSize() -> i < 0"); return; }
     unsigned_type(IntegralType) usize = (unsigned_type(IntegralType))size;
-    if ( usize > MAX_XSIZE ) { panic_ask("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
+    if ( usize > MAX_XSIZE ) { log_technical_bug("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
     CheckAllocatedSize(usize);
     for ( size_t idx = XBuffer_Super::m_size ; idx < usize ; ++idx ) {
       _WData[idx] = elementToCopy;
