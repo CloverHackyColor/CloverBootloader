@@ -35,10 +35,14 @@ public:
     public:
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-      int64_t dgetPointerSpeed() const { return Speed.isDefined() ? Speed.value() : 0; };
-      bool dgetPointerEnabled() const { return Enabled.isDefined() ? Enabled.value() ? dgetPointerSpeed() != 0 : false : dgetPointerSpeed() != 0 ; };
+      int64_t dgetPointerSpeed() const { return Speed.isDefined() ? Speed.value() : 2; };
+      bool dgetPointerEnabled() const {
+        if ( dgetPointerSpeed() <= 0 ) return false; // return false, whatever value Enabled has.
+        if ( Enabled.isDefined() ) return Enabled.value();
+        return true; // if !Enabled.isDefined(), return true because dgetPointerSpeed() > 0
+      }
       bool dgetPointerMirror() const { return Mirror.isDefined() ? Mirror.value() : false; };
-      uint64_t dgetDoubleClickTime() const { return DoubleClickTime.isDefined() ? DoubleClickTime.value() : 0; };
+      uint64_t dgetDoubleClickTime() const { return DoubleClickTime.isDefined() ? DoubleClickTime.value() : 500; };
 
     };
     // -------------------------------------------------- Mouse class end
