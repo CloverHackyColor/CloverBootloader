@@ -218,7 +218,7 @@ Install to /EFI/CLOVER/themes/steampunkblack";
 "CloverConfigPlistValidator_title" = "CloverConfigPlistValidator";
 "CloverConfigPlistValidator_description" = "CloverConfigPlistValidator by jief,
 Verify sanity of your config.plist keeps it clean and up to date.
-Installs to $HOME/src";
+Installs to ";
 
 // ============================================================================
 // RC Scripts
