@@ -231,7 +231,7 @@ EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
 }
 
 // Read signature database
-void *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
+void *GetSignatureDatabase(const wchar_t *DatabaseName,
                            IN  EFI_GUID *DatabaseGuid,
                            OUT UINTN    *DatabaseSize)
 {
@@ -392,7 +392,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   if ((DatabaseName == NULL) || (DatabaseGuid == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
-  DBG("Setting secure variable: %s %ls 0x%hhX (0x%hhX)\n", strguid(DatabaseGuid), DatabaseName, Database, DatabaseSize);
+  DBG("Setting secure variable: %s %ls 0x%llX (0x%llX)\n", strguid(DatabaseGuid), DatabaseName, uintptr_t(Database), DatabaseSize);
   NameLen = StrLen(DatabaseName);
   if (NameLen == 0) {
     return EFI_INVALID_PARAMETER;
@@ -403,9 +403,9 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   if (EFI_ERROR(Status)) {
     return Status;
   }
-  DBG("Timestamp: %t\n", Timestamp);
+  // TODO: %t specifier DBG("Timestamp: %t\n", Timestamp);
   // In user mode we need to sign the database with exchange key
-  if (!gSettings.Boot.SecureBootSetupMode) {
+  if (!GlobalConfig.SecureBootSetupMode) {
     // Initialize the cyphers and digests
     ERR_load_crypto_strings();
     OpenSSL_add_all_digests();
@@ -491,7 +491,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   } else {
     CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16), Database, DatabaseSize); //Payload, PayloadSize);
   }
-  DBG("Writing secure variable 0x%hhX (0x%hhX) ...\n", Authentication, Size);
+  DBG("Writing secure variable 0x%llX (0x%llX) ...\n", uintptr_t(Authentication), Size);
   // Write the database variable
   Status = gRT->SetVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES, Size, Authentication);
   // Cleanup the authentication buffer
@@ -507,8 +507,8 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
 {
   EFI_STATUS Status;
   // Check is valid to set database
-  if ((gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
-      (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
+  if ((GlobalConfig.SecureBoot && GlobalConfig.SecureBootSetupMode) ||
+      (!GlobalConfig.SecureBoot && !GlobalConfig.SecureBootSetupMode)) {
     return EFI_NOT_FOUND;
   }
   // Erase database

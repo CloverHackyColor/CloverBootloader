@@ -305,7 +305,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 #ifdef ENABLE_SECURE_BOOT
   // Verify secure boot policy
-  if (gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) {
+  if (GlobalConfig.SecureBoot && GlobalConfig.SecureBootSetupMode) {
     // Only verify if in forced secure boot mode
     EFI_STATUS Status = VerifySecureBootImage(DevicePath);
     if (EFI_ERROR(Status)) {

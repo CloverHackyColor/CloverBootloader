@@ -114,7 +114,6 @@ extern INTN EntriesPosX, EntriesPosY;
 
 
 class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
-class REFIT_MENU_ENTRY;
 class REFIT_ABSTRACT_MENU_ENTRY;
 
 typedef void (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);

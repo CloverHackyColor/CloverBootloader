@@ -26,6 +26,7 @@
   MdePkg/MdePkg.dec
   CloverPkg.dec
   #CryptoPkg/CryptoPkg.dec
+  Library/OpensslLib/openssl-1.0.1e/OpensslLib.dec
 
 #
 # OPENSSL_FLAGS is set to define the following flags to be compatible with 

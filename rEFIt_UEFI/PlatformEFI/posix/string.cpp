@@ -154,5 +154,25 @@ strncmp(const char *s1, const char *s2, size_t n)
 //	return 0;
 //}
 
+int memcmp(const void *s1, const void *s2, size_t n)
+{
+  if ( n > MAX_UINTN ) {
+    log_technical_bug("n > MAX_UINTN");
+  }
+  INTN ret = CompareMem(s1,s2,(UINTN)(n));
+  if ( ret < INT_MIN ) {
+    log_technical_bug("n > ret > MAX_INT");
+  }
+  if ( ret > INT_MAX ) {
+    log_technical_bug("n > ret > MAX_INT");
+  }
+  return (int)ret;
+}
+
+char* strstr(const char *haystack, const char *needle)
+{
+  return AsciiStrStr(haystack,needle);
+}
+
 
 #endif

@@ -41,7 +41,7 @@ extern "C" {
 #include <Protocol/SimpleTextIn.h>
 #include <Protocol/SimpleTextOut.h>
 #include <Library/GenericBdsLib.h>
-#include <Library/HiiLib.h>
+//#include <Library/HiiLib.h>
 #include <Library/HdaModels.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
@@ -63,7 +63,7 @@ extern "C" {
 #include <Library/HobLib.h>
 #include <Library/SerialPortLib.h>
 #include <Library/HdaVerbs.h>
-#include <Library/NetLib.h>
+//#include <Library/NetLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 

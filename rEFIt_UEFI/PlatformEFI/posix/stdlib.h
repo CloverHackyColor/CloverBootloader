@@ -19,23 +19,24 @@ extern "C" {
 
 void abort(void);
 
-#ifdef __cplusplus
-}
-#endif
-
 inline void* malloc(size_t size)
 {
-	return AllocatePool(size);
+  return AllocatePool(size);
 }
 
 inline void* reallocWithOldSize(void *ptr, size_t newsize, size_t oldsize) // not the posix realloc. For EFI we need oldsize
 {
-	return ReallocatePool(oldsize, newsize, ptr);
+  return ReallocatePool(oldsize, newsize, ptr);
 }
 
 inline void free(void *ptr)
 {
-	FreePool(ptr);
+  FreePool(ptr);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

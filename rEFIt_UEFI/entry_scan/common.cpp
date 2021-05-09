@@ -385,7 +385,7 @@ BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME 
 //  { 0, 0, 0, 0 }, NULL};
 //STATIC REFIT_MENU_SCREEN  InitialMenu(0, L"Please Select File..."_XSW, XStringW());
 // Ask user for file path from volumes menu
-BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   REFIT_MENU_SCREEN   Menu(0, L"Please Select File..."_XSW, XStringW());
   UINTN               Index = 0, /*Count = 0,*/ MenuExit;

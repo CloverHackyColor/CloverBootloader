@@ -398,43 +398,30 @@
   CloverPkg.dec
   OpenCorePkg/OpenCorePkg.dec
   MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
-  NetworkPkg/NetworkPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
-  OpenCorePkg/OpenCorePkg.dec
+#  Library/OpensslLib/openssl-1.0.1e/OpensslLib.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
-  UefiBootServicesTableLib
+  UefiBootServicesTableLib # for gBS and gST
   UefiLib
   MemoryAllocationLib
   BaseMemoryLib
   BaseLib
   DevicePathLib
-  OcDeviceTreeLib
-  DebugLib
-  DxeServicesLib
-  DxeServicesTableLib
+  DxeServicesTableLib # for gDS
   HdaDevicesLib
   HobLib
   IoLib
-#  HiiLib
-#  EfiFileLib
-  PeCoffLib
-#  GenericBdsLib
   MemLogLib
   VideoBiosPatchLib
-  OpensslLib
-  NetLib
+#  OpensslLib # for secureboot, I think
   WaveLib
-  BaseDebugPrintErrorLevelLib
-  BaseSerialPortLib
   OpenCoreLib
-  #OcDebugLogLib
+  DebugLib
   OcDebugLogLibOc2Clover
-  OcAppleBootPolicyLib
   CppMemLib
 
 [Guids]

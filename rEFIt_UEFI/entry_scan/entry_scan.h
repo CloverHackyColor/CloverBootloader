@@ -52,7 +52,7 @@ BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME 
                                   const CHAR16 *ParentPath, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path from volumes menu
-BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path
 BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 
@@ -93,7 +93,6 @@ EFI_STATUS UnlockBootScreen(void);
 #define DEFAULT_UNAUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
 
 void AddSecureBootTool(void);
-void InitializeSecureBoot(void);
 EFI_STATUS InstallSecureBoot(void);
 void UninstallSecureBoot(void);
 void EnableSecureBoot(void);
@@ -108,13 +107,13 @@ EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
 EFI_STATUS ClearSecureBootKeys(void);
 
 // secure boot database
-void *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
-                           IN  EFI_GUID *DatabaseGuid,
-                           OUT UINTN    *DatabaseSize);
-EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
-                                IN EFI_GUID *DatabaseGuid,
-                                IN void     *Database,
-                                IN UINTN     DatabaseSize);
+void *GetSignatureDatabase(const wchar_t* DatabaseName,
+                           IN  EFI_GUID * DatabaseGuid,
+                           OUT UINTN    * DatabaseSize);
+EFI_STATUS SetSignatureDatabase(const wchar_t* DatabaseName,
+                                IN EFI_GUID *  DatabaseGuid,
+                                IN void     *  Database,
+                                IN UINTN       DatabaseSize);
 
 // secure boot authorized database
 void *GetAuthorizedDatabase(UINTN *DatabaseSize);

@@ -24,8 +24,8 @@
 // originally from OpensslLib
 
 //#define memset(dest,ch,count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
-#define memchr(buf,ch,count)              ScanMem8(buf,(UINTN)(count),(UINT8)ch)
-#define memcmp(buf1,buf2,count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
+//#define memchr(buf,ch,count)              ScanMem8(buf,(UINTN)(count),(UINT8)ch)
+//#define memcmp(buf1,buf2,count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
 //#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))
 //#define strcmp                            AsciiStrCmp
 //#define strncmp(string1,string2,count)    (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
@@ -33,8 +33,8 @@
 //#define strncpy(strDest,strSource,count)  AsciiStrnCpyS(strDest,(UINTN)count+1,strSource,(UINTN)count)
 //#define strlen(str)                       (size_t)(AsciiStrLen(str))
 //#define strcat(strDest,strSource)         AsciiStrCatS(strDest,AsciiStrLen(strDest)+1,strSource)
-#define strchr(str,ch)                    ScanMem8((void *)(str),AsciiStrSize(str),(UINT8)ch)
-#define strstr(a,b)                       AsciiStrStr(a,b)
+//#define strchr(str,ch)                    ScanMem8((void *)(str),AsciiStrSize(str),(UINT8)ch)
+//#define strstr(a,b)                       AsciiStrStr(a,b)
 
 
 #ifdef __cplusplus

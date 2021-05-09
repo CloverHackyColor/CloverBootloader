@@ -1,0 +1,25 @@
+## @file  MdePkg.dec
+# This Package provides all definitions, library classes and libraries instances.
+#
+# It also provides the definitions(including PPIs/PROTOCOLs/GUIDs) of
+# EFI1.10/UEFI2.7/PI1.7 and some Industry Standards.
+#
+# Copyright (c) 2007 - 2019, Intel Corporation. All rights reserved.<BR>
+# Portions copyright (c) 2008 - 2009, Apple Inc. All rights reserved.<BR>
+# (C) Copyright 2016 Hewlett Packard Enterprise Development LP<BR>
+#
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = Openssl
+  PACKAGE_GUID                   = A303B781-8C0D-432F-849E-B36B6CCDBE55
+  PACKAGE_VERSION                = 1
+
+
+[Includes]
+  ../Include
+  include

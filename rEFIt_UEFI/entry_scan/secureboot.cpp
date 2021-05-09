@@ -70,7 +70,7 @@ void EnableSecureBoot(void)
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
   // Check in setup mode
-  if (gSettings.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
+  if (GlobalConfig.SecureBoot || !GlobalConfig.SecureBootSetupMode) {
     return;
   }
   // Ask user if they want to use default keys
@@ -80,7 +80,7 @@ void EnableSecureBoot(void)
   UINT32 AuthenticationStatus = 0;
   UINTN  FileSize = 0;
   // Open the file buffer
-  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getCloverDirFullPath(), &FileSize, &AuthenticationStatus);
+  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getCloverDirFullDevicePath(), &FileSize, &AuthenticationStatus);
   if (FileBuffer != NULL) {
     if (FileSize > 0) {
       // Retrieve the certificates
@@ -99,7 +99,7 @@ void EnableSecureBoot(void)
   }
   // Check and alert about image not found
   if ((FileBuffer == NULL) || (FileSize == 0)) {
-    XStringW FilePath = FileDevicePathToXStringW(&self.getCloverDirFullPath());
+    XStringW FilePath = FileDevicePathToXStringW(&self.getCloverDirFullDevicePath());
     if (FilePath.notEmpty()) {
       DBG("Failed to load Clover image from %ls\n", FilePath.wc_str());
     } else {
@@ -154,25 +154,25 @@ CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 STATIC void PrintSecureBootInfo(void)
 {
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.Boot.SecureBoot) {
-    DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Setup" : "Disabled"));
+  if (!GlobalConfig.SecureBoot) {
+    DBG("Secure Boot: %s\n", (GlobalConfig.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
-    DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Forced" : "Enabled"));
+    DBG("Secure Boot: %s\n", (GlobalConfig.SecureBootSetupMode ? "Forced" : "Enabled"));
     DBG("Boot Policy: %ls\n", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
   }
 }
 
 // Alert message for disable failure
-STATIC void DisableMessage(IN EFI_STATUS  Status,
-                           IN CHAR16     *String,
-                           IN CHAR16     *ErrorString)
+STATIC void DisableMessage(const EFI_STATUS  Status,
+                           const CHAR16     *String,
+                           const CHAR16     *ErrorString)
 {
   XStringW Str;
   if (ErrorString != NULL) {
-    Str = SWPrintf("%ls\n%ls\n%ls", String, ErrorString, efiStrError(Status));
+    Str = SWPrintf("%ls\n%ls\n%s", String, ErrorString, efiStrError(Status));
   } else {
-    Str = SWPrintf("%s\n%s", String, efiStrError(Status));
+    Str = SWPrintf("%ls\n%s", String, efiStrError(Status));
   }
   DBG("Secure Boot: %ls", Str.wc_str());
   AlertMessage(L"Disable Secure Boot"_XSW, Str);
@@ -182,9 +182,9 @@ STATIC void DisableMessage(IN EFI_STATUS  Status,
 void DisableSecureBoot(void)
 {
   EFI_STATUS  Status;
-  CHAR16     *ErrorString = NULL;
+  const CHAR16     *ErrorString = NULL;
   // Check in user mode
-  if (gSettings.Boot.SecureBootSetupMode || !gSettings.Boot.SecureBoot) {
+  if (GlobalConfig.SecureBootSetupMode || !GlobalConfig.SecureBoot) {
     return;
   }
   UninstallSecureBoot();
@@ -317,7 +317,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
 
     case SECURE_BOOT_POLICY_INSERT:
       // If this is forced mode then no insert
-      if (gSettings.Boot.SecureBootSetupMode) {
+      if (GlobalConfig.SecureBootSetupMode) {
         return TRUE;
       }
       break;
@@ -427,7 +427,7 @@ EFI_STATUS InstallSecureBoot(void)
   }
   PrintSecureBootInfo();
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
+  if (!GlobalConfig.SecureBoot || GlobalConfig.SecureBootSetupMode) {
     return EFI_SUCCESS;
   }
   // Locate security protocols
@@ -477,16 +477,16 @@ void UninstallSecureBoot(void)
 void InitializeSecureBoot(void)
 {
   // Set secure boot variables to firmware values
-  UINTN Size = sizeof(gSettings.Boot.SecureBootSetupMode);
-  gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBootSetupMode);
-  Size = sizeof(gSettings.Boot.SecureBoot);
-  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBoot);
+  UINTN Size = sizeof(GlobalConfig.SecureBootSetupMode);
+  gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBootSetupMode);
+  Size = sizeof(GlobalConfig.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBoot);
   // Make sure that secure boot is disabled if in setup mode, this will
   //  allow us to specify later in settings that we want to override
   //  setup mode and pretend like we are in secure boot mode to enforce
   //  secure boot policy even when secure boot is not present/disabled.
-  if (gSettings.Boot.SecureBootSetupMode) {
-    gSettings.Boot.SecureBoot = 0;
+  if (GlobalConfig.SecureBootSetupMode) {
+    GlobalConfig.SecureBoot = 0;
   }
 }
 

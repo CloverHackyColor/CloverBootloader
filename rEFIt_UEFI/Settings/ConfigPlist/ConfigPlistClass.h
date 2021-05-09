@@ -20,6 +20,7 @@
 #include "../../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
 #include <IndustryStandard/SmBios.h> // for Smbios memory type
 #include "../../Platform/guid.h"
+#include "../../entry_scan/secureboot.h"
 extern "C" {
   #include <Protocol/GraphicsOutput.h>
 }
