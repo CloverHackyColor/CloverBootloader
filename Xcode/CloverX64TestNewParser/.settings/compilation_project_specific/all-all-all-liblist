@@ -1,7 +1,0 @@
-#echo "
-#
-#foo
-#
-#" | awk '$0!=""{ printf " -l%s", $0; }'
-
-find ../../../PosixCompilation/DEBUG_Libs -name "*.lib"  | awk '$0!=""{ printf " %s", $0; }'

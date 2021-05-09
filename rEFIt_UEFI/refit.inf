@@ -64,6 +64,8 @@
   cpp_lib/XmlLiteUnionTypes.h
   cpp_unit_test/all_tests.cpp
   cpp_unit_test/all_tests.h
+  cpp_unit_test/config-test.cpp
+  cpp_unit_test/config-test.h
   cpp_unit_test/find_replace_mask_Clover_tests.cpp
   cpp_unit_test/find_replace_mask_Clover_tests.h
   cpp_unit_test/find_replace_mask_OC_tests.cpp
@@ -359,9 +361,7 @@
   Settings/ConfigManager.h
   Settings/ConfigPlist/ConfigPlistAbstract.cpp
   Settings/ConfigPlist/ConfigPlistAbstract.h
-  Settings/ConfigPlist/ConfigPlistClass.cpp
   Settings/ConfigPlist/ConfigPlistClass.h
-  Settings/ConfigPlist/Config_ACPI.cpp
   Settings/ConfigPlist/Config_ACPI.h
   Settings/ConfigPlist/Config_ACPI_DSDT.cpp
   Settings/ConfigPlist/Config_ACPI_DSDT.h
@@ -561,4 +561,6 @@
   GCC:*_*_*_CC_FLAGS = -fno-omit-frame-pointer -DJCONST=CONST
   GCC:*_*_*_CXX_FLAGS = -fno-omit-frame-pointer -fno-rtti -DJCONST=CONST
   
-  MSFT:*_*_*_CC_FLAGS = /Os /wd4201 /D JCONST=const
+  MSFT:*_*_*_CC_FLAGS = /wd4201 /D JCONST=const
+  #TODO re-enable warnings
+  MSFT:*_*_*_CXX_FLAGS = /wd4201 /wd4244 /wd4267 /D JCONST=const 

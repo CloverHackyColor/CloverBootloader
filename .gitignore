@@ -131,3 +131,7 @@ RELEASE_*/
 #copy I make sometimes
 *copy
 *copy [0-9]*
+
+#work in progress
+*_wip
+

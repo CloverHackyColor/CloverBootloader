@@ -70,7 +70,7 @@ public:
   DevicesClass Devices = DevicesClass();
   XmlStringWArray DisableDrivers = XmlStringWArray();
   GUI_Class GUI = GUI_Class();
-  Graphics_Class Graphics = Graphics_Class(*this);
+  Graphics_Class Graphics; // Cannot do this :  = Graphics_Class(*this); because of a MSVC bug. Compilation failed at ssignment of m_fields because all member become const.
   KernelAndKextPatches_Class KernelAndKextPatches = KernelAndKextPatches_Class();
 protected:
   SmbiosPlistClass::SmbiosDictClass SMBIOS = SmbiosPlistClass::SmbiosDictClass(); // use the same dict as for standalone smbios plist
@@ -96,18 +96,13 @@ public:
   };
 
 public:
+  ConfigPlistClass() : Graphics(*this) {}
+  
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-
-public:
-  ConfigPlistClass() {};
 
   const decltype(DisableDrivers)::ValueType& dgetDisabledDriverArray() const { return DisableDrivers.isDefined() ? DisableDrivers.value() : DisableDrivers.nullValue; };
   const decltype(SMBIOS)& getSMBIOS() const { return SMBIOS; };
 
 };
-
-
-//extern const ConfigPlist& configPlist;
-//extern const ConfigPlist& getConfigPlist();
 
 #endif /* _CONFIGPLISTCLASS_H_ */

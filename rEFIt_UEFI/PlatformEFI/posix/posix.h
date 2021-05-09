@@ -36,8 +36,16 @@
 #define strchr(str,ch)                    ScanMem8((void *)(str),AsciiStrSize(str),(UINT8)ch)
 #define strstr(a,b)                       AsciiStrStr(a,b)
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void abort(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 
 inline float fabsf(float x) {

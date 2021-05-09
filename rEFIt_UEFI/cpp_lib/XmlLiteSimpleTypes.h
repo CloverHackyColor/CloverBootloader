@@ -12,12 +12,15 @@
 #define NOP do { int i=0 ; (void)i; } while (0) // for debugging
 #endif
 
-
 #include "../cpp_foundation/XBuffer.h"
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XToolsCommon.h"
 
 #include "XmlLiteParser.h"
+
+#if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
 
 static inline void WARNING_IF_DEFINED_breakpoint()
 {
@@ -374,7 +377,11 @@ public:
   virtual const char* getDescription() override { return "uint8"; };
 
   bool setUInt8Value(ValueType ui8) { setDefined(); m_value = ui8; return true; }
-  bool setUInt8Value(ValueType value, bool sign) { if ( sign ) return setUInt8Value(-value); else setUInt8Value(value); return true; }
+  bool setUInt8Value(ValueType value, bool sign) {
+    if ( sign ) { log_technical_bug("XmlUInt8 sign=true"); setUInt8Value(0); return false; }
+    setUInt8Value(value);
+    return true;
+  }
 //  bool setUInt8Value(uint8_t value, bool sign, XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors) {
 //    setUInt8Value(value, sign);
 //    return validate(xmlLiteParser, xmlPath, pos, generateErrors);
@@ -391,8 +398,8 @@ public:
 
   virtual const char* getDescription() override { return "int8"; };
 
-  bool setInt8Value(int8_t i8) { setDefined(); m_value = i8; return true; }
-  bool setInt8Value(int8_t value, bool sign) { if ( sign ) return setInt8Value(-value); else setInt8Value(value); return true; }
+  bool setInt8Value(ValueType i8) { setDefined(); m_value = i8; return true; }
+  bool setInt8Value(ValueType value, bool sign) { if ( sign ) return setInt8Value(-value); else setInt8Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -405,8 +412,12 @@ public:
   
   virtual const char* getDescription() override { return "uint16"; };
 
-  bool setUInt16Value(uint16_t ui16) { setDefined(); m_value = ui16; return true; }
-  bool setUInt16Value(uint16_t value, bool sign) { if ( sign ) return setUInt16Value(-value); else setUInt16Value(value); return true; }
+  bool setUInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
+  bool setUInt16Value(ValueType value, bool sign) {
+    if ( sign ) { log_technical_bug("XmlUInt16 sign=true"); setUInt16Value(0); return false; }
+    setUInt16Value(value);
+    return true;
+  }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -419,8 +430,8 @@ public:
 
   virtual const char* getDescription() override { return "unt16"; };
 
-  bool setInt16Value(uint16_t ui16) { setDefined(); m_value = ui16; return true; }
-  bool setInt16Value(uint16_t value, bool sign) { if ( sign ) return setInt16Value(-value); else setInt16Value(value); return true; }
+  bool setInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
+  bool setInt16Value(ValueType value, bool sign) { if ( sign ) return setInt16Value(-value); else setInt16Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -433,8 +444,12 @@ public:
 
   virtual const char* getDescription() override { return "uint32"; };
 
-  bool setUInt32Value(uint32_t ui32) { setDefined(); m_value = ui32; return true; }
-  bool setUInt32Value(uint32_t value, bool sign) { if ( sign ) return setUInt32Value(-value); else setUInt32Value(value); return true; }
+  bool setUInt32Value(ValueType ui32) { setDefined(); m_value = ui32; return true; }
+  bool setUInt32Value(ValueType value, bool sign) {
+    if ( sign ) { log_technical_bug("XmlUInt32 sign=true"); setUInt32Value(0); return false; }
+    setUInt32Value(value);
+    return true;
+  }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -447,8 +462,8 @@ public:
 
   virtual const char* getDescription() override { return "int32"; };
 
-  bool setInt32Value(int32_t i32) { setDefined(); m_value = i32; return true; }
-  bool setInt32Value(uint32_t value, bool sign) { if ( sign ) return setInt32Value(-value); else setInt32Value(value); return true; }
+  bool setInt32Value(ValueType i32) { setDefined(); m_value = i32; return true; }
+  bool setInt32Value(ValueType value, bool sign) { if ( sign ) return setInt32Value(-value); else setInt32Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -461,8 +476,12 @@ public:
 
   virtual const char* getDescription() override { return "uint64"; };
 
-  bool setUInt64Value(uint64_t ui64) { setDefined(); m_value = ui64; return true; }
-  bool setUInt64Value(uint64_t value, bool sign) { if ( sign ) return setUInt64Value(-value); else setUInt64Value(value); return true; }
+  bool setUInt64Value(ValueType ui64) { setDefined(); m_value = ui64; return true; }
+  bool setUInt64Value(ValueType value, bool sign) {
+    if ( sign ) { log_technical_bug("XmlUInt64 sign=true"); setUInt64Value(0); return false; }
+    setUInt64Value(value);
+    return true;
+  }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };
@@ -475,8 +494,8 @@ public:
 
   virtual const char* getDescription() override { return "int64"; };
 
-  bool setInt64Value(int64_t i64) { setDefined(); m_value = i64; return true; }
-  bool setInt64Value(uint64_t value, bool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
+  bool setInt64Value(ValueType i64) { setDefined(); m_value = i64; return true; }
+  bool setInt64Value(ValueType value, bool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
 
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
 };

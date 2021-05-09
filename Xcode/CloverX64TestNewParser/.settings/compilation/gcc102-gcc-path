@@ -1,7 +1,0 @@
-#this is sourced.
-
-gcc_path=/Users/jief/local_brew/local_brew/Homebrew
-gcc_prefix=x86_64-apple-darwin18-
-gcc_suffix=-10
-#only bin_path is used bt the caller
-bin_path="$gcc_path"/bin/"$gcc_prefix""$1""$gcc_suffix"

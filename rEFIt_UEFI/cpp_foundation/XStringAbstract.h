@@ -243,7 +243,7 @@ protected:
 	{
     XSTRING_CHECK_SIZE;
 		if ( pos<0 ) {
-      panic_ask("T* data(int i) -> i < 0");
+      log_technical_bug("T* data(int i) -> i < 0");
       return __m_data;
     }
  		size_t offset = size_of_utf_string_len(__m_data, (unsigned_type(IntegralType))pos); // If pos is too big, size_of_utf_string_len returns the end of the string
@@ -263,11 +263,11 @@ public:
 
 	// no assignement, no destructor
 
-	const T* s() const { XSTRING_CHECK_SIZE; return __m_data; }
-	const T* data() const { XSTRING_CHECK_SIZE; return __m_data; }
+	constexpr const T* s() const { XSTRING_CHECK_SIZE; return __m_data; }
+	constexpr const T* data() const { XSTRING_CHECK_SIZE; return __m_data; }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-  const T* data(IntegralType pos) const { return _data(pos); }
+  constexpr const T* data(IntegralType pos) const { return _data(pos); }
 
 
   size_t length() const { return length_of_utf_string(data()); } // TODO: caching length
@@ -714,17 +714,6 @@ struct _xstringarray__char_type<T, enable_if_t(is___LString(T))>
   static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
 };
 
-template<>
-struct _xstringarray__char_type<XString8, void>
-{
-  static const typename XString8::char_t* getCharPtr(const XString8& t) { return t.s(); }
-};
-
-template<>
-struct _xstringarray__char_type<XStringW, void>
-{
-  static const typename XStringW::char_t* getCharPtr(const XStringW& t) { return t.s(); }
-};
 
 #endif
 
@@ -762,7 +751,7 @@ class XStringAbstract : public __String<T, ThisXStringClass>
         super::__m_data = (T*)Xrealloc(super::__m_data, nNewAllocatedSize*sizeof(T), m_allocatedSize*sizeof(T));
       }
 			if ( !super::__m_data ) {
-        panic_ask("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewAllocatedSize, uintptr_t(super::__m_data), nNewAllocatedSize*sizeof(T), m_allocatedSize*sizeof(T));
+        log_technical_bug("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewAllocatedSize, uintptr_t(super::__m_data), nNewAllocatedSize*sizeof(T), m_allocatedSize*sizeof(T));
         m_allocatedSize = 0;
         return;
 			}
@@ -920,11 +909,11 @@ public:
 	T* dataSized(IntegralType size)
 	{
 		if ( size<0 ) {
-      panic_ask("T* dataSized() -> i < 0");
+      log_technical_bug("T* dataSized() -> i < 0");
       return NULL;
     }
 		if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) {
-      panic_ask("T* dataSized() -> i > MAX_XSIZE");
+      log_technical_bug("T* dataSized() -> i > MAX_XSIZE");
       return NULL;
     }
 		CheckSize((unsigned_type(IntegralType))size, 0);

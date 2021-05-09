@@ -1054,10 +1054,10 @@ EFI_STATUS ConfigManager::InitialisePlatform()
 //    }
 ////  }
 
-  // Why this overrides ? Should we remove the setting from config.plist ?
-  gSettings.GUI.Mouse.PointerEnabled = TRUE;
-  gSettings.GUI.Mouse.PointerSpeed = 2;
-  gSettings.GUI.Mouse.DoubleClickTime = 500; //TODO - make it constant as nobody change it
+//  // Why this overrides ? Should we remove the setting from config.plist ?
+//  gSettings.GUI.Mouse.PointerEnabled = TRUE;
+//  gSettings.GUI.Mouse.PointerSpeed = 2;
+//  gSettings.GUI.Mouse.DoubleClickTime = 500; //TODO - make it constant as nobody change it
 
   if (gSettings.Devices.Audio.ResetHDA) ResetHDA();
 

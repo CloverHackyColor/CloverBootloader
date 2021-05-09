@@ -13,8 +13,6 @@
 		9A0B085E240300E000E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A2755742639E0500095D456 /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755532639E04F0095D456 /* Config_GUI.cpp */; };
 		9A2755752639E0500095D456 /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755572639E04F0095D456 /* Config_Quirks.cpp */; };
-		9A2755762639E0500095D456 /* ConfigPlistClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755612639E04F0095D456 /* ConfigPlistClass.cpp */; };
-		9A2755772639E0500095D456 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755632639E04F0095D456 /* Config_ACPI.cpp */; };
 		9A2755782639E0500095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755672639E0500095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755792639E0500095D456 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755682639E0500095D456 /* Config_ACPI_DSDT.cpp */; };
 		9A27557A2639E0500095D456 /* SMBIOSPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27556C2639E0500095D456 /* SMBIOSPlist.cpp */; };
@@ -78,9 +76,7 @@
 		9A27555E2639E04F0095D456 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9A27555F2639E04F0095D456 /* Config_Devices_Arbitrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_Arbitrary.h; sourceTree = "<group>"; };
 		9A2755602639E04F0095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
-		9A2755612639E04F0095D456 /* ConfigPlistClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistClass.cpp; sourceTree = "<group>"; };
 		9A2755622639E04F0095D456 /* Config_SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_SystemParameters.h; sourceTree = "<group>"; };
-		9A2755632639E04F0095D456 /* Config_ACPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_ACPI.cpp; sourceTree = "<group>"; };
 		9A2755642639E04F0095D456 /* Config_Devices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices.h; sourceTree = "<group>"; };
 		9A2755652639E0500095D456 /* Config_CPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_CPU.h; sourceTree = "<group>"; };
 		9A2755662639E0500095D456 /* Config_BootGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_BootGraphics.h; sourceTree = "<group>"; };
@@ -293,7 +289,6 @@
 				9A2755682639E0500095D456 /* Config_ACPI_DSDT.cpp */,
 				9A2755562639E04F0095D456 /* Config_ACPI_DSDT.h */,
 				9A2755692639E0500095D456 /* Config_ACPI_SSDT.h */,
-				9A2755632639E04F0095D456 /* Config_ACPI.cpp */,
 				9A27555B2639E04F0095D456 /* Config_ACPI.h */,
 				9A27555D2639E04F0095D456 /* Config_Boot.h */,
 				9A2755662639E0500095D456 /* Config_BootGraphics.h */,
@@ -315,7 +310,6 @@
 				9A2755622639E04F0095D456 /* Config_SystemParameters.h */,
 				9A2755672639E0500095D456 /* ConfigPlistAbstract.cpp */,
 				9A2755602639E04F0095D456 /* ConfigPlistAbstract.h */,
-				9A2755612639E04F0095D456 /* ConfigPlistClass.cpp */,
 				9A27555A2639E04F0095D456 /* ConfigPlistClass.h */,
 				9A27555E2639E04F0095D456 /* README.md */,
 				9A27556C2639E0500095D456 /* SMBIOSPlist.cpp */,
@@ -748,8 +742,6 @@
 			files = (
 				9A2755742639E0500095D456 /* Config_GUI.cpp in Sources */,
 				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
-				9A2755762639E0500095D456 /* ConfigPlistClass.cpp in Sources */,
-				9A2755772639E0500095D456 /* Config_ACPI.cpp in Sources */,
 				9A358B3D25CF117A00A3850D /* XmlLiteCompositeTypes.cpp in Sources */,
 				9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,

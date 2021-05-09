@@ -179,10 +179,14 @@ public:
         
         decltype(SlotCount)::ValueType dgetSlotMax() const {
           if ( !isDefined() || !Modules.isDefined() || Modules.size() == 0 ) return 0;
-          decltype(SlotCount)::ValueType max = 0;
+          uint8_t max = 0;
           for ( size_t idx = 0 ; idx < Modules.size() ; ++idx ) {
             if ( Modules[idx].dgetModuleSize() > 0 ) {
-              if ( Modules[idx].dgetSlotNo() > max ) max = Modules[idx].dgetSlotNo();
+              if ( Modules[idx].dgetSlotNo() > UINT8_MAX ) {
+                log_technical_bug("Modules[idx].dgetSlotNo() > UINT8_MAX");
+              }else{
+                if ( Modules[idx].dgetSlotNo() > max ) max = (uint8_t)Modules[idx].dgetSlotNo(); // safe cast Modules[idx].dgetSlotNo() is <= UINT8_MAX
+              }
             }
           }
           return max+1;
@@ -235,7 +239,7 @@ public:
           return b;
         }
         const decltype(Device)::ValueType& dgetDevice() const { return Device.isDefined() ? Device.value() : Device.nullValue; };
-        INTN dgetDeviceN() const {
+        uint8_t dgetDeviceN() const {
   //        if ( !Device.isDefined() ) panic("%s: invalid value. Check validate method.", __PRETTY_FUNCTION__);
           if ( !Device.isDefined() ) return 0;
           if (Device.value().isEqualIC("ATI")) {
@@ -282,7 +286,7 @@ public:
             }
           }
 
-        decltype(Name)::ValueType dgetSlotName() const { return Name.isDefined() ? Name.value() : Device.isDefined() ? S8Printf("PCI Slot %lld", dgetDeviceN()) : NullXString8; };
+        decltype(Name)::ValueType dgetSlotName() const { return Name.isDefined() ? Name.value() : Device.isDefined() ? S8Printf("PCI Slot %hhd", dgetDeviceN()) : NullXString8; };
 
       };
       

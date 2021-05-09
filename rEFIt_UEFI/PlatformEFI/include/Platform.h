@@ -38,6 +38,10 @@ Headers collection for procedures
 #endif
 
 
+#if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 
 // Jief : temporary rename
 #define AllocateZeroPool AllocateZeroPool

@@ -134,12 +134,12 @@ StrHToBuf (
 
   for(Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < StrLength; Index4IsValidGuidAsciiString++) {
 
-    if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'a') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'f')) {
-      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (__typeof__(*Str))'a' + 0x0A);
-    } else if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'A') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'F')) {
+    if ((Str[Index4IsValidGuidAsciiString] >= (decltype(*Str))'a') && (Str[Index4IsValidGuidAsciiString] <= (decltype(*Str))'f')) {
+      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (decltype(*Str))'a' + 0x0A);
+    } else if ((Str[Index4IsValidGuidAsciiString] >= (decltype(*Str))'A') && (Str[Index4IsValidGuidAsciiString] <= (decltype(*Str))'F')) {
       Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - L'A' + 0x0A);
-    } else if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'0') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'9')) {
-      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (__typeof__(*Str))'0');
+    } else if ((Str[Index4IsValidGuidAsciiString] >= (decltype(*Str))'0') && (Str[Index4IsValidGuidAsciiString] <= (decltype(*Str))'9')) {
+      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (decltype(*Str))'0');
     } else {
       return EFI_INVALID_PARAMETER;
     }

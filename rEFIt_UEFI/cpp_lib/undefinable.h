@@ -61,7 +61,7 @@ class undefinable_uint8 : public undefinable<uint8_t>
   using super = undefinable<uint8_t>;
 public:
     undefinable_uint8() { }
-    explicit undefinable_uint8(uint16_t newValue) { super::operator=(newValue); }
+    explicit undefinable_uint8(uint8_t newValue) { super::operator=(newValue); }
     undefinable_uint8& operator = (uint8_t newValue) { super::operator=(newValue); return *this; }
 };
 

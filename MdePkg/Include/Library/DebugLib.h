@@ -320,6 +320,12 @@ DebugPrintLevelEnabled (
 /**
  *
   */
+#ifdef _MSC_VER
+#define DONT_EVALUATE(expression)                                    \
+   do {                                                                 \
+      TRUE ? (void)(0) : (void)((expression)); \
+   } while (FALSE)
+#else
 #define DONT_EVALUATE(expression)                                    \
    do {                                                                 \
       _Pragma("GCC diagnostic push") \
@@ -329,6 +335,7 @@ DebugPrintLevelEnabled (
       TRUE ? (void)(0) : (void)((expression)); \
       _Pragma("GCC diagnostic pop") \
    } while (FALSE)
+#endif
 
 /**
   Macro that calls DebugAssert() if an expression evaluates to FALSE.

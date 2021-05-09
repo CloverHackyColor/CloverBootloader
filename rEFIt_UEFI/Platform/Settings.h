@@ -279,7 +279,7 @@ public:
   XString8                AddArguments = XString8();
   XString8                FullTitle = XStringW();
   XStringW                Settings = XStringW(); // path of a config.plist that'll be read at the beginning of startloader
-  CHAR16                  Hotkey = 0;
+  char32_t                Hotkey = 0;
   BOOLEAN                 CommonSettings = 0;
 //  UINT8                   Flags = 0;
   bool                    Hidden = 0;
@@ -445,7 +445,7 @@ public:
   XStringW             Volume = XStringW();
   XStringW             FullTitle = XStringW();
   XStringW             Title = XStringW();
-  CHAR16               Hotkey = 0;
+  char32_t             Hotkey = 0;
 //  UINT8                Flags = 0;
   bool                 Hidden = 0;
   bool                 AlwaysHidden = 0;
@@ -534,7 +534,7 @@ public:
   XString8           Arguments = XString8();
   XStringW           FullTitle = XStringW();
   XStringW           Title = XStringW();
-  CHAR16             Hotkey = 0;
+  char32_t           Hotkey = 0;
 //  UINT8              Flags = 0;
   bool               Hidden = 0;
   bool               AlwaysHidden = 0;
@@ -670,8 +670,8 @@ public:
   const VBIOS_PATCH_BYTES* getVBIOS_PATCH_BYTES() const {
     VBIOS_PATCH_BYTES_array.setSize(size());
     for ( size_t idx = 0 ; idx < size() ; ++idx ) {
-      VBIOS_PATCH_BYTES_array[idx].Find = ElementAt(idx).Find.data();
-      VBIOS_PATCH_BYTES_array[idx].Replace = ElementAt(idx).Replace.data();
+      VBIOS_PATCH_BYTES_array[idx].Find = ElementAt(idx).Find.vdata();
+      VBIOS_PATCH_BYTES_array[idx].Replace = ElementAt(idx).Replace.vdata();
       VBIOS_PATCH_BYTES_array[idx].NumberOfBytes = ElementAt(idx).Replace.size();
     }
     return VBIOS_PATCH_BYTES_array;

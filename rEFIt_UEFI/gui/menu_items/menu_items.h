@@ -108,7 +108,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   bool               Hidden = 0;
   UINTN              Row = 0;
   CHAR16             ShortcutDigit = 0;
-  CHAR16             ShortcutLetter = 0;
+  char32_t           ShortcutLetter = 0;
   XIcon              Image = 0;
   EG_RECT            Place = EG_RECT();
   ACTION             AtClick = ActionNone;

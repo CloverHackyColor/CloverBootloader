@@ -13,7 +13,15 @@ extern "C" {
 
 #include "stddef.h" // for size_t
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void abort(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 inline void* malloc(size_t size)
 {

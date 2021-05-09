@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\refit">
       <UniqueIdentifier>{b28287be-3608-43a6-af0b-868dd39b423f}</UniqueIdentifier>
     </Filter>
@@ -24,9 +20,6 @@
     </Filter>
     <Filter Include="Source Files\entry_scan">
       <UniqueIdentifier>{70c6e14b-9aa2-43d2-9518-14074c5dd80d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\cpp_util">
-      <UniqueIdentifier>{f598a647-b681-4c85-8984-1088ea0f8ac2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Build">
       <UniqueIdentifier>{153ba83d-3aab-4183-89b7-05d27a341169}</UniqueIdentifier>
@@ -43,11 +36,29 @@
     <Filter Include="Source Files\gui\menu_items">
       <UniqueIdentifier>{7dd0ed85-7ee5-4f6a-9fe9-9847efbeaff8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Platform\Posix">
-      <UniqueIdentifier>{1536825f-c4e7-4ab6-b33c-e07f03669f4d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Platform\plist">
       <UniqueIdentifier>{99ed8aa3-2e39-41f8-bd25-0003afe59992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{6530f1a2-5ed7-4ec2-bf7e-3ce874f78ba4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings\ConfigPlist">
+      <UniqueIdentifier>{fe0560eb-394f-423b-aa41-7922e8e1fb53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PlatformEFI">
+      <UniqueIdentifier>{83aa877a-eb4a-4e6b-9890-0fc7a9698f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PlatformEFI\cpp_util">
+      <UniqueIdentifier>{9a4d7d58-abc0-4875-85af-27204689462a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PlatformEFI\posix">
+      <UniqueIdentifier>{f1e97a11-0b73-460f-8e79-fcd9ccbc192d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PlatformEFI\include">
+      <UniqueIdentifier>{ab69a189-f9a9-4984-80f2-94c9acd61fd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cpp_lib">
+      <UniqueIdentifier>{486e7e5c-8ad5-4313-b762-d09f8a5999b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -65,123 +76,6 @@
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\refit\screen.cpp">
       <Filter>Source Files\refit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\ati.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\b64cdecode.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BdsConnect.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BootLog.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BootOptions.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\card_vlist.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Console.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\cpu.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\device_inject.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DevicePath.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Edid.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Events.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\gma.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\guid.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\hda.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Hibernate.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Injectors.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_inject.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_patcher.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Net.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\nvidia.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Nvram.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\platformdata.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Settings.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\smbios.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\sound.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\spd.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StartupSound.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StateGenerator.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\usbfix.cpp">
-      <Filter>Source Files\Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\libeg\BmLib.cpp">
       <Filter>Source Files\libeg</Filter>
@@ -255,15 +149,6 @@
     <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\tool.cpp">
       <Filter>Source Files\entry_scan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\globals_ctor.cpp">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\globals_dtor.cpp">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\operatorNewDelete.cpp">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Build\Clover\RELEASE_VS2017\X64\rEFIt_UEFI\refit\DEBUG\AutoGen.c">
       <Filter>Source Files\Build</Filter>
     </ClCompile>
@@ -306,23 +191,8 @@
     <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.cpp">
       <Filter>Source Files\cpp_unit_test</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\abort.cpp">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\strlen.cpp">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.cpp">
       <Filter>Source Files\cpp_unit_test</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\stdio.cpp">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\wchar.cpp">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BasicIO.cpp">
-      <Filter>Source Files\Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.cpp">
       <Filter>Source Files\cpp_unit_test</Filter>
@@ -341,12 +211,6 @@
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.cpp">
       <Filter>Source Files\cpp_foundation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\APFS.cpp">
-      <Filter>Source Files\Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\VersionString.cpp">
-      <Filter>Source Files\Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\libeg\XCinema.cpp">
       <Filter>Source Files\libeg</Filter>
@@ -411,94 +275,259 @@
     <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\xml.cpp">
       <Filter>Source Files\Platform\plist</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\string.cpp">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\libeg\XIcon.cpp">
       <Filter>Source Files\libeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigManager.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\Self.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\SelfOem.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_ACPI_DSDT.cpp">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_GUI.cpp">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Quirks.cpp">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\ConfigPlistAbstract.cpp">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\SMBIOSPlist.cpp">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\BasicIO.cpp">
+      <Filter>Source Files\PlatformEFI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\BootLog.cpp">
+      <Filter>Source Files\PlatformEFI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\globals_ctor.cpp">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\globals_dtor.cpp">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\operatorNewDelete.cpp">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\pure_virtual.cpp">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\abort.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\posix_additions.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdio.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\string.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\strings.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\strlen.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\PlatformEFI\posix\wchar.cpp">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\APFS.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\ati.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\b64cdecode.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BdsConnect.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BootOptions.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\card_vlist.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\CloverVersion.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Console.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\cpu.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DataHub.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\device_inject.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Edid.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Events.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\gma.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\guid.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\hda.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Hibernate.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Injectors.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\KERNEL_AND_KEXT_PATCHES.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_inject.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_patcher.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\KextList.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\MacOsVersion.cpp">
+      <Filter>Source Files\Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.c">
       <Filter>Source Files\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Self.cpp">
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\nvidia.cpp">
       <Filter>Source Files\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\Platform\SelfOem.cpp">
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Nvram.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\platformdata.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Settings.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\SettingsUtils.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\smbios.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\SmbiosFillPatchingValues.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\sound.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\spd.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StartupSound.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StateGenerator.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\usbfix.cpp">
       <Filter>Source Files\Platform</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rEFIt_UEFI\Platform\Utils.cpp">
       <Filter>Source Files\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\pure_virtual.cpp">
-      <Filter>Source Files\cpp_util</Filter>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\VersionString.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Volume.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Volumes.cpp">
+      <Filter>Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteArrayTypes.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteCompositeTypes.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteDictTypes.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteParser.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteSimpleTypes.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteUnionTypes.cpp">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\gui\REFIT_MAINMENU_SCREEN.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\config-test.cpp">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\MacOsVersion_test.cpp">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strcasecmp_test.cpp">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\xml_lite-reapeatingdict-test.cpp">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\xml_lite-test.cpp">
+      <Filter>Source Files\cpp_unit_test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\rEFIt_UEFI\refit\lib.h">
       <Filter>Source Files\refit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati_reg.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\b64cdecode.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\boot.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\device_inject.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\gma.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\hda.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kext_inject.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\loader.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LoaderUefi.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\memvendors.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\nvidia.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Platform.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\spd.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_5_patcher.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_patcher.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StateGenerator.h">
-      <Filter>Source Files\Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\libeg\EfiFileLib.h">
       <Filter>Source Files\libeg</Filter>
@@ -541,18 +570,6 @@
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\securebootkeys.h">
       <Filter>Source Files\entry_scan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\globals_ctor.h">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\globals_dtor.h">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\operatorNewDelete.h">
-      <Filter>Source Files\cpp_util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\remove_ref.h">
-      <Filter>Source Files\cpp_util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XArray.h">
       <Filter>Source Files\cpp_foundation</Filter>
@@ -608,59 +625,11 @@
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.h">
       <Filter>Source Files\cpp_unit_test</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\limits.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\posix.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdarg.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stddef.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdint.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdlib.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.h">
       <Filter>Source Files\cpp_unit_test</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test-cpp_conf.h">
       <Filter>Source Files\cpp_unit_test</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdio.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\string.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\wchar.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BasicIO.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootLog.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Events.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Hibernate.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Nvram.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Settings.h">
-      <Filter>Source Files\Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.h">
       <Filter>Source Files\cpp_unit_test</Filter>
@@ -689,63 +658,6 @@
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringAbstract.h">
       <Filter>Source Files\cpp_foundation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\APFS.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootOptions.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\card_vlist.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Console.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\cpu.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Edid.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\guid.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Injectors.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MachO-loader.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Net.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\platformdata.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\smbios.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StartupSound.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\usbfix.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\VersionString.h">
-      <Filter>Source Files\Platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\libeg\BmLib.h">
       <Filter>Source Files\libeg</Filter>
     </ClInclude>
@@ -754,9 +666,6 @@
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\libeg\XCinema.h">
       <Filter>Source Files\libeg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\abort.h">
-      <Filter>Source Files\Platform\Posix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.h">
       <Filter>Source Files\cpp_foundation</Filter>
@@ -821,28 +730,364 @@
     <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\xml.h">
       <Filter>Source Files\Platform\plist</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdbool.h">
-      <Filter>Source Files\Platform\Posix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\libeg\XIcon.h">
       <Filter>Source Files\libeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigManager.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\Self.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\SelfOem.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_ACPI.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_ACPI_DSDT.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_ACPI_SSDT.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Boot.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_BootGraphics.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_CPU.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_AddProperties.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_Arbitrary.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_Audio.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_FakeID.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_Properties.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Devices_USB.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Graphics.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_GUI.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_KernelAndKextPatches.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_Quirks.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_RtVariables.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\Config_SystemParameters.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\ConfigPlistAbstract.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\ConfigPlistClass.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\SMBIOSPlist.h">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\globals_ctor.h">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\globals_dtor.h">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\cpp_util\operatorNewDelete.h">
+      <Filter>Source Files\PlatformEFI\cpp_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\include\Platform.h">
+      <Filter>Source Files\PlatformEFI\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\include\printf_lite-test-cpp_conf.h">
+      <Filter>Source Files\PlatformEFI\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\include\printlib-test-cpp_conf.h">
+      <Filter>Source Files\PlatformEFI\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\include\XToolsConf.h">
+      <Filter>Source Files\PlatformEFI\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\abort.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\limits.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\posix.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\posix_additions.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdarg.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdbool.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stddef.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdint.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdio.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\stdlib.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\string.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\strings.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\PlatformEFI\posix\wchar.h">
+      <Filter>Source Files\PlatformEFI\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\APFS.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati_reg.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati2.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\b64cdecode.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BasicIO.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\boot.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootLog.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootOptions.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\card_vlist.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\CloverVersion.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Console.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\cpu.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\DataHub.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\DataHubExt.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\device_inject.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Edid.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Events.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\gma.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\guid.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\hda.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Hibernate.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Injectors.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\KERNEL_AND_KEXT_PATCHES.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kext_inject.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\KextList.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MacOsVersion.h">
+      <Filter>Source Files\Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.h">
       <Filter>Source Files\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Self.h">
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\memvendors.h">
       <Filter>Source Files\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rEFIt_UEFI\Platform\SelfOem.h">
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\nvidia.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Nvram.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\platformdata.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Settings.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\SettingsUtils.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\smbios.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\SmbiosFillPatchingValues.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\spd.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_5_patcher.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_patcher.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StartupSound.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StateGenerator.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\usbfix.h">
       <Filter>Source Files\Platform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rEFIt_UEFI\Platform\Utils.h">
       <Filter>Source Files\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\VersionString.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Volume.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Volumes.h">
+      <Filter>Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\undefinable.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteArrayTypes.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteCompositeTypes.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteDictTypes.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteParser.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteSimpleTypes.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_lib\XmlLiteUnionTypes.h">
+      <Filter>Source Files\cpp_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\gui\REFIT_MAINMENU_SCREEN.h">
+      <Filter>Source Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\config-test.h">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\MacOsVersion_test.h">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strcasecmp_test.h">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\xml_lite-reapeatingdict-test.h">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\xml_lite-test.h">
+      <Filter>Source Files\cpp_unit_test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\rEFIt_UEFI\libeg\ftol.asm">
       <Filter>Source Files\libeg</Filter>
+    </None>
+    <None Include="..\..\rEFIt_UEFI\Settings\Readme.md">
+      <Filter>Source Files\Settings</Filter>
+    </None>
+    <None Include="..\..\rEFIt_UEFI\Settings\ConfigPlist\README.md">
+      <Filter>Source Files\Settings\ConfigPlist</Filter>
+    </None>
+    <None Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.cpp copy">
+      <Filter>Source Files\Platform</Filter>
     </None>
   </ItemGroup>
 </Project>

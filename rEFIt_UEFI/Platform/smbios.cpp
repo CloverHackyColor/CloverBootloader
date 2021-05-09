@@ -1116,18 +1116,18 @@ void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
   // real PC -> PCI, real Mac -> PCIe
 
 #ifdef JIEF_DEBUG
-  for (uint64_t Index = 0; Index <= 15; Index++) {
-    DBG("SlotDevice[%lld].BusNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum);
-    DBG("SlotDevice[%lld].DevFuncNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum);
-    DBG("SlotDevice[%lld].SegmentGroupNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum);
-    DBG("SlotDevice[%lld].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
-    DBG("SlotDevice[%lld].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
-    DBG("SlotDevice[%lld].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
-    DBG("SlotDevice[%lld].Valid = %d\n", Index, smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
+  for (uint8_t Index = 0; Index <= 15; Index++) {
+    DBG("SlotDevice[%hhu].BusNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum);
+    DBG("SlotDevice[%hhu].DevFuncNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum);
+    DBG("SlotDevice[%hhu].SegmentGroupNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum);
+    DBG("SlotDevice[%hhu].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
+    DBG("SlotDevice[%hhu].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
+    DBG("SlotDevice[%hhu].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
+    DBG("SlotDevice[%hhu].Valid = %d\n", Index, smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
   }
 #endif
 
-  for (size_t Index = 0; Index < 15; Index++) {
+  for (uint8_t Index = 0; Index < 15; Index++) {
     if (smbiosSettings.SlotDevices.isSlotForIndexValid(Index)) {
       INTN Dev, Func;
       ZeroMem((void*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
@@ -1135,7 +1135,7 @@ void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
       newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
       newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
       newSmbiosTable.Type9->SlotDesignation = 1;
-      newSmbiosTable.Type9->SlotType = smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType;
+      newSmbiosTable.Type9->SlotType = (uint8_t)smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType;
       newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
       newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
       newSmbiosTable.Type9->SlotLength = SlotLengthShort;

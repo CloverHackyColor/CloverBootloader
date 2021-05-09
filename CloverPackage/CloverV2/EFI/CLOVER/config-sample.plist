@@ -791,6 +791,8 @@
 			<integer>2</integer>
 			<key>Enabled</key>
 			<true/>
+			<key>DoubleClickTime</key>
+			<integer>500</integer>
 		</dict>
 		<key>#TextOnly</key>
 		<false/>

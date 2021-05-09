@@ -81,7 +81,7 @@
 
 STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XIcon& Image,
-                            IN CHAR16 ShortcutLetter, IN CONST XString8Array& Options)
+                            IN char32_t ShortcutLetter, IN CONST XString8Array& Options)
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
