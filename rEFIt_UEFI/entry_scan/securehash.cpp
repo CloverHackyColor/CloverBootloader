@@ -607,7 +607,7 @@ STATIC void *CreateImageSignatureDatabase(IN void   *FileBuffer,
     HashPtr = (UINT8 *)(&(PeHeader.Pe32Plus->OptionalHeader.CheckSum));
   } else {
     // Invalid image
-    DBG("Invalid image: 0x%hhX (0x%hhX)\n", FileBuffer, FileSize);
+    DBG("Invalid image: 0x%llX (0x%llX)\n", uintptr_t(FileBuffer), FileSize);
     return NULL;
   }
   HashSize = (UINTN)(HashPtr - HashBase);
@@ -795,7 +795,7 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
     // PE32+
     SecDataDir = (EFI_IMAGE_DATA_DIRECTORY *)&(PeHeader.Pe32Plus->OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_SECURITY]);
   }
-  DBG("Get image database: 0x%hhX (0x%hhX) 0x%hhX 0x%hhX 0x%hhX (0x%hhX)\n", FileBuffer, FileSize, SecDataDir, SecDataDir->VirtualAddress, ((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress, SecDataDir->Size);
+  DBG("Get image database: 0x%llX (0x%llX) 0x%llX 0x%X 0x%s (0x%X)\n", uintptr_t(FileBuffer), FileSize, uintptr_t(SecDataDir), SecDataDir->VirtualAddress, ((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress, SecDataDir->Size);
   // Check the security data directory is found and valid
   if ((SecDataDir->VirtualAddress >= FileSize) || ((SecDataDir->VirtualAddress + SecDataDir->Size) > FileSize)) {
     DBG("Security directory exceeds the file limits\n");
@@ -824,7 +824,7 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
     if (Alignment != 0) {
       Alignment = SECDIR_ALIGNMENT_SIZE - Alignment;
     }
-    DBG("Embedded certificate: 0x%hhX (0x%hhX) [0x%hhX]\n", Cert, Length, Cert->wCertificateType);
+    DBG("Embedded certificate: 0x%llX (0x%llX) [0x%hX]\n", uintptr_t(Cert), Length, Cert->wCertificateType);
     // Get the certificate's type
     if (Cert->wCertificateType == WIN_CERT_TYPE_PKCS_SIGNED_DATA) {
       // PKCS#7
@@ -862,19 +862,19 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
     }
     // Append the signature if valid
     if ((SigGuid != NULL) && (Signature != NULL) && (SigSize > 0)) {
-      DBG("Found signature certificate: 0x%hhX (0x%hhX) %s\n", Signature, SigSize, strguid(SigGuid));
+      DBG("Found signature certificate: 0x%llX (0x%llX) %s\n", uintptr_t(Signature), SigSize, strguid(SigGuid));
       if (EFI_ERROR(AppendSignatureToDatabase(&Database, &Size, SigGuid, Signature, SigSize))) {
         break;
       }
     } else {
-      DBG("Skipping non-signature certificate: 0x%hhX (0x%hhX) [0x%hhX]\n", Cert, Length, Cert->wCertificateType);
+      DBG("Skipping non-signature certificate: 0x%llX (0x%llX) [0x%hX]\n", uintptr_t(Cert), Length, Cert->wCertificateType);
     }
     // Advance to next certificate
     Ptr += (Length + Alignment);
   }
   // Check if there is some sort of corruption
   if (Ptr != End) {
-    DBG("Failed to retrieve image database: 0x%hhX - 0x%hhX @ 0x%hhX\n", (((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress), End, Ptr);
+    DBG("Failed to retrieve image database: 0x%llX - 0x%llX @ 0x%llX\n", uintptr_t((((UINT8 *)FileBuffer) + SecDataDir->VirtualAddress)), uintptr_t(End), uintptr_t(Ptr));
     // Don't return anything if not at end
     if (Database != NULL) {
       FreePool(Database);

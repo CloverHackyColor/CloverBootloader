@@ -15,6 +15,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef __OPEN_SSL_SUPPORT_H__
 #define __OPEN_SSL_SUPPORT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <Base.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -37,10 +42,10 @@ typedef VOID  *FILE;
 #define va_end __builtin_va_end
 #define va_arg __builtin_va_arg
 #else
-#define va_list   VA_LIST
-#define va_arg    VA_ARG
-#define va_start  VA_START
-#define va_end    VA_END
+//#define va_list   VA_LIST
+//#define va_arg    VA_ARG
+//#define va_start  VA_START
+//#define va_end    VA_END
 #endif
 #else // __CC_ARM
 #define va_start(Marker, Parameter)   __va_start(Marker, Parameter)
@@ -84,7 +89,7 @@ typedef VOID  *FILE;
 //
 // Basic types from EFI Application Toolkit required to buiild Open SSL
 //
-typedef UINTN          size_t;
+typedef __SIZE_TYPE__          size_t;
 typedef INTN           ssize_t;
 typedef INT64          off_t;
 typedef UINT16         mode_t;
@@ -244,8 +249,13 @@ extern FILE  *stdout;
 #define strcat(strDest,strSource)         AsciiStrCatS(strDest,AsciiStrLen(strDest)+1,strSource)
 #define strchr(str,ch)                    ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
 #define abort()                           ASSERT (FALSE)
-#define assert(expression)
+//#define assert(expression)
 #define localtime(timer)                  NULL
 #define gmtime_r(timer,result)            (result = NULL)
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

@@ -23,6 +23,8 @@
 #include "../Platform/hda.h"
 
 #include "../include/Net.h"
+#include "../entry_scan/secureboot.h"
+
 
 #ifndef DEBUG_ALL
 #define DEBUG_CONFIGMANAGER 1

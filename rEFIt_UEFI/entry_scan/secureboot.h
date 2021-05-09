@@ -26,7 +26,8 @@
 // User policy, white and black list with query
 #define SECURE_BOOT_POLICY_USER      (6)
 
-
-
+#ifdef ENABLE_SECURE_BOOT
+void InitializeSecureBoot(void);
+#endif
 
 #endif /* ENTRY_SCAN_SECUREBOOT_H_ */

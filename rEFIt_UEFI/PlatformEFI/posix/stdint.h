@@ -1,16 +1,23 @@
 #ifndef __CLOVER_STDINT_H__
 #define __CLOVER_STDINT_H__
 
+// Currently only compiling 64 bits.
+// If compiling for other size, #ifdef the static_assert depending of the platform and adjust constant (INT_MIN, INT_MAX)
+#ifdef __cplusplus
+static_assert(sizeof(int) != 8, "sizeof(int) != 8");
+#endif
 
-#define INT8_MIN (-128)
+#define INT8_MIN  (-128)
 #define INT16_MIN (-32768)
 #define INT32_MIN (-2147483647 - 1)
-#define INT64_MIN  (-9223372036854775807LL - 1)
+#define INT64_MIN (-9223372036854775807LL - 1)
+#define INT_MIN   INT64_MIN
 
 #define INT8_MAX 127
 #define INT16_MAX 32767
 #define INT32_MAX 2147483647
 #define INT64_MAX 9223372036854775807LL
+#define INT_MAX   INT64_MAX
 
 #define UINT8_MAX 0xff /* 255U */
 #define UINT16_MAX 0xffff /* 65535U */

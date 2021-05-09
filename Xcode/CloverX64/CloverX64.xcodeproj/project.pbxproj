@@ -3259,6 +3259,7 @@
 					NO_MSABI_VA_FUNCS,
 					DISABLE_PRINTLIB,
 					OC_TARGET_NOOPT,
+					DISABLE_SECURE_BOOT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -3288,6 +3289,7 @@
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
+					$PROJECT_DIR/../../Library/OpensslLib/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -3380,6 +3382,7 @@
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
+					$PROJECT_DIR/../../Library/OpensslLib/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (

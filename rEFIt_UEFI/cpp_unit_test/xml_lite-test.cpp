@@ -514,7 +514,7 @@ int documentation_test1()
           {"KeyNameForInt32", anInt32},
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-  } MyDict;
+  } MyDict = MyDictClass();
 
 
   const char* config_test = R"V0G0N(
@@ -567,7 +567,7 @@ int documentation_test2()
           {"KeyNameForInsideDict", inside1},
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-  } MyDict;
+  } MyDict = MyTopLevelDictClass();
 
   const char* config_test = R"V0G0N(
    <?xml version="1.0" encoding="UTF-8"?>
@@ -623,7 +623,7 @@ int documentation_test3()
           {"Count", Count},
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-  } MyDict;
+  } MyDict = MyPlist();
 
 
   const char* config_test = R"V0G0N(
@@ -706,7 +706,7 @@ int documentation_test4()
         }
         return true;
       }
-  } MyDict;
+  } MyDict = MyPlist();
 
 
   const char* config_test = R"V0G0N(
@@ -775,7 +775,7 @@ int documentation_test5()
         }
         return true;
       }
-  } MyDict;
+  } MyDict = MyPlist();
 
 
   const char* config_test = R"V0G0N(
@@ -812,7 +812,7 @@ int documentation_test6()
           {"KeyNameForBoolArray", aBoolArray},
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-  } MyDict;
+  } MyDict = MyDictClass();
 
   const char* config_test = R"V0G0N(
 <?xml version="1.0" encoding="UTF-8"?>
@@ -850,7 +850,7 @@ int documentation_test7()
           {"KeyNameForKeyIntPairs", keyIntPairs},
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-  } MyDict;
+  } MyDict = MyDictClass();
 
   const char* config_test = R"V0G0N(
 <?xml version="1.0" encoding="UTF-8"?>

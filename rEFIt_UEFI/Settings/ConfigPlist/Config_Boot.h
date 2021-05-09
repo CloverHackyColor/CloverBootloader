@@ -14,14 +14,7 @@
 #include "../../cpp_lib/XmlLiteParser.h"
 #include "../../include/BootTypes.h"
 
-#ifndef UNIT_TESTS_MACOS
-/* This is interdependency. This is just for now to be compatible with SETTINGS_DATA. Refactoring in progress. */
-//#include "../../libeg/XImage.h"
-//#include "../../refit/lib.h"
-//#include "../../Platform/Self.h"
-#endif
 
-#include "../../entry_scan/secureboot.h"
 
 class Boot_Class : public XmlDict
 {

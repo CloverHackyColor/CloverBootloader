@@ -29,6 +29,8 @@ void* memcpy(void *dst, const void *src, size_t len);
 //	return CopyMem(dst,src,len);
 //}
 
+int memcmp(const void *s1, const void *s2, size_t n);
+
 size_t strlen(const char *str);
 
 inline char* strcat(char* s1, const char* s2)
@@ -70,6 +72,8 @@ extern void* memset(void *b, int c, size_t len); // memset is defined in cpp_uti
 //	return AsciiStrCatS(s1, AsciiStrLen(strDest)+1,strSource)
 //}
 //
+
+ char* strstr(const char *haystack, const char *needle);
 
 #ifdef __cplusplus
 }

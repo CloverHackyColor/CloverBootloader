@@ -50,6 +50,10 @@
 
 #include <Guid/ImageAuthentication.h>
 
+extern "C" {
+#include <Library/DxeServicesLib.h>
+}
+
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_MENU 1
 #else
@@ -68,9 +72,9 @@ extern BOOLEAN gThemeNeedInit;
 // Add secure boot tool entry
 void AddSecureBootTool(void)
 {
-  LOADER_ENTRY *Entry;
+//  LOADER_ENTRY *Entry;
   // If in forced mode or no secure boot then don't add tool
-  if (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode) {
+  if (!GlobalConfig.SecureBoot && !GlobalConfig.SecureBootSetupMode) {
     return;
   }
 //panic("not done yet");
@@ -97,15 +101,16 @@ void AddSecureBootTool(void)
 }
 
 
-STATIC REFIT_ABSTRACT_MENU_ENTRY   QueryEntry[] = {
-  { L"Deny authentication"_XSW, SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"Allow authentication"_XSW, SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"Insert authentication into database"_XSW, SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   QueryEntry[] = {
+  { L"Deny authentication"_XSW, SECURE_BOOT_POLICY_DENY, ActionEnter },
+  { L"Allow authentication"_XSW, SECURE_BOOT_POLICY_ALLOW, ActionEnter },
+  { L"Insert authentication into database"_XSW, SECURE_BOOT_POLICY_INSERT, ActionEnter },
 };
-STATIC REFIT_MENU_ENTRY  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
-STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication"_XSW, L""_XSW, 3, NULL, 2, QueryEntries,
-  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-  /*  FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+/*commented out to avoid warning: STATIC*/ REFIT_SIMPLE_MENU_ENTRY_TAG  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
+//STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication"_XSW, L""_XSW, 3, NULL, 2, QueryEntries,
+//  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//  /*  FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication"_XSW, L""_XSW }; // TODO:add QueryEntries
 
 // Query the secure boot user what to do with image
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
@@ -114,20 +119,18 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   // Check parameters
   if (DevicePath != NULL) {
     // Get the device path string
-    QueryUserMenu.InfoLines.setEmpty()
+    QueryUserMenu.InfoLines.setEmpty();
     QueryUserMenu.InfoLines.Add(L"Please select the authentication action for"_XSW);
-    QueryUserMenu.InfoLines.AddNoNull(FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    QueryUserMenu.InfoLines.AddNoNull(FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath));
     if (QueryUserMenu.InfoLines.size() >= 1) {
       // Get the device path file path
-      QueryUserMenu.InfoLines.AddNoNull(FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+      QueryUserMenu.InfoLines.AddNoNull(FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath));
       if (QueryUserMenu.InfoLines.size() >= 2) {
         // Create the entries
         REFIT_SIMPLE_MENU_ENTRY_TAG  *ChosenEntry = NULL;
         UINTN              MenuExit;
-        // Update the menu
-        QueryUserMenu.Entries.size() = gSettings.Boot.SecureBootSetupMode ? 2 : 3;
         // Debug message
-        DBG("VerifySecureBootImage: Query user for authentication action for %ls\n", QueryUserMenu.InfoLines[1]);
+        DBG("VerifySecureBootImage: Query user for authentication action for %ls\n", QueryUserMenu.InfoLines[1].wc_str());
         // Because we may
         if (!gGuiIsReady) {
           InitScreen(FALSE);
@@ -142,12 +145,13 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         // Run the query menu
         do
         {
-           MenuExit = QueryUserMenu.RunMenu(&ChosenEntry);
-           if ((ChosenEntry != NULL) &&
-               ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
-             Response = (UINTN)ChosenEntry->Tag;
-             MenuExit = MENU_EXIT_ESCAPE;
-           }
+          REFIT_ABSTRACT_MENU_ENTRY* AbstractChosenEntry = ChosenEntry;
+          MenuExit = QueryUserMenu.RunMenu(&AbstractChosenEntry);
+          if ((ChosenEntry != NULL) &&
+             ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
+           Response = (UINTN)ChosenEntry->Tag;
+           MenuExit = MENU_EXIT_ESCAPE;
+          }
         } while (MenuExit != MENU_EXIT_ESCAPE);
       }
     }
@@ -375,27 +379,28 @@ extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 #define TAG_CLEAR   4
 #define TAG_DISABLE 5
 
-STATIC REFIT_MENU_ITEM_RETURN   SecureBootPolicyEntry = { NULL, TAG_POLICY, 0, 0, 0, NULL,  NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY   InsertImageSignatureEntry = { L"Add image authentication to database", TAG_INSERT, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY   RemoveImageSignatureEntry = { L"Remove image authentication from database", TAG_REMOVE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY   ClearImageSignatureEntry = { L"Clear image authentication database", TAG_CLEAR, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY   DisableSecureBootEntry = { L"Disable secure boot", TAG_DISABLE, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL };
-STATIC REFIT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
-STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration", NULL, 0, NULL, 0, SecureBootEntries,
-                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-                                        /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   SecureBootPolicyEntry = { L""_XSW, TAG_POLICY, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   InsertImageSignatureEntry = { L"Add image authentication to database"_XSW, TAG_INSERT, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   RemoveImageSignatureEntry = { L"Remove image authentication from database"_XSW, TAG_REMOVE, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   ClearImageSignatureEntry = { L"Clear image authentication database"_XSW, TAG_CLEAR, ActionEnter };
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   DisableSecureBootEntry = { L"Disable secure boot"_XSW, TAG_DISABLE, ActionEnter };
+/*commented out to avoid warning: STATIC*/ REFIT_ABSTRACT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
+//STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration"_XSW, NULL, 0, NULL, 0, SecureBootEntries,
+//                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//                                        /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
+STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration"_XSW, L""_XSW }; // TODO: what was this SecureBootEntries array.
 
-STATIC REFIT_MENU_ENTRY   SecureBootPolicyNameEntry[] = {
-  { L"Deny", SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"Allow", SECURE_BOOT_POLICY_ALLOW, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"Query", SECURE_BOOT_POLICY_QUERY, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"Insert", SECURE_BOOT_POLICY_INSERT, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"WhiteList", SECURE_BOOT_POLICY_WHITELIST, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"BlackList", SECURE_BOOT_POLICY_BLACKLIST, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
-  { L"User", SECURE_BOOT_POLICY_USER, 0, 0, 0, NULL, NULL, NULL, { 0, 0, 0, 0 }, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },
+STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   SecureBootPolicyNameEntry[] = {
+  { L"Deny"_XSW, SECURE_BOOT_POLICY_DENY, ActionEnter },
+  { L"Allow"_XSW, SECURE_BOOT_POLICY_ALLOW, ActionEnter },
+  { L"Query"_XSW, SECURE_BOOT_POLICY_QUERY, ActionEnter },
+  { L"Insert"_XSW, SECURE_BOOT_POLICY_INSERT, ActionEnter },
+  { L"WhiteList"_XSW, SECURE_BOOT_POLICY_WHITELIST, ActionEnter },
+  { L"BlackList"_XSW, SECURE_BOOT_POLICY_BLACKLIST, ActionEnter },
+  { L"User"_XSW, SECURE_BOOT_POLICY_USER, ActionEnter },
 };
 
-STATIC REFIT_MENU_ENTRY  *SecureBootPolicyEntries[] = {
+/*commented out to avoid warning: STATIC*/ REFIT_ABSTRACT_MENU_ENTRY  *SecureBootPolicyEntries[] = {
   SecureBootPolicyNameEntry,
   SecureBootPolicyNameEntry + 1,
   SecureBootPolicyNameEntry + 2,
@@ -406,10 +411,11 @@ STATIC REFIT_MENU_ENTRY  *SecureBootPolicyEntries[] = {
   &MenuEntryReturn
 };
 
-STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy", NULL, 0, NULL,
-                                                   sizeof(SecureBootPolicyEntries) / sizeof(REFIT_MENU_ENTRY *), SecureBootPolicyEntries,
-                                                   0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
-                                              /*    FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 } , NULL };
+//STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy", NULL, 0, NULL,
+//                                                   sizeof(SecureBootPolicyEntries) / sizeof(REFIT_MENU_ENTRY *), SecureBootPolicyEntries,
+//                                                   0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//                                              /*    FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 } , NULL };
+STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy"_XSW, L""_XSW }; // TODO: add entries from SecureBootPolicyEntries
 
 // Configure secure boot
 BOOLEAN ConfigureSecureBoot(void)
@@ -417,27 +423,28 @@ BOOLEAN ConfigureSecureBoot(void)
   BOOLEAN StillConfiguring = TRUE;
   do
   {
-    UINTN             Index = 0, MenuExit;
-    REFIT_MENU_ENTRY *ChosenEntry = NULL;
+    UINTN             MenuExit;
+    REFIT_SIMPLE_MENU_ENTRY_TAG *ChosenEntry = NULL;
     EFI_DEVICE_PATH  *DevicePath = NULL;
     // Add the entry for secure boot policy
-    SecureBootPolicyEntry.Title.SPrintf("Secure boot policy: %ls", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
+    SecureBootPolicyEntry.Title.SWPrintf("Secure boot policy: %ls", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
     if (SecureBootPolicyEntry.Title.isEmpty()) {
       break;
     }
     SecureBootPolicyMenu.Title = SecureBootPolicyEntry.Title;
-    SecureBootMenu.Entries[Index++] = &SecureBootPolicyEntry;
+    SecureBootMenu.Entries.setEmpty();
+    SecureBootMenu.Entries.AddReference(&SecureBootPolicyEntry, false);
     // Get the proper entries for the secure boot mode
-    if (!gSettings.Boot.SecureBootSetupMode) {
-      SecureBootMenu.Entries[Index++] = &InsertImageSignatureEntry;
-      SecureBootMenu.Entries[Index++] = &RemoveImageSignatureEntry;
-      SecureBootMenu.Entries[Index++] = &ClearImageSignatureEntry;
-      SecureBootMenu.Entries[Index++] = &DisableSecureBootEntry;
+    if (!GlobalConfig.SecureBootSetupMode) {
+      SecureBootMenu.Entries.AddReference(&InsertImageSignatureEntry, false);
+      SecureBootMenu.Entries.AddReference(&RemoveImageSignatureEntry, false);
+      SecureBootMenu.Entries.AddReference(&ClearImageSignatureEntry, false);
+      SecureBootMenu.Entries.AddReference(&DisableSecureBootEntry, false);
     }
-    SecureBootMenu.Entries[Index++] = &MenuEntryReturn;
-    SecureBootMenu.Entries.size() = Index;
+    SecureBootMenu.Entries.AddReference(&MenuEntryReturn, false);
     // Run the configuration menu
-    MenuExit = SecureBootMenu.RunMenu(&ChosenEntry);
+    REFIT_ABSTRACT_MENU_ENTRY* absPtr = ChosenEntry;
+    MenuExit = SecureBootMenu.RunMenu(&absPtr);
     if ((ChosenEntry != NULL) &&
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
       switch (ChosenEntry->Tag) {
@@ -446,7 +453,8 @@ BOOLEAN ConfigureSecureBoot(void)
         do
         {
           ChosenEntry = NULL;
-          MenuExit = SecureBootPolicyMenu.RunMenu(&ChosenEntry);
+          absPtr = ChosenEntry;
+          MenuExit = SecureBootPolicyMenu.RunMenu(&absPtr);
           if ((ChosenEntry != NULL) &&
               ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
             switch (ChosenEntry->Tag) {
@@ -489,10 +497,10 @@ BOOLEAN ConfigureSecureBoot(void)
         // Clear authentication database
         if (YesNoMessage(L"Clear Authentication Database", L"Are you sure you want to clear\nthe image authentication database?")) {
           DBG("User cleared authentication database\n");
-          AlertMessage(L"Clear Authentication Database",
+          AlertMessage(L"Clear Authentication Database"_XSW,
                        EFI_ERROR(ClearAuthorizedDatabase()) ?
-                         L"Clearing the image authentication database failed!" :
-                         L"Cleared image authentication database successfully");
+                         L"Clearing the image authentication database failed!"_XSW :
+                         L"Cleared image authentication database successfully"_XSW);
         }
         break;
 
@@ -501,10 +509,10 @@ BOOLEAN ConfigureSecureBoot(void)
         if (YesNoMessage(L"Disable Secure Boot", L"Are you sure you want to disable secure boot?")) {
           DBG("User disabled secure boot\n");
           DisableSecureBoot();
-          if (!gSettings.Boot.SecureBoot) {
+          if (!GlobalConfig.SecureBoot) {
             return TRUE;
           }
-          AlertMessage(L"Disable Secure Boot", L"Disabling secure boot failed!\nClover does not appear to own the PK");
+          AlertMessage(L"Disable Secure Boot"_XSW, L"Disabling secure boot failed!\nClover does not appear to own the PK"_XSW);
         }
         break;
 
@@ -515,7 +523,6 @@ BOOLEAN ConfigureSecureBoot(void)
     } else if (MenuExit == MENU_EXIT_ESCAPE) {
       StillConfiguring = FALSE;
     }
-    FreePool(SecureBootPolicyEntry.Title);
   } while (StillConfiguring);
   return FALSE;
 }
