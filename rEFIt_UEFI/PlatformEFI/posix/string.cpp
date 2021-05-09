@@ -159,7 +159,7 @@ int memcmp(const void *s1, const void *s2, size_t n)
   if ( n > MAX_UINTN ) {
     log_technical_bug("n > MAX_UINTN");
   }
-  UINTN ret = CompareMem(s1,s2,(UINTN)(n));
+  INTN ret = CompareMem(s1,s2,(UINTN)(n));
   if ( ret < INT_MIN ) {
     log_technical_bug("n > ret > MAX_INT");
   }
