@@ -1386,30 +1386,75 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     done
 fi
 
-# build CloverThemeManager package
-#if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]]; then
+## build CloverThemeManager package
+# if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]]; then
 #    local CTM_Dir="${SRCROOT}"/CloverThemeManager
 #    local CTM_Dest='/Applications'
-
+# 
 #    packagesidentity="${clover_package_identity}".CTM.themes
 #    choiceId="CloverThemeManager"
 #    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-
+# 
 #    ditto --noextattr --noqtn "$CTM_Dir"  \
 #     "${PKG_BUILD_DIR}/${choiceId}/Root/${CTM_Dest}"/
 #    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
 #                       --subst="INSTALLER_CHOICE=$packageRefId"      \
 #                       CloverThemeManager
 #    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    # CloverThemeManager.app can update it-self,
-    # so there's no need to record the choice as 'previously selected'.
+#    # CloverThemeManager.app can update it-self,
+#    # so there's no need to record the choice as 'previously selected'.
 #    addChoice --group="Themes" --start-selected="false" \
 #              --start-enabled="checkFileExists('/Users')" \
 #              --start-visible="checkFileExists('/Users')" \
 #              --pkg-refs="$packageRefId" "${choiceId}"
-    # end CloverThemeManager package
-# End build theme packages
-#fi
+#    # end CloverThemeManager package
+## End build theme packages
+# fi
+
+# build BootLoaderChooser
+if [[ -d "${SRCROOT}"/BootLoaderChooser && ${NOEXTRAS} != *"BootLoaderChooser"* ]]; then
+    echo "===================== BootLoaderChooser ====================="
+    local BLC_Dir="${SRCROOT}"/BootLoaderChooser
+    local BLC_Dest='/EFI/BOOT'
+    
+    packagesidentity="$clover_package_identity"
+    choiceId="BootLoaderChooser"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    
+    ditto --noextattr --noqtn "$BLC_Dir"  \
+    "${PKG_BUILD_DIR}/${choiceId}/Root/${BLC_Dest}"/
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       BootLoaderChooser
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
+        addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                  --pkg-refs="$packageRefId" "${choiceId}"
+    else
+        addChoice --start-visible="true" --start-selected="false"  \
+                  --pkg-refs="$packageRefId" "${choiceId}"
+# End BootLoaderChooser
+fi
+
+# build CloverConfigPlistValidator package
+if [[ -d "${SRCROOT}"/CloverConfigPlistValidator && ${NOEXTRAS} != *"CloverConfigPlistValidator"* ]]; then
+   echo "=============== CloverConfigPlistValidator ==============="
+   local CCPV_Dir="${SRCROOT}"/CloverConfigPlistValidator
+   local CCPV_Dest='/usr/local/bin'
+   
+   packagesidentity="${clover_package_identity}"
+   choiceId="CloverConfigPlistValidator"
+   packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+
+   ditto --noextattr --noqtn "$CCPV_Dir"  \
+    "${PKG_BUILD_DIR}/${choiceId}/Root/${CCPV_Dest}"/
+   addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                      --subst="INSTALLER_CHOICE=$packageRefId"      \
+                      CloverConfigPlistValidator
+   buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+   addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')" \
+             --pkg-refs="$packageRefId" "${choiceId}"
+# End build CloverConfigPlistValidator packages
+fi
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane

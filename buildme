@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # created by vector sigma on July 15 2019
+# modified by LAbyOne on My 2021
 # github version
 
 # Linux users should be able to use this wrapper, although the following are needed:
@@ -8,6 +9,17 @@
 # sudo apt-get install build-essential uuid-dev iasl git gcc-10 nasm python3-distutils
 
 # $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
+
+# ====== COLORS ======
+COL_BLACK="\x1b[30;01m"
+COL_RED="\x1b[31;01m"
+COL_GREEN="\x1b[32;01m"
+COL_YELLOW="\x1b[33;01m"
+COL_MAGENTA="\x1b[35;01m"
+COL_CYAN="\x1b[36;01m"
+COL_WHITE="\x1b[37;01m"
+COL_BLUE="\x1b[34;01m"
+COL_RESET="\x1b[39;49;00m"
 
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
@@ -128,6 +140,27 @@ else
   sleep 3
   menu
 fi
+}
+
+buildCCPV() {
+revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
+if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
+	rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+fi
+mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+mv -f "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/ccpv
+rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
+}
+
+BLC() {
+if [[ ! -d "${CLOVERROOT}"/CloverPackage/BootLoaderChooser ]]; then
+	mkdir -p "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
+fi
+curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
+chmod 775 "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
+#open "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
 }
 
 buildClover() {
@@ -256,9 +289,225 @@ cd "${CLOVERROOT}"/BaseTools
 make clean
 }
 
+## Utilities
+buildCPV() {
+revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
+if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
+	rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+fi
+mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+mv -f "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator_${revision}
+rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
+open "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+}
+
+PlistEDPlus() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.0.52/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
+	hdiutil attach -quiet -noverify -nobrowse PlistEDPlus_Mac.dmg && cp -Rf /Volumes/bin\:release\:PlistEDPlus/PlistEDPlus.app $HOME/Desktop/ClovUtils
+	hdiutil detach -force /Volumes/bin\:release\:PlistEDPlus
+	rm -r $HOME/Desktop/ClovUtils/PlistEDPlus_Mac.dmg && open $HOME/Desktop/ClovUtils
+}
+
+Hackintool() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/headkaze/Hackintool/releases/download/3.5.2/Hackintool.zip -o Hackintool.zip
+	unzip -q Hackintool.zip && rm -r Hackintool.zip && open $HOME/Desktop/ClovUtils
+}
+
+BitmaskDecode() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/BitmaskDecode && open $HOME/Desktop/ClovUtils
+}
+
+MaciASL() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/acidanthera/MaciASL/releases/download/1.6.1/MaciASL-1.6.1-RELEASE.dmg > MaciASL-1.6.1-RELEASE.dmg
+	hdiutil attach -quiet -noverify -nobrowse MaciASL-1.6.1-RELEASE.dmg && cp -Rf /Volumes/MaciASL/MaciASL.app $HOME/Desktop/ClovUtils
+	hdiutil detach -force /Volumes/MaciASL
+	rm -r $HOME/Desktop/ClovUtils/MaciASL-1.6.1-RELEASE.dmg && open $HOME/Desktop/ClovUtils
+}
+
+dmidecode() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils/dmidecode
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/acidanthera/dmidecode dmi-decode && xcodebuild -project ./dmi-decode/dmidecode.xcodeproj -quiet
+	cp -r dmi-decode/dmidecode $HOME/Desktop/ClovUtils/dmidecode && rm -Rf $HOME/Desktop/ClovUtils/dmi-decode && open $HOME/Desktop/ClovUtils
+
+}
+
+Get-IOReg-Devices() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/LAbyOne/Get-IOReg-Devices
+	mv -f Get-IOReg-Devices/Get\ IOReg\ Devices $HOME/Desktop/ClovUtils/Get\ IOReg-Devices && chmod a+x $HOME/Desktop/ClovUtils/Get\ IOReg-Devices/*.command
+	rm -rf Get-IOReg-Devices && open $HOME/Desktop/ClovUtils
+}
+
+NDBrightness () {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/KAMIKAZEUA/NativeDisplayBrightness NDBrightness
+	xcodebuild -project ./NDBrightness/NativeDisplayBrightness.xcodeproj -quiet -configuration Release clean build ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$HOME/Desktop/ClovUtils
+	rm -Rf $HOME/Desktop/ClovUtils/NDBrightness && rm -r $HOME/Desktop/ClovUtils/*.dSYM && open $HOME/Desktop/ClovUtils
+}
+
+SSDTTime() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/SSDTTime && open $HOME/Desktop/ClovUtils
+}
+
+USBMap() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils	
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/USBMap 
+	open $HOME/Desktop/ClovUtils
+}
+
+QtiASL() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.0.60/QtiASL_Mac.dmg > QtiASL_Mac.dmg
+	hdiutil attach -quiet -noverify -nobrowse QtiASL_Mac.dmg && cp -Rf /Volumes/bin\:release\:QtiASL/QtiASL.app $HOME/Desktop/ClovUtils
+	hdiutil detach -force /Volumes/bin\:release\:QtiASL
+	rm -r $HOME/Desktop/ClovUtils/QtiASL_Mac.dmg && open $HOME/Desktop/ClovUtils
+}
+
+CsrDecode() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils/CsrDecode
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/CsrDecode && open $HOME/Desktop/ClovUtils
+}
+
+gibMacOS() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+	mkdir -p $HOME/Desktop/ClovUtils
+fi
+	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/gibMacOS && open $HOME/Desktop/ClovUtils
+}
+
+Utilities() {
+echo
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
+cd "${CLOVERROOT}"
+local lsha1="not a git repo"
+if [[ -d .git ]]; then
+  lsha1=$(git rev-parse --short HEAD)
+fi
+echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
+echo -e $COL_CYAN"                         $COL_CYAN Utilities "$COL_RESET
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
+echo && echo
+echo && echo
+echo && echo
+echo && echo
+echo
+
+PS3='
+Files will be put on Desktop/ClovUtils: '
+options=( 'Get CloverConfigPlistValidator'
+          'Get PlistEDPlus'
+		  'Get Hackintool'
+		  'Get BitmaskDecode'
+		  'Get MaciASL'
+		  'Get dmidecode'
+		  'Get IOReg-Devices'
+		  'Get NativeDisplayBrightness'
+		  'Get SSDTTime'
+		  'Get USBMap'
+		  'Get QtiASL'
+		  'Get CsrDecode'
+		  'Get gibMacOS'
+          'back to buildme')
+select opt in "${options[@]}"
+ do
+    case $opt in
+    "Get CloverConfigPlistValidator")
+      buildCPV
+    break
+    ;;
+    "Get PlistEDPlus")
+      PlistEDPlus
+    break
+    ;;
+    "Get Hackintool")
+      Hackintool
+    break
+    ;;
+    "Get BitmaskDecode")
+      BitmaskDecode
+    break
+    ;;
+    "Get MaciASL")
+      MaciASL
+    break
+    ;;
+    "Get dmidecode")
+      dmidecode
+    break
+    ;;
+    "Get IOReg-Devices")
+      Get-IOReg-Devices
+    break
+    ;;
+    "Get NativeDisplayBrightness")
+      NDBrightness
+    break
+    ;;
+    "Get SSDTTime")
+      SSDTTime
+    break
+    ;;
+    "Get USBMap")
+      USBMap
+    break
+    ;;
+    "Get QtiASL")
+      QtiASL
+    break
+    ;;
+    "Get CsrDecode")
+      CsrDecode
+    break
+    ;;
+    "Get gibMacOS")
+      gibMacOS
+    break
+    ;;
+    "back to buildme")
+      menu
+    break
+    ;;
+    *)
+    echo "invalid option $REPLY"
+    break
+    ;;
+    esac
+  done
+Utilities
+}
+
 menu() {
 echo
-echo '------------------------------------------------------------------------'
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
 cd "${CLOVERROOT}"
 
 local lsha1="not a git repo"
@@ -267,10 +516,12 @@ if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
 fi
 
-echo "buildme, Clover r$(git describe --tags $(git rev-list --tags --max-count=1﻿)) (SHA: $lsha1)"
-echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
-echo
-PS3='Please enter your choice: '
+echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
+echo -e "$COL_CYAN  TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
+
+PS3='
+Please enter your choice: '
 options=( 'build Clover'
           'build Clover with HFSPlus'
           'make pkg'
@@ -278,13 +529,14 @@ options=( 'build Clover'
           'make app (with Clover)'
           'make iso'
           'build all'
-          'test build (no autogen, no boot files)'
+		  'test build (no autogen, no boot files)'
           'status'
           'update Clover'
           'show diff'
           'open CloverV2/EFI/CLOVER directory'
           'update Clover (reset changes)'
           'clean BaseTools'
+          'Utilities'
           'quit')
 
 select opt in "${options[@]}"
@@ -299,7 +551,9 @@ do
       break
     ;;
     "make pkg")
-      buildPkg
+	  buildCCPV
+	  BLC
+	  buildPkg
       break
     ;;
     "make app")
@@ -315,6 +569,8 @@ do
       break
     ;;
     "build all")
+	  buildCCPV
+	  BLC
       buildClover
       buildPkg
       buildIso
@@ -362,6 +618,10 @@ do
       fi
       break
     ;;
+    "Utilities")
+	  Utilities
+      break
+    ;;
     "quit")
       exit 0
     ;;
@@ -381,6 +641,7 @@ if [[ "$2" == ci ]]; then
   buildPkg
   buildIso
   buildApp
+  buildCPV
 else
   menu
 fi
