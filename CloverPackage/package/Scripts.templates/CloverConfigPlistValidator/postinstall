@@ -22,6 +22,12 @@ else
     DEST_VOL="$2"
 fi
 
+#############################################################################
+
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
+installer_choice="@INSTALLER_CHOICE@"
+
 # ---------------------------------------------
 # Fix chmod / chown attributes
 # ---------------------------------------------
