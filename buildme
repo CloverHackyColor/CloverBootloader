@@ -419,7 +419,7 @@ echo && echo
 echo && echo
 echo && echo
 echo && echo
-echo
+echo && echo
 
 PS3='
 Files will be put on Desktop/ClovUtils: '
@@ -519,7 +519,7 @@ fi
 echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
 echo -e "$COL_CYAN  TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
 echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
-
+echo
 PS3='
 Please enter your choice: '
 options=( 'build Clover'
