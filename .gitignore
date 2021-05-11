@@ -11,6 +11,7 @@
 
 # /CloverPackage/
 /CloverPackage/sym/
+/CloverPackage/CloverConfigPlistValidator/
 /CloverPackage/CloverV2/BootSectors/boot0af
 /CloverPackage/CloverV2/BootSectors/boot0ss
 /CloverPackage/CloverV2/BootSectors/boot0md
