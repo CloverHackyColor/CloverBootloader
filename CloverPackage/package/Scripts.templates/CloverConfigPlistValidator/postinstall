@@ -27,7 +27,7 @@ installer_choice="@INSTALLER_CHOICE@"
 # Fix chmod attributes
 # ---------------------------------------------
 
-chmod +x /usr/local/bin/ccpv
+chmod a+x /usr/local/bin/ccpv
 
 # Mark that the option was selected
 /usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
