@@ -24,10 +24,10 @@ install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 installer_choice="@INSTALLER_CHOICE@"
 
 # ---------------------------------------------
-# Fix chmod / chown attributes
+# Fix chmod attributes
 # ---------------------------------------------
 
-chmod a+x /usr/local/bin/ccpv
+chmod +x /usr/local/bin/ccpv
 
 # Mark that the option was selected
 /usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
