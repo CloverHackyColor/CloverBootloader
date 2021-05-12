@@ -218,11 +218,11 @@ Install to /EFI/CLOVER/themes/steampunkblack";
 "BootLoaderChooser_title" = "BootLoaderChooser";
 "BootLoaderChooser_description" = "BootLoaderChooser by jief,
 This tool is a menu that allows you to choose which bootloader you want to load.
-Will replace your BOOX64.efi, you can choose between Clover and OpenCore.
+Will replace your BOOTX64.efi, you can choose between Clover and OpenCore.
 The first time, you'll get the menu. Choose one bootloader.
 The next times, it'll immediately load the bootloader you chose before.
 When you need the menu back, just boot your computer with a key pressed.
-INSTALL ONLY IF YOU KNOW WHAT YOU ARE DOING !!!
+INSTALL ONLY IF YOU KNOW WHAT ARE YOU DOING !!!
 More infos https://github.com/jief666/BootloaderChooser. ";
 
 // ============================================================================
