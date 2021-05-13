@@ -125,7 +125,7 @@ public:
 protected:
   XmlBool FuzzyMatch = XmlBool();
   XmlString8AllowEmpty KernelCache = XmlString8AllowEmpty();
-  XmlBool ProvideConsoleGopEnable = XmlBool();
+//  XmlBool ProvideConsoleGopEnable = XmlBool();
 public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
