@@ -543,35 +543,43 @@ select opt in "${options[@]}"
 do
   case $opt in
     "build Clover")
-      buildClover
+       checkTools
+       buildClover
       break
     ;;
     "build Clover with HFSPlus")
-      buildCloverHFSPlus
+     checkTools
+     buildCloverHFSPlus
       break
     ;;
     "make pkg")
+      checkTools
+      buildClover
 	  buildCCPV
 	  BLC
 	  buildPkg
       break
     ;;
     "make app")
+      checkTools
       buildApp
       break
     ;;
     "make app (with Clover)")
+      checkTools
       buildApp withV2
       break
     ;;
     "make iso")
+      checkTools
       buildIso
       break
     ;;
     "build all")
+      checkTools
+      buildClover
 	  buildCCPV
 	  BLC
-      buildClover
       buildPkg
       buildIso
       buildApp
