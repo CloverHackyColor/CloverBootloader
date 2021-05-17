@@ -38,8 +38,7 @@ jobs:
         run: |
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
           (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
-          (cd "CloverPackage/CloverConfigPlistValidator/" && mv CloverConfigPlistValidator* "CloverConfigPlistValidator" && zip -q "CloverConfigPlistValidator.zip" "CloverConfigPlistValidator" || exit 1)
-          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/Clover.app*.pkg CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator.zip CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
+          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/Clover.app*.pkg CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
 
       - name: Generate Release Notes
@@ -57,7 +56,6 @@ jobs:
           path: |
             *.7z
             Clover.app*.pkg
-            CloverConfigPlistValidator.zip
             CloverV2*.zip
             CLOVERX64.efi.zip
             Clover_r*.pkg
@@ -66,7 +64,7 @@ jobs:
       #   if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
       #   uses: ncipollo/release-action@v1
       #   with:
-      #     artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverConfigPlistValidator.zip, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
+      #     artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
       #     bodyFile: ReleaseNotes.md
       #     name: Release v5.1 r${{ env.CUR_TAG }}
       #     prerelease: false
