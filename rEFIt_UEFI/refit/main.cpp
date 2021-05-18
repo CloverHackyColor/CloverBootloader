@@ -689,6 +689,9 @@ void debugStartImageWithOC()
   }
 }
 #endif
+
+//const UINT32 standardMask[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+
 void LOADER_ENTRY::DelegateKernelPatches()
 {
   XObjArray<ABSTRACT_KEXT_OR_KERNEL_PATCH> selectedPathArray;
@@ -707,6 +710,15 @@ void LOADER_ENTRY::DelegateKernelPatches()
   mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
   mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
   memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
+  
+  UINT32 FakeCPU = gSettings.KernelAndKextPatches.FakeCPUID;
+//  for (size_t Idx = 0; Idx < 4; Idx++) {
+//    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[Idx] = FakeCPU & 0xFF;
+//    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[Idx] = 0xFF;
+//    FakeCPU >>= 8;
+//  }
+  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[0] = FakeCPU;
+  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[0] = 0xFFFFFFFF;
 
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
