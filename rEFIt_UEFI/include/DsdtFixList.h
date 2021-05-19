@@ -45,7 +45,7 @@
 #define FIX_ACST      bit(26)
 #define FIX_HDMI      bit(27)
 #define FIX_REGIONS   bit(28)
-#define FIX_HEADERS   bit(29)
+#define FIX_HEADERS_DEPRECATED   bit(29) // deprecated !!
 #define FIX_MUTEX     bit(30)
 
 
