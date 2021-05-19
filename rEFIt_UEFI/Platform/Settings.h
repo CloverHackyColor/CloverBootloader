@@ -1086,7 +1086,7 @@ public:
         ResetAddr = configPlist.dgetResetAddr();
         ResetVal = configPlist.dgetResetVal();
         SlpSmiEnable = configPlist.dgetSlpSmiEnable();
-        FixHeaders = configPlist.dgetFixHeaders();
+        FixHeaders = configPlist.dgetFixHeaders() || configPlist.DSDT.Fixes.dgetFixHeaders();
         FixMCFG = configPlist.dgetFixMCFG();
         NoASPM = configPlist.dgetNoASPM();
         smartUPS = configPlist.dgetsmartUPS();

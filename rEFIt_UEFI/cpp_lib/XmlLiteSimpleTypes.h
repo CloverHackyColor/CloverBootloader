@@ -43,7 +43,7 @@ private:
     bool m_isDefined;
 
 public:
-  XmlAbstractType() : m_isDefined(false) {};
+  constexpr XmlAbstractType() : m_isDefined(false) {};
   virtual ~XmlAbstractType() {};
   
   virtual const char* getDescription() = 0;
@@ -98,8 +98,8 @@ public:
 protected:
   bool booll = false;
 public:
-  XmlStrictBool() : super() {};
-  XmlStrictBool(bool b) : booll(b) { /*if (b) b = 1;*/ }
+  constexpr XmlStrictBool() : super() {};
+  constexpr XmlStrictBool(bool b) : booll(b) { /*if (b) b = 1;*/ }
 
   virtual void reset() override { super::reset(); booll = 0; };
   virtual const char* getDescription() override { return "boolean"; };

@@ -18,21 +18,25 @@ class DSDT_Class : public XmlDict
 public:
     class ACPI_DSDT_Fixes_Class;
 
-    class ACPI_DSDT_Fix : public XmlBool
+    class ACPI_DSDT_Fix : public XmlAbstractType
     {
-      using super = XmlBool;
+      using super = XmlAbstractType;
       friend class ACPI_DSDT_Fixes_Class;
     protected:
       const CHAR8* m_newName = NULL;
       const CHAR8* m_oldName = NULL;
       UINT32 m_bitData = 0;
-      XmlBool oldEnabled = XmlBool();
-      XmlBool newEnabled = XmlBool();
+      XmlBool oldEnabled {};
+      XmlBool newEnabled {};
 
     public:
-      ACPI_DSDT_Fix(const CHAR8* newName, const CHAR8* oldName, UINT32 bitData ) : XmlBool(), m_newName(newName), m_oldName(oldName), m_bitData(bitData) {};
+      constexpr ACPI_DSDT_Fix(const CHAR8* newName, const CHAR8* oldName, UINT32 bitData ) : m_newName(newName), m_oldName(oldName), m_bitData(bitData), oldEnabled(), newEnabled() {};
       ACPI_DSDT_Fix(const ACPI_DSDT_Fix&) { panic("copy ctor"); }; // can't do "=delete" because clang thinks it will be called at initialization "ACPI_DSDT_Fixes_Class Fixes = ACPI_DSDT_Fixes_Class();"
       ACPI_DSDT_Fix& operator = (const ACPI_DSDT_Fix&) = delete; // { panic("copy ctor"); }; // = delete;
+
+      virtual const char* getDescription() override { panic("not defined"); };
+      virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { panic("not defined"); };
+      virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override { panic("not defined"); };
 
       virtual void reset() override {
         super::reset();
@@ -40,7 +44,7 @@ public:
         newEnabled.reset();
       };
 
-      const CHAR8* getNewName() const { return m_newName; }
+      constexpr const CHAR8* getNewName() const { return m_newName; }
       const CHAR8* getOldName() const { return m_oldName; }
       uint32_t getBitData() const { return m_bitData; }
 
@@ -57,7 +61,7 @@ public:
     class ACPI_DSDT_Fixes_Class : public XmlDict
     {
       using super = XmlDict;
-    protected:
+    public:
       ACPI_DSDT_Fix ACPI_DSDT_Fixe_Array[31] = { // CAREFUL not to declare too much
         { "AddDTGP_0001", "AddDTGP", FIX_DTGP },
         { "FixDarwin_0002", "FixDarwin", FIX_WARNING },
@@ -88,7 +92,7 @@ public:
         { "FIX_ACST_4000000", "FixACST", FIX_ACST },
         { "AddHDMI_8000000", "AddHDMI", FIX_HDMI },
         { "FixRegions_10000000", "FixRegions", FIX_REGIONS },
-        { "FixHeaders_20000000", "FixHeaders", FIX_HEADERS },
+        { "FixHeaders_20000000", "FixHeaders", FIX_HEADERS_DEPRECATED },
         { NULL, "FixMutex", FIX_MUTEX }
       };
 
@@ -99,15 +103,40 @@ public:
           ACPI_DSDT_Fixe_Array[idx].reset();
         }
       };
-    //  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+
       virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound) override;
       
+      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+        if ( !isDefined() ) return true;
+//        if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
+//          log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
+//          return true; // Bug in ACPI_DSDT_Fixe_Array. We don't want to reset all the values, so return true.
+//        }
+//        if ( ACPI_DSDT_Fixe_Array[29].isDefined() ) {
+//          xmlLiteParser->addWarning(generateErrors, S8Printf("FixHeaders is ACPI/DSDT in deprecated. Move it to ACPI."));
+//          return true; // return true because we handle this value anyway.
+//        }
+        return true;
+      }
+
+      const ACPI_DSDT_Fix& getFixHeaders() const {
+        // FixHeaders is bit 29, but that's a coincidence with the index of the array. ACPI_DSDT_Fixe_Array[FIX_HEADERS_DEPRECATED] would be wrong.
+        if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
+          log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
+        }
+        return ACPI_DSDT_Fixe_Array[29];
+      }
+
       uint32_t dgetFixBiosDsdt() const {
         uint32_t FixDsdt = 0;
         for (size_t Index = 0; Index < sizeof(ACPI_DSDT_Fixe_Array)/sizeof(ACPI_DSDT_Fixe_Array[0]); Index++) {
           if ( ACPI_DSDT_Fixe_Array[Index].dgetEnabled() ) FixDsdt |= ACPI_DSDT_Fixe_Array[Index].getBitData();
         }
         return FixDsdt;
+      }
+      bool dgetFixHeaders() const {
+        return getFixHeaders().dgetEnabled();
       }
     };
 

@@ -61,7 +61,7 @@ extern "C" int main(int argc, const char * argv[])
       //path = "/JiefLand/5.Devel/Clover/user config/BS.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/maclinuxG4/config.plist";
       //path = "/JiefLand/5.Devel/Clover/user config/MICKHAEL/EFI_Github/CLOVER/config.plist";
-      path = "/JiefLand/5.Devel/Clover/user config/Slice/2021-04-29/config.plist";
+      path = "/JiefLand/5.Devel/Clover/user config/MacKonsti/2021-05-17/config-test.plist";
   #endif
   
   if ( !path ) {

@@ -883,7 +883,10 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
     log_technical_bug("%s : !selfOem.isInitialized()", __PRETTY_FUNCTION__);
   }
   EFI_STATUS Status = LoadConfigPlist(ConfName);
-  if ( EFI_ERROR(Status) ) return Status;
+  if ( EFI_ERROR(Status) ) {
+    DBG("LoadConfigPlist return %s. Config not loaded\n", efiStrError(Status));
+    return Status;
+  }
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
