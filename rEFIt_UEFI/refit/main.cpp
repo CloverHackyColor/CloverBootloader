@@ -183,7 +183,9 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     goto bailout;
   }else{
     DBG("\n");
+#ifdef JIEF_DEBUG
     DBG("ChildImaheHandle=%llx\n", uintptr_t(ChildImageHandle));
+#endif
   }
 
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
@@ -717,6 +719,8 @@ void LOADER_ENTRY::DelegateKernelPatches()
 //    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[Idx] = 0xFF;
 //    FakeCPU >>= 8;
 //  }
+  memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data));
+  memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask));
   mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[0] = FakeCPU;
   mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[0] = 0xFFFFFFFF;
 
