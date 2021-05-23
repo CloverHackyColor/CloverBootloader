@@ -68,8 +68,8 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
   }
 
   *efiFileNamePtr = CloverDirFullPath.basename();
-  XStringW& efiFileName = *efiFileNamePtr;
 #ifdef JIEF_DEBUG
+  XStringW& efiFileName = *efiFileNamePtr;
   DBG("efiFileName=%ls\n", efiFileName.wc_str());
 #endif
 
@@ -95,9 +95,8 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
     *CloverDirPtr = NULL;
     return RETURN_LOAD_ERROR;
   }
-  EFI_FILE* CloverDir = *CloverDirPtr;
-
 #ifdef JIEF_DEBUG
+  EFI_FILE* CloverDir = *CloverDirPtr;
   DBG("CloverDir = %lld\n", uintptr_t(CloverDir));
 #endif
 
