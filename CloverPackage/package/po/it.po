@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-22 13:02+0300\n"
+"POT-Creation-Date: 2021-05-15 18:25+0300\n"
 "PO-Revision-Date: 2019-07-13 10:25+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: it <it@li.org>\n"
@@ -1021,14 +1021,50 @@ msgstr ""
 "CloverThemeManager.app by blackosx tiene i tuoi temi aggiornati, li rimuove o li installa scegliendo da una grande selezione.\n"
 "Installa in /Applications"
 
+#. type: "BootLoaderChooser_title"
+#: Resources/templates/Localizable.strings:218
+#, fuzzy, no-wrap
+#| msgid "Bootloader"
+msgid "BootLoaderChooser"
+msgstr "Bootloader"
+
+#. type: "BootLoaderChooser_description"
+#: Resources/templates/Localizable.strings:219
+#, no-wrap
+msgid ""
+"BootLoaderChooser by jief,\n"
+"This tool is a menu that allows you to choose which bootloader you want to load.\n"
+"Will replace your BOOTX64.efi, you can choose between several bootloader versions.\n"
+"The first time, you'll get the menu. Choose one bootloader.\n"
+"The next times, it'll immediately load the bootloader you chose before.\n"
+"When you need the menu back, just boot your computer with a key pressed.\n"
+"INSTALL ONLY IF YOU KNOW WHAT YOU ARE DOING !!!\n"
+"More infos https://github.com/jief666/BootloaderChooser. "
+msgstr ""
+
+#. type: "CloverConfigPlistValidator_title"
+#: Resources/templates/Localizable.strings:231
+#, no-wrap
+msgid "CloverConfigPlistValidator"
+msgstr ""
+
+#. type: "CloverConfigPlistValidator_description"
+#: Resources/templates/Localizable.strings:232
+#, no-wrap
+msgid ""
+"CloverConfigPlistValidator by jief,\n"
+"Verify sanity of your config.plist keeps it clean and up to date.\n"
+"Installs to /usr/local/bin and will be available as 'ccpv' "
+msgstr ""
+
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:239
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Script RC sul volume di destinazione"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1038,43 +1074,43 @@ msgstr ""
 "Il volume di destinazione deve essere un volume OSX avviabile."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Script RC su tutti gli altri volumi OSX avviabili"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:221
+#: Resources/templates/Localizable.strings:243
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Installa tutti gli script RC su tutti i volumi interni OSX avviabili oltre al volume di destinazione."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:244
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Script RC Opzionali"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:245
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disabilita il servizio sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:224
+#: Resources/templates/Localizable.strings:246
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Script che disabilita il servizio BONJOUR (sleep proxy client). Eviterà che il sistema, in caso di standby, si risvegli a tutte le  ore."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:229
+#: Resources/templates/Localizable.strings:251
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Installare Pannello Preferenze"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:230
+#: Resources/templates/Localizable.strings:252
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

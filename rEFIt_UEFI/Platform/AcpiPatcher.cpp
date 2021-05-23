@@ -399,7 +399,7 @@ BOOLEAN FixAsciiTableHeader(UINT8 *Str, UINTN Len)
 BOOLEAN PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 {
   BOOLEAN Ret1, Ret2, Ret3;
-  if (!(gSettings.ACPI.DSDT.FixDsdt & FIX_HEADERS) && !gSettings.ACPI.FixHeaders) {
+  if ( !gSettings.ACPI.FixHeaders ) {
     return FALSE;
   }
   Ret1 = FixAsciiTableHeader((UINT8*)&Header->CreatorId, 4);
@@ -438,7 +438,7 @@ void PatchAllTables()
     }
     EFI_ACPI_DESCRIPTION_HEADER* NewTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
     CopyMem(NewTable, Table, Len);
-    if ((gSettings.ACPI.DSDT.FixDsdt & FIX_HEADERS) || gSettings.ACPI.FixHeaders) {
+    if ( gSettings.ACPI.FixHeaders ) {
       // Merged tables already have the header patched, so no need to do it again
       if (!IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
         // table header NOT already patched

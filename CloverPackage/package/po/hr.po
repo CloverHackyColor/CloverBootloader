@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-22 13:02+0300\n"
+"POT-Creation-Date: 2021-05-15 18:25+0300\n"
 "PO-Revision-Date: 2018-10-02 11:39+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -1019,14 +1019,50 @@ msgstr ""
 "CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 
+#. type: "BootLoaderChooser_title"
+#: Resources/templates/Localizable.strings:218
+#, fuzzy, no-wrap
+#| msgid "Bootloader"
+msgid "BootLoaderChooser"
+msgstr "Pokretač sustava"
+
+#. type: "BootLoaderChooser_description"
+#: Resources/templates/Localizable.strings:219
+#, no-wrap
+msgid ""
+"BootLoaderChooser by jief,\n"
+"This tool is a menu that allows you to choose which bootloader you want to load.\n"
+"Will replace your BOOTX64.efi, you can choose between several bootloader versions.\n"
+"The first time, you'll get the menu. Choose one bootloader.\n"
+"The next times, it'll immediately load the bootloader you chose before.\n"
+"When you need the menu back, just boot your computer with a key pressed.\n"
+"INSTALL ONLY IF YOU KNOW WHAT YOU ARE DOING !!!\n"
+"More infos https://github.com/jief666/BootloaderChooser. "
+msgstr ""
+
+#. type: "CloverConfigPlistValidator_title"
+#: Resources/templates/Localizable.strings:231
+#, no-wrap
+msgid "CloverConfigPlistValidator"
+msgstr ""
+
+#. type: "CloverConfigPlistValidator_description"
+#: Resources/templates/Localizable.strings:232
+#, no-wrap
+msgid ""
+"CloverConfigPlistValidator by jief,\n"
+"Verify sanity of your config.plist keeps it clean and up to date.\n"
+"Installs to /usr/local/bin and will be available as 'ccpv' "
+msgstr ""
+
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:239
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instaliraj RC skripte na odabrani disk"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1036,43 +1072,43 @@ msgstr ""
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:221
+#: Resources/templates/Localizable.strings:243
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:244
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opcionalne RC skripte"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:223
+#: Resources/templates/Localizable.strings:245
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:224
+#: Resources/templates/Localizable.strings:246
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:229
+#: Resources/templates/Localizable.strings:251
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Instaliraj Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:230
+#: Resources/templates/Localizable.strings:252
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

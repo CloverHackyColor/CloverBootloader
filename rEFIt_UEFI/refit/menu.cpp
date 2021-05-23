@@ -448,6 +448,8 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].SValue.SWPrintf("%04hhu", gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide);
   InputItems[InputItemsCount].ItemType = BoolValue; //123
   InputItems[InputItemsCount++].BValue = gSettings.GUI.ProvideConsoleGop;
+  InputItems[InputItemsCount].ItemType = BoolValue; //124
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.FixHeaders;
 
 
 
@@ -1067,6 +1069,11 @@ void ApplyInputs(void)
     gSettings.GUI.ProvideConsoleGop = InputItems[i].BValue;
     DBG("applied ConsoleGopEnable=%s\n", gSettings.GUI.ProvideConsoleGop ? "Y" : "N" );
   }
+  i++; //124
+  if (InputItems[i].Valid) {
+    gSettings.ACPI.FixHeaders = InputItems[i].BValue;
+    DBG("applied gSettings.ACPI.FixHeaders=%s\n", gSettings.ACPI.FixHeaders ? "Y" : "N" );
+  }
 
 
   if (NeedSave) {
@@ -1078,6 +1085,7 @@ void ApplyInputs(void)
 void AboutRefit(void)
 {
   if (AboutMenu.Entries.size() == 0) {
+    AboutMenu.Daylight = ThemeX.Daylight;
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
       AboutMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_ABOUT);
     }
@@ -1135,6 +1143,7 @@ void AboutRefit(void)
 void HelpRefit(void)
 {
   if (HelpMenu.Entries.size() == 0) {
+    HelpMenu.Daylight = ThemeX.Daylight;
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
       HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
     }
@@ -2062,7 +2071,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
   SubScreen->AddMenuCheck("Rename ACST",  FIX_ACST, 67);
   SubScreen->AddMenuCheck("Add HDMI",     FIX_HDMI, 67);
   SubScreen->AddMenuCheck("Fix Regions",  FIX_REGIONS, 67);
-  SubScreen->AddMenuCheck("Fix Headers",  FIX_HEADERS, 67);
+//  SubScreen->AddMenuCheck("Fix Headers",  FIX_HEADERS_DEPRECATED, 67);
   SubScreen->AddMenuCheck("Fix Mutex",    FIX_MUTEX, 67);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -2144,6 +2153,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
   SubScreen->AddMenuEntry(SubMenuDsdtFix(), true);
   SubScreen->AddMenuEntry(SubMenuDSDTPatches(), true);
   SubScreen->AddMenuItemInput(49, "Fix MCFG", FALSE);
+  SubScreen->AddMenuItemInput(124, "Fix Headers", gSettings.ACPI.FixHeaders);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
@@ -2598,12 +2608,10 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   gThemeOptionsChanged = FALSE;
 
   if (OptionMenu.Entries.size() == 0) {
+    OptionMenu.Daylight = ThemeX.Daylight;
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
       OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
     }
-    //else {
-    //  OptionMenu.TitleImage.setEmpty();
-    //}
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.GetAnime(); //FALSE;

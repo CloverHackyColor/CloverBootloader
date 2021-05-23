@@ -14,6 +14,11 @@
 
 XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound)
 {
+#ifdef JIEF_DEBUG
+  if ( strncmp(keyValue, "FixHeaders", strlen("FixHeaders")) == 0 ) {
+    NOP;
+  }
+#endif
     for ( size_t idx = 0 ; idx < sizeof(ACPI_DSDT_Fixe_Array)/sizeof(ACPI_DSDT_Fixe_Array[0]) ; idx++ )
     {
       if ( ACPI_DSDT_Fixe_Array[idx].getNewName() && strnIsEqualIC(keyValue, keyValueLength, ACPI_DSDT_Fixe_Array[idx].getNewName()) ) {
@@ -27,6 +32,7 @@ XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class
           ACPI_DSDT_Fixe_Array[idx].newEnabled.reset();
         }
         ACPI_DSDT_Fixe_Array[idx].newEnabled.parseFromXmlLite(xmlLiteParser, xmlPath, true);
+        ACPI_DSDT_Fixe_Array[idx].setDefined();
         *keyFound = true;
         return ACPI_DSDT_Fixe_Array[idx].newEnabled;
       }else
@@ -41,6 +47,7 @@ XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class
           ACPI_DSDT_Fixe_Array[idx].oldEnabled.reset();
         }
         ACPI_DSDT_Fixe_Array[idx].oldEnabled.parseFromXmlLite(xmlLiteParser, xmlPath, true);
+        ACPI_DSDT_Fixe_Array[idx].setDefined();
         *keyFound = true;
         return ACPI_DSDT_Fixe_Array[idx].oldEnabled;
       }

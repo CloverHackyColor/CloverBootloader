@@ -526,7 +526,11 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   XmlLiteParser xmlLiteParser;
   bool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
   if ( xmlLiteParser.getErrorsAndWarnings().size() ) {
-    DebugLog(2, "There is problems in plist '%ls'\n", configPlistPath.wc_str());
+    if ( xmlLiteParser.getErrorsAndWarnings().size() > 1 ) {
+      DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
+    }else{
+      DebugLog(2, "There is a problem in plist '%ls'\n", configPlistPath.wc_str());
+    }
     for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
       const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
       DebugLog(2, "%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
@@ -883,7 +887,10 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
     log_technical_bug("%s : !selfOem.isInitialized()", __PRETTY_FUNCTION__);
   }
   EFI_STATUS Status = LoadConfigPlist(ConfName);
-  if ( EFI_ERROR(Status) ) return Status;
+  if ( EFI_ERROR(Status) ) {
+    DBG("LoadConfigPlist return %s. Config not loaded\n", efiStrError(Status));
+    return Status;
+  }
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 

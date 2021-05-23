@@ -964,9 +964,17 @@ LoadLatestNvramPlist()
   if (!EFI_ERROR(Status) && HandleCount > 0) {
     for (UINTN indexHandle = 0; indexHandle < HandleCount; indexHandle++) {
       RootDir = EfiLibOpenRoot(Handles[indexHandle]);
+      if ( RootDir == NULL ) {
+        DBG(" - [%lld] cannot open - skipping!\n", indexHandle);
+        continue;
+      }
       Status = RootDir->Open(RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
       if (EFI_ERROR(Status)) {
-        DBG(" - [%lld] no nvram.plist - skipping!\n", indexHandle);
+        if ( Status == EFI_NOT_FOUND ) {
+          DBG(" - [%lld] no nvram.plist\n", indexHandle);
+        }else{
+          DBG(" - [%lld] Cannot open nvram.plist - %s\n", indexHandle, efiStrError(Status));
+        }
         continue;
       }
       FileInfo = EfiLibFileInfo(FileHandle);
@@ -1077,7 +1085,7 @@ LoadLatestNvramPlist()
  //   DBG(" nvram.plist not found!\n");
  // }
 #endif
-  DBG("loaded Status=%s\n", efiStrError(Status));
+  DBG("LoadLatestNvramPlist loaded Status=%s\n", efiStrError(Status));
   return Status;
 }
 
@@ -1096,7 +1104,7 @@ PutNvramPlistToRtVars ()
   if (gNvramDict == NULL) {
     /*Status = */LoadLatestNvramPlist();
     if (gNvramDict == NULL) {
-      DBG("PutNvramPlistToRtVars: nvram.plist not found\n");
+      DBG("PutNvramPlistToRtVars: no nvram.plist\n");
       return;
     }
   }

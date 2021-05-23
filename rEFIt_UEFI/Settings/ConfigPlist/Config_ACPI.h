@@ -170,6 +170,9 @@ public:
     if ( dgetResetAddr() == 0xCF9) return 0x06;
     return 0;
   }
+  
+  const decltype(FixHeaders)& getFixHeaders() const { return FixHeaders; };
+
   bool dgetSlpSmiEnable() const { return HaltEnabler.isDefined() ? HaltEnabler.value() : false; };
   bool dgetFixHeaders() const { return FixHeaders.isDefined() ? FixHeaders.value() : false; };
   bool dgetFixMCFG() const { return FixMCFG.isDefined() ? FixMCFG.value() : false; };

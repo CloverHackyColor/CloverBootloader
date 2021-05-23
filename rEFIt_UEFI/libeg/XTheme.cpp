@@ -272,7 +272,9 @@ void XTheme::Init()
   CharWidth = 9;  
   SelectionColor = 0x80808080;
   SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
-  FontFileName.setEmpty();     
+  FontFileName.setEmpty();
+
+  Icons.setEmpty();
 //  Theme.takeValueFrom("embedded");
   embedded = false;
   BannerFileName.setEmpty();    
@@ -329,6 +331,7 @@ void XTheme::Init()
 
   Cinema.setEmpty();
 }
+
 TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;

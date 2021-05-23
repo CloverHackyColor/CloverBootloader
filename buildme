@@ -105,6 +105,11 @@ else
 fi
 }
 
+export DIR_OUT=${DIR_OUT:-"$CLOVERROOT"/toolchain/tools/output}
+if [[ ! -d "${DIR_OUT}" ]]; then
+mkdir -p "${DIR_OUT}"
+fi
+
 updateClover() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
@@ -143,15 +148,8 @@ fi
 }
 
 buildCCPV() {
-revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
-if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
-	rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-fi
-mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-mv -f "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/ccpv
-rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
+make
 }
 
 BLC() {
@@ -160,7 +158,6 @@ if [[ ! -d "${CLOVERROOT}"/CloverPackage/BootLoaderChooser ]]; then
 fi
 curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
 chmod 775 "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
-#open "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
 }
 
 buildClover() {
@@ -203,6 +200,31 @@ if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
   "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
 fi
 }
+
+buildtestsix() {
+checkTools
+
+# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+rm -rf "$CLOVERROOT"/Conf
+mkdir "$CLOVERROOT"/Conf
+
+cd "${CLOVERROOT}"
+echo "[BUILD CLOVERDB]"
+./hebuild.sh
+}
+
+buildtestsev() {
+checkTools
+
+# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+rm -rf "$CLOVERROOT"/Conf
+mkdir "$CLOVERROOT"/Conf
+
+cd "${CLOVERROOT}"
+echo "[BUILD CLOVERDB]"
+./ebuild.sh -t GCC53 -mc
+}
+
 
 buildCloverTest() {
 checkTools
@@ -263,22 +285,24 @@ make iso
 }
 
 checkStatus() {
+revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
   git fetch --recurse-submodules origin
-  git log -n 1
-  git status
-  git submodule foreach --recursive "git log -n 1 && git status"
+  git log -n 1 > "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
+  git status >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
+  git submodule foreach --recursive "git log -n 1 && git status" >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/status_${revision}-*.txt 
 else
   echo "Error: this is not a git repository, can't get info!"
 fi
 }
 
 showdiff() {
+revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
   git fetch --recurse-submodules origin
-  git diff
+  git diff > "${DIR_OUT}"/diff_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/diff_${revision}-*.txt
 else
   echo "Error: this is not a git repository, can't get info!"
 fi
@@ -297,6 +321,7 @@ if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
 fi
 mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+checkXCODE
 xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 mv -f "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator_${revision}
 rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
@@ -404,6 +429,100 @@ fi
 	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/gibMacOS && open $HOME/Desktop/ClovUtils
 }
 
+
+testing() {
+	clear
+echo
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
+cd "${CLOVERROOT}"
+local lsha1="not a git repo"
+if [[ -d .git ]]; then
+  lsha1=$(git rev-parse --short HEAD)
+fi
+echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
+echo -e $COL_CYAN"                         $COL_CYAN Test Builds "$COL_RESET
+echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
+echo -e "\n\n\n\n\n\n\n\n\n\n\n"
+
+PS3='
+Please enter your choice: '
+options=( 'test Clover with boot6'
+          'test Clover with boot7'
+		  'test build (no autogen, no boot files)'
+          'back to buildme'
+	      'quit')
+select opt in "${options[@]}"
+ do
+    case $opt in
+    "test Clover with boot6")
+      buildtestsix
+    break
+    ;;
+    "test Clover with boot7")
+      buildtestsev
+    break
+    ;;
+    "test build (no autogen, no boot files)")
+      Hackintool
+    break
+    ;;
+    "Get BitmaskDecode")
+      BitmaskDecode
+    break
+    ;;
+    "Get MaciASL")
+      MaciASL
+    break
+    ;;
+    "Get dmidecode")
+      dmidecode
+    break
+    ;;
+    "Get IOReg-Devices")
+      Get-IOReg-Devices
+    break
+    ;;
+    "Get NativeDisplayBrightness")
+      NDBrightness
+    break
+    ;;
+    "Get SSDTTime")
+      SSDTTime
+    break
+    ;;
+    "Get USBMap")
+      USBMap
+    break
+    ;;
+    "Get QtiASL")
+      QtiASL
+    break
+    ;;
+    "Get CsrDecode")
+      CsrDecode
+    break
+    ;;
+    "Get gibMacOS")
+      gibMacOS
+    break
+    ;;
+    "back to buildme")
+      menu
+    break
+    ;;
+    "quit")
+      exit
+    break
+    ;;
+    *)
+    echo "invalid option $REPLY"
+    break
+    ;;
+    esac
+  done
+testing
+}
+
 Utilities() {
 echo
 echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
@@ -415,11 +534,7 @@ fi
 echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
 echo -e $COL_CYAN"                         $COL_CYAN Utilities "$COL_RESET
 echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
-echo && echo
-echo && echo
-echo && echo
-echo && echo
-echo
+echo -e "\n\n\n\n\n\n\n\n"
 
 PS3='
 Files will be put on Desktop/ClovUtils: '
@@ -436,7 +551,8 @@ options=( 'Get CloverConfigPlistValidator'
 		  'Get QtiASL'
 		  'Get CsrDecode'
 		  'Get gibMacOS'
-          'back to buildme')
+          'back to buildme'
+	      'quit')
 select opt in "${options[@]}"
  do
     case $opt in
@@ -496,6 +612,10 @@ select opt in "${options[@]}"
       menu
     break
     ;;
+    "quit")
+      exit
+    break
+    ;;
     *)
     echo "invalid option $REPLY"
     break
@@ -519,19 +639,19 @@ fi
 echo -e "              🍀$COL_GREEN Clover r$(git describe --tags $(git rev-list --tags --max-count=1))$COL_WHITE (SHA: $lsha1)"$COL_RESET
 echo -e "$COL_CYAN  TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
 echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
-
+echo -e "\n\n\n\n\n\n\n\n"
 PS3='
 Please enter your choice: '
 options=( 'build Clover'
+          'update Clover'
           'build Clover with HFSPlus'
           'make pkg'
           'make app'
           'make app (with Clover)'
           'make iso'
           'build all'
-		  'test build (no autogen, no boot files)'
+		  'test Clover'
           'status'
-          'update Clover'
           'show diff'
           'open CloverV2/EFI/CLOVER directory'
           'update Clover (reset changes)'
@@ -544,6 +664,10 @@ do
   case $opt in
     "build Clover")
       buildClover
+      break
+    ;;
+    "update Clover")
+      updateClover
       break
     ;;
     "build Clover with HFSPlus")
@@ -569,28 +693,16 @@ do
       break
     ;;
     "build all")
+      buildClover
 	  buildCCPV
 	  BLC
-      buildClover
       buildPkg
       buildIso
       buildApp
       break
     ;;
-    "test build (no autogen, no boot files)")
-      buildCloverTest
-      break
-    ;;
-    "update Clover")
-      updateClover
-      break
-    ;;
-    "update Clover (reset changes)")
-      read -p "Are you sure? (type y to confirm or any other to negate) " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        updateResetClover
-      fi
+    "test Clover")
+      testing
       break
     ;;
     "status")
@@ -610,6 +722,14 @@ do
       fi
       break
     ;;
+    "update Clover (reset changes)")
+      read -p "Are you sure? (type y to confirm or any other to negate) " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        updateResetClover
+      fi
+      break
+      ;;
     "clean BaseTools")
       read -p "Are you sure? (type y to confirm or any other to negate) " -n 1 -r
       echo

@@ -506,8 +506,8 @@ int documentation_test1()
   class MyDictClass : public XmlDict
   {
     public:
-      XmlBool aBool;
-      XmlInt32 anInt32;
+      XmlBool aBool {};
+      XmlInt32 anInt32 {};
 
       XmlDictField m_fields[2] = {
           {"KeyNameForBool", aBool},
@@ -548,8 +548,8 @@ int documentation_test2()
   class MyInsideDictClass : public XmlDict
   {
     public:
-      XmlBool aBool;
-      XmlInt32 anInt32;
+      XmlBool aBool {};
+      XmlInt32 anInt32 {};
 
       XmlDictField m_fields[2] = {
           {"KeyNameForBool", aBool},
@@ -561,7 +561,7 @@ int documentation_test2()
   class MyTopLevelDictClass : public ConfigPlistAbstractClass
   {
     public:
-      MyInsideDictClass inside1;
+      MyInsideDictClass inside1 {};
 
       XmlDictField m_fields[1] = {
           {"KeyNameForInsideDict", inside1},
@@ -600,8 +600,8 @@ int documentation_test3()
   class MyPlist : public ConfigPlistAbstractClass
   {
     public:
-      XmlBool aBool;
-      XmlInt32 anInt32;
+      XmlBool aBool {};
+      XmlInt32 anInt32 {};
       class CountClass : public XmlInt64
       {
         using super = XmlInt64;
@@ -678,9 +678,9 @@ int documentation_test4()
   {
       using super = XmlDict;
     public:
-      MyXmlType type;       // this is a subclass of XmlUInt8 that check that type is 1 or 2
-      MyXmlSubType subType; // this is a subclass of XmlUInt8 that check that subtype is 11 or 12
-      XmlString8 name;      // as many other field that there is in this dict
+      MyXmlType type {};       // this is a subclass of XmlUInt8 that check that type is 1 or 2
+      MyXmlSubType subType {}; // this is a subclass of XmlUInt8 that check that subtype is 11 or 12
+      XmlString8 name {};      // as many other field that there is in this dict
 
       XmlDictField m_fields[2] = {
           {"Type", type},
@@ -737,9 +737,9 @@ int documentation_test5()
   {
       using super = XmlDict;
     public:
-      XmlUInt8 type; // no validation except that the value is an unsigned 8 bits int
-      XmlUInt8 subType; // no validation except that the value is an unsigned 8 bits int
-      XmlString8 name;      // as many other field that there is in this dict
+      XmlUInt8 type {}; // no validation except that the value is an unsigned 8 bits int
+      XmlUInt8 subType {}; // no validation except that the value is an unsigned 8 bits int
+      XmlString8 name {};      // as many other field that there is in this dict
 
       XmlDictField m_fields[2] = {
           {"Type", type},
@@ -806,7 +806,7 @@ int documentation_test6()
   class MyDictClass : public ConfigPlistAbstractClass
   {
     public:
-      XmlArray<XmlBool> aBoolArray;
+      XmlArray<XmlBool> aBoolArray {};
 
       XmlDictField m_fields[1] = {
           {"KeyNameForBoolArray", aBoolArray},
@@ -844,7 +844,7 @@ int documentation_test7()
   class MyDictClass : public ConfigPlistAbstractClass
   {
     public:
-      XmlRepeatingDict<XmlAddKey<XmlKey, XmlInt32>> keyIntPairs;
+      XmlRepeatingDict<XmlAddKey<XmlKey, XmlInt32>> keyIntPairs {};
 
       XmlDictField m_fields[1] = {
           {"KeyNameForKeyIntPairs", keyIntPairs},

@@ -183,7 +183,9 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     goto bailout;
   }else{
     DBG("\n");
+#ifdef JIEF_DEBUG
     DBG("ChildImaheHandle=%llx\n", uintptr_t(ChildImageHandle));
+#endif
   }
 
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
@@ -193,9 +195,9 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 #ifdef JIEF_DEBUG
     EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
     if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
-    DBG("%ls : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+      DBG("%ls : Image base = 0x%llx\n", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
     }else{
-      DBG("Can't get loaded image protocol");
+      DBG("Can't get loaded image protocol\n");
     }
 #endif
     goto bailout;
@@ -689,6 +691,9 @@ void debugStartImageWithOC()
   }
 }
 #endif
+
+//const UINT32 standardMask[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+
 void LOADER_ENTRY::DelegateKernelPatches()
 {
   XObjArray<ABSTRACT_KEXT_OR_KERNEL_PATCH> selectedPathArray;
@@ -707,6 +712,17 @@ void LOADER_ENTRY::DelegateKernelPatches()
   mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
   mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
   memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
+  
+  UINT32 FakeCPU = gSettings.KernelAndKextPatches.FakeCPUID;
+//  for (size_t Idx = 0; Idx < 4; Idx++) {
+//    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[Idx] = FakeCPU & 0xFF;
+//    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[Idx] = 0xFF;
+//    FakeCPU >>= 8;
+//  }
+  memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data));
+  memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask));
+  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[0] = FakeCPU;
+  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[0] = 0xFFFFFFFF;
 
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
@@ -2033,8 +2049,8 @@ void DisconnectSomeDevices(void)
 //  EFI_FILE_PROTOCOL       *RootFP = NULL;
 //  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *VolumeFS = NULL;
   PCI_TYPE00              Pci;
-  CHAR16                           *DriverName;
-  EFI_COMPONENT_NAME_PROTOCOL      *CompName;
+  CHAR16                           *DriverName = NULL;
+  EFI_COMPONENT_NAME_PROTOCOL      *CompName = NULL;
 
   if (gDriversFlags.PartitionLoaded) {
     DBG("Partition driver loaded: ");
@@ -2102,6 +2118,11 @@ void DisconnectSomeDevices(void)
 //          DBG("CompName %s\n", efiStrError(Status));
           continue;
         }
+        // 2021-05, Jief : PG7 had a crash. In some cases, CompName->GetDriverName == NULL.
+        if ( CompName->GetDriverName == NULL ) {
+          DBG("DisconnectSomeDevices: GetDriverName CompName=%lld, CompName->GetDriverName=NULL\n", uintptr_t(CompName));
+          continue;
+        }
         Status = CompName->GetDriverName(CompName, "eng", &DriverName);
         if (EFI_ERROR(Status)) {
           continue;
@@ -2110,7 +2131,7 @@ void DisconnectSomeDevices(void)
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);
-//            DBG("Disconnect [%ls] from %X: %s\n", DriverName, ControllerHandles[Index2], efiStrError(Status));
+            //DBG("Disconnect [%ls] from %llX: %s\n", DriverName, uintptr_t(ControllerHandles[Index2]), efiStrError(Status));
           }
         }
       }

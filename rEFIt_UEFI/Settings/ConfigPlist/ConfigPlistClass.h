@@ -101,6 +101,28 @@ public:
   
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
+  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+    if ( !isDefined() ) return true;
+    if ( LString8(ACPI.DSDT.Fixes.ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
+      log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
+    }
+    if ( ACPI.getFixHeaders().isDefined()  &&  ACPI.DSDT.Fixes.ACPI_DSDT_Fixe_Array[29].isDefined() ) {
+      if ( ACPI.getFixHeaders().value() == ACPI.DSDT.Fixes.ACPI_DSDT_Fixe_Array[29].dgetEnabled() ) {
+        xmlLiteParser->addWarning(generateErrors, S8Printf("FixHeaders exists in ACPI and ACPI/DSDT/Fixes. Delete FixHeaders from ACPI/DSDT/Fixes."));
+      }else{
+        if ( ACPI.getFixHeaders().value()  ||  ACPI.DSDT.Fixes.ACPI_DSDT_Fixe_Array[29].dgetEnabled() ) {
+          if ( ACPI.getFixHeaders().value() ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("FixHeaders exists in ACPI and ACPI/DSDT/Fixes with a different value. Using value of ACPI/FixHeaders. Delete FixHeaders from ACPI/DSDT/Fixes."));
+          }else{
+            xmlLiteParser->addWarning(generateErrors, S8Printf("FixHeaders exists in ACPI and ACPI/DSDT/Fixes with a different value. Using value of ACPI/DSDT/Fixes/FixHeaders. Delete FixHeaders from ACPI/DSDT/Fixes and set ACPI/FixHeaders to true."));
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   const decltype(DisableDrivers)::ValueType& dgetDisabledDriverArray() const { return DisableDrivers.isDefined() ? DisableDrivers.value() : DisableDrivers.nullValue; };
   const decltype(SMBIOS)& getSMBIOS() const { return SMBIOS; };
 
