@@ -2049,8 +2049,8 @@ void DisconnectSomeDevices(void)
 //  EFI_FILE_PROTOCOL       *RootFP = NULL;
 //  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *VolumeFS = NULL;
   PCI_TYPE00              Pci;
-  CHAR16                           *DriverName;
-  EFI_COMPONENT_NAME_PROTOCOL      *CompName;
+  CHAR16                           *DriverName = NULL;
+  EFI_COMPONENT_NAME_PROTOCOL      *CompName = NULL;
 
   if (gDriversFlags.PartitionLoaded) {
     DBG("Partition driver loaded: ");
@@ -2118,6 +2118,11 @@ void DisconnectSomeDevices(void)
 //          DBG("CompName %s\n", efiStrError(Status));
           continue;
         }
+        // 2021-05, Jief : PG7 had a crash. In some cases, CompName->GetDriverName == NULL.
+        if ( CompName->GetDriverName == NULL ) {
+          DBG("DisconnectSomeDevices: GetDriverName CompName=%lld, CompName->GetDriverName=NULL\n", uintptr_t(CompName));
+          continue;
+        }
         Status = CompName->GetDriverName(CompName, "eng", &DriverName);
         if (EFI_ERROR(Status)) {
           continue;
@@ -2126,7 +2131,7 @@ void DisconnectSomeDevices(void)
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);
-//            DBG("Disconnect [%ls] from %X: %s\n", DriverName, ControllerHandles[Index2], efiStrError(Status));
+            //DBG("Disconnect [%ls] from %llX: %s\n", DriverName, uintptr_t(ControllerHandles[Index2]), efiStrError(Status));
           }
         }
       }
