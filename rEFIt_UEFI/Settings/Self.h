@@ -18,34 +18,34 @@ extern "C" {
 
 class Self
 {
+  // Class method, usable even without any instance of Self.
 protected:
-  EFI_HANDLE        m_SelfImageHandle;  // this efi.
-  EFI_LOADED_IMAGE* m_SelfLoadedImage; // this efi.
-  EFI_DEVICE_PATH*  m_SelfDevicePath; // path to device containing this efi.
-  XStringW          m_SelfDevicePathAsXStringW; // path to device containing this efi.
+  static EFI_STATUS __initialize(EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
+public:
+  static const EFI_FILE_PROTOCOL* getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle, XStringW* efiFileName);
 
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *m_SelfSimpleVolume;  // Volume containing this efi.
-  EFI_FILE*         m_SelfVolumeRootDir;  // Root dir of the volume containing this efi.
+protected:
+  EFI_HANDLE        m_SelfImageHandle {};  // this efi.
+  EFI_LOADED_IMAGE* m_SelfLoadedImage {}; // this efi.
+  EFI_DEVICE_PATH*  m_SelfDevicePath {}; // path to device containing this efi.
+//  XStringW          m_SelfDevicePathAsXStringW; // path to device containing this efi.
 
-  XStringW          m_efiFileName = L""_XSW;
-  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath; // full path, including device, of the folder containing this efi.
-  EFI_FILE*         m_CloverDir;               // opened folder containing this efi
-  XStringW          m_CloverDirFullPath; // full path of folder containing this efi.
-//  XStringW          m_CloverDirPath; // dirname containing this efi (contains just the dir, not the device path)
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* m_SelfSimpleVolume {};  // Volume containing this efi.
+  EFI_FILE*         m_SelfVolumeRootDir {};  // Root dir of the volume containing this efi.
 
-//  bool      m_OemDirExists;
-//  EFI_FILE *m_OemDir;
+  XStringW          m_efiFileName =  {};
+  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath {}; // full path, including device, of the folder containing this efi.
+  EFI_FILE*         m_CloverDir {};               // opened folder containing this efi
+  XStringW          m_CloverDirFullPath {}; // full path of folder containing this efi.
 
-  bool      m_ThemesDirExists;
-  EFI_FILE *m_ThemesDir;
+  bool      m_ThemesDirExists {};
+  EFI_FILE *m_ThemesDir {};
 
   EFI_STATUS _openDir(const XStringW& path, bool* b, EFI_FILE** efiDir);
   EFI_STATUS _initialize();
 
 public:
-  Self () : m_SelfImageHandle(NULL), m_SelfLoadedImage(NULL), m_SelfDevicePath(NULL), m_SelfDevicePathAsXStringW(),
-            m_SelfSimpleVolume(NULL), m_SelfVolumeRootDir(NULL),
-            m_CloverDirFullDevicePath(NULL), m_CloverDir(NULL), m_CloverDirFullPath()/*, m_CloverDirPath()*/, m_ThemesDirExists(false), m_ThemesDir(0) {};
+  Self () {};
   Self(const Self&) = delete;
   Self& operator = (const Self&) = delete;
 
@@ -77,10 +77,6 @@ public:
   const EFI_DEVICE_PATH& getCloverDirFullDevicePath() { checkInitialized(); return *m_CloverDirFullDevicePath; }
   const EFI_FILE& getCloverDir() { checkInitialized(); return *m_CloverDir; }
   const XStringW& getCloverDirFullPath() { checkInitialized(); return m_CloverDirFullPath; }
-//  const XStringW& getCloverDirPath() { checkInitialized(); return m_CloverDirPath; } // returns path containing this efi. Like \\EFI\\CLOVER
-
-//  bool oemDirExists() { checkInitialized(); return m_OemDirExists; }
-//  const EFI_FILE& getOemDir() { checkInitialized(); return *m_OemDir; } // Oem dir name under SelfDir. Like "OEM\\MyBoard"
 
   bool themesDirExists() { checkInitialized(); return m_ThemesDirExists; }
   const EFI_FILE& getThemesDir() { checkInitialized(); return *m_ThemesDir; }
