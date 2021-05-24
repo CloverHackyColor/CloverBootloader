@@ -154,7 +154,7 @@ make
 
 BLC() {
 if [[ ! -d "${CLOVERROOT}"/CloverPackage/BootLoaderChooser ]]; then
-	mkdir -p "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
+  mkdir -p "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
 fi
 curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
 chmod 775 "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
@@ -317,7 +317,7 @@ make clean
 buildCPV() {
 revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
 if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
-	rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
+  rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 fi
 mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
@@ -330,108 +330,107 @@ open "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
 
 PlistEDPlus() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.0.52/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
-	hdiutil attach -quiet -noverify -nobrowse PlistEDPlus_Mac.dmg && cp -Rf /Volumes/bin\:release\:PlistEDPlus/PlistEDPlus.app $HOME/Desktop/ClovUtils
-	hdiutil detach -force /Volumes/bin\:release\:PlistEDPlus
-	rm -r $HOME/Desktop/ClovUtils/PlistEDPlus_Mac.dmg && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.0.52/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
+hdiutil attach -quiet -noverify -nobrowse PlistEDPlus_Mac.dmg && cp -Rf /Volumes/bin\:release\:PlistEDPlus/PlistEDPlus.app $HOME/Desktop/ClovUtils
+hdiutil detach -force /Volumes/bin\:release\:PlistEDPlus
+rm -r $HOME/Desktop/ClovUtils/PlistEDPlus_Mac.dmg && open $HOME/Desktop/ClovUtils
 }
 
 Hackintool() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/headkaze/Hackintool/releases/download/3.5.2/Hackintool.zip -o Hackintool.zip
-	unzip -q Hackintool.zip && rm -r Hackintool.zip && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/headkaze/Hackintool/releases/download/3.5.2/Hackintool.zip -o Hackintool.zip
+unzip -q Hackintool.zip && rm -r Hackintool.zip && open $HOME/Desktop/ClovUtils
 }
 
 BitmaskDecode() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/BitmaskDecode && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/BitmaskDecode && open $HOME/Desktop/ClovUtils
 }
 
 MaciASL() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/acidanthera/MaciASL/releases/download/1.6.1/MaciASL-1.6.1-RELEASE.dmg > MaciASL-1.6.1-RELEASE.dmg
-	hdiutil attach -quiet -noverify -nobrowse MaciASL-1.6.1-RELEASE.dmg && cp -Rf /Volumes/MaciASL/MaciASL.app $HOME/Desktop/ClovUtils
-	hdiutil detach -force /Volumes/MaciASL
-	rm -r $HOME/Desktop/ClovUtils/MaciASL-1.6.1-RELEASE.dmg && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/acidanthera/MaciASL/releases/download/1.6.1/MaciASL-1.6.1-RELEASE.dmg > MaciASL-1.6.1-RELEASE.dmg
+hdiutil attach -quiet -noverify -nobrowse MaciASL-1.6.1-RELEASE.dmg && cp -Rf /Volumes/MaciASL/MaciASL.app $HOME/Desktop/ClovUtils
+hdiutil detach -force /Volumes/MaciASL
+rm -r $HOME/Desktop/ClovUtils/MaciASL-1.6.1-RELEASE.dmg && open $HOME/Desktop/ClovUtils
 }
 
 dmidecode() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils/dmidecode
+  mkdir -p $HOME/Desktop/ClovUtils/dmidecode
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/acidanthera/dmidecode dmi-decode && xcodebuild -project ./dmi-decode/dmidecode.xcodeproj -quiet
-	cp -r dmi-decode/dmidecode $HOME/Desktop/ClovUtils/dmidecode && rm -Rf $HOME/Desktop/ClovUtils/dmi-decode && open $HOME/Desktop/ClovUtils
-
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/acidanthera/dmidecode dmi-decode && xcodebuild -project ./dmi-decode/dmidecode.xcodeproj -quiet
+cp -r dmi-decode/dmidecode $HOME/Desktop/ClovUtils/dmidecode && rm -Rf $HOME/Desktop/ClovUtils/dmi-decode && open $HOME/Desktop/ClovUtils
 }
 
 Get-IOReg-Devices() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/LAbyOne/Get-IOReg-Devices
-	mv -f Get-IOReg-Devices/Get\ IOReg\ Devices $HOME/Desktop/ClovUtils/Get\ IOReg-Devices && chmod a+x $HOME/Desktop/ClovUtils/Get\ IOReg-Devices/*.command
-	rm -rf Get-IOReg-Devices && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/LAbyOne/Get-IOReg-Devices
+mv -f Get-IOReg-Devices/Get\ IOReg\ Devices $HOME/Desktop/ClovUtils/Get\ IOReg-Devices && chmod a+x $HOME/Desktop/ClovUtils/Get\ IOReg-Devices/*.command
+rm -rf Get-IOReg-Devices && open $HOME/Desktop/ClovUtils
 }
 
 NDBrightness () {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/KAMIKAZEUA/NativeDisplayBrightness NDBrightness
-	xcodebuild -project ./NDBrightness/NativeDisplayBrightness.xcodeproj -quiet -configuration Release clean build ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$HOME/Desktop/ClovUtils
-	rm -Rf $HOME/Desktop/ClovUtils/NDBrightness && rm -r $HOME/Desktop/ClovUtils/*.dSYM && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/KAMIKAZEUA/NativeDisplayBrightness NDBrightness
+xcodebuild -project ./NDBrightness/NativeDisplayBrightness.xcodeproj -quiet -configuration Release clean build ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$HOME/Desktop/ClovUtils
+rm -Rf $HOME/Desktop/ClovUtils/NDBrightness && rm -r $HOME/Desktop/ClovUtils/*.dSYM && open $HOME/Desktop/ClovUtils
 }
 
 SSDTTime() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/SSDTTime && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/SSDTTime && open $HOME/Desktop/ClovUtils
 }
 
 USBMap() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils	
+  mkdir -p $HOME/Desktop/ClovUtils	
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/USBMap 
-	open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/USBMap 
+open $HOME/Desktop/ClovUtils
 }
 
 QtiASL() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.0.60/QtiASL_Mac.dmg > QtiASL_Mac.dmg
-	hdiutil attach -quiet -noverify -nobrowse QtiASL_Mac.dmg && cp -Rf /Volumes/bin\:release\:QtiASL/QtiASL.app $HOME/Desktop/ClovUtils
-	hdiutil detach -force /Volumes/bin\:release\:QtiASL
-	rm -r $HOME/Desktop/ClovUtils/QtiASL_Mac.dmg && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.0.60/QtiASL_Mac.dmg > QtiASL_Mac.dmg
+hdiutil attach -quiet -noverify -nobrowse QtiASL_Mac.dmg && cp -Rf /Volumes/bin\:release\:QtiASL/QtiASL.app $HOME/Desktop/ClovUtils
+hdiutil detach -force /Volumes/bin\:release\:QtiASL
+rm -r $HOME/Desktop/ClovUtils/QtiASL_Mac.dmg && open $HOME/Desktop/ClovUtils
 }
 
 CsrDecode() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils/CsrDecode
+  mkdir -p $HOME/Desktop/ClovUtils/CsrDecode
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/CsrDecode && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/CsrDecode && open $HOME/Desktop/ClovUtils
 }
 
 gibMacOS() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-	mkdir -p $HOME/Desktop/ClovUtils
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-	cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/gibMacOS && open $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/gibMacOS && open $HOME/Desktop/ClovUtils
 }
 
 
 testing() {
-	clear
+clear
 echo
 echo -e $COL_GREEN"-----------------------------------------------------------"$COL_RESET
 cd "${CLOVERROOT}"
@@ -448,75 +447,75 @@ PS3='
 Please enter your choice: '
 options=( 'test Clover with boot6'
           'test Clover with boot7'
-		  'test build (no autogen, no boot files)'
+	  'test build (no autogen, no boot files)'
           'back to buildme'
-	      'quit')
+	  'quit')
 select opt in "${options[@]}"
  do
     case $opt in
     "test Clover with boot6")
       buildtestsix
-    break
+      break
     ;;
     "test Clover with boot7")
       buildtestsev
-    break
+      break
     ;;
     "test build (no autogen, no boot files)")
       Hackintool
-    break
+      break
     ;;
     "Get BitmaskDecode")
       BitmaskDecode
-    break
+      break
     ;;
     "Get MaciASL")
       MaciASL
-    break
+      break
     ;;
     "Get dmidecode")
       dmidecode
-    break
+      break
     ;;
     "Get IOReg-Devices")
       Get-IOReg-Devices
-    break
+      break
     ;;
     "Get NativeDisplayBrightness")
       NDBrightness
-    break
+      break
     ;;
     "Get SSDTTime")
       SSDTTime
-    break
+      break
     ;;
     "Get USBMap")
       USBMap
-    break
+      break
     ;;
     "Get QtiASL")
       QtiASL
-    break
+      break
     ;;
     "Get CsrDecode")
       CsrDecode
-    break
+      break
     ;;
     "Get gibMacOS")
       gibMacOS
-    break
+      break
     ;;
     "back to buildme")
       menu
-    break
+      break
     ;;
     "quit")
       exit
-    break
+      break
     ;;
     *)
-    echo "invalid option $REPLY"
-    break
+      echo "invalid option $REPLY"
+      break
     ;;
     esac
   done
@@ -540,84 +539,83 @@ PS3='
 Files will be put on Desktop/ClovUtils: '
 options=( 'Get CloverConfigPlistValidator'
           'Get PlistEDPlus'
-		  'Get Hackintool'
-		  'Get BitmaskDecode'
-		  'Get MaciASL'
-		  'Get dmidecode'
-		  'Get IOReg-Devices'
-		  'Get NativeDisplayBrightness'
-		  'Get SSDTTime'
-		  'Get USBMap'
-		  'Get QtiASL'
-		  'Get CsrDecode'
-		  'Get gibMacOS'
+          'Get Hackintool'
+          'Get BitmaskDecode'
+	  'Get MaciASL'
+	  'Get dmidecode'
+          'Get IOReg-Devices'
+          'Get NativeDisplayBrightness'
+	  'Get SSDTTime'
+	  'Get USBMap'
+	  'Get QtiASL'
+	  'Get CsrDecode'
+	  'Get gibMacOS'
           'back to buildme'
-	      'quit')
+	  'quit')
 select opt in "${options[@]}"
  do
     case $opt in
     "Get CloverConfigPlistValidator")
       buildCPV
-    break
+      break
     ;;
     "Get PlistEDPlus")
       PlistEDPlus
-    break
+      break
     ;;
     "Get Hackintool")
       Hackintool
-    break
+      break
     ;;
     "Get BitmaskDecode")
       BitmaskDecode
-    break
+      break
     ;;
     "Get MaciASL")
       MaciASL
-    break
+      break
     ;;
     "Get dmidecode")
       dmidecode
-    break
+      break
     ;;
     "Get IOReg-Devices")
       Get-IOReg-Devices
-    break
+      break
     ;;
     "Get NativeDisplayBrightness")
       NDBrightness
-    break
+      break
     ;;
     "Get SSDTTime")
       SSDTTime
-    break
+      break
     ;;
     "Get USBMap")
       USBMap
-    break
+      break
     ;;
     "Get QtiASL")
       QtiASL
-    break
+      break
     ;;
     "Get CsrDecode")
       CsrDecode
-    break
+      break
     ;;
     "Get gibMacOS")
       gibMacOS
-    break
+      break
     ;;
     "back to buildme")
       menu
-    break
     ;;
     "quit")
       exit
-    break
+      break
     ;;
     *)
-    echo "invalid option $REPLY"
+      echo "invalid option $REPLY"
     break
     ;;
     esac
@@ -650,7 +648,7 @@ options=( 'build Clover'
           'make app (with Clover)'
           'make iso'
           'build all'
-		  'test Clover'
+          'test Clover'
           'status'
           'show diff'
           'open CloverV2/EFI/CLOVER directory'
@@ -675,9 +673,9 @@ do
       break
     ;;
     "make pkg")
-	  buildCCPV
-	  BLC
-	  buildPkg
+      buildCCPV
+      BLC
+      buildPkg
       break
     ;;
     "make app")
@@ -694,8 +692,8 @@ do
     ;;
     "build all")
       buildClover
-	  buildCCPV
-	  BLC
+      buildCCPV
+      BLC
       buildPkg
       buildIso
       buildApp
@@ -739,7 +737,6 @@ do
       break
     ;;
     "Utilities")
-	  Utilities
       break
     ;;
     "quit")
@@ -758,10 +755,11 @@ menu
 set -e
 if [[ "$2" == ci ]]; then
   buildClover
+  buildCCPV
+  BLC
   buildPkg
   buildIso
   buildApp
-  buildCPV
 else
   menu
 fi
