@@ -447,9 +447,9 @@ PS3='
 Please enter your choice: '
 options=( 'test Clover with boot6'
           'test Clover with boot7'
-	  'test build (no autogen, no boot files)'
+          'test build (no autogen, no boot files)'
           'back to buildme'
-	  'quit')
+          'quit')
 select opt in "${options[@]}"
  do
     case $opt in
