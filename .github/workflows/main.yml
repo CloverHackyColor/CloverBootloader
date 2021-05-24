@@ -30,7 +30,9 @@ jobs:
           HOMEBREW_NO_AUTO_UPDATE: 1
 
       - name: Build Clover Pack
-        run: ./buildme "" ci
+        run: |
+          chmod +x ./buildme
+          ./buildme "" ci
 
       - name: Prepare Release Packs
         run: |
@@ -58,13 +60,13 @@ jobs:
             CLOVERX64.efi.zip
             Clover_r*.pkg
 
-      - name: Upload to Release
-        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
-          bodyFile: ReleaseNotes.md
-          name: Release v5.1 r${{ env.CUR_TAG }}
-          prerelease: false
-          tag: ${{ env.CUR_TAG }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload to Release
+      #   if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
+      #     bodyFile: ReleaseNotes.md
+      #     name: Release v5.1 r${{ env.CUR_TAG }}
+      #     prerelease: false
+      #     tag: ${{ env.CUR_TAG }}
+      #     token: ${{ secrets.GITHUB_TOKEN }}
