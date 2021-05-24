@@ -541,17 +541,17 @@ options=( 'Get CloverConfigPlistValidator'
           'Get PlistEDPlus'
           'Get Hackintool'
           'Get BitmaskDecode'
-	  'Get MaciASL'
-	  'Get dmidecode'
+          'Get MaciASL'
+          'Get dmidecode'
           'Get IOReg-Devices'
           'Get NativeDisplayBrightness'
-	  'Get SSDTTime'
-	  'Get USBMap'
-	  'Get QtiASL'
-	  'Get CsrDecode'
-	  'Get gibMacOS'
+          'Get SSDTTime'
+          'Get USBMap'
+          'Get QtiASL'
+          'Get CsrDecode'
+          'Get gibMacOS'
           'back to buildme'
-	  'quit')
+          'quit')
 select opt in "${options[@]}"
  do
     case $opt in
@@ -728,7 +728,7 @@ do
         updateResetClover
       fi
       break
-      ;;
+    ;;
     "clean BaseTools")
       read -p "Are you sure? (type y to confirm or any other to negate) " -n 1 -r
       echo
