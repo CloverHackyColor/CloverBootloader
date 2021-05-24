@@ -609,6 +609,7 @@ select opt in "${options[@]}"
     ;;
     "back to buildme")
       menu
+      break
     ;;
     "quit")
       exit
@@ -737,6 +738,7 @@ do
       break
     ;;
     "Utilities")
+      Utilities
       break
     ;;
     "quit")
