@@ -580,6 +580,8 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
             }else{
               if ( Prop->getString()->stringValue().contains("Install%20macOS%20BigSur") || Prop->getString()->stringValue().contains("Install%20macOS%2011.0")) {
                 OSVersion = "11"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2012.0")) {
+                OSVersion = "12"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
@@ -831,12 +833,15 @@ GetOSIconName (const MacOsVersion& OSVersion)
   XStringW OSIconName;
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
+  } else if (OSVersion.elementAt(0) == 12 ){
+    // Monterey
+    OSIconName = L"monterey,mac"_XSW;
   } else if ( (OSVersion.elementAt(0) == 10 && OSVersion.elementAt(1) == 16 ) ||
               (OSVersion.elementAt(0) == 11 /*&& OSVersion.elementAt(1) == 0*/ )
             ) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
-  }else if ( OSVersion.elementAt(0) == 10 ) {
+  } else if ( OSVersion.elementAt(0) == 10 ) {
     if ( OSVersion.elementAt(1) == 15 ) {
       // Catalina
       OSIconName = L"cata,mac"_XSW;

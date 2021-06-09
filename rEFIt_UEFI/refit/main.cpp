@@ -1340,8 +1340,13 @@ void LOADER_ENTRY::StartLoader()
         */
   //      InstallerVersion = SearchString((CHAR8*)LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
         InstallerVersion = AsciiStrStr((CHAR8*)LoadedImage->ImageBase, "Mac OS X ");
+        int location = 9;
+        if (InstallerVersion == NULL) {
+          InstallerVersion = AsciiStrStr((CHAR8*)LoadedImage->ImageBase, "macOS ");
+          location = 7;
+        }
         if (InstallerVersion != NULL) { // string was found
-          InstallerVersion += 9; // advance to version location
+          InstallerVersion += location; // advance to version location
 
           if (strncmp(InstallerVersion, "10.7", 4) &&
               strncmp(InstallerVersion, "10.8", 4) &&
@@ -1353,7 +1358,8 @@ void LOADER_ENTRY::StartLoader()
               strncmp(InstallerVersion, "10.14", 5) &&
               strncmp(InstallerVersion, "10.15", 5) &&
               strncmp(InstallerVersion, "10.16", 5) &&
-              strncmp(InstallerVersion, "11.", 3)) {
+              strncmp(InstallerVersion, "11.", 3) &&
+              strncmp(InstallerVersion, "12.", 3)) {
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
