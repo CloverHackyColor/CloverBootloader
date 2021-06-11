@@ -578,9 +578,9 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in Kernel Flags\n");
             }else{
-              if ( Prop->getString()->stringValue().contains("Install%20macOS%20BigSur") || Prop->getString()->stringValue().contains("Install%20macOS%2011.0")) {
+              if ( Prop->getString()->stringValue().contains("Install%20macOS%20BigSur") || Prop->getString()->stringValue().contains("Install%20macOS%2011")) {
                 OSVersion = "11"_XS8;
-              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2012.0")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Monterey") || Prop->getString()->stringValue().contains("Install%20macOS%2012")) {
                 OSVersion = "12"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
