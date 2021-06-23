@@ -2434,7 +2434,7 @@ void SetVariablesFromNvram()
 }
 
 void
-GetListOfConfigs ()
+GetListOfConfigs()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
@@ -2877,7 +2877,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
 
   gConf.InitialisePlatform();
-
+// DBG("5: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
   /*
    * saving debug.log works from here
    */
@@ -2954,7 +2954,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfThemes();
     GetListOfConfigs();
   }
-
+//  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
+  GlobalConfig.C3Latency = gSettings.ACPI.SSDT._C3Latency;
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
     void       *Value = NULL;

@@ -735,8 +735,10 @@ void ConfigManager::applySettings() const
         if ( !configPlist.ACPI.SSDT.getMinMultiplier().isDefined() )
           gSettings.ACPI.SSDT.MinMultiplier = 7;
       }
+ //     DBG("2: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
       if ( !configPlist.ACPI.SSDT.getC3Latency().isDefined() )
         gSettings.ACPI.SSDT._C3Latency = 0x00FA;
+ //     DBG("2: gSettings.ACPI.SSDT._C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
     }
     //gSettings.CPU.Turbo                = gCPUStructure.Turbo;
     gSettings.CPU.SavingMode           = 0xFF;  //means not set

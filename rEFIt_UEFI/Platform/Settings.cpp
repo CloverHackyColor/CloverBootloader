@@ -417,7 +417,8 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
   GlobalConfig.EnableC6 = settingsData.getEnableC6();
   GlobalConfig.EnableC4 = settingsData.getEnableC4();
   GlobalConfig.EnableC2 = settingsData.getEnableC2();
-  GlobalConfig.C3Latency = settingsData.getEnableC6();
+//  GlobalConfig.C3Latency = settingsData.getC3Latency();
+//  DBG("4: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
 
   if (settingsData.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
     GlobalConfig.HWP = TRUE;
