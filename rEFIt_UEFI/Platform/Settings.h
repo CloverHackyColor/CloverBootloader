@@ -2684,7 +2684,7 @@ printf("%s", "");
     return ACPI.SSDT._EnableC2;
   }
   bool getC3Latency() const {
-    if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency.value();
+ //   if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency.value();
     return ACPI.SSDT._C3Latency;
   }
 
