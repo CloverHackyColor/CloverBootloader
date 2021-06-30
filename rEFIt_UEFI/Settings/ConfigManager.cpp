@@ -735,13 +735,14 @@ void ConfigManager::applySettings() const
         if ( !configPlist.ACPI.SSDT.getMinMultiplier().isDefined() )
           gSettings.ACPI.SSDT.MinMultiplier = 7;
       }
- //     DBG("2: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
       if ( !configPlist.ACPI.SSDT.getC3Latency().isDefined() )
         gSettings.ACPI.SSDT._C3Latency = 0x00FA;
- //     DBG("2: gSettings.ACPI.SSDT._C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
+
     }
     //gSettings.CPU.Turbo                = gCPUStructure.Turbo;
-    gSettings.CPU.SavingMode           = 0xFF;  //means not set
+    if (configPlist.CPU.dgetSavingMode() != 0xFF) { //means not set
+      gSettings.CPU.SavingMode           = configPlist.CPU.dgetSavingMode();
+    }
     if ( gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D )
     {
       if ( !configPlist.CPU.getUseARTFreq().isDefined() )
@@ -803,12 +804,6 @@ void ConfigManager::applySettings() const
       DBG("Set MaxRatio for QEMU: %d\n", gCPUStructure.MaxRatio);
       gCPUStructure.MaxRatio *= 10;
       gCPUStructure.MinRatio = 60;
-  /*    AsmWriteMsr64(MSR_FLEX_RATIO, ((6ULL << 40) + //(1ULL << 16) +
-                                     (gCPUStructure.MaxRatio << 8)));
-      DBG("check if flex is RW\n");
-      Msrflex = AsmReadMsr64(MSR_FLEX_RATIO); //0 == not Rw :(
-      DBG("MSR_FLEX_RATIO = %lx\n", Msrflex);
-   */
       gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                              (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
       gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo);
@@ -897,18 +892,16 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
   MACHINE_TYPES  Model = iMac132;
-  if ( smbiosPlist.SMBIOS.isDefined() ) {
-    if ( smbiosPlist.SMBIOS.hasModel() ) {
-      Model = smbiosPlist.SMBIOS.getModel();
-    }
-  } if ( configPlist.getSMBIOS().hasModel() ) {
-      Model = configPlist.getSMBIOS().getModel();
-  }else{
+  if ( smbiosPlist.SMBIOS.isDefined() && smbiosPlist.SMBIOS.hasModel()) {
+    Model = smbiosPlist.SMBIOS.getModel();
+  } else if ( configPlist.getSMBIOS().hasModel() ) {
+    Model = configPlist.getSMBIOS().getModel();
+  } else {
     Model = GetDefaultModel();
   }
 
-  if ( !EFI_ERROR(Status) ) {
-    gSettings.takeValueFrom(configPlist);
+//  if ( !EFI_ERROR(Status) ) {
+//    gSettings.takeValueFrom(configPlist);
     // TODO improve this (avoid to delete settings to re-import them !)
     // restore default value for SMBIOS (delete values from configPlist)
     SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
@@ -918,7 +911,8 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
       // import values from smbiosPlist if they are defined
       FillSmbiosWithDefaultValue(Model, smbiosPlist.SMBIOS);
     }
-  }
+//  }
+  gSettings.takeValueFrom(configPlist);
 
   applySettings();
   return Status;
@@ -1021,6 +1015,7 @@ EFI_STATUS ConfigManager::InitialisePlatform()
   GetCPUProperties();
   DiscoverDevices();
 //  GetMacAddress(&gConf.LanCardArrayNonConst);
+  //SavingMode
 
   if ( g_SmbiosDiscoveredSettings.EnabledCores ) {
     GlobalConfig.EnabledCores = g_SmbiosDiscoveredSettings.EnabledCores;

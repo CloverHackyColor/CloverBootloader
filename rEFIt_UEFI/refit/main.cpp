@@ -2956,6 +2956,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 //  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
   GlobalConfig.C3Latency = gSettings.ACPI.SSDT._C3Latency;
+  GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm;
+//  DBG("0: gSettings.CPU.SavingMode=%x\n", gSettings.CPU.SavingMode);
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
     void       *Value = NULL;
@@ -3069,7 +3071,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
     afterGetUserSettings(gSettings);
 
-
 //  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
 //  if (defDSM) {
 //    dropDSM = gSettings.DropOEM_DSM;   //if set by user
@@ -3113,6 +3114,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gGuiIsReady = TRUE;
   GlobalConfig.gBootChanged = TRUE;
   GlobalConfig.gThemeChanged = TRUE;
+
   do {
     if (GlobalConfig.gBootChanged && GlobalConfig.gThemeChanged) { // config changed
       GetListOfDsdts(); //only after GetUserSettings
