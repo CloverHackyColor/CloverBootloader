@@ -2955,8 +2955,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfConfigs();
   }
 //  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
-  GlobalConfig.C3Latency = gSettings.ACPI.SSDT._C3Latency;
-  GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm;
 //  DBG("0: gSettings.CPU.SavingMode=%x\n", gSettings.CPU.SavingMode);
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {

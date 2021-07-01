@@ -1013,7 +1013,7 @@ EFI_STATUS ConfigManager::InitialisePlatform()
 
   GetCPUProperties();
   DiscoverDevices();
-//  GetMacAddress(&gConf.LanCardArrayNonConst);
+
   //SavingMode
 
   if ( g_SmbiosDiscoveredSettings.EnabledCores ) {
@@ -1025,44 +1025,12 @@ EFI_STATUS ConfigManager::InitialisePlatform()
   selfOem.initialize("config"_XS8, gFirmwareClover, GlobalConfig.OEMBoardFromSmbios, GlobalConfig.OEMProductFromSmbios, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), gConf.LanCardArray);
   Status = gConf.LoadConfig(L"config"_XSW);
 
+  GlobalConfig.C3Latency = gSettings.ACPI.SSDT._C3Latency;
+  GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm;
+
   for ( size_t idx = 0 ; idx < GfxPropertiesArrayNonConst.size() ; ++idx ) {
     GfxPropertiesArrayNonConst[idx].LoadVBios = gSettings.Graphics.LoadVBios;
   }
-
-//  /* populate GfxPropertiesArrayNonConst */
-//  GfxPropertiesArrayNonConst.setEmpty();
-//  for ( size_t idx = 0 ; idx < m_Discoverer.GfxPropertiesArray.size() ; ++idx ) {
-//    GfxProperties* gfx = new GfxProperties;
-//    *gfx = GfxPropertiesArray[idx];
-//    (*gfx).LoadVBios = gSettings.Graphics.LoadVBios;
-//    GfxPropertiesArrayNonConst.AddReference(gfx, true);
-//  }
-//
-//  /* populate HdaPropertiesArrayNonConst */
-//  HdaPropertiesArrayNonConst.setEmpty();
-//  for ( size_t idx = 0 ; idx < m_Discoverer.HdaPropertiesArray.size() ; ++idx ) {
-//    HdaProperties* hda = new HdaProperties;
-//    *hda = HdaPropertiesArray[idx];
-//    HdaPropertiesArrayNonConst.AddReference(hda, true);
-//  }
-//
-//  /* populate LanCardArrayNonConst */
-//  LanCardArrayNonConst.setEmpty();
-//  GetUEFIMacAddress();
-////  if ( LanCardArrayNonConst.size() == 0 /*&& gSettings.RtVariables.GetLegacyLanAddress()*/ ) {
-//    for ( size_t idx = 0 ; idx < m_Discoverer.LanCardArray.size() ; ++idx ) {
-//      if ( !LanCardArrayNonConst.containsMacAddress(m_Discoverer.LanCardArray[idx].Mac)) {
-//        LanCardClass* lan = new LanCardClass;
-//        memcpy(&lan->MacAddress, m_Discoverer.LanCardArray[idx].Mac, sizeof(lan->MacAddress));
-//        LanCardArrayNonConst.AddReference(lan, true);
-//      }
-//    }
-////  }
-
-//  // Why this overrides ? Should we remove the setting from config.plist ?
-//  gSettings.GUI.Mouse.PointerEnabled = TRUE;
-//  gSettings.GUI.Mouse.PointerSpeed = 2;
-//  gSettings.GUI.Mouse.DoubleClickTime = 500; //TODO - make it constant as nobody change it
 
   if (gSettings.Devices.Audio.ResetHDA) ResetHDA();
 
