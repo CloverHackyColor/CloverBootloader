@@ -548,7 +548,7 @@ return Status;
 }
 
 /*
- * Load a plist into configPlist global object, "transfer" the settings into gSettings and call afterGetUserSettings()
+ * Load a plist into configPlist global object
  * ConfName : name of the file, without .plist extension. File will be searched in OEM or main folder
  */
 EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
@@ -559,7 +559,7 @@ EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
 }
 
 /*
- * Load a plist into smbiosPlist global object, "transfer" the settings into gSettings and call afterGetUserSettings()
+ * Load a plist into smbiosPlist global object
  * ConfName : name of the file, without .plist extension. File will be searched in OEM or main folder
  */
 EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
@@ -886,7 +886,7 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   EFI_STATUS Status = LoadConfigPlist(ConfName);
   if ( EFI_ERROR(Status) ) {
     DBG("LoadConfigPlist return %s. Config not loaded\n", efiStrError(Status));
-    return Status;
+    //return Status; // Let's try to continue with default values.
   }
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
@@ -900,19 +900,18 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
     Model = GetDefaultModel();
   }
 
-//  if ( !EFI_ERROR(Status) ) {
-//    gSettings.takeValueFrom(configPlist);
-    // TODO improve this (avoid to delete settings to re-import them !)
-    // restore default value for SMBIOS (delete values from configPlist)
-    SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
-    // import values from configPlist if they are defined
-    FillSmbiosWithDefaultValue(Model, configPlist.getSMBIOS());
-    if ( smbiosPlist.SMBIOS.isDefined() ) {
-      // import values from smbiosPlist if they are defined
-      FillSmbiosWithDefaultValue(Model, smbiosPlist.SMBIOS);
-    }
-//  }
-  gSettings.takeValueFrom(configPlist);
+  if ( !EFI_ERROR(Status) ) {
+    gSettings.takeValueFrom(configPlist); // if load failed, keep default value.
+  }
+  // TODO improve this (avoid to delete settings to re-import them !)
+  // restore default value for SMBIOS (delete values from configPlist)
+  SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
+  // import values from configPlist if they are defined
+  FillSmbiosWithDefaultValue(Model, configPlist.getSMBIOS());
+  if ( smbiosPlist.SMBIOS.isDefined() ) {
+    // import values from smbiosPlist if they are defined
+    FillSmbiosWithDefaultValue(Model, smbiosPlist.SMBIOS);
+  }
 
   applySettings();
   return Status;

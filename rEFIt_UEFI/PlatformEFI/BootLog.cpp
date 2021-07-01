@@ -249,6 +249,7 @@ void EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
   }
   
   if ((DebugMode >= 1) && gSettings.Boot.DebugLog) {
+    SuspendMemLogCallback smc;
     SaveMessageToDebugLogFile(LastMessage);
   }
 }
