@@ -20,7 +20,7 @@ class Self
 {
   // Class method, usable even without any instance of Self.
 protected:
-  static EFI_STATUS __initialize(EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
+  static EFI_STATUS __initialize(bool debugMsg, EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
 public:
   static const EFI_FILE_PROTOCOL* getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle, XStringW* efiFileName);
 

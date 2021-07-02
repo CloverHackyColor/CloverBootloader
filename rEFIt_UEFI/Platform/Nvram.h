@@ -35,8 +35,7 @@ void
 XString8 GetNvramVariableAsXString8(
     IN      CONST CHAR16   *VariableName,
     IN      EFI_GUID       *VendorGuid,
-    OUT     UINT32         *Attributes    OPTIONAL,
-    OUT     UINTN          *DataSize      OPTIONAL
+    OUT     UINT32         *Attributes    OPTIONAL
   );
 
 EFI_STATUS
@@ -118,5 +117,11 @@ RemoveStartupDiskVolume (void);
 
 UINT64
 GetEfiTimeInMs (IN EFI_TIME *T);
+
+#ifdef JIEF_DEBUG
+EFI_STATUS DumpNvram();
+#endif
+
+
 
 #endif /* PLATFORM_NVRAM_H_ */
