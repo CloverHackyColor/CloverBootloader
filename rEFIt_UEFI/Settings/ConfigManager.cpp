@@ -740,9 +740,6 @@ void ConfigManager::applySettings() const
 
     }
     //gSettings.CPU.Turbo                = gCPUStructure.Turbo;
-    if (configPlist.CPU.dgetSavingMode() != 0xFF) { //means not set
-      gSettings.CPU.SavingMode           = configPlist.CPU.dgetSavingMode();
-    }
     if ( gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D )
     {
       if ( !configPlist.CPU.getUseARTFreq().isDefined() )
