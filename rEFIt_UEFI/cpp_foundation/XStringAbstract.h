@@ -921,7 +921,7 @@ public:
 	}
   void updateSize() {
     #ifdef XSTRING_CACHING_OF_SIZE
-      super::__m_size = 0;
+      super::__m_size = 0; // Jief, TODO
     #endif
   }
 //
