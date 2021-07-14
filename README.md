@@ -8,17 +8,17 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Theme manager and theme repository at http://sourceforge.net/p/cloverefiboot/themes/
 - Native screen resolution in GUI
 - Press Page Up or Page Down to change GUI resolution
-- Press F1 for multilingual help, depending on language setting in configuration
-- Press F2 to save preboot.log from GUI
-- Press F4 to save original (OEM) ACPI tables into /EFI/CLOVER/ACPI/origin
-- Press F5 to test DSDT patching
-- Press F6 to save graphics firmware into /EFI/CLOVER/misc
-- Press F10 to save screenshots from GUI
-- Press F12 to eject CD/DVD
+- Press **F1** for multilingual help, depending on language setting in configuration
+- Press **F2** to save `preboot.log` from GUI
+- Press **F4** to save original (OEM) ACPI tables into `/EFI/CLOVER/ACPI/origin`
+- Press **F5** to test DSDT patching
+- Press **F6** to save graphics firmware into `/EFI/CLOVER/misc`
+- Press **F10** to save screenshots from GUI
+- Press **F12** to eject CD/DVD
 - GUI refreshes after CD/DVD insertion
 - Ability to boot previously selected boot entry after default timeout
 - Boot entries menu scrolls if screen resolution is too low for menu
 - Create custom boot entries for personalizing boot entries and add support for other operating systems
 - Create Clover boot entry in NVRAM with tool from GUI
 - Launch EFI command shell from GUI
-- Startup sound controlled by F8 and checked by F7
+- Startup sound controlled by **F8** and checked by **F7**
