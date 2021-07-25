@@ -93,7 +93,8 @@ public:
         if ( Inject.isDefined() ) {
           if ( Inject.value() ) {
             if ( !Custom.isDefined() ) {
-              xmlLiteParser->addWarning(generateErrors, S8Printf("Custom has to be defined if Inject is defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+// Each patch of VID/PID/HSPW/VIS can work independently without custom values.
+//              xmlLiteParser->addWarning(generateErrors, S8Printf("Custom has to be defined if Inject is defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
 //              return false; // Allow this to be compatible with old way of reading settings. Can be put back when definitive switch is made
             }else{
               if ( Custom.value().size() % 128 != 0 ) {
