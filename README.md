@@ -14,6 +14,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Press **F5** to test DSDT patching
 - Press **F6** to save graphics firmware into `/EFI/CLOVER/misc`
 - Press **F10** to save screenshots from GUI
+- Press **F11** to reset NVRAM
 - Press **F12** to eject CD/DVD
 - GUI refreshes after CD/DVD insertion
 - Ability to boot previously selected boot entry after default timeout
