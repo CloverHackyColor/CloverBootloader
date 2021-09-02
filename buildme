@@ -462,47 +462,7 @@ select opt in "${options[@]}"
       break
     ;;
     "test build (no autogen, no boot files)")
-      Hackintool
-      break
-    ;;
-    "Get BitmaskDecode")
-      BitmaskDecode
-      break
-    ;;
-    "Get MaciASL")
-      MaciASL
-      break
-    ;;
-    "Get dmidecode")
-      dmidecode
-      break
-    ;;
-    "Get IOReg-Devices")
-      Get-IOReg-Devices
-      break
-    ;;
-    "Get NativeDisplayBrightness")
-      NDBrightness
-      break
-    ;;
-    "Get SSDTTime")
-      SSDTTime
-      break
-    ;;
-    "Get USBMap")
-      USBMap
-      break
-    ;;
-    "Get QtiASL")
-      QtiASL
-      break
-    ;;
-    "Get CsrDecode")
-      CsrDecode
-      break
-    ;;
-    "Get gibMacOS")
-      gibMacOS
+      buildCloverTest
       break
     ;;
     "back to buildme")

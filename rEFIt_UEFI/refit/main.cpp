@@ -2878,6 +2878,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gConf.InitialisePlatform();
 // DBG("5: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
+
+#ifdef JIEF_DEBUG
+  DumpNvram();
+#endif
+
   /*
    * saving debug.log works from here
    */
@@ -2955,7 +2960,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfConfigs();
   }
 //  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
-  GlobalConfig.C3Latency = gSettings.ACPI.SSDT._C3Latency;
 //  DBG("0: gSettings.CPU.SavingMode=%x\n", gSettings.CPU.SavingMode);
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {

@@ -21,7 +21,7 @@
 #define DBG(...) DebugLog(DEBUG_SELF, __VA_ARGS__)
 #endif
 
-EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** SelfLoadedImagePtr, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** SelfSimpleVolumePtr, EFI_FILE** SelfVolumeRootDirPtr, XStringW* CloverDirFullPathPtr, XStringW* efiFileNamePtr, EFI_FILE** CloverDirPtr)
+EFI_STATUS Self::__initialize(bool debugMsg, EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** SelfLoadedImagePtr, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** SelfSimpleVolumePtr, EFI_FILE** SelfVolumeRootDirPtr, XStringW* CloverDirFullPathPtr, XStringW* efiFileNamePtr, EFI_FILE** CloverDirPtr)
 {
   EFI_STATUS Status;
 
@@ -51,7 +51,7 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
   EFI_FILE* SelfVolumeRootDir = *SelfVolumeRootDirPtr;
   
 #ifdef JIEF_DEBUG
-  DBG("SelfVolumeRootDir = %lld\n", uintptr_t(SelfVolumeRootDir));
+  if ( debugMsg ) DBG("SelfVolumeRootDir = %lld\n", uintptr_t(SelfVolumeRootDir));
 #endif
 
   // find the current directory
@@ -69,8 +69,10 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
 
   *efiFileNamePtr = CloverDirFullPath.basename();
 #ifdef JIEF_DEBUG
-  XStringW& efiFileName = *efiFileNamePtr;
-  DBG("efiFileName=%ls\n", efiFileName.wc_str());
+  if ( debugMsg ) {
+    XStringW& efiFileName = *efiFileNamePtr;
+    DBG("efiFileName=%ls\n", efiFileName.wc_str());
+  }
 #endif
 
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
@@ -87,7 +89,9 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
   if ( i != SIZE_T_MAX && i > 0 ) CloverDirFullPath.deleteCharsAtPos(i, SIZE_T_MAX); // keep getCloverDir() in sync !
 
 #ifdef JIEF_DEBUG
-  DBG("SelfDirPath = %ls\n", CloverDirFullPath.wc_str());
+  if ( debugMsg ) {
+    DBG("SelfDirPath = %ls\n", CloverDirFullPath.wc_str());
+  }
 #endif
 
   Status = SelfVolumeRootDir->Open(SelfVolumeRootDir, CloverDirPtr, CloverDirFullPath.wc_str(), EFI_FILE_MODE_READ, 0);
@@ -96,8 +100,10 @@ EFI_STATUS Self::__initialize(EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** Sel
     return RETURN_LOAD_ERROR;
   }
 #ifdef JIEF_DEBUG
-  EFI_FILE* CloverDir = *CloverDirPtr;
-  DBG("CloverDir = %lld\n", uintptr_t(CloverDir));
+  if ( debugMsg ) {
+    EFI_FILE* CloverDir = *CloverDirPtr;
+    DBG("CloverDir = %lld\n", uintptr_t(CloverDir));
+  }
 #endif
 
   return EFI_SUCCESS;
@@ -111,7 +117,7 @@ const EFI_FILE_PROTOCOL* Self::getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle
     XStringW          CloverDirFullPath;          // full path of folder containing this efi.
     EFI_FILE*         CloverDir;                  // opened folder containing this efi
 
-  /*EFI_STATUS Status = */__initialize(ImageHandle, &SelfLoadedImage, &SelfSimpleVolume, &SelfVolumeRootDir, &CloverDirFullPath, efiFileName, &CloverDir);
+  /*EFI_STATUS Status = */__initialize(false, ImageHandle, &SelfLoadedImage, &SelfSimpleVolume, &SelfVolumeRootDir, &CloverDirFullPath, efiFileName, &CloverDir);
   if ( efiFileName->isEmpty() ) {
     if ( CloverDir != NULL ) CloverDir->Close(CloverDir);
     return NULL;
@@ -143,7 +149,7 @@ EFI_STATUS Self::_initialize()
 {
 //  EFI_STATUS Status;
 
-  /*Status = */__initialize(m_SelfImageHandle, &m_SelfLoadedImage, &m_SelfSimpleVolume, &m_SelfVolumeRootDir, &m_CloverDirFullPath, &m_efiFileName, &m_CloverDir);
+  /*Status = */__initialize(true, m_SelfImageHandle, &m_SelfLoadedImage, &m_SelfSimpleVolume, &m_SelfVolumeRootDir, &m_CloverDirFullPath, &m_efiFileName, &m_CloverDir);
   if ( m_SelfLoadedImage == NULL ) log_technical_bug("Cannot get SelfLoadedImage");
   if ( m_SelfLoadedImage->DeviceHandle == NULL ) log_technical_bug("m_SelfLoadedImage->DeviceHandle == NULL");
   if ( m_SelfSimpleVolume == NULL ) log_technical_bug("Cannot get m_SelfSimpleVolume");
