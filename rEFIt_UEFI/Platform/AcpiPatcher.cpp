@@ -913,7 +913,7 @@ void DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
 
       if (pacCount > 0 && pacCount % 3 == 0) {
         pacCount /= 3;
-		  DBG(" (Found hidden SSDT %lld pcs)\n", pacCount);
+		    DBG(" (Found hidden SSDT %lld pcs)\n", pacCount);
 
         while (pacCount-- > 0) {
           // Skip text marker and addr type tag
@@ -937,8 +937,10 @@ void DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
           CopyMem(&OemTableId[0], &((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
           OemTableId[8] = 0;
           stripTrailingSpaces(OemTableId);
-			DBG("      * %llu: '%s', '%s', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
-              ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
+          int innLen = ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length;
+          if (innLen < 0 || innLen > 0x20000) break;
+			    DBG("      * %llu: '%s', '%s', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
+              ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, innLen);
           for (k = 0; k < 16; k++) {
             DBG("%02hhX ", ((UINT8*)adr)[k]);
           }
@@ -1123,7 +1125,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CONST
     // Acpi 2.0 or up
     // may have it in XDsdt or XFirmwareCtrl
 	  DBG(", XDsdt: %llx, XFacs: %llx", Fadt->XDsdt, Fadt->XFirmwareCtrl);
-    if (Fadt->XDsdt != 0) {
+    if ((Fadt->XDsdt != 0)  && (Fadt->XDsdt < 0xFFFFFFF0ull)){
       DsdtAdr = Fadt->XDsdt;
     }
     if (Fadt->XFirmwareCtrl != 0) {
@@ -1349,9 +1351,10 @@ void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
     DBG(" No Rsdt and Xsdt - exiting.\n");
     return;
   }
+  UINT32 Count = 0;
   if (Xsdt) {
     UINT64 *Ptr, *EndPtr;
-    UINT32 Count = XsdtTableCount();
+    Count = XsdtTableCount();
     DBG("  Tables in Xsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
 
@@ -1390,13 +1393,13 @@ void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
     }
   } // if Xsdt
 
-  if (Rsdt) {
+  if (!Count && Rsdt) {
     UINT32 *Ptr, *EndPtr;
     // additional Rsdt tables which are not present in Xsdt will have "RSDT-" prefix, like RSDT-FACS.aml
     FileNamePrefix = L"RSDT-";
     // Take tables from Rsdt
     // if saved from Xsdt already, then just print debug
-    UINT32 Count = RsdtTableCount();
+    Count = RsdtTableCount();
     DBG("  Tables in Rsdt: %d\n", Count);
     if (Count > 100) Count = 100; //it's enough
     Ptr = RsdtEntryPtrFromIndex(0);
