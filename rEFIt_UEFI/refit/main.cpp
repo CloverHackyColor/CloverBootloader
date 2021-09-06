@@ -630,7 +630,8 @@ void debugStartImageWithOC()
   EFI_LOADED_IMAGE* OcLoadedImage;
   EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &OcLoadedImage);
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+//  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
   if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
@@ -862,7 +863,8 @@ void LOADER_ENTRY::StartLoader()
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+//    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   /*
    * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
