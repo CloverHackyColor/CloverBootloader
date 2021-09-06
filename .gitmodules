@@ -1,0 +1,3 @@
+[submodule "OpenCorePkg"]
+	url = https://github.com/serdeliuk/OpenCorePkg.git
+	branch = master
