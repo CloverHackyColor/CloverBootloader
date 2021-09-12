@@ -1,4 +1,4 @@
 [submodule "OpenCorePkg"]
-	url = https://github.com/serdeliuk/OpenCorePkg.git
+	url = https://github.com/CloverHackyColor/OpenCorePkg
 	branch = master
 	path = OpenCorePkg
