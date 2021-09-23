@@ -125,6 +125,7 @@
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
 #  PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   PeiServicesLib|MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+#  OrderedCollectionLib|MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxDxeLib.inf
@@ -180,19 +181,25 @@
   OcAppleBootPolicyLib|OpenCorePkg/Library/OcAppleBootPolicyLib/OcAppleBootPolicyLib.inf
   OcAppleChunklistLib|OpenCorePkg/Library/OcAppleChunklistLib/OcAppleChunklistLib.inf
   OcAppleDiskImageLib|OpenCorePkg/Library/OcAppleDiskImageLib/OcAppleDiskImageLib.inf
+#  OcAppleImageConversionLib|OpenCorePkg/Library/OcAppleImageConversionLib/OcAppleImageConversionLib.inf
   OcAppleKeyMapLib|OpenCorePkg/Library/OcAppleKeyMapLib/OcAppleKeyMapLib.inf
   OcAppleKeysLib|OpenCorePkg/Library/OcAppleKeysLib/OcAppleKeysLib.inf
   OcAppleRamDiskLib|OpenCorePkg/Library/OcAppleRamDiskLib/OcAppleRamDiskLib.inf
   OcBootManagementLib|OpenCorePkg/Library/OcBootManagementLib/OcBootManagementLib.inf
   OcCompressionLib|OpenCorePkg/Library/OcCompressionLib/OcCompressionLib.inf
+  OcConsoleControlEntryModeGenericLib|OpenCorePkg/Library/OcConsoleControlEntryModeLib/OcConsoleControlEntryModeGenericLib.inf
   OcConsoleLib|OpenCorePkg/Library/OcConsoleLib/OcConsoleLib.inf
   OcCpuLib|OpenCorePkg/Library/OcCpuLib/OcCpuLib.inf
   OcCryptoLib|OpenCorePkg/Library/OcCryptoLib/OcCryptoLib.inf
+  OcDeviceMiscLib|OpenCorePkg/Library/OcDeviceMiscLib/OcDeviceMiscLib.inf
   OcDevicePathLib|OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib.inf
   OcFileLib|OpenCorePkg/Library/OcFileLib/OcFileLib.inf
+  OcFlexArrayLib|OpenCorePkg/Library/OcFlexArrayLib/OcFlexArrayLib.inf
+  OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf
   OcMemoryLib|OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf
   OcMiscLib|OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf
   OcOSInfoLib|OpenCorePkg/Library/OcOSInfoLib/OcOSInfoLib.inf
+#  OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
   OcRngLib|OpenCorePkg/Library/OcRngLib/OcRngLib.inf
   OcRtcLib|OpenCorePkg/Library/OcRtcLib/OcRtcLib.inf
   OcSerializeLib|OpenCorePkg/Library/OcSerializeLib/OcSerializeLib.inf
@@ -200,6 +207,8 @@
   OcStorageLib|OpenCorePkg/Library/OcStorageLib/OcStorageLib.inf
   OcTemplateLib|OpenCorePkg/Library/OcTemplateLib/OcTemplateLib.inf
   OcXmlLib|OpenCorePkg/Library/OcXmlLib/OcXmlLib.inf
+  OcTypingLib|OpenCorePkg/Library/OcTypingLib/OcTypingLib.inf
+  #OcTimerLib|OpenCorePkg/Library/OcTimerLib/OcTimerLib.inf
   OcDeviceTreeLib|OpenCorePkg/Library/OcDeviceTreeLib/OcDeviceTreeLib.inf
   OcDataHubLib|OpenCorePkg/Library/OcDataHubLib/OcDataHubLib.inf
   OcAppleImg4Lib|OpenCorePkg/Library/OcAppleImg4Lib/OcAppleImg4Lib.inf
@@ -209,13 +218,13 @@
   OcMacInfoLib|OpenCorePkg/Library/OcMacInfoLib/OcMacInfoLib.inf
   OcApfsLib|OpenCorePkg/Library/OcApfsLib/OcApfsLib.inf
   OcAppleSecureBootLib|OpenCorePkg/Library/OcAppleSecureBootLib/OcAppleSecureBootLib.inf
-  OcAppleImageVerificationLib|OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
+#  OcAppleImageVerificationLib|OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
   OcDriverConnectionLib|OpenCorePkg/Library/OcDriverConnectionLib/OcDriverConnectionLib.inf
   #OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   OcAcpiLib|OpenCorePkg/Library/OcAcpiLib/OcAcpiLib.inf
   OcAppleEventLib|OpenCorePkg/Library/OcAppleEventLib/OcAppleEventLib.inf
-  #OcAppleImageConversionLib|OpenCorePkg/Library/OcAppleImageConversionLib/OcAppleImageConversionLib.inf
   OcAudioLib|OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf
+  OcBlitLib|OpenCorePkg/Library/OcBlitLib/OcBlitLib.inf
   OcInputLib|OpenCorePkg/Library/OcInputLib/OcInputLib.inf
   OcAppleUserInterfaceThemeLib|OpenCorePkg/Library/OcAppleUserInterfaceThemeLib/OcAppleUserInterfaceThemeLib.inf
   OcConfigurationLib|OpenCorePkg/Library/OcConfigurationLib/OcConfigurationLib.inf
@@ -225,10 +234,13 @@
   OcSmbiosLib|OpenCorePkg/Library/OcSmbiosLib/OcSmbiosLib.inf
   OcSmcLib|OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf
   OcUnicodeCollationEngGenericLib|OpenCorePkg/Library/OcUnicodeCollationEngLib/OcUnicodeCollationEngGenericLib.inf
+  OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
   OcPeCoffLib|OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf
-  #OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
-  
-  OpenCoreLib|OpenCorePkg/Platform/OpenCore/OpenCoreLib.inf
+  OcVariableLib|OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf
+  ResetSystemLib|OpenCorePkg/Library/OcResetSystemLib/OcResetSystemLib.inf
+
+    
+  OpenCoreLib|OpenCorePkg/Application/OpenCore/OpenCoreLib.inf
   OcDebugLogLibOc2Clover|OpenCorePkg/Library/OcDebugLogLibOc2Clover/OcDebugLogLibOc2Clover.inf
 
   #MachoLib|Library/MachoLib/MachoLib.inf
@@ -291,7 +303,7 @@
   DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h
 !endif
 
-  OpenCorePkg/Platform/OpenCore/OpenCoreLib.inf {
+  OpenCorePkg/Application/OpenCore/OpenCoreLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -344,6 +356,10 @@
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
   OpenCorePkg/Library/OcCryptoLib/OcCryptoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcDeviceMiscLib/OcDeviceMiscLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -431,10 +447,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+#  OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf {
+#    <BuildOptions>
+#      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+#  }
   OpenCorePkg/Library/OcDriverConnectionLib/OcDriverConnectionLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -490,6 +506,14 @@
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
   OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -794,7 +818,7 @@
   #Sample/Application/Sample.inf
   #gptsync/gptsync.inf
   bdmesg_efi/bdmesg.inf
-  OpenCorePkg/Application/ControlMsrE2/ControlMsrE2.inf
+  OpenCorePkg/Application/ControlMsrE2/ControlMsrE2Clover.inf
   
 !ifndef NO_CLOVER_SHELL
   ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf

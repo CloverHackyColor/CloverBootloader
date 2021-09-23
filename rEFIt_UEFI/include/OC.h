@@ -22,6 +22,7 @@ extern "C" {
 #include <Library/OcDevicePathLib.h>
 #include <Library/OcFileLib.h>
 #include <Library/OcCpuLib.h> // OC_CPU_INFO
+#include <Library/OcMainLib.h> // OcMiscEarlyInit
 //#include <Protocol/OcBootstrap.h> // OC_BOOTSTRAP_PROTOCOL
 #include <Library/OcBootManagementLib/BootManagementInternal.h>
 
@@ -34,14 +35,6 @@ extern OC_CPU_INFO mOpenCoreCpuInfo;
 //extern OC_RSA_PUBLIC_KEY* mOpenCoreVaultKey;
 //extern EFI_HANDLE mLoadHandle;
 
-EFI_STATUS
-EFIAPI
-OcStartImage_2 (
-  IN  OC_BOOT_ENTRY               *Chosen,
-  IN  EFI_HANDLE                  ImageHandle,
-  OUT UINTN                       *ExitDataSize,
-  OUT CHAR16                      **ExitData    OPTIONAL
-  );
 
 EFI_STATUS
 EFIAPI

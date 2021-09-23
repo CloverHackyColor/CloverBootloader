@@ -620,7 +620,7 @@ static XStringW getDriversPath()
 #endif
 }
 
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 void debugStartImageWithOC()
 {
   MsgLog("debugStartImageWithOC\n");
@@ -629,13 +629,17 @@ void debugStartImageWithOC()
 
   EFI_LOADED_IMAGE* OcLoadedImage;
   EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &OcLoadedImage);
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = OcLocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
   if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
 
   mOpenCoreConfiguration.Misc.Debug.Target = 0;
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Boot.PickerMode, "Builtin");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.DmgLoading, "Any");
+  mOpenCoreConfiguration.Uefi.Quirks.IgnoreInvalidFlexRatio = 0;
+  mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
 
   OcMain(&mOpenCoreStorage, NULL);
 
@@ -861,8 +865,8 @@ void LOADER_ENTRY::StartLoader()
 
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = OcLocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   /*
    * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
@@ -883,7 +887,7 @@ void LOADER_ENTRY::StartLoader()
       !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
     memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
-    DBG("config-oc.plist isn't use at all\n");
+    DBG("config-oc.plist isn't used at all\n");
 
   #else
     Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
@@ -1055,7 +1059,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper = gSettings.Quirks.OcKernelQuirks.DisableIoMapper;
     mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison = gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison;
     mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
-    mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
+    mOpenCoreConfiguration.Kernel.Emulate.DummyPowerManagement = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
     mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons = gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons;
     mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize = gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize;
     mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
@@ -1178,25 +1182,6 @@ void LOADER_ENTRY::StartLoader()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
 
-  // if OC is NOT initialized with OcMain, we need the following
-  //  if (OcOSInfoInstallProtocol (false) == NULL) {
-  //    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
-  //  }
-  //  if (OcAppleRtcRamInstallProtocol (false) == NULL) {
-  //    DEBUG ((DEBUG_ERROR, "OC: Failed to install rtc ram protocol\n"));
-  //  }
-
-  ////  Uncomment OcMiscBoot to run the OC bootpicker
-  //  OcMiscBoot (
-  //    &mOpenCoreStorage,
-  //    &mOpenCoreConfiguration,
-  //    NULL,
-  //    OcStartImage_2,
-  //    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
-  //    mLoadHandle
-  //    );
-
-
     if ( OpenRuntimeEfiName.notEmpty() ) {
       XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), OpenRuntimeEfiName.wc_str());
       EFI_HANDLE DriverHandle;
@@ -1212,18 +1197,6 @@ void LOADER_ENTRY::StartLoader()
     }
 
     OcMain(&mOpenCoreStorage, NULL);
-  //  {
-  //    gCurrentConfig = &gMainConfig;
-  //    RedirectRuntimeServices();
-  //    EFI_HANDLE Handle = NULL;
-  //    Status = gBS->InstallMultipleProtocolInterfaces (
-  //      &Handle,
-  //      &gOcFirmwareRuntimeProtocolGuid,
-  //      &mOcFirmwareRuntimeProtocol,
-  //      NULL
-  //      );
-  //    DBG("Install gOcFirmwareRuntimeProtocolGuid : Status %s\n", efiStrError(Status));
-  //  }
 
     XStringW DevicePathAsString = DevicePathToXStringW(DevicePath);
     if ( DevicePathAsString.rindexOf(".dmg") == MAX_XSIZE )
@@ -1638,7 +1611,7 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper,
       mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison,
       mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum,
-      mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement,
+      mOpenCoreConfiguration.Kernel.Emulate.DummyPowerManagement,
       mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons,
       mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize,
       mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic,
