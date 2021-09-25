@@ -920,6 +920,14 @@ void LOADER_ENTRY::StartLoader()
         OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[i];
         OC_STRING_ASSIGN(entry->BundlePath, S8Printf("Kexts\\%s", OC_BLOB_GET(&entry->BundlePath)).c_str());
       }
+
+//      DBG("mOpenCoreConfiguration.Kernel.Add.Count=%d\n", mOpenCoreConfiguration.Kernel.Add.Count);
+//      for ( size_t i = 0 ; i < mOpenCoreConfiguration.Kernel.Add.Count ; i++ )
+//      {
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->Identifier=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->Identifier));
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->BundlePath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->BundlePath));
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->PlistPath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->PlistPath));
+//      }
     #endif
     #ifndef USE_OC_SECTION_Misc
       memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
@@ -1237,6 +1245,7 @@ void LOADER_ENTRY::StartLoader()
         DBG("LoadImage at '%ls' failed. Status = %s\n", DevicePathAsString.wc_str(), efiStrError(Status));
         return;
       }
+      DBG("ImageHandle = %llx\n", uintptr_t(ImageHandle));
     }else
     {
       // NOTE : OpenCore ignore the name of the dmg.
@@ -1414,7 +1423,15 @@ void LOADER_ENTRY::StartLoader()
     SmbiosFillPatchingValues(GlobalConfig.SetTable132, GlobalConfig.EnabledCores, g_SmbiosDiscoveredSettings.RamSlotCount, gConf.SlotDeviceArray, gSettings, gCPUStructure, &g_SmbiosInjectedSettings);
     PatchSmbios(g_SmbiosInjectedSettings);
 //    DBG("PatchACPI\n");
+#ifdef USE_OC_SECTION_Acpi
+    // If we use the ACPI section form config-oc.plist, let's also delegate the acpi patching to OC
+#else
     PatchACPI(Volume, macOSVersion);
+#endif
+
+#ifdef JIEF_DEBUG
+    //SaveOemTables();
+#endif
 //
 //  // If KPDebug is true boot in verbose mode to see the debug messages
 //  if (KernelAndKextPatches.KPDebug) {

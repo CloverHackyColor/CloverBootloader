@@ -79,7 +79,7 @@ static EFI_FILE_PROTOCOL* gLogFile = NULL;
 int g_OpeningLogFile = 0;
 
 
-// Avoid debug looping. To be able to call DBG from inside function that DBG calls, we need to suspend callback to avoid a loop.
+// Avoid debug looping. TO be able to call DBG from inside function that DBG calls, we need to suspend callback to avoid a loop.
 // Just instanciante this, the destructor will restore the callback.
 class SuspendMemLogCallback
 {

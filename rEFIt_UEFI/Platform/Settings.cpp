@@ -370,7 +370,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     for ( size_t idx = 0 ; idx < settingsData.ACPI.ACPIDropTablesArray.size() ; ++idx)
     {
       ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
-      DBG(" - [%02zd]: Drop table : %08X, %16llx : ", idx, settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
+      DBG(" - [%02zd]: Drop table : %.4s, %16llx : ", idx, (const char*)&settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
       bool Dropped = FALSE;
       while (DropTable) {
         if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
