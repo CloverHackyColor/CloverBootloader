@@ -739,14 +739,14 @@ void LOADER_ENTRY::DelegateKernelPatches()
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = (UINT32)kextPatch.Count;
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
     
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Find.data(), kextPatch.Find.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Find.data(), kextPatch.Find.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.getName().c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.SearchLen;
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.data(), kextPatch.MaskFind.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MinKernel, "");
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Replace.vdata(), kextPatch.Replace.size());
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.vdata(), kextPatch.MaskReplace.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Replace.data(), kextPatch.Replace.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.data(), kextPatch.MaskReplace.size());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = (UINT32)kextPatch.Skip;
 #ifdef JIEF_DEBUG
 if ( kextPatch.Label ==  "algrey - cpuid_set_info - ryzen cores and logicals count - part 3 - 10.14"_XS8 ) {
