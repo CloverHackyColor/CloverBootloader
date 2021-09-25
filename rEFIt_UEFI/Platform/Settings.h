@@ -2465,6 +2465,8 @@ printf("%s", "");
 
       UINT32                  FirmwareFeatures = UINT32();
       UINT32                  FirmwareFeaturesMask = UINT32();
+      UINT64                  ExtendedFirmwareFeatures = UINT64();
+      UINT64                  ExtendedFirmwareFeaturesMask = UINT64();
       RamSlotInfoArrayClass   RamSlotInfoArray = RamSlotInfoArrayClass();
       SlotDeviceArrayClass    SlotDevices = SlotDeviceArrayClass();
 
@@ -2512,6 +2514,8 @@ printf("%s", "");
 
       if ( !(FirmwareFeatures == other.FirmwareFeatures) ) return false;
       if ( !(FirmwareFeaturesMask == other.FirmwareFeaturesMask) ) return false;
+      if ( !(ExtendedFirmwareFeatures == other.ExtendedFirmwareFeatures) ) return false;
+      if ( !(ExtendedFirmwareFeaturesMask == other.ExtendedFirmwareFeaturesMask) ) return false;
       if ( !RamSlotInfoArray.isEqual(other.RamSlotInfoArray) ) return false;
       if ( !SlotDevices.isEqual(other.SlotDevices) ) return false;
 
@@ -2557,9 +2561,11 @@ printf("%s", "");
       gPlatformFeature = configPlist.dgetgPlatformFeature();
       // PatchTableType11
       NoRomInfo = configPlist.dgetNoRomInfo();
-
+      //SMBIOS TYPE128
       FirmwareFeatures = configPlist.dgetFirmwareFeatures();
       FirmwareFeaturesMask = configPlist.dgetFirmwareFeaturesMask();
+      ExtendedFirmwareFeatures = configPlist.dgetExtendedFirmwareFeatures();
+      ExtendedFirmwareFeaturesMask = configPlist.dgetExtendedFirmwareFeaturesMask();
       RamSlotInfoArray.takeValueFrom(configPlist.Memory);
       SlotDevices.takeValueFrom(configPlist.Slots);
     }

@@ -134,6 +134,8 @@ void SmbiosFillPatchingValues(bool _SetTable132, uint8_t pEnabledCores, uint16_t
   smbiosInjectedSetting.gPlatformFeature = globalSettings.Smbios.gPlatformFeature;
   smbiosInjectedSetting.FirmwareFeatures = globalSettings.Smbios.FirmwareFeatures;
   smbiosInjectedSetting.FirmwareFeaturesMask = globalSettings.Smbios.FirmwareFeaturesMask;
+  smbiosInjectedSetting.ExtendedFirmwareFeatures = globalSettings.Smbios.ExtendedFirmwareFeatures;
+  smbiosInjectedSetting.ExtendedFirmwareFeaturesMask = globalSettings.Smbios.ExtendedFirmwareFeaturesMask;
   smbiosInjectedSetting.Attribute = globalSettings.Smbios.Attribute;
 
   smbiosInjectedSetting.KPDELLSMBIOS = globalSettings.KernelAndKextPatches.KPDELLSMBIOS;

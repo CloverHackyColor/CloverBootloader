@@ -451,6 +451,11 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //124
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.FixHeaders;
 
+  InputItems[InputItemsCount].ItemType = Hex;  //125
+  InputItems[InputItemsCount++].SValue.SWPrintf("0x%016llX", gSettings.Smbios.ExtendedFirmwareFeatures);
+  InputItems[InputItemsCount].ItemType = Hex;  //126
+  InputItems[InputItemsCount++].SValue.SWPrintf("0x%016llX", gSettings.Smbios.ExtendedFirmwareFeaturesMask);
+
 
 
   //menu for drop table
@@ -1074,7 +1079,16 @@ void ApplyInputs(void)
     gSettings.ACPI.FixHeaders = InputItems[i].BValue;
     DBG("applied gSettings.ACPI.FixHeaders=%s\n", gSettings.ACPI.FixHeaders ? "Y" : "N" );
   }
-
+  i++; //125
+  if (InputItems[i].Valid) {
+    gSettings.Smbios.ExtendedFirmwareFeatures = StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("applied ExtendedFirmwareFeatures=0x%llX\n", gSettings.Smbios.ExtendedFirmwareFeatures);
+  }
+  i++; //126
+  if (InputItems[i].Valid) {
+    gSettings.Smbios.ExtendedFirmwareFeaturesMask = StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("applied ExtendedFirmwareFeaturesMask=0x%llX\n", gSettings.Smbios.ExtendedFirmwareFeaturesMask);
+  }
 
   if (NeedSave) {
     ApplySettings();
@@ -2025,6 +2039,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   SubScreen->AddMenuItemInput(87,  "ROM Release Date:", TRUE);
   SubScreen->AddMenuItemInput(62,  "FirmwareFeatures:", TRUE);
   SubScreen->AddMenuItemInput(63,  "FirmwareFeaturesMask:", TRUE);
+  SubScreen->AddMenuItemInput(125, "ExtendedFirmwareFeatures:", TRUE);
+  SubScreen->AddMenuItemInput(126, "ExtendedFirmwareFeaturesMask:", TRUE);
   SubScreen->AddMenuItemInput(17,  "PlatformFeature:", TRUE);
   SubScreen->AddMenuItemInput(117, "EFI Version:", TRUE);
 

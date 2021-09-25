@@ -271,12 +271,23 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    sizeof(gSettings.Smbios.FirmwareFeatures),
                    &gSettings.Smbios.FirmwareFeatures);
 
-  // Download-Fritz: Should be added to SMBIOS or at least to some other config section
-  AddNvramVariable(L"FirmwareFeaturesMask",
+  SetNvramVariable(L"FirmwareFeaturesMask",
                    &gEfiAppleNvramGuid,
                    Attributes,
                    sizeof(gSettings.Smbios.FirmwareFeaturesMask),
                    &gSettings.Smbios.FirmwareFeaturesMask);
+
+  SetNvramVariable(L"ExtendedFirmwareFeatures",
+                   &gEfiAppleNvramGuid,
+                   Attributes,
+                   sizeof(gSettings.Smbios.ExtendedFirmwareFeatures),
+                   &gSettings.Smbios.ExtendedFirmwareFeatures);
+
+  SetNvramVariable(L"ExtendedFirmwareFeaturesMask",
+                   &gEfiAppleNvramGuid,
+                   Attributes,
+                   sizeof(gSettings.Smbios.ExtendedFirmwareFeaturesMask),
+                   &gSettings.Smbios.ExtendedFirmwareFeaturesMask);
 
   // HW_MLB and HW_ROM are also around on some Macs with the same values as MLB and ROM
   AddNvramXString8(L"HW_BID", &gEfiAppleNvramGuid, Attributes, gSettings.Smbios.BoardNumber);

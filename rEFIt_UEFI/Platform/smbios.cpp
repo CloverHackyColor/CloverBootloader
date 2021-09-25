@@ -1982,6 +1982,8 @@ void PatchTableType128(const SmbiosInjectedSettings& smbiosSettings)
   // set firmware-features mask
   newSmbiosTable.Type128->FirmwareFeaturesMask = smbiosSettings.FirmwareFeaturesMask;
 
+  newSmbiosTable.Type128->ExtendedFirmwareFeatures = (uint32_t)(smbiosSettings.ExtendedFirmwareFeatures >> 32);
+  newSmbiosTable.Type128->ExtendedFirmwareFeaturesMask = (uint32_t)(smbiosSettings.ExtendedFirmwareFeaturesMask >> 32);
   /**
    * TODO: I have an idea that region should be the same as Efivar.bin
    * @author Slice

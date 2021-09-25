@@ -666,6 +666,10 @@ void ConfigManager::FillSmbiosWithDefaultValue(MACHINE_TYPES Model, const Smbios
   if ( smbiosDictClass.getChassisAssetTag().isDefined() ) gSettings.Smbios.ChassisAssetTag = smbiosDictClass.getChassisAssetTag().value();
   if ( smbiosDictClass.getFirmwareFeatures().isDefined() ) gSettings.Smbios.FirmwareFeatures = smbiosDictClass.getFirmwareFeatures().value();
   if ( smbiosDictClass.getFirmwareFeaturesMask().isDefined() ) gSettings.Smbios.FirmwareFeaturesMask = smbiosDictClass.getFirmwareFeaturesMask().value();
+
+  //ExtendedFirmwareFeatures
+  if ( smbiosDictClass.getExtendedFirmwareFeatures().isDefined() ) gSettings.Smbios.ExtendedFirmwareFeatures = smbiosDictClass.getExtendedFirmwareFeatures().value();
+  if ( smbiosDictClass.getExtendedFirmwareFeaturesMask().isDefined() ) gSettings.Smbios.ExtendedFirmwareFeaturesMask = smbiosDictClass.getExtendedFirmwareFeaturesMask().value();
   if ( smbiosDictClass.getPlatformFeature().isDefined() ) gSettings.Smbios.gPlatformFeature = smbiosDictClass.getPlatformFeature().value();
   if ( smbiosDictClass.getBoardType().isDefined() ) gSettings.Smbios.BoardType = smbiosDictClass.getBoardType().value();
   if ( smbiosDictClass.getChassisType().isDefined() ) gSettings.Smbios.ChassisType = smbiosDictClass.getChassisType().value();

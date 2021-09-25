@@ -707,6 +707,56 @@ uint32_t GetFwFeatures(MACHINE_TYPES Model)
     }
 }
 
+
+uint64_t GetExtFwFeatures(MACHINE_TYPES Model)
+{
+  // FirmwareFeatures for 12+
+  switch ( Model )
+  {
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro141:
+    case MacBookPro142:
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      return 0x8FC0FE176ull;
+      break;
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro133:
+    case MacBookPro143:
+      return 0x8FC0FE17Eull;
+      break;
+    case MacBookPro121:
+    case MacBookPro151:
+    case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
+    case MacBookPro161:
+    case MacBookAir81:
+    case MacBookAir82:
+    case iMac161:
+    case iMac162:
+      return 0x8FC0FE137ull;
+      break;
+    case MacBook61:
+    case MacBook71:
+    case MacBook81:
+      return 0x8FC0FE13Full;
+      break;
+    default:
+      return (uint64_t)GetFwFeatures(Model); //unknown - use oem SMBIOS value to be default
+      break;
+  }
+}
+
+uint64_t GetExtFwFeaturesMask(MACHINE_TYPES Model)
+{
+  return (uint64_t)GetFwFeaturesMaskFromModel(Model) + 0xFF00000000ull;
+}
+
 bool GetMobile(MACHINE_TYPES Model)
 {
   // Mobile: the battery tab in Energy Saver
@@ -1196,6 +1246,8 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData, RE
   settingsData->Smbios.ChassisAssetTag = ApplePlatformData[Model].chassisAsset;
   settingsData->Smbios.FirmwareFeatures = GetFwFeatures(Model);
   settingsData->Smbios.FirmwareFeaturesMask = GetFwFeaturesMaskFromModel(Model);
+  settingsData->Smbios.ExtendedFirmwareFeatures = GetExtFwFeatures(Model);
+  settingsData->Smbios.ExtendedFirmwareFeaturesMask = GetExtFwFeaturesMask(Model);
   settingsData->Smbios.gPlatformFeature = GetPlatformFeature(Model);
   if ((Model > MacPro31) && (Model < MacPro71)) {
     settingsData->Smbios.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
