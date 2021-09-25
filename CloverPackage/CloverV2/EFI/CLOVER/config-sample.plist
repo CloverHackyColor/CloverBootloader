@@ -1160,6 +1160,8 @@
 		<true/>
 		<key>DummyPowerManagement</key>
 		<false/>
+		<key>ExtendBTFeatureFlags</key>
+		<false/>
 		<key>ExternalDiskIcons</key>
 		<false/>
 		<key>IncreasePciBarSize</key>
