@@ -593,7 +593,7 @@ uint32_t GetFwFeatures(MACHINE_TYPES Model)
       return 0xE00DE137;
       break;
     case MacMini81:
-      return 0xFD8FF466;
+      return 0xFD8FF467;
       break;
     case MacBookAir61:
     case MacBookAir62:
@@ -623,30 +623,30 @@ uint32_t GetFwFeatures(MACHINE_TYPES Model)
     case iMac181:
     case iMac182:
     case iMac183:
-      return 0xFC0FE176;
+      return 0xFC0FE177;
       break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
-      return 0xFC0FE17E;
+      return 0xFC0FE17F;
       break;
     case iMacPro11:
       return 0xFD8FF53F;
       break;
     case MacBookAir91:
-      return 0xFD8FF42E;
+      return 0xFD8FF42F;
       break;
     case iMac191:
     case iMac192:
     case iMac201:
     case iMac202:
-      return 0xFD8FF576;
+      return 0xFD8FF577;
       break;
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
-      return 0xFDAFF066;
+      return 0xFDAFF067;
       break;
       // Verified list from Users
     case MacBookAir31:
@@ -671,7 +671,7 @@ uint32_t GetFwFeatures(MACHINE_TYPES Model)
       return 0xE80FE137;
       break;
     case MacPro61:
-      return 0xE80FE176;
+      return 0xE80FE177;
       break;
     case MacPro71:
       return 0xFD8FF53F;
@@ -721,7 +721,7 @@ uint64_t GetExtFwFeatures(MACHINE_TYPES Model)
     case iMac181:
     case iMac182:
     case iMac183:
-      return 0x8FC0FE176ull;
+      return 0x8FC0FE177ull;
       break;
     case MacBook91:
     case MacBook101:
