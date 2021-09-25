@@ -1826,7 +1826,18 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       continue;
     }
     if ( LStringW(DirEntry->FileName).containsIC("OpenRuntime") ) {
-      OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v12.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.7.3") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.5") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.1") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( OpenRuntimeEfiName.isEmpty() ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }
       continue;
     }
     {
