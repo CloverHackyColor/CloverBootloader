@@ -154,7 +154,10 @@ class ACPI_DROP_TABLE
 {
 public:
   ACPI_DROP_TABLE *Next;
-  UINT32          Signature;
+  union {
+    UINT32   Signature = 0;
+    char     SignatureAs4Chars[4];
+  };
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem = INPUT_ITEM();
@@ -811,7 +814,10 @@ public:
       class ACPIDropTablesClass
       {
         public:
-          UINT32   Signature = 0;
+          union {
+            UINT32   Signature = 0;
+            char     SignatureAs4Chars[4];
+          };
           UINT64   TableId = 0;
           UINT32   TabLength = 0;
           bool     OtherOS = 0;
