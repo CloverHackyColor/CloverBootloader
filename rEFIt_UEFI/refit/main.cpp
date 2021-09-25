@@ -1189,6 +1189,29 @@ void LOADER_ENTRY::StartLoader()
       if ( !EFI_ERROR(Status) ) {
         Status = gBS->StartImage(DriverHandle, 0, 0);
         DBG("Start '%ls' : Status %s\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
+
+        if ( !EFI_ERROR(Status) )
+        {
+          OC_FIRMWARE_RUNTIME_PROTOCOL  *FwRuntime;
+          Status = gBS->LocateProtocol (
+            &gOcFirmwareRuntimeProtocolGuid,
+            NULL,
+            (VOID **) &FwRuntime
+            );
+
+          if (!EFI_ERROR (Status)) {
+            if (FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
+            } else {
+              DEBUG ((
+                DEBUG_ERROR,
+                "OCABC: Incompatible OpenRuntime r%u, require r%u\n",
+                (UINT32) FwRuntime->Revision,
+                (UINT32) OC_FIRMWARE_RUNTIME_REVISION
+                ));
+              panic("Incompatible OpenRuntime r%llu, require r%u\n", FwRuntime->Revision, OC_FIRMWARE_RUNTIME_REVISION);
+            }
+          }
+        }
       }else{
         panic("Error when loading '%ls' : Status %s.\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
       }
