@@ -2901,7 +2901,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
 
   gConf.InitialisePlatform();
-// DBG("5: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
 
 #ifdef JIEF_DEBUG
   DumpNvram();
@@ -2983,8 +2982,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfThemes();
     GetListOfConfigs();
   }
-//  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
-//  DBG("0: gSettings.CPU.SavingMode=%x\n", gSettings.CPU.SavingMode);
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
     void       *Value = NULL;

@@ -26,7 +26,16 @@ protected:
         return true;
       }
   };
-  
+  class LatencyClass : public XmlUInt16
+  {
+      using super = XmlUInt16;
+    public:
+      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
+        return xmlLiteParser->addWarning(generateErrors, S8Printf("Latency is replaced by ACPI/SSDT/C3Latency, value ignored. tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+      }
+  };
+
   XmlUInt16 QPI = XmlUInt16();
   FrequencyMHzClass FrequencyMHz = FrequencyMHzClass();
   XmlUInt16 Type = XmlUInt16();
@@ -36,7 +45,7 @@ protected:
   XmlBool C6 = XmlBool();
   XmlBool C4 = XmlBool();
   XmlBool C2 = XmlBool();
-  XmlUInt16 Latency = XmlUInt16();
+  LatencyClass Latency = LatencyClass();
   XmlUInt8 SavingMode = XmlUInt8();
   XmlBool HWPEnable = XmlBool();
   XmlUInt32 HWPValue = XmlUInt32();

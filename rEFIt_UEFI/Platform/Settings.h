@@ -1265,7 +1265,6 @@ public:
       undefinable_bool        _EnableC6 = undefinable_bool();
       undefinable_bool        _EnableC4 = undefinable_bool();
       undefinable_bool        _EnableC2 = undefinable_bool();
-      undefinable_uint16      _C3Latency = undefinable_uint16();
       
 #if __cplusplus > 201703L
 		bool operator == (const CPUClass&) const = default;
@@ -1287,7 +1286,6 @@ public:
       if ( !(_EnableC6 == other._EnableC6) ) return false;
       if ( !(_EnableC4 == other._EnableC4) ) return false;
       if ( !(_EnableC2 == other._EnableC2) ) return false;
-      if ( !(_C3Latency == other._C3Latency) ) return false;
       return true;
     }
     void takeValueFrom(const ConfigPlistClass::CPU_Class& configPlist)
@@ -1307,7 +1305,6 @@ public:
       _EnableC6 = configPlist.dget_EnableC6();
       _EnableC4 = configPlist.dget_EnableC4();
       _EnableC2 = configPlist.dget_EnableC2();
-      _C3Latency = configPlist.dget_C3Latency();
     }
   };
 
@@ -2688,10 +2685,6 @@ printf("%s", "");
   bool getEnableC2() const {
     if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2.value();
     return ACPI.SSDT._EnableC2;
-  }
-  bool getC3Latency() const {
- //   if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency.value();
-    return ACPI.SSDT._C3Latency;
   }
 
 };

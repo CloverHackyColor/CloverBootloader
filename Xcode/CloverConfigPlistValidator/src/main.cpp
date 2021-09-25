@@ -57,11 +57,7 @@ extern "C" int main(int argc, const char * argv[])
   #ifdef JIEF_DEBUG
       path = "config-nowarning-noerror.plist";
       path = "config-test2.plist";
-      //path = "/JiefLand/5.Devel/Clover/user config/Matgen84/EFI_github/CLOVER/config.plist";
-      //path = "/JiefLand/5.Devel/Clover/user config/BS.plist";
-      //path = "/JiefLand/5.Devel/Clover/user config/maclinuxG4/config.plist";
-      //path = "/JiefLand/5.Devel/Clover/user config/MICKHAEL/EFI_Github/CLOVER/config.plist";
-      path = "/JiefLand/5.Devel/Clover/user config/MacKonsti/2021-05-17/config-test.plist";
+      path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/config.plist";
   #endif
   
   if ( !path ) {
