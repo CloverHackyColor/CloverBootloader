@@ -59,6 +59,7 @@ public:
       XmlBool DisableIoMapper = XmlBool();
       XmlBool DisableLinkeditJettison = XmlBool();
       XmlBool DummyPowerManagement = XmlBool();
+      XmlBool ExtendBTFeatureFlags = XmlBool();
       XmlBool ExternalDiskIcons = XmlBool();
       XmlBool IncreasePciBarSize = XmlBool();
       XmlBool PowerTimeoutKernelPanic = XmlBool();
@@ -70,6 +71,7 @@ public:
       bool dgetDisableIoMapper() const { return DisableIoMapper.isDefined() ? DisableIoMapper.value() : DisableIoMapper.nullValue; };
       bool dgetDisableLinkeditJettison() const { return DisableLinkeditJettison.isDefined() ? DisableLinkeditJettison.value() : DisableLinkeditJettison.nullValue; };
       bool dgetDummyPowerManagement() const { return DummyPowerManagement.isDefined() ? DummyPowerManagement.value() : DummyPowerManagement.nullValue; };
+      bool dgetExtendBTFeatureFlags() const { return ExtendBTFeatureFlags.isDefined() ? ExtendBTFeatureFlags.value() : ExtendBTFeatureFlags.nullValue; };
       bool dgetExternalDiskIcons() const { return ExternalDiskIcons.isDefined() ? ExternalDiskIcons.value() : ExternalDiskIcons.nullValue; };
       bool dgetIncreasePciBarSize() const { return IncreasePciBarSize.isDefined() ? IncreasePciBarSize.value() : IncreasePciBarSize.nullValue; };
       bool dgetPowerTimeoutKernelPanic() const { return PowerTimeoutKernelPanic.isDefined() ? PowerTimeoutKernelPanic.value() : PowerTimeoutKernelPanic.nullValue; };
@@ -130,7 +132,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[30] = {
+  XmlDictField m_fields[31] = {
     {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
     {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
     {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -156,6 +158,7 @@ public:
     {"DisableIoMapper", OcKernelQuirks.DisableIoMapper},
     {"DisableLinkeditJettison", OcKernelQuirks.DisableLinkeditJettison},
     {"DummyPowerManagement", OcKernelQuirks.DummyPowerManagement},
+    {"ExtendBTFeatureFlags", OcKernelQuirks.ExtendBTFeatureFlags},
     {"ExternalDiskIcons", OcKernelQuirks.ExternalDiskIcons},
     {"IncreasePciBarSize", OcKernelQuirks.IncreasePciBarSize},
     {"PowerTimeoutKernelPanic", OcKernelQuirks.PowerTimeoutKernelPanic},
