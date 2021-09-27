@@ -121,10 +121,10 @@ static int MapKeyData2AppleKey(EFI_KEY_DATA* KeyData, APPLE_KEY_CODE* pKey, UINT
 				*pKey = 0x7051;
 				return 1;
 			case 0x03: // left arrow
-				*pKey = 0x7050;
+				*pKey = 0x704F;
 				return 1;
 			case 0x04: // right arrow
-				*pKey = 0x704F;
+				*pKey = 0x7050;
 				return 1;
 		}
 		return 0;
