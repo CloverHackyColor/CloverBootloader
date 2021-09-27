@@ -134,8 +134,6 @@ extern void HelpRefit(void);
 extern void AboutRefit(void);
 //extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
-extern UINTN                 ConfigsNum;
-extern CHAR16                *ConfigsList[];
 extern UINTN                 DsdtsNum;
 extern CHAR16                *DsdtsList[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
@@ -792,12 +790,7 @@ void LOADER_ENTRY::StartLoader()
   }
   
   //Free memory
-  for (size_t i = 0; i < ConfigsNum; i++) {
-    if (ConfigsList[i]) {
-      FreePool(ConfigsList[i]);
-      ConfigsList[i] = NULL;
-    }
-  }
+  ConfigsList.setEmpty();
   for (size_t i = 0; i < DsdtsNum; i++) {
     if (DsdtsList[i]) {
       FreePool(DsdtsList[i]);
@@ -2464,9 +2457,8 @@ GetListOfConfigs()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
-  INTN              NameLen;
 
-  ConfigsNum = 0;
+  ConfigsList.setEmpty();
   OldChosenConfig = 0;
 
   DirIterOpen(&selfOem.getConfigDir(), NULL, &DirIter);
@@ -2476,12 +2468,15 @@ GetListOfConfigs()
       continue;
     }
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
-        OldChosenConfig = ConfigsNum;
+        OldChosenConfig = ConfigsList.size(); // DirEntry->FileName is not yet inserted into ConfigsList. So its index will be ConfigsList.size()
       }
-      NameLen = StrLen(DirEntry->FileName) - 6; //without ".plist"
-      ConfigsList[ConfigsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
-      ConfigsList[ConfigsNum++][NameLen] = L'\0';
-      DBG("- %ls\n", DirEntry->FileName);
+      size_t NameLen = wcslen(DirEntry->FileName) - 6; //without ".plist"
+      if ( NameLen <= MAX_INTN ) {
+        ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to realloctae and copy memory
+        DBG("- %ls\n", DirEntry->FileName);
+      }else{
+        DBG("- bug!, NameLen > MAX_INTN");
+      }
     }
   DirIterClose(&DirIter);
 }

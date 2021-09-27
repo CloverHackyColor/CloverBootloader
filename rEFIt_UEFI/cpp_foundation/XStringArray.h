@@ -212,7 +212,11 @@ public:
   template<typename XStringClass1, enable_if(is___String(XStringClass1))>
   void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new remove_const(XStringClass1)(aString), pos, true); }
 
+  template<typename CharType, enable_if(is_char(CharType))>
+  void AddReference(CharType* newElement, bool FreeIt) { array.AddReference(new XStringClass_(newElement), FreeIt); }
+
   void AddReference(XStringClass* newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
+
   void insertReferenceAtPos(XStringClass* newElement, size_t pos, bool FreeIt) { array.InsertRef(newElement, pos, FreeIt); }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>

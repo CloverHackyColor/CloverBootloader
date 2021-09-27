@@ -89,8 +89,7 @@ EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 
 
 XStringWArray                   ThemeNameArray;
-UINTN                           ConfigsNum;
-CHAR16                          *ConfigsList[20];
+XStringWArray                   ConfigsList;
 UINTN                           DsdtsNum = 0;
 CHAR16                          *DsdtsList[20];
 XObjArray<HDA_OUTPUTS>          AudioList;

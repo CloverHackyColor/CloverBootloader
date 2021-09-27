@@ -2543,9 +2543,9 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
 
   SubScreen->AddMenuInfoLine_f("Select a config file:");
 
-  for (i = 0; i < ConfigsNum; i++) {
+  for (i = 0; i < ConfigsList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.takeValueFrom(ConfigsList[i]);
+    InputBootArgs->Title = ConfigsList[i];
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[90];
