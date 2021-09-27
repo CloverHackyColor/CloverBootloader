@@ -2749,8 +2749,7 @@ extern XObjArray<HDA_OUTPUTS> AudioList;
 
 extern XStringWArray ThemeNameArray;
 extern XStringWArray ConfigsList;
-extern CHAR16*       DsdtsList[20];
-extern UINTN DsdtsNum;
+extern XStringWArray DsdtsList;
 //extern INTN    ScrollButtonsHeight;
 //extern INTN    ScrollBarDecorationsHeight;
 //extern INTN    ScrollScrollDecorationsHeight;

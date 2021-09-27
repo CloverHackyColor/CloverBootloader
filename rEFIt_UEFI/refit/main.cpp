@@ -134,8 +134,6 @@ extern void HelpRefit(void);
 extern void AboutRefit(void);
 //extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
-extern UINTN                 DsdtsNum;
-extern CHAR16                *DsdtsList[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 extern EFI_DXE_SERVICES  *gDS;
@@ -791,12 +789,7 @@ void LOADER_ENTRY::StartLoader()
   
   //Free memory
   ConfigsList.setEmpty();
-  for (size_t i = 0; i < DsdtsNum; i++) {
-    if (DsdtsList[i]) {
-      FreePool(DsdtsList[i]);
-      DsdtsList[i] = NULL;
-    }
-  }
+  DsdtsList.setEmpty();
   OptionMenu.FreeMenu();
   //there is a place to free memory
   // GuiAnime
@@ -2472,7 +2465,7 @@ GetListOfConfigs()
       }
       size_t NameLen = wcslen(DirEntry->FileName) - 6; //without ".plist"
       if ( NameLen <= MAX_INTN ) {
-        ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to realloctae and copy memory
+        ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
         DBG("- %ls\n", DirEntry->FileName);
       }else{
         DBG("- bug!, NameLen > MAX_INTN");
@@ -2486,16 +2479,8 @@ GetListOfDsdts()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
-  INTN              NameLen;
 
-  if (DsdtsNum > 0) {
-    for (UINTN i = 0; i < DsdtsNum; i++) {
-      if (DsdtsList[DsdtsNum] != NULL) {
-        FreePool(DsdtsList[DsdtsNum]);
-      }
-    }
-  }
-  DsdtsNum = 0;
+  DsdtsList.setEmpty();
   OldChosenDsdt = 0xFFFF;
 
   DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
@@ -2505,11 +2490,10 @@ GetListOfDsdts()
       continue;
     }
       if ( gSettings.ACPI.DSDT.DsdtName.isEqualIC(DirEntry->FileName) ) {
-        OldChosenDsdt = DsdtsNum;
+        OldChosenDsdt = DsdtsList.size(); // DirEntry->FileName is not yet inserted into DsdtsList. So its index will be DsdtsList.size()
       }
-      NameLen = StrLen(DirEntry->FileName); //with ".aml"
-      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName); // if changing, notice freepool above
-      DsdtsList[DsdtsNum++][NameLen] = L'\0';
+      size_t NameLen = wcslen(DirEntry->FileName); //with ".aml"
+      DsdtsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
       DBG("- %ls\n", DirEntry->FileName);
     }
   DirIterClose(&DirIter);

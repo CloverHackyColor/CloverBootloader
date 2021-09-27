@@ -1011,7 +1011,7 @@ void ApplyInputs(void)
     if (OldChosenDsdt == 0xFFFF) {
       gSettings.ACPI.DSDT.DsdtName = L"BIOS.aml"_XSW;
     } else {
-      gSettings.ACPI.DSDT.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
+      gSettings.ACPI.DSDT.DsdtName = DsdtsList[OldChosenDsdt];
     }
   }
   i++; //117
@@ -2134,7 +2134,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
   SubScreen->AddMenuInfoLine_f("Select a DSDT file:");
   SubScreen->AddMenuItemSwitch(116,  "BIOS.aml", FALSE);
 
-  for (i = 0; i < DsdtsNum; i++) {
+  for (i = 0; i < DsdtsList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.takeValueFrom(DsdtsList[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
