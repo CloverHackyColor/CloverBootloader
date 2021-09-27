@@ -1165,9 +1165,9 @@ void LOADER_ENTRY::StartLoader()
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
       }
       XStringW infoPlistPath = SWPrintf("%s\\Contents\\Info.plist", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
-      if ( FileExists(&self.getCloverDir(), infoPlistPath) ) {
+      if (FileExists(&self.getCloverDir(), infoPlistPath)) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
-      }else{
+      } else {
         DBG("Cannot find kext info.plist at '%ls'\n", infoPlistPath.wc_str());
       }
   #endif
@@ -1385,7 +1385,7 @@ void LOADER_ENTRY::StartLoader()
 
     if ( macOSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB7F;
+        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB6F;
         gSettings.RtVariables.BooterConfig = 0x28;
       }
 //      ReadSIPCfg();
@@ -3192,7 +3192,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-    XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
+      XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
       DBG("after NVRAM boot-args=%s\n", gSettings.Boot.BootArgs.c_str());
       GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", GlobalConfig.OptionsBits);
@@ -3543,7 +3543,7 @@ panic("not done yet");
                                     (UINT16*)&BootNum
                                     );
               if (!EFI_ERROR(Status)) {
-          DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
+                DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);
