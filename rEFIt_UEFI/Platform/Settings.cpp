@@ -89,10 +89,8 @@ EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 
 
 XStringWArray                   ThemeNameArray;
-UINTN                           ConfigsNum;
-CHAR16                          *ConfigsList[20];
-UINTN                           DsdtsNum = 0;
-CHAR16                          *DsdtsList[20];
+XStringWArray                   ConfigsList;
+XStringWArray                   DsdtsList;
 XObjArray<HDA_OUTPUTS>          AudioList;
 
 // firmware
