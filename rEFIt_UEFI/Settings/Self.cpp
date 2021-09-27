@@ -155,6 +155,8 @@ EFI_STATUS Self::_initialize()
   if ( m_SelfSimpleVolume == NULL ) log_technical_bug("Cannot get m_SelfSimpleVolume");
   if ( m_SelfVolumeRootDir == NULL ) log_technical_bug("Cannot get m_SelfVolumeRootDir");
   if ( m_CloverDirFullPath.isEmpty() ) log_technical_bug("Cannot get m_CloverDirFullPath");
+  m_CloverDirFullPath4Display = m_CloverDirFullPath;
+  m_CloverDirFullPath4Display.replaceAll('\\', '/');
   if ( m_efiFileName.isEmpty() ) log_technical_bug("Cannot get m_efiFileName");
   if ( m_CloverDir == NULL ) panic("Cannot open getSelfRootDir()"); // We have to panic, nothing would work without m_CloverDir
   

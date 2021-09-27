@@ -1985,7 +1985,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   //Slice: the idea was from past
   // first priority DSDT.aml from the root of booted volume. It allows to keep different DSDT for different systems
   // second priority is DSDT from OEM folder
-  // third priority is /EFI/CLOVER/ACPI/patched/DSDT*.aml choosen from GUI.
+  // third priority is {Clover folder}/ACPI/patched/DSDT*.aml choosen from GUI.
   
   XStringW PathDsdt = SWPrintf("\\%ls", gSettings.ACPI.DSDT.DsdtName.wc_str());
   if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {

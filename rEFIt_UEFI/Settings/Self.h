@@ -37,6 +37,7 @@ protected:
   EFI_DEVICE_PATH*  m_CloverDirFullDevicePath {}; // full path, including device, of the folder containing this efi.
   EFI_FILE*         m_CloverDir {};               // opened folder containing this efi
   XStringW          m_CloverDirFullPath {}; // full path of folder containing this efi.
+  XStringW          m_CloverDirFullPath4Display {}; // prettier for diplay
 
   bool      m_ThemesDirExists {};
   EFI_FILE *m_ThemesDir {};
@@ -77,6 +78,7 @@ public:
   const EFI_DEVICE_PATH& getCloverDirFullDevicePath() { checkInitialized(); return *m_CloverDirFullDevicePath; }
   const EFI_FILE& getCloverDir() { checkInitialized(); return *m_CloverDir; }
   const XStringW& getCloverDirFullPath() { checkInitialized(); return m_CloverDirFullPath; }
+  const XStringW& getCloverDirFullPath4Display() { checkInitialized(); return m_CloverDirFullPath4Display; }
 
   bool themesDirExists() { checkInitialized(); return m_ThemesDirExists; }
   const EFI_FILE& getThemesDir() { checkInitialized(); return *m_ThemesDir; }
