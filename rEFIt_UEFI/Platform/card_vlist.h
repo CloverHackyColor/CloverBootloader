@@ -27,7 +27,7 @@ FindCardWithIds (
 //  UINT32      SubId,
 //  UINT64      VideoRam,
 //  UINTN       VideoPorts,
-//  BOOLEAN     LoadVBios
+//  XBool     LoadVBios
 //  );
 
 

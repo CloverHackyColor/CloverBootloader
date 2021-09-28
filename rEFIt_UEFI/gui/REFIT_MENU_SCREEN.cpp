@@ -79,10 +79,10 @@
 const CHAR16 ArrowUp[2]   = { ARROW_UP, 0 }; //defined in  Simple Text Out protocol
 const CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 //
-//BOOLEAN MainAnime = FALSE;
+//XBool MainAnime = false;
 //
 ////TODO Scroll variables must be a part of REFIT_SCREEN
-////BOOLEAN ScrollEnabled = FALSE;
+////XBool ScrollEnabled = false;
 //
 static INTN ScrollbarYMovement;
 //
@@ -102,7 +102,7 @@ INTN MenuWidth , TimeoutPosY;
 UINTN MenuMaxTextLen = 0;
 INTN EntriesPosX, EntriesPosY;
 
-BOOLEAN mGuiReady = FALSE;
+XBool mGuiReady = false;
 
 XPointer REFIT_MENU_SCREEN::mPointer;
 
@@ -174,8 +174,8 @@ void REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
 
 
   ScrollState.IsScrolling = (ScrollState.MaxFirstVisible > 0);
-  ScrollState.PaintAll = TRUE;
-  ScrollState.PaintSelection = FALSE;
+  ScrollState.PaintAll = true;
+  ScrollState.PaintSelection = false;
 
   ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
 
@@ -228,15 +228,15 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       if (ScrollState.CurrentSelection > 0) {
         ScrollState.CurrentSelection --;
         if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.FirstVisible = ScrollState.CurrentSelection;
         }
         if (ScrollState.CurrentSelection == ScrollState.MaxScroll) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
         }
         if ((ScrollState.CurrentSelection < ScrollState.MaxScroll) &&
              (ScrollState.CurrentSelection > ScrollState.LastVisible)) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.LastVisible = ScrollState.CurrentSelection;
           ScrollState.FirstVisible = ScrollState.LastVisible - ScrollState.MaxVisible;
         }
@@ -248,12 +248,12 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
         ScrollState.CurrentSelection++;
         if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
             (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.FirstVisible++;
           CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         }
         if (ScrollState.CurrentSelection == ScrollState.MaxScroll + 1) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
         }
       }
       break;
@@ -264,7 +264,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
           ScrollState.CurrentSelection++;
         ScrollState.FirstVisible++;
         ScrollState.LastVisible++;
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
       }
       break;
 
@@ -274,7 +274,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
           ScrollState.CurrentSelection--;
         ScrollState.FirstVisible--;
         ScrollState.LastVisible--;
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
       }
       break;
 
@@ -287,14 +287,14 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
             ScrollState.CurrentSelection = 0;                // move to first entry
         } else {
           if (ScrollState.FirstVisible > 0)
-            ScrollState.PaintAll = TRUE;
+            ScrollState.PaintAll = true;
           ScrollState.CurrentSelection -= ScrollState.MaxVisible;          // move one page and scroll synchronously
           ScrollState.FirstVisible -= ScrollState.MaxVisible;
         }
         CONSTRAIN_MIN(ScrollState.CurrentSelection, 0);
         CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
         if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.FirstVisible = ScrollState.CurrentSelection;
         }
       }
@@ -313,7 +313,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
             ScrollState.CurrentSelection = ScrollState.MaxIndex;         // move to last entry
         } else {
 //          if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible)
-//            ScrollState.PaintAll = TRUE;
+//            ScrollState.PaintAll = true;
           ScrollState.CurrentSelection += ScrollState.MaxVisible;          // move one page and scroll synchronously
           ScrollState.FirstVisible += ScrollState.MaxVisible;
         }
@@ -321,11 +321,11 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
         CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
             (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
- //         ScrollState.PaintAll = TRUE;
+ //         ScrollState.PaintAll = true;
           ScrollState.FirstVisible+= ScrollState.MaxVisible;
           CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         }
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
       }
 //    DBG("after cur=%lld, maxInd=%lld, maxVis=%lld, First=%lld, maxFirst=%lld, lastVis=%lld, maxscr=%lld\n",
 //        ScrollState.CurrentSelection, ScrollState.MaxIndex, ScrollState.MaxVisible, ScrollState.FirstVisible,
@@ -337,7 +337,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       if (ScrollState.CurrentSelection > 0) {
         ScrollState.CurrentSelection = 0;
         if (ScrollState.FirstVisible > 0) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.FirstVisible = 0;
         }
       }
@@ -347,7 +347,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
         ScrollState.CurrentSelection = ScrollState.MaxIndex;
         if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible) {
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           ScrollState.FirstVisible = ScrollState.MaxFirstVisible;
         }
       }
@@ -357,12 +357,12 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       // The caller has already updated CurrentSelection, but we may
       // have to scroll to make it visible.
       if (ScrollState.CurrentSelection < ScrollState.FirstVisible) {
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
         ScrollState.FirstVisible = ScrollState.CurrentSelection; // - (ScrollState.MaxVisible >> 1);
         CONSTRAIN_MIN(ScrollState.FirstVisible, 0);
       } else if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
                  (ScrollState.CurrentSelection <= ScrollState.MaxScroll)) {
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
         ScrollState.FirstVisible = ScrollState.CurrentSelection - ScrollState.MaxVisible;
         CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
       }
@@ -371,7 +371,7 @@ void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
   }
 
   if (!ScrollState.PaintAll && ScrollState.CurrentSelection != ScrollState.LastSelection)
-    ScrollState.PaintSelection = TRUE;
+    ScrollState.PaintSelection = true;
   ScrollState.LastVisible = ScrollState.FirstVisible + ScrollState.MaxVisible;
 
   //ycr.ru
@@ -568,7 +568,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
           continue;
           break;
         case SCAN_F2:
-          SavePreBootLog = TRUE;
+          SavePreBootLog = true;
           break;
           //not used here
 /*        case SCAN_F6:
@@ -641,7 +641,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
 
   switch (MenuExit) {
     case MENU_EXIT_ENTER:
-      Item->Valid = TRUE;
+      Item->Valid = true;
       ApplyInputs();
       break;
 
@@ -656,7 +656,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
       }
       break;
   }
-  Item->Valid = FALSE;
+  Item->Valid = false;
   if (Item->SValue.notEmpty()) {
     MsgLog("EDITED: %ls\n", Item->SValue.wc_str());
   }
@@ -701,7 +701,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
   EFI_INPUT_KEY key;
   //    UINTN         Index;
   INTN          ShortcutEntry;
-  BOOLEAN       HaveTimeout = FALSE;
+  XBool       HaveTimeout = false;
   INTN          TimeoutCountdown = 0;
   UINTN         MenuExit;
 
@@ -733,7 +733,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
   //no default - no timeout!
   if ((*DefaultEntryIndex != -1) && (TimeoutSeconds > 0)) {
     //      DBG("have timeout\n");
-    HaveTimeout = TRUE;
+    HaveTimeout = true;
     TimeoutCountdown =  TimeoutSeconds;
   }
   MenuExit = 0;
@@ -770,10 +770,10 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
     // update the screen
     if (ScrollState.PaintAll) {
       call_MENU_FUNCTION_PAINT_ALL(NULL);
-      ScrollState.PaintAll = FALSE;
+      ScrollState.PaintAll = false;
     } else if (ScrollState.PaintSelection) {
       call_MENU_FUNCTION_PAINT_SELECTION(NULL);
-      ScrollState.PaintSelection = FALSE;
+      ScrollState.PaintSelection = false;
     }
 
     if (HaveTimeout) {
@@ -783,14 +783,14 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
 
     if (gEvent) { //for now used at CD eject.
       MenuExit = MENU_EXIT_ESCAPE;
-      ScrollState.PaintAll = TRUE;
+      ScrollState.PaintAll = true;
       gEvent = 0; //to prevent looping
       break;
     }
     key.UnicodeChar = 0;
     key.ScanCode = 0;
     if (!mGuiReady) {
-      mGuiReady = TRUE;
+      mGuiReady = true;
       DBG("GUI ready\n");
     }
     
@@ -813,7 +813,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       case ActionSelect:
         ScrollState.LastSelection = ScrollState.CurrentSelection;
         ScrollState.CurrentSelection = mItemID;
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
         HidePointer();
         break;
       case ActionEnter:
@@ -823,7 +823,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
           MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
           MenuExit = InputDialog();
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
@@ -846,7 +846,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
           MenuExit = InputDialog();
         } else if (Entries[mItemID].getREFIT_MENU_SWITCH()) {
           MenuExit = InputDialog();
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           HidePointer();
         } else if (!Entries[mItemID].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
@@ -854,7 +854,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         break;
       case ActionDeselect:
         ScrollState.LastSelection = ScrollState.CurrentSelection;
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
         HidePointer();
         break;
       case ActionFinish:
@@ -885,7 +885,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       // the user pressed a key, cancel the timeout
       call_MENU_FUNCTION_PAINT_TIMEOUT(L"");
       HidePointer(); //ycr.ru
-      HaveTimeout = FALSE;
+      HaveTimeout = false;
     }
 
     mAction = ActionNone; //do action once
@@ -926,7 +926,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         MenuExit = MENU_EXIT_HELP;
         break;
       case SCAN_F2:
-        SavePreBootLog = TRUE;
+        SavePreBootLog = true;
         //let it be twice
         Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
 // Jief : don't write outside SelfDir
@@ -941,7 +941,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         SaveOemTables();
         break;
       case SCAN_F5:
-        SaveOemDsdt(TRUE); //full patch
+        SaveOemDsdt(true); //full patch
         break;
       case SCAN_F6:
         Status = egSaveFile(&self.getCloverDir(), VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
@@ -984,7 +984,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       case SCAN_F9:
         SetNextScreenMode(1);
         egGetScreenSize(&UGAWidth, &UGAHeight); //before init theme
-        GlobalConfig.gThemeChanged = TRUE;
+        GlobalConfig.gThemeChanged = true;
         MenuExit = MENU_EXIT_ESCAPE; //to redraw screen
         break;
       case SCAN_F10:
@@ -996,7 +996,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         break;
       case SCAN_F12:
         MenuExit = MENU_EXIT_EJECT;
-        ScrollState.PaintAll = TRUE;
+        ScrollState.PaintAll = true;
         break;
 
     }
@@ -1008,7 +1008,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
           MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
           MenuExit = InputDialog();
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_ENTRY_CLOVER()){
           MenuExit = MENU_EXIT_DETAILS;
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
@@ -1021,7 +1021,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
           MenuExit = InputDialog();
         } else if (Entries[ScrollState.CurrentSelection].getREFIT_MENU_SWITCH()){
           MenuExit = InputDialog();
-          ScrollState.PaintAll = TRUE;
+          ScrollState.PaintAll = true;
           HidePointer();
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_DETAILS;
@@ -1342,7 +1342,7 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
   }
   OldTextHeight = Height;
 
-//  TextBufferXY = egCreateFilledImage(TextWidth, Height, TRUE, &MenuBackgroundPixel);
+//  TextBufferXY = egCreateFilledImage(TextWidth, Height, true, &MenuBackgroundPixel);
   TextBufferXY.setSizeInPixels(TextWidth, Height);
 //  TextBufferXY.Fill(MenuBackgroundPixel);
 
@@ -1508,20 +1508,20 @@ void REFIT_MENU_SCREEN::ScrollingBar()
   Total.CopyRect(ThemeX.Background, ScrollTotal.XPos, ScrollTotal.YPos);
   if (!ThemeX.ScrollbarBackgroundImage.isEmpty()) {
     for (INTN i = 0; i < ScrollbarBackground.Height; i+=ThemeX.ScrollbarBackgroundImage.GetHeight()) {
-      Total.Compose(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarBackgroundImage, FALSE);
+      Total.Compose(ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarBackgroundImage, false);
     }
   }
-  Total.Compose(BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos, ThemeX.BarStartImage, FALSE);
-  Total.Compose(BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos, ThemeX.BarEndImage, FALSE);
+  Total.Compose(BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos, ThemeX.BarStartImage, false);
+  Total.Compose(BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos, ThemeX.BarEndImage, false);
   if (!ThemeX.ScrollbarImage.isEmpty()) {
     for (INTN i = 0; i < Scrollbar.Height; i+=ThemeX.ScrollbarImage.GetHeight()) {
-      Total.Compose(Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarImage, FALSE);
+      Total.Compose(Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos, ThemeX.ScrollbarImage, false);
     }
   }
-  Total.Compose(UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos, ThemeX.UpButtonImage, FALSE);
-  Total.Compose(DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos, ThemeX.DownButtonImage, FALSE);
-  Total.Compose(ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos, ThemeX.ScrollStartImage, FALSE);
-  Total.Compose(ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos, ThemeX.ScrollEndImage, FALSE);
+  Total.Compose(UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos, ThemeX.UpButtonImage, false);
+  Total.Compose(DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos, ThemeX.DownButtonImage, false);
+  Total.Compose(ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos, ThemeX.ScrollStartImage, false);
+  Total.Compose(ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos, ThemeX.ScrollEndImage, false);
   Total.Draw(ScrollTotal.XPos, ScrollTotal.YPos, ThemeX.ScrollWidth / 16.f); //ScrollWidth can be set in theme.plist but usually=16
 }
 /**
@@ -1869,7 +1869,7 @@ void REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 }
 
 
-void REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, XBool Cursor)
 {
   InputBootArgs->Title.takeValueFrom(Line);
   if (Inx == 3 || Inx == 116) {
@@ -1885,13 +1885,13 @@ void REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootAr
   AddMenuEntry(InputBootArgs, true);
 }
 
-void REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, XBool Cursor)
 {
   REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
-void REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, XBool Cursor)
 {
   REFIT_MENU_SWITCH *InputBootArgs = new REFIT_MENU_SWITCH;
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
@@ -1914,7 +1914,7 @@ EFI_STATUS REFIT_MENU_SCREEN::CheckMouseEvent()
     else if (mPointer.MouseInRect(&DownButton) && Event == LeftClick)
       mAction = ActionScrollDown;
     else if (mPointer.MouseInRect(&Scrollbar) && Event == LeftMouseDown) {
-      IsDragging = TRUE;
+      IsDragging = true;
       Move = true;
 //      mAction = ActionMoveScrollbar;
       ScrollbarYMovement = 0;
@@ -1922,7 +1922,7 @@ EFI_STATUS REFIT_MENU_SCREEN::CheckMouseEvent()
       ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = mPointer.GetPlace().YPos;
     }
     else if (IsDragging && Event == LeftClick) {
-      IsDragging = FALSE;
+      IsDragging = false;
       Move = true;
 //      mAction = ActionMoveScrollbar;
     }

@@ -52,7 +52,7 @@ public:
   EFI_HANDLE        Handle = 0;
   UINT8             *Mmio = 0;
   UINT32            Connectors = 0;
-  BOOLEAN           ConnChanged = 0;
+  XBool           ConnChanged = false;
 
   // ATTENTION : this is not discovered. This will be assigned once config plist is read.
   bool LoadVBios = 0;

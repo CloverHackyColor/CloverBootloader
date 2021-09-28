@@ -372,11 +372,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32            NamesTable;
         INT32             SegVAddr;
         INT32             shift;
-        BOOLEAN           PatcherInited;
-        BOOLEAN           gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-        BOOLEAN           gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
-        BOOLEAN           isKernelcache;
-        BOOLEAN           is64BitKernel;
+        XBool           PatcherInited;
+        XBool           gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+        XBool           gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
+        XBool           isKernelcache;
+        XBool           is64BitKernel;
         UINT32            KernelSlide;
         UINT32            KernelOffset;
         // notes:
@@ -426,15 +426,15 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32        searchSectionByNum(UINT8 * Binary, UINT32 Num);
 //        void          KernelAndKextsPatcherStart();
 //        void          KernelAndKextPatcherInit();
-        BOOLEAN       KernelUserPatch();
-        BOOLEAN       KernelPatchPm();
-        BOOLEAN       KernelLapicPatch_32();
-        BOOLEAN       KernelLapicPatch_64();
-        BOOLEAN       BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
+        XBool       KernelUserPatch();
+        XBool       KernelPatchPm();
+        XBool       KernelLapicPatch_32();
+        XBool       KernelLapicPatch_64();
+        XBool       BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
         void EFIAPI   KernelBooterExtensionsPatch();
-        BOOLEAN       KernelPanicNoKextDump();
+        XBool       KernelPanicNoKextDump();
         void          KernelCPUIDPatch();
-        BOOLEAN       PatchCPUID(const UINT8* Location, INT32 LenLoc,
+        XBool       PatchCPUID(const UINT8* Location, INT32 LenLoc,
                                  const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                                  const UINT8* ReplaceExt, INT32 Len);
         void          KernelPatcher_32();
@@ -452,7 +452,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
  
         EFI_STATUS LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
         EFI_STATUS AddKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
-        void      LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
+        void      LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN XBool Force);
 //        void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
         void      AddKextsFromDirInArray(const XString8& SrcDir, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray);
         void      AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray);
@@ -471,12 +471,12 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void      DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         void      SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         void      BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
-        BOOLEAN   SandyBridgeEPM();
-        BOOLEAN   HaswellEXCPM();
-        BOOLEAN   HaswellLowEndXCPM();
-        BOOLEAN   BroadwellEPM();
-        BOOLEAN   KernelIvyBridgeXCPM();
-        BOOLEAN   KernelIvyE5XCPM();
+        XBool   SandyBridgeEPM();
+        XBool   HaswellEXCPM();
+        XBool   HaswellLowEndXCPM();
+        XBool   BroadwellEPM();
+        XBool   KernelIvyBridgeXCPM();
+        XBool   KernelIvyE5XCPM();
         void      EightApplePatch(UINT8 *Driver, UINT32 DriverSize);
         
         void Stall(int Pause) { if ( KernelAndKextPatches.KPDebug ) { gBS->Stall(Pause); } };
@@ -487,10 +487,10 @@ class REFIT_ABSTRACT_MENU_ENTRY
         LOADER_ENTRY* SubMenuKextInjectMgmt();
         void DelegateKernelPatches();
         
-        BOOLEAN checkOSBundleRequired(const TagDict* dict);
-        XStringW getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents);
+        XBool checkOSBundleRequired(const TagDict* dict);
+        XStringW getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, XBool* NoContents);
         TagDict* getInfoPlist(const XStringW& infoPlistPath);
-        XString8 getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents);
+        XString8 getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, XBool NoContents);
 			} ;
 
 

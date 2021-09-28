@@ -56,7 +56,7 @@ InitTheme(const CHAR8* ChosenTheme)
     if (NowHour >= 24 ) NowHour -= 24;
     ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
   } else {
-    ThemeX.Daylight = TRUE; // when timezone is not set
+    ThemeX.Daylight = true; // when timezone is not set
   }
   if (ThemeX.Daylight) {
     DBG("use Daylight theme\n");
@@ -66,7 +66,7 @@ InitTheme(const CHAR8* ChosenTheme)
 
   for (i = 0; i < 3; i++) {
     //    DBG("validate %d face\n", i);
-    textFace[i].valid = FALSE;
+    textFace[i].valid = false;
   }
 
   NSVGfontChain *fontChain = fontsDB;
@@ -175,9 +175,9 @@ finish:
   if (!ThemeDict) {  // No theme could be loaded, use embedded
     DBG(" using embedded theme\n");
     if (ThemeX.DarkEmbedded) { // when using embedded, set Daylight according to darkembedded
-      ThemeX.Daylight = FALSE;
+      ThemeX.Daylight = false;
     } else {
-      ThemeX.Daylight = TRUE;
+      ThemeX.Daylight = true;
     }
 
     ThemeX.FillByEmbedded();
@@ -246,13 +246,13 @@ finish:
 //xtheme class
 XTheme::XTheme() : Icons(), ThemeDir(0), HideBadges(0), HideUIFlags(0), Font(FONT_ALFA), CharWidth(0), SelectionColor(0), FontFileName(), Theme(),
                    BannerFileName(), SelectionSmallFileName(), SelectionBigFileName(), SelectionIndicatorName(), DefaultSelection(),
-                   BackgroundName(), BackgroundScale(imNone), BackgroundSharp(0), BackgroundDark(0), SelectionOnTop(0), BootCampStyle(0),
+                   BackgroundName(), BackgroundScale(imNone), BackgroundSharp(0), BackgroundDark(false), SelectionOnTop(false), BootCampStyle(false),
                    BadgeOffsetX(0), BadgeOffsetY(0), BadgeScale(0), ThemeDesignWidth(0), ThemeDesignHeight(0), BannerPosX(0), BannerPosY(0),
-                   BannerEdgeHorizontal(0), BannerEdgeVertical(0), BannerNudgeX(0), BannerNudgeY(0), VerticalLayout(0), NonSelectedGrey(0),
-                   MainEntriesSize(0), TileXSpace(0), TileYSpace(0), Proportional(0), embedded(0), DarkEmbedded(0), TypeSVG(0), Scale(0), CentreShift(0),
+                   BannerEdgeHorizontal(0), BannerEdgeVertical(0), BannerNudgeX(0), BannerNudgeY(0), VerticalLayout(false), NonSelectedGrey(false),
+                   MainEntriesSize(0), TileXSpace(0), TileYSpace(0), Proportional(false), embedded(false), DarkEmbedded(false), TypeSVG(false), Scale(0), CentreShift(0),
                    row0TileSize(0), row1TileSize(0), BanHeight(0), LayoutHeight(0), LayoutBannerOffset(0), LayoutButtonOffset(0), LayoutTextOffset(0),
                    LayoutAnimMoveForMenuX(0), ScrollWidth(0), ScrollButtonsHeight(0), ScrollBarDecorationsHeight(0), ScrollScrollDecorationsHeight(0),
-                   FontWidth(0), FontHeight(0), TextHeight(0), Daylight(0), Background(), BigBack(), Banner(), SelectionImages(), Buttons(), ScrollbarBackgroundImage(), BarStartImage(), BarEndImage(),
+                   FontWidth(0), FontHeight(0), TextHeight(0), Daylight(false), Background(), BigBack(), Banner(), SelectionImages(), Buttons(), ScrollbarBackgroundImage(), BarStartImage(), BarEndImage(),
                    ScrollbarImage(), ScrollStartImage(), ScrollEndImage(), UpButtonImage(), DownButtonImage(), FontImage(), BannerPlace(), Cinema(), SVGParser(0)
 {
   Init();
@@ -267,7 +267,7 @@ void XTheme::Init()
 //  DisableFlags = 0;             
   HideBadges = 0; 
   HideUIFlags = 0; 
-//  TextOnly = FALSE; 
+//  TextOnly = false; 
   Font = FONT_GRAY;      // FONT_TYPE   
   CharWidth = 9;  
   SelectionColor = 0x80808080;
@@ -285,10 +285,10 @@ void XTheme::Init()
   BackgroundName.setEmpty();  
   BackgroundScale = imNone;     // SCALING 
   BackgroundSharp = 0;            
-  BackgroundDark = FALSE;       //TODO should be set to true if Night theme
-//  CustomIcons = FALSE;          //TODO don't know how to handle with SVG theme
-  SelectionOnTop = FALSE;         
-  BootCampStyle = FALSE; 
+  BackgroundDark = false;       //TODO should be set to true if Night theme
+//  CustomIcons = false;          //TODO don't know how to handle with SVG theme
+  SelectionOnTop = false;         
+  BootCampStyle = false; 
   BadgeOffsetX = 0xFFFF;  //default offset
   BadgeOffsetY = 0xFFFF;
   BadgeScale = 4;   // TODO now we have float scale = BadgeScale/16
@@ -301,16 +301,16 @@ void XTheme::Init()
   BannerNudgeX = 0;
   BannerNudgeY = 0;
   BanHeight = 0;
-  VerticalLayout = FALSE;
-  NonSelectedGrey = FALSE;    
+  VerticalLayout = false;
+  NonSelectedGrey = false;    
   MainEntriesSize = 128;
   TileXSpace = 8;
   TileYSpace = 24;
 
-  Proportional = FALSE;
-//  ShowOptimus = FALSE;
-//  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
-  TypeSVG = FALSE;
+  Proportional = false;
+//  ShowOptimus = false;
+//  DarkEmbedded = false;  //looks like redundant, we always check Night or Daylight
+  TypeSVG = false;
 //  Codepage = 0xC0;           //this is for PNG theme
 //  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
   Scale = 1.0f;

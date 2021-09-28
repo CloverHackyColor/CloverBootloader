@@ -37,11 +37,11 @@ public:
   XStringW            VolLabel = XStringW(); // comes from \\.VolumeLabel.txt, or empty.
   UINT8               DiskKind = 0;
   LEGACY_OS           *LegacyOS = 0;
-  BOOLEAN             Hidden = 0;
+  XBool             Hidden = false;
   UINT8               BootType = 0;
-  BOOLEAN             IsAppleLegacy = 0;
-  BOOLEAN             HasBootCode = 0;
-  BOOLEAN             IsMbrPartition = 0;
+  XBool             IsAppleLegacy = false;
+  XBool             HasBootCode = false;
+  XBool             IsMbrPartition = false;
   UINTN               MbrPartitionIndex = 0;
   EFI_BLOCK_IO        *BlockIO = 0;
   UINT64              BlockIOOffset = 0;

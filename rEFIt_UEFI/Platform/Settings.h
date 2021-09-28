@@ -33,7 +33,7 @@
 //};
 
 extern CONST CHAR8      *AudioOutputNames[];
-extern BOOLEAN           gFirmwareClover;
+extern XBool           gFirmwareClover;
 
 
 class HDA_OUTPUTS
@@ -59,8 +59,8 @@ typedef struct {
 //UINT16            Height;
   CHAR8             Model[64];
   CHAR8             Config[64];
-  BOOLEAN           LoadVBios;
-//BOOLEAN           PatchVBios;
+  XBool           LoadVBios;
+//XBool           PatchVBios;
   UINTN             Segment;
   UINTN             Bus;
   UINTN             Device;
@@ -68,7 +68,7 @@ typedef struct {
   EFI_HANDLE        Handle;
   UINT8             *Mmio;
   UINT32            Connectors;
-  BOOLEAN           ConnChanged;
+  XBool           ConnChanged;
 } GFX_PROPERTIES;
 
 typedef struct {
@@ -161,9 +161,9 @@ public:
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem = INPUT_ITEM();
-  BOOLEAN         OtherOS;
+  XBool         OtherOS;
 
-  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(0) {}
+  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(false) {}
   ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
   const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
   ~ACPI_DROP_TABLE() {}
@@ -177,7 +177,7 @@ class CUSTOM_LOADER_SUBENTRY;
 //template<class C> class XmlArray;
 
 //void CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
                    
 class CUSTOM_LOADER_SUBENTRY_SETTINGS
 {
@@ -219,7 +219,7 @@ public: // temporary, must be protected:
 public:
 
 //  friend void ::CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//  friend BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//  friend XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
 //  friend class ::CUSTOM_LOADER_SUBENTRY;
 };
 
@@ -244,7 +244,7 @@ public:
 class CUSTOM_LOADER_ENTRY_SETTINGS;
 //
 //void CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
-//BOOLEAN FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//XBool FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
 
 extern const XString8 defaultInstallTitle;
 extern const XString8 defaultRecoveryTitle;
@@ -283,7 +283,7 @@ public:
   XString8                FullTitle = XStringW();
   XStringW                Settings = XStringW(); // path of a config.plist that'll be read at the beginning of startloader
   char32_t                Hotkey = 0;
-  BOOLEAN                 CommonSettings = 0;
+  XBool                 CommonSettings = false;
 //  UINT8                   Flags = 0;
   bool                    Hidden = 0;
   bool                    AlwaysHidden = 0;
@@ -2623,7 +2623,7 @@ printf("%s", "");
 
 //other
 //  UINT16                  DropOEM_DSM; // not used anymore.
-//  BOOLEAN                 LpcTune; // never set to true.
+//  XBool                 LpcTune; // never set to true.
 
   SETTINGS_DATA() {}
 //  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
@@ -2762,7 +2762,7 @@ extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
 extern UINTN                            OldChosenAudio;
-extern BOOLEAN                        SavePreBootLog;
+extern XBool                        SavePreBootLog;
 extern UINT8                            DefaultAudioVolume;
 
 
@@ -2772,7 +2772,7 @@ extern UINT8                            DefaultAudioVolume;
 //extern UINTN                          NHDA;
 //extern UINT16                         gCPUtype;
 extern SETTINGS_DATA                  gSettings;
-extern BOOLEAN                        gFirmwareClover;
+extern XBool                        gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern EFI_EDID_DISCOVERED_PROTOCOL   *EdidDiscovered;
 //extern UINT8                          *gEDID;
@@ -2781,7 +2781,7 @@ extern UINTN                           gEvent;
 
 extern UINT16                          gBacklightLevel;
 
-//extern BOOLEAN                         defDSM;
+//extern XBool                         defDSM;
 //extern UINT16                          dropDSM;
 
 //extern TagDict*                          gConfigDict[];
@@ -2797,8 +2797,8 @@ extern XObjArray<ACPI_PATCHED_AML>       ACPIPatchedAML;
 extern CHAR16                         *IconFormat;
 
 
-extern BOOLEAN                        ResumeFromCoreStorage;
-//extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
+extern XBool                        ResumeFromCoreStorage;
+//extern XBool                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
@@ -2811,12 +2811,12 @@ class REFIT_CONFIG
 {
 public:
   UINTN       DisableFlags = 0; //to disable some volume types (optical, firewire etc)
-  BOOLEAN     Quiet = true;
-  BOOLEAN     SpecialBootMode = false; // content of nvram var "aptiofixflag"
+  XBool     Quiet = true;
+  XBool     SpecialBootMode = false; // content of nvram var "aptiofixflag"
 
-  BOOLEAN       gBootChanged = FALSE;
-  BOOLEAN       gThemeChanged = FALSE;
-  BOOLEAN       NeedPMfix = FALSE;
+  XBool       gBootChanged = false;
+  XBool       gThemeChanged = false;
+  XBool       NeedPMfix = false;
   ACPI_DROP_TABLE         *ACPIDropTables = NULL;
 
   UINT8                   CustomLogoType = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
@@ -2827,8 +2827,8 @@ public:
   UINT8                   SecureBoot = 0;
   UINT8                   SecureBootSetupMode = 0;
 
-  BOOLEAN                 SetTable132 = 0;
-  BOOLEAN                 HWP = 0;
+  XBool                 SetTable132 = false;
+  XBool                 HWP = false;
 
   bool                EnableC6 = 0;
   bool                EnableC4 = 0;
@@ -2862,8 +2862,8 @@ public:
 
   XStringW                    BlockKexts = XStringW();
   // KernelAndKextPatches
-  BOOLEAN                 KextPatchesAllowed = true;
-  BOOLEAN                 KernelPatchesAllowed = true; //From GUI: Only for user patches, not internal Clover
+  XBool                 KextPatchesAllowed = true;
+  XBool                 KernelPatchesAllowed = true; //From GUI: Only for user patches, not internal Clover
 
   XString8 BiosVersionUsed = XString8();
   XString8 EfiVersionUsed = XString8();
@@ -2914,7 +2914,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 void afterGetUserSettings(SETTINGS_DATA& gSettings);
 
 XStringW
-GetOtherKextsDir (BOOLEAN On);
+GetOtherKextsDir (XBool On);
 
 XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion);
 

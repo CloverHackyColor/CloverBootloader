@@ -147,8 +147,8 @@ StriCmp (
 	return *SecondS; //if all chars equal then compare sizes, last char in SecondS will be 0
 }
 
-// If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
-BOOLEAN
+// If Null-terminated strings are case insensitive equal or its sSize symbols are equal then true
+XBool
 AsciiStriNCmp(
               IN      CONST CHAR8              *FirstS,
               IN      CONST CHAR8              *SecondS,
@@ -158,16 +158,16 @@ AsciiStriNCmp(
     INTN i = sSize;
 	while ( i && (*FirstS != '\0') ) {
 		if ( (((*FirstS >= 'a') && (*FirstS <= 'z')) ? (*FirstS - ('a' - 'A')) : *FirstS ) !=
-            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) return FALSE;
+            (((*SecondS >= 'a') && (*SecondS <= 'z')) ? (*SecondS - ('a' - 'A')) : *SecondS ) ) return false;
 		FirstS++;
 		SecondS++;
         i--;
 	}
-	return TRUE;
+	return true;
 }
 
 // Case insensitive search of WhatString in WhereString
-BOOLEAN
+XBool
 AsciiStrStriN (
                IN      CONST CHAR8              *WhatString,
                IN      CONST UINTN               sWhatSize,
@@ -176,8 +176,8 @@ AsciiStrStriN (
               )
 {
   INTN i = sWhereSize;
-  BOOLEAN Found = FALSE;
-  if (sWhatSize > sWhereSize) return FALSE;
+  XBool Found = false;
+  if (sWhatSize > sWhereSize) return false;
   for (; i && !Found; i--) {
     Found = AsciiStriNCmp(WhatString, WhereString, sWhatSize);
     WhereString++;
@@ -306,31 +306,31 @@ EfiReallocatePool (
   @param FirstTime       - A pointer to the first EFI_TIME data.
   @param SecondTime      - A pointer to the second EFI_TIME data.
 
-  @retval  TRUE              The FirstTime is not later than the SecondTime.
-  @retval  FALSE             The FirstTime is later than the SecondTime.
+  @retval  true              The FirstTime is not later than the SecondTime.
+  @retval  false             The FirstTime is later than the SecondTime.
 
 **/
-BOOLEAN
+XBool
 TimeCompare (
   IN EFI_TIME               *FirstTime,
   IN EFI_TIME               *SecondTime
   )
 {
   if (FirstTime->Year != SecondTime->Year) {
-    return (BOOLEAN) (FirstTime->Year < SecondTime->Year);
+    return (XBool) (FirstTime->Year < SecondTime->Year);
   } else if (FirstTime->Month != SecondTime->Month) {
-    return (BOOLEAN) (FirstTime->Month < SecondTime->Month);
+    return (XBool) (FirstTime->Month < SecondTime->Month);
   } else if (FirstTime->Day != SecondTime->Day) {
-    return (BOOLEAN) (FirstTime->Day < SecondTime->Day);
+    return (XBool) (FirstTime->Day < SecondTime->Day);
   } else if (FirstTime->Hour != SecondTime->Hour) {
-    return (BOOLEAN) (FirstTime->Hour < SecondTime->Hour);
+    return (XBool) (FirstTime->Hour < SecondTime->Hour);
   } else if (FirstTime->Minute != SecondTime->Minute) {
-    return (BOOLEAN) (FirstTime->Minute < SecondTime->Minute);
+    return (XBool) (FirstTime->Minute < SecondTime->Minute);
   } else if (FirstTime->Second != SecondTime->Second) {
-    return (BOOLEAN) (FirstTime->Second < SecondTime->Second);
+    return (XBool) (FirstTime->Second < SecondTime->Second);
   }
 
-  return (BOOLEAN) (FirstTime->Nanosecond <= SecondTime->Nanosecond);
+  return (XBool) (FirstTime->Nanosecond <= SecondTime->Nanosecond);
 }
 
 /*

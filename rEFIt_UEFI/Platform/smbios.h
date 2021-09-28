@@ -242,7 +242,7 @@ extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;
 
 // TODO stop using globals.
 extern MEM_STRUCTURE            gRAM;
-extern BOOLEAN                  gMobile;
+extern XBool                  gMobile;
 
 
 

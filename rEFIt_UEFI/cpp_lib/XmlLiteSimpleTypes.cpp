@@ -430,7 +430,7 @@ if ( xmlPath.contains("CsrActiveConfig") ) {
     if ( valueLength >= 1  &&  ( (value[0] >= '0' && value[0] <= '9') || value[0] == '-' )  ) {  // Decimal value
       size_t idx = 0;
       if (value[idx] == '-') {
-        negative = TRUE;
+        negative = true;
         idx++;
       }
       for ( ; idx < valueLength; idx++)

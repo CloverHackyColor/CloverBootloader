@@ -1,10 +1,10 @@
 #include "../libeg/libeg.h"
 
-void InitScreen(IN BOOLEAN SetMaxResolution);
+void InitScreen(IN XBool SetMaxResolution);
 void SetupScreen(void);
 void BeginTextScreen(IN CONST CHAR16 *Title);
-void FinishTextScreen(IN BOOLEAN WaitAlways);
-void BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/);
+void FinishTextScreen(IN XBool WaitAlways);
+void BeginExternalScreen(IN XBool UseGraphicsMode/*, IN CONST CHAR16 *Title*/);
 void FinishExternalScreen(void);
 void TerminateScreen(void);
 void SetNextScreenMode(INT32);

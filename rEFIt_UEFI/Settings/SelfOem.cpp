@@ -63,7 +63,7 @@ bool SelfOem::_checkOEMPath()
     m_OemDir = NULL;
     return false;
   }
-  BOOLEAN res2 = FileExists(m_OemDir, SWPrintf("%s.plist", m_ConfName.c_str()));
+  XBool res2 = FileExists(m_OemDir, SWPrintf("%s.plist", m_ConfName.c_str()));
   if ( !res2 ) {
     DBG("_checkOEMPath looked for config file at '%ls\\%ls\\%s.plist'. File doesn't exist.\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), m_ConfName.c_str());
     m_OemDir->Close(m_OemDir);

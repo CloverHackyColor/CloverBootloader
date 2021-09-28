@@ -66,8 +66,8 @@ extern "C" {
 #define DBG(...) DebugLog(DEBUG_SECURE_MENU, __VA_ARGS__)
 #endif
 
-extern BOOLEAN gGuiIsReady;
-extern BOOLEAN gThemeNeedInit;
+extern XBool gGuiIsReady;
+extern XBool gThemeNeedInit;
 
 // Add secure boot tool entry
 void AddSecureBootTool(void)
@@ -108,7 +108,7 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   QueryEntry[] = {
 };
 /*commented out to avoid warning: STATIC*/ REFIT_SIMPLE_MENU_ENTRY_TAG  *QueryEntries[] = { QueryEntry, QueryEntry + 1, QueryEntry + 2 };
 //STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication"_XSW, L""_XSW, 3, NULL, 2, QueryEntries,
-//  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//  0, NULL, NULL, false, false, 0, 0, 0, 0,
 //  /*  FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
 STATIC REFIT_MENU_SCREEN  QueryUserMenu = { 0, L"Secure Boot Authentication"_XSW, L""_XSW }; // TODO:add QueryEntries
 
@@ -133,14 +133,14 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         DBG("VerifySecureBootImage: Query user for authentication action for %ls\n", QueryUserMenu.InfoLines[1].wc_str());
         // Because we may
         if (!gGuiIsReady) {
-          InitScreen(FALSE);
+          InitScreen(false);
           if (gThemeNeedInit) {
             UINTN      Size         = 0;
             InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size));
             ThemeX.ClearScreen();
-            gThemeNeedInit = FALSE;
+            gThemeNeedInit = false;
           }
-          gGuiIsReady = TRUE;
+          gGuiIsReady = true;
         }
         // Run the query menu
         do
@@ -244,11 +244,11 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
   } else if ((FileBuffer == NULL) || (FileSize == 0)) {
     // Load file by device path
     UINT32 AuthenticationStatus = 0;
-    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    FileBuffer = GetFileBufferByFilePath(false, DevicePath, &FileSize, &AuthenticationStatus);
     if (FileBuffer) {
       if (FileSize > 0) {
         // Create image signature
-        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, true);
         if (Database) {
           // Add the image signature to database
           if (EFI_ERROR(Status = AppendImageDatabaseToAuthorizedDatabase(Database, DatabaseSize))) {
@@ -267,7 +267,7 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
     }
   } else {
     // Create image signature
-    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, true);
     if (Database) {
       // Add the image signature to database
       if (EFI_ERROR(Status = AppendImageDatabaseToAuthorizedDatabase(Database, DatabaseSize))) {
@@ -318,11 +318,11 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
   } else if ((FileBuffer == NULL) || (FileSize == 0)) {
     // Load file by device path
     UINT32 AuthenticationStatus = 0;
-    FileBuffer = GetFileBufferByFilePath(FALSE, DevicePath, &FileSize, &AuthenticationStatus);
+    FileBuffer = GetFileBufferByFilePath(false, DevicePath, &FileSize, &AuthenticationStatus);
     if (FileBuffer) {
       if (FileSize > 0) {
         // Create image signature
-        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+        Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, true);
         if (Database) {
           // Remove the image signature from database
           if (EFI_ERROR(Status = RemoveImageDatabaseFromAuthorizedDatabase(Database, DatabaseSize))) {
@@ -341,7 +341,7 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
     }
   } else {
     // Create image signature
-    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, TRUE);
+    Database = GetImageSignatureDatabase(FileBuffer, FileSize, &DatabaseSize, true);
     if (Database) {
       // Remove the image signature from database
       if (EFI_ERROR(Status = RemoveImageDatabaseFromAuthorizedDatabase(Database, DatabaseSize))) {
@@ -386,7 +386,7 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   ClearImageSignatureEntry = { L"Clear image 
 STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   DisableSecureBootEntry = { L"Disable secure boot"_XSW, TAG_DISABLE, ActionEnter };
 /*commented out to avoid warning: STATIC*/ REFIT_ABSTRACT_MENU_ENTRY  *SecureBootEntries[] = { NULL, NULL, NULL, NULL, NULL, NULL };
 //STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration"_XSW, NULL, 0, NULL, 0, SecureBootEntries,
-//                                             0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//                                             0, NULL, NULL, false, false, 0, 0, 0, 0,
 //                                        /*   FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 }, NULL };
 STATIC REFIT_MENU_SCREEN  SecureBootMenu = { 0, L"Secure Boot Configuration"_XSW, L""_XSW }; // TODO: what was this SecureBootEntries array.
 
@@ -413,14 +413,14 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   SecureBootPolicyNameEntry[] = {
 
 //STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy", NULL, 0, NULL,
 //                                                   sizeof(SecureBootPolicyEntries) / sizeof(REFIT_MENU_ENTRY *), SecureBootPolicyEntries,
-//                                                   0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//                                                   0, NULL, NULL, false, false, 0, 0, 0, 0,
 //                                              /*    FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 } , NULL };
 STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy"_XSW, L""_XSW }; // TODO: add entries from SecureBootPolicyEntries
 
 // Configure secure boot
-BOOLEAN ConfigureSecureBoot(void)
+XBool ConfigureSecureBoot(void)
 {
-  BOOLEAN StillConfiguring = TRUE;
+  XBool StillConfiguring = true;
   do
   {
     UINTN             MenuExit;
@@ -510,21 +510,21 @@ BOOLEAN ConfigureSecureBoot(void)
           DBG("User disabled secure boot\n");
           DisableSecureBoot();
           if (!GlobalConfig.SecureBoot) {
-            return TRUE;
+            return true;
           }
           AlertMessage(L"Disable Secure Boot"_XSW, L"Disabling secure boot failed!\nClover does not appear to own the PK"_XSW);
         }
         break;
 
       default:
-        StillConfiguring = FALSE;
+        StillConfiguring = false;
         break;
       }
     } else if (MenuExit == MENU_EXIT_ESCAPE) {
-      StillConfiguring = FALSE;
+      StillConfiguring = false;
     }
   } while (StillConfiguring);
-  return FALSE;
+  return false;
 }
 
 #endif // ENABLE_SECURE_BOOT

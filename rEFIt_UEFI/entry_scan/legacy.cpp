@@ -57,7 +57,7 @@
 
 //the function is not in the class and deals always with MainMenu
 //I made args as pointers to have an ability to call with NULL
-BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& _LoaderTitle, IN REFIT_VOLUME *Volume, IN const XIcon* Image, IN const XIcon* DriveImage, IN char32_t Hotkey, IN BOOLEAN CustomEntry)
+XBool AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& _LoaderTitle, IN REFIT_VOLUME *Volume, IN const XIcon* Image, IN const XIcon* DriveImage, IN char32_t Hotkey, IN XBool CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -207,7 +207,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
 void ScanLegacy(void)
 {
   UINTN                   VolumeIndex, VolumeIndex2;
-  BOOLEAN                 ShowVolume, HideIfOthersFound;
+  XBool                 ShowVolume, HideIfOthersFound;
   REFIT_VOLUME            *Volume;
   
   DBG("Scanning legacy ...\n");
@@ -243,20 +243,20 @@ void ScanLegacy(void)
       continue;
     }
 //    DBG("not hidden\n");
-    ShowVolume = FALSE;
-    HideIfOthersFound = FALSE;
+    ShowVolume = false;
+    HideIfOthersFound = false;
     if (Volume->IsAppleLegacy) {
-      ShowVolume = TRUE;
-      HideIfOthersFound = TRUE;
+      ShowVolume = true;
+      HideIfOthersFound = true;
     } else if (Volume->HasBootCode) {
-      ShowVolume = TRUE;
+      ShowVolume = true;
 //      DBG("Volume %d will be shown BlockIo=%X WholeIo=%X\n",
 //        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
       if ((Volume->WholeDiskBlockIO == 0) &&
           Volume->BlockIOOffset == 0 /* &&
                                       Volume->OSName == NULL */)
         // this is a whole disk (MBR) entry; hide if we have entries for partitions
-        HideIfOthersFound = TRUE;
+        HideIfOthersFound = true;
 //      DBG("Hide it!\n");
     }
     if (HideIfOthersFound) {
@@ -267,7 +267,7 @@ void ScanLegacy(void)
         if (VolumeIndex2 != VolumeIndex &&
             Volumes[VolumeIndex2].HasBootCode &&
             Volumes[VolumeIndex2].WholeDiskBlockIO == Volume->BlockIO){
-          ShowVolume = FALSE;
+          ShowVolume = false;
 //         DBG("PBR volume at index %d\n", VolumeIndex2);
           break;
         }
@@ -276,7 +276,7 @@ void ScanLegacy(void)
     
     if (ShowVolume && (!Volume->Hidden)){
 //      DBG(" add legacy\n");
-      if (!AddLegacyEntry(L""_XSW, L""_XSW, Volume, NULL, NULL, 0, FALSE)) {
+      if (!AddLegacyEntry(L""_XSW, L""_XSW, Volume, NULL, NULL, 0, false)) {
         DBG("...entry not added\n");
       };
     } else {
@@ -289,7 +289,7 @@ void ScanLegacy(void)
 void AddCustomLegacy(void)
 {
   UINTN                VolumeIndex, VolumeIndex2;
-  BOOLEAN              ShowVolume, HideIfOthersFound;
+  XBool              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   XIcon MainIcon;
   XIcon DriveIcon;
@@ -338,17 +338,17 @@ void AddCustomLegacy(void)
         continue;
       }
       
-      ShowVolume = FALSE;
-      HideIfOthersFound = FALSE;
+      ShowVolume = false;
+      HideIfOthersFound = false;
       if (Volume->IsAppleLegacy) {
-        ShowVolume = TRUE;
-        HideIfOthersFound = TRUE;
+        ShowVolume = true;
+        HideIfOthersFound = true;
       } else if (Volume->HasBootCode) {
-        ShowVolume = TRUE;
+        ShowVolume = true;
         if ((Volume->WholeDiskBlockIO == 0) &&
             Volume->BlockIOOffset == 0) {
           // this is a whole disk (MBR) entry; hide if we have entries for partitions
-          HideIfOthersFound = TRUE;
+          HideIfOthersFound = true;
         }
       }
       if (HideIfOthersFound) {
@@ -358,7 +358,7 @@ void AddCustomLegacy(void)
           if (VolumeIndex2 != VolumeIndex &&
               Volumes[VolumeIndex2].HasBootCode &&
               Volumes[VolumeIndex2].WholeDiskBlockIO == Volume->BlockIO) {
-            ShowVolume = FALSE;
+            ShowVolume = false;
             break;
           }
         }
@@ -402,7 +402,7 @@ void AddCustomLegacy(void)
       }
       // Create a legacy entry for this volume
       DBG("\n");
-      if (AddLegacyEntry(Custom.settings.FullTitle, Custom.settings.Title, Volume, &MainIcon, &DriveIcon, Custom.settings.Hotkey, TRUE))
+      if (AddLegacyEntry(Custom.settings.FullTitle, Custom.settings.Title, Volume, &MainIcon, &DriveIcon, Custom.settings.Hotkey, true))
       {
 //        DBG("match!\n");
       }

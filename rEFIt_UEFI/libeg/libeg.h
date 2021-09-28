@@ -39,6 +39,7 @@
 
 //#include <Efi.h>
 
+#include "../cpp_foundation/XBool.h"
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/XBuffer.h"
@@ -99,7 +100,7 @@ typedef struct {
   INTN    CurrentSelection, LastSelection;
   INTN    MaxScroll, MaxIndex;
   INTN    FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
-  BOOLEAN IsScrolling, PaintAll, PaintSelection;
+  XBool IsScrolling, PaintAll, PaintSelection;
 } SCROLL_STATE;
 
 typedef enum {
@@ -115,8 +116,8 @@ typedef enum {
 class INPUT_ITEM {
 public:
   ITEM_TYPE     ItemType = BoolValue; //string, value, boolean
-  BOOLEAN       Valid = 0;
-  UINT8         BValue = 0; // was BOOLEAN, but value 2 is sometimes assigned.
+  XBool         Valid = false;
+  UINT8         BValue = 0; // was XBool, but value 2 is sometimes assigned.
   //UINT8         Pad8;
   UINT32        IValue = 0;
   XStringW      SValue = XStringW();
@@ -136,10 +137,10 @@ public:
 };
 
 typedef struct {
-  EFI_STATUS          LastStatus;
-  const EFI_FILE            *DirHandle;
-  BOOLEAN             CloseDirHandle;
-  EFI_FILE_INFO       *LastFileInfo;
+  EFI_STATUS          LastStatus = 0;
+  const EFI_FILE     *DirHandle = NULL;
+  XBool               CloseDirHandle = false;
+  EFI_FILE_INFO      *LastFileInfo = NULL;
 } REFIT_DIR_ITER;
 
 typedef struct {
@@ -226,7 +227,7 @@ typedef struct EG_RECT {
 /* functions */
 
 
-void    egInitScreen(IN BOOLEAN SetMaxResolution);
+void    egInitScreen(IN XBool SetMaxResolution);
 void    egDumpGOPVideoModes(void);
 //EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
 //EFI_STATUS egSetMaxResolution(void);
@@ -234,11 +235,11 @@ EFI_STATUS egSetMode(INT32 Next);
 
 void    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
 XString8 egScreenDescription(void);
-BOOLEAN egHasGraphicsMode(void);
-BOOLEAN egIsGraphicsModeEnabled(void);
-void    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
-// NOTE: Even when egHasGraphicsMode() returns FALSE, you should
-//  call egSetGraphicsModeEnabled(FALSE) to ensure the system
+XBool egHasGraphicsMode(void);
+XBool egIsGraphicsModeEnabled(void);
+void    egSetGraphicsModeEnabled(IN XBool Enable);
+// NOTE: Even when egHasGraphicsMode() returns false, you should
+//  call egSetGraphicsModeEnabled(false) to ensure the system
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 

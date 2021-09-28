@@ -60,20 +60,20 @@ UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN t
 /*
 UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec)
 {
-  BOOLEAN eq;
+  XBool eq;
   
   for (UINTN i = 0x20; i < len; i++) {
-    eq = TRUE;
+    eq = true;
     for (UINTN j = 0; j < 16 && (sec[j] != 0); j++) {
       if (Source[i + j] != sec[j]) {
-        eq = FALSE;
+        eq = false;
         break;
       }
     }
     if (eq) {
       for (UINTN j = 0; j < 16 && (seg[j] != 0); j++) {
         if (Source[i + 0x10 + j] != seg[j]) {
-          eq = FALSE;
+          eq = false;
           break;
         }
       }
@@ -143,10 +143,10 @@ void ExtractKextBundleIdentifier(CHAR8 *Plist)
   }
 }
 
-BOOLEAN
+XBool
 isPatchNameMatch (CHAR8   *BundleIdentifier, CHAR8   *Name)
 {
-  BOOLEAN   isBundle = (AsciiStrStr(Name, ".") != NULL);
+  XBool   isBundle = (AsciiStrStr(Name, ".") != NULL);
   return
     isBundle
       ? (AsciiStrCmp(BundleIdentifier, Name) == 0)
@@ -163,7 +163,7 @@ isPatchNameMatch (CHAR8   *BundleIdentifier, CHAR8   *Name)
 //
 
 // inited or not?
-BOOLEAN ATIConnectorsPatchInited = FALSE;
+XBool ATIConnectorsPatchInited = false;
 
 // ATIConnectorsController's boundle IDs for
 // 0: ATI version - Lion, SnowLeo 10.6.7 2011 MBP
@@ -193,7 +193,7 @@ void LOADER_ENTRY::ATIConnectorsPatchInit()
            KernelAndKextPatches.KPATIConnectorsController.c_str()
               );
   
-  ATIConnectorsPatchInited = TRUE;
+  ATIConnectorsPatchInited = true;
   
   //DBG(L"Bundle1: %s\n", ATIKextBundleId[0]);
   //DBG(L"Bundle2: %s\n", ATIKextBundleId[1]);
@@ -574,7 +574,7 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
     // now let's patch it
     if (macOSVersion < MacOsVersion("10.9"_XS8) || macOSVersion >= MacOsVersion("10.14"_XS8)) {
         DBG("Unsupported macOS.\nSandyBridge-E requires macOS 10.9 - 10.13.x, aborted\n");
-        DBG("SNBE_AICPUPatch() <===FALSE\n");
+        DBG("SNBE_AICPUPatch() <===false\n");
         return;
     }
     
@@ -1122,7 +1122,7 @@ void LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
   
     for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
       XString8& Name = KernelAndKextPatches.KextPatches[i].Name;
-      BOOLEAN   isBundle = Name.contains(".");
+      XBool   isBundle = Name.contains(".");
       if ((KernelAndKextPatches.KextPatches[i].Find.size() > 0) &&
           isBundle?(AsciiStrCmp(gKextBundleIdentifier, Name.c_str()) == 0):(AsciiStrStr(gKextBundleIdentifier, Name.c_str()) != NULL)) {
       //    (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name) != NULL)) {

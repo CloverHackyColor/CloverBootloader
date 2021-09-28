@@ -175,9 +175,9 @@ typedef struct NSVGshape
   char strokeLineCap;      // Stroke cap type.
   char fillRule;        // Fill rule, see NSVGfillRule.
   unsigned char flags;    // Logical or of NSVG_FLAGS_* flags
-  BOOLEAN isText;
-  BOOLEAN debug;
-  BOOLEAN isSymbol;
+  XBool isText;
+  XBool debug;
+  XBool isSymbol;
   float miterLimit;      // Miter limit
   float bounds[4];      // Tight bounding box of the shape [minx,miny,maxx,maxy].
   float xform[6];
@@ -208,7 +208,7 @@ typedef struct NSVGimage
   NSVGshape* shapes;      // Linked list of shapes in the image.
   NSVGgroup* groups;      // Linked list of all groups in the image
   NSVGpath* paths;        // Linked list of paths in the image.
-  BOOLEAN isFont;
+  XBool isFont;
   NSVGclipPath* clipPaths;
 } NSVGimage;
 
@@ -355,10 +355,10 @@ typedef struct NSVGfontChain {
 } NSVGfontChain;
 
 typedef struct textFaces {
-  NSVGfont *font;
-  UINT32 color;
-  INTN   size;
-  BOOLEAN valid;
+  NSVGfont *font = NULL;
+  UINT32 color = 0;
+  INTN   size = 0;
+  XBool valid = false;
 } textFaces;
 
 extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
@@ -425,7 +425,7 @@ typedef struct NSVGparser
   char styleFlag;
   char patternFlag;
   char symbolFlag;
-  BOOLEAN isText;
+  XBool isText;
   char unknown[64];
   NSVGtext* text;
   NSVGsymbol* symbols;

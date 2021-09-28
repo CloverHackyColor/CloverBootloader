@@ -34,7 +34,7 @@ static void panic_(const char* format, VA_LIST va)
 ;
 
 #ifdef CLOVER_BUILD
-extern void egSetGraphicsModeEnabled(BOOLEAN);
+extern void egSetGraphicsModeEnabled(XBool);
 extern const LString8 gBuildId;
 #endif
 

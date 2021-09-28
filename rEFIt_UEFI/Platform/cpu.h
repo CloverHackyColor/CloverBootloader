@@ -343,53 +343,53 @@ MSR C001006B  0000-0000-0000-0000
 
 typedef struct {
  //values from CPUID
-  UINT32                  CPUID[CPUID_MAX][4];
-  UINT32                  Vendor;
-  UINT32                  Signature;
-  UINT32                  Family;
-  UINT32                  Model;
-  UINT32                  Stepping;
-  UINT32                  Type;
-  UINT32                  Extmodel;
-  UINT32                  Extfamily;
-  UINT64                  Features;
-  UINT64                  ExtFeatures;
-  UINT32                  CoresPerPackage;
-  UINT32                  LogicalPerPackage;
-  CHAR8                   BrandString[48];
+  UINT32                  CPUID[CPUID_MAX][4] = {{0}};
+  UINT32                  Vendor = 0;
+  UINT32                  Signature = 0;
+  UINT32                  Family = 0;
+  UINT32                  Model = 0;
+  UINT32                  Stepping = 0;
+  UINT32                  Type = 0;
+  UINT32                  Extmodel = 0;
+  UINT32                  Extfamily = 0;
+  UINT64                  Features = 0;
+  UINT64                  ExtFeatures = 0;
+  UINT32                  CoresPerPackage = 0;
+  UINT32                  LogicalPerPackage = 0;
+  XString8                BrandString = XString8();
 
   //values from BIOS
-  UINT64                  ExternalClock;
-  UINT32                  MaxSpeed;       //MHz
-  UINT32                  CurrentSpeed;   //MHz
-//  UINT32                  Pad;
+  UINT64                  ExternalClock = 0;
+  UINT32                  MaxSpeed = 0;       //MHz
+  UINT32                  CurrentSpeed = 0;   //MHz
+//  UINT32                  Pad = 0;
 
   //calculated from MSR
-  UINT64                  MicroCode;
-  UINT64                  ProcessorFlag;
-  UINT32                  MaxRatio;
-  UINT32                  SubDivider;
-  UINT32                  MinRatio;
-  UINT32                  DynFSB;
-  UINT64                  ProcessorInterconnectSpeed; //MHz
-  UINT64                  FSBFrequency; //Hz
-  UINT64                  CPUFrequency;
-  UINT64                  TSCFrequency;
-  UINT8                   Cores;
-  UINT8                   EnabledCores;
-  UINT8                   Threads;
-  UINT8                   Mobile;  //not for i3-i7
-  BOOLEAN                 Turbo;
-  UINT8                   Pad2[3];
+  UINT64                  MicroCode = 0;
+  UINT64                  ProcessorFlag = 0;
+  UINT32                  MaxRatio = 0;
+  UINT32                  SubDivider = 0;
+  UINT32                  MinRatio = 0;
+  UINT32                  DynFSB = 0;
+  UINT64                  ProcessorInterconnectSpeed = 0; //MHz
+  UINT64                  FSBFrequency = 0; //Hz
+  UINT64                  CPUFrequency = 0;
+  UINT64                  TSCFrequency = 0;
+  UINT8                   Cores = 0;
+  UINT8                   EnabledCores = 0;
+  UINT8                   Threads = 0;
+  UINT8                   Mobile = 0;  //not for i3-i7
+  XBool                   Turbo = false;
+  UINT8                   Pad2[3] = {0};
 
   /* Core i7,5,3 */
-  UINT16                  Turbo1; //1 Core
-  UINT16                  Turbo2; //2 Core
-  UINT16                  Turbo3; //3 Core
-  UINT16                  Turbo4; //4 Core
+  UINT16                  Turbo1 = 0; //1 Core
+  UINT16                  Turbo2 = 0; //2 Core
+  UINT16                  Turbo3 = 0; //3 Core
+  UINT16                  Turbo4 = 0; //4 Core
 
-  UINT64                  TSCCalibr;
-  UINT64                  ARTFrequency;
+  UINT64                  TSCCalibr = 0;
+  UINT64                  ARTFrequency = 0;
 
 } CPU_STRUCTURE;
 

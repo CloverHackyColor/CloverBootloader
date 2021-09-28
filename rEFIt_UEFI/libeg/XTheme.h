@@ -61,7 +61,7 @@ public:
 //  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
-//  BOOLEAN     TextOnly;
+//  XBool     TextOnly;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;
@@ -75,10 +75,10 @@ public:
   XStringW    BackgroundName;
   SCALING     BackgroundScale;
   INTN        BackgroundSharp;
-  BOOLEAN     BackgroundDark;
-//  BOOLEAN     CustomIcons;
-  BOOLEAN     SelectionOnTop;
-  BOOLEAN     BootCampStyle;
+  XBool     BackgroundDark;
+//  XBool     CustomIcons;
+  XBool     SelectionOnTop;
+  XBool     BootCampStyle;
   INTN        BadgeOffsetX;
   INTN        BadgeOffsetY;
   INTN        BadgeScale;
@@ -90,17 +90,17 @@ public:
   INTN        BannerEdgeVertical;
   INTN        BannerNudgeX;
   INTN        BannerNudgeY;
-  BOOLEAN     VerticalLayout;
-  BOOLEAN     NonSelectedGrey;
+  XBool     VerticalLayout;
+  XBool     NonSelectedGrey;
   INTN        MainEntriesSize;
   INTN        TileXSpace;
   INTN        TileYSpace;
 //  INTN        IconFormat;
-  BOOLEAN     Proportional;
-//  BOOLEAN     ShowOptimus;
-  BOOLEAN     embedded;
-  BOOLEAN     DarkEmbedded;
-  BOOLEAN     TypeSVG;
+  XBool     Proportional;
+//  XBool     ShowOptimus;
+  XBool     embedded;
+  XBool     DarkEmbedded;
+  XBool     TypeSVG;
 //  INTN        Codepage;  //no! it is global settings
 //  INTN        CodepageSize;
   float       Scale;
@@ -123,7 +123,7 @@ public:
   INTN  FontHeight;
   INTN  TextHeight;
 
-  BOOLEAN     Daylight;
+  XBool     Daylight;
 
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
@@ -168,7 +168,7 @@ public:
   bool CheckNative(INTN Id);
  
   //fonts
-  void LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols);
+  void LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols);
   void PrepareFont();
   INTN GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN MaxWidth, INTN Start, INTN Step);
   INTN RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,

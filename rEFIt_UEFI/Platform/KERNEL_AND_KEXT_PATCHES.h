@@ -119,7 +119,7 @@ class KEXT_PATCH : public ABSTRACT_KEXT_OR_KERNEL_PATCH
   using super = ABSTRACT_KEXT_OR_KERNEL_PATCH;
 public:
   XString8         Name = XString8();
-  bool             IsPlistPatch = BOOLEAN();
+  bool             IsPlistPatch = XBool();
 
 
   virtual XString8 getName() const { return Name; }

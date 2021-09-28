@@ -36,11 +36,11 @@ GetModeImpl (
   *Mode = CurrentMode;
 
   if (GopUgaExists) {
-    *GopUgaExists = TRUE;
+    *GopUgaExists = true;
   }
 
   if (StdInLocked) {
-    *StdInLocked  = FALSE;
+    *StdInLocked  = false;
   }
 
   return EFI_SUCCESS;

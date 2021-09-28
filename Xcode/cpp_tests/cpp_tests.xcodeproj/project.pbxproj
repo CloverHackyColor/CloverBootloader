@@ -3462,7 +3462,7 @@
 		9A82F7F326184670006F973B /* update_generated.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = update_generated.py; sourceTree = "<group>"; };
 		9A82F7F426184670006F973B /* update_products.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = update_products.py; sourceTree = "<group>"; };
 		9A82F7F526184670006F973B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		9A82F7F626184670006F973B /* Products.zjson */ = {isa = PBXFileReference; lastKnownFileType = file; path = Products.zjson; sourceTree = "<group>"; };
+		9A82F7F626184670006F973B /* Products.zjson */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.zjson; sourceTree = "<group>"; };
 		9A82F7F726184670006F973B /* DataBase.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DataBase.md; sourceTree = "<group>"; };
 		9A82F7F926184670006F973B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9A82F7FB26184670006F973B /* hfs_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hfs_format.h; sourceTree = "<group>"; };
@@ -13786,6 +13786,7 @@
 					"___NOT___ENABLE_SECURE_BOOT",
 					"sprintf=__sprintf_is_disabled__",
 					"wcscmp=__wcsncmp_is_disabled__",
+					OC_TARGET_DEBUG,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -13836,6 +13837,11 @@
 				OTHER_CFLAGS = (
 					"-include",
 					Platform.h,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-include",
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_foundation/XBool.h,
 				);
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
@@ -13907,6 +13913,7 @@
 					"___NOT___ENABLE_SECURE_BOOT",
 					"sprintf=__sprintf_is_disabled__",
 					"wcscmp=__wcsncmp_is_disabled__",
+					OC_TARGET_DEBUG,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -13956,6 +13963,11 @@
 				OTHER_CFLAGS = (
 					"-include",
 					Platform.h,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-include",
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_foundation/XBool.h,
 				);
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;

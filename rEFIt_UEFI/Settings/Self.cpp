@@ -206,7 +206,7 @@ EFI_STATUS Self::_initialize()
 //
 //  // Do this before the next check.
 //  if ( !m_CloverDirFullPath.startWith('\\') ) {
-//    //CHAR16* f = ConvertDevicePathToText(m_SelfLoadedImage->FilePath, TRUE, TRUE);
+//    //CHAR16* f = ConvertDevicePathToText(m_SelfLoadedImage->FilePath, true, true);
 //    //panic("Bad format for m_CloverDirFullPath(%ls). It must start with a '\\'.\nConvertDevicePathToText=%ls", m_CloverDirFullPath.wc_str(), f);
 //    //
 //    // Some firmware seems to not put a '\' at the begining. Do not panic anymore, just add it.

@@ -87,7 +87,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
       if ((Id == BUILTIN_SELECTION_BIG) ||
           (Id == BUILTIN_ICON_BACKGROUND) ||
           (Id == BUILTIN_ICON_BANNER)) {
-        shape->debug = TRUE;
+        shape->debug = true;
       } */
 //      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
 //        shape->opacity = 0.f;
@@ -196,7 +196,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
 //    DBG("icon %s width=%f height=%f\n", IconNameX.c_str(), Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
-//  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
+//  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, true, &MenuBackgroundPixel);
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
     *Image = NewImage;
@@ -422,7 +422,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
 //  nsvgDeleteRasterizer(rast);
   
-  TypeSVG = TRUE;
+  TypeSVG = true;
   ThemeDesignHeight = (int)SVGimage->height;
   ThemeDesignWidth = (int)SVGimage->width;
   if (SelectionOnTop) {
@@ -510,7 +510,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   Scale = sy;
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
-  p->isText = TRUE;
+  p->isText = true;
   size_t len = string.length();
   for (size_t i=0; i < len; i++) {
     CHAR16 letter = string.char16At(i);
@@ -579,7 +579,7 @@ void testSVG()
     NSVGparser* p;
 #if TEST_DITHER
     {
-      EG_IMAGE        *RndImage = egCreateImage(256, 256, FALSE);
+      EG_IMAGE        *RndImage = egCreateImage(256, 256, false);
       INTN i,j;
       EG_PIXEL pixel = WhitePixel;
       for (i=0; i<256; i++) {

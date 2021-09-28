@@ -68,7 +68,7 @@
 //LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
 
 
-//void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
+//void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, XBool LoadVBios)
 //{
 //	CARDLIST* new_card = new CARDLIST;
 //  new_card->Signature = CARDLIST_SIGNATURE;

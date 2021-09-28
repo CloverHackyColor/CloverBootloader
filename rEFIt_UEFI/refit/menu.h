@@ -38,7 +38,7 @@ void FreeScrollBar(void);
 
 void
 FillInputs (
-  BOOLEAN New
+  XBool New
   );
 
 void

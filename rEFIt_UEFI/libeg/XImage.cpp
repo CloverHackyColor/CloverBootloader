@@ -749,7 +749,7 @@ EFI_STATUS XImage::LoadIcns(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName, 
     }
 
     // decode it
-//    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+//    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, true);
 //    Status = FromEGImage(NewImage);
     Status = FromICNS(FileData, FileDataLength, PixelSize);
     FreePool(FileData);

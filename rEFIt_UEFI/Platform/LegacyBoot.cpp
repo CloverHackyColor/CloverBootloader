@@ -197,7 +197,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Regs.H.DL = DriveNum;
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
-		// TRUE = error
+		// true = error
     DBG("Reset 0 disk controller: %hhX\n", DriveNum);
     Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset disk controller
     Regs.H.DL = DriveNum;
@@ -220,7 +220,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
-		// TRUE = error
+		// true = error
     Regs.H.AH = 0x01;		// INT 13h AH=01h: Get Status of Last Drive Operation
     LegacyBiosInt86(0x13, &Regs);
 		Status = EFI_NOT_FOUND;
@@ -681,7 +681,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	Regs.H.DL = 0x80;
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
-		// TRUE = error
+		// true = error
 		Status = EFI_NOT_FOUND;
     DBG("reset controller 0x80 error\n");
     //		return Status;
@@ -749,7 +749,7 @@ gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
 /** For BIOS and some UEFI boots.
  * Loads partition boot record (PBR) and starts it.
  */
-EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
+EFI_STATUS bootPBR(REFIT_VOLUME* volume, XBool SataReset)
 {
   EFI_STATUS					Status;
   EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
@@ -963,7 +963,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
     Regs.X.SI = (UINT16)(UINTN)pMBR;
   }
 
-	DBG("mbr: %d index: %llX pointer: %llX dx: %hX si: %hX\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
+	DBG("mbr: %d index: %llX pointer: %llX dx: %hX si: %hX\n", (bool)volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
 	DBG("pmbr: %llX start: %X size: %X\n", (uintptr_t)&pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
 
   //

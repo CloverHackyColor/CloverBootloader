@@ -164,10 +164,10 @@ void SaveMergedXsdtEntrySize(UINT32 Index, UINTN Size)
   }
 }
 
-BOOLEAN IsXsdtEntryMerged(UINT32 Index)
+XBool IsXsdtEntryMerged(UINT32 Index)
 {
   if (!XsdtReplaceSizes) {
-    return FALSE;
+    return false;
   }
   return 0 != XsdtReplaceSizes[Index];
 }
@@ -249,7 +249,7 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   DropTable->Signature = Table->Signature;
   DropTable->TableId = Table->OemTableId;
   DropTable->Length = Table->Length;
-  DropTable->MenuItem.BValue = FALSE;
+  DropTable->MenuItem.BValue = false;
   DropTable->Next = GlobalConfig.ACPIDropTables;
   GlobalConfig.ACPIDropTables = DropTable;
 }
@@ -378,29 +378,29 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
 
 
 // by cecekpawon, edited by Slice, further edits by RehabMan
-BOOLEAN FixAsciiTableHeader(UINT8 *Str, UINTN Len)
+XBool FixAsciiTableHeader(UINT8 *Str, UINTN Len)
 {
-  BOOLEAN NonAscii = FALSE;
+  XBool NonAscii = false;
   UINT8* StrEnd = Str + Len;
   for (; Str < StrEnd; Str++) {
     if (!*Str) continue; // NUL is allowed
     if (*Str < ' ') {
       *Str = ' ';
-      NonAscii = TRUE;
+      NonAscii = true;
     }
     else if (*Str > 0x7e) {
       *Str = '_';
-      NonAscii = TRUE;
+      NonAscii = true;
     }
   }
   return NonAscii;
 }
 
-BOOLEAN PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
+XBool PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 {
-  BOOLEAN Ret1, Ret2, Ret3;
+  XBool Ret1, Ret2, Ret3;
   if ( !gSettings.ACPI.FixHeaders ) {
-    return FALSE;
+    return false;
   }
   Ret1 = FixAsciiTableHeader((UINT8*)&Header->CreatorId, 4);
   Ret2 = FixAsciiTableHeader((UINT8*)&Header->OemTableId, 8);
@@ -414,7 +414,7 @@ void PatchAllTables()
   UINT64* Ptr = XsdtEntryPtrFromIndex(0);
   UINT64* EndPtr = XsdtEntryPtrFromIndex(Count);
   for (; Ptr < EndPtr; Ptr++) {
-    BOOLEAN Patched = FALSE;
+    XBool Patched = false;
     EFI_ACPI_DESCRIPTION_HEADER* Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)ReadUnaligned64(Ptr);
     if (!Table) {
       // skip NULL entry
@@ -478,12 +478,12 @@ void PatchAllTables()
       NewTable->Length = Len;
       RenameDevices((UINT8*)NewTable);
       GetBiosRegions((UINT8*)NewTable);  //take Regions from SSDT even if they will be dropped
-      Patched = TRUE;
+      Patched = true;
     }
     if (NewTable->Signature == MCFG_SIGN && gSettings.ACPI.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;
       CopyMem(NewTable, Table, Len1); //Len increased but less than EFI_PAGE
-      NewTable->Length = (UINT32)(UINTN)Len1;      Patched = TRUE;
+      NewTable->Length = (UINT32)(UINTN)Len1;      Patched = true;
     }
     if (Patched) {
       WriteUnaligned64(Ptr, BufferPtr);
@@ -776,19 +776,19 @@ void   **mSavedTables = NULL;
 UINTN   mSavedTablesEntries = 0;
 UINTN   mSavedTablesNum = 0;
 
-/** Returns TRUE is TableEntry is already saved. */
-BOOLEAN IsTableSaved(void *TableEntry)
+/** Returns true is TableEntry is already saved. */
+XBool IsTableSaved(void *TableEntry)
 {
   UINTN   Index;
 
   if (mSavedTables != NULL) {
     for (Index = 0; Index < mSavedTablesNum; Index++) {
       if (mSavedTables[Index] == TableEntry) {
-        return TRUE;
+        return true;
       }
     }
   }
-  return FALSE;
+  return false;
 }
 
 /** Adds TableEntry to mSavedTables if not already there. */
@@ -1451,7 +1451,7 @@ void SaveOemTables()
 //  EFI_STATUS              Status;
   void                   *RsdPtr;
   XStringW                AcpiOriginPath = L"ACPI\\origin"_XSW;
-  BOOLEAN                 Saved = FALSE;
+  XBool                 Saved = false;
   CHAR8                  *MemLogStart;
   UINTN                   MemLogStartLen;
 
@@ -1469,7 +1469,7 @@ void SaveOemTables()
     if (gFirmwareClover) {
       // Save it
       DumpTables(RsdPtr, AcpiOriginPath.wc_str());
-      Saved = TRUE;
+      Saved = true;
     } else {
       // just print to log
       DumpTables(RsdPtr, NULL);
@@ -1484,7 +1484,7 @@ void SaveOemTables()
     DBG("Found UEFI Acpi 2.0 RSDP at %llx\n", (UINTN)RsdPtr);
     // if tables already saved, then just print to log
     DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath.wc_str());
-    Saved = TRUE;
+    Saved = true;
   }
   //
   // Then search Acpi 1.0 UEFI Sys.Tables
@@ -1495,13 +1495,13 @@ void SaveOemTables()
     DBG("Found UEFI Acpi 1.0 RSDP at %llx\n", (UINTN)RsdPtr);
     // if tables already saved, then just print to log
     DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath.wc_str());
-    //    Saved = TRUE;
+    //    Saved = true;
   }
   SaveBufferToDisk(MemLogStart, GetMemLogLen() - MemLogStartLen, AcpiOriginPath.wc_str(), L"DumpLog.txt");
   FreePool(mSavedTables);
 }
 
-void SaveOemDsdt(BOOLEAN FullPatch)
+void SaveOemDsdt(XBool FullPatch)
 {
   EFI_STATUS                                    Status = EFI_NOT_FOUND;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
@@ -1580,7 +1580,7 @@ void SaveOemDsdt(BOOLEAN FullPatch)
   }
 }
 
-BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST CHAR16* PartName, UINTN Pass)
+XBool LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST CHAR16* PartName, UINTN Pass)
 {
   // pass1 prefilter based on file names (optimization that avoids loading same files twice)
   UINTN Index = IGNORE_INDEX;
@@ -1592,7 +1592,7 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
     // special case for SSDT.aml: no attempt to merge
     if (0 == StriCmp(PartName, L"SSDT.aml") || (8 != StrLen(PartName) && IGNORE_INDEX == Index)) {
       DBG("ignore on pass 1\n");
-      return FALSE;
+      return false;
     }
   }
   UINT8 *buffer = NULL;
@@ -1603,7 +1603,7 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
       EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
       if (TableHeader->Length > 500 * Kilo) {
         DBG("wrong table\n");
-        return FALSE;
+        return false;
       }
     }
     DBG("size=%lld ", (UINT64)bufferLen);
@@ -1716,8 +1716,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   //  UINTN             ApicLen;
   UINTN              ApicCPUNum;
   UINT8             *SubTable;
-  BOOLEAN            DsdtLoaded = FALSE;
-  BOOLEAN            NeedUpdate = FALSE;
+  XBool            DsdtLoaded = false;
+  XBool            NeedUpdate = false;
   OPER_REGION       *tmpRegion;
 //  XStringW           AcpiOemPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
@@ -1787,7 +1787,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
         NewRsdPointer->Revision = 2;
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
-        NeedUpdate = TRUE;
+        NeedUpdate = true;
         //        gBS->InstallConfigurationTable(&gEfiAcpiTableGuid, RsdPointer);
         //        DBG("first install success\n");
         //        gBS->InstallConfigurationTable(&gEfiAcpi10TableGuid, RsdPointer);
@@ -1868,7 +1868,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     //should correct headers if needed and if asked
     PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)newFadt);
 
-    if (gSettings.ACPI.smartUPS==TRUE) {
+    if (gSettings.ACPI.smartUPS==true) {
       newFadt->PreferredPmProfile = 3;
     } else {
       newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
@@ -2002,7 +2002,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   //apply DSDT loaded from a file into buffer
   //else FADT will contain old BIOS DSDT
   //
-  DsdtLoaded = FALSE;
+  DsdtLoaded = false;
   if (!EFI_ERROR(Status)) {
     // if we will apply fixes, allocate additional space
     bufferLen = bufferLen + bufferLen / 8;
@@ -2022,7 +2022,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
       FadtPointer->Dsdt  = (UINT32)dsdt;
       FadtPointer->XDsdt = dsdt;
       FixChecksum(&FadtPointer->Header);
-      DsdtLoaded = TRUE;
+      DsdtLoaded = true;
     }
   }
   if(buffer) FreePool(buffer); //the buffer is allocated if egLoadFile() is success. Else the pointer must be nullptr
@@ -2420,7 +2420,7 @@ EFI_STATUS LoadAndInjectAcpiTable(CONST CHAR16 *PathPatched,
 /**
  * Patches UEFI ACPI tables with tables found in OsSubdir.
  */
-EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
+EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, XBool DropSSDT)
 {
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER    *RsdPointer;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE       *FadtPointer;

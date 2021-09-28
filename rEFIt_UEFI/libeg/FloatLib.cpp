@@ -391,7 +391,7 @@ int dither(float x, int level)
 }
 //there is
 #if 0
-BOOLEAN
+XBool
 EFIAPI
 AsmRdRand16 (
              OUT     UINT16                    *Rand

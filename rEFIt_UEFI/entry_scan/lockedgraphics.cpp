@@ -72,7 +72,7 @@ static EFI_BOOT_SERVICES  OldBootServices;
 // The locked graphics collection
 static LOCKED_GRAPHICS   *LockedGraphics;
 // The screen lock
-static BOOLEAN            ScreenIsLocked;
+static XBool            ScreenIsLocked;
 
 static EFI_STATUS EFIAPI LockedGOPBlt(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL IN EFI_GRAPHICS_OUTPUT_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
 {
@@ -102,7 +102,7 @@ static EFI_STATUS EFIAPI LockedGOPQueryMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Thi
 
 static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface)
 {
-  BOOLEAN          Modify = TRUE;
+  XBool          Modify = true;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||
@@ -121,7 +121,7 @@ static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
       return EFI_SUCCESS;
     }
     if (Ptr->GOPInterface == GOPInterface) {
-      Modify = FALSE;
+      Modify = false;
     }
     Ptr = Ptr->Next;
   }
@@ -296,7 +296,7 @@ static EFI_STATUS RemoveLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Ag
 
 static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_UGA_DRAW_PROTOCOL *UGAInterface)
 {
-  BOOLEAN          Modify = TRUE;
+  XBool          Modify = true;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||
@@ -315,7 +315,7 @@ static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
       return EFI_SUCCESS;
     }
     if (Ptr->UGAInterface == UGAInterface) {
-       Modify = FALSE;
+       Modify = false;
     }
     Ptr = Ptr->Next;
   }
@@ -489,7 +489,7 @@ EFI_STATUS LockBootScreen(void)
   LockGraphicsGOP();
   LockGraphicsUGA();
   // Lock screen
-  ScreenIsLocked = TRUE;
+  ScreenIsLocked = true;
   return EFI_SUCCESS;
 }
 
@@ -513,6 +513,6 @@ EFI_STATUS UnlockBootScreen(void)
   // Restore locate handle, open and close protocol
   CopyMem(gBS, &OldBootServices, sizeof(EFI_BOOT_SERVICES));
   // Unlock
-  ScreenIsLocked = FALSE;
+  ScreenIsLocked = false;
   return EFI_SUCCESS;
 }

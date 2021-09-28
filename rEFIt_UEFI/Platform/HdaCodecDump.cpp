@@ -60,7 +60,7 @@ CONST CHAR8 *gColors[HDA_CONFIG_DEFAULT_COLOR_OTHER + 1] = {
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 
-#define HdaLog(format, ...)  MemLogf(FALSE, 0, format, ##__VA_ARGS__)
+#define HdaLog(format, ...)  MemLogf(false, 0, format, ##__VA_ARGS__)
 
 //#pragma clang diagnostic pop
 
@@ -446,7 +446,7 @@ EFI_STATUS SaveHdaDumpBin()
 			HdaWidget.ConnectionSelect = 0;
 			HdaWidget.SupportedPowerStates = Widgets[w].SupportedPowerStates;
 			HdaWidget.DefaultPowerState = Widgets[w].DefaultPowerState;
-			HdaWidget.AmpOverride = Widgets[w].AmpOverride;
+			HdaWidget.AmpOverride = Widgets[w].AmpOverride != 0;
 			HdaWidget.AmpInCapabilities = Widgets[w].AmpInCapabilities;
 			HdaWidget.AmpOutCapabilities = Widgets[w].AmpOutCapabilities;
 			HdaWidget.AmpOutLeftDefaultGainMute = Widgets[w].AmpOutLeftDefaultGainMute;

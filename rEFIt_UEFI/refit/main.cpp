@@ -118,9 +118,9 @@
 
 // variables
 
-BOOLEAN                 gGuiIsReady     = FALSE;
-BOOLEAN                 gThemeNeedInit  = TRUE;
-BOOLEAN                 DoHibernateWake = FALSE;
+XBool                 gGuiIsReady     = false;
+XBool                 gThemeNeedInit  = true;
+XBool                 DoHibernateWake = false;
 
 
 EFI_HANDLE ConsoleInHandle;
@@ -132,7 +132,7 @@ XStringW OpenRuntimeEfiName;
 
 extern void HelpRefit(void);
 extern void AboutRefit(void);
-//extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
+//extern XBool BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
@@ -166,7 +166,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // load the image into memory
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
-    ReturnStatus = Status = gBS->LoadImage(FALSE, self.getSelfImageHandle(), DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
+    ReturnStatus = Status = gBS->LoadImage(false, self.getSelfImageHandle(), DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
     DBG(" status=%s", efiStrError(Status));
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
@@ -561,7 +561,7 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *, IN CONST CHAR16 *) 
 
 void CheckEmptyFB()
 {
-  BOOLEAN EmptyFB = (GlobalConfig.IgPlatform == 0x00050000) ||
+  XBool EmptyFB = (GlobalConfig.IgPlatform == 0x00050000) ||
   (GlobalConfig.IgPlatform == 0x01620007) ||
   (GlobalConfig.IgPlatform == 0x04120004) ||
   (GlobalConfig.IgPlatform == 0x19120001) ||
@@ -648,20 +648,20 @@ void debugStartImageWithOC()
   UINTN HandleIndex = 0;
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     EFI_DEVICE_PATH_PROTOCOL* DevicePath = DevicePathFromHandle(Handles[HandleIndex]);
-    CHAR16* UnicodeDevicePath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
+    CHAR16* UnicodeDevicePath = ConvertDevicePathToText(DevicePath, false, false);
     MsgLog("debugStartImageWithOC : path %ls\n", UnicodeDevicePath);
     if ( StrCmp(devicePathToLookFor.wc_str(), UnicodeDevicePath) == 0 ) break;
   }
   if ( HandleIndex < HandleCount )
   {
     EFI_DEVICE_PATH_PROTOCOL* jfkImagePath = FileDevicePath(Handles[HandleIndex], L"\\System\\Library\\CoreServices\\boot.efi");
-    CHAR16* UnicodeDevicePath = ConvertDevicePathToText (jfkImagePath, FALSE, FALSE); (void)UnicodeDevicePath;
+    CHAR16* UnicodeDevicePath = ConvertDevicePathToText (jfkImagePath, false, false); (void)UnicodeDevicePath;
 
     EFI_HANDLE EntryHandle = NULL;
 
     // point to InternalEfiLoadImage from OC
     Status = gBS->LoadImage (
-      FALSE,
+      false,
       gImageHandle,
       jfkImagePath,
       NULL,
@@ -1122,11 +1122,11 @@ void LOADER_ENTRY::StartLoader()
       }
   #if 1
       //CFBundleExecutable
-      BOOLEAN   NoContents = FALSE;
+      XBool   NoContents = false;
       XStringW  infoPlistPath = getKextPlist(dirPath, KextEntry, &NoContents); //it will be fullPath, including dir
       TagDict*  dict = getInfoPlist(infoPlistPath);
-  //    BOOLEAN inject = checkOSBundleRequired(dict);
-      BOOLEAN inject = true;
+  //    XBool inject = checkOSBundleRequired(dict);
+      XBool inject = true;
       if (inject) {
         if ( infoPlistPath.notEmpty()) {
           if (NoContents) {
@@ -1221,7 +1221,7 @@ void LOADER_ENTRY::StartLoader()
     {
       // point to InternalEfiLoadImage from OC
       Status = gBS->LoadImage (
-        FALSE,
+        false,
         gImageHandle,
         DevicePath,
         NULL,
@@ -1248,7 +1248,7 @@ void LOADER_ENTRY::StartLoader()
             PreviousNode = Node;
             break;
         }
-  //      CHAR16* s1 = ConvertDeviceNodeToText(Node, FALSE, FALSE);
+  //      CHAR16* s1 = ConvertDeviceNodeToText(Node, false, false);
   //      MsgLog("Split DevicePath = %ls\n", s1);
         PreviousNode = Node;
         Node = NextDevicePathNode(Node);
@@ -1266,7 +1266,7 @@ void LOADER_ENTRY::StartLoader()
 
       // point to InternalEfiLoadImage from OC
       Status = gBS->LoadImage (
-        FALSE,
+        false,
         gImageHandle,
         BootEfiFromDmgDevicePath,
         NULL,
@@ -1313,8 +1313,8 @@ void LOADER_ENTRY::StartLoader()
     // 1. Ensure we have graphics mode set (since it is a must in the future).
     // 2. Request text mode for boot.efi, which it expects by default (here a SetMode libeg hack will trigger
     //    on problematic UEFI implementations like AMI).
-    egSetGraphicsModeEnabled(TRUE);
-    egSetGraphicsModeEnabled(FALSE);
+    egSetGraphicsModeEnabled(true);
+    egSetGraphicsModeEnabled(false);
 
     DBG("GetOSVersion:");
 
@@ -1462,7 +1462,7 @@ void LOADER_ENTRY::StartLoader()
      */
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-       (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
+       (gCPUStructure.BrandString.contains("Celeron") || gCPUStructure.BrandString.contains("Pentium")) &&
        macOSVersion >= MacOsVersion("10.8.5"_XS8)  &&  macOSVersion < MacOsVersion("10.12"_XS8)  &&
        (!LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
@@ -1523,7 +1523,7 @@ void LOADER_ENTRY::StartLoader()
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
 
-    PatchACPI_OtherOS(L"Windows", FALSE);
+    PatchACPI_OtherOS(L"Windows", false);
     //PauseForKey(L"continue");
 
   }
@@ -1538,7 +1538,7 @@ void LOADER_ENTRY::StartLoader()
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
     //FinalizeSmbios();
-    PatchACPI_OtherOS(L"Linux", FALSE);
+    PatchACPI_OtherOS(L"Linux", false);
     //PauseForKey(L"continue");
   }
 
@@ -1610,7 +1610,7 @@ void LOADER_ENTRY::StartLoader()
       gBS->CloseEvent (mSimpleFileSystemChangeEvent);
 //      gBS->CloseEvent (mVirtualAddressChangeEvent);
       // When doing hibernate wake, save to DataHub only up to initial size of log
-      SavePreBootLog = FALSE;
+      SavePreBootLog = false;
     } else {
       // delete boot-switch-vars if exists
       Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
@@ -1731,7 +1731,7 @@ void LEGACY_ENTRY::StartLegacy()
 
 
   egClearScreen(&MenuBackgroundPixel);
-  BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
+  BeginExternalScreen(true/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
   BootLogoX.LoadXImage(&ThemeX.getThemeDir(), Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
@@ -1751,10 +1751,10 @@ void LEGACY_ENTRY::StartLegacy()
           } else if (gSettings.Boot.LegacyBoot == "PBRtest"_XS8) {
             Status = bootPBRtest(Volume);
           } else if (gSettings.Boot.LegacyBoot == "PBRsata"_XS8) {
-            Status = bootPBR(Volume, TRUE);
+            Status = bootPBR(Volume, true);
           } else {
             // default
-            Status = bootPBR(Volume, FALSE);
+            Status = bootPBR(Volume, false);
           }
           break;
         default:
@@ -1793,7 +1793,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   UINTN                   DriversArrSize;
   UINTN                   DriversArrNum;
   EFI_HANDLE              *DriversArr;
-  BOOLEAN                 Skip;
+  XBool                 Skip;
   UINT8                   AptioBlessed;
   STATIC CHAR16 CONST * CONST AptioNames[] = {
     L"AptioMemoryFix",
@@ -1817,9 +1817,9 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 
 //only one driver with highest priority will obtain status "Loaded"
   DirIterOpen(&self.getCloverDir(), Path, &DirIter);
-#define BOOLEAN_AT_INDEX(k) (*(BOOLEAN*)((UINTN)&gDriversFlags + AptioIndices[(k)]))
+#define BOOLEAN_AT_INDEX(k) (*(XBool*)((UINTN)&gDriversFlags + AptioIndices[(k)]))
   for (size_t i = 0; i != ARRAY_SIZE(AptioIndices); ++i)
-    BOOLEAN_AT_INDEX(i) = FALSE;
+    BOOLEAN_AT_INDEX(i) = false;
   AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
   while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
     size_t i;
@@ -1840,11 +1840,14 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     Skip = (DirEntry->FileName[0] == L'.');
     for (size_t i=0; i<gSettings.DisabledDriverArray.size(); i++) {
       if (StrStr(DirEntry->FileName, gSettings.DisabledDriverArray[i].wc_str()) != NULL) {
-        Skip = TRUE;   // skip this
+        Skip = true;   // skip this
         break;
       }
     }
     if (Skip) {
+      continue;
+    }
+    if ( LStringW(DirEntry->FileName).startWith("._") ) {
       continue;
     }
     if ( LStringW(DirEntry->FileName).containsIC("OcQuirks") ) {
@@ -1878,7 +1881,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
         if (((UINT8) i) != AptioBlessed)
           continue;
         if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
-          BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
+          BOOLEAN_AT_INDEX(AptioBlessed) = true;
         AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
       }
     }
@@ -1893,15 +1896,15 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       AudioDriverHandle = DriverHandle;
     }
     if ( FileName.containsIC("EmuVariable") ) {
-      gDriversFlags.EmuVariableLoaded = TRUE;
+      gDriversFlags.EmuVariableLoaded = true;
     } else if ( FileName.containsIC("Video") ) {
-      gDriversFlags.VideoLoaded = TRUE;
+      gDriversFlags.VideoLoaded = true;
     } else if ( FileName.containsIC("Partition") ) {
-      gDriversFlags.PartitionLoaded = TRUE;
+      gDriversFlags.PartitionLoaded = true;
     } else if ( FileName.containsIC("HFS") ) {
-      gDriversFlags.HFSLoaded = TRUE;
+      gDriversFlags.HFSLoaded = true;
     } else if ( FileName.containsIC("apfs") ) {
-      gDriversFlags.APFSLoaded = TRUE;
+      gDriversFlags.APFSLoaded = true;
     }
     if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
       // driver loaded - check for EFI_DRIVER_BINDING_PROTOCOL
@@ -1957,7 +1960,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
   EFI_BLOCK_IO_PROTOCOL                 *BlockIo;
   EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfo;
   UINTN                                 OpenInfoCount;
-  BOOLEAN                               Found;
+  XBool                               Found;
 
   DBG("Searching for invalid DiskIo BY_DRIVER connects:");
 
@@ -1973,7 +1976,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
   //
   // Check every DiskIo handle
   //
-  Found = FALSE;
+  Found = false;
   for (Index = 0; Index < HandleCount; Index++) {
     //DBG("\n");
     //DBG(" - Handle %p:", Handles[Index]);
@@ -2038,7 +2041,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
         if (!Found) {
           DBG("\n");
         }
-        Found = TRUE;
+        Found = true;
         Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
         //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
         DBG(" - Handle %llx with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %llx, Disconnect: %s\n", (uintptr_t)Handles[Index], (uintptr_t)(OpenInfo[OpenInfoIndex].AgentHandle), efiStrError(Status));
@@ -2174,7 +2177,7 @@ void DisconnectSomeDevices(void)
         }
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
         if (!EFI_ERROR(Status)) {
-          if(IS_PCI_VGA(&Pci) == TRUE) {
+          if(IS_PCI_VGA(&Pci) == true) {
             // disconnect VGA
             Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
             DBG("disconnect %s", efiStrError(Status));
@@ -2212,7 +2215,7 @@ static void LoadDrivers(void)
   UINTN       DriversToConnectNum = 0;
   UINT8       *Edid;
   UINTN       VarSize = 0;
-  BOOLEAN     VBiosPatchNeeded;
+  XBool     VBiosPatchNeeded;
 
   DbgHeader("LoadDrivers");
 
@@ -2246,14 +2249,14 @@ static void LoadDrivers(void)
                                );
     if (Status == EFI_BUFFER_TOO_SMALL) {
       // var exists - it's done - let's not do it again
-      VBiosPatchNeeded = FALSE;
+      VBiosPatchNeeded = false;
     }
   }
 
   if ( (gSettings.Graphics.EDID.CustomEDID.notEmpty() && gFirmwareClover) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
     // we have video bios patch - force video driver reconnect
     DBG("Video bios patch requested or CustomEDID - forcing video reconnect\n");
-    gDriversFlags.VideoLoaded = TRUE;
+    gDriversFlags.VideoLoaded = true;
     DriversToConnectNum++;
   }
 
@@ -2293,7 +2296,7 @@ INTN FindDefaultEntry(void)
 {
   INTN                Index = -1;
   REFIT_VOLUME        *Volume;
-  BOOLEAN             SearchForLoader;
+  XBool             SearchForLoader;
 
 //  DBG("FindDefaultEntry ...\n");
   //DbgHeader("FindDefaultEntry");
@@ -2386,7 +2389,7 @@ void SetVariablesFromNvram()
     arg = (__typeof__(arg))AllocatePool(Size+1);
     
 /*    if (AsciiStrStr(tmpString, "nvda_drv=1")) { //found substring
-      gSettings.NvidiaWeb = TRUE;
+      gSettings.NvidiaWeb = true;
     } */
     //first we will find new args that is not present in main args
     index = 0;
@@ -2437,7 +2440,7 @@ void SetVariablesFromNvram()
   
   tmpString = (__typeof__(tmpString))GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
   if (tmpString && AsciiStrCmp(tmpString, "1") == 0) {
-    gSettings.SystemParameters.NvidiaWeb = TRUE;
+    gSettings.SystemParameters.NvidiaWeb = true;
   }
   if (tmpString) {
     FreePool(tmpString);
@@ -2519,7 +2522,7 @@ GetListOfACPI()
       continue;
     }
 //    DBG("Found name %ls\n", DirEntry->FileName);
-      BOOLEAN ACPIDisabled = FALSE;
+      XBool ACPIDisabled = false;
       ACPI_PATCHED_AML* ACPIPatchedAMLTmp = new ACPI_PATCHED_AML;
       ACPIPatchedAMLTmp->FileName.takeValueFrom(DirEntry->FileName);
 
@@ -2529,7 +2532,7 @@ GetListOfACPI()
 //        if ((gSettings.ACPI.DisabledAML[i] != NULL) &&
 //            (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.ACPI.DisabledAML[i]) == 0)
 //            ) {
-          ACPIDisabled = TRUE;
+          ACPIDisabled = true;
           break;
         }
       }
@@ -2706,9 +2709,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
   EFI_STATUS Status;
-  BOOLEAN           MainLoopRunning = TRUE;
-  BOOLEAN           ReinitDesktop = TRUE;
-  BOOLEAN           AfterTool = FALSE;
+  XBool           MainLoopRunning = true;
+  XBool           ReinitDesktop = true;
+  XBool           AfterTool = false;
   REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY  *DefaultEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY  *OptionEntry = NULL;
@@ -2720,9 +2723,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  LOADER_ENTRY      *LoaderEntry;
 //  XStringW          ConfName;
 //  TagDict*          smbiosTags = NULL;
-//  BOOLEAN           UniteConfigs = FALSE;
+//  XBool           UniteConfigs = false;
   EFI_TIME          Now;
-  BOOLEAN           HaveDefaultVolume;
+  XBool           HaveDefaultVolume;
   REFIT_MENU_SCREEN BootScreen;
   BootScreen.isBootScreen = true; //other screens will be constructed as false
   // CHAR16            *InputBuffer; //, *Y;
@@ -2734,7 +2737,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // get TSC freq and init MemLog if needed
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
-  //gSettings.GUI.TextOnly = TRUE;
+  //gSettings.GUI.TextOnly = true;
 
   // bootstrap
   gST       = SystemTable;
@@ -2970,7 +2973,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //read aptiofixflag from nvram for special boot
     Status = GetVariable2(L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
     if (!EFI_ERROR(Status)) {
-      GlobalConfig.SpecialBootMode = TRUE;
+      GlobalConfig.SpecialBootMode = true;
       FreePool(Value);
       DBG("Fast option enabled\n");
     }
@@ -2999,7 +3002,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 /*  if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
-    GetSmcKeys(FALSE);  // later we can get here SMC information
+    GetSmcKeys(false);  // later we can get here SMC information
   } */
   
   Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (void**)&gEmuVariableControl);
@@ -3015,14 +3018,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.isFastBoot()) {
     // init screen and dump video modes to log
     if (gDriversFlags.VideoLoaded) {
-      InitScreen(FALSE);
+      InitScreen(false);
     } else {
-      InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
+      InitScreen(!gFirmwareClover); // ? false : true);
     }
     //DBG("DBG: setup screen\n");
     SetupScreen();
   } else {
-    InitScreen(FALSE);
+    InitScreen(false);
   }
 
   //DBG("ReinitRefitLib\n");
@@ -3094,7 +3097,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gSettings.Boot.StrictHibernate) {
       DBG(" Don't use StrictHibernate with emulated NVRAM!\n");
     }
-    gSettings.Boot.StrictHibernate = FALSE;    
+    gSettings.Boot.StrictHibernate = false;    
   }
 */
   HaveDefaultVolume = gSettings.Boot.DefaultVolume.notEmpty();
@@ -3115,17 +3118,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
   }
 
-  AfterTool = FALSE;
-  gGuiIsReady = TRUE;
-  GlobalConfig.gBootChanged = TRUE;
-  GlobalConfig.gThemeChanged = TRUE;
+  AfterTool = false;
+  gGuiIsReady = true;
+  GlobalConfig.gBootChanged = true;
+  GlobalConfig.gThemeChanged = true;
 
   do {
     if (GlobalConfig.gBootChanged && GlobalConfig.gThemeChanged) { // config changed
       GetListOfDsdts(); //only after GetUserSettings
       GetListOfACPI(); //ssdt and other tables
     }
-    GlobalConfig.gBootChanged = FALSE;
+    GlobalConfig.gBootChanged = false;
     MainMenu.Entries.setEmpty();
     OptionMenu.Entries.setEmpty();
     InitKextList();
@@ -3152,7 +3155,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (gThemeNeedInit) {
         UINTN      Size         = 0;
         InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size));
-        gThemeNeedInit = FALSE;
+        gThemeNeedInit = false;
       } else if (GlobalConfig.gThemeChanged) {
         DBG("change theme\n");
         InitTheme(NULL);
@@ -3175,7 +3178,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("after NVRAM boot-args=%s\n", gSettings.Boot.BootArgs.c_str());
       GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", GlobalConfig.OptionsBits);
-      FillInputs(TRUE);
+      FillInputs(true);
 
       // scan for loaders and tools, add then to the menu
       if (gSettings.GUI.Scan.LegacyFirst){
@@ -3185,7 +3188,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
       }
     }
-    GetSmcKeys(TRUE);
+    GetSmcKeys(true);
     
     // Add custom entries
     AddCustomEntries();
@@ -3248,7 +3251,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //      }
     }
     // wait for user ACK when there were errors
-    FinishTextScreen(FALSE);
+    FinishTextScreen(false);
 #if CHECK_SMC
     DumpSmcKeys();
 #endif
@@ -3261,7 +3264,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DefaultEntry = NULL;
     }
 
-    MainLoopRunning = TRUE;
+    MainLoopRunning = true;
     //    MainMenu.TimeoutSeconds = gSettings.Boot.Timeout >= 0 ? gSettings.Boot.Timeout : 0;
     if (DefaultEntry && (GlobalConfig.isFastBoot() ||
                          (gSettings.Boot.SkipHibernateTimeout &&
@@ -3276,11 +3279,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (DefaultEntry->getLEGACY_ENTRY()){
         DefaultEntry->StartLegacy();
       }
-      gSettings.Boot.FastBoot = FALSE; //Hmm... will never be here
+      gSettings.Boot.FastBoot = false; //Hmm... will never be here
     }
-//    BOOLEAN MainAnime = MainMenu.GetAnime();
+//    XBool MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
-    AfterTool = FALSE;
+    AfterTool = false;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
  //     CHAR8 *LastChosenOS = NULL;
@@ -3290,7 +3293,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else {
         MainMenu.GetAnime();
         if (GlobalConfig.gThemeChanged) {
-          GlobalConfig.gThemeChanged = FALSE;
+          GlobalConfig.gThemeChanged = false;
           ThemeX.ClearScreen();
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
@@ -3309,11 +3312,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (MenuExit == MENU_EXIT_OPTIONS){
-        GlobalConfig.gBootChanged = FALSE;
+        GlobalConfig.gBootChanged = false;
         OptionsMenu(&OptionEntry);
         if (GlobalConfig.gBootChanged) {
-          AfterTool = TRUE;
-          MainLoopRunning = FALSE;
+          AfterTool = true;
+          MainLoopRunning = false;
           break;
         }
         continue;
@@ -3375,25 +3378,25 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
         // Terminate the screen and just exit
         TerminateScreen();
-        MainLoopRunning = FALSE;
-        ReinitDesktop = FALSE;
-        AfterTool = TRUE;
+        MainLoopRunning = false;
+        ReinitDesktop = false;
+        AfterTool = true;
       }
 
       if ( ChosenEntry->getREFIT_MENU_ITEM_SHUTDOWN() ) { // It is not Shut Down, it is Exit from Clover
         TerminateScreen();
         //         gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
-        MainLoopRunning = FALSE;   // just in case we get this far
-        ReinitDesktop = FALSE;
-        AfterTool = TRUE;
+        MainLoopRunning = false;   // just in case we get this far
+        ReinitDesktop = false;
+        AfterTool = true;
       }
       if ( ChosenEntry->getREFIT_MENU_ITEM_OPTIONS() ) {    // Options like KernelFlags, DSDTname etc.
-        GlobalConfig.gBootChanged = FALSE;
+        GlobalConfig.gBootChanged = false;
         OptionsMenu(&OptionEntry);
         if (GlobalConfig.gBootChanged)
-          AfterTool = TRUE;
+          AfterTool = true;
         if (GlobalConfig.gBootChanged || GlobalConfig.gThemeChanged) // If theme has changed reinit the desktop
-          MainLoopRunning = FALSE;
+          MainLoopRunning = false;
       }
       if ( ChosenEntry->getREFIT_MENU_ITEM_ABOUT() ) {    // About rEFIt
         AboutRefit();
@@ -3409,9 +3412,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ChosenEntry->StartLoader();
         //if boot.efi failed we should somehow exit from the loop
         TerminateScreen();
-        MainLoopRunning = FALSE;
-        ReinitDesktop = FALSE;
-        AfterTool = TRUE;
+        MainLoopRunning = false;
+        ReinitDesktop = false;
+        AfterTool = true;
       }
       if ( ChosenEntry->getLEGACY_ENTRY() ) {   // Boot legacy OS
         if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
@@ -3420,9 +3423,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           // which results in "Operating System not found" message coming from BIOS
           // in this case just quit Clover to enter BIOS again
           TerminateScreen();
-          MainLoopRunning = FALSE;
-          ReinitDesktop = FALSE;
-          AfterTool = TRUE;
+          MainLoopRunning = false;
+          ReinitDesktop = false;
+          AfterTool = true;
         } else {
           SetBootCurrent(ChosenEntry->getLEGACY_ENTRY());
           ChosenEntry->StartLegacy();
@@ -3435,21 +3438,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         //   return EFI_SUCCESS;
         //  BdsLibConnectAllDriversToAllControllers();
         //    PauseForKey(L"Returned from StartTool\n");
-        MainLoopRunning = FALSE;
-        AfterTool = TRUE;
+        MainLoopRunning = false;
+        AfterTool = true;
       }
 
   #ifdef ENABLE_SECURE_BOOT
 panic("not done yet");
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
 //            EnableSecureBoot();
-//            MainLoopRunning = FALSE;
-//            AfterTool = TRUE;
+//            MainLoopRunning = false;
+//            AfterTool = true;
 //      }
 //
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT_CONFIG() ) { // Configure secure boot
 //            MainLoopRunning = !ConfigureSecureBoot();
-//            AfterTool = TRUE;
+//            AfterTool = true;
 //      }
   #endif // ENABLE_SECURE_BOOT
 
@@ -3472,7 +3475,7 @@ panic("not done yet");
             UINTN OptionalDataSize;
             UINTN BootNum;
 
-            PrintBootOptions(FALSE);
+            PrintBootOptions(false);
 
             for (EntryIndex = 0; EntryIndex < (INTN)MainMenu.Entries.size(); EntryIndex++) {
               if (MainMenu.Entries[EntryIndex].Row != 0) {
@@ -3514,7 +3517,7 @@ panic("not done yet");
               Status = AddBootOptionForFile (
                                     LoaderEntry->Volume->DeviceHandle,
                                     LoaderEntry->LoaderPath,
-                                    TRUE,
+                                    true,
                                     Description.wc_str(),
                                     OptionalData,
                                     OptionalDataSize,
@@ -3529,20 +3532,20 @@ panic("not done yet");
             } //for (EntryIndex
 
 
-            PrintBootOptions(FALSE);
+            PrintBootOptions(false);
           } else if ( LoaderEntry->LoadOptions.contains("BO-REMOVE") ) {
-            PrintBootOptions(FALSE);
+            PrintBootOptions(false);
             Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
                                               LoaderEntry->LoaderPath
                                               );
-            PrintBootOptions(FALSE);
+            PrintBootOptions(false);
           } else if ( LoaderEntry->LoadOptions.contains("BO-PRINT") ) {
-            PrintBootOptions(TRUE);
+            PrintBootOptions(true);
           }
 
         }
-        MainLoopRunning = FALSE;
-        AfterTool = TRUE;
+        MainLoopRunning = false;
+        AfterTool = true;
       }
     } //MainLoopRunning
     UninitRefitLib();

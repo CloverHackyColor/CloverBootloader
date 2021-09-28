@@ -213,7 +213,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
 
 
 
-BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl, UINTN len)
+XBool devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl, UINTN len)
 {
   UINT32 offset;
   UINT32 off;
@@ -224,7 +224,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *v
   UINT8 *newdata;
 
   if(!device || !nm || !vl /*|| !len*/) //rehabman: allow zero length data
-    return FALSE;
+    return false;
   /*	DBG("devprop_add_value %s=", nm);
    for (i=0; i<len; i++) {
    DBG("%02X", vl[i]);
@@ -234,7 +234,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *v
   length = (UINT32)((l * 2) + len + (2 * sizeof(UINT32)) + 2);
   data = (UINT8*)AllocateZeroPool(length);
   if(!data)
-    return FALSE;
+    return false;
 
   off= 0;
 
@@ -260,7 +260,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *v
 
   newdata = (UINT8*)AllocateZeroPool((length + offset));
   if(!newdata)
-    return FALSE;
+    return false;
   if((device->data) && (offset > 1)) {
  		CopyMem((void*)newdata, (void*)device->data, offset);
   }
@@ -273,7 +273,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *v
   device->data = newdata;
 
   FreePool(data);
-  return TRUE;
+  return true;
 }
 
 bool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl)
@@ -343,19 +343,19 @@ void devprop_free_string(DevPropString *StringBuf)
 }
 
 // Ethernet built-in device injection
-BOOLEAN set_eth_props(pci_dt_t *eth_dev)
+XBool set_eth_props(pci_dt_t *eth_dev)
 {
 #if DEBUG_INJECT
 //  CHAR8           *devicepath;
 #endif
   DevPropDevice   *device = NULL;
   UINT8           builtin = 0x0;
-  BOOLEAN         Injected = FALSE;
+  XBool         Injected = false;
   UINTN           i;
   CHAR8           compatible[64];
   
   if (!gSettings.Devices.LANInjection) {
-    return FALSE;
+    return false;
   }
 
   if (!device_inject_string) {
@@ -366,11 +366,11 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 #endif
   if (eth_dev && !eth_dev->used) {
     device = devprop_add_device_pci(device_inject_string, eth_dev, NULL);
-    eth_dev->used = TRUE;
+    eth_dev->used = true;
   }
 
   if (!device) {
-    return FALSE;
+    return false;
   }
   // -------------------------------------------------
 //  DBG("LAN Controller [%04X:%04X] :: %s\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
@@ -384,7 +384,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
       if (gSettings.Devices.AddPropertyArray[i].Device != DEV_LAN) {
         continue;
       }
-      Injected = TRUE;
+      Injected = true;
 
       if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
         //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -396,7 +396,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   }
   if (Injected) {
     DBG("custom LAN properties injected, continue\n");
-    //    return TRUE;
+    //    return true;
   }
 
   //  DBG("Setting dev.prop built-in=0x%X\n", builtin);
@@ -430,14 +430,14 @@ static UINT16  current_in_sleep  = 1000;
 static UINT16  current_available_high = 2100; //mA
 static UINT16  current_extra_high    = 3200;
 
-BOOLEAN set_usb_props(pci_dt_t *usb_dev)
+XBool set_usb_props(pci_dt_t *usb_dev)
 {
 #if DEBUG_INJECT
 //  CHAR8           *devicepath;
 #endif
   DevPropDevice   *device = NULL;
   UINT32          fake_devid;
-  BOOLEAN         Injected = FALSE;
+  XBool         Injected = false;
   UINTN           i;
 
   if (!device_inject_string)
@@ -448,11 +448,11 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 
   if (usb_dev && !usb_dev->used) {
     device = devprop_add_device_pci(device_inject_string, usb_dev, NULL);
-    usb_dev->used = TRUE;
+    usb_dev->used = true;
   }
 
   if (!device) {
-    return FALSE;
+    return false;
   }
  // -------------------------------------------------
  // DBG("USB Controller [%04X:%04X] :: %s\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
@@ -463,7 +463,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       if (gSettings.Devices.AddPropertyArray[i].Device != DEV_USB) {
         continue;
       }
-      Injected = TRUE;
+      Injected = true;
 
       if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
         //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -475,7 +475,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   }
   if (Injected) {
     DBG("custom USB properties injected, continue\n");
-    //    return TRUE;
+    //    return true;
   }
 
   if (gSettings.Devices.USB.InjectClockID) {

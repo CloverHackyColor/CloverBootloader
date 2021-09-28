@@ -85,7 +85,7 @@ void XTheme::MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Hei
   if (Height != NULL)
     *Height = ScaledHeight;
 }
-void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
+void XTheme::LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   XImage      NewImage; //tempopary image from file
@@ -94,7 +94,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *PixelPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *FontPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstPixel;
-  BOOLEAN     isKorean = (gSettings.GUI.languageCode == korean);
+  XBool     isKorean = (gSettings.GUI.languageCode == korean);
   XStringW    fontFilePath;
   const XStringW& commonFontDir = L"font"_XSW;
 
@@ -183,7 +183,7 @@ void XTheme::PrepareFont()
   // load the font
   if (FontImage.isEmpty()) {
     DBG("load font image type %d\n", Font);
-    LoadFontImage(TRUE, 16, 16); //anyway success
+    LoadFontImage(true, 16, 16); //anyway success
   }
 
   if (!FontImage.isEmpty()) {

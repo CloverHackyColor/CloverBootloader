@@ -52,13 +52,13 @@
 //UINT32      *dtLength;
 //UINT8       *KernelData = NULL;
 //UINT32      KernelSlide = 0;
-//BOOLEAN     isKernelcache = FALSE;
-//BOOLEAN     is64BitKernel = FALSE;
-//BOOLEAN     SSSE3;
+//XBool     isKernelcache = false;
+//XBool     is64BitKernel = false;
+//XBool     SSSE3;
 
-//BOOLEAN     PatcherInited = FALSE;
-//BOOLEAN     gSNBEAICPUFixRequire = FALSE; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-//BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
+//XBool     PatcherInited = false;
+//XBool     gSNBEAICPUFixRequire = false; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+//XBool     gBDWEIOPCIFixRequire = false; // Broadwell-E IOPCIFamily fix require or not
 
 extern EFI_GUID gEfiAppleBootGuid;
 
@@ -820,13 +820,13 @@ const UINT8 CataSearchExt[]        = {0x44, 0x89, 0xE0, 0xC1, 0xE8, 0x10};
 const UINT8 CataReplaceMovEax[]    = {0xB8, 0x00, 0x00, 0x00, 0x00, 0x90}; // mov eax, val || nop
 
 
-BOOLEAN LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
+XBool LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
                    const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                    const UINT8* ReplaceExt, INT32 Len)
 {
   INT32 patchLocation=0, patchLocation1=0;
   INT32 Adr = 0, Num;
-  BOOLEAN Patched = FALSE;
+  XBool Patched = false;
   UINT8 FakeModel = (KernelAndKextPatches.FakeCPUID >> 4) & 0x0f;
   UINT8 FakeExt = (KernelAndKextPatches.FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
@@ -847,7 +847,7 @@ BOOLEAN LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
         CopyMem(&KernelData[Adr + patchLocation1], ReplaceExt, Len);
         KernelData[Adr + patchLocation1 + 1] = FakeExt;
       }
-      Patched = TRUE;
+      Patched = true;
     }
   }
   return Patched;
@@ -917,7 +917,7 @@ void LOADER_ENTRY::KernelCPUIDPatch()
 
 #define NEW_PM 1
 
-BOOLEAN LOADER_ENTRY::KernelPatchPm()
+XBool LOADER_ENTRY::KernelPatchPm()
 {
   DBG_RT("Patching kernel power management...\n");
 #if NEW_PM
@@ -987,7 +987,7 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm()
   UINT64* Ptr = (UINT64*)KernelData;
   UINT64* End = Ptr + 0x1000000/sizeof(UINT64);
   if (Ptr == NULL) {
-    return FALSE;
+    return false;
   }
 
   
@@ -1032,24 +1032,24 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm()
     gBS->Stall(3000000);
   }
 #endif
-  return TRUE;
+  return true;
 }
 
 const UINT8 PanicNoKextDumpFind[]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
 //STATIC UINT8 PanicNoKextDumpReplace[6] = {0x00, 0x00, 0x2E, 0x2A, 0x73, 0x00};
 
-BOOLEAN LOADER_ENTRY::KernelPanicNoKextDump()
+XBool LOADER_ENTRY::KernelPanicNoKextDump()
 {
   INT32      patchLocation;
   patchLocation = FindBin(KernelData, 0xF00000, PanicNoKextDumpFind, 6);
   if (patchLocation > 0) {
     KernelData[patchLocation + 1] = 0;
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
+XBool LOADER_ENTRY::KernelLapicPatch_64()
 {
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
@@ -1125,7 +1125,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
 
   if (!patchLocation1) {
     DBG_RT( "Can't find Lapic panic, kernel patch aborted.\n");
-    return FALSE;
+    return false;
   }
   
   // Already patched?  May be running a non-vanilla kernel already?
@@ -1133,11 +1133,11 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
       bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90 &&
       bytes[patchLocation1 + 4] == 0x90) {
     DBG_RT( "Lapic panic already patched, kernel file (10.6 - 10.9) manually patched?\n");
-    return FALSE;
+    return false;
   } else if (bytes[patchLocation1 + 0] == 0x31 && bytes[patchLocation1 + 1] == 0xC0 &&
              bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90) {
     DBG_RT( "Lapic panic already patched, kernel file (10.10 - recent macOS) manually patched?\n");
-    return FALSE;
+    return false;
   } else {
     if (bytes[patchLocation1 + 8] == 0x3B && bytes[patchLocation1 + 9] == 0x05 &&
         bytes[patchLocation1 + 13] == 0x00) {
@@ -1174,13 +1174,13 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
         
       if (!patchLocation2) {
         DBG_RT( "Can't find Lapic panic master (10.10 - recent macOS), kernel patch aborted.\n");
-        return FALSE;
+        return false;
       }
         
       // Already patched? May be running a non-vanilla kernel already?
       if (bytes[patchLocation2 + 5] == 0x31 && bytes[patchLocation2 + 6] == 0xC0) {
         DBG_RT( "Lapic panic master already patched, kernel file (10.10 - recent macOS) manually patched?\n");
-        return FALSE;
+        return false;
       } else {
         DBG_RT( "Patched Lapic panic master (10.10 - recent macOS)\n");
         // E8 XX XX FF FF 83 XX XX XX XX 00 00
@@ -1203,10 +1203,10 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
     Stall(3000000);
 //  }
     
-  return TRUE;
+  return true;
 }
 
-BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
+XBool LOADER_ENTRY::KernelLapicPatch_32()
 {
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
@@ -1229,7 +1229,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
 
   if (!patchLocation) {
     DBG_RT( "Can't find Lapic panic, kernel patch aborted.\n");
-    return FALSE;
+    return false;
   }
 
   // Already patched?  May be running a non-vanilla kernel already?
@@ -1238,7 +1238,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
       bytes[patchLocation + 2] == 0x90 && bytes[patchLocation + 3] == 0x90 &&
       bytes[patchLocation + 4] == 0x90) {
     DBG_RT( "Lapic panic already patched, kernel file manually patched?\n");
-    return FALSE;
+    return false;
   } else {
     DBG_RT( "Patched Lapic panic (32-bit)\n");
     for (i = 0; i < 5; i++) {
@@ -1250,7 +1250,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
     Stall(3000000);
 //  }
 
-  return TRUE;
+  return true;
 }
 
 //
@@ -1259,7 +1259,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
 // SandyBridge-E, Ivy Bridge, Ivy Bridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
 // credit Pike R.Alpha, stinga11, syscl
 //
-//BOOLEAN (*EnableExtCpuXCPM)(void *kernelData);
+//XBool (*EnableExtCpuXCPM)(void *kernelData);
 
 //
 // syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
@@ -1278,7 +1278,7 @@ void LOADER_ENTRY::applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *re
 // Global XCPM patches compatibility
 // Currently 10.8.5 - 10.15
 //
-static inline BOOLEAN IsXCPMOSVersionCompat(const MacOsVersion& macOSVersion)
+static inline XBool IsXCPMOSVersionCompat(const MacOsVersion& macOSVersion)
 {
   return macOSVersion >= MacOsVersion("10.8.5"_XS8)  &&  macOSVersion < MacOsVersion("11.1.0"_XS8);
 }
@@ -1288,17 +1288,17 @@ static inline BOOLEAN IsXCPMOSVersionCompat(const MacOsVersion& macOSVersion)
 //
 // syscl - SandyBridgeEPM(): enable PowerManagement on SandyBridge-E
 //
-BOOLEAN LOADER_ENTRY::SandyBridgeEPM()
+XBool LOADER_ENTRY::SandyBridgeEPM()
 {
     // note: a dummy function that made patches consistency
-    return TRUE;
+    return true;
 }
 
 //
 // syscl - Enable Haswell-E XCPM
 // Hex data provided and polished (c) PMheart, idea (c) Pike R.Alpha
 //
-BOOLEAN LOADER_ENTRY::HaswellEXCPM()
+XBool LOADER_ENTRY::HaswellEXCPM()
 {
   DBG("HaswellEXCPM() ===>\n");
   UINT8       *kern = KernelData;
@@ -1310,8 +1310,8 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
   // check OS version suit for patches
   if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("HaswellEXCPM(): Unsupported macOS.\n");
-    DBG("HaswellEXCPM() <===FALSE\n");
-    return FALSE;
+    DBG("HaswellEXCPM() <===false\n");
+    return false;
   }
 
   // _cpuid_set_info
@@ -1453,19 +1453,19 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
     } else {
       DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-      DBG("HaswellEXCPM() <===FALSE\n");
-      return FALSE;
+      DBG("HaswellEXCPM() <===false\n");
+      return false;
     }
   }
 
   DBG("HaswellEXCPM() <===\n");
-  return TRUE;
+  return true;
 }
 
 //
 // Enable Broadwell-E/EP PowerManagement on 10.12+ by syscl
 //
-BOOLEAN LOADER_ENTRY::BroadwellEPM()
+XBool LOADER_ENTRY::BroadwellEPM()
 {
   DBG("BroadwellEPM() ===>\n");
 
@@ -1476,8 +1476,8 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
   // check OS version suit for patches
   if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("BroadwellEPM(): Unsupported macOS.\n");
-    DBG("BroadwellEPM() <===FALSE\n");
-    return FALSE;
+    DBG("BroadwellEPM() <===false\n");
+    return false;
   }
 
   KernelAndKextPatches.FakeCPUID = (UINT32)(macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10.3"_XS8) ? 0x0306C0 : 0x040674);
@@ -1511,20 +1511,20 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
     } else {
       DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-      DBG("BroadwellEPM() <===FALSE\n");
-      return FALSE;
+      DBG("BroadwellEPM() <===false\n");
+      return false;
     }
   }
 
   DBG("BroadwellEPM() <===\n");
-  return TRUE;
+  return true;
 }
 //
 // syscl - this patch provides XCPM support for Haswell low-end(HSWLowEnd) and platforms later than Haswell
 // implemented by syscl
 // credit also Pike R.Alpha, stinga11, Sherlocks, vit9696
 //
-BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
+XBool LOADER_ENTRY::HaswellLowEndXCPM()
 {
   DBG("HaswellLowEndXCPM() ===>\n");
 //  UINT64      os_version = AsciiOSVersionToUint64(macOSVersion);
@@ -1533,8 +1533,8 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   // check OS version suit for patches
   if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("HaswellLowEndXCPM(): Unsupported macOS.\n");
-    DBG("HaswellLowEndXCPM() <===FALSE\n");
-    return FALSE;
+    DBG("HaswellLowEndXCPM() <===false\n");
+    return false;
   }
 
   KernelAndKextPatches.FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
@@ -1543,7 +1543,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
   if (macOSVersion >= MacOsVersion("10.8.5"_XS8) && macOSVersion < MacOsVersion("10.12"_XS8)) {
     DBG("HaswellLowEndXCPM() <===\n");
-    return TRUE;
+    return true;
   }
 
   // _xcpm_idle //this is a part of KernelPM
@@ -1611,13 +1611,13 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   }
 
   DBG("HaswellLowEndXCPM() <===\n");
-  return TRUE;
+  return true;
 }
 
 //
 // this patch provides XCPM support for Ivy Bridge. by PMheart
 //
-BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
+XBool LOADER_ENTRY::KernelIvyBridgeXCPM()
 {
   XString8      comment;
 //  UINT32      i;
@@ -1627,20 +1627,20 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
     DBG("KernelIvyBridgeXCPM(): Unsupported platform.\nRequires Ivy Bridge, aborted\n");
-    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-    return FALSE;
+    DBG("KernelIvyBridgeXCPM() <===false\n");
+    return false;
   }
 
   // check OS version suit for patches
   // PMheart: attempt to add 10.14 compatibility
   if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("KernelIvyBridgeXCPM():Unsupported macOS.\n");
-    DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-    return FALSE;
+    DBG("KernelIvyBridgeXCPM() <===false\n");
+    return false;
   } else if (macOSVersion >= MacOsVersion("10.8.5"_XS8) && macOSVersion < MacOsVersion("10.12"_XS8)) {
     // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
     DBG("KernelIvyBridgeXCPM() <===\n");
-    return TRUE;
+    return true;
   }
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1667,8 +1667,8 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
     } else {
       DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-      DBG("KernelIvyBridgeXCPM() <===FALSE\n");
-      return FALSE;
+      DBG("KernelIvyBridgeXCPM() <===false\n");
+      return false;
     }
   }
 
@@ -1715,14 +1715,14 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
   }
 */
   DBG("KernelIvyBridgeXCPM() <===\n");
-  return TRUE;
+  return true;
 }
 
 //
 // this patch provides XCPM support for Ivy Bridge-E. by PMheart
 // attempt to enable XCPM for Ivy-E, still need to test further
 //
-BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
+XBool LOADER_ENTRY::KernelIvyE5XCPM()
 {
   UINT8       *kern = (UINT8*)KernelData;
   XString8    comment;
@@ -1733,16 +1733,16 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   // check whether Ivy Bridge-E5
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE_E5) {
     DBG("KernelIvyE5XCPM(): Unsupported platform.\nRequires Ivy Bridge-E, aborted\n");
-    DBG("KernelIvyE5XCPM() <===FALSE\n");
-    return FALSE;
+    DBG("KernelIvyE5XCPM() <===false\n");
+    return false;
   }
   
   // check OS version suit for patches
   // PMheart: attempt to add 10.15 compatibility
   if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("KernelIvyE5XCPM(): Unsupported macOS.\n");
-    DBG("KernelIvyE5XCPM() <===FALSE\n");
-    return FALSE;
+    DBG("KernelIvyE5XCPM() <===false\n");
+    return false;
   }
   
   // _cpuid_set_info
@@ -1806,8 +1806,8 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
     } else {
 //      DBG("_xcpm_pkg_scope_msr not found, patch aborted\n");
-      DBG("KernelIvyE5XCPM() <===FALSE\n");
-      return FALSE;
+      DBG("KernelIvyE5XCPM() <===false\n");
+      return false;
     }
   }
   
@@ -1888,7 +1888,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   }
   
   DBG("KernelIvyE5XCPM() <===\n");
-  return TRUE;
+  return true;
 }
 #if 0
 void Patcher_SSE3_6(void* kernelData)
@@ -1903,7 +1903,7 @@ void Patcher_SSE3_6(void* kernelData)
  // DBG("Start find SSE3 address\n");
   i=0;
   //for (i=0;i<Length;i++)
-  while(TRUE) {
+  while(true) {
     if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F &&
         bytes[i+3] == 0x44 && bytes[i+4] == 0x0E && bytes[i+5] == 0xF1 &&
         bytes[i-1664-32] == 0x55
@@ -1932,7 +1932,7 @@ void Patcher_SSE3_6(void* kernelData)
 //  DBG("Found SSE3 last data addres Start\n");
   i = patchLocation1 + 1500;
   //for (i=(patchLocation1+1500); i<(patchLocation1+3000); i++)
-  while(TRUE) {
+  while(true) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55 ) {
       patchlast = (i+1) - patchLocation1;
 //      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
@@ -2288,7 +2288,7 @@ LOADER_ENTRY::FindBootArgs()
   ptr = (UINT8*)0x200000ull;
 
 
-  while(TRUE) {
+  while(true) {
 
     // check bootargs for 10.7 and up
     bootArgs2 = (BootArgs2*)ptr;
@@ -2352,7 +2352,7 @@ LOADER_ENTRY::FindBootArgs()
   }
 }
 
-BOOLEAN
+XBool
 LOADER_ENTRY::KernelUserPatch()
 {
   INTN Num, y = 0;
@@ -2423,7 +2423,7 @@ LOADER_ENTRY::KernelUserPatch()
   return (y != 0);
 }
 
-BOOLEAN
+XBool
 LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 {
   INTN Num, y = 0;
@@ -2490,7 +2490,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //    return;
 //  }
 //
-//  PatcherInited = TRUE;
+//  PatcherInited = true;
 //
 //  // KernelRelocBase will normally be 0
 //  // but if OsxAptioFixDrv is used, then it will be > 0
@@ -2523,7 +2523,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //  // check that it is Mach-O header and detect architecture
 //  if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
 //    DBG("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
-//    is64BitKernel = FALSE;
+//    is64BitKernel = false;
 //  } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
 //    DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
 ////    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
@@ -2549,7 +2549,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //      KernelOffset = GetTextExec();
 ////      DBG("BigSur: KernelOffset =0x%X\n", KernelOffset);
 //    }
-//    is64BitKernel = TRUE;
+//    is64BitKernel = true;
 //  } else {
 //    // not valid Mach-O header - exiting
 //    DBG( "Kernel not found at 0x%llx - skipping patches!\n", (UINTN)KernelData);
@@ -2596,7 +2596,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //void
 //LOADER_ENTRY::KernelAndKextsPatcherStart()
 //{
-//  BOOLEAN KextPatchesNeeded, patchedOk;
+//  XBool KextPatchesNeeded, patchedOk;
 //  /*
 //   * it was intended for custom entries but not work if no custom entries used
 //   * so set common until better solution invented
@@ -2673,7 +2673,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //    DBG( "KernelPm patch: Enabled\n");
 ////    KernelAndKextPatcherInit();
 ////    if (KernelData == NULL) goto NoKernelData;
-//    patchedOk = FALSE;
+//    patchedOk = false;
 //    if (is64BitKernel) {
 //      patchedOk = KernelPatchPm();
 //    }
@@ -2718,8 +2718,8 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //    // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
 //    //
 ////    EnableExtCpuXCPM = NULL;
-//    patchedOk = FALSE;
-////    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
+//    patchedOk = false;
+////    XBool apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
 ////    KernelAndKextPatcherInit();
 ////    if (KernelData == NULL) goto NoKernelData;
 //
@@ -2733,7 +2733,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //          case CPU_MODEL_JAKETOWN:
 //            // SandyBridge-E LGA2011
 //            patchedOk = SandyBridgeEPM();
-//            gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
+//            gSNBEAICPUFixRequire = true;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
 //            break;
 //
 //          case CPU_MODEL_IVY_BRIDGE:
@@ -2755,13 +2755,13 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //          case CPU_MODEL_BROADWELL_DE:
 //            // Broadwell-E/EP
 //            patchedOk = BroadwellEPM();
-//            gBDWEIOPCIFixRequire = TRUE;
+//            gBDWEIOPCIFixRequire = true;
 //            break;
 //
 //          default:
 //            if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-//               (AsciiStrStr(gCPUStructure.BrandString, "Celeron") ||
-//                AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+//               ( gCPUStructure.BrandString.contains("Celeron") ||
+//                 gCPUStructure.BrandString.contains("Pentium"))) {
 //              // Haswell+ low-end CPU
 //              patchedOk = HaswellLowEndXCPM();
 //            }
@@ -2780,8 +2780,8 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //  if (/*OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS) || */
 //      OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC)) {
 //    DBG_RT( "\nAllowing kext patching to check if FakeSMC is present\n");
-//    GlobalConfig.KextPatchesAllowed = TRUE;
-//    KextPatchesNeeded = TRUE;
+//    GlobalConfig.KextPatchesAllowed = true;
+//    KextPatchesNeeded = true;
 //  }
 //
 //  DBG_RT( "\nKextPatches Needed: %c, Allowed: %c ... ",

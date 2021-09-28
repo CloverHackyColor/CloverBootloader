@@ -26,7 +26,7 @@ protected:
   INTN      Id; //ScreenID, enumeration value but keep it to be int for extensibility
 public:
   //I see no reason to make they protected
-  BOOLEAN   RunOnce;
+  XBool   RunOnce;
   INTN      NumFrames; //set by user in Theme.plist or in Theme.svg
   INTN      FrameTime; //usually 50, 100, 200 ms
   INTN      FilmX, FilmY;  //relative
@@ -34,7 +34,7 @@ public:
   INTN      ScreenEdgeVertical;
   INTN      NudgeX, NudgeY;
   XStringW  Path; //user defined name for folder and files Path/Path_002.png etc
-  BOOLEAN   AnimeRun;
+  XBool   AnimeRun;
   UINT64    LastDraw;
 
 protected:
@@ -46,11 +46,11 @@ public:
   EG_RECT FilmPlace;  // Screen has several Films each in own place
 
 public:
-  FILM() : Id(0), RunOnce(0), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
-           NudgeX(0), NudgeY(0), Path(), AnimeRun(0), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
+  FILM() : Id(0), RunOnce(false), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
+           NudgeX(0), NudgeY(0), Path(), AnimeRun(false), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
          {}
-  FILM(INTN Id) : Id(Id), RunOnce(0), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
-           NudgeX(0), NudgeY(0), Path(), AnimeRun(0), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
+  FILM(INTN Id) : Id(Id), RunOnce(false), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
+           NudgeX(0), NudgeY(0), Path(), AnimeRun(false), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
          {}
   ~FILM() {}
 

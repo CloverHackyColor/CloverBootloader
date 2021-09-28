@@ -9,6 +9,7 @@
 #define INCLUDE_PCI_H_
 
 #include <stdint.h>
+#include "../cpp_foundation/XBool.h"
 
 /* PCI */
 #define PCI_BASE_ADDRESS_0          0x10    /* 32 bits */
@@ -35,19 +36,19 @@ typedef struct {
 } pci_addr_t;
 
 typedef union {
+  uint32_t    addr = 0;
 	pci_addr_t	bits;
-	uint32_t	    addr;
 } pci_dev_t;
 
 typedef struct pci_dt_t {
 //  EFI_PCI_IO_PROTOCOL		*PciIo;
 //  PCI_TYPE00            Pci;
-  EFI_HANDLE    DeviceHandle;
-  UINT8*        regs;
-	pci_dev_t			dev;
+  EFI_HANDLE    DeviceHandle = NULL;
+  UINT8*        regs         = NULL;
+	pci_dev_t			dev          = pci_dev_t();
 
-	UINT16				vendor_id;
-	UINT16				device_id;
+	UINT16				vendor_id    = 0;
+	UINT16				device_id    = 0;
 
 	union {
 		struct {
@@ -55,15 +56,15 @@ typedef struct pci_dt_t {
 			UINT16	  device_id;
 		} subsys;
 		UINT32	    subsys_id;
-	} subsys_id;
-	UINT8		      revision;
-	UINT8		      subclass;
-	UINT16				class_id;
+  } subsys_id_union = { {0, 0} };
+	UINT8		      revision      = 0;
+	UINT8		      subclass      = 0;
+	UINT16				class_id      = 0;
 
-	struct pci_dt_t			*parent;
-	struct pci_dt_t			*children;
-	struct pci_dt_t			*next;
-  BOOLEAN             used;
+	struct pci_dt_t	*parent     = NULL;
+	struct pci_dt_t	*children   = NULL;
+	struct pci_dt_t	*next       = NULL;
+  XBool            used       = false;
 } pci_dt_t;
 
 

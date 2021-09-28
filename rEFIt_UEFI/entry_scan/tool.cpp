@@ -79,7 +79,7 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_TOOL, __VA_ARGS__)
 #endif
 
-STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
+STATIC XBool AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XIcon& Image,
                             IN char32_t ShortcutLetter, IN CONST XString8Array& Options)
 {
@@ -87,7 +87,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
   // Check the loader exists
   if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) ||
       !FileExists(Volume->RootDir, LoaderPath)) {
-    return FALSE;
+    return false;
   }
   // Allocate the entry
   Entry = new REFIT_MENU_ENTRY_LOADER_TOOL;
@@ -113,7 +113,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
 
   DBG("found tool %ls\n", LoaderPath.s());
   MainMenu.AddMenuEntry(Entry, true);
-  return TRUE;
+  return true;
 }
 
 STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)

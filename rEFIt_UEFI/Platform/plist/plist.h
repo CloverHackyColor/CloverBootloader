@@ -139,12 +139,12 @@ GetNextTag (
   UINT32 *length
   );
 
-BOOLEAN
+XBool
 IsPropertyNotNullAndTrue(
   const TagStruct* Prop
   );
 
-BOOLEAN
+XBool
 IsPropertyNotNullAndFalse(
   const TagStruct* Prop
   );

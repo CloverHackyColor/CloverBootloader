@@ -68,10 +68,10 @@ Clover_FindDevicePathNodeWithType (
 EFI_STATUS
 ParseBootOption (OUT BO_BOOT_OPTION  *BootOption);
 
-/** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
+/** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == true. */
 void
 PrintBootOptions (
-  IN  BOOLEAN AllBootOptions
+  IN  XBool AllBootOptions
   );
 
 /** Prints BootOrder with DBG. */
@@ -113,7 +113,7 @@ FindBootOptionForFile (
 
 /** Adds new boot option for given file system device handle FileDeviceHandle, file path FileName
  *  and Description, to be BootIndex in the list of options (0 based).
- *  If UseShortForm == TRUE, then only the hard drive media dev path will be used instead
+ *  If UseShortForm == true, then only the hard drive media dev path will be used instead
  *  of full device path.
  *  Long (full) form:
  *   PciRoot(0x0)/Pci(0x1f,0x2)/Sata(0x1,0x0)/HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
@@ -124,7 +124,7 @@ EFI_STATUS
 AddBootOptionForFile (
                       IN  EFI_HANDLE FileDeviceHandle,
                       IN  CONST XStringW &FileName,
-                      IN  BOOLEAN    UseShortForm,
+                      IN  XBool    UseShortForm,
                       IN  CONST CHAR16     *Description,
                       IN  UINT8      *OptionalData,
                       IN  UINTN      OptionalDataSize,

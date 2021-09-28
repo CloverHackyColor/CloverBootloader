@@ -829,7 +829,7 @@ bool GetMobile(MACHINE_TYPES Model)
     case MacBookAir81:
     case MacBookAir82:
     case MacBookAir91:
-      return TRUE;
+      return true;
     case MacMini11:
     case MacMini21:
     case MacMini31:
@@ -841,7 +841,7 @@ bool GetMobile(MACHINE_TYPES Model)
     case MacMini62:
     case MacMini71:
     case MacMini81:
-      return FALSE;
+      return false;
     case iMac41:
     case iMac42:
     case iMac51:
@@ -875,7 +875,7 @@ bool GetMobile(MACHINE_TYPES Model)
     case iMac201:
     case iMac202:
     case iMacPro11:
-      return FALSE;
+      return false;
     case MacPro11:
     case MacPro21:
     case MacPro31:
@@ -883,13 +883,13 @@ bool GetMobile(MACHINE_TYPES Model)
     case MacPro51:
     case MacPro61:
     case MacPro71:
-      return FALSE;
+      return false;
     case Xserve11:
     case Xserve21:
     case Xserve31:
-      return FALSE;
+      return false;
     case MaxMachineType: // currently a copy of iMac132
-      return FALSE;
+      return false;
     default: // bug, unknown Apple model
       log_technical_bug("%s : cannot find model %d\n", __PRETTY_FUNCTION__, Model);
       return false;

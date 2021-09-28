@@ -48,13 +48,13 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const 
 
 
 // Ask user for file path from directory menu
-BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+XBool AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
                                   const CHAR16 *ParentPath, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path from volumes menu
-BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+XBool AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path
-BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
+XBool AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 
 // legacy
 void ScanLegacy(void);
@@ -63,7 +63,7 @@ void AddCustomLegacy(void);
 // loader
 void ScanLoader(void);
 void AddCustomEntries(void);
-BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry);
+XBool IsCustomBootEntry(IN LOADER_ENTRY *Entry);
 
 // tool
 void ScanTool(void);
@@ -97,13 +97,13 @@ EFI_STATUS InstallSecureBoot(void);
 void UninstallSecureBoot(void);
 void EnableSecureBoot(void);
 void DisableSecureBoot(void);
-BOOLEAN ConfigureSecureBoot(void);
+XBool ConfigureSecureBoot(void);
 CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy);
 EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
                                 IN UINTN    AuthorizedDatabaseSize,
-                                IN BOOLEAN  WantDefaultKeys);
+                                IN XBool  WantDefaultKeys);
 EFI_STATUS ClearSecureBootKeys(void);
 
 // secure boot database
@@ -123,7 +123,7 @@ EFI_STATUS ClearAuthorizedDatabase(void);
 void *GetImageSignatureDatabase(IN void    *FileBuffer,
                                 IN UINT64   FileSize,
                                 IN UINTN   *DatabaseSize,
-                                IN BOOLEAN  HashIfNoDatabase);
+                                IN XBool  HashIfNoDatabase);
 EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN void  *Database,
                                                    IN UINTN  DatabaseSize);
 EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN void  *Database,

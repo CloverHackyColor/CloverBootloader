@@ -221,8 +221,8 @@ typedef enum {
 
 
 
-//extern BOOLEAN          gBootArgsChanged;
-extern BOOLEAN          gThemeOptionsChanged;
+//extern XBool          gBootArgsChanged;
+extern XBool          gThemeOptionsChanged;
 //extern POINTERS         gPointer;
 //extern EFI_GUID gEfiAppleBootGuid;
 
@@ -245,19 +245,19 @@ void ScanVolumes(void);
 
 REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName);
 
-BOOLEAN FileExists(const EFI_FILE *BaseDir, const CHAR16 *RelativePath);
-BOOLEAN FileExists(const EFI_FILE *BaseDir, const XStringW& RelativePath);
-BOOLEAN FileExists(const EFI_FILE& Root, const XStringW& RelativePath);
+XBool FileExists(const EFI_FILE *BaseDir, const CHAR16 *RelativePath);
+XBool FileExists(const EFI_FILE *BaseDir, const XStringW& RelativePath);
+XBool FileExists(const EFI_FILE& Root, const XStringW& RelativePath);
 
 //inline EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName) { return FileDevicePath(Device, FileName.wc_str()); }
 EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName);
 
-BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
+XBool DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
 
 EFI_STATUS DirNextEntry(const EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode);
 
 void    DirIterOpen(const EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter);
-BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONST CHAR16 *FilePattern OPTIONAL, OUT EFI_FILE_INFO **DirEntry);
+XBool DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONST CHAR16 *FilePattern OPTIONAL, OUT EFI_FILE_INFO **DirEntry);
 EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter);
 
 CONST CHAR16 * Basename(IN CONST CHAR16 *Path);
@@ -316,7 +316,7 @@ extern CHAR16 *BlankLine;
 
 extern INTN UGAWidth;
 extern INTN UGAHeight;
-extern BOOLEAN AllowGraphicsMode;
+extern XBool AllowGraphicsMode;
 
 #endif
 
@@ -396,7 +396,7 @@ void DebugPause(void);
 // BmLib
 //
 
-extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
+extern XBool DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 //void FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 

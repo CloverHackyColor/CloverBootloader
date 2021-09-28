@@ -79,7 +79,7 @@ DeleteNvramVariable (
 void
 ResetNvram (void);
 
-BOOLEAN
+XBool
 IsDeletableVariable (
   IN CHAR16    *Name,
   IN EFI_GUID  *Guid
@@ -101,7 +101,7 @@ void
 PutNvramPlistToRtVars (void);
 
 void
-GetSmcKeys(BOOLEAN WriteToSMC);
+GetSmcKeys(XBool WriteToSMC);
 #if CHECK_SMC
 void DumpSmcKeys();
 #endif

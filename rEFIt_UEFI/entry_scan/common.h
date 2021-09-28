@@ -33,7 +33,7 @@ StrToLower (
 
 void AlertMessage (IN const XStringW& Title, IN const XStringW& Message);
 
-BOOLEAN
+XBool
 YesNoMessage (
   IN CONST CHAR16 *Title,
   IN CONST CHAR16 *Message);

@@ -75,8 +75,8 @@ StriCmp (
 		IN      CONST CHAR16              *SecondS
 		);
 
-// If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
-BOOLEAN
+// If Null-terminated strings are case insensitive equal or its sSize symbols are equal then true
+XBool
 AsciiStriNCmp(
               IN      CONST CHAR8              *FirstS,
               IN      CONST CHAR8              *SecondS,
@@ -84,7 +84,7 @@ AsciiStriNCmp(
               );
 
 // Case insensitive search of WhatString in WhereString
-BOOLEAN
+XBool
 AsciiStrStriN (
                IN      CONST CHAR8              *WhatString,
                IN      CONST UINTN               sWhatSize,
@@ -155,11 +155,11 @@ EfiReallocatePool (
   @param FirstTime       - A pointer to the first EFI_TIME data.
   @param SecondTime      - A pointer to the second EFI_TIME data.
 
-  @retval  TRUE              The FirstTime is not later than the SecondTime.
-  @retval  FALSE             The FirstTime is later than the SecondTime.
+  @retval  true              The FirstTime is not later than the SecondTime.
+  @retval  false             The FirstTime is later than the SecondTime.
 
 **/
-BOOLEAN
+XBool
 TimeCompare (
   IN EFI_TIME               *FirstTime,
   IN EFI_TIME               *SecondTime

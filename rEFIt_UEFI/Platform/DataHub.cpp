@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "DataHub.h"
 
 //
@@ -172,14 +173,14 @@ GetNextDataRecord (
 {
   EFI_DATA_ENTRY          *LogEntry;
   LIST_ENTRY              *Link;
-  BOOLEAN                 ReturnFirstEntry;
+  XBool                 ReturnFirstEntry;
   EFI_DATA_RECORD_HEADER  *Record;
   EFI_DATA_ENTRY          *NextLogEntry;
 
   //
   // If MonotonicCount == 0 just return the first one
   //
-  ReturnFirstEntry  = (BOOLEAN) (*PtrCurrentMTC == 0);
+  ReturnFirstEntry  = (XBool) (*PtrCurrentMTC == 0);
 
   Record            = NULL;
   for (Link = GetFirstNode(Head); Link != Head; Link = GetNextNode(Head, Link)) {

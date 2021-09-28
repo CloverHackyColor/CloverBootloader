@@ -62,14 +62,14 @@ UINTN ConHeight;
 CHAR16 *BlankLine = NULL;
 INTN BanHeight = 0;
 
-static void SwitchToText(IN BOOLEAN CursorEnabled);
+static void SwitchToText(IN XBool CursorEnabled);
 static void SwitchToGraphics(void);
 static void DrawScreenHeader(IN CONST CHAR16 *Title);
 static void UpdateConsoleVars(void);
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension);
 INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 //INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
-static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension);
+static XBool IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension);
 static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
@@ -77,7 +77,7 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
 
 INTN   UGAWidth;
 INTN   UGAHeight;
-BOOLEAN AllowGraphicsMode;
+XBool AllowGraphicsMode;
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
@@ -89,7 +89,7 @@ const EFI_GRAPHICS_OUTPUT_BLT_PIXEL WhitePixel  = { 0xff, 0xff, 0xff, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0xff};
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
 
-static BOOLEAN GraphicsScreenDirty;
+static XBool GraphicsScreenDirty;
 
 // general defines and variables
 
@@ -97,7 +97,7 @@ static BOOLEAN GraphicsScreenDirty;
 // Screen initialization and switching
 //
 
-void InitScreen(IN BOOLEAN SetMaxResolution)
+void InitScreen(IN XBool SetMaxResolution)
 {
 	//DbgHeader("InitScreen");
     // initialize libeg
@@ -105,16 +105,16 @@ void InitScreen(IN BOOLEAN SetMaxResolution)
     
     if (egHasGraphicsMode()) {
         egGetScreenSize(&UGAWidth, &UGAHeight);
-        AllowGraphicsMode = TRUE;
+        AllowGraphicsMode = true;
     } else {
-        AllowGraphicsMode = FALSE;
-		//egSetGraphicsModeEnabled(FALSE);   // just to be sure we are in text mode
+        AllowGraphicsMode = false;
+		//egSetGraphicsModeEnabled(false);   // just to be sure we are in text mode
     }
 	
-    GraphicsScreenDirty = TRUE;
+    GraphicsScreenDirty = true;
     
     // disable cursor
-	gST->ConOut->EnableCursor(gST->ConOut, FALSE);
+	gST->ConOut->EnableCursor(gST->ConOut, false);
     
     UpdateConsoleVars();
 
@@ -126,28 +126,28 @@ void SetupScreen(void)
 {
     if (gSettings.GUI.TextOnly) {
         // switch to text mode if requested
-        AllowGraphicsMode = FALSE;
-        SwitchToText(FALSE);
+        AllowGraphicsMode = false;
+        SwitchToText(false);
     } else if (AllowGraphicsMode) {
         // clear screen and show banner
         // (now we know we'll stay in graphics mode)
         SwitchToGraphics();
-		//BltClearScreen(TRUE);
+		//BltClearScreen(true);
     }
 }
 
-static void SwitchToText(IN BOOLEAN CursorEnabled)
+static void SwitchToText(IN XBool CursorEnabled)
 {
-  egSetGraphicsModeEnabled(FALSE);
+  egSetGraphicsModeEnabled(false);
 	gST->ConOut->EnableCursor(gST->ConOut, CursorEnabled);
 }
 
 static void SwitchToGraphics(void)
 {
     if (AllowGraphicsMode && !egIsGraphicsModeEnabled()) {
-      InitScreen(FALSE);
-      egSetGraphicsModeEnabled(TRUE);
-      GraphicsScreenDirty = TRUE;
+      InitScreen(false);
+      egSetGraphicsModeEnabled(true);
+      GraphicsScreenDirty = true;
     }
 }
 
@@ -157,59 +157,59 @@ static void SwitchToGraphics(void)
 void BeginTextScreen(IN CONST CHAR16 *Title)
 {
     DrawScreenHeader(Title);
-    SwitchToText(FALSE);
+    SwitchToText(false);
     
     // reset error flag
-    haveError = FALSE;
+    haveError = false;
 }
 
-void FinishTextScreen(IN BOOLEAN WaitAlways)
+void FinishTextScreen(IN XBool WaitAlways)
 {
     if (haveError || WaitAlways) {
-        SwitchToText(FALSE);
+        SwitchToText(false);
  //       PauseForKey(L"FinishTextScreen");
     }
     
     // reset error flag
-    haveError = FALSE;
+    haveError = false;
 }
 
-void BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
+void BeginExternalScreen(IN XBool UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
 {
 	if (!AllowGraphicsMode) {
-        UseGraphicsMode = FALSE;
+        UseGraphicsMode = false;
 	}
     
     if (UseGraphicsMode) {
         SwitchToGraphics();
-		//BltClearScreen(FALSE);
+		//BltClearScreen(false);
     }
     
     // show the header
 	//DrawScreenHeader(Title);
     
 	if (!UseGraphicsMode) {
-        SwitchToText(TRUE);
+        SwitchToText(true);
 	}
     
     // reset error flag
-    haveError = FALSE;
+    haveError = false;
 }
 
 void FinishExternalScreen(void)
 {
     // make sure we clean up later
-    GraphicsScreenDirty = TRUE;
+    GraphicsScreenDirty = true;
     
     if (haveError) {
         // leave error messages on screen in case of error,
         // wait for a key press, and then switch
         PauseForKey("was error."_XS8);
-        SwitchToText(FALSE);
+        SwitchToText(false);
     }
     
     // reset error flag
-    haveError = FALSE;
+    haveError = false;
 }
 
 void TerminateScreen(void)
@@ -219,7 +219,7 @@ void TerminateScreen(void)
 	gST->ConOut->ClearScreen(gST->ConOut);
     
     // enable cursor
-	gST->ConOut->EnableCursor(gST->ConOut, TRUE);
+	gST->ConOut->EnableCursor(gST->ConOut, true);
 }
 
 static void DrawScreenHeader(IN CONST CHAR16 *Title)
@@ -340,7 +340,7 @@ INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension,
   return value;
 }
 
-static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension)
+static XBool IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN ScreenDimension)
 {
   return (Value >= 0 && Value + ImageDimension <= ScreenDimension);
 }
@@ -391,7 +391,7 @@ void REFIT_MENU_SCREEN::InitAnime()
   }
   if (FilmC == nullptr) {
 //    DBG("Screen %lld inited without anime\n", ID);
-//    FilmC->AnimeRun = FALSE;
+//    FilmC->AnimeRun = false;
     return;
   }
 //  DBG("=== Debug Film ===\n");
@@ -433,7 +433,7 @@ void REFIT_MENU_SCREEN::InitAnime()
   }
   if (FilmC->NumFrames != 0) {
     DBG(" Anime seems OK, init it\n");
-    FilmC->AnimeRun = TRUE;
+    FilmC->AnimeRun = true;
     FilmC->Reset();
     FilmC->LastDraw = 0;
   }

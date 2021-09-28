@@ -38,6 +38,7 @@
   cpp_foundation/unicode_conversions.cpp
   cpp_foundation/unicode_conversions.h
   cpp_foundation/XArray.h
+  cpp_foundation/XBool.h
   cpp_foundation/XBuffer.cpp
   cpp_foundation/XBuffer.h
   cpp_foundation/XObjArray.h

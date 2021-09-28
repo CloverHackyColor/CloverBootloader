@@ -117,7 +117,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 #endif
 
 
-BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
+XBool EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
 {
   EFI_STATUS          Status;
   EFI_PCI_IO_PROTOCOL *PciIo;
@@ -130,13 +130,13 @@ BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
   // get device PciIo protocol
   Status = gBS->OpenProtocol(PciDevHandle, &gEfiPciIoProtocolGuid, (void **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
-    return FALSE;
+    return false;
   }
 
   // get device location
   Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
   if (EFI_ERROR(Status)) {
-    return FALSE;
+    return false;
   }
 
   // iterate over all GFX devices and check for sibling
@@ -144,19 +144,19 @@ BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
     if (gConf.GfxPropertiesArray[Index].Segment == Segment
         && gConf.GfxPropertiesArray[Index].Bus == Bus
         && gConf.GfxPropertiesArray[Index].Device == Device) {
-      return TRUE;
+      return true;
     }
   }
 
-  return FALSE;
+  return false;
 }
 
-BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const MacOsVersion& OSVersion)
+XBool setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const MacOsVersion& OSVersion)
 {
   DevPropDevice           *device = NULL;
   UINT32                  layoutId = 0;
   UINT32                  codecId = 0;
-  BOOLEAN                 Injected = FALSE;
+  XBool                 Injected = false;
   UINTN                   i;
 
   if (!device_inject_string) {
@@ -164,15 +164,15 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
   }
   if (IsHDMIAudio(hda_dev->DeviceHandle)) {
     if (!gSettings.Devices.HDMIInjection) {
-      return FALSE;
+      return false;
     }
 
     if (hda_dev && !hda_dev->used) {
       device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
-      hda_dev->used = TRUE;
+      hda_dev->used = true;
     }
     if (!device) {
-      return FALSE;
+      return false;
     }
 
     if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
@@ -180,7 +180,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
         if (gSettings.Devices.AddPropertyArray[i].Device != DEV_HDMI) {
           continue;
         }
-        Injected = TRUE;
+        Injected = true;
 
         if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
           //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -192,7 +192,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
     }
     if (Injected) {
       DBG("Additional HDMI properties injected, continue\n");
-      //return TRUE;
+      //return true;
     } else {
       if (gSettings.Devices.UseIntelHDMI) {
         DBG(" HDMI Audio, used with HDA setting hda-gfx=onboard-2\n");
@@ -204,14 +204,14 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
     }
   } else {
     if (!gSettings.Devices.Audio.HDAInjection) {
-      return FALSE;
+      return false;
     }
     if (hda_dev && !hda_dev->used) {
       device = devprop_add_device_pci(device_inject_string, hda_dev, NULL);
-      hda_dev->used = TRUE;
+      hda_dev->used = true;
     }
     if (!device) {
-      return FALSE;
+      return false;
     }
     // HDA - determine layout-id
     if (gSettings.Devices.Audio.HDALayoutId > 0) {
@@ -226,7 +226,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
         if (gSettings.Devices.AddPropertyArray[i].Device != DEV_HDA) {
           continue;
         }
-        Injected = TRUE;
+        Injected = true;
 
         if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
           //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -253,7 +253,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
       devprop_add_value(device, "PinConfigurations", (UINT8 *)&layoutId, 1);
     }
   }
-  return TRUE;
+  return true;
 }
 
 

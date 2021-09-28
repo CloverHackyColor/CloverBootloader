@@ -388,7 +388,7 @@ STATIC XString8Array LinuxKernelOptions(const EFI_FILE_PROTOCOL *Dir,
   return CustomOptions;
 }
 
-STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
+STATIC XBool isFirstRootUUID(REFIT_VOLUME *Volume)
 {
   UINTN         VolumeIndex;
   REFIT_VOLUME *scanedVolume;
@@ -397,13 +397,13 @@ STATIC BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
     scanedVolume = &Volumes[VolumeIndex];
 
     if (scanedVolume == Volume)
-      return TRUE;
+      return true;
 
     if (CompareGuid(&scanedVolume->RootUUID, &Volume->RootUUID))
-      return FALSE;
+      return false;
 
   }
-  return TRUE;
+  return true;
 }
 
 //Set Entry->VolName to .disk_label.contentDetails if it exists
@@ -902,7 +902,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN UINT8 CustomBoot,
                                        IN const XImage& CustomLogo,
                                        IN const KERNEL_AND_KEXT_PATCHES* Patches,
-                                       IN BOOLEAN CustomEntry)
+                                       IN XBool CustomEntry)
 {
   EFI_DEVICE_PATH       *LoaderDevicePath;
   XStringW               LoaderDevicePathString;
@@ -1136,7 +1136,7 @@ if ( Entry->APFSTargetUUID.startWith("99999999") ) {
     }
   }
 
-  BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
+  XBool BootCampStyle = ThemeX.BootCampStyle;
 
   if ( Entry->Title.isEmpty()  &&  Entry->DisplayedVolName.isEmpty() ) {
     XStringW BasenameXW = XStringW(Basename(Volume->DevicePathString.wc_str()));
@@ -1235,7 +1235,7 @@ void LOADER_ENTRY::AddDefaultMenu()
 //  REFIT_VOLUME      *Volume;
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
-  BOOLEAN           KernelIs64BitOnly;
+  XBool           KernelIs64BitOnly;
 //  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
@@ -1343,8 +1343,8 @@ void LOADER_ENTRY::AddDefaultMenu()
     }
     
   } else if (LoaderType == OSTYPE_LINEFI) {
-    BOOLEAN Quiet = LoadOptions.contains(quietLitteral);
-    BOOLEAN WithSplash = LoadOptions.contains(splashLitteral);
+    XBool Quiet = LoadOptions.contains(quietLitteral);
+    XBool WithSplash = LoadOptions.contains(splashLitteral);
     
     // default entry
     SubEntry = getPartiallyDuplicatedEntry();
@@ -1464,7 +1464,7 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
 //    }
 //  }
 
-  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NullXImage, NULL, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NullXImage, NULL, false);
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
         (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||
@@ -1975,7 +1975,7 @@ void ScanLoader(void)
 
 
 #if defined(ANDX86)
-    if (TRUE) { //gSettings.AndroidScan
+    if (true) { //gSettings.AndroidScan
       // check for Android loaders
       for (UINTN Index = 0; Index < AndroidEntryDataCount; ++Index) {
         UINTN aIndex, aFound;
@@ -2405,7 +2405,7 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.getFullTitle(), Custom.getTitle(), Volume,
                                 NULL, NULL,
                                 parentType, newCustomFlags, 0, {0,0,0,0}, 0, NullXImage,
-                                /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
+                                /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, true);
       if (Entry != NULL) {
 //        if ( Custom.settings.Settings.notEmpty() ) DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");
 //        if (!Custom.settings.CommonSettings) {
@@ -2466,7 +2466,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
   REFIT_DIR_ITER *Iter = &SIter;
   CHAR16          PartUUID[40];
   XStringW        CustomPath = _CustomPath;
-  BOOLEAN         FindCustomPath = (CustomPath.isEmpty());
+  XBool         FindCustomPath = (CustomPath.isEmpty());
 
   if ( SubMenu != NULL ) panic("Call AddCustomSubEntry instead");
   
@@ -2667,7 +2667,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
       // Check to make sure that this entry is not hidden or disabled by another custom entry
       if (true) {
-        BOOLEAN              BetterMatch = FALSE;
+        XBool              BetterMatch = false;
         for (size_t i = 0 ; i < GlobalConfig.CustomEntries.size() ; ++i ) {
           CUSTOM_LOADER_ENTRY& CustomEntry = GlobalConfig.CustomEntries[i];
           if ( CustomEntry.settings.Disabled ) continue; // before, disabled entries settings weren't loaded.
@@ -2704,7 +2704,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
                                  ((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) != 0);
                 } else {
                   // Better match
-                  BetterMatch = TRUE;
+                  BetterMatch = true;
                 }
               // Duplicate volume match
               } else if (Custom.settings.Path != CustomEntry.settings.Path) {
@@ -2766,7 +2766,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.settings.FullTitle, Custom.settings.dgetTitle(), Volume,
                                 (Image.isEmpty() ? NULL : &Image), (DriveImage.isEmpty() ? NULL : &DriveImage),            
                                 Custom.settings.Type, newCustomFlags, Custom.settings.Hotkey, Custom.settings.BootBgColor, Custom.CustomLogoType, Custom.CustomLogoImage,
-                                /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
+                                /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, true);
       if (Entry != NULL) {
         if ( Custom.settings.Settings.notEmpty() ) {
           DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");

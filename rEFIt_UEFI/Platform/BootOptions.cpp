@@ -158,7 +158,7 @@ Clover_FindDevicePathNodeWithType (
 
 
 /** Creates device path for boot option: device path for file system volume + file name.
- *  If UseShortForm == TRUE, then only the hard drive media dev path will be used instead
+ *  If UseShortForm == true, then only the hard drive media dev path will be used instead
  *  of full device path.
  *  Long (full) form:
  *   PciRoot(0x0)/Pci(0x1f,0x2)/Sata(0x1,0x0)/HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
@@ -170,7 +170,7 @@ EFI_STATUS
 CreateBootOptionDevicePath (
     IN  EFI_HANDLE      FileDeviceHandle,
     IN  CONST XStringW&  FileName,
-    IN  BOOLEAN         UseShortForm,
+    IN  XBool         UseShortForm,
     OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
     )
 {
@@ -219,14 +219,14 @@ CreateBootOptionDevicePath (
 }
 
 
-/** Returns TRUE if dev paths are equal. Has special ascii case insensitive compare for file dev paths. */
-BOOLEAN
+/** Returns true if dev paths are equal. Has special ascii case insensitive compare for file dev paths. */
+XBool
 DevicePathEqual (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath1,
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath2
     )
 {
-    BOOLEAN         Equal;
+    XBool         Equal;
     UINT8           Type1;
     UINT8           SubType1;
     UINTN           Len1;
@@ -234,9 +234,9 @@ DevicePathEqual (
     CHAR16          *FPath2;
     
     
-    Equal = FALSE;
+    Equal = false;
     
-    while (TRUE) {
+    while (true) {
         Type1 = DevicePathType (DevicePath1);
         SubType1 = DevicePathSubType (DevicePath1);
         Len1 = DevicePathNodeLength (DevicePath1);
@@ -265,7 +265,7 @@ DevicePathEqual (
         
         if (IsDevicePathEnd (DevicePath1)) {
             // END node - they are the same
-            Equal = TRUE;
+            Equal = true;
             break;
         }
         
@@ -769,14 +769,14 @@ FindBootOptionForFile (
   //
   // Create FileDeviceHandle/FileName device paths (long and short form) - we will search boot options for that.
   //
-  Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, FALSE, &SearchedDevicePath[0]);
+  Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, false, &SearchedDevicePath[0]);
   if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   SearchedDevicePathSize[0] = GetDevicePathSize (SearchedDevicePath[0]);
 	DBG(" Searching for: %ls (Len: %llu)\n", FileDevicePathToXStringW(SearchedDevicePath[0]).wc_str(), SearchedDevicePathSize[0]);
 
-  Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &SearchedDevicePath[1]);
+  Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, true, &SearchedDevicePath[1]);
   if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -828,10 +828,10 @@ FindBootOptionForFile (
   return EFI_NOT_FOUND;
 }
 
-/** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
+/** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == true. */
 void
 PrintBootOptions (
-    IN  BOOLEAN         AllBootOptions
+    IN  XBool         AllBootOptions
     )
 {
   EFI_STATUS          Status;
@@ -840,7 +840,7 @@ PrintBootOptions (
   UINTN               Index;
   UINTN               BootNum;
   BO_BOOT_OPTION      BootOption;
-  BOOLEAN             FoundOthers;
+  XBool             FoundOthers;
 
 
   DBG("\nBoot options:\n-------------\n");
@@ -873,7 +873,7 @@ PrintBootOptions (
 
   if (AllBootOptions) {
     DBG("\nBoot options not in BootOrder list:\n");
-    FoundOthers = FALSE;
+    FoundOthers = false;
     //
     // Additionally print BootXXXX vars which are not in BootOrder
     //
@@ -902,7 +902,7 @@ PrintBootOptions (
 
       PrintBootOption (&BootOption, 0);
       FreePool(BootOption.Variable);
-      FoundOthers = TRUE;
+      FoundOthers = true;
     }
     if (!FoundOthers) {
       DBG(" not found\n");
@@ -988,7 +988,7 @@ AddBootOption (
 
 /** Adds new boot option for given file system device handle FileDeviceHandle, file path FileName
  *  and Description, to be BootIndex in the list of options (0 based).
- *  If UseShortForm == TRUE, then only the hard drive media dev path will be used instead
+ *  If UseShortForm == true, then only the hard drive media dev path will be used instead
  *  of full device path.
  *  Long (full) form:
  *   PciRoot(0x0)/Pci(0x1f,0x2)/Sata(0x1,0x0)/HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
@@ -999,7 +999,7 @@ EFI_STATUS
 AddBootOptionForFile (
     IN  EFI_HANDLE      FileDeviceHandle,
     IN  CONST XStringW&  FileName,
-    IN  BOOLEAN         UseShortForm,
+    IN  XBool         UseShortForm,
     IN  CONST CHAR16          *Description,
     IN  UINT8           *OptionalData,
     IN  UINTN           OptionalDataSize,

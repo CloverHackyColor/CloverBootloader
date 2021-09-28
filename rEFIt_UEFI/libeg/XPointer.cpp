@@ -68,7 +68,7 @@ EFI_STATUS XPointer::MouseBirth()
     }
     MouseEvent = NoEvents;
     SimplePointerProtocol = NULL;
-    gSettings.GUI.Mouse.PointerEnabled = FALSE;
+    gSettings.GUI.Mouse.PointerEnabled = false;
     return Status;
   }
 

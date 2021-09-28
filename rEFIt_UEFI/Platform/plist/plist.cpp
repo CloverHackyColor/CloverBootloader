@@ -255,7 +255,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
     }
   }
   buffer_start = configBuffer;
-  while (TRUE)
+  while (true)
   {
     Status = XMLParseNextTag(configBuffer + pos, &tag, &length);
     DBG("pos=%u\n", pos);
@@ -382,12 +382,12 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
   {
     Status = ParseTagDate(buffer + pos, tag, &length);
   }
-  /***** FALSE ****/
+  /***** false ****/
   else if (!strcmp(tagName, kXMLTagFalse))
   {
     Status = ParseTagBoolean(tag, false, &length);
   }
-  /***** TRUE ****/
+  /***** true ****/
   else if (!strcmp(tagName, kXMLTagTrue))
   {
     Status = ParseTagBoolean(tag, true, &length);
@@ -453,7 +453,7 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 e
   XObjArray<TagStruct>& tagList = *tagListPtr;
 
   if (!empty) {
-    while (TRUE) {
+    while (true) {
       TagStruct* newDictOrArrayTag = NULL;
       Status = XMLParseNextTag(buffer + pos, &newDictOrArrayTag, &length);
       if (EFI_ERROR(Status)) {
@@ -558,7 +558,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
   UINT32    length = 0;
   INTN     integer;
   UINT32    size;
-  BOOLEAN   negative = FALSE;
+  XBool   negative = false;
   CHAR8*    val = buffer;
   TagInt64* tmpTag;
 
@@ -601,7 +601,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
   }
   else if ( size ) {  // Decimal value
     if (*val == '-') {
-      negative = TRUE;
+      negative = true;
       val++;
       size--;
     }
@@ -805,20 +805,20 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag, UINT32* lenPtr)
 
 
 /*
- return TRUE if the property present && value = TRUE
- else return FALSE
+ return true if the property present && value = true
+ else return false
  */
-BOOLEAN
+XBool
 IsPropertyNotNullAndTrue(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isTrueOrYy();
 }
 
 /*
- return TRUE if the property present && value = FALSE
- else return FALSE
+ return true if the property present && value = false
+ else return false
  */
-BOOLEAN
+XBool
 IsPropertyNotNullAndFalse(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isFalseOrNn();

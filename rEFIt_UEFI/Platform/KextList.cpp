@@ -76,12 +76,12 @@ void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   EFI_FILE_INFO   *PlugInEntry;
   XStringW        PlugInsPath;
   XStringW         PlugInsName;
-  BOOLEAN         Blocked = FALSE;
+  XBool         Blocked = false;
 
   if( !selfOem.isKextsDirFound() ) return;
 
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
-    Blocked = TRUE;
+    Blocked = true;
   }
 
   DirIterOpen(&selfOem.getKextsDir(), KextDirNameUnderOEMPath, &DirIter);

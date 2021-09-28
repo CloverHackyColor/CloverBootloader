@@ -27,7 +27,7 @@ LogDataHub (
 
 void
 EFIAPI
-SetupDataForOSX (BOOLEAN Hibernate);
+SetupDataForOSX (XBool Hibernate);
 
 
 #endif /* PLATFORM_DATAHUBCPU_H_ */

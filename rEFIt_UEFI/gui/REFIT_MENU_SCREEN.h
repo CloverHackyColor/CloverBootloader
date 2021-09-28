@@ -333,15 +333,15 @@ public:
   XStringW          ThemeName = XStringW();  //?
   EG_RECT           OldTextBufferRect = EG_RECT();
   XImage            OldTextBufferImage = XImage();
-  BOOLEAN           isBootScreen = 0;
+  XBool           isBootScreen = false;
   FILM              *FilmC = 0;
 
   ACTION          mAction = ActionNone;
   UINTN           mItemID = 0;
-  SCROLL_STATE    ScrollState = {0,0,0,0,0,0,0,0,0,0,0};
-  BOOLEAN         ScrollEnabled = 0;
+  SCROLL_STATE    ScrollState = {0,0,0,0,0,0,0,0,false,false,false};
+  XBool         ScrollEnabled = false;
   INTN            TextStyle = 0;
-  BOOLEAN         IsDragging = 0;
+  XBool         IsDragging = false;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
@@ -415,13 +415,13 @@ public:
   EFI_STATUS WaitForInputEventPoll(UINTN TimeoutDefault);
 
   //menu functions
-  void AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void AddMenuInfo_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
   void AddMenuInfoLine_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
   void AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
-  void AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
-  void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void FreeMenu();
   INTN FindMenuShortcutEntry(IN char32_t Shortcut);
   UINTN RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);

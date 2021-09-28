@@ -56,7 +56,7 @@ InitializeInterruptRedirection (
 //  IN  EFI_LEGACY_8259_PROTOCOL  *Legacy8259
   );
 
-BOOLEAN
+XBool
 EFIAPI
 LegacyBiosInt86 (
 //  IN  EFI_LEGACY_BIOS_THUNK_PROTOCOL  *This,
@@ -64,7 +64,7 @@ LegacyBiosInt86 (
   IN  IA32_REGISTER_SET				*Regs
   );
 
-BOOLEAN
+XBool
 EFIAPI
 LegacyBiosFarCall86 (
 //  IN  EFI_LEGACY_BIOS_THUNK_PROTOCOL  *This,

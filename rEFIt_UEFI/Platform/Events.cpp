@@ -69,7 +69,7 @@ void WaitForCR()
   EFI_INPUT_KEY key;
   UINTN         ind;
 
-  while (TRUE) {
+  while (true) {
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
     if (Status == EFI_NOT_READY) {
       gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
@@ -278,7 +278,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
     UINTN						archMode = sizeof(UINTN) * 8;
     UINTN						Version = 0;
     
-    while(TRUE)
+    while(true)
     {
       bootArgs2v = (BootArgs2*)ptr;
       bootArgs1v = (BootArgs1*)ptr;

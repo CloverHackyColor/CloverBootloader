@@ -287,7 +287,7 @@ public:
             const XStringW& dgetVolume() const { return Volume.isDefined() ? Volume.value() : NullXStringW; };
             const XStringW& dgetPath() const { return Path.isDefined() ? Path.value() : NullXStringW; };
             const XStringW& dgetSettings() const { return Settings.isDefined() ? Settings.value() : NullXStringW; };
-            BOOLEAN dgetCommonSettings() const { return CommonSettings.isDefined() ? CommonSettings.value() : false; };
+            XBool dgetCommonSettings() const { return CommonSettings.isDefined() ? CommonSettings.value() : false; };
             const XString8& dgetAddArguments() const { return AddArguments.isDefined() ? AddArguments.value() : NullXString8; };
             const undefinable_XString8 dgetArguments() const { return Arguments.isDefined() ? undefinable_XString8(Arguments.value()) : undefinable_XString8(); };
             const XString8& dgetm_Title() const { return Title.isDefined() ? Title.value() : NullXString8; };

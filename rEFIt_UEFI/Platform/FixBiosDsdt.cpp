@@ -44,25 +44,25 @@ OPER_REGION *gRegions = NULL;
 CHAR8*  device_name[12];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport 10=>XHCI 11=>HDMI
 CHAR8*  UsbName[10];
 
-BOOLEAN HDAFIX = TRUE;
-BOOLEAN GFXHDAFIX = TRUE;
-BOOLEAN DisplayName1;
-BOOLEAN DisplayName2;
-BOOLEAN NetworkName;
-BOOLEAN ArptName;
-BOOLEAN XhciName;
-BOOLEAN ArptBCM;
-BOOLEAN ArptAtheros;
-BOOLEAN LPCBFIX;
-BOOLEAN IDEFIX;
-BOOLEAN SATAFIX;
-BOOLEAN ASUSFIX;
-BOOLEAN USBIntel;
-BOOLEAN USBNForce;
-BOOLEAN USBIDFIX = TRUE;
-//BOOLEAN Display1PCIE;
-//BOOLEAN Display2PCIE;
-BOOLEAN FirewireName;
+XBool HDAFIX = true;
+XBool GFXHDAFIX = true;
+XBool DisplayName1;
+XBool DisplayName2;
+XBool NetworkName;
+XBool ArptName;
+XBool XhciName;
+XBool ArptBCM;
+XBool ArptAtheros;
+XBool LPCBFIX;
+XBool IDEFIX;
+XBool SATAFIX;
+XBool ASUSFIX;
+XBool USBIntel;
+XBool USBNForce;
+XBool USBIDFIX = true;
+//XBool Display1PCIE;
+//XBool Display2PCIE;
+XBool FirewireName;
 
 // for read computer data
 UINT32 DisplayADR1[4];
@@ -494,7 +494,7 @@ UINT8 darwin[] =  //it is not const
 };
 
 
-BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
+XBool CmpNum(UINT8 *dsdt, INT32 i, XBool Sure)
 {
   return ((Sure && ((dsdt[i-1] == 0x0A) ||
                     (dsdt[i-2] == 0x0B) ||
@@ -507,37 +507,37 @@ BOOLEAN CmpNum(UINT8 *dsdt, INT32 i, BOOLEAN Sure)
 // for HDA from device_inject.c and mark device_inject function
 //extern UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb);
 
-BOOLEAN get_lpc_model(UINT32 id) {
+XBool get_lpc_model(UINT32 id) {
   UINTN  i;
 
   for (i=1; i< (sizeof(lpc_chipset) / sizeof(lpc_chipset[0])); i++) {
     if (lpc_chipset[i].id == id) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 
-BOOLEAN get_ide_model(UINT32 id) {
+XBool get_ide_model(UINT32 id) {
   UINTN  i;
 
   for (i=1; i< (sizeof(ide_chipset) / sizeof(ide_chipset[0])); i++) {
     if (ide_chipset[i].id == id) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 /*
-BOOLEAN get_ahci_model(UINT32 id) {
+XBool get_ahci_model(UINT32 id) {
   UINTN  i;
 
   for (i=1; i< (sizeof(ahci_chipset) / sizeof(ahci_chipset[0])); i++) {
     if (ahci_chipset[i].id == id) {
-      return FALSE;
+      return false;
     }
   }
-  return TRUE;
+  return true;
 }
 */
 CONST CHAR8* get_net_model(UINT32 id) {
@@ -595,7 +595,7 @@ void GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 /* Discussion
  Native USB mean for those chipsets IOUSBFamily set some "errata"
  for example native 0x1cXX has no such errata */
-BOOLEAN NativeUSB(UINT16 DID)
+XBool NativeUSB(UINT16 DID)
 {
   UINT16 d = DID & 0xFF00;
   return ((d == 0x2600) || (d == 0x2700) || (d == 0x2800) || (d == 0x3a00) || (d == /*NFORCE_USB->*/0x0a00));
@@ -686,8 +686,8 @@ void CheckHardware()
             Displaydevice[display].revision = Pci.Hdr.RevisionID;
             Displaydevice[display].subclass = Pci.Hdr.ClassCode[0];
             Displaydevice[display].class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-            Displaydevice[display].subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-            Displaydevice[display].subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+            Displaydevice[display].subsys_id_union.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+            Displaydevice[display].subsys_id_union.subsys.device_id = Pci.Device.SubsystemID;
             //
             // Detect if PCI Express Device
             //
@@ -697,9 +697,9 @@ void CheckHardware()
  /*           PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
             if (PciIoDevice->IsPciExp) {
               if (display==0)
-                Display1PCIE = TRUE;
+                Display1PCIE = true;
               else
-                Display2PCIE = TRUE;
+                Display2PCIE = true;
             }
             DBG("Display %d is %sPCIE\n", display, (PciIoDevice->IsPciExp) ? "" :" not"); */
             display++;
@@ -800,12 +800,12 @@ void CheckHardware()
                 DBG("Audio HDA (addr:0x%X) setting specified layout-id=%d (0x%X)\n", HDAADR1, layoutId, layoutId);
               }
 
-              HDAFIX = TRUE;
+              HDAFIX = true;
               HDAcodecId = codecId;
               HDAlayoutId = layoutId;
             } else { //HDMI
               GetPciADR(DevicePath, &HDMIADR1, &HDMIADR2, NULL);
-              GFXHDAFIX = TRUE;
+              GFXHDAFIX = true;
             }
           }
 
@@ -899,7 +899,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
 {
   UINT32  i, k, size;
   UINT32  SBSIZE = 0, SBADR = 0;
-  BOOLEAN SBFound = FALSE;
+  XBool SBFound = false;
   UINT32  off2, j1;
 
   if (acpi_cpu_score) {
@@ -949,7 +949,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
     if (dsdt[i] == 0x5B && dsdt[i + 1] == 0x83) { // ProcessorOP
       UINT32 j;
       UINT32 offset = i + 3 + (dsdt[i + 2] >> 6);  // name
-      BOOLEAN add_name = TRUE;
+      XBool add_name = true;
       if (acpi_cpu_count == 0) {         //only first time in the cycle
         CHAR8 c1 = dsdt[offset + 1];
         // I want to determine a scope of PR
@@ -976,7 +976,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
             //check device
             k = j + 2;
             if ((dsdt[j] == 0x5B) && (dsdt[j + 1] == 0x82) &&
-                !CmpNum(dsdt, j, TRUE)) { //device candidate
+                !CmpNum(dsdt, j, true)) { //device candidate
   //            DBG("device candidate at %X\n", j);
               size = get_size(dsdt, k);
               if (size) {
@@ -1006,7 +1006,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
                 if (dsdt[j - j1] != 0x10) {
                   continue;
                 }
-                if (!CmpNum(dsdt, j - j1, TRUE)) {
+                if (!CmpNum(dsdt, j - j1, true)) {
                   SBADR = j - j1 + 1;
                   SBSIZE = get_size(dsdt, SBADR);
                   //     DBG("found Scope(\\_SB) address = 0x%08X size = 0x%08X\n", SBADR, SBSIZE);
@@ -1014,7 +1014,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
                     //if found
                     k = SBADR - 6;
                     if ((SBADR + SBSIZE) > i + 4) {  //Yes - it is outer
-                      SBFound = TRUE;
+                      SBFound = true;
                       break;  //SB found
                     }  //else not an outer scope
                   }
@@ -1048,7 +1048,7 @@ void findCPU(UINT8* dsdt, UINT32 length)
         }
 
         if (!(IS_UPPER(c) || IS_DIGIT(c) || c == '_')) {
-          add_name = FALSE;
+          add_name = false;
           DBG("Invalid character found in ProcessorOP 0x%hhX!\n", c);
           break;
         }
@@ -1206,18 +1206,18 @@ INT32 FindName(UINT8 *dsdt, INT32 len, CONST CHAR8* name)
   return 0;
 }
 
-BOOLEAN GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
+XBool GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
 {
   INT32 i;
   INT32 j = (dsdt[adr] == 0x5C)?1:0; //now we accept \NAME
   if (!name) {
-    return FALSE;
+    return false;
   }
   for (i = adr + j; i < adr + j + 4; i++) {
     if ((dsdt[i] < 0x2F) ||
         ((dsdt[i] > 0x39) && (dsdt[i] < 0x41)) ||
         ((dsdt[i] > 0x5A) && (dsdt[i] != 0x5F))) {
-      return FALSE;
+      return false;
     }
     name[i - adr - j] = dsdt[i];
   }
@@ -1225,13 +1225,13 @@ BOOLEAN GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
   if (shift) {
     *shift = j;
   }
-  return TRUE;
+  return true;
 }
 
-BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
+XBool CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
 {
   // Name (_ADR, 0x001f0001)
-  return (BOOLEAN)
+  return (XBool)
   ((dsdt[j + 4] == 0x08) &&
    (dsdt[j + 5] == 0x5F) &&
    (dsdt[j + 6] == 0x41) &&
@@ -1263,11 +1263,11 @@ BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
    );
 }
 
-BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
+XBool CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
 {
   // Name (_HID, EisaId ("PNP0C0F")) for PNP=0x0C0F BigEndian
   if (PNP == 0) {
-    return (BOOLEAN)
+    return (XBool)
     ((dsdt[j + 0] == 0x08) &&
      (dsdt[j + 1] == 0x5F) &&
      (dsdt[j + 2] == 0x48) &&
@@ -1277,7 +1277,7 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
      (dsdt[j + 6] == 0x41) &&
      (dsdt[j + 7] == 0xD0));
   }
-  return (BOOLEAN)
+  return (XBool)
   ((dsdt[j + 0] == 0x08) &&
    (dsdt[j + 1] == 0x5F) &&
    (dsdt[j + 2] == 0x48) &&
@@ -1333,13 +1333,13 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, const XBuffer<UINT8>& Name)
 INT32 FindBin (UINT8 *dsdt, UINT32 len, const UINT8* bin, UINT32 N)
 {
   UINT32 i, j;
-  BOOLEAN eq;
+  XBool eq;
 
   for (i=0; len >= N && i < len - N; i++) {
-    eq = TRUE;
+    eq = true;
     for (j=0; j<N; j++) {
       if (dsdt[i+j] != bin[j]) {
-        eq = FALSE;
+        eq = false;
         break;
       }
     }
@@ -1397,7 +1397,7 @@ UINT32 CorrectOuterMethod (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   i = adr; //usually adr = @5B - 1 = sizefield - 3
   while (i-- > 0x20) {  //find method that previous to adr
     k = i + 1;
-    if ((dsdt[i] == 0x14) && !CmpNum(dsdt, i, FALSE)) { //method candidate
+    if ((dsdt[i] == 0x14) && !CmpNum(dsdt, i, false)) { //method candidate
       size = get_size(dsdt, k);
       if (!size) {
         continue;
@@ -1428,7 +1428,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   INT32   size = 0;
   INT32   offset = 0;
 //  UINT32   SBSIZE = 0, SBADR = 0;
-  BOOLEAN SBFound = FALSE;
+  XBool SBFound = false;
 
   if (shift == 0) {
     return len;
@@ -1438,21 +1438,21 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   while (i > 0x20) {  //find devices that previous to adr
     //check device
     k = 0;
-    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
+    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, true)) { //device candidate
       k = i + 2;
     } else if ((dsdt[i] == 0x10) && //looks like Scope
                (dsdt[i-1] != 0x14) && //this is Method()
                (dsdt[i-1] != 0xA0) && //this is If()
                (dsdt[i-1] != 0xA1) && //this is Else()
                (dsdt[i-1] != 0xA2) && //this is While()
-               !CmpNum(dsdt, i, TRUE)) { //device scope like Scope (_PCI)
+               !CmpNum(dsdt, i, true)) { //device scope like Scope (_PCI)
       //additional check for Field
       // a problem with fields 52 4D 53 33 10 41 4D 45 4D
       // 1. Search outer filed
       // 2. check the size of the field
       // 3. compare if we are in the filed
       j = i - 1;
-      SBFound = TRUE;
+      SBFound = true;
       while (j > 0x20) {
         if (((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x81)) || 
             ((dsdt[j - 1] == 0x5B) && (dsdt[j] == 0x82)) ||
@@ -1460,7 +1460,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
           size = (INT32)get_size(dsdt, j + 1); // if it is not a size then size = 0
           if (j + size >= i) {
             // it is inside a Field, skip it
-            SBFound = FALSE;
+            SBFound = false;
           }         
           break; // other field so we stop search
         }
@@ -1489,7 +1489,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
         if (dsdt[i-j] != 0x10) {
           continue;
         }
-        if (!CmpNum(dsdt, i-j, TRUE)) {
+        if (!CmpNum(dsdt, i-j, true)) {
           SBADR = i-j+1;
           SBSIZE = get_size(dsdt, SBADR);
        //     DBG("found Scope(\\_SB) address = 0x%08X size = 0x%08X\n", SBADR, SBSIZE);
@@ -1501,7 +1501,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
               offset = write_size(SBADR, dsdt, len, shift);
               shift += offset;
               len += offset;
-              SBFound = TRUE;
+              SBFound = true;
               break;  //SB found
             }  //else not an outer scope
           }
@@ -1578,18 +1578,18 @@ UINT32 devFind(UINT8 *dsdt, UINT32 address)
 }
 
 
-BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
+XBool CustProperties(AML_CHUNK* pack, UINT32 Dev)
 {
   UINTN i;
-  BOOLEAN Injected = FALSE;
+  XBool Injected = false;
   if (gSettings.Devices.AddPropertyArray.size() == 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
-    return FALSE; // not do this for Arbitrary properties?
+    return false; // not do this for Arbitrary properties?
   }
   for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
     if (gSettings.Devices.AddPropertyArray[i].Device != Dev) {
       continue;
     }
-    Injected = TRUE;
+    Injected = true;
 
     if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
       //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -1672,12 +1672,12 @@ void  findPciRoot (UINT8 *dsdt, UINT32 len)
   UINT32 PCIADR, PCISIZE = 0;
 
   //initialising
-  NetworkName   = FALSE;
-  DisplayName1  = FALSE;
-  DisplayName2  = FALSE;
-  FirewireName  = FALSE;
-  ArptName      = FALSE;
-  XhciName      = FALSE;
+  NetworkName   = false;
+  DisplayName1  = false;
+  DisplayName2  = false;
+  FirewireName  = false;
+  ArptName      = false;
+  XhciName      = false;
 
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -1778,7 +1778,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
   size_t sizeoffset;
   INT32 adr;
   UINT32 i;
-  BOOLEAN found = FALSE;
+  XBool found = false;
   if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
     DBG(" invalid patches!\n");
     return len;
@@ -1810,7 +1810,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
     }
 
 //    MsgLog(" (%X)", adr);
-    found = TRUE;
+    found = true;
     len = move_data(adr + i, dsdt, len, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
     CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
     len = CorrectOuterMethod(dsdt, len, adr + i - 2, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
@@ -1825,7 +1825,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
 UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
 {
   INT32 adr;
-  BOOLEAN found = FALSE;
+  XBool found = false;
   UINT32 i, k;
   UINT32 BrdADR = 0, BridgeSize;
 
@@ -1857,7 +1857,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrg
       if(BridgeSize <= ToFind.size()) continue;
 
       k = 0;
-      found = FALSE;
+      found = false;
       while (k <= 100) {
         adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind);
         if (adr < 0) {
@@ -1874,7 +1874,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrg
         }
 
         DBG(" (%X)", adr);
-        found = TRUE;
+        found = true;
         if ( ToReplace.notEmpty() ) {
           CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
         }
@@ -2506,17 +2506,17 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   UINT32 PCIADR = 0, PCISIZE = 0, Size;
   CHAR8 *display;
   UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
-  BOOLEAN DISPLAYFIX = FALSE;
-  BOOLEAN NonUsable = FALSE;
-  BOOLEAN DsmFound = FALSE;
-  BOOLEAN NeedHDMI = !!(gSettings.ACPI.DSDT.FixDsdt & FIX_HDMI);
+  XBool DISPLAYFIX = false;
+  XBool NonUsable = false;
+  XBool DsmFound = false;
+  XBool NeedHDMI = !!(gSettings.ACPI.DSDT.FixDsdt & FIX_HDMI);
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met, *met2;
   AML_CHUNK *pack;
   UINT32 FakeID = 0;
   UINT32 FakeVen = 0;
-  DisplayName1 = FALSE;
+  DisplayName1 = false;
 
   if (!DisplayADR1[VCard]) return len;
 
@@ -2538,7 +2538,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       }
       devsize = get_size(dsdt, devadr); //sizeof PEG0  0x35
       if (devsize) {
-        DisplayName1 = TRUE;
+        DisplayName1 = true;
         break;
       }
     } // End Display1
@@ -2555,7 +2555,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
         devsize1 = get_size(dsdt, devadr1);
         if (devsize1) {
           MsgLog("Found internal video device %X @%X\n", DisplayADR2[VCard], devadr1);
-          DISPLAYFIX = TRUE;
+          DISPLAYFIX = true;
           break;
         }
       }
@@ -2575,10 +2575,10 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
               dsdt[j+11] = 0;
               MsgLog("Found internal video device FFFF@%X, ReUse as 0\n", devadr1);
             } else {
-              NonUsable = TRUE;
+              NonUsable = true;
               MsgLog("Found internal video device FFFF@%X, unusable\n", devadr1);
             }
-            DISPLAYFIX = TRUE;
+            DISPLAYFIX = true;
             break;
           }
         }
@@ -2590,7 +2590,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       i = devadr1;
     } else if (DisplayADR2[VCard] == 0xFFFE) { //builtin
       i = devadr;
-      DISPLAYFIX = TRUE;
+      DISPLAYFIX = true;
       devadr1 = devadr;
       MsgLog(" builtin display\n");
     }
@@ -2801,8 +2801,8 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   UINT32 PCIADR = 0, PCISIZE = 0, Size;
   CHAR8 *hdmi = NULL;
   UINT32 devadr=0, BridgeSize=0, devadr1=0; //, devsize1=0;
-  BOOLEAN BridgeFound = FALSE;
-  BOOLEAN HdauFound = FALSE;
+  XBool BridgeFound = false;
+  XBool HdauFound = false;
   AML_CHUNK* brd = NULL;
   AML_CHUNK *root = NULL;
   AML_CHUNK *met, *met2;
@@ -2828,7 +2828,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       if (!BridgeSize) {
         continue;
       }
-      BridgeFound = TRUE;
+      BridgeFound = true;
       if (HDMIADR2 != 0xFFFE){
         for (k = devadr + 9; k < devadr + BridgeSize; k++) {
           if (CmpAdr(dsdt, k, HDMIADR2))
@@ -2842,7 +2842,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
             DBG("found HDMI device [0x%08X:%X] at %X and Name is %s\n",
                 HDMIADR1, HDMIADR2, devadr1, device_name[11]);
             ReplaceName(dsdt + devadr, BridgeSize, device_name[11], "HDAU");
-            HdauFound = TRUE;
+            HdauFound = true;
             break;
           }
         }
@@ -2985,7 +2985,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
-  NetworkName = FALSE;
+  NetworkName = false;
   // Network Address
   for (i = 0x24; len >=10 && i < len - 10; i++) {
     if (CmpAdr(dsdt, i, NetworkADR1[card])) { //0x001C0004
@@ -3012,7 +3012,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
                 NetworkADR1[card], NetworkADR2[card], NetworkADR, device_name[1]);
             //renaming disabled until better way will found
        //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[1], "GIGE");
-            NetworkName = TRUE;
+            NetworkName = true;
             break;
           }
         }
@@ -3193,7 +3193,7 @@ DBG("FIXAirport dsdt len=%d\n", len);
   if (!PCISIZE) return len; //what is the bad DSDT ?!
 
   DBG("Start Airport Fix\n");
-  ArptName = FALSE;
+  ArptName = false;
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     // AirPort Address
     if ( CmpAdr(dsdt, i, ArptADR1)  ||  (gSettings.Devices.AirportBridgeDeviceName.notEmpty() && CmpDev(dsdt, i, gSettings.Devices.AirportBridgeDeviceName))   ) {
@@ -3215,7 +3215,7 @@ DBG("FIXAirport dsdt len=%d\n", len);
             DBG("found Airport device [%08X:%X] at %X And Name is %s\n",
                 ArptADR1, ArptADR2, ArptADR, device_name[9]);
             //     ReplaceName(dsdt + BrdADR, BridgeSize, device_name[9], "ARPT"); //sometimes dangeous
-            ArptName = TRUE;
+            ArptName = true;
             break;
           }
         }
@@ -3650,7 +3650,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
             DBG("found Firewire device NAME(_ADR,0x%08X) at %X And Name is %s\n",
                 FirewireADR2, k, device_name[2]);
             ReplaceName(dsdt + BrdADR, BridgeSize, device_name[2], "FRWR");
-            FirewireName = TRUE;
+            FirewireName = true;
             break;
           }
         }
@@ -3788,7 +3788,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const MacOsVersion& OSVersion)
       DBG("found HDA device NAME(_ADR,0x%08X) And Name is %s\n",
           HDAADR1, device_name[4]);
       ReplaceName(dsdt, len, device_name[4], "HDEF");
-      HDAFIX = FALSE;
+      HDAFIX = false;
       break;
     } // End HDA
   }
@@ -4055,7 +4055,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       // find USB adr
       for (j = 0x20; len >= 4 && j < len - 4; j++) {
         if (CmpAdr(dsdt, j, USBADR[i])) {   //j+4 -> _ADR
-          XhciName = FALSE;
+          XhciName = false;
           UsbName[i] = (__typeof_am__(UsbName[i]))AllocateZeroPool(5);
   //        DBG("found USB at 0x%X\n", j);
           adr1 = devFind(dsdt, j + 2);
@@ -4094,7 +4094,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 }
                 DBG(" %s\n", UsbName[i]);
                 ReplaceName(dsdt + adr1, Size, device_name[10], UsbName[i]);
-                XhciName = TRUE;
+                XhciName = true;
                 break;
               }
             }
@@ -4272,7 +4272,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   AML_CHUNK *root;
   AML_CHUNK *device;
   CHAR8     *ide;
-  BOOLEAN   PATAFIX=TRUE;
+  XBool   PATAFIX=true;
   AML_CHUNK *met, *met2;
   AML_CHUNK *pack;
   AML_CHUNK *device1;
@@ -4300,7 +4300,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   {
     if (CmpAdr(dsdt, j, 0))
     {
-      PATAFIX = FALSE;
+      PATAFIX = false;
       break;
     }
   }
@@ -4676,7 +4676,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
   UINT32 waksize=0;
   UINT32 sizeoffset = 0, sizeoffset2 = 0;
 //  UINT16 PM30 = 0x430;  //default
-  BOOLEAN ReturnFound = FALSE;
+  XBool ReturnFound = false;
 
   DBG("Start _WAK Return Fix\n");
 
@@ -4694,7 +4694,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABL
             if (dsdt[i+k] == 0xA4) { // Return
               DBG( "_WAK Method find return data, don't need to patch.\n");
        //       return len;
-              ReturnFound = TRUE;
+              ReturnFound = true;
             }
           }
 //Slice - this patch disabled as useless
@@ -4758,9 +4758,9 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 //  UINT32 adr=0;
   INT32  offset=0;
   INT32 sizeoffset;
-//  BOOLEAN pwrbfix = FALSE;
-//  BOOLEAN usbpwrb = FALSE;
-//  BOOLEAN foundpwrb = FALSE;
+//  XBool pwrbfix = false;
+//  XBool usbpwrb = false;
+//  XBool foundpwrb = false;
 
   sizeoffset = sizeof(pwrb);
   if (!PWRBADR) {
@@ -4783,7 +4783,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
               if (dsdt[k] == UsbName[l][0] && dsdt[k+1] == UsbName[l][1] &&
                   dsdt[k+2] == UsbName[l][2] && dsdt[k+3] == UsbName[l][3]) {
                 //DBG( "found USB _GPE Method.\n");
-       //         usbpwrb = TRUE;
+       //         usbpwrb = true;
 
                 if (!usbcount) {
                   //DBG( "will to find Scope(\\_GPE).\n");
@@ -5044,11 +5044,11 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 void FixRegions (UINT8 *dsdt, UINT32 len)
 {
   UINTN i, j;
-  INTN  shift;
+  INTN  shift = 0; // to silence warning
   CHAR8 Name[8];
   CHAR8 NameAdr[8];
   OPER_REGION *p;
-//  BOOLEAN Corrected = FALSE;
+//  XBool Corrected = false;
 
   //  OperationRegion (GNVS, SystemMemory, 0xDE2E9E18, 0x01CD)
   //  5B 80 47 4E 56 53 00  0C 18 9E 2E DE  0B CD 01
@@ -5084,7 +5084,7 @@ void FixRegions (UINT8 *dsdt, UINT32 len)
                 if (dsdt[j+4] == 0x0C) {
                   CopyMem(&oldAddress, &dsdt[j+5], 4);
                   CopyMem(&dsdt[j+5], &p->Address, 4);
- //                 Corrected = TRUE;
+ //                 Corrected = true;
                 } else if (dsdt[j+4] == 0x0B) {
                   CopyMem(&oldAddress, &dsdt[j+5], 2);
                   CopyMem(&dsdt[j+5], &p->Address, 2);
@@ -5111,7 +5111,8 @@ void GetBiosRegions(UINT8  *buffer)
 //  UINT8       *buffer = NULL;
   UINT32      bufferLen = 0;
   UINTN       i, j;
-  INTN        shift, shift2;
+  INTN        shift = 0;  // to silence warning
+  INTN        shift2;
   CHAR8       Name[8];
   CHAR8       NameAdr[8];
 
@@ -5218,7 +5219,7 @@ Scope(\_SB)
     PSXS._ON() <- to not patch
   }
 */
-BOOLEAN isACPI_Char(CHAR8 C)
+XBool isACPI_Char(CHAR8 C)
 {
   return (((C >= 'A') && (C <= 'Z')) ||
     ((C >= '0') && (C <= '9')) ||
@@ -5226,7 +5227,7 @@ BOOLEAN isACPI_Char(CHAR8 C)
 }
 
 // all string in Bridge is supposed to be 4 chars long.
-BOOLEAN CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
+XBool CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
 {
   // "RP02" NameLen=4
   // "_SB_PCI0RP02" NameLen=12
@@ -5237,7 +5238,7 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
   while ((NameLen < Len) && isACPI_Char((CHAR8)Table[NameLen])) NameLen++;
   NameLen &= ~3;
   if (NameLen < 4) {
-    return FALSE;
+    return false;
   }
   Name = (__typeof__(Name))AllocateCopyPool(NameLen + 1, Table);
   Name[NameLen] = '\0';
@@ -5245,12 +5246,12 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
   for (size_t idx = 0 ; idx < Bridge.size() && i >= 0 ; ++idx ) {
     if (AsciiStrStr(Name + i, Bridge[idx].c_str()) == NULL) { //compare Bridge->Name with RP02, Next->Name with PCI0 then _SB_
       FreePool(Name);
-      return FALSE;
+      return false;
     }
     i -= 4;
   }
   FreePool(Name);
-  return TRUE;
+  return true;
 }
 
 void RenameDevices(UINT8* table)
@@ -5264,7 +5265,7 @@ void RenameDevices(UINT8* table)
   INTN size;
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
   INTN adr, shift, Num = 0;
-  BOOLEAN found;
+  XBool found;
   for (UINTN index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
     const ACPI_RENAME_DEVICE& deviceRename = gSettings.ACPI.DeviceRename[index];
     XString8Array FindList = deviceRename.acpiName.getSplittedName();
@@ -5299,17 +5300,17 @@ void RenameDevices(UINT8* table)
       i -= 6;  //skip size and device field
  //     DBG("search for bridge since %lld\n", adr);
       while (i > 0x20) {  //find devices that previous to adr
-        found = FALSE;
+        found = false;
         //check device
-        if ((table[i] == 0x5B) && (table[i + 1] == 0x82) && !CmpNum(table, (INT32)i, TRUE)) { //device candidate
+        if ((table[i] == 0x5B) && (table[i + 1] == 0x82) && !CmpNum(table, (INT32)i, true)) { //device candidate
           k = i + 2;
-          found = TRUE;
+          found = true;
         }
         //check scope
 
-        if ((table[i] == 0x10) && !CmpNum(table, (INT32)i, TRUE)) {
+        if ((table[i] == 0x10) && !CmpNum(table, (INT32)i, true)) {
           k = i + 1;
-          found = TRUE;
+          found = true;
         }
         if (found) {  // i points to Device or Scope
           size = get_size(table, (UINT32)(UINTN)k); //k points to size  //
@@ -5357,9 +5358,9 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   }
 
   //Reenter requires ZERO values
-  HDAFIX = TRUE;
-  GFXHDAFIX = TRUE;
-  USBIDFIX = TRUE;
+  HDAFIX = true;
+  GFXHDAFIX = true;
+  USBIDFIX = true;
 
   EFI_ACPI_DESCRIPTION_HEADER* efi_acpi_description_header = (EFI_ACPI_DESCRIPTION_HEADER*)temp;
   DsdtLen = efi_acpi_description_header->Length;
