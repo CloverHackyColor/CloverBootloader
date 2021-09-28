@@ -183,8 +183,6 @@
 				<true/>
 				<key>FixHPET</key>
 				<true/>
-				<key>FixHeaders</key>
-				<true/>
 				<key>FixLAN</key>
 				<true/>
 				<key>FixRTC</key>
