@@ -839,6 +839,7 @@
 					"wcsncmp=wcsncmp_fixed",
 					"wcsstr=wcsstr_fixed",
 					NO_DEBUG_TRACE,
+					OC_TARGET_DEBUG,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -967,6 +968,7 @@
 					"wcsncmp=wcsncmp_fixed",
 					"wcsstr=wcsstr_fixed",
 					NO_DEBUG_TRACE,
+					OC_TARGET_DEBUG,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

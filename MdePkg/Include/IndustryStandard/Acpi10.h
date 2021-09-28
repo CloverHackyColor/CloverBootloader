@@ -24,7 +24,10 @@ typedef struct {
 /// The common ACPI description table header.  This structure prefaces most ACPI tables.
 ///
 typedef struct {
+  union {
   UINT32  Signature;
+    CHAR8   SignatureAs4Char[4];
+  };
   UINT32  Length;
   UINT8   Revision;
   UINT8   Checksum;

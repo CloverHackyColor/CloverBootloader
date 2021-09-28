@@ -134,10 +134,6 @@ extern void HelpRefit(void);
 extern void AboutRefit(void);
 //extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
-extern UINTN                 ConfigsNum;
-extern CHAR16                *ConfigsList[];
-extern UINTN                 DsdtsNum;
-extern CHAR16                *DsdtsList[];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 extern EFI_DXE_SERVICES  *gDS;
@@ -620,7 +616,7 @@ static XStringW getDriversPath()
 #endif
 }
 
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 void debugStartImageWithOC()
 {
   MsgLog("debugStartImageWithOC\n");
@@ -629,13 +625,17 @@ void debugStartImageWithOC()
 
   EFI_LOADED_IMAGE* OcLoadedImage;
   EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &OcLoadedImage);
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = OcLocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
   if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
 
   mOpenCoreConfiguration.Misc.Debug.Target = 0;
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Boot.PickerMode, "Builtin");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.DmgLoading, "Any");
+  mOpenCoreConfiguration.Uefi.Quirks.IgnoreInvalidFlexRatio = 0;
+  mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
 
   OcMain(&mOpenCoreStorage, NULL);
 
@@ -735,14 +735,14 @@ void LOADER_ENTRY::DelegateKernelPatches()
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = (UINT32)kextPatch.Count;
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
     
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Find.data(), kextPatch.Find.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Find.data(), kextPatch.Find.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.getName().c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.SearchLen;
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.data(), kextPatch.MaskFind.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MinKernel, "");
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Replace.vdata(), kextPatch.Replace.size());
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.vdata(), kextPatch.MaskReplace.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Replace.data(), kextPatch.Replace.size());
+    OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.data(), kextPatch.MaskReplace.size());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = (UINT32)kextPatch.Skip;
 #ifdef JIEF_DEBUG
 if ( kextPatch.Label ==  "algrey - cpuid_set_info - ryzen cores and logicals count - part 3 - 10.14"_XS8 ) {
@@ -788,18 +788,8 @@ void LOADER_ENTRY::StartLoader()
   }
   
   //Free memory
-  for (size_t i = 0; i < ConfigsNum; i++) {
-    if (ConfigsList[i]) {
-      FreePool(ConfigsList[i]);
-      ConfigsList[i] = NULL;
-    }
-  }
-  for (size_t i = 0; i < DsdtsNum; i++) {
-    if (DsdtsList[i]) {
-      FreePool(DsdtsList[i]);
-      DsdtsList[i] = NULL;
-    }
-  }
+  ConfigsList.setEmpty();
+  DsdtsList.setEmpty();
   OptionMenu.FreeMenu();
   //there is a place to free memory
   // GuiAnime
@@ -861,8 +851,8 @@ void LOADER_ENTRY::StartLoader()
 
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = OcLocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
   /*
    * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
@@ -883,7 +873,7 @@ void LOADER_ENTRY::StartLoader()
       !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
     memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
-    DBG("config-oc.plist isn't use at all\n");
+    DBG("config-oc.plist isn't used at all\n");
 
   #else
     Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
@@ -916,6 +906,14 @@ void LOADER_ENTRY::StartLoader()
         OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[i];
         OC_STRING_ASSIGN(entry->BundlePath, S8Printf("Kexts\\%s", OC_BLOB_GET(&entry->BundlePath)).c_str());
       }
+
+//      DBG("mOpenCoreConfiguration.Kernel.Add.Count=%d\n", mOpenCoreConfiguration.Kernel.Add.Count);
+//      for ( size_t i = 0 ; i < mOpenCoreConfiguration.Kernel.Add.Count ; i++ )
+//      {
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->Identifier=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->Identifier));
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->BundlePath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->BundlePath));
+//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->PlistPath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->PlistPath));
+//      }
     #endif
     #ifndef USE_OC_SECTION_Misc
       memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
@@ -1055,7 +1053,8 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper = gSettings.Quirks.OcKernelQuirks.DisableIoMapper;
     mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison = gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison;
     mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
-    mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
+    mOpenCoreConfiguration.Kernel.Emulate.DummyPowerManagement = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
+    mOpenCoreConfiguration.Kernel.Quirks.ExtendBTFeatureFlags = gSettings.Quirks.OcKernelQuirks.ExtendBTFeatureFlags;
     mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons = gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons;
     mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize = gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize;
     mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
@@ -1152,9 +1151,9 @@ void LOADER_ENTRY::StartLoader()
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
       }
       XStringW infoPlistPath = SWPrintf("%s\\Contents\\Info.plist", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
-      if ( FileExists(&self.getCloverDir(), infoPlistPath) ) {
+      if (FileExists(&self.getCloverDir(), infoPlistPath)) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
-      }else{
+      } else {
         DBG("Cannot find kext info.plist at '%ls'\n", infoPlistPath.wc_str());
       }
   #endif
@@ -1178,25 +1177,6 @@ void LOADER_ENTRY::StartLoader()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
 
-  // if OC is NOT initialized with OcMain, we need the following
-  //  if (OcOSInfoInstallProtocol (false) == NULL) {
-  //    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
-  //  }
-  //  if (OcAppleRtcRamInstallProtocol (false) == NULL) {
-  //    DEBUG ((DEBUG_ERROR, "OC: Failed to install rtc ram protocol\n"));
-  //  }
-
-  ////  Uncomment OcMiscBoot to run the OC bootpicker
-  //  OcMiscBoot (
-  //    &mOpenCoreStorage,
-  //    &mOpenCoreConfiguration,
-  //    NULL,
-  //    OcStartImage_2,
-  //    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
-  //    mLoadHandle
-  //    );
-
-
     if ( OpenRuntimeEfiName.notEmpty() ) {
       XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), OpenRuntimeEfiName.wc_str());
       EFI_HANDLE DriverHandle;
@@ -1204,6 +1184,29 @@ void LOADER_ENTRY::StartLoader()
       if ( !EFI_ERROR(Status) ) {
         Status = gBS->StartImage(DriverHandle, 0, 0);
         DBG("Start '%ls' : Status %s\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
+
+        if ( !EFI_ERROR(Status) )
+        {
+          OC_FIRMWARE_RUNTIME_PROTOCOL  *FwRuntime;
+          Status = gBS->LocateProtocol (
+            &gOcFirmwareRuntimeProtocolGuid,
+            NULL,
+            (VOID **) &FwRuntime
+            );
+
+          if (!EFI_ERROR (Status)) {
+            if (FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
+            } else {
+              DEBUG ((
+                DEBUG_ERROR,
+                "OCABC: Incompatible OpenRuntime r%u, require r%u\n",
+                (UINT32) FwRuntime->Revision,
+                (UINT32) OC_FIRMWARE_RUNTIME_REVISION
+                ));
+              panic("Incompatible OpenRuntime r%llu, require r%u\n", FwRuntime->Revision, OC_FIRMWARE_RUNTIME_REVISION);
+            }
+          }
+        }
       }else{
         panic("Error when loading '%ls' : Status %s.\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
       }
@@ -1212,18 +1215,6 @@ void LOADER_ENTRY::StartLoader()
     }
 
     OcMain(&mOpenCoreStorage, NULL);
-  //  {
-  //    gCurrentConfig = &gMainConfig;
-  //    RedirectRuntimeServices();
-  //    EFI_HANDLE Handle = NULL;
-  //    Status = gBS->InstallMultipleProtocolInterfaces (
-  //      &Handle,
-  //      &gOcFirmwareRuntimeProtocolGuid,
-  //      &mOcFirmwareRuntimeProtocol,
-  //      NULL
-  //      );
-  //    DBG("Install gOcFirmwareRuntimeProtocolGuid : Status %s\n", efiStrError(Status));
-  //  }
 
     XStringW DevicePathAsString = DevicePathToXStringW(DevicePath);
     if ( DevicePathAsString.rindexOf(".dmg") == MAX_XSIZE )
@@ -1241,6 +1232,7 @@ void LOADER_ENTRY::StartLoader()
         DBG("LoadImage at '%ls' failed. Status = %s\n", DevicePathAsString.wc_str(), efiStrError(Status));
         return;
       }
+      DBG("ImageHandle = %llx\n", uintptr_t(ImageHandle));
     }else
     {
       // NOTE : OpenCore ignore the name of the dmg.
@@ -1379,7 +1371,7 @@ void LOADER_ENTRY::StartLoader()
 
     if ( macOSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB7F;
+        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB6F;
         gSettings.RtVariables.BooterConfig = 0x28;
       }
 //      ReadSIPCfg();
@@ -1418,7 +1410,15 @@ void LOADER_ENTRY::StartLoader()
     SmbiosFillPatchingValues(GlobalConfig.SetTable132, GlobalConfig.EnabledCores, g_SmbiosDiscoveredSettings.RamSlotCount, gConf.SlotDeviceArray, gSettings, gCPUStructure, &g_SmbiosInjectedSettings);
     PatchSmbios(g_SmbiosInjectedSettings);
 //    DBG("PatchACPI\n");
+#ifdef USE_OC_SECTION_Acpi
+    // If we use the ACPI section form config-oc.plist, let's also delegate the acpi patching to OC
+#else
     PatchACPI(Volume, macOSVersion);
+#endif
+
+#ifdef JIEF_DEBUG
+    //SaveOemTables();
+#endif
 //
 //  // If KPDebug is true boot in verbose mode to see the debug messages
 //  if (KernelAndKextPatches.KPDebug) {
@@ -1629,7 +1629,7 @@ void LOADER_ENTRY::StartLoader()
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
   DBG("Kernel quirks\n");
-  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d\n",
+  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d\n",
       mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs,
@@ -1638,7 +1638,8 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper,
       mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison,
       mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum,
-      mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement,
+      mOpenCoreConfiguration.Kernel.Emulate.DummyPowerManagement,
+      mOpenCoreConfiguration.Kernel.Quirks.ExtendBTFeatureFlags,
       mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons,
       mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize,
       mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic,
@@ -1853,7 +1854,18 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       continue;
     }
     if ( LStringW(DirEntry->FileName).containsIC("OpenRuntime") ) {
-      OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v12.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.7.3") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.5") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.1") ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }else
+      if ( OpenRuntimeEfiName.isEmpty() ) {
+        OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+      }
       continue;
     }
     {
@@ -2438,9 +2450,8 @@ GetListOfConfigs()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
-  INTN              NameLen;
 
-  ConfigsNum = 0;
+  ConfigsList.setEmpty();
   OldChosenConfig = 0;
 
   DirIterOpen(&selfOem.getConfigDir(), NULL, &DirIter);
@@ -2450,12 +2461,15 @@ GetListOfConfigs()
       continue;
     }
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
-        OldChosenConfig = ConfigsNum;
+        OldChosenConfig = ConfigsList.size(); // DirEntry->FileName is not yet inserted into ConfigsList. So its index will be ConfigsList.size()
       }
-      NameLen = StrLen(DirEntry->FileName) - 6; //without ".plist"
-      ConfigsList[ConfigsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
-      ConfigsList[ConfigsNum++][NameLen] = L'\0';
-      DBG("- %ls\n", DirEntry->FileName);
+      size_t NameLen = wcslen(DirEntry->FileName) - 6; //without ".plist"
+      if ( NameLen <= MAX_INTN ) {
+        ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
+        DBG("- %ls\n", DirEntry->FileName);
+      }else{
+        DBG("- bug!, NameLen > MAX_INTN");
+      }
     }
   DirIterClose(&DirIter);
 }
@@ -2465,16 +2479,8 @@ GetListOfDsdts()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
-  INTN              NameLen;
 
-  if (DsdtsNum > 0) {
-    for (UINTN i = 0; i < DsdtsNum; i++) {
-      if (DsdtsList[DsdtsNum] != NULL) {
-        FreePool(DsdtsList[DsdtsNum]);
-      }
-    }
-  }
-  DsdtsNum = 0;
+  DsdtsList.setEmpty();
   OldChosenDsdt = 0xFFFF;
 
   DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
@@ -2484,11 +2490,10 @@ GetListOfDsdts()
       continue;
     }
       if ( gSettings.ACPI.DSDT.DsdtName.isEqualIC(DirEntry->FileName) ) {
-        OldChosenDsdt = DsdtsNum;
+        OldChosenDsdt = DsdtsList.size(); // DirEntry->FileName is not yet inserted into DsdtsList. So its index will be DsdtsList.size()
       }
-      NameLen = StrLen(DirEntry->FileName); //with ".aml"
-      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName); // if changing, notice freepool above
-      DsdtsList[DsdtsNum++][NameLen] = L'\0';
+      size_t NameLen = wcslen(DirEntry->FileName); //with ".aml"
+      DsdtsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
       DBG("- %ls\n", DirEntry->FileName);
     }
   DirIterClose(&DirIter);
@@ -2877,7 +2882,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
 
   gConf.InitialisePlatform();
-// DBG("5: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
 
 #ifdef JIEF_DEBUG
   DumpNvram();
@@ -2959,8 +2963,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfThemes();
     GetListOfConfigs();
   }
-//  DBG("0: GlobalConfig.C3Latency=%x\n", gSettings.ACPI.SSDT._C3Latency);
-//  DBG("0: gSettings.CPU.SavingMode=%x\n", gSettings.CPU.SavingMode);
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
     void       *Value = NULL;
@@ -3169,7 +3171,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-    XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
+      XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
       DBG("after NVRAM boot-args=%s\n", gSettings.Boot.BootArgs.c_str());
       GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", GlobalConfig.OptionsBits);
@@ -3520,7 +3522,7 @@ panic("not done yet");
                                     (UINT16*)&BootNum
                                     );
               if (!EFI_ERROR(Status)) {
-          DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
+                DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);

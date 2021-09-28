@@ -22,8 +22,10 @@ extern "C" {
 #include <Library/OcDevicePathLib.h>
 #include <Library/OcFileLib.h>
 #include <Library/OcCpuLib.h> // OC_CPU_INFO
+#include <Library/OcMainLib.h> // OcMiscEarlyInit
 //#include <Protocol/OcBootstrap.h> // OC_BOOTSTRAP_PROTOCOL
 #include <Library/OcBootManagementLib/BootManagementInternal.h>
+#include <Library/OcAfterBootCompatLib/BootCompatInternal.h>
 
 #include <Guid/AppleApfsInfo.h>
 
@@ -34,14 +36,6 @@ extern OC_CPU_INFO mOpenCoreCpuInfo;
 //extern OC_RSA_PUBLIC_KEY* mOpenCoreVaultKey;
 //extern EFI_HANDLE mLoadHandle;
 
-EFI_STATUS
-EFIAPI
-OcStartImage_2 (
-  IN  OC_BOOT_ENTRY               *Chosen,
-  IN  EFI_HANDLE                  ImageHandle,
-  OUT UINTN                       *ExitDataSize,
-  OUT CHAR16                      **ExitData    OPTIONAL
-  );
 
 EFI_STATUS
 EFIAPI
@@ -109,20 +103,41 @@ OcMain (
 } // extern "C"
 #endif
 
-#define OC_STRING_ASSIGN_N(ocString, value, len) do { \
-  if( len >= sizeof(ocString.Value) ) { \
-    memset(ocString.Value, 0, sizeof(ocString.Value)); \
-    ocString.DynValue = (__typeof__(ocString.DynValue))malloc(len); \
-    memcpy(ocString.DynValue, value, len); \
-    ocString.MaxSize = (UINT32)len; \
-    ocString.Size = (UINT32)len;   /* unsafe cast */ \
-  }else{ \
-    ocString.DynValue = NULL; \
-    memcpy(ocString.Value, value, len); \
-    ocString.MaxSize = sizeof(ocString.Value); \
-    ocString.Size = (UINT32)len;   /* unsafe cast */ \
-  } \
-} while (0)
+// This was a macro.
+// But there is a catch : if parameter value depends on ocString.DynValue, DynValue is wiped before value is evaluated.
+// Solution could have been an intermediary variable.
+inline void OC_DATA_ASSIGN_N(OC_DATA& ocString, const unsigned char* value, size_t len) {
+  if( len >= sizeof(ocString.Value) ) {
+    memset(ocString.Value, 0, sizeof(ocString.Value));
+    ocString.DynValue = (__typeof__(ocString.DynValue))malloc(len);
+    memcpy(ocString.DynValue, value, len);
+    ocString.MaxSize = (UINT32)len;
+    ocString.Size = (UINT32)len;   /* unsafe cast */
+  }else{
+    ocString.DynValue = NULL;
+    memcpy(ocString.Value, value, len);
+    ocString.MaxSize = sizeof(ocString.Value);
+    ocString.Size = (UINT32)len;   /* unsafe cast */
+  }
+}
+
+// This was a macro.
+// But there is a catch : if parameter value depends on ocString.DynValue, DynValue is wiped before value is evaluated.
+// Solution could have been an intermediary variable.
+inline void OC_STRING_ASSIGN_N(OC_STRING& ocString, const char* value, size_t len) {
+  if( len >= sizeof(ocString.Value) ) {
+    memset(ocString.Value, 0, sizeof(ocString.Value));
+    ocString.DynValue = (__typeof__(ocString.DynValue))malloc(len);
+    memcpy(ocString.DynValue, value, len);
+    ocString.MaxSize = (UINT32)len;
+    ocString.Size = (UINT32)len;   /* unsafe cast */
+  }else{
+    ocString.DynValue = NULL;
+    memcpy(ocString.Value, value, len);
+    ocString.MaxSize = sizeof(ocString.Value);
+    ocString.Size = (UINT32)len;   /* unsafe cast */
+  }
+}
 
 #define OC_STRING_ASSIGN(ocString, value) OC_STRING_ASSIGN_N(ocString, value, strlen(value)+1)
 

@@ -174,6 +174,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define FW_FEATURE_DISABLE_BOOTSCRIPT_WORKAROUND      0x80000000U // 31
 
 //
+// Supports large BaseSystem. Checked by patchd. Required by macOS 12.
+//
+#define FW_FEATURE_SUPPORTS_LARGE_BASESYSTEM         0x800000000U // 35
+
+//
 // OEM Platform Feature Information - Platform feature bits
 // These bits are exposed via APPLE_SMBIOS_TABLE_TYPE133 FirmwareFeatures:
 // UINT64 PlatformFeature.

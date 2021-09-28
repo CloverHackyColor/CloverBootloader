@@ -144,7 +144,7 @@ SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE3_STR_IDX[] = {
 
 SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE4_STR_IDX[] = {
   smbios_offsetof(SMBIOS_TABLE_TYPE4, Socket),
-  smbios_offsetof(SMBIOS_TABLE_TYPE4, ProcessorManufacture),
+  smbios_offsetof(SMBIOS_TABLE_TYPE4, ProcessorManufacturer),
   smbios_offsetof(SMBIOS_TABLE_TYPE4, ProcessorVersion),
   smbios_offsetof(SMBIOS_TABLE_TYPE4, SerialNumber),
   smbios_offsetof(SMBIOS_TABLE_TYPE4, AssetTag),
@@ -983,7 +983,7 @@ DBG("newSmbiosTable.Type4->ProcessorFamily=%d\n", newSmbiosTable.Type4->Processo
 DBG("newSmbiosTable.Type4->ProcessorFamily2=%d\n", newSmbiosTable.Type4->ProcessorFamily2);
 DBG("newSmbiosTable.Type4->ProcessorId.FeatureFlags=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags);
 DBG("newSmbiosTable.Type4->ProcessorId.Signatur=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.Signature);
-DBG("newSmbiosTable.Type4->ProcessorManufacture=%d\n", newSmbiosTable.Type4->ProcessorManufacture);
+DBG("newSmbiosTable.Type4->ProcessorManufacturer=%d\n", newSmbiosTable.Type4->ProcessorManufacturer);
 DBG("newSmbiosTable.Type4->ProcessorType=%d\n", newSmbiosTable.Type4->ProcessorType);
 DBG("newSmbiosTable.Type4->ProcessorUpgrade=%d\n", newSmbiosTable.Type4->ProcessorUpgrade);
 DBG("newSmbiosTable.Type4->ProcessorVersion=%d\n", newSmbiosTable.Type4->ProcessorVersion);
@@ -1982,6 +1982,8 @@ void PatchTableType128(const SmbiosInjectedSettings& smbiosSettings)
   // set firmware-features mask
   newSmbiosTable.Type128->FirmwareFeaturesMask = smbiosSettings.FirmwareFeaturesMask;
 
+  newSmbiosTable.Type128->ExtendedFirmwareFeatures = (uint32_t)(smbiosSettings.ExtendedFirmwareFeatures >> 32);
+  newSmbiosTable.Type128->ExtendedFirmwareFeaturesMask = (uint32_t)(smbiosSettings.ExtendedFirmwareFeaturesMask >> 32);
   /**
    * TODO: I have an idea that region should be the same as Efivar.bin
    * @author Slice

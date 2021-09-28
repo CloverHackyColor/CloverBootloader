@@ -1658,14 +1658,14 @@ void FillOCCpuInfo(OC_CPU_INFO* CpuInfo)
   CpuInfo->CpuidExtSigEcx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_81][ECX];
   CpuInfo->CpuidExtSigEdx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_81][EDX];
   CpuInfo->Brand = (UINT8)CpuInfo->CpuidVerEbx.Bits.BrandIndex;
-  CpuInfo->MaxDiv = (UINT8)gCPUStructure.SubDivider;
+//  CpuInfo->MaxDiv = (UINT8)gCPUStructure.SubDivider;
   //there is a fault in OC as it can't handle non-integer values. Clover does by *10.
-  CpuInfo->MinBusRatio = (UINT8)(gCPUStructure.MinRatio / 10);
-  CpuInfo->MaxBusRatio = (UINT8)(gCPUStructure.MaxRatio / 10);
-  CpuInfo->TurboBusRatio1 = (UINT8)(gCPUStructure.Turbo1 /10);
-  CpuInfo->TurboBusRatio2 = (UINT8)(gCPUStructure.Turbo2 /10);
-  CpuInfo->TurboBusRatio3 = (UINT8)(gCPUStructure.Turbo3 /10);
-  CpuInfo->TurboBusRatio4 = (UINT8)(gCPUStructure.Turbo4 /10);
+//  CpuInfo->MinBusRatio = (UINT8)(gCPUStructure.MinRatio / 10);
+//  CpuInfo->MaxBusRatio = (UINT8)(gCPUStructure.MaxRatio / 10);
+//  CpuInfo->TurboBusRatio1 = (UINT8)(gCPUStructure.Turbo1 /10);
+//  CpuInfo->TurboBusRatio2 = (UINT8)(gCPUStructure.Turbo2 /10);
+//  CpuInfo->TurboBusRatio3 = (UINT8)(gCPUStructure.Turbo3 /10);
+//  CpuInfo->TurboBusRatio4 = (UINT8)(gCPUStructure.Turbo4 /10);
   CpuInfo->PackageCount = 1; //number of started cores. Intel always start with one core.
   CpuInfo->CoreCount = gCPUStructure.Cores;
   CpuInfo->ThreadCount = gCPUStructure.Threads;

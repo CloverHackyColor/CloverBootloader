@@ -154,7 +154,10 @@ class ACPI_DROP_TABLE
 {
 public:
   ACPI_DROP_TABLE *Next;
-  UINT32          Signature;
+  union {
+    UINT32   Signature = 0;
+    char     SignatureAs4Chars[4];
+  };
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem = INPUT_ITEM();
@@ -811,7 +814,10 @@ public:
       class ACPIDropTablesClass
       {
         public:
-          UINT32   Signature = 0;
+          union {
+            UINT32   Signature = 0;
+            char     SignatureAs4Chars[4];
+          };
           UINT64   TableId = 0;
           UINT32   TabLength = 0;
           bool     OtherOS = 0;
@@ -1259,7 +1265,6 @@ public:
       undefinable_bool        _EnableC6 = undefinable_bool();
       undefinable_bool        _EnableC4 = undefinable_bool();
       undefinable_bool        _EnableC2 = undefinable_bool();
-      undefinable_uint16      _C3Latency = undefinable_uint16();
       
 #if __cplusplus > 201703L
 		bool operator == (const CPUClass&) const = default;
@@ -1281,7 +1286,6 @@ public:
       if ( !(_EnableC6 == other._EnableC6) ) return false;
       if ( !(_EnableC4 == other._EnableC4) ) return false;
       if ( !(_EnableC2 == other._EnableC2) ) return false;
-      if ( !(_C3Latency == other._C3Latency) ) return false;
       return true;
     }
     void takeValueFrom(const ConfigPlistClass::CPU_Class& configPlist)
@@ -1301,7 +1305,6 @@ public:
       _EnableC6 = configPlist.dget_EnableC6();
       _EnableC4 = configPlist.dget_EnableC4();
       _EnableC2 = configPlist.dget_EnableC2();
-      _C3Latency = configPlist.dget_C3Latency();
     }
   };
 
@@ -2078,6 +2081,7 @@ printf("%s", "");
           bool DisableLinkeditJettison = false;
         //  bool DisableRtcChecksum = false;
           bool DummyPowerManagement = false;
+          bool ExtendBTFeatureFlags = false;
           bool ExternalDiskIcons = false;
           bool IncreasePciBarSize = false;
         //  bool LapicKernelPanic = false;
@@ -2096,6 +2100,7 @@ printf("%s", "");
             if ( !(DisableIoMapper == other.DisableIoMapper) ) return false;
             if ( !(DisableLinkeditJettison == other.DisableLinkeditJettison) ) return false;
             if ( !(DummyPowerManagement == other.DummyPowerManagement) ) return false;
+            if ( !(ExtendBTFeatureFlags == other.ExtendBTFeatureFlags) ) return false;
             if ( !(ExternalDiskIcons == other.ExternalDiskIcons) ) return false;
             if ( !(IncreasePciBarSize == other.IncreasePciBarSize) ) return false;
             if ( !(PowerTimeoutKernelPanic == other.PowerTimeoutKernelPanic) ) return false;
@@ -2110,6 +2115,7 @@ printf("%s", "");
             DisableIoMapper = configPlist.dgetDisableIoMapper();
             DisableLinkeditJettison = configPlist.dgetDisableLinkeditJettison();
             DummyPowerManagement = configPlist.dgetDummyPowerManagement();
+            ExtendBTFeatureFlags = configPlist.dgetExtendBTFeatureFlags();
             ExternalDiskIcons = configPlist.dgetExternalDiskIcons();
             IncreasePciBarSize = configPlist.dgetIncreasePciBarSize();
             PowerTimeoutKernelPanic = configPlist.dgetPowerTimeoutKernelPanic();
@@ -2462,6 +2468,8 @@ printf("%s", "");
 
       UINT32                  FirmwareFeatures = UINT32();
       UINT32                  FirmwareFeaturesMask = UINT32();
+      UINT64                  ExtendedFirmwareFeatures = UINT64();
+      UINT64                  ExtendedFirmwareFeaturesMask = UINT64();
       RamSlotInfoArrayClass   RamSlotInfoArray = RamSlotInfoArrayClass();
       SlotDeviceArrayClass    SlotDevices = SlotDeviceArrayClass();
 
@@ -2509,6 +2517,8 @@ printf("%s", "");
 
       if ( !(FirmwareFeatures == other.FirmwareFeatures) ) return false;
       if ( !(FirmwareFeaturesMask == other.FirmwareFeaturesMask) ) return false;
+      if ( !(ExtendedFirmwareFeatures == other.ExtendedFirmwareFeatures) ) return false;
+      if ( !(ExtendedFirmwareFeaturesMask == other.ExtendedFirmwareFeaturesMask) ) return false;
       if ( !RamSlotInfoArray.isEqual(other.RamSlotInfoArray) ) return false;
       if ( !SlotDevices.isEqual(other.SlotDevices) ) return false;
 
@@ -2554,9 +2564,11 @@ printf("%s", "");
       gPlatformFeature = configPlist.dgetgPlatformFeature();
       // PatchTableType11
       NoRomInfo = configPlist.dgetNoRomInfo();
-
+      //SMBIOS TYPE128
       FirmwareFeatures = configPlist.dgetFirmwareFeatures();
       FirmwareFeaturesMask = configPlist.dgetFirmwareFeaturesMask();
+      ExtendedFirmwareFeatures = configPlist.dgetExtendedFirmwareFeatures();
+      ExtendedFirmwareFeaturesMask = configPlist.dgetExtendedFirmwareFeaturesMask();
       RamSlotInfoArray.takeValueFrom(configPlist.Memory);
       SlotDevices.takeValueFrom(configPlist.Slots);
     }
@@ -2683,10 +2695,6 @@ printf("%s", "");
     if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2.value();
     return ACPI.SSDT._EnableC2;
   }
-  bool getC3Latency() const {
- //   if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency.value();
-    return ACPI.SSDT._C3Latency;
-  }
 
 };
 
@@ -2740,10 +2748,8 @@ public:
 extern XObjArray<HDA_OUTPUTS> AudioList;
 
 extern XStringWArray ThemeNameArray;
-extern CHAR16*       ConfigsList[20];
-extern CHAR16*       DsdtsList[20];
-extern UINTN DsdtsNum;
-extern UINTN ConfigsNum;
+extern XStringWArray ConfigsList;
+extern XStringWArray DsdtsList;
 //extern INTN    ScrollButtonsHeight;
 //extern INTN    ScrollBarDecorationsHeight;
 //extern INTN    ScrollScrollDecorationsHeight;

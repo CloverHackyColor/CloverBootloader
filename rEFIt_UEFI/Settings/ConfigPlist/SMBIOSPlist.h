@@ -367,11 +367,13 @@ public:
 
     XmlUInt32 FirmwareFeatures = XmlUInt32(); // gFwFeatures
     XmlUInt32 FirmwareFeaturesMask = XmlUInt32();
+    XmlUInt64 ExtendedFirmwareFeatures = XmlUInt64(); // gFwFeatures
+    XmlUInt64 ExtendedFirmwareFeaturesMask = XmlUInt64();
   public:
     MemoryDictClass Memory = MemoryDictClass();
     SlotDeviceArrayClass Slots = SlotDeviceArrayClass();
 
-    XmlDictField m_fields[29] = {
+    XmlDictField m_fields[31] = {  //31
       {"Trust", Trust},
       {"MemoryRank", MemoryRank},
       {"Memory", Memory},
@@ -383,6 +385,8 @@ public:
       {"EfiVersion", EfiVersion},
       {"FirmwareFeatures", FirmwareFeatures},
       {"FirmwareFeaturesMask", FirmwareFeaturesMask},
+      {"ExtendedFirmwareFeatures", ExtendedFirmwareFeatures},
+      {"ExtendedFirmwareFeaturesMask", ExtendedFirmwareFeaturesMask},
       {"PlatformFeature", PlatformFeature},
       {"BiosVendor", BiosVendor},
       {"Manufacturer", Manufacturer},
@@ -449,6 +453,8 @@ public:
     const decltype(EfiVersion)& getEfiVersion() const { return EfiVersion; }
     const decltype(FirmwareFeatures)& getFirmwareFeatures() const { return FirmwareFeatures; }
     const decltype(FirmwareFeaturesMask)& getFirmwareFeaturesMask() const { return FirmwareFeaturesMask; }
+    const decltype(ExtendedFirmwareFeatures)& getExtendedFirmwareFeatures() const { return ExtendedFirmwareFeatures; }
+    const decltype(ExtendedFirmwareFeaturesMask)& getExtendedFirmwareFeaturesMask() const { return ExtendedFirmwareFeaturesMask; }
     const decltype(PlatformFeature)& getPlatformFeature() const { return PlatformFeature; }
     const decltype(BiosVendor)& getBiosVendor() const { return BiosVendor; }
     const decltype(Manufacturer)& getManufacturer() const { return Manufacturer; }
@@ -627,6 +633,14 @@ public:
     decltype(FirmwareFeaturesMask)::ValueType dgetFirmwareFeaturesMask() const {
       if ( FirmwareFeaturesMask.isDefined() ) return FirmwareFeaturesMask.value();
       return GetFwFeaturesMaskFromModel(dgetModel());
+    };
+    decltype(ExtendedFirmwareFeatures)::ValueType dgetExtendedFirmwareFeatures() const {
+      if ( ExtendedFirmwareFeatures.isDefined() ) return ExtendedFirmwareFeatures.value();
+      return GetExtFwFeatures(dgetModel());
+    };
+    decltype(ExtendedFirmwareFeaturesMask)::ValueType dgetExtendedFirmwareFeaturesMask() const {
+      if ( ExtendedFirmwareFeaturesMask.isDefined() ) return ExtendedFirmwareFeaturesMask.value();
+      return GetExtFwFeaturesMask(dgetModel());
     }
 
   };

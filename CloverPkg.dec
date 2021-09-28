@@ -211,7 +211,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|0x10010003
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010|UINT32|0x10010004
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0|UINT32|0x10010005
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0|UINT32|0x10010006
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0|UINT8|0x10010006
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0|UINT32|0x10010007
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE|BOOLEAN|0x10010008
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyAEnable|FALSE|BOOLEAN|0x10010009

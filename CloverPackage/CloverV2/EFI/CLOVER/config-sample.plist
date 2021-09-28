@@ -183,8 +183,6 @@
 				<true/>
 				<key>FixHPET</key>
 				<true/>
-				<key>FixHeaders</key>
-				<true/>
 				<key>FixLAN</key>
 				<true/>
 				<key>FixRTC</key>
@@ -995,6 +993,12 @@
 		<string>Apple Inc.</string>
 		<key>#FirmwareFeatures</key>
 		<string>0xC0001403</string>
+		<key>#FirmwareFeaturesMask</key>
+		<string>0xFFFFFFFF</string>
+		<key>#ExtendedFirmwareFeatures</key>
+		<string>0x8FE001403</string>
+		<key>#ExtendedFirmwareFeaturesMask</key>
+		<string>0xFFFFFFFFFF</string>
 		<key>#PlatformFeature</key>
 		<string>0x00</string>
 		<key>#Trust</key>
@@ -1003,8 +1007,6 @@
 		<string>C0225060SAMF651AX</string>
 		<key>#BiosVendor</key>
 		<string>Apple Inc.</string>
-		<key>#FirmwareFeaturesMask</key>
-		<string>0xFFFFFFFF</string>
 		<key>#BoardManufacturer</key>
 		<string>Apple Inc.</string>
 		<key>#BoardType</key>
@@ -1155,6 +1157,8 @@
 		<key>DisableLinkeditJettison</key>
 		<true/>
 		<key>DummyPowerManagement</key>
+		<false/>
+		<key>ExtendBTFeatureFlags</key>
 		<false/>
 		<key>ExternalDiskIcons</key>
 		<false/>

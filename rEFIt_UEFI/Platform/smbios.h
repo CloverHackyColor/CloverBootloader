@@ -201,6 +201,8 @@ class SmbiosInjectedSettings
     uint64_t gPlatformFeature = 0;
     uint32_t FirmwareFeatures = 0;
     uint32_t FirmwareFeaturesMask = 0;
+    uint64_t ExtendedFirmwareFeatures = 0;
+    uint64_t ExtendedFirmwareFeaturesMask = 0;
     int8_t Attribute = 0;
 
     bool KPDELLSMBIOS = 0;
