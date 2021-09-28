@@ -509,15 +509,15 @@ void ApplyInputs(void)
   }
   i++; //4
   if (InputItems[i].Valid) {
-    GlobalConfig.DropSSDT = InputItems[i].BValue;
+    GlobalConfig.DropSSDT = InputItems[i].BValue != 0;
   }
   i++; //5
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.Generate.GeneratePStates = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.Generate.GeneratePStates = InputItems[i].BValue != 0;
   }
   i++; //6
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SlpSmiEnable = InputItems[i].BValue;
+    gSettings.ACPI.SlpSmiEnable = InputItems[i].BValue != 0;
   }
   i++; //7
   if (InputItems[i].Valid) {
@@ -532,23 +532,23 @@ void ApplyInputs(void)
   }
   i++; //9
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.Generate.GenerateCStates = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.Generate.GenerateCStates = InputItems[i].BValue != 0;
   }
   i++; //10
   if (InputItems[i].Valid) {
-    GlobalConfig.EnableC2 = InputItems[i].BValue;
+    GlobalConfig.EnableC2 = InputItems[i].BValue != 0;
   }
   i++; //11
   if (InputItems[i].Valid) {
-    GlobalConfig.EnableC4 = InputItems[i].BValue;
+    GlobalConfig.EnableC4 = InputItems[i].BValue != 0;
   }
   i++; //12
   if (InputItems[i].Valid) {
-    GlobalConfig.EnableC6 = InputItems[i].BValue;
+    GlobalConfig.EnableC6 = InputItems[i].BValue != 0;
   }
   i++; //13
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.EnableISS = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableISS = InputItems[i].BValue != 0;
   }
   i++; //14
   if (InputItems[i].Valid) {
@@ -557,11 +557,11 @@ void ApplyInputs(void)
   }
   i++; //15
   if (InputItems[i].Valid) {
-    gSettings.ACPI.PatchNMI = InputItems[i].BValue;
+    gSettings.ACPI.PatchNMI = InputItems[i].BValue != 0;
   }
   i++; //16
   if (InputItems[i].Valid) {
-    gSettings.Graphics.PatchVBios = InputItems[i].BValue;
+    gSettings.Graphics.PatchVBios = InputItems[i].BValue != 0;
   }
   i++; //17
   if (InputItems[i].Valid) {
@@ -588,11 +588,11 @@ void ApplyInputs(void)
     i++; //21
     if (InputItems[i].Valid) {
       if (gConf.GfxPropertiesArrayNonConst[j].Vendor == Ati) {
-        gSettings.Graphics.InjectAsDict.InjectATI = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectATI = InputItems[i].BValue != 0;
       } else if (gConf.GfxPropertiesArrayNonConst[j].Vendor == Nvidia) {
-        gSettings.Graphics.InjectAsDict.InjectNVidia = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectNVidia = InputItems[i].BValue != 0;
       } else if (gConf.GfxPropertiesArrayNonConst[j].Vendor == Intel) {
-        gSettings.Graphics.InjectAsDict.InjectIntel = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectIntel = InputItems[i].BValue != 0;
       }
     }
     i++; //22
@@ -630,7 +630,7 @@ void ApplyInputs(void)
     }
     i++; //25
     if (InputItems[i].Valid) {
-      gConf.GfxPropertiesArrayNonConst[j].LoadVBios = InputItems[i].BValue;
+      gConf.GfxPropertiesArrayNonConst[j].LoadVBios = InputItems[i].BValue != 0;
     }
   }  //end of Graphics Cards
   // next number == 42
@@ -642,27 +642,27 @@ void ApplyInputs(void)
   }
   i++; //45
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.EightApple = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.EightApple = InputItems[i].BValue != 0;
     GlobalConfig.gBootChanged = true;
   }
   i++; //46
   if (InputItems[i].Valid) {
-    GlobalConfig.KPAppleIntelCPUPM = InputItems[i].BValue;
+    GlobalConfig.KPAppleIntelCPUPM = InputItems[i].BValue != 0;
     GlobalConfig.gBootChanged = true;
   }
   i++; //47
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue != 0;
     GlobalConfig.gBootChanged = true;
   }
   i++; //48
   if (InputItems[i].Valid) {
-     GlobalConfig.KPKernelPm = InputItems[i].BValue;
+     GlobalConfig.KPKernelPm = InputItems[i].BValue != 0;
      GlobalConfig.gBootChanged = true;
   }
   i++; //49
   if (InputItems[i].Valid) {
-    gSettings.ACPI.FixMCFG = InputItems[i].BValue;
+    gSettings.ACPI.FixMCFG = InputItems[i].BValue != 0;
   }
 
   i++; //50
@@ -677,7 +677,7 @@ void ApplyInputs(void)
 
   i++; //52
   if (InputItems[i].Valid) {
-    gSettings.Graphics.EDID.InjectEDID = InputItems[i].BValue;
+    gSettings.Graphics.EDID.InjectEDID = InputItems[i].BValue != 0;
   }
   i++; //53
   if (InputItems[i].Valid) {
@@ -688,25 +688,25 @@ void ApplyInputs(void)
     gSettings.Graphics.EDID.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
   }
   i++; //55
-  // ErmaC: NvidiaGeneric bool(Y/N)
+  // ErmaC: NvidiaGeneric XBool(Y/N)
   if (InputItems[i].Valid) {
-    gSettings.Graphics.NvidiaGeneric = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaGeneric = InputItems[i].BValue != 0;
   }
   i++; //56
   if (InputItems[i].Valid) {
-    gSettings.SystemParameters.NvidiaWeb = InputItems[i].BValue;
+    gSettings.SystemParameters.NvidiaWeb = InputItems[i].BValue != 0;
   }
   i++; //57
   if (InputItems[i].Valid) {
-    gSettings.Devices.Audio.ResetHDA = InputItems[i].BValue;
+    gSettings.Devices.Audio.ResetHDA = InputItems[i].BValue != 0;
   }
   i++; //58
   if (InputItems[i].Valid) {
-    gSettings.Devices.Audio.AFGLowPowerState = InputItems[i].BValue;
+    gSettings.Devices.Audio.AFGLowPowerState = InputItems[i].BValue != 0;
   }
   i++; //59
   if (InputItems[i].Valid) {
-    gSettings.Devices.Audio.HDAInjection = InputItems[i].BValue;
+    gSettings.Devices.Audio.HDAInjection = InputItems[i].BValue != 0;
   }
   i++; //60
   if (InputItems[i].Valid) {
@@ -714,7 +714,7 @@ void ApplyInputs(void)
   }
   i++; //61
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue != 0;
 //    // yes, we do need to change gRemapSmBiosIsRequire here as well
 //    gRemapSmBiosIsRequire = InputItems[i].BValue;
     GlobalConfig.gBootChanged = true;
@@ -731,7 +731,7 @@ void ApplyInputs(void)
   }
   i++; //64
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPDebug = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPDebug = InputItems[i].BValue != 0;
  //   GlobalConfig.gBootChanged = true;
   }
 
@@ -778,13 +778,13 @@ void ApplyInputs(void)
   }
   i++; //72
   if (InputItems[i].Valid) {
-    gSettings.GUI.Mouse.PointerMirror = InputItems[i].BValue;
+    gSettings.GUI.Mouse.PointerMirror = InputItems[i].BValue != 0;
   }
 
 
   i = 74;
   if (InputItems[i].Valid) {
-    gSettings.Devices.USB.USBFixOwnership = InputItems[i].BValue;
+    gSettings.Devices.USB.USBFixOwnership = InputItems[i].BValue != 0;
   }
   i++; //75
   if (InputItems[i].Valid) {
@@ -850,11 +850,11 @@ void ApplyInputs(void)
 
   i++; //88
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.DoubleFirstState = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.DoubleFirstState = InputItems[i].BValue != 0;
   }
   i++; //89
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.EnableC7 = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableC7 = InputItems[i].BValue != 0;
   }
 
   i++; //90
@@ -874,16 +874,16 @@ void ApplyInputs(void)
   }
   i++; //91
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPKernelLapic = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPKernelLapic = InputItems[i].BValue != 0;
     GlobalConfig.gBootChanged = true;
   }
   i++; //92
   if (InputItems[i].Valid) {
-    gSettings.Devices.USB.USBInjection = InputItems[i].BValue;
+    gSettings.Devices.USB.USBInjection = InputItems[i].BValue != 0;
   }
   i++; //93
   if (InputItems[i].Valid) {
-    gSettings.Devices.USB.InjectClockID = InputItems[i].BValue;
+    gSettings.Devices.USB.InjectClockID = InputItems[i].BValue != 0;
   }
   i++; //94
   if (InputItems[i].Valid) {
@@ -938,7 +938,7 @@ void ApplyInputs(void)
   }
   i++; //102
   if (InputItems[i].Valid) {
-    gSettings.ACPI.DSDT.DebugDSDT = InputItems[i].BValue;
+    gSettings.ACPI.DSDT.DebugDSDT = InputItems[i].BValue != 0;
   }
   i++; //103
   if (InputItems[i].Valid) {
@@ -954,19 +954,19 @@ void ApplyInputs(void)
 
   i++; //105
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPKernelXCPM = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPKernelXCPM = InputItems[i].BValue != 0;
     DBG("applied KernelXCPM\n");
     GlobalConfig.gBootChanged = true;
   }
 
   i++; //106
   if (InputItems[i].Valid) {
-    gSettings.Devices.StringInjector = InputItems[i].BValue;
+    gSettings.Devices.StringInjector = InputItems[i].BValue != 0;
   }
 
   i++; //107
   if (InputItems[i].Valid) {
-    gSettings.Devices.NoDefaultProperties = InputItems[i].BValue;
+    gSettings.Devices.NoDefaultProperties = InputItems[i].BValue != 0;
   }
 
   i++; //108
@@ -983,12 +983,12 @@ void ApplyInputs(void)
 
   i++; //110
   if (InputItems[i].Valid) {
-    gSettings.Graphics.NvidiaNoEFI = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaNoEFI = InputItems[i].BValue != 0;
   }
 
   i++; //111
   if (InputItems[i].Valid) {
-    gSettings.Graphics.NvidiaSingle = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaSingle = InputItems[i].BValue != 0;
   }
   i++; //112
   if (InputItems[i].Valid) {
@@ -996,15 +996,15 @@ void ApplyInputs(void)
   }
   i++; //113
   if (InputItems[i].Valid) {
-    gSettings.ACPI.AutoMerge = InputItems[i].BValue;
+    gSettings.ACPI.AutoMerge = InputItems[i].BValue != 0;
   }
   i++; //114
   if (InputItems[i].Valid) {
-    gSettings.Graphics.RadeonDeInit = InputItems[i].BValue;
+    gSettings.Graphics.RadeonDeInit = InputItems[i].BValue != 0;
   }
   i++; //115
   if (InputItems[i].Valid) {
-    gSettings.SystemParameters.NoCaches = InputItems[i].BValue;
+    gSettings.SystemParameters.NoCaches = InputItems[i].BValue != 0;
   }
   i++; //116
   if (InputItems[i].Valid) {
@@ -1061,7 +1061,7 @@ void ApplyInputs(void)
   }
   i++; //121
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPPanicNoKextDump = InputItems[i].BValue;
+    gSettings.KernelAndKextPatches.KPPanicNoKextDump = InputItems[i].BValue != 0;
     GlobalConfig.gBootChanged = true;
   }
   i++; //122
@@ -1071,12 +1071,12 @@ void ApplyInputs(void)
   }
   i++; //123
   if (InputItems[i].Valid) {
-    gSettings.GUI.ProvideConsoleGop = InputItems[i].BValue;
+    gSettings.GUI.ProvideConsoleGop = InputItems[i].BValue != 0;
     DBG("applied ConsoleGopEnable=%s\n", gSettings.GUI.ProvideConsoleGop ? "Y" : "N" );
   }
   i++; //124
   if (InputItems[i].Valid) {
-    gSettings.ACPI.FixHeaders = InputItems[i].BValue;
+    gSettings.ACPI.FixHeaders = InputItems[i].BValue != 0;
     DBG("applied gSettings.ACPI.FixHeaders=%s\n", gSettings.ACPI.FixHeaders ? "Y" : "N" );
   }
   i++; //125
@@ -2612,7 +2612,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
   INTN                NextEntryIndex = -1;
 
-  XBool             OldFontStyle = ThemeX.Proportional;
+  XBool               OldFontStyle = ThemeX.Proportional;
   ThemeX.Proportional = false; //temporary disable proportional
 
 //  if (AllowGraphicsMode) {

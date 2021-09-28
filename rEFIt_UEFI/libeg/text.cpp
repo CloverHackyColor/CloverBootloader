@@ -94,7 +94,7 @@ void XTheme::LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols)
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *PixelPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *FontPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstPixel;
-  XBool     isKorean = (gSettings.GUI.languageCode == korean);
+  XBool       isKorean = (gSettings.GUI.languageCode == korean);
   XStringW    fontFilePath;
   const XStringW& commonFontDir = L"font"_XSW;
 
@@ -208,7 +208,7 @@ void XTheme::PrepareFont()
 }
 
 //search pixel similar to first
-inline bool SamePix(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Ptr, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel)
+inline XBool SamePix(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Ptr, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel)
 {
   //compare with first pixel of the array top-left point [0][0]
   return ((Ptr.Red >= FirstPixel.Red - (FirstPixel.Red >> 2)) &&

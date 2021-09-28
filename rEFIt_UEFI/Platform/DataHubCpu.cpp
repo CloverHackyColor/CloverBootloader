@@ -467,7 +467,7 @@ SetupDataForOSX(XBool Hibernate)
   UINT64     ARTFrequency;
   UINTN      Revision;
   UINT16     Zero = 0;
-  XBool    isRevLess = (ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[0] == 0 &&
+  XBool      isRevLess = (ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[0] == 0 &&
                           ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[1] == 0 &&
                           ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[2] == 0 &&
                           ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[3] == 0 &&

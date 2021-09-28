@@ -118,9 +118,9 @@
 
 // variables
 
-XBool                 gGuiIsReady     = false;
-XBool                 gThemeNeedInit  = true;
-XBool                 DoHibernateWake = false;
+XBool                gGuiIsReady     = false;
+XBool                gThemeNeedInit  = true;
+XBool                DoHibernateWake = false;
 
 
 EFI_HANDLE ConsoleInHandle;
@@ -1122,7 +1122,7 @@ void LOADER_ENTRY::StartLoader()
       }
   #if 1
       //CFBundleExecutable
-      XBool   NoContents = false;
+      XBool NoContents = false;
       XStringW  infoPlistPath = getKextPlist(dirPath, KextEntry, &NoContents); //it will be fullPath, including dir
       TagDict*  dict = getInfoPlist(infoPlistPath);
   //    XBool inject = checkOSBundleRequired(dict);
@@ -1793,7 +1793,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   UINTN                   DriversArrSize;
   UINTN                   DriversArrNum;
   EFI_HANDLE              *DriversArr;
-  XBool                 Skip;
+  XBool                   Skip;
   UINT8                   AptioBlessed;
   STATIC CHAR16 CONST * CONST AptioNames[] = {
     L"AptioMemoryFix",
@@ -1960,7 +1960,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
   EFI_BLOCK_IO_PROTOCOL                 *BlockIo;
   EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfo;
   UINTN                                 OpenInfoCount;
-  XBool                               Found;
+  XBool                                 Found;
 
   DBG("Searching for invalid DiskIo BY_DRIVER connects:");
 
@@ -2215,7 +2215,7 @@ static void LoadDrivers(void)
   UINTN       DriversToConnectNum = 0;
   UINT8       *Edid;
   UINTN       VarSize = 0;
-  XBool     VBiosPatchNeeded;
+  XBool       VBiosPatchNeeded;
 
   DbgHeader("LoadDrivers");
 
@@ -2296,7 +2296,7 @@ INTN FindDefaultEntry(void)
 {
   INTN                Index = -1;
   REFIT_VOLUME        *Volume;
-  XBool             SearchForLoader;
+  XBool               SearchForLoader;
 
 //  DBG("FindDefaultEntry ...\n");
   //DbgHeader("FindDefaultEntry");
@@ -2709,9 +2709,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
   EFI_STATUS Status;
-  XBool           MainLoopRunning = true;
-  XBool           ReinitDesktop = true;
-  XBool           AfterTool = false;
+  XBool             MainLoopRunning = true;
+  XBool             ReinitDesktop = true;
+  XBool             AfterTool = false;
   REFIT_ABSTRACT_MENU_ENTRY  *ChosenEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY  *DefaultEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY  *OptionEntry = NULL;
@@ -2723,9 +2723,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  LOADER_ENTRY      *LoaderEntry;
 //  XStringW          ConfName;
 //  TagDict*          smbiosTags = NULL;
-//  XBool           UniteConfigs = false;
+//  XBool          UniteConfigs = false;
   EFI_TIME          Now;
-  XBool           HaveDefaultVolume;
+  XBool             HaveDefaultVolume;
   REFIT_MENU_SCREEN BootScreen;
   BootScreen.isBootScreen = true; //other screens will be constructed as false
   // CHAR16            *InputBuffer; //, *Y;

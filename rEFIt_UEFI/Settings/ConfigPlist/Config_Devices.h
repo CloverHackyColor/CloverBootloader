@@ -122,9 +122,9 @@ protected:
     const decltype(SetIntelBacklight)::ValueType& dgetIntelBacklight() const { return SetIntelBacklight.isDefined() ? SetIntelBacklight.value() : SetIntelBacklight.nullValue; };
     const decltype(SetIntelMaxBacklight)::ValueType& dgetIntelMaxBacklight() const { return SetIntelMaxBacklight.isDefined() ? SetIntelMaxBacklight.value() : SetIntelMaxBacklight.nullValue; };
     const decltype(IntelMaxValue)::ValueType& dgetIntelMaxValue() const { return IntelMaxValue.isDefined() ? IntelMaxValue.value() : IntelMaxValue.nullValue; };
-    bool dgetLANInjection() const { return isDefined() ? LANInjection.isDefined() ? LANInjection.value() : true : false; }; // TODO: different default value if section is not defined
+    XBool dgetLANInjection() const { return isDefined() ? LANInjection.isDefined() ? LANInjection.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
     const decltype(HDMIInjection)::ValueType& dgetHDMIInjection() const { return HDMIInjection.isDefined() ? HDMIInjection.value() : HDMIInjection.nullValue; };
-    bool dgetNoDefaultProperties() const { return isDefined() ? NoDefaultProperties.isDefined() ? NoDefaultProperties.value() : true : false; }; // TODO: different default value if section is not defined
+    XBool dgetNoDefaultProperties() const { return isDefined() ? NoDefaultProperties.isDefined() ? NoDefaultProperties.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
     const decltype(UseIntelHDMI)::ValueType& dgetUseIntelHDMI() const { return UseIntelHDMI.isDefined() ? UseIntelHDMI.value() : UseIntelHDMI.nullValue; };
     const decltype(ForceHPET)::ValueType& dgetForceHPET() const { return ForceHPET.isDefined() ? ForceHPET.value() : ForceHPET.nullValue; };
     const decltype(DisableFunctions)::ValueType& dgetDisableFunctions() const { return DisableFunctions.isDefined() ? DisableFunctions.value() : DisableFunctions.nullValue; };

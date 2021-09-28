@@ -432,8 +432,8 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 	EFI_HANDLE				*HandleBuffer = NULL;
 	UINT32            *HandleType = NULL;
 	UINTN             HandleIndex;
-	XBool           Parent;
-	XBool           Device;
+	XBool             Parent;
+	XBool             Device;
 	EFI_PCI_IO_PROTOCOL*	PciIo = NULL;
 	PCI_TYPE00				Pci;
   
@@ -552,7 +552,7 @@ BdsLibConnectUsbDevByShortFormDP(
   UINTN                                 Index;
   EFI_PCI_IO_PROTOCOL                   *PciIo;
   UINT8                                 Class[3];
-  XBool                               AtLeastOneConnected;
+  XBool                                 AtLeastOneConnected;
 
   //
   // Check the passed in parameters

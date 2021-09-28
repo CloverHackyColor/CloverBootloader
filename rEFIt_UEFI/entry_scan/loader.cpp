@@ -1233,9 +1233,9 @@ void LOADER_ENTRY::AddDefaultMenu()
   LOADER_ENTRY      *SubEntry;
 //  REFIT_MENU_SCREEN *SubScreen;
 //  REFIT_VOLUME      *Volume;
-  UINT64            VolumeSize;
+  UINT64             VolumeSize;
   EFI_GUID          *Guid = NULL;
-  XBool           KernelIs64BitOnly;
+  XBool              KernelIs64BitOnly;
 //  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
@@ -2188,7 +2188,7 @@ void ScanLoader(void)
     }
   }
 
-  bool hasMovedSomething;
+  XBool hasMovedSomething;
 
   // Re-order preboot partition
   do {
@@ -2466,7 +2466,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
   REFIT_DIR_ITER *Iter = &SIter;
   CHAR16          PartUUID[40];
   XStringW        CustomPath = _CustomPath;
-  XBool         FindCustomPath = (CustomPath.isEmpty());
+  XBool           FindCustomPath = (CustomPath.isEmpty());
 
   if ( SubMenu != NULL ) panic("Call AddCustomSubEntry instead");
   
@@ -2557,7 +2557,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     if (Custom.settings.Volume.notEmpty()) {
       if ((StrStr(Volume->DevicePathString.wc_str(), Custom.settings.Volume.wc_str()) == NULL) &&
           ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom.settings.Volume.wc_str()) == NULL))) {
-        bool CustomEntryFound = false;
+        XBool CustomEntryFound = false;
         //..\VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,E97E25EA28F4DF46AAD44CC3F12E28D3)
         EFI_DEVICE_PATH *MediaPath = Clover_FindDevicePathNodeWithType(Volume->DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
         if (MediaPath) {
@@ -2667,7 +2667,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
       // Check to make sure that this entry is not hidden or disabled by another custom entry
       if (true) {
-        XBool              BetterMatch = false;
+        XBool BetterMatch = false;
         for (size_t i = 0 ; i < GlobalConfig.CustomEntries.size() ; ++i ) {
           CUSTOM_LOADER_ENTRY& CustomEntry = GlobalConfig.CustomEntries[i];
           if ( CustomEntry.settings.Disabled ) continue; // before, disabled entries settings weren't loaded.

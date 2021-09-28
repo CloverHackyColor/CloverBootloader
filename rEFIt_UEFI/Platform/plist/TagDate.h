@@ -22,12 +22,12 @@ public:
   const TagDate& operator = (const TagDate&); // Can be defined if needed
   virtual ~TagDate() { }
   
-  virtual bool operator == (const TagStruct& other) const;
+  virtual XBool operator == (const TagStruct& other) const;
 
   virtual TagDate* getDate() { return this; }
   virtual const TagDate* getDate() const { return this; }
 
-  virtual bool isDict() const { return true; }
+  virtual XBool isDict() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Dict"_XS8; }
   static TagDate* getEmptyTag();
   virtual void FreeTag();

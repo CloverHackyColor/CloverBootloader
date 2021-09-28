@@ -105,7 +105,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 {
   public:
   XStringW           Title = XStringW();
-  bool               Hidden = 0;
+  XBool              Hidden = false;
   UINTN              Row = 0;
   CHAR16             ShortcutDigit = 0;
   char32_t           ShortcutLetter = 0;
@@ -372,11 +372,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32            NamesTable;
         INT32             SegVAddr;
         INT32             shift;
-        XBool           PatcherInited;
-        XBool           gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-        XBool           gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
-        XBool           isKernelcache;
-        XBool           is64BitKernel;
+        XBool             PatcherInited;
+        XBool             gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+        XBool             gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
+        XBool             isKernelcache;
+        XBool             is64BitKernel;
         UINT32            KernelSlide;
         UINT32            KernelOffset;
         // notes:
@@ -426,15 +426,15 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32        searchSectionByNum(UINT8 * Binary, UINT32 Num);
 //        void          KernelAndKextsPatcherStart();
 //        void          KernelAndKextPatcherInit();
-        XBool       KernelUserPatch();
-        XBool       KernelPatchPm();
-        XBool       KernelLapicPatch_32();
-        XBool       KernelLapicPatch_64();
-        XBool       BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
+        XBool         KernelUserPatch();
+        XBool         KernelPatchPm();
+        XBool         KernelLapicPatch_32();
+        XBool         KernelLapicPatch_64();
+        XBool         BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
         void EFIAPI   KernelBooterExtensionsPatch();
-        XBool       KernelPanicNoKextDump();
+        XBool         KernelPanicNoKextDump();
         void          KernelCPUIDPatch();
-        XBool       PatchCPUID(const UINT8* Location, INT32 LenLoc,
+        XBool         PatchCPUID(const UINT8* Location, INT32 LenLoc,
                                  const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                                  const UINT8* ReplaceExt, INT32 Len);
         void          KernelPatcher_32();
@@ -471,12 +471,12 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void      DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         void      SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         void      BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
-        XBool   SandyBridgeEPM();
-        XBool   HaswellEXCPM();
-        XBool   HaswellLowEndXCPM();
-        XBool   BroadwellEPM();
-        XBool   KernelIvyBridgeXCPM();
-        XBool   KernelIvyE5XCPM();
+        XBool     SandyBridgeEPM();
+        XBool     HaswellEXCPM();
+        XBool     HaswellLowEndXCPM();
+        XBool     BroadwellEPM();
+        XBool     KernelIvyBridgeXCPM();
+        XBool     KernelIvyE5XCPM();
         void      EightApplePatch(UINT8 *Driver, UINT32 DriverSize);
         
         void Stall(int Pause) { if ( KernelAndKextPatches.KPDebug ) { gBS->Stall(Pause); } };

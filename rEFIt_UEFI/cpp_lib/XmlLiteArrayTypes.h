@@ -42,10 +42,10 @@ class XmlArray : public XmlAbstractType, public XObjArray<T>
     const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return *this; }
 //    const ValueType& v() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return *this; }
 
-    virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("array"); }
-    virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+    virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("array"); }
+    virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
     // Validate remove invalid elements, but doesn't invalidate the whole array. So this is always returning true.
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 };
 
 
@@ -54,7 +54,7 @@ const typename XmlArray<T>::ValueType XmlArray<T>::nullValue;
 
 
 template <class T>
-bool XmlArray<T>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlArray<T>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
   RETURN_IF_FALSE ( xmlLiteParser->consumeOpeningTag("array") );
@@ -94,7 +94,7 @@ bool XmlArray<T>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8&
 }
 
 template <class T>
-bool XmlArray<T>::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors)
+XBool XmlArray<T>::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors)
 {
   for ( size_t idx = 0 ; idx < super2::size() ; ) {
     if ( !super2::ElementAt(idx).validate(xmlLiteParser, xmlPath, pos, generateErrors) ) {
@@ -119,18 +119,18 @@ class XmlString8Array : public XmlArray<XmlString8>
     const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return array; }
 
     virtual void reset() override { super::reset(); array.setEmpty(); };
-    virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override
+    virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override
     {
-      bool b = super::parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors);
+      XBool b = super::parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors);
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {
         array.AddReference(&super::ElementAt(idx).value(), false);
       }
       return b;
     }
     // Validate can remove invalid element. So we have to regenerate 'array'. There is no object copy, so it's very quick
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override
     {
-      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      XBool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       array.setEmpty();
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {
         array.AddReference(&super::ElementAt(idx).value(), false);
@@ -155,23 +155,23 @@ class XmlStringWArray : public XmlArray<XmlStringW>
     const ValueType& value() const { if ( !isDefined() ) log_technical_bug("%s : value is not defined", __PRETTY_FUNCTION__); return array; }
 
     virtual void reset() override { super::reset(); array.setEmpty(); };
-    virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override
+    virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override
     {
 #ifdef JIEF_DEBUG
 if (xmlPath == "/DisableDrivers"_XS8) {
 NOP;
 }
 #endif
-      bool b = super::parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors);
+      XBool b = super::parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors);
       array.setEmpty();
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {
         array.AddReference(&super::ElementAt(idx).value(), false);
       }
       return b;
     }
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override
     {
-      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      XBool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       // Validate can remove invalid element. So we have to regenerate 'array'. There is no object copy, so it's very quick
       array.setEmpty();
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {

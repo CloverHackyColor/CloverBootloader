@@ -1543,9 +1543,9 @@ void free_val(value_t *val )
 //  {FLAGTRUE, false, "ATY,VendorID",  NULL,     WRDVAL(0x1002)        },
 /*typedef struct {
     UINT32    flags;
-    XBool    all_ports;
+    XBool   all_ports;
     CHAR8     *name;
-    XBool    (*get_value)(value_t *val, INTN index, XBool Sier);
+    XBool   (*get_value)(value_t *val, INTN index, XBool Sier);
     value_t    default_val;
  } AtiDevProp;
  */

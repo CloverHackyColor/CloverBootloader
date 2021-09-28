@@ -122,14 +122,14 @@ FindBootOptionForFile (
  */
 EFI_STATUS
 AddBootOptionForFile (
-                      IN  EFI_HANDLE FileDeviceHandle,
+                      IN  EFI_HANDLE      FileDeviceHandle,
                       IN  CONST XStringW &FileName,
-                      IN  XBool    UseShortForm,
-                      IN  CONST CHAR16     *Description,
-                      IN  UINT8      *OptionalData,
-                      IN  UINTN      OptionalDataSize,
-                      IN  UINTN      BootIndex,
-                      OUT UINT16     *BootNum
+                      IN  XBool           UseShortForm,
+                      IN  CONST CHAR16   *Description,
+                      IN  UINT8          *OptionalData,
+                      IN  UINTN           OptionalDataSize,
+                      IN  UINTN           BootIndex,
+                      OUT UINT16         *BootNum
                       );
 
 /** Deletes boot option specified with BootNum (XXXX in BootXXXX var name). */

@@ -15,7 +15,7 @@ class SystemParameters_Class : public XmlDict
 public:
   class InjectKextsClass: public XmlBoolOrString {
     using super = XmlBoolOrString;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( isDefined() && xmlString8.isDefined() ) {
         if ( !xmlString8.value().isEqualIC("Detect") ) return xmlLiteParser->addWarning(generateErrors, S8Printf("InjectKexts must be a boolean or \"Detect\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -25,7 +25,7 @@ public:
   };
   class CustomUUIDClass : public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( !isDefined() ) return true;
       if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf(" invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
@@ -64,20 +64,20 @@ public:
 
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    bool b = true;
+    XBool b = true;
     return b;
   }
 
-  bool dgetWithKexts() const { return true; } // looks like it can never be false anymore...
-  bool dgetWithKextsIfNoFakeSMC() const { return InjectKexts.xmlString8.isDefined() ? InjectKexts.xmlString8.value().isEqualIC("Detect") : false; }
-  bool dgetNoCaches() const { return NoCaches.isDefined() ? NoCaches.value() : false; }
-  bool dgetBacklightLevelConfig() const { return BacklightLevel.isDefined(); }
+  XBool dgetWithKexts() const { return true; } // looks like it can never be false anymore...
+  XBool dgetWithKextsIfNoFakeSMC() const { return InjectKexts.xmlString8.isDefined() ? InjectKexts.xmlString8.value().isEqualIC("Detect") : false; }
+  XBool dgetNoCaches() const { return NoCaches.isDefined() ? NoCaches.value() : XBool(false); }
+  XBool dgetBacklightLevelConfig() const { return BacklightLevel.isDefined(); }
   uint16_t dgetBacklightLevel() const { return BacklightLevel.isDefined() &&  BacklightLevel.xmlInt16.isDefined() ? BacklightLevel.xmlInt16.value() : 0xFFFF; }
   const XString8& dgetCustomUuid() const { return CustomUUID.isDefined() ? CustomUUID.value() : NullXString8; }
-  UINT8 dget_InjectSystemID() const { return InjectSystemID.isDefined() ? InjectSystemID.value() : 2; }
-  bool dgetNvidiaWeb() const { return NvidiaWeb.isDefined() ? NvidiaWeb.value() : 0; }
+  UINT8 dget_InjectSystemID() const { return InjectSystemID.isDefined() ? (int)InjectSystemID.value() : 2; }
+  XBool dgetNvidiaWeb() const { return NvidiaWeb.isDefined() ? NvidiaWeb.value() : XBool(false); }
 };
 
 

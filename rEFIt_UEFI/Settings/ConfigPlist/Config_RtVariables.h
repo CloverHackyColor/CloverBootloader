@@ -20,7 +20,7 @@ public:
       public:
         class GuidClass : public XmlString8AllowEmpty {
           using super = XmlString8AllowEmpty;
-          virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
             if ( !isDefined() ) return true;
             if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid GUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
@@ -67,7 +67,7 @@ public:
       XmlData    xmlData = XmlData();
       XmlUnionField m_fields[2] = { xmlString8, xmlData};
       virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-//    virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override
+//    virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override
 //    {
 //      WARNING_IF_DEFINED;
 //
@@ -81,7 +81,7 @@ public:
 //      xmlLiteParser->addError(generateErrors, S8Printf("Expecting \"UseMacAddr0\", \"UseMacAddr1\", a string or data for tag '%s:%d'.", xmlPath.c_str(), pos.getLine()));
 //      return false;
 //    }
-//    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+//    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
 //if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
 //      if ( !xmlString8.isDefined() ) return true;
 //      if ( xmlString8.value().isEqualIC("UseMacAddr0") ) return true;
@@ -118,7 +118,7 @@ public:
   };
 
 //  class ROMClass: public XmlData {
-//    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+//    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
 //if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
 //      if ( "UseMacAddr0"_XS8.isEqualIC(value().CData()) ) return true;
 //      if ( "UseMacAddr1"_XS8.isEqualIC(value().CData()) ) return true;

@@ -37,11 +37,11 @@ protected:
   public:
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-  bool dgetPStates() const { return PStates.isDefined() ? PStates.value() : false; };
-  bool dgetCStates() const { return CStates.isDefined() ? CStates.value() : false; };
-  bool dgetAPSN() const { return APSN.isDefined() ? APSN.value() : false; };
-  bool dgetAPLF() const { return APLF.isDefined() ? APLF.value() : false; };
-  bool dgetPluginType() const { return PluginType.isDefined() ? PluginType.value() : false; };
+  XBool dgetPStates() const { return PStates.isDefined() ? PStates.value() : XBool(false); };
+  XBool dgetCStates() const { return CStates.isDefined() ? CStates.value() : XBool(false); };
+  XBool dgetAPSN() const { return APSN.isDefined() ? APSN.value() : XBool(false); };
+  XBool dgetAPLF() const { return APLF.isDefined() ? APLF.value() : XBool(false); };
+  XBool dgetPluginType() const { return PluginType.isDefined() ? PluginType.value() : XBool(false); };
 
   undefinable_bool getPStates() const { return PStates.isDefined() ? undefinable_bool(PStates.value()) : undefinable_bool(); };
   undefinable_bool getCStates() const { return CStates.isDefined() ? undefinable_bool(CStates.value()) : undefinable_bool(); };
@@ -65,23 +65,23 @@ public:
   public:
     virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
     
-    bool dgetGeneratePStates() const {
+    XBool dgetGeneratePStates() const {
       if ( xmlBool.isDefined() ) return xmlBool.value();
       return xmlDict.dgetPStates();
     }
-    bool dgetGenerateCStates() const {
+    XBool dgetGenerateCStates() const {
       if ( xmlBool.isDefined() ) return xmlBool.value();
       return xmlDict.dgetCStates();
     }
-    bool dgetGenerateAPSN() const {
+    XBool dgetGenerateAPSN() const {
       if ( xmlBool.isDefined() ) return xmlBool.value();
       return xmlDict.dgetAPSN();
     }
-    bool dgetGenerateAPLF() const {
+    XBool dgetGenerateAPLF() const {
       if ( xmlBool.isDefined() ) return xmlBool.value();
       return xmlDict.dgetAPLF();
     }
-    bool dgetGeneratePluginType() const {
+    XBool dgetGeneratePluginType() const {
       if ( xmlBool.isDefined() ) return xmlBool.value();
       return xmlDict.dgetPluginType();
     }
@@ -152,18 +152,18 @@ protected:
 public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
-  bool dgetDropSSDTSetting() const { return DropOem.isDefined() ? DropOem.value() : false; };
-  bool dgetNoOemTableId() const { return NoOemTableId.isDefined() ? NoOemTableId.value() : false; };
-  bool dgetNoDynamicExtract() const { return NoDynamicExtract.isDefined() ? NoDynamicExtract.value() : false; };
-  bool dgetEnableISS() const { return UseSystemIO.isDefined() ? UseSystemIO.value() : false; };
-  bool dgetEnableC7() const { return EnableC7.isDefined() ? EnableC7.value() : false; };
-  bool dget_EnableC6() const { return EnableC6.isDefined() ? EnableC6.value() : false; };
-  bool dget_EnableC4() const { return EnableC4.isDefined() ? EnableC4.value() : false; };
-  bool dget_EnableC2() const { return EnableC2.isDefined() ? EnableC2.value() : false; };
+  XBool dgetDropSSDTSetting() const { return DropOem.isDefined() ? DropOem.value() : XBool(false); };
+  XBool dgetNoOemTableId() const { return NoOemTableId.isDefined() ? NoOemTableId.value() : XBool(false); };
+  XBool dgetNoDynamicExtract() const { return NoDynamicExtract.isDefined() ? NoDynamicExtract.value() : XBool(false); };
+  XBool dgetEnableISS() const { return UseSystemIO.isDefined() ? UseSystemIO.value() : XBool(false); };
+  XBool dgetEnableC7() const { return EnableC7.isDefined() ? EnableC7.value() : XBool(false); };
+  XBool dget_EnableC6() const { return EnableC6.isDefined() ? EnableC6.value() : XBool(false); };
+  XBool dget_EnableC4() const { return EnableC4.isDefined() ? EnableC4.value() : XBool(false); };
+  XBool dget_EnableC2() const { return EnableC2.isDefined() ? EnableC2.value() : XBool(false); };
   uint16_t dget_C3Latency() const { return C3Latency.isDefined() ? C3Latency.value() : 0; };
   uint8_t dgetPLimitDict() const { return PLimitDict.isDefined() ? PLimitDict.value() : 0; };
   uint8_t dgetUnderVoltStep() const { return UnderVoltStep.isDefined() ? UnderVoltStep.value() : 0; };
-  bool dgetDoubleFirstState() const { return DoubleFirstState.isDefined() ? DoubleFirstState.value() : false; };
+  XBool dgetDoubleFirstState() const { return DoubleFirstState.isDefined() ? DoubleFirstState.value() : XBool(false); };
   uint8_t dgetMinMultiplier() const { return MinMultiplier.isDefined() ? MinMultiplier.value() : 0; };
   uint8_t dgetMaxMultiplier() const { return MaxMultiplier.isDefined() ? MaxMultiplier.value() : 0; };
   uint8_t dgetPluginType() const { return PluginType.isDefined() ? PluginType.value() : 0; };

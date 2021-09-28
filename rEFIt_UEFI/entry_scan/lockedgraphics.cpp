@@ -72,7 +72,7 @@ static EFI_BOOT_SERVICES  OldBootServices;
 // The locked graphics collection
 static LOCKED_GRAPHICS   *LockedGraphics;
 // The screen lock
-static XBool            ScreenIsLocked;
+static XBool              ScreenIsLocked;
 
 static EFI_STATUS EFIAPI LockedGOPBlt(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *This, IN EFI_GRAPHICS_OUTPUT_BLT_PIXEL *BltBuffer, OPTIONAL IN EFI_GRAPHICS_OUTPUT_BLT_OPERATION BltOperation, IN UINTN SourceX, IN UINTN SourceY, IN UINTN DestinationX, IN UINTN DestinationY, IN UINTN Width, IN UINTN Height, IN UINTN Delta OPTIONAL)
 {
@@ -102,7 +102,7 @@ static EFI_STATUS EFIAPI LockedGOPQueryMode(IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Thi
 
 static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface)
 {
-  XBool          Modify = true;
+  XBool Modify = true;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||
@@ -296,7 +296,7 @@ static EFI_STATUS RemoveLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Ag
 
 static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN EFI_UGA_DRAW_PROTOCOL *UGAInterface)
 {
-  XBool          Modify = true;
+  XBool Modify = true;
   LOCKED_GRAPHICS *Ptr = LockedGraphics;
   if ((Handle == NULL) ||
       (AgentHandle == NULL) ||

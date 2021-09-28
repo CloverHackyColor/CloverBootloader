@@ -2177,8 +2177,8 @@ XBool setup_nvidia_devprop(pci_dt_t *nvda_dev)
   EFI_STATUS    Status = EFI_NOT_FOUND;
   DevPropDevice *device = NULL;
   XString8      devicepath;
-  XBool       load_vbios = gSettings.Graphics.LoadVBios;
-  XBool       Injected = false;
+  XBool         load_vbios = gSettings.Graphics.LoadVBios;
+  XBool         Injected = false;
   UINT8         *rom = NULL;
   UINT16        nvCardType = 0;
   UINT64        videoRam = 0;
@@ -2194,7 +2194,7 @@ XBool setup_nvidia_devprop(pci_dt_t *nvda_dev)
   INT32         crlf_count = 0;
   option_rom_pci_header_t    *rom_pci_header;
   XString8      version_str;
-  XBool       RomAssigned = false;
+  XBool         RomAssigned = false;
   UINT32        device_id, subsys_id;
   const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD      *nvcard;
 

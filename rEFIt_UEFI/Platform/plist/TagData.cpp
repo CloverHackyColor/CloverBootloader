@@ -73,7 +73,7 @@ void TagData::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagData::operator == (const TagStruct& other) const
+XBool TagData::operator == (const TagStruct& other) const
 {
   if ( !other.isData() ) return false;
   if ( dataBuffer != other.getData()->dataBuffer ) return false;

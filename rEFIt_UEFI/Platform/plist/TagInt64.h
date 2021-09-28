@@ -22,12 +22,12 @@ public:
   const TagInt64& operator = (const TagInt64&); // Can be defined if needed
   virtual ~TagInt64() { }
   
-  virtual bool operator == (const TagStruct& other) const;
+  virtual XBool operator == (const TagStruct& other) const;
 
   virtual TagInt64* getInt64() { return this; }
   virtual const TagInt64* getInt64() const { return this; }
 
-  virtual bool isInt64() const { return true; }
+  virtual XBool isInt64() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Int64"_XS8; }
   static TagInt64* getEmptyTag();
   virtual void FreeTag();

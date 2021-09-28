@@ -16,20 +16,20 @@ public:
   XString8 Name; //for example "os_moja", "vol_internal"
   XImage Image;
   XImage ImageNight;
-  bool Native;
+  XBool Native;
   void *ImageSVG;  //NSVGimage*
   void *ImageSVGnight;
 protected:
-  bool Empty;
+  XBool Empty;
 public:
   XIcon(): Id(0), Name(), Image(), ImageNight(), Native(false), ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(true) {};
-  XIcon(INTN Id, bool Embedded = false);
+  XIcon(INTN Id, XBool Embedded = false);
   // Initialisation of ImageSVG(other.ImageSVG), ImageSVGnight(other.ImageSVGnight) is wrong because we just copy the pointer
   XIcon(const XIcon& other) : Id(other.Id), Name(other.Name), Image(other.Image), ImageNight(other.ImageNight), Native(other.Native), ImageSVG(other.ImageSVG), ImageSVGnight(other.ImageSVGnight), Empty(other.Empty) {} ;
   ~XIcon();
   
 
-  bool isEmpty() const  { return Empty; }
+  XBool isEmpty() const  { return Empty; }
   void setFilled() { Empty = false; }
   void setEmpty()  { Empty = true; }
   
@@ -41,7 +41,7 @@ public:
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
 //  Icon(const Icon&) = delete;
   XIcon& operator=(const XIcon&); // = delete;
-  XImage* GetBest(bool night, bool *free = nullptr);
+  XImage* GetBest(XBool night, XBool *free = nullptr);
 };
 
 

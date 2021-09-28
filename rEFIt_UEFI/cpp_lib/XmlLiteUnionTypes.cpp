@@ -22,7 +22,7 @@ void XmlUnion::reset()
   }
 }
 
-bool XmlUnion::isTheNextTag(XmlLiteParser* xmlLiteParser)
+XBool XmlUnion::isTheNextTag(XmlLiteParser* xmlLiteParser)
 {
   XmlUnionField* fields;
   size_t nb;
@@ -37,7 +37,7 @@ bool XmlUnion::isTheNextTag(XmlLiteParser* xmlLiteParser)
   return false;
 }
 
-bool XmlUnion::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlUnion::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   XmlParserPosition pos = xmlLiteParser->getPosition();
 #ifdef JIEF_DEBUG
@@ -67,7 +67,7 @@ if ( xmlPath == "/Boot/XMPDetection"_XS8 ) {
   return false;
 }
 
-bool XmlUnion::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors)
+XBool XmlUnion::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors)
 {
   XmlUnionField* fields;
   size_t nb;

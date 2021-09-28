@@ -524,7 +524,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   }
   
   XmlLiteParser xmlLiteParser;
-  bool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
+  XBool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
   if ( xmlLiteParser.getErrorsAndWarnings().size() ) {
     if ( xmlLiteParser.getErrorsAndWarnings().size() > 1 ) {
       DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());

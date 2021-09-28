@@ -123,7 +123,7 @@ public:
   XStringW      SValue = XStringW();
   UINTN         LineShift = 0;
   
-  bool operator == (const INPUT_ITEM& other) const
+  XBool operator == (const INPUT_ITEM& other) const
   {
     if ( !(ItemType == other.ItemType ) ) return false;
     if ( !(Valid == other.Valid ) ) return false;
@@ -133,7 +133,7 @@ public:
     if ( !(LineShift == other.LineShift ) ) return false;
     return true;
   }
-  bool operator != (const INPUT_ITEM& other) const { return !(*this == other); }
+  XBool operator != (const INPUT_ITEM& other) const { return !(*this == other); }
 };
 
 typedef struct {
@@ -198,8 +198,8 @@ public:
   EG_RECT(INTN x, INTN y, INTN w, INTN h) : XPos(x), YPos(y), Width(w), Height(h) { }
   EG_RECT(const EG_RECT& other) : XPos(other.XPos), YPos(other.YPos), Width(other.Width), Height(other.Height) { }
   const EG_RECT& operator = (const EG_RECT& other) { XPos = other.XPos; YPos = other.YPos; Width = other.Width; Height = other.Height; return *this; }
-  bool operator == (const EG_RECT& other) { return XPos == other.XPos  &&  YPos == other.YPos  &&  Width == other.Width  &&  Height == other.Height; }
-  bool operator != (const EG_RECT& other) { return !(*this == other); }
+  XBool operator == (const EG_RECT& other) { return XPos == other.XPos  &&  YPos == other.YPos  &&  Width == other.Width  &&  Height == other.Height; }
+  XBool operator != (const EG_RECT& other) { return !(*this == other); }
 };
 #else
 typedef struct EG_RECT {

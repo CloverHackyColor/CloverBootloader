@@ -94,9 +94,9 @@ UINT16      mHandle19;
 UINT16      mMemory17[MAX_RAM_SLOTS];
 UINT64      mInstalled[MAX_RAM_SLOTS];
 UINT64      mEnabled[MAX_RAM_SLOTS];
-XBool     gMobile;
+XBool       gMobile;
 UINT8       gBootStatus;
-XBool     Once;
+XBool       Once;
 
 MEM_STRUCTURE    gRAM;
 
@@ -664,7 +664,7 @@ DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, sm
   return;
 }
 
-bool getMobileFromSmbios()
+XBool getMobileFromSmbios()
 {
   // System Chassis Information
   //
@@ -1123,7 +1123,7 @@ void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
     DBG("SlotDevice[%hhu].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
     DBG("SlotDevice[%hhu].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
     DBG("SlotDevice[%hhu].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
-    DBG("SlotDevice[%hhu].Valid = %d\n", Index, smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
+    DBG("SlotDevice[%hhu].Valid = %d\n", Index, (bool)smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
   }
 #endif
 
@@ -1441,7 +1441,7 @@ DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", smbiosSettings.Memory.SlotCounts)
 DBG("gSettings.Smbios.Memory.UserChannels=%d\n", smbiosSettings.Memory.UserChannels);
 for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
   DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Frequency);
-  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
+  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, (bool)smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
   DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).ModuleSize);
   DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).PartNo.c_str());
   DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).SerialNo.c_str());

@@ -103,7 +103,7 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
                                 IN UINTN    AuthorizedDatabaseSize,
-                                IN XBool  WantDefaultKeys);
+                                IN XBool    WantDefaultKeys);
 EFI_STATUS ClearSecureBootKeys(void);
 
 // secure boot database
@@ -123,7 +123,7 @@ EFI_STATUS ClearAuthorizedDatabase(void);
 void *GetImageSignatureDatabase(IN void    *FileBuffer,
                                 IN UINT64   FileSize,
                                 IN UINTN   *DatabaseSize,
-                                IN XBool  HashIfNoDatabase);
+                                IN XBool    HashIfNoDatabase);
 EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN void  *Database,
                                                    IN UINTN  DatabaseSize);
 EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN void  *Database,

@@ -12,11 +12,11 @@
 
 NullXmlType nullXmlType;
 
-#define RETURN_IF_FALSE(Expression) do { bool b = Expression; if ( !b ) return false; } while (0);
+#define RETURN_IF_FALSE(Expression) do { XBool b = Expression; if ( !b ) return false; } while (0);
 
 const XmlStrictBool::ValueType XmlStrictBool::nullValue = XmlStrictBool::ValueType();
 
-bool XmlStrictBool::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlStrictBool::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -52,18 +52,18 @@ if ( xmlPath == "/Boot/XMPDetection"_XS8 ) {
   return false;
 }
 
-bool XmlBool::isTheNextTag(XmlLiteParser* xmlLiteParser)
+XBool XmlBool::isTheNextTag(XmlLiteParser* xmlLiteParser)
 {
   XmlParserPosition pos = xmlLiteParser->getPosition();
-  // Because we currently accept string tag as boolean, we have to parse to see if it can be a bool. We can't just check the next tag.
+  // Because we currently accept string tag as boolean, we have to parse to see if it can be a XBool. We can't just check the next tag.
   // Use a temporary variable. TODO improve by separating parsing and storage (ie Do not call setBoolValue in parseFromXmlLite().
   XmlBool xmlBool;
-  bool b = xmlBool.parseFromXmlLite(xmlLiteParser, NullXString8, false);
+  XBool b = xmlBool.parseFromXmlLite(xmlLiteParser, NullXString8, false);
   xmlLiteParser->restorePosition(pos);
   return b;
 }
 
-bool XmlBool::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlBool::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -119,18 +119,18 @@ if ( xmlPath.containsIC("/Debug"_XS8) ) {
 }
 
 
-bool XmlBoolYesNo::isTheNextTag(XmlLiteParser* xmlLiteParser)
+XBool XmlBoolYesNo::isTheNextTag(XmlLiteParser* xmlLiteParser)
 {
   XmlParserPosition pos = xmlLiteParser->getPosition();
-  // Because we currently accept string tag as boolean, we have to parse to see if it can be a bool. We can't just check the next tag.
+  // Because we currently accept string tag as boolean, we have to parse to see if it can be a XBool. We can't just check the next tag.
   // Use a temporary variable. TODO improve by separating parsing and storage (ie Do not call setBoolValue in parseFromXmlLite().
   XmlBoolYesNo xmlBool;
-  bool b = xmlBool.parseFromXmlLite(xmlLiteParser, NullXString8, false);
+  XBool b = xmlBool.parseFromXmlLite(xmlLiteParser, NullXString8, false);
   xmlLiteParser->restorePosition(pos);
   return b;
 }
 
-bool XmlBoolYesNo::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlBoolYesNo::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -183,7 +183,7 @@ if ( xmlPath.containsIC("/Debug"_XS8) ) {
 
 
 
-bool XmlString8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlString8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -230,7 +230,7 @@ if ( out && strcmp(out, "/SMBIOs") == 0 ) {
 }
 const XmlString8::ValueType XmlString8::nullValue = XmlString8::ValueType();
 
-bool XmlStringW::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlStringW::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -262,7 +262,7 @@ const XmlStringW::ValueType XmlStringW::nullValue = XmlString8::ValueType();
 const XmlKey::ValueType XmlKey::nullValue = XmlKey::ValueType();
 
 // TODO only difference with XmlString8::parseFromXmlLite is paramter "key" instead of "string"
-bool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr)
+XBool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr)
 {
   WARNING_IF_DEFINED;
 
@@ -298,7 +298,7 @@ printf("\n");
   return false;
 }
 
-bool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   const char* _value;
   size_t _valueLength;
@@ -309,7 +309,7 @@ bool XmlKey::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlP
 
 const XmlData::ValueType XmlData::nullValue = XmlData::ValueType();
 
-bool XmlData::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlData::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -342,7 +342,7 @@ bool XmlData::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xml
 }
 
 
-bool XmlIntegerAbstract::isTheNextTag(XmlLiteParser* xmlLiteParser)
+XBool XmlIntegerAbstract::isTheNextTag(XmlLiteParser* xmlLiteParser)
 {
   if ( xmlLiteParser->nextTagIsOpeningTag("integer") ) return true;
 
@@ -351,8 +351,8 @@ bool XmlIntegerAbstract::isTheNextTag(XmlLiteParser* xmlLiteParser)
   // Use a temporary variable. TODO improve by separating parsing and storage (ie Do not call setBoolValue in parseFromXmlLite().
 
   UINTN result;
-  bool negative;
-  bool b = parseXmlInteger(xmlLiteParser, NullXString8, &result, &negative, INT64_MIN, UINT64_MAX, false);
+  XBool negative;
+  XBool b = parseXmlInteger(xmlLiteParser, NullXString8, &result, &negative, INT64_MIN, UINT64_MAX, false);
   xmlLiteParser->restorePosition(pos);
   return b;
 }
@@ -362,7 +362,7 @@ bool XmlIntegerAbstract::isTheNextTag(XmlLiteParser* xmlLiteParser)
  * Minimum can be a positive integer. It's possible to pass minimum=10 and maximum=15.
  * Maximum can't be a negative integer.
  */
-bool XmlIntegerAbstract::parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, UINTN* resultPtr, bool* negativePtr, INTN minimum, UINTN maximum, bool generateErrors)
+XBool XmlIntegerAbstract::parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, UINTN* resultPtr, XBool* negativePtr, INTN minimum, UINTN maximum, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -375,8 +375,8 @@ bool XmlIntegerAbstract::parseXmlInteger(XmlLiteParser* xmlLiteParser, const XSt
   RETURN_IF_FALSE( xmlLiteParser->getSimpleTag(&tag, &tagLength, &value, &valueLength, NULL, generateErrors) );
   
   UINTN& result = *resultPtr;
-  bool& negative = *negativePtr;
-  bool atLeastOneDigit = false;
+  XBool& negative = *negativePtr;
+  XBool atLeastOneDigit = false;
 
 #ifdef JIEF_DEBUG
 if ( xmlPath.contains("CsrActiveConfig") ) {
@@ -502,66 +502,66 @@ if ( xmlPath.contains("CsrActiveConfig") ) {
 }
 
 
-bool XmlUInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlUInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT8_MAX, generateErrors) );
   return setUInt8Value((uint8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlUInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlUInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT16_MAX, generateErrors) );
   return setUInt16Value((uint16_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlUInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlUInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT32_MAX, generateErrors) );
   return setUInt32Value((uint32_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlUInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlUInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, 0, UINT64_MAX, generateErrors) );
   return setUInt64Value((uint64_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlInt8::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT8_MIN, INT8_MAX, generateErrors) );
   return setInt8Value((int8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlInt16::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT16_MIN, INT16_MAX, generateErrors) );
   return setInt16Value((int16_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlInt32::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT32_MIN, INT32_MAX, generateErrors) );
   return setInt32Value((int32_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }
 
-bool XmlInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlInt64::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   UINTN value;
-  bool sign;
+  XBool sign;
   RETURN_IF_FALSE( parseXmlInteger(xmlLiteParser, xmlPath, &value, &sign, INT64_MIN, INT64_MAX, generateErrors) );
   return setInt64Value((int8_t)value, sign); // safe cast because parseXmlInteger minimum/maximum parameter
 }

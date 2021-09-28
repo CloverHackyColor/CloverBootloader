@@ -807,7 +807,7 @@ XIcon* XTheme::GetIconP(const XString8& Name)
   return &NullIcon; //if name is not found
 }
 
-bool XTheme::CheckNative(INTN Id)
+XBool XTheme::CheckNative(INTN Id)
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {

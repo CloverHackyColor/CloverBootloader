@@ -221,8 +221,8 @@ typedef enum {
 
 
 
-//extern XBool          gBootArgsChanged;
-extern XBool          gThemeOptionsChanged;
+//extern XBool         gBootArgsChanged;
+extern XBool           gThemeOptionsChanged;
 //extern POINTERS         gPointer;
 //extern EFI_GUID gEfiAppleBootGuid;
 

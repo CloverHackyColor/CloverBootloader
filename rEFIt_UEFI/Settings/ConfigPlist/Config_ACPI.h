@@ -76,7 +76,7 @@ public:
       class Signature_Class : public XmlString8AllowEmpty
       {
         using super = XmlString8AllowEmpty;
-        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
           if ( !isDefined() ) return true;
           if ( xstring8.length() == 4 ) return true;
@@ -111,7 +111,7 @@ public:
         return *(UINT64*)&Id;
       };
       UINT32 dgetTabLength() const { return Length.isDefined() ? Length.value() : 0; };
-      bool dgetOtherOS() const { return DropForAllOS.isDefined() ? DropForAllOS.value() : false; };
+      XBool dgetOtherOS() const { return DropForAllOS.isDefined() ? DropForAllOS.value() : XBool(false); };
 
 
   };
@@ -173,13 +173,13 @@ public:
   
   const decltype(FixHeaders)& getFixHeaders() const { return FixHeaders; };
 
-  bool dgetSlpSmiEnable() const { return HaltEnabler.isDefined() ? HaltEnabler.value() : false; };
-  bool dgetFixHeaders() const { return FixHeaders.isDefined() ? FixHeaders.value() : false; };
-  bool dgetFixMCFG() const { return FixMCFG.isDefined() ? FixMCFG.value() : false; };
-  bool dgetNoASPM() const { return DisableASPM.isDefined() ? DisableASPM.value() : false; };
-  bool dgetsmartUPS() const { return smartUPS.isDefined() ? smartUPS.value() : false; };
-  bool dgetPatchNMI() const { return PatchAPIC.isDefined() ? PatchAPIC.value() : false; };
-  bool dgetAutoMerge() const { return AutoMerge.isDefined() ? AutoMerge.value() : false; };
+  XBool dgetSlpSmiEnable() const { return HaltEnabler.isDefined() ? HaltEnabler.value() : XBool(false); };
+  XBool dgetFixHeaders() const { return FixHeaders.isDefined() ? FixHeaders.value() : XBool(false); };
+  XBool dgetFixMCFG() const { return FixMCFG.isDefined() ? FixMCFG.value() : XBool(false); };
+  XBool dgetNoASPM() const { return DisableASPM.isDefined() ? DisableASPM.value() : XBool(false); };
+  XBool dgetsmartUPS() const { return smartUPS.isDefined() ? smartUPS.value() : XBool(false); };
+  XBool dgetPatchNMI() const { return PatchAPIC.isDefined() ? PatchAPIC.value() : XBool(false); };
+  XBool dgetAutoMerge() const { return AutoMerge.isDefined() ? AutoMerge.value() : XBool(false); };
   const decltype(DisabledAML)::ValueType& dgetDisabledAML() const { return DisabledAML.isDefined() ? DisabledAML.value() : DisabledAML.nullValue; };
   const decltype(SortedOrder)::ValueType& dgetSortedACPI() const { return SortedOrder.isDefined() ? SortedOrder.value() : SortedOrder.nullValue; };
 

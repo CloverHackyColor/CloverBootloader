@@ -1451,7 +1451,7 @@ void SaveOemTables()
 //  EFI_STATUS              Status;
   void                   *RsdPtr;
   XStringW                AcpiOriginPath = L"ACPI\\origin"_XSW;
-  XBool                 Saved = false;
+  XBool                   Saved = false;
   CHAR8                  *MemLogStart;
   UINTN                   MemLogStartLen;
 
@@ -1716,8 +1716,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   //  UINTN             ApicLen;
   UINTN              ApicCPUNum;
   UINT8             *SubTable;
-  XBool            DsdtLoaded = false;
-  XBool            NeedUpdate = false;
+  XBool              DsdtLoaded = false;
+  XBool              NeedUpdate = false;
   OPER_REGION       *tmpRegion;
 //  XStringW           AcpiOemPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 

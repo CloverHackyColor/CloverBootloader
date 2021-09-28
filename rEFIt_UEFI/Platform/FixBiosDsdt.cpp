@@ -1231,7 +1231,7 @@ XBool GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
 XBool CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
 {
   // Name (_ADR, 0x001f0001)
-  return (XBool)
+  return
   ((dsdt[j + 4] == 0x08) &&
    (dsdt[j + 5] == 0x5F) &&
    (dsdt[j + 6] == 0x41) &&
@@ -1267,7 +1267,7 @@ XBool CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
 {
   // Name (_HID, EisaId ("PNP0C0F")) for PNP=0x0C0F BigEndian
   if (PNP == 0) {
-    return (XBool)
+    return
     ((dsdt[j + 0] == 0x08) &&
      (dsdt[j + 1] == 0x5F) &&
      (dsdt[j + 2] == 0x48) &&
@@ -1277,7 +1277,7 @@ XBool CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
      (dsdt[j + 6] == 0x41) &&
      (dsdt[j + 7] == 0xD0));
   }
-  return (XBool)
+  return
   ((dsdt[j + 0] == 0x08) &&
    (dsdt[j + 1] == 0x5F) &&
    (dsdt[j + 2] == 0x48) &&
@@ -4265,14 +4265,14 @@ UINT8 VenIDE[] = {0x86,0x80,0x00,0x00};
 
 UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 {
-  UINT32    i, k;
-  UINT32    j;
-  UINT32    IDEADR = 0, BridgeSize = 0, Size;
-  INT32     sizeoffset;
+  UINT32     i, k;
+  UINT32     j;
+  UINT32     IDEADR = 0, BridgeSize = 0, Size;
+  INT32      sizeoffset;
   AML_CHUNK *root;
   AML_CHUNK *device;
   CHAR8     *ide;
-  XBool   PATAFIX=true;
+  XBool      PATAFIX=true;
   AML_CHUNK *met, *met2;
   AML_CHUNK *pack;
   AML_CHUNK *device1;

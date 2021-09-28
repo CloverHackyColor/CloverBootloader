@@ -65,7 +65,7 @@ extern "C" {
 void EnableSecureBoot(void)
 {
   EFI_STATUS  Status = EFI_NOT_FOUND;
-  XBool     WantDefaultKeys;
+  XBool WantDefaultKeys;
   CONST CHAR16     *ErrorString = NULL;
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
@@ -375,7 +375,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
                             IN CONST EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
                             IN void                              *FileBuffer,
                             IN UINTN                              FileSize,
-                            IN XBool                            BootPolicy)
+                            IN XBool                              BootPolicy)
 {
   EFI_STATUS Status = EFI_SECURITY_VIOLATION;
   // Check secure boot policy

@@ -48,7 +48,7 @@ public:
   const EFI_FILE& getThemeDir() {
     return *ThemeDir;
   }
-  bool IsEmbeddedTheme(void)
+  XBool IsEmbeddedTheme(void)
   {
     if (embedded) {
       ThemeDir = NULL;
@@ -61,7 +61,7 @@ public:
 //  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
-//  XBool     TextOnly;
+//  XBool    TextOnly;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;
@@ -75,10 +75,10 @@ public:
   XStringW    BackgroundName;
   SCALING     BackgroundScale;
   INTN        BackgroundSharp;
-  XBool     BackgroundDark;
-//  XBool     CustomIcons;
-  XBool     SelectionOnTop;
-  XBool     BootCampStyle;
+  XBool       BackgroundDark;
+//  XBool    CustomIcons;
+  XBool       SelectionOnTop;
+  XBool       BootCampStyle;
   INTN        BadgeOffsetX;
   INTN        BadgeOffsetY;
   INTN        BadgeScale;
@@ -90,17 +90,17 @@ public:
   INTN        BannerEdgeVertical;
   INTN        BannerNudgeX;
   INTN        BannerNudgeY;
-  XBool     VerticalLayout;
-  XBool     NonSelectedGrey;
+  XBool       VerticalLayout;
+  XBool       NonSelectedGrey;
   INTN        MainEntriesSize;
   INTN        TileXSpace;
   INTN        TileYSpace;
 //  INTN        IconFormat;
-  XBool     Proportional;
-//  XBool     ShowOptimus;
-  XBool     embedded;
-  XBool     DarkEmbedded;
-  XBool     TypeSVG;
+  XBool       Proportional;
+//  XBool    ShowOptimus;
+  XBool       embedded;
+  XBool       DarkEmbedded;
+  XBool       TypeSVG;
 //  INTN        Codepage;  //no! it is global settings
 //  INTN        CodepageSize;
   float       Scale;
@@ -123,7 +123,7 @@ public:
   INTN  FontHeight;
   INTN  TextHeight;
 
-  XBool     Daylight;
+  XBool   Daylight;
 
   XImage  Background; //Background and Banner will not be in array as they live own life
   XImage  BigBack; //it size is not equal to screen size will be scaled or cropped
@@ -165,7 +165,7 @@ public:
         XIcon& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XIcon& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XIcon& LoadOSIcon(const XString8& Full);
-  bool CheckNative(INTN Id);
+  XBool CheckNative(INTN Id);
  
   //fonts
   void LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols);

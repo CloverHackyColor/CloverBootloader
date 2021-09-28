@@ -72,7 +72,7 @@ void TagDate::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagDate::operator == (const TagStruct& other) const
+XBool TagDate::operator == (const TagStruct& other) const
 {
   if ( !other.isDate() ) return false;
   return string == other.getDate()->string;

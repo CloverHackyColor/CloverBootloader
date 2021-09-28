@@ -11,32 +11,32 @@
 
 
 
-bool ConfigPlistAbstractClass::parse(XmlLiteParser* xmlLiteParser, const XString8& xmlPath)
+XBool ConfigPlistAbstractClass::parse(XmlLiteParser* xmlLiteParser, const XString8& xmlPath)
 {
   xmlLiteParser->moveForwardUntilSignificant();
   xmlLiteParser->skipHeader();
   auto pos = xmlLiteParser->getPosition();
-  bool b = parseFromXmlLite(xmlLiteParser, xmlPath, true);
+  XBool b = parseFromXmlLite(xmlLiteParser, xmlPath, true);
   if ( !b ) return false;
   b = validate(xmlLiteParser, xmlPath, pos, true);
   return b;
 }
 
-bool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size, const XString8& xmlPath, XmlLiteParser* xmlLiteParser)
+XBool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size, const XString8& xmlPath, XmlLiteParser* xmlLiteParser)
 {
   xmlLiteParser->init(buf.c_str(), size);
   return parse(xmlLiteParser, xmlPath);
 }
 
 
-bool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size, const XString8& xmlPath)
+XBool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size, const XString8& xmlPath)
 {
   XmlLiteParser xmlLiteParser;
   xmlLiteParser.init(buf.c_str(), size);
   return parse(&xmlLiteParser, xmlPath);
 }
 
-bool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size)
+XBool ConfigPlistAbstractClass::parse(const LString8& buf, size_t size)
 {
   return parse(buf, size, ""_XS8);
 }

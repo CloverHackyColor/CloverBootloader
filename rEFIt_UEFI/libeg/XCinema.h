@@ -26,7 +26,7 @@ protected:
   INTN      Id; //ScreenID, enumeration value but keep it to be int for extensibility
 public:
   //I see no reason to make they protected
-  XBool   RunOnce;
+  XBool     RunOnce;
   INTN      NumFrames; //set by user in Theme.plist or in Theme.svg
   INTN      FrameTime; //usually 50, 100, 200 ms
   INTN      FilmX, FilmY;  //relative
@@ -34,7 +34,7 @@ public:
   INTN      ScreenEdgeVertical;
   INTN      NudgeX, NudgeY;
   XStringW  Path; //user defined name for folder and files Path/Path_002.png etc
-  XBool   AnimeRun;
+  XBool     AnimeRun;
   UINT64    LastDraw;
 
 protected:
@@ -58,11 +58,11 @@ public:
   void SetIndex(INTN Index) { Id = Index; }
 
   const XImage& GetImage(INTN Index) const;
-  const XImage& GetImage(bool *free = nullptr) const;
+  const XImage& GetImage(XBool *free = nullptr) const;
   void AddFrame(XImage* Frame, INTN Index); //IndexedImage will be created
   size_t Size() { return Frames.size(); }
   INTN LastFrameID() { return LastIndex; }
-  bool Finished() { return CurrentFrame == 0; }
+  XBool Finished() { return CurrentFrame == 0; }
   void GetFrames(XTheme& TheTheme/*, const XStringW& Path*/); //read image sequence from Theme/Path/
   void SetPlace(const EG_RECT& Rect) { FilmPlace = Rect; }
   void Advance() { ++CurrentFrame %= (LastIndex + 1); }

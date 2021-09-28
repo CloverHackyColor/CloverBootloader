@@ -152,7 +152,7 @@ EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileNam
   EFI_STATUS          Status;
   EFI_FILE*           FileHandle;
   UINTN               BufferSize;
-  XBool             CreateNew = true;
+  XBool               CreateNew = true;
   CONST CHAR16        *p = FileName + StrLen(FileName);
   CHAR16              DirName[256];
   UINTN               dirNameLen;

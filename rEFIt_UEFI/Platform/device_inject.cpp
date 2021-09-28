@@ -276,7 +276,7 @@ XBool devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl,
   return true;
 }
 
-bool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl)
+XBool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl)
 {
   return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
@@ -350,7 +350,7 @@ XBool set_eth_props(pci_dt_t *eth_dev)
 #endif
   DevPropDevice   *device = NULL;
   UINT8           builtin = 0x0;
-  XBool         Injected = false;
+  XBool           Injected = false;
   UINTN           i;
   CHAR8           compatible[64];
   
@@ -437,7 +437,7 @@ XBool set_usb_props(pci_dt_t *usb_dev)
 #endif
   DevPropDevice   *device = NULL;
   UINT32          fake_devid;
-  XBool         Injected = false;
+  XBool           Injected = false;
   UINTN           i;
 
   if (!device_inject_string)

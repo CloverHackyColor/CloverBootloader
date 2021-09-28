@@ -18,10 +18,10 @@ public:
 
   ConfigPlistAbstractClass() {};
 
-  bool parse(XmlLiteParser* xmlLiteParser, const XString8& xmlPath);
-  bool parse(const LString8& buf, size_t size, const XString8& xmlPath, XmlLiteParser* xmlLiteParser);
-  bool parse(const LString8& buf, size_t size, const XString8& xmlPath);
-  bool parse(const LString8& buf, size_t size);
+  XBool parse(XmlLiteParser* xmlLiteParser, const XString8& xmlPath);
+  XBool parse(const LString8& buf, size_t size, const XString8& xmlPath, XmlLiteParser* xmlLiteParser);
+  XBool parse(const LString8& buf, size_t size, const XString8& xmlPath);
+  XBool parse(const LString8& buf, size_t size);
 
 };
 

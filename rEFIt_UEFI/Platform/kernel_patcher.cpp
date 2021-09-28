@@ -52,13 +52,13 @@
 //UINT32      *dtLength;
 //UINT8       *KernelData = NULL;
 //UINT32      KernelSlide = 0;
-//XBool     isKernelcache = false;
-//XBool     is64BitKernel = false;
-//XBool     SSSE3;
+//XBool       isKernelcache = false;
+//XBool       is64BitKernel = false;
+//XBool       SSSE3;
 
-//XBool     PatcherInited = false;
-//XBool     gSNBEAICPUFixRequire = false; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-//XBool     gBDWEIOPCIFixRequire = false; // Broadwell-E IOPCIFamily fix require or not
+//XBool       PatcherInited = false;
+//XBool       gSNBEAICPUFixRequire = false; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+//XBool       gBDWEIOPCIFixRequire = false; // Broadwell-E IOPCIFamily fix require or not
 
 extern EFI_GUID gEfiAppleBootGuid;
 
@@ -224,7 +224,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const X
   }
   INT32 i;
   UINT32 Offset = 0; // Init to avoid warning
-  bool found = false;
+  XBool found = false;
   for (i = 0; i < lSizeVtable; ++i) {
     Offset = vArray[i].n_un.n_strx;
     if (strstr(&Names[Offset], procedure.c_str())) {
@@ -334,7 +334,7 @@ UINTN LOADER_ENTRY::searchProc(const XString8& procedure)
   //search for the name
 //  gBS->Stall(9000000);
   size_t i;
-  bool found = false;
+  XBool found = false;
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
     if (Offset == 0) break;
@@ -2372,7 +2372,7 @@ LOADER_ENTRY::KernelUserPatch()
     }
     // if we modify directly KernelAndKextPatches.KernelPatches[i].SearchLen, it will wrong for next driver
     UINTN SearchLen = KernelAndKextPatches.KernelPatches[i].SearchLen;
-    bool once = false;
+    XBool once = false;
     UINTN procLen = 0;
     UINTN procAddr = searchProc(KernelAndKextPatches.KernelPatches[i].ProcedureName);
     DBG("procedure %s found at 0x%llx\n", KernelAndKextPatches.KernelPatches[i].ProcedureName.c_str(), procAddr);

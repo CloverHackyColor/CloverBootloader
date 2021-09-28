@@ -66,17 +66,17 @@ XStringW GetBundleVersion(const XStringW& pathUnderSelf)
 void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
 {
 
-  REFIT_DIR_ITER  DirIter;
-  EFI_FILE_INFO*  DirEntry;
-  SIDELOAD_KEXT*  mKext;
-  SIDELOAD_KEXT*  mPlugInKext;
-  XStringW        FullName;
+  REFIT_DIR_ITER   DirIter;
+  EFI_FILE_INFO   *DirEntry;
+  SIDELOAD_KEXT   *mKext;
+  SIDELOAD_KEXT   *mPlugInKext;
+  XStringW         FullName;
 //  XStringW        FullPath = SWPrintf("%ls\\KEXTS\\%ls", OEMPath.wc_str(), KextDirNameUnderOEMPath);
-  REFIT_DIR_ITER  PlugInsIter;
+  REFIT_DIR_ITER   PlugInsIter;
   EFI_FILE_INFO   *PlugInEntry;
-  XStringW        PlugInsPath;
+  XStringW         PlugInsPath;
   XStringW         PlugInsName;
-  XBool         Blocked = false;
+  XBool            Blocked = false;
 
   if( !selfOem.isKextsDirFound() ) return;
 

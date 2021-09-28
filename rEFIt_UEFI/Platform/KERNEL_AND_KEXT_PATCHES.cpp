@@ -8,7 +8,7 @@
 #include "KERNEL_AND_KEXT_PATCHES.h"
 #include "MacOsVersion.h"
 
-bool ABSTRACT_PATCH::IsPatchEnabledByBuildNumber(const XString8& Build)
+XBool ABSTRACT_PATCH::IsPatchEnabledByBuildNumber(const XString8& Build)
 {
   XBool ret = false;
 
@@ -35,7 +35,7 @@ bool ABSTRACT_PATCH::IsPatchEnabledByBuildNumber(const XString8& Build)
 }
 
 
-bool ABSTRACT_PATCH::IsPatchEnabled(const MacOsVersion& CurrOS)
+XBool ABSTRACT_PATCH::IsPatchEnabled(const MacOsVersion& CurrOS)
 {
   XBool ret = false;
 
@@ -63,7 +63,7 @@ bool ABSTRACT_PATCH::IsPatchEnabled(const MacOsVersion& CurrOS)
 
 
 //
-//bool KERNEL_AND_KEXT_PATCHES::IsPatchEnabledByBuildNumber(const XString8& Build)
+//XBool KERNEL_AND_KEXT_PATCHES::IsPatchEnabledByBuildNumber(const XString8& Build)
 //{
 //  XBool ret = false;
 //

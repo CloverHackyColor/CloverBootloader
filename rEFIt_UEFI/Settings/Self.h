@@ -20,7 +20,7 @@ class Self
 {
   // Class method, usable even without any instance of Self.
 protected:
-  static EFI_STATUS __initialize(bool debugMsg, EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
+  static EFI_STATUS __initialize(XBool debugMsg, EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
 public:
   static const EFI_FILE_PROTOCOL* getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle, XStringW* efiFileName);
 
@@ -39,10 +39,10 @@ protected:
   XStringW          m_CloverDirFullPath {}; // full path of folder containing this efi.
   XStringW          m_CloverDirFullPath4Display {}; // prettier for diplay
 
-  bool      m_ThemesDirExists {};
+  XBool     m_ThemesDirExists {};
   EFI_FILE *m_ThemesDir {};
 
-  EFI_STATUS _openDir(const XStringW& path, bool* b, EFI_FILE** efiDir);
+  EFI_STATUS _openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir);
   EFI_STATUS _initialize();
 
 public:
@@ -56,7 +56,7 @@ public:
   EFI_STATUS reInitialize();
   void closeHandle();
 
-  bool isInitialized() const { return m_CloverDir != NULL; }
+  XBool isInitialized() const { return m_CloverDir != NULL; }
   void checkInitialized() const
   {
 #ifdef DEBUG
@@ -80,7 +80,7 @@ public:
   const XStringW& getCloverDirFullPath() { checkInitialized(); return m_CloverDirFullPath; }
   const XStringW& getCloverDirFullPath4Display() { checkInitialized(); return m_CloverDirFullPath4Display; }
 
-  bool themesDirExists() { checkInitialized(); return m_ThemesDirExists; }
+  XBool themesDirExists() { checkInitialized(); return m_ThemesDirExists; }
   const EFI_FILE& getThemesDir() { checkInitialized(); return *m_ThemesDir; }
 
 };

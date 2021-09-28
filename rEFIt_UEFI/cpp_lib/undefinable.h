@@ -12,12 +12,12 @@ template <class T>
 class undefinable
 {
 protected:
-  bool m_defined = false;
+  XBool m_defined = false;
   T m_value = T();
 
 public:
-  bool isDefined() const { return m_defined; }
-  void setDefined(bool b) { m_defined = b; }
+  XBool isDefined() const { return m_defined; }
+  void setDefined(XBool b) { m_defined = b; }
   
 //  T& value() { return m_value; } // never allow to return a modifiable value. Breaks encapsulation.
   const T& value() const {
@@ -38,13 +38,13 @@ public:
     return *this;
   }
   
-  bool operator ==(const undefinable<T>& other) const
+  XBool operator ==(const undefinable<T>& other) const
   {
     if ( !(m_defined == other.m_defined ) ) return false;
     if ( m_defined && !(m_value == other.m_value ) ) return false; // we don't test value if this is not defined.
     return true;
   }
-  bool operator !=(const undefinable<T>& other) const { return !(*this == other); }
+  XBool operator !=(const undefinable<T>& other) const { return !(*this == other); }
 };
 
 class undefinable_bool : public undefinable<bool>
@@ -54,6 +54,15 @@ public:
     undefinable_bool() { }
     explicit undefinable_bool(bool newValue) { super::operator=(newValue); }
     undefinable_bool& operator = (bool newValue) { super::operator=(newValue); return *this; }
+};
+
+class undefinable_xbool : public undefinable<XBool>
+{
+  using super = undefinable<XBool>;
+public:
+    undefinable_xbool() { }
+    explicit undefinable_xbool(XBool newValue) { super::operator=(newValue); }
+    undefinable_xbool& operator = (XBool newValue) { super::operator=(newValue); return *this; }
 };
 
 class undefinable_uint8 : public undefinable<uint8_t>

@@ -207,7 +207,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
 void ScanLegacy(void)
 {
   UINTN                   VolumeIndex, VolumeIndex2;
-  XBool                 ShowVolume, HideIfOthersFound;
+  XBool                    ShowVolume, HideIfOthersFound;
   REFIT_VOLUME            *Volume;
   
   DBG("Scanning legacy ...\n");
@@ -289,7 +289,7 @@ void ScanLegacy(void)
 void AddCustomLegacy(void)
 {
   UINTN                VolumeIndex, VolumeIndex2;
-  XBool              ShowVolume, HideIfOthersFound;
+  XBool                ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   XIcon MainIcon;
   XIcon DriveIcon;

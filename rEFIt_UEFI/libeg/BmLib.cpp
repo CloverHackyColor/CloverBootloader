@@ -317,20 +317,20 @@ TimeCompare (
   )
 {
   if (FirstTime->Year != SecondTime->Year) {
-    return (XBool) (FirstTime->Year < SecondTime->Year);
+    return (FirstTime->Year < SecondTime->Year);
   } else if (FirstTime->Month != SecondTime->Month) {
-    return (XBool) (FirstTime->Month < SecondTime->Month);
+    return (FirstTime->Month < SecondTime->Month);
   } else if (FirstTime->Day != SecondTime->Day) {
-    return (XBool) (FirstTime->Day < SecondTime->Day);
+    return (FirstTime->Day < SecondTime->Day);
   } else if (FirstTime->Hour != SecondTime->Hour) {
-    return (XBool) (FirstTime->Hour < SecondTime->Hour);
+    return (FirstTime->Hour < SecondTime->Hour);
   } else if (FirstTime->Minute != SecondTime->Minute) {
-    return (XBool) (FirstTime->Minute < SecondTime->Minute);
+    return (FirstTime->Minute < SecondTime->Minute);
   } else if (FirstTime->Second != SecondTime->Second) {
-    return (XBool) (FirstTime->Second < SecondTime->Second);
+    return (FirstTime->Second < SecondTime->Second);
   }
 
-  return (XBool) (FirstTime->Nanosecond <= SecondTime->Nanosecond);
+  return (FirstTime->Nanosecond <= SecondTime->Nanosecond);
 }
 
 /*

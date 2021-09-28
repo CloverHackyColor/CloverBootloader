@@ -173,14 +173,14 @@ GetNextDataRecord (
 {
   EFI_DATA_ENTRY          *LogEntry;
   LIST_ENTRY              *Link;
-  XBool                 ReturnFirstEntry;
+  XBool                    ReturnFirstEntry;
   EFI_DATA_RECORD_HEADER  *Record;
   EFI_DATA_ENTRY          *NextLogEntry;
 
   //
   // If MonotonicCount == 0 just return the first one
   //
-  ReturnFirstEntry  = (XBool) (*PtrCurrentMTC == 0);
+  ReturnFirstEntry  = *PtrCurrentMTC == 0;
 
   Record            = NULL;
   for (Link = GetFirstNode(Head); Link != Head; Link = GetNextNode(Head, Link)) {

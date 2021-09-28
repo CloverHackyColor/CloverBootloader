@@ -341,7 +341,7 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
 //EFIAPI
 //GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
 //                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
-//                 OUT XBool            *GopEnable
+//                 OUT XBool           *GopEnable
 //                 )
 //{
 //  DBG("GetQuirksConfig called\n");

@@ -168,9 +168,9 @@ Clover_FindDevicePathNodeWithType (
  */
 EFI_STATUS
 CreateBootOptionDevicePath (
-    IN  EFI_HANDLE      FileDeviceHandle,
+    IN  EFI_HANDLE       FileDeviceHandle,
     IN  CONST XStringW&  FileName,
-    IN  XBool         UseShortForm,
+    IN  XBool            UseShortForm,
     OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
     )
 {
@@ -226,7 +226,7 @@ DevicePathEqual (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath2
     )
 {
-    XBool         Equal;
+    XBool           Equal;
     UINT8           Type1;
     UINT8           SubType1;
     UINTN           Len1;
@@ -831,7 +831,7 @@ FindBootOptionForFile (
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == true. */
 void
 PrintBootOptions (
-    IN  XBool         AllBootOptions
+    IN  XBool AllBootOptions
     )
 {
   EFI_STATUS          Status;
@@ -840,7 +840,7 @@ PrintBootOptions (
   UINTN               Index;
   UINTN               BootNum;
   BO_BOOT_OPTION      BootOption;
-  XBool             FoundOthers;
+  XBool               FoundOthers;
 
 
   DBG("\nBoot options:\n-------------\n");
@@ -997,13 +997,13 @@ AddBootOption (
  */
 EFI_STATUS
 AddBootOptionForFile (
-    IN  EFI_HANDLE      FileDeviceHandle,
+    IN  EFI_HANDLE       FileDeviceHandle,
     IN  CONST XStringW&  FileName,
-    IN  XBool         UseShortForm,
-    IN  CONST CHAR16          *Description,
+    IN  XBool            UseShortForm,
+    IN  CONST CHAR16    *Description,
     IN  UINT8           *OptionalData,
-    IN  UINTN           OptionalDataSize,
-    IN  UINTN           BootIndex,
+    IN  UINTN            OptionalDataSize,
+    IN  UINTN            BootIndex,
     OUT UINT16          *BootNum
     )
 {

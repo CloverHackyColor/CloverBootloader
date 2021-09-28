@@ -970,12 +970,12 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
   UINT32          FakeID;
   UINT32          DualLink = 1;
 //  UINT64          os_version = AsciiOSVersionToUint64(macOSVersion);
-  XBool         SetUGAWidth = false;
-  XBool         SetUGAHeight = false;
-  XBool         Injected = false;
-  XBool         SetFake = false;
-  XBool         SetSnb = false;
-  XBool         SetIg = false;
+  XBool           SetUGAWidth = false;
+  XBool           SetUGAHeight = false;
+  XBool           Injected = false;
+  XBool           SetFake = false;
+  XBool           SetSnb = false;
+  XBool           SetIg = false;
 
   MACHINE_TYPES   MacModel = GetModelFromString(gSettings.Smbios.ProductName);
 

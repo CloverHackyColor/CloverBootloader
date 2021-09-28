@@ -39,8 +39,8 @@ int getNextTag_tests()
 {
   const char* tag;
   size_t tagLength;
-  bool isOpeningTag, isClosingTag;
-  bool b;
+  XBool isOpeningTag, isClosingTag;
+  XBool b;
 
   gXmlLiteParserTest.init("<key>");
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
@@ -132,7 +132,7 @@ int getSimpleTag_tests()
   size_t tagLength;
   const char* value;
   size_t valueLength;
-  bool b;
+  XBool b;
   
   gXmlLiteParserTest.init("<key>k</key><string>v</string>");
   b = gXmlLiteParserTest.getSimpleTag(&tag, &tagLength, &value, &valueLength, "key", true);
@@ -208,7 +208,7 @@ int getKey_tests()
 {
   const char* tag;
   size_t length;
-  bool b;
+  XBool b;
   XmlParserPosition xmlParserPosition;
 
   gXmlLiteParserTest.init("<key></key><string>v</string>");
@@ -251,7 +251,7 @@ int getKey_tests()
 
 int skip_tests()
 {
-  bool b;
+  XBool b;
 
   gXmlLiteParserTest.init("k</key><string>v</string>");
   b = gXmlLiteParserTest.skipUntilClosingTag("key", strlen("key"), true);
@@ -310,9 +310,9 @@ auto msg = gXmlLiteParserTest.getErrorsAndWarnings()[0].msg;
 int xml_integer_tests()
 {
 //  XmlAbstractType xml_int8;
-//  bool b;
+//  XBool b;
 //  UINTN result;
-//  bool negative;
+//  XBool negative;
 //  XString8 s;
 //  
 //  xmlLiteParser.init("<integer>10</integer>");
@@ -377,7 +377,7 @@ int xml_integer_tests()
 
 int validate_dict_tests()
 {
-  bool b;
+  XBool b;
 
   class Dict1_Class : public XmlDict
   {
@@ -385,7 +385,7 @@ int validate_dict_tests()
       class Test1Bool: public XmlBool
       {
       public:
-        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           RETURN_IF_FALSE( XmlBool::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
           xmlLiteParser->addWarning(generateErrors, S8Printf("Test1Bool tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
           return false; // parsing can continue.
@@ -403,7 +403,7 @@ int validate_dict_tests()
     public:
       Dict1_Class dict1 = Dict1_Class();
 
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( XmlDict::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         xmlLiteParser->addWarning(generateErrors, S8Printf("dict1 tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
         return false; // parsing can continue.
@@ -448,14 +448,14 @@ int validate_dict_tests()
 
 int validate_array_tests()
 {
-  bool b;
+  XBool b;
 
   class Main2Dict_Class : public XmlDict
   {
     public:
       XmlArray<XmlBool> array = XmlArray<XmlBool>();
 
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( XmlDict::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         xmlLiteParser->addWarning(generateErrors, S8Printf("dict2 tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
         return false; // parsing can continue.
@@ -501,7 +501,7 @@ int validate_array_tests()
 
 int documentation_test1()
 {
-  bool b;
+  XBool b;
 
   class MyDictClass : public XmlDict
   {
@@ -543,7 +543,7 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test2()
 {
-  bool b;
+  XBool b;
 
   class MyInsideDictClass : public XmlDict
   {
@@ -595,7 +595,7 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test3()
 {
-  bool b;
+  XBool b;
 
   class MyPlist : public ConfigPlistAbstractClass
   {
@@ -605,7 +605,7 @@ int documentation_test3()
       class CountClass : public XmlInt64
       {
         using super = XmlInt64;
-        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
           if ( value() < -2 ) {
               xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot be negative. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -647,11 +647,11 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test4()
 {
-  bool b;
+  XBool b;
   class MyXmlType : public XmlUInt8
   {
     using super = XmlUInt8;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( value() < 1  || value() > 2 ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be 1 or 2 at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -664,7 +664,7 @@ int documentation_test4()
   class MyXmlSubType : public XmlUInt8
   {
     using super = XmlUInt8;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( value() < 11  || value() > 12 ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("SubType must be 11 or 22 at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -688,7 +688,7 @@ int documentation_test4()
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
       
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
         if ( !type.isDefined() ) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -732,7 +732,7 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test5()
 {
-  bool b;
+  XBool b;
   class MyPlist : public ConfigPlistAbstractClass
   {
       using super = XmlDict;
@@ -747,7 +747,7 @@ int documentation_test5()
       };
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
       
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
         if ( !type.isDefined() ) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -801,7 +801,7 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test6()
 {
-  bool b;
+  XBool b;
 
   class MyDictClass : public ConfigPlistAbstractClass
   {
@@ -839,7 +839,7 @@ gXmlLiteParserTest.printfErrorsAndWarnings();
 
 int documentation_test7()
 {
-  bool b;
+  XBool b;
 
   class MyDictClass : public ConfigPlistAbstractClass
   {

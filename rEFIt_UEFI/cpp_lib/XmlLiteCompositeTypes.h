@@ -55,9 +55,9 @@
 //
 //  virtual void reset() override;
 //
-//  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
-//  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-//  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+//  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
+//  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+//  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 //};
 //
 //
@@ -77,7 +77,7 @@
 //    virtual void getFields(XmlCompositeField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 //
 //    // Super class parseFromXmlLite would be fine, execpt for the calculation of xmlPath
-//    virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override
+//    virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override
 //    {
 //      if ( !xmlKey.parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors) ) return false;
 //      if ( !xmlValue.parseFromXmlLite(xmlLiteParser, S8Printf("%s/%s", xmlPath.c_str(), xmlKey.xstring8.c_str()), generateErrors) ) return false;

@@ -14,7 +14,7 @@ class Devices_Arbitrary_Class : public XmlDict
 public:
 
 //    class PciAddrClass : public XmlString8AllowEmpty {
-//      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+//      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
 //        RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
 //        if ( isDefined() && value().length() != 8 ) return xmlLiteParser->addError(generateErrors, S8Printf("PciAddr must be 8 chars long (ex 00:00.01) at line %d.", keyPos.getLine()));
 //        return true;

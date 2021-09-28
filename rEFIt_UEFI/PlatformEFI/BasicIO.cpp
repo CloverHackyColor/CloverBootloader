@@ -23,7 +23,7 @@ extern "C" {
 
 XBool ReadAllKeyStrokes(void)
 {
-    XBool       GotKeyStrokes;
+    XBool         GotKeyStrokes;
     EFI_STATUS    Status;
     EFI_INPUT_KEY key;
 

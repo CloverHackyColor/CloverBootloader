@@ -156,7 +156,7 @@ XBool setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const Mac
   DevPropDevice           *device = NULL;
   UINT32                  layoutId = 0;
   UINT32                  codecId = 0;
-  XBool                 Injected = false;
+  XBool                   Injected = false;
   UINTN                   i;
 
   if (!device_inject_string) {

@@ -3334,6 +3334,7 @@
 					"-Wignored-qualifiers",
 					"-Wreorder",
 					"-Wmissing-braces",
+					"-Wnon-pod-varargs",
 				);
 			};
 			name = Debug;
@@ -3434,6 +3435,7 @@
 					"-Wignored-qualifiers",
 					"-Wreorder",
 					"-Wmissing-braces",
+					"-Wnon-pod-varargs",
 				);
 			};
 			name = Release;

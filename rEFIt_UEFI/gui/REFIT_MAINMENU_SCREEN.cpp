@@ -120,7 +120,7 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN X
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
     INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
     Back.CopyRect(ThemeX.Background, X, Y);
-    bool free = false;
+    XBool free = false;
     XImage *CurrSel = Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight, &free);
     Back.Compose(0, 0, *CurrSel, false, BadgeDim/128.f);
     Back.DrawOnBack(X, Y, Back);
@@ -238,7 +238,7 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
   }
 
 //  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
-  bool free = false;
+  XBool free = false;
   XImage *MainImage = MainIcon.GetBest(!Daylight, &free);
 
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;

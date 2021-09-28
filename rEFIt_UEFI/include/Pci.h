@@ -64,7 +64,7 @@ typedef struct pci_dt_t {
 	struct pci_dt_t	*parent     = NULL;
 	struct pci_dt_t	*children   = NULL;
 	struct pci_dt_t	*next       = NULL;
-  XBool            used       = false;
+  XBool           used       = false;
 } pci_dt_t;
 
 

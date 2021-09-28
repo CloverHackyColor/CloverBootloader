@@ -745,7 +745,7 @@ Failed:
 void *GetImageSignatureDatabase(IN void    *FileBuffer,
                                 IN UINT64   FileSize,
                                 IN UINTN   *DatabaseSize,
-                                IN XBool  HashIfNoDatabase)
+                                IN XBool    HashIfNoDatabase)
 {
   UINTN                                Size = 0;
   void                                *Database = NULL;

@@ -245,7 +245,7 @@ typedef struct {
   const CHAR8         *cfg_name;
   UINT8               ports;
   UINT32              flags;
-  XBool             posted;
+  XBool               posted;
 } card_t;
 
 // Chip flags
@@ -278,9 +278,9 @@ typedef struct {
 
 typedef struct {
   UINT32    flags;
-  XBool   all_ports;
+  XBool     all_ports;
   CONST CHAR8     *name;
-  XBool   (*get_value)(value_t *val, INTN index, XBool Sier);
+  XBool     (*get_value)(value_t *val, INTN index, XBool Sier);
   value_t   default_val;
 } AtiDevProp;
 

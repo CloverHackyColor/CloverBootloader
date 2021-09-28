@@ -406,7 +406,7 @@ void REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
   InfoLines.AddReference(s, true);
 }
 
-void REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
+void REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, XBool freeIt)
 {
 	if ( !Entry ) return;
 	Entries.AddReference(Entry, freeIt);
@@ -701,7 +701,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
   EFI_INPUT_KEY key;
   //    UINTN         Index;
   INTN          ShortcutEntry;
-  XBool       HaveTimeout = false;
+  XBool         HaveTimeout = false;
   INTN          TimeoutCountdown = 0;
   UINTN         MenuExit;
 
@@ -1601,7 +1601,7 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       if (!TitleImage.isEmpty()) {
         INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage.Image.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
-        bool free;
+        XBool free;
         XImage *tImage = TitleImage.GetBest(!Daylight, &free);
    //     TitleImage.Image.Draw(FilmXPos, FilmYPos); //TODO - account night and svg
 
@@ -1903,7 +1903,7 @@ EFI_STATUS REFIT_MENU_SCREEN::CheckMouseEvent()
   EFI_STATUS Status = EFI_TIMEOUT;
   mAction = ActionNone;
   MOUSE_EVENT Event = mPointer.GetEvent();
-  bool Move = false;
+  XBool Move = false;
 
   if (!IsDragging && Event == MouseMove)
     Event = NoEvents;

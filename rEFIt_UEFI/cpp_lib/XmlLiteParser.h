@@ -8,6 +8,7 @@
 #ifndef __XML_LITE_H__
 #define __XML_LITE_H__
 
+#include "../cpp_foundation/XBool.h"
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
@@ -17,17 +18,17 @@
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
 
-bool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength);
-bool strnIsEqual(const char* key, size_t keyLength, const char* value);
-bool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength);
-bool strnIsEqualIC(const char* key, size_t keyLength, const char* value);
+XBool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength);
+XBool strnIsEqual(const char* key, size_t keyLength, const char* value);
+XBool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength);
+XBool strnIsEqualIC(const char* key, size_t keyLength, const char* value);
 
 class XmlParserMessage
 {
   public:
-    bool isError = true;
+    XBool isError = true;
     XString8 msg;
-    XmlParserMessage(bool _isError, const XString8& _msg) : isError(_isError), msg(_msg) {};
+    XmlParserMessage(XBool _isError, const XString8& _msg) : isError(_isError), msg(_msg) {};
 };
 
 class XmlLiteParser;
@@ -49,7 +50,7 @@ public:
   int getLine() const { return line; }
   int getCol() const { return col; }
   
-  bool operator == (const XmlParserPosition& other) const {
+  XBool operator == (const XmlParserPosition& other) const {
     return p == other.p;
   }
 };
@@ -63,13 +64,13 @@ class XmlLiteParser
   XmlParserPosition currentPos = XmlParserPosition();
   XObjArray<XmlParserMessage> errorsAndWarnings = XObjArray<XmlParserMessage>();
 
-  bool AddErrorOrWarning(XmlParserMessage* msg) {
+  XBool AddErrorOrWarning(XmlParserMessage* msg) {
     if ( errorsAndWarnings.size() < 500 ) errorsAndWarnings.AddReference(msg, true);
     if ( errorsAndWarnings.size() == 500 ) errorsAndWarnings.AddReference(new XmlParserMessage(true, "Too many error. Stopping"_XS8), true);
     return false;
   }
 public:
-  bool xmlParsingError = false;
+  XBool xmlParsingError = false;
 
   XmlLiteParser() {};
   XmlLiteParser(char* _p) : p_start(_p)
@@ -86,10 +87,10 @@ public:
   int getCol() { return currentPos.col; }
   XObjArray<XmlParserMessage>& getErrorsAndWarnings() { return errorsAndWarnings; }
   // Add warning, error and xml error always return false so you can return addWarning(...) from validate function
-  bool addWarning(bool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(false, warning)); return false; }
-  bool addError(bool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(true, warning)); return false; }
+  XBool addWarning(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(false, warning)); return false; }
+  XBool addError(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(true, warning)); return false; }
   // Xml stuctural error. Parsing should probably stop.
-  bool addXmlError(bool generateErrors, const XString8& warning) {
+  XBool addXmlError(XBool generateErrors, const XString8& warning) {
     if ( generateErrors ) {xmlParsingError = true;  AddErrorOrWarning(new XmlParserMessage(true, warning));}
     return false;
   }
@@ -102,7 +103,7 @@ public:
   XmlParserPosition getPosition();
   void restorePosition(XmlParserPosition& xml_position);
   
-  bool isEof() const { return currentPos.p >= p_end; }
+  XBool isEof() const { return currentPos.p >= p_end; }
   char getchar();
   char* getcharPtr() { return currentPos.p; };
 
@@ -120,8 +121,8 @@ public:
   /*
    * The opening tag has been read. Skip until the closing tag
    */
-  bool skipUntilClosingTag(const char* tagToSkip, size_t tagToSkipLength, bool generateErrors);
-  bool skipNextTag(bool generateErrors);
+  XBool skipUntilClosingTag(const char* tagToSkip, size_t tagToSkipLength, XBool generateErrors);
+  XBool skipNextTag(XBool generateErrors);
 
   
 
@@ -139,45 +140,45 @@ public:
    * Get the next tag, either opening or closing tag.
    * For empty tag (</true>), first call return that it's an opening tag. Second call return that it's a closing tag.
    */
-  bool getNextTag(const char** tag, size_t* length, bool* isOpeningTag, bool* isClosingTag, bool generateErrors);
-  bool getSimpleTag(const char** tag, size_t* tagLength, const char** value, size_t* valueLength, const char* expectedTag/*, bool valueCanBeEmpty*/, bool generateErrors);
+  XBool getNextTag(const char** tag, size_t* length, XBool* isOpeningTag, XBool* isClosingTag, XBool generateErrors);
+  XBool getSimpleTag(const char** tag, size_t* tagLength, const char** value, size_t* valueLength, const char* expectedTag/*, XBool valueCanBeEmpty*/, XBool generateErrors);
 
-  bool getSimpleTagValue(const char* tag, size_t tagLength, const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, bool generateErrors);
+  XBool getSimpleTagValue(const char* tag, size_t tagLength, const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, XBool generateErrors);
   
   /*
    * Get the next tag, check it's a key, get the value and consume the closing tag ("</key>").
    */
-  bool getKeyTagValue(const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, bool generateErrors);
+  XBool getKeyTagValue(const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, XBool generateErrors);
   
   /*
    * Check and consume the tag
    * Returns true if it's the expected opening tag
    * Returns false, add error in error list and don't change position if it's not
    */
-  bool consumeOpeningTag(const char* expectedTag, bool generateErrors = true);
+  XBool consumeOpeningTag(const char* expectedTag, XBool generateErrors = true);
   
   /*
    * Check and consume the tag
    * Returns true if it's the expected closing tag
    * Returns false, add error in error list and don't change position if it's not
    */
-  bool consumeClosingTag(const char* expectedTag, bool generateErrors);
+  XBool consumeClosingTag(const char* expectedTag, XBool generateErrors);
   
   /*
    * Check but do NOT consume the tag
    * Returns true if it's the expected opening tag
    * Returns false, DO NOT add error in error list and don't change position if it's not
    */
-  bool nextTagIsOpeningTag(const char* expectedTag);
-  bool nextTagIsClosingTag(const char* expectedTag);
+  XBool nextTagIsOpeningTag(const char* expectedTag);
+  XBool nextTagIsClosingTag(const char* expectedTag);
 
-//  bool getTagBool(XmlBool* XmlBoolean);
+//  XBool getTagBool(XmlBool* XmlBoolean);
   
 
 };
 
 
-#define RETURN_IF_FALSE(Expression) do { bool b = Expression; if ( !b ) return false; } while (0);
+#define RETURN_IF_FALSE(Expression) do { XBool b = Expression; if ( !b ) return false; } while (0);
 
 
 

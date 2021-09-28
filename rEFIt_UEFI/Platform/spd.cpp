@@ -37,7 +37,7 @@
 #endif
 
 
-XBool     smbIntel;
+XBool       smbIntel;
 UINT8				smbPage;
 
 CONST CHAR8 *spd_memory_types[] =

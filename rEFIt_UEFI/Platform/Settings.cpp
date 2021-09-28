@@ -63,7 +63,7 @@ INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 UINTN OldChosenAudio;
-XBool                        SavePreBootLog;
+XBool                            SavePreBootLog;
 UINT8                            DefaultAudioVolume;
 INTN LayoutBannerOffset = 64;
 INTN LayoutTextOffset = 0;
@@ -94,13 +94,13 @@ XStringWArray                   DsdtsList;
 XObjArray<HDA_OUTPUTS>          AudioList;
 
 // firmware
-XBool                         gFirmwareClover             = false;
+XBool                           gFirmwareClover             = false;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
 //XBool                         defDSM;
-//UINT16                          dropDSM;
+//UINT16                        dropDSM;
 
-XBool                         ResumeFromCoreStorage = false;
+XBool                           ResumeFromCoreStorage = false;
 //XBool                         gRemapSmBiosIsRequire;
 
 // QPI
@@ -186,7 +186,7 @@ XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
   return LoadOptions;
 }
 
-UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
+UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(XBool NoCachesDefault) const
 {
   UINT8 Flags = parent.getFlags(NoCachesDefault);
   if ( settings._Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
@@ -226,7 +226,7 @@ const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
 };
 
 
-bool SETTINGS_DATA::GUIClass::getDarkEmbedded(bool isDaylight) const {
+XBool SETTINGS_DATA::GUIClass::getDarkEmbedded(XBool isDaylight) const {
   if ( EmbeddedThemeType.isEqualIC("Dark") ) return true;
   if ( EmbeddedThemeType.isEqualIC("Daytime") ) return !isDaylight;
   return false;
@@ -369,7 +369,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     {
       ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
       DBG(" - [%02zd]: Drop table : %.4s, %16llx : ", idx, (const char*)&settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
-      bool Dropped = false;
+      XBool Dropped = false;
       while (DropTable) {
         if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
              (!settingsData.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId)) &&
@@ -943,8 +943,8 @@ SetDevices (LOADER_ENTRY *Entry)
   UINTN               Bus;
   UINTN               Device;
   UINTN               Function;
-  XBool             StringDirty = false;
-  XBool             TmpDirty    = false;
+  XBool               StringDirty = false;
+  XBool               TmpDirty    = false;
   UINT32              Rcba;
   UINT32              Hptc;
   DevPropDevice *device = NULL;
@@ -1943,11 +1943,11 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 // Do we need that with OC ? For old version ?
 //EFI_STATUS LOADER_ENTRY::SetFSInjection()
 //{
-//  EFI_STATUS           Status;
+//  EFI_STATUS            Status;
 //  FSINJECTION_PROTOCOL *FSInject;
 //  XStringW              SrcDir;
-//  //XBool              InjectionNeeded = false;
-//  //XBool              BlockCaches     = false;
+//  //XBool               InjectionNeeded = false;
+//  //XBool               BlockCaches     = false;
 //  FSI_STRING_LIST      *Blacklist      = 0;
 //  FSI_STRING_LIST      *ForceLoadKexts = NULL;
 //

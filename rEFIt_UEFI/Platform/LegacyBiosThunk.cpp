@@ -214,8 +214,8 @@ LegacyBiosInt86 (
   UINTN                 Status;
   UINTN                 Eflags;
   IA32_REGISTER_SET     ThunkRegSet;
-  XBool               Ret;
-  UINT16                *Stack16;
+  XBool                 Ret;
+  UINT16               *Stack16;
   
   ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
@@ -295,7 +295,7 @@ LegacyBiosInt86 (
 
   CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
-  Ret = (XBool) (Regs->E.EFLAGS.Bits.CF == 1);
+  Ret = Regs->E.EFLAGS.Bits.CF == 1;
 
   return Ret;
 }
@@ -311,17 +311,17 @@ LegacyBiosFarCall86 (
 //  IN  UINTN                           StackSize
   )
 {
-  UINTN                 Status;
-  UINT32                Eflags;
-  IA32_REGISTER_SET     ThunkRegSet;
-  XBool               Ret;
-  UINT16                *Stack16;
+  UINTN                    Status;
+  UINT32                   Eflags;
+  IA32_REGISTER_SET        ThunkRegSet;
+  XBool                    Ret;
+  UINT16                  *Stack16;
 //	UINT16				BiosInt = 0x100;
-  EFI_TPL                 OriginalTpl;
+  EFI_TPL                  OriginalTpl;
   EFI_TIMER_ARCH_PROTOCOL *Timer;
-  UINT64                  TimerPeriod = 0;
+  UINT64                   TimerPeriod = 0;
 #if ENABLE_PS2MOUSE_LEGACYBOOT == 1
-  UINT16                  LegacyMaskOld, LegacyMaskNew;
+  UINT16                   LegacyMaskOld, LegacyMaskNew;
 #endif
 
   // Disconnect EFI VGA driver (and switch to Text VGA Mode)
@@ -449,7 +449,7 @@ LegacyBiosFarCall86 (
 
 	CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 	
-	Ret = (XBool) (Regs->E.EFLAGS.Bits.CF == 1);
+	Ret = Regs->E.EFLAGS.Bits.CF == 1;
 
   // Connect VGA EFI Driver
   BdsLibConnectAllDriversToAllControllers();

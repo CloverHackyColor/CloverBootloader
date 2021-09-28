@@ -146,7 +146,7 @@ void ExtractKextBundleIdentifier(CHAR8 *Plist)
 XBool
 isPatchNameMatch (CHAR8   *BundleIdentifier, CHAR8   *Name)
 {
-  XBool   isBundle = (AsciiStrStr(Name, ".") != NULL);
+  XBool isBundle = (AsciiStrStr(Name, ".") != NULL);
   return
     isBundle
       ? (AsciiStrCmp(BundleIdentifier, Name) == 0)
@@ -957,7 +957,7 @@ void LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   if (!kextpatch.IsPlistPatch) {
     // kext binary patch
     DBG_RT("Binary patch\n");
-    bool once = false;
+    XBool once = false;
     UINTN procLen = 0;
     UINTN procAddr = searchProcInDriver(Driver, DriverSize, kextpatch.ProcedureName);
     
@@ -1122,7 +1122,7 @@ void LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
   
     for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
       XString8& Name = KernelAndKextPatches.KextPatches[i].Name;
-      XBool   isBundle = Name.contains(".");
+      XBool isBundle = Name.contains(".");
       if ((KernelAndKextPatches.KextPatches[i].Find.size() > 0) &&
           isBundle?(AsciiStrCmp(gKextBundleIdentifier, Name.c_str()) == 0):(AsciiStrStr(gKextBundleIdentifier, Name.c_str()) != NULL)) {
       //    (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name) != NULL)) {

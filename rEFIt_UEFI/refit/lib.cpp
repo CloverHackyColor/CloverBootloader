@@ -68,8 +68,8 @@
 
 
 //XStringW         ThemePath;
-//XBool          gBootArgsChanged = false;
-XBool          gThemeOptionsChanged = false;
+//XBool            gBootArgsChanged = false;
+XBool              gThemeOptionsChanged = false;
 
 
 //
@@ -220,7 +220,7 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
   UINTN               PathIndex;
   EFI_LOADED_IMAGE    *LoadedImage;
   EFI_DEVICE_PATH     *DevicePath;
-  XBool             Seen;
+  XBool               Seen;
   
   MaxPaths--;  // leave space for the terminating NULL pointer
   
@@ -283,15 +283,15 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
 static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT XBool *Bootable)
 {
   EFI_STATUS              Status;
-  UINT8                   *SectorBuffer;
+  UINT8                  *SectorBuffer;
   UINTN                   i;
-  //MBR_PARTITION_INFO      *MbrTable;
+  //MBR_PARTITION_INFO   *MbrTable;
   //XBool                 MbrTableFound;
-  UINTN       BlockSize = 0;
-  CHAR16      volumeName[255];
-  CHAR8         tmp[64];
-  UINT32        VCrc32;
-  //  CHAR16      *kind = NULL;
+  UINTN                   BlockSize = 0;
+  CHAR16                  volumeName[255];
+  CHAR8                   tmp[64];
+  UINT32                  VCrc32;
+  //CHAR16               *kind = NULL;
   
   Volume->HasBootCode = false;
   Volume->LegacyOS->IconName.setEmpty();
@@ -576,7 +576,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   //  UINTN                   BufferSize = 255;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
-  XBool                 Bootable;
+  XBool                   Bootable;
   //  EFI_INPUT_KEY           Key;
   
   // get device path
@@ -900,13 +900,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 static void ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
 {
   EFI_STATUS              Status;
-  REFIT_VOLUME            *Volume;
+  REFIT_VOLUME           *Volume;
   UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
   UINTN                   i;
   UINTN                   LogicalPartitionIndex = 4;
-  UINT8                   *SectorBuffer;
-  XBool                 Bootable;
-  MBR_PARTITION_INFO      *EMbrTable;
+  UINT8                  *SectorBuffer;
+  XBool                   Bootable;
+  MBR_PARTITION_INFO     *EMbrTable;
   
   ExtBase = MbrEntry->StartLBA;
   SectorBuffer = (__typeof__(SectorBuffer))AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);

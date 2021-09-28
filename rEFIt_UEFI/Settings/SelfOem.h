@@ -16,7 +16,7 @@ class SelfOem
 protected:
   XString8     m_ConfName = NullXString8; // Initialisation required by -Weffc++. Couldn't use default ctor.
 
-//  bool         m_OemDirExists;
+//  XBool        m_OemDirExists;
   EFI_FILE*    m_OemDir = NULL;
   XStringW     m_OemPathRelToSelfDir = NullXStringW;
   XStringW     m_OemFulPath = NullXStringW;
@@ -29,9 +29,9 @@ protected:
   XStringW     m_KextsPathRelToSelfDir = NullXStringW;
   XStringW     m_KextsFullPath = NullXStringW;
 
-//  EFI_STATUS _openDir(const XStringW& path, bool* b, EFI_FILE** efiDir);
-  bool _checkOEMPath();
-  bool _setOemPathRelToSelfDir(bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray);
+//  EFI_STATUS _openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir);
+  XBool _checkOEMPath();
+  XBool _setOemPathRelToSelfDir(XBool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray);
   EFI_STATUS _initialize();
 
 public:
@@ -41,16 +41,16 @@ public:
 
   ~SelfOem () {};
 
-  EFI_STATUS initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray);
+  EFI_STATUS initialize(const XString8& confName, XBool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray);
   void unInitialize();
   EFI_STATUS reInitialize();
   void closeHandle();
 
-  bool isInitialized() const { return m_ConfName.notEmpty(); }
+  XBool isInitialized() const { return m_ConfName.notEmpty(); }
 
   const XString8& getConfName() { return m_ConfName; }
 
-  bool oemDirExists() { return m_OemPathRelToSelfDir.notEmpty(); }
+  XBool oemDirExists() { return m_OemPathRelToSelfDir.notEmpty(); }
   const EFI_FILE& getOemDir() { assert(m_OemDir != NULL); return *m_OemDir; }
   const XStringW& getOemPathRelToSelfDir() { assert(m_OemPathRelToSelfDir.notEmpty()); return m_OemPathRelToSelfDir; }
   const XStringW& getOemFullPath() { assert(m_OemFulPath.notEmpty()); return m_OemFulPath; }
@@ -61,7 +61,7 @@ public:
   const XStringW& getConfigDirFullPath() { if ( m_OemDir != NULL ) return getOemFullPath(); return self.getCloverDirFullPath(); }
 
 
-  bool  isKextsDirFound() { return m_KextsDir != NULL; }
+  XBool isKextsDirFound() { return m_KextsDir != NULL; }
   const EFI_FILE& getKextsDir() { assert(m_KextsDir != NULL); return *m_KextsDir; }
   const XStringW& getKextsDirPathRelToSelfDir() { assert(m_KextsPathRelToSelfDir.notEmpty()); return m_KextsPathRelToSelfDir; }
   const XStringW& getKextsFullPath() { assert(m_KextsFullPath.notEmpty()); return m_KextsFullPath; }

@@ -25,14 +25,14 @@ static_assert(MAX_RAM_SLOTS < UINT8_MAX, "MAX_RAM_SLOTS < UINT8_MAX"); // Import
 
 class RAM_SLOT_INFO {
 public:
-  UINT64  Slot = UINT64();
-  UINT32  ModuleSize = UINT32();
-  UINT32  Frequency = UINT32();
+  UINT64   Slot = UINT64();
+  UINT32   ModuleSize = UINT32();
+  UINT32   Frequency = UINT32();
   XString8 Vendor = XString8();
   XString8 PartNo = XString8();
   XString8 SerialNo = XString8();
-  UINT8   Type = UINT8();
-  bool  InUse = bool();
+  UINT8    Type = UINT8();
+  XBool    InUse = false;
 
   RAM_SLOT_INFO() {}
 };
@@ -151,19 +151,19 @@ class SmbiosInjectedSettings
     XString8 ChassisAssetTag         = XString8();
     XString8 FamilyName              = XString8();
     XString8 SmUUID                  = XString8();
-    bool NoRomInfo = 0;
-    uint8_t EnabledCores = 0;
-    bool TrustSMBIOS = 0;
-    bool InjectMemoryTables = 0;
-    uint8_t BoardType = 0;
-    uint8_t ChassisType = 0;
+    XBool    NoRomInfo = false;
+    uint8_t  EnabledCores = 0;
+    XBool    TrustSMBIOS = false;
+    XBool    InjectMemoryTables = false;
+    uint8_t  BoardType = 0;
+    uint8_t  ChassisType = 0;
 
     class SlotDevicesArrayClass : protected XObjArray<SLOT_DEVICE>
     {
         using super = XObjArray<SLOT_DEVICE>;
       public:
         void setEmpty() { super::setEmpty(); }
-        void AddReference(SLOT_DEVICE* newElement, bool FreeIt) { super::AddReference(newElement, FreeIt); }
+        void AddReference(SLOT_DEVICE* newElement, XBool FreeIt) { super::AddReference(newElement, FreeIt); }
 
         const SLOT_DEVICE& getSlotForIndex(size_t Index) const {
           if ( Index >= MAX_RAM_SLOTS) {
@@ -185,7 +185,7 @@ class SmbiosInjectedSettings
           AddReference(slotDevice, true);
           return *slotDevice;
         }
-        bool isSlotForIndexValid(uint8_t Index) const {
+        XBool isSlotForIndexValid(uint8_t Index) const {
           if ( Index >= MAX_RAM_SLOTS) {
             log_technical_bug("%s : Index >= MAX_RAM_SLOTS", __PRETTY_FUNCTION__);
           }
@@ -205,11 +205,11 @@ class SmbiosInjectedSettings
     uint64_t ExtendedFirmwareFeaturesMask = 0;
     int8_t Attribute = 0;
 
-    bool KPDELLSMBIOS = 0;
+    XBool KPDELLSMBIOS = false;
 
     // CPU
     uint16_t CpuType = 0;
-    bool SetTable132 = 0;
+    XBool SetTable132 = false;
     uint16_t QPI = 0;
 
     // from SmBios
@@ -242,7 +242,7 @@ extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;
 
 // TODO stop using globals.
 extern MEM_STRUCTURE            gRAM;
-extern XBool                  gMobile;
+extern XBool                    gMobile;
 
 
 
@@ -256,7 +256,7 @@ EFI_STATUS PrepatchSmbios(SmbiosDiscoveredSettings* smbiosSettings);
 void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings);
 void FinalizeSmbios(const SmbiosInjectedSettings& smbiosSettings);
 
-bool getMobileFromSmbios();
+XBool getMobileFromSmbios();
 XString8 getSmUUIDFromSmbios();
 
 

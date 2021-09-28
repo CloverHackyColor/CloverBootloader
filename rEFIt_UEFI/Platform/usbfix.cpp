@@ -65,7 +65,7 @@ DBG("FixOwnership() -> begin\n");
   
   UINTN             isOSowned;
   UINTN             isBIOSowned;
-  XBool           isOwnershipConflict;
+  XBool             isOwnershipConflict;
   
   //
   // Find the usb host controller 

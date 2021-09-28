@@ -36,12 +36,12 @@ public:
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
       int64_t dgetPointerSpeed() const { return Speed.isDefined() ? Speed.value() : 2; };
-      bool dgetPointerEnabled() const {
+      XBool dgetPointerEnabled() const {
         if ( dgetPointerSpeed() <= 0 ) return false; // return false, whatever value Enabled has.
         if ( Enabled.isDefined() ) return Enabled.value();
         return true; // if !Enabled.isDefined(), return true because dgetPointerSpeed() > 0
       }
-      bool dgetPointerMirror() const { return Mirror.isDefined() ? Mirror.value() : false; };
+      XBool dgetPointerMirror() const { return Mirror.isDefined() ? Mirror.value() : XBool(false); };
       uint64_t dgetDoubleClickTime() const { return DoubleClickTime.isDefined() ? DoubleClickTime.value() : 500; };
 
     };
@@ -49,7 +49,7 @@ public:
 
 
     // -------------------------------------------------- Scan class
-    // bool or dict
+    // XBool or dict
     class GUI_Scan_Class : public XmlUnion
     {
       public:
@@ -75,15 +75,15 @@ public:
         public:
           virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
           
-          bool dgetDisableEntryScan() const { return Entries.isDefined() && Entries.value() == false; };
-          bool dgetDisableToolScan() const { return Tool.isDefined() && Tool.value() == false; };
-          bool dgetLinux() const { return !(Linux.isDefined() && Linux.value() == false); };
-          bool dgetNoLegacy() const {
+          XBool dgetDisableEntryScan() const { return Entries.isDefined() && Entries.value() == false; };
+          XBool dgetDisableToolScan() const { return Tool.isDefined() && Tool.value() == false; };
+          XBool dgetLinux() const { return !(Linux.isDefined() && Linux.value() == false); };
+          XBool dgetNoLegacy() const {
             if ( !Legacy.isDefined() ) return false;
             if ( Legacy.xmlBool.isDefined() && Legacy.xmlBool.value() == false ) return true;
             return false;
           }
-          bool dgetLegacyFirst() const { return Legacy.isDefined() && Legacy.xmlString8.isDefined() && Legacy.xmlString8.value().startWithIC("F"); };
+          XBool dgetLegacyFirst() const { return Legacy.isDefined() && Legacy.xmlString8.isDefined() && Legacy.xmlString8.value().startWithIC("F"); };
           UINT8 dgetKernel() const {
             if ( !Kernel.isDefined() ) return 0;
             if ( Kernel.xmlBool.isDefined() ) {
@@ -114,23 +114,23 @@ public:
         XmlUnionField m_fields[2] = { ScanAsBool, ScanAsAsDict};
         virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
-        bool dgetDisableEntryScan() const {
+        XBool dgetDisableEntryScan() const {
           if ( ScanAsBool.isDefined() && ScanAsBool.value() == false ) return true;
           return ScanAsAsDict.dgetDisableEntryScan();
         }
-        bool dgetDisableToolScan() const {
+        XBool dgetDisableToolScan() const {
           if ( ScanAsBool.isDefined() && ScanAsBool.value() == false ) return true;
           return ScanAsAsDict.dgetDisableToolScan();
         }
-        bool dgetLinuxScan() const {
+        XBool dgetLinuxScan() const {
           if ( !ScanAsAsDict.isDefined() ) return parent.isDefined(); // TODO: different default value if section is not defined
           return ScanAsAsDict.dgetLinux();
         }
-        bool dgetNoLegacy() const {
+        XBool dgetNoLegacy() const {
           if ( ScanAsBool.isDefined() && ScanAsBool.value() == false ) return true;
           return ScanAsAsDict.dgetNoLegacy();
         }
-        bool dgetLegacyFirst() const {
+        XBool dgetLegacyFirst() const {
           if ( !ScanAsAsDict.isDefined() ) return false;
           return ScanAsAsDict.dgetLegacyFirst();
         }
@@ -212,7 +212,7 @@ public:
               XmlString8AllowEmpty xmlString8 = XmlString8AllowEmpty();
               XmlUnionField m_fields[2] = { xmlBool, xmlString8};
               virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-              virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+              virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                 RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
                 if ( !xmlString8.isDefined() ) return true;
                 if ( xmlString8.value().isEqualIC("Always") ) return true;
@@ -281,13 +281,13 @@ public:
 
           public:
             virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-            virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+            virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 
-            bool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : false; };
+            XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
             const XStringW& dgetVolume() const { return Volume.isDefined() ? Volume.value() : NullXStringW; };
             const XStringW& dgetPath() const { return Path.isDefined() ? Path.value() : NullXStringW; };
             const XStringW& dgetSettings() const { return Settings.isDefined() ? Settings.value() : NullXStringW; };
-            XBool dgetCommonSettings() const { return CommonSettings.isDefined() ? CommonSettings.value() : false; };
+            XBool dgetCommonSettings() const { return CommonSettings.isDefined() ? CommonSettings.value() : XBool(false); };
             const XString8& dgetAddArguments() const { return AddArguments.isDefined() ? AddArguments.value() : NullXString8; };
             const undefinable_XString8 dgetArguments() const { return Arguments.isDefined() ? undefinable_XString8(Arguments.value()) : undefinable_XString8(); };
             const XString8& dgetm_Title() const { return Title.isDefined() ? Title.value() : NullXString8; };
@@ -319,8 +319,8 @@ public:
               UINTN Color = AsciiStrHexToUintn(BootBgColor.value());
               return EFI_GRAPHICS_OUTPUT_BLT_PIXEL({uint8_t((Color >> 8) & 0xFF),uint8_t((Color >> 16) & 0xFF),uint8_t((Color >> 24) & 0xFF),uint8_t((Color >> 0) & 0xFF)});
             }
-            bool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : false; };
-            bool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
+            XBool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : XBool(false); };
+            XBool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
             UINT8 dgetType() const {
               if ( Type.isDefined() ) {
                 if ((Type.value().isEqualIC("OSX")) ||
@@ -377,10 +377,10 @@ public:
             }
             
             // 2021-04-22
-            decltype(ForceTextMode)::ValueType dgetForceTextMode() const { return ForceTextMode.isDefined() ? ForceTextMode.value() : false; };
+            decltype(ForceTextMode)::ValueType dgetForceTextMode() const { return ForceTextMode.isDefined() ? ForceTextMode.value() : XBool(false); };
 
 //              /* calculated values */
-//              UINT8 getFlags(bool NoCachesDefault) const {
+//              UINT8 getFlags(XBool NoCachesDefault) const {
 //                UINT8 Flags = 0;
 //                if ( Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
 //                if ( dgetAlwaysHidden() ) Flags = OSFLAG_SET(Flags, OSFLAG_DISABLED);
@@ -432,12 +432,12 @@ public:
 
             public:
               virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-              virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+              virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                 if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
                 return true;
               }
 
-              bool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : false; };
+              XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
               const XString8& dget_AddArguments() const { return AddArguments.isDefined() ? AddArguments.value() : NullXString8; };
               const undefinable_XString8 dget_Arguments() const { return Arguments.isDefined() ? undefinable_XString8(Arguments.value()) : undefinable_XString8(); };
               undefinable_XString8 dget_Title() const { return Title.isDefined() ? undefinable_XString8(Title.value()) : undefinable_XString8(); };
@@ -484,7 +484,7 @@ public:
               XmlData    DriveImageData = XmlData();
               class HotKeyClass : public XmlString8AllowEmpty {
                 using super = XmlString8AllowEmpty;
-                virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+                virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                   RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
                   if ( !isDefined() ) return true;
                   if ( xstring8.length() != 1 ) {
@@ -520,7 +520,7 @@ public:
             public:
               virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
               
-              bool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : false; };
+              XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
               const XString8& dgetVolume() const { return Volume.isDefined() ? Volume.value() : NullXString8; };
               const XString8& dgetTitle() const { return Title.isDefined() ? Title.value() : NullXString8; };
               const XString8& dgetFullTitle() const { return FullTitle.isDefined() ? FullTitle.value() : NullXString8; };
@@ -529,8 +529,8 @@ public:
               const XString8& dgetDriveImagePath() const { return DriveImagePath.isDefined() ? DriveImagePath.value() : NullXString8; };
               const XBuffer<UINT8>& dgetDriveImageData() const { return DriveImageData.isDefined() ? DriveImageData.value() : XBuffer<UINT8>::NullXBuffer; };
               char32_t dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
-              bool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : false; };
-              bool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
+              XBool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : XBool(false); };
+              XBool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
               UINT8 dgetType() const {
                 if ( Type.isDefined() ) {
                   if (Type.value().isEqualIC("Windows")) {
@@ -581,7 +581,7 @@ public:
         public:
           virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-          bool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : false; };
+          XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
           const XString8& dgetVolume() const { return Volume.isDefined() ? Volume.value() : NullXString8; };
           const XString8& dgetPath() const { return Path.isDefined() ? Path.value() : NullXString8; };
           const XString8& dgetArguments() const { return Arguments.isDefined() ? Arguments.value() : NullXString8; };
@@ -590,8 +590,8 @@ public:
           const XString8& dgetImagePath() const { return ImagePath.isDefined() ? ImagePath.value() : NullXString8; };
           const XBuffer<UINT8>& dgetImageData() const { return ImageData.isDefined() ? ImageData.value() : XBuffer<UINT8>::NullXBuffer; };
           char32_t dgetHotkey() const { return Hotkey.isDefined() && Hotkey.value().notEmpty() ? Hotkey.value()[0] : 0; };
-          bool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : false; };
-          bool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
+          XBool dgetHidden() const { return Hidden.isDefined() && Hidden.xmlBool.isDefined() ? Hidden.xmlBool.value() : XBool(false); };
+          XBool dgetAlwaysHidden() const { return Hidden.isDefined() && Hidden.xmlString8.isDefined() ? Hidden.xmlString8.value().isEqualIC("Always") : false; };
 
           UINT8 dgetVolumeType() const { return VolumeType.isDefined() ? VolumeType.dgetVolumeType() : /*Parent ? Parent->dgetVolumeType() :*/ 0; } // VolumeType is duplicated in DuplicateCustomEntry(), but unconditionnally assigned in FillinCustomEntry(). So no "inheritance" from parent.
         };
@@ -623,7 +623,7 @@ protected:
 // EmbeddedThemeType
   class EmbeddedThemeTypeClass: public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
       if ( xstring8.isEqualIC("Dark") ) return true;
       if ( xstring8.isEqualIC("Light") ) return true;
@@ -643,7 +643,7 @@ protected:
 // ScreenResolution
   class ScreenResolutionClass: public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
       // TODO Check that resolution is Integer x Integer
       return true;
@@ -658,7 +658,7 @@ protected:
       using super = XmlInt64OrString;
     public:
 //      ConsoleMode_Class() : XmlInt64OrString(false) {};
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         if ( !xmlString8.isDefined() ) return true;
         if ( xmlString8.value().isEqualIC("Max") ) return true;
@@ -670,7 +670,7 @@ protected:
   // Language
   class LanguageClass: public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
       if ( xstring8.containsIC("en") ) return true;
       if ( xstring8.containsIC("ru") ) return true;
@@ -733,17 +733,17 @@ public:
   GUI_Class() : Scan(*this) {}
   
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-//  virtual bool validate(XmlLiteParser* xmlLiteParser, const char* name, XmlAbstractType* xmlTyp, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors) override;
+//  virtual XBool validate(XmlLiteParser* xmlLiteParser, const char* name, XmlAbstractType* xmlTyp, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors) override;
 
   int32_t dgetTimezone() const { return Timezone.isDefined() ? Timezone.value() : 0xFF; };
   const XString8& dgetTheme() const { return Theme.isDefined() ? Theme.value() : NullXString8; };
   const XString8& dgetEmbeddedThemeType() const { return EmbeddedThemeType.isDefined() ? EmbeddedThemeType.value() : NullXString8; };
-  bool dgetPlayAsync() const { return PlayAsync.isDefined() ? PlayAsync.value() : false; };
-  bool dgetCustomIcons() const { return CustomIcons.isDefined() ? CustomIcons.value() : false; };
-  bool dgetTextOnly() const { return TextOnly.isDefined() ? TextOnly.value() : false; };
-  bool dgetShowOptimus() const { return ShowOptimus.isDefined() ? ShowOptimus.value() : false; };
+  XBool dgetPlayAsync() const { return PlayAsync.isDefined() ? PlayAsync.value() : XBool(false); };
+  XBool dgetCustomIcons() const { return CustomIcons.isDefined() ? CustomIcons.value() : XBool(false); };
+  XBool dgetTextOnly() const { return TextOnly.isDefined() ? TextOnly.value() : XBool(false); };
+  XBool dgetShowOptimus() const { return ShowOptimus.isDefined() ? ShowOptimus.value() : XBool(false); };
   const XString8& dgetScreenResolution() const { return ScreenResolution.isDefined() ? ScreenResolution.value() : NullXString8; };
-  bool dgetProvideConsoleGop() const { return isDefined() ? ProvideConsoleGop.isDefined() ? ProvideConsoleGop.value() : true : false; }; // TODO: different default value if section is not defined
+  XBool dgetProvideConsoleGop() const { return isDefined() ? ProvideConsoleGop.isDefined() ? ProvideConsoleGop.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
   int64_t dgetConsoleMode() const {
     if ( ConsoleMode.xmlInt64.isDefined() ) {
       return ConsoleMode.xmlInt64.value();
@@ -801,11 +801,11 @@ public:
 
 
     
-  bool dgetKbdPrevLang() const { return KbdPrevLang.isDefined() ? KbdPrevLang.value() : false; };
+  XBool dgetKbdPrevLang() const { return KbdPrevLang.isDefined() ? KbdPrevLang.value() : XBool(false); };
 
   /* calculated value */
 
-  bool getDarkEmbedded(bool isDaylight) const {
+  XBool getDarkEmbedded(XBool isDaylight) const {
     if ( !EmbeddedThemeType.isDefined() ) return false;
     if ( EmbeddedThemeType.value().isEqualIC("Dark") ) return true;
     if ( EmbeddedThemeType.value().isEqualIC("Daytime") ) return !isDaylight;

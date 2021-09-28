@@ -1441,7 +1441,7 @@ MACHINE_TYPES GetDefaultModel()
     return MacPro61;
   }
   // TODO: Add more CPU models and configure the correct machines per CPU/GFX model
-  bool isMobile = getMobileFromSmbios();
+  XBool isMobile = getMobileFromSmbios();
   if(isMobile) {
     switch (gCPUStructure.Model)
     {

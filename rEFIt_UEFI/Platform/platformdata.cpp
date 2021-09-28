@@ -757,7 +757,7 @@ uint64_t GetExtFwFeaturesMask(MACHINE_TYPES Model)
   return (uint64_t)GetFwFeaturesMaskFromModel(Model) + 0xFF00000000ull;
 }
 
-bool GetMobile(MACHINE_TYPES Model)
+XBool GetMobile(MACHINE_TYPES Model)
 {
   // Mobile: the battery tab in Energy Saver
   switch ( Model )
@@ -988,7 +988,7 @@ UINT64 GetPlatformFeature(MACHINE_TYPES Model)
     }
 }
 
-void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RBr[8])
+void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, XBool isMobile, char RBr[8])
 {
   memset(RBr, 0, 8);
   if (ApplePlatformData[Model].smcBranch[0] != 'N') {
@@ -1066,7 +1066,7 @@ void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RBr[8])
   }
 }
 
-void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RPlt[8])
+void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, XBool isMobile, char RPlt[8])
 {
   memset(RPlt, 0, 8);
   if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
@@ -1142,7 +1142,7 @@ void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RPlt[8])
   }
 }
 
-bool isReleaseDateWithYear20(MACHINE_TYPES Model)
+XBool isReleaseDateWithYear20(MACHINE_TYPES Model)
 {
   switch ( Model )
   {
@@ -1598,11 +1598,11 @@ int compareBiosVersion(const XString8& version1, const XString8& version2)
   }
 }
 
-bool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2)
+XBool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2)
 {
   return compareBiosVersion(version1, version2) <= 0;
 }
-bool isBiosVersionEquel(const XString8& version1, const XString8& version2)
+XBool isBiosVersionEquel(const XString8& version1, const XString8& version2)
 {
   return compareBiosVersion(version1, version2) == 0;
 }

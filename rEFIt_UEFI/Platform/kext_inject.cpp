@@ -213,11 +213,11 @@ EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileN
   UINTN       executableBufferLength = 0;
 //  CHAR8*      bundlePathBuffer = NULL;
 //  UINTN       bundlePathBufferLength = 0;
-  XStringW    TempName;
-  TagDict*    dict = NULL;
+  XStringW              TempName;
+  TagDict*              dict = NULL;
   const TagStruct*      prop = NULL;
-  XBool     NoContents = false;
-  XBool     inject = false;
+  XBool                 NoContents = false;
+  XBool                 inject = false;
   _BooterKextFileInfo *infoAddr = NULL;
   _DeviceTreeBuffer *kext = (_DeviceTreeBuffer *)kext_v;
 

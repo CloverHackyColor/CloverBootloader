@@ -29,7 +29,7 @@ void XmlDict::reset()
 /*
  * Try to parse the tag following a key in a dict
  */
-XmlAbstractType& XmlDict::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound)
+XmlAbstractType& XmlDict::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound)
 {
   XmlDictField* fields;
   size_t nb;
@@ -88,7 +88,7 @@ if ( strcmp(fieldName, "AutoMerge") == 0 ) {
   return nullXmlType;
 }
 
-XmlAbstractType& XmlDict::parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const char** keyValuePtr,
+XmlAbstractType& XmlDict::parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const char** keyValuePtr,
 size_t* keyValueLengthPtr)
 {
   const char*& keyValue = *keyValuePtr;
@@ -114,7 +114,7 @@ size_t* keyValueLengthPtr)
 //XmlParserPosition valuePos = xmlLiteParser->getPosition();
 //#endif
 
-  bool keyFound;
+  XBool keyFound;
   XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
 
   if ( !keyFound ) {
@@ -137,7 +137,7 @@ size_t* keyValueLengthPtr)
   return xmlAbstractType;
 }
 
-bool XmlDict::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool XmlDict::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -158,7 +158,7 @@ bool XmlDict::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xml
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif
-//    bool keyFound;
+//    XBool keyFound;
 //    XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
 
     XmlParserPosition keyPos = xmlLiteParser->getPosition();
@@ -177,7 +177,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
       if ( xmlAbstractType.isDefined() )
       {
         XString8 xmlSubPath = xmlPath.lastChar() == '/' ? S8Printf("%s%.*s", xmlPath.c_str(), (int)keyValueLength, keyValue) : S8Printf("%s/%.*s", xmlPath.c_str(), (int)keyValueLength, keyValue);
-        bool validated = xmlAbstractType.validate(xmlLiteParser, xmlSubPath, keyPos, generateErrors);
+        XBool validated = xmlAbstractType.validate(xmlLiteParser, xmlSubPath, keyPos, generateErrors);
         if ( !validated ) xmlAbstractType.reset();
       }else{
         if ( xmlLiteParser->getPosition() == beforePos ) {
@@ -198,7 +198,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
   return true;
 }
 
-bool XmlDict::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors)
+XBool XmlDict::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors)
 {
   (void)xmlLiteParser;
   (void)xmlPath;

@@ -35,12 +35,12 @@
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
 #define IS_BLANK(x) ((x == ' ') || (x == '\t'))
 
-inline bool isPathSeparator(char32_t c) { return c == '/' || c == '\\'; }
+inline XBool isPathSeparator(char32_t c) { return c == '/' || c == '\\'; }
 
 
 ////void        LowCase (IN OUT CHAR8 *Str);
 //UINT32      hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
-XBool     IsHexDigit (CHAR8 c);
+XBool       IsHexDigit (CHAR8 c);
 UINT8       hexstrtouint8 (CONST CHAR8* buf); //one or two hex letters to one byte
 
 

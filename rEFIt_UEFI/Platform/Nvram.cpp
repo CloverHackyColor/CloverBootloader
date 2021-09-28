@@ -372,7 +372,7 @@ ResetNativeNvram ()
   CHAR16          *Name;
   UINTN           NameSize;
   UINTN           NewNameSize;
-  XBool         Restart = true;
+  XBool           Restart = true;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
   EFI_FILE* FileHandle;
@@ -636,7 +636,7 @@ BootVolumeDevicePathEqual (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
-  XBool          Equal;
+  XBool            Equal;
   UINT8            Type1;
   UINT8            SubType1;
   UINT8            Type2;
@@ -645,7 +645,7 @@ BootVolumeDevicePathEqual (
   UINTN            Len2;
   SATA_DEVICE_PATH *SataNode1;
   SATA_DEVICE_PATH *SataNode2;
-  XBool          ForceEqualNodes;
+  XBool            ForceEqualNodes;
 
 
 //  DBG_DP ("   BootVolumeDevicePathEqual:\n    %ls\n    %ls\n", FileDevicePathToStr (DevicePath1), FileDevicePathToStr (DevicePath2));
@@ -1243,7 +1243,7 @@ FindStartupDiskVolume (
 //  LOADER_ENTRY *LoaderEntry;
 //  REFIT_VOLUME *Volume;
   REFIT_VOLUME *DiskVolume;
-  XBool      IsPartitionVolume;
+  XBool        IsPartitionVolume;
   XStringW     LoaderPath;
   XStringW     EfiBootVolumeStr;
   

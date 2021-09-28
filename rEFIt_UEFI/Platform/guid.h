@@ -28,7 +28,7 @@ public:
 
   EFI_GUIDClass(const EFI_GUID& other) { Data1 = other.Data1; Data2 = other.Data2; Data3 = other.Data3; memcpy(Data4, other.Data4, sizeof(Data4)); }
   
-  bool operator == (const EFI_GUID& other) const {
+  XBool operator == (const EFI_GUID& other) const {
     if ( !(Data1 == other.Data1) ) return false;
     if ( !(Data2 == other.Data2) ) return false;
     if ( !(Data3 == other.Data3) ) return false;

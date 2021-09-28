@@ -52,10 +52,10 @@ public:
   EFI_HANDLE        Handle = 0;
   UINT8             *Mmio = 0;
   UINT32            Connectors = 0;
-  XBool           ConnChanged = false;
+  XBool             ConnChanged = false;
 
   // ATTENTION : this is not discovered. This will be assigned once config plist is read.
-  bool LoadVBios = 0;
+  XBool LoadVBios = false;
 
   DiscoveredGfx() {}
   DiscoveredGfx(const DiscoveredGfx&) = default; // default copy is ok because we can copy Mmio, because it's not allocated and still make sense once copied.
@@ -67,7 +67,7 @@ class GfxPropertiesArrayClass : public XObjArray<DiscoveredGfx>
 public:
 
   
-  bool hasBrand(HRDW_MANUFACTERER brand) const {
+  XBool hasBrand(HRDW_MANUFACTERER brand) const {
     for ( size_t idx = 0 ; idx < size() ; ++idx ) {
       if ( ElementAt(idx).Vendor == brand ) return true;
     }
@@ -75,11 +75,11 @@ public:
   }
   
 
-  bool hasNvidia() const { return hasBrand(Nvidia); }
-  bool hasIntel() const { return hasBrand(Intel); }
+  XBool hasNvidia() const { return hasBrand(Nvidia); }
+  XBool hasIntel() const { return hasBrand(Intel); }
   
-  bool isCardAtPosIntel(size_t pos) const { return size() > pos && ElementAt(pos).Vendor == Intel; }
-  bool isCardAtPosNvidia(size_t pos) const { return size() > pos && ElementAt(pos).Vendor == Nvidia; }
+  XBool isCardAtPosIntel(size_t pos) const { return size() > pos && ElementAt(pos).Vendor == Intel; }
+  XBool isCardAtPosNvidia(size_t pos) const { return size() > pos && ElementAt(pos).Vendor == Nvidia; }
 
 };
 
@@ -113,7 +113,7 @@ class LanCardArrayClass : public XObjArray<LanCardClass>
 {
 public:
   /* Requirment : MacAddressToLookFor is 6 chars long */
-  bool containsMacAddress(const UINT8* MacAddressToLookFor) const {
+  XBool containsMacAddress(const UINT8* MacAddressToLookFor) const {
     for ( size_t idx = 0 ; idx < size() ; ++idx ) {
       if ( memcmp(MacAddressToLookFor, ElementAt(idx).MacAddress, 6) == 0 ) return true;
     }

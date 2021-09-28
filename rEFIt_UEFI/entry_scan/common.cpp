@@ -346,7 +346,7 @@ STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, XStringW(), XStringW(), &YesMessag
 // Display a yes/no prompt
 XBool YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
-  XBool            Result = false;
+  XBool              Result = false;
   UINTN              MenuExit;
   CreateInfoLines(Message, &YesNoMessageMenu.InfoLines);
   YesNoMessageMenu.Title = Title;
@@ -389,7 +389,7 @@ XBool AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE
 {
   REFIT_MENU_SCREEN   Menu(0, L"Please Select File..."_XSW, XStringW());
   UINTN               Index = 0, /*Count = 0,*/ MenuExit;
-  XBool             Responded = false;
+  XBool               Responded = false;
   if (Result == NULL) {
     return false;
   }

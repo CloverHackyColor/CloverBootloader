@@ -121,7 +121,7 @@ typedef void (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST C
 class EntryArray : public XObjArray<REFIT_ABSTRACT_MENU_ENTRY>
 {
 public:
-  bool includeHidden = false;
+  XBool includeHidden = false;
 
   size_t sizeIncludingHidden() const { return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size(); }
 
@@ -328,20 +328,20 @@ public:
   EntryArray Entries = EntryArray();
   
   INTN              TimeoutSeconds = 0;
-  bool              Daylight = true;
+  XBool             Daylight = true;
   XStringW          TimeoutText = XStringW();
   XStringW          ThemeName = XStringW();  //?
   EG_RECT           OldTextBufferRect = EG_RECT();
   XImage            OldTextBufferImage = XImage();
-  XBool           isBootScreen = false;
-  FILM              *FilmC = 0;
+  XBool             isBootScreen = false;
+  FILM             *FilmC = 0;
 
   ACTION          mAction = ActionNone;
   UINTN           mItemID = 0;
   SCROLL_STATE    ScrollState = {0,0,0,0,0,0,0,0,false,false,false};
-  XBool         ScrollEnabled = false;
+  XBool           ScrollEnabled = false;
   INTN            TextStyle = 0;
-  XBool         IsDragging = false;
+  XBool           IsDragging = false;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
@@ -418,7 +418,7 @@ public:
   void AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void AddMenuInfo_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
   void AddMenuInfoLine_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
-  void AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
+  void AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, XBool freeIt);
   void AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
   void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, XBool Cursor);

@@ -57,7 +57,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
 EFI_STATUS ParseTagFloat(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
 EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
 EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagBoolean(TagStruct* * tag, bool value, UINT32* lenPtr);
+EFI_STATUS ParseTagBoolean(TagStruct* * tag, XBool value, UINT32* lenPtr);
 
 EFI_STATUS XMLParseNextTag (CHAR8  *buffer, TagStruct**tag, UINT32 *lenPtr);
 
@@ -165,7 +165,7 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
 //}
 //
 
-bool TagStruct::debugIsEqual(const TagStruct& other, const XString8& label) const
+XBool TagStruct::debugIsEqual(const TagStruct& other, const XString8& label) const
 {
   if ( *this != other ) {
     MsgLog("Difference at %s\n", label.c_str());
@@ -184,29 +184,29 @@ void TagStruct::printf(unsigned int ident) const
 }
 
 // Convenience method
-bool TagStruct::isTrue() const
+XBool TagStruct::isTrue() const
 {
   if ( isBool() ) return getBool()->boolValue();
   return false;
 }
-bool TagStruct::isFalse() const
+XBool TagStruct::isFalse() const
 {
   if ( isBool() ) return !getBool()->boolValue();
   return false;
 }
-bool TagStruct::isTrueOrYy() const
+XBool TagStruct::isTrueOrYy() const
 {
   if ( isBool() ) return getBool()->boolValue();
   if ( isString() && getString()->stringValue().notEmpty() && (getString()->stringValue()[0] == 'y' || getString()->stringValue()[0] == 'Y') ) return true;
   return false;
 }
-bool TagStruct::isTrueOrYes() const
+XBool TagStruct::isTrueOrYes() const
 {
   if ( isBool() ) return getBool()->boolValue();
   if ( isString() && getString()->stringValue().isEqual("Yes"_XS8) ) return true;
   return false;
 }
-bool TagStruct::isFalseOrNn() const
+XBool TagStruct::isFalseOrNn() const
 {
   if ( isBool() ) return !getBool()->boolValue();
   if ( isString() && getString()->stringValue().notEmpty() && (getString()->stringValue()[0] == 'n' || getString()->stringValue()[0] == 'N') ) return true;
@@ -426,7 +426,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagList
 
-EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 empty, UINT32* lenPtr)
+EFI_STATUS __ParseTagList(XBool isArray, CHAR8* buffer, TagStruct** tag, UINT32 empty, UINT32* lenPtr)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
   UINT32    pos;
@@ -558,7 +558,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
   UINT32    length = 0;
   INTN     integer;
   UINT32    size;
-  XBool   negative = false;
+  XBool  negative = false;
   CHAR8*    val = buffer;
   TagInt64* tmpTag;
 
@@ -711,7 +711,7 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
 //==========================================================================
 // ParseTagBoolean
 
-EFI_STATUS ParseTagBoolean(TagStruct** tag, bool value, UINT32* lenPtr)
+EFI_STATUS ParseTagBoolean(TagStruct** tag, XBool value, UINT32* lenPtr)
 {
   TagBool* tmpTag;
 

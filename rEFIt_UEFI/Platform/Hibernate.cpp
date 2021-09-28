@@ -712,13 +712,13 @@ STATIC CHAR16 OffsetHexStr[100];
 XBool
 IsOsxHibernated (IN LOADER_ENTRY *Entry)
 {
-  EFI_STATUS      Status  = EFI_SUCCESS;
-  UINTN           Size            = 0;
+  EFI_STATUS       Status  = EFI_SUCCESS;
+  UINTN            Size            = 0;
   UINT8           *Data           = NULL;
   //  REFIT_VOLUME    *ThisVolume     = Entry->Volume;
   REFIT_VOLUME    *Volume         = Entry->Volume;
   EFI_GUID        *BootGUID       = NULL;
-  XBool         ret             = false;
+  XBool            ret             = false;
   UINT8           *Value          = NULL;
   
   //  UINTN           VolumeIndex;
@@ -986,9 +986,9 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   UINT8                       *VarData = NULL;
   REFIT_VOLUME                *SleepImageVolume;
   UINT32                      Attributes;
-  XBool                     HasIORTCVariables = false;
-  XBool                     HasHibernateInfo = false;
-  XBool                     HasHibernateInfoInRTC = false;
+  XBool                       HasIORTCVariables = false;
+  XBool                       HasHibernateInfo = false;
+  XBool                       HasHibernateInfoInRTC = false;
   
   DBG("PrepareHibernation:\n");
   
