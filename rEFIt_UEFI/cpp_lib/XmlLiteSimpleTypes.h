@@ -152,7 +152,6 @@ public:
     super::reset(); xstring8.setEmpty();
   };
 
-//  ValueType& value() { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
   virtual const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
 
   virtual bool setStringValue(const ValueType& _value) { setDefined(); xstring8 = _value; return true; }
@@ -324,12 +323,12 @@ public:
   virtual const char* getDescription() override { return "data"; };
   virtual void reset() override { super::reset(); m_value.setEmpty(); };
 
-  ValueType& modifiableValue() { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_value; }
   const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_value; }
 
   bool setDataValue(const uint8_t* s, size_t size) { setDefined(); m_value.ncpy(s, size); return true; }
   bool stealDataValue(uint8_t* s, size_t size) { setDefined(); m_value.stealValueFrom(s, size); return true; }
   bool stealDataValue(uint8_t* s, size_t size, size_t allocatedSize) { setDefined(); m_value.stealValueFrom(s, size, allocatedSize); return true; }
+  void setSize(size_t size, uint8_t elementToCopy) { m_value.setSize(size, elementToCopy); }
 
   virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string") || xmlLiteParser->nextTagIsOpeningTag("data"); }
   virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;

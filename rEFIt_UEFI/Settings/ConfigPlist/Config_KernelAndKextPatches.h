@@ -62,7 +62,7 @@ public:
           if ( !Replace.isDefined() || Replace.value().size() == 0 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("One of Find or Replace has to be defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
           if ( Replace.value().size() > Find.value().size() ) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("Replace is longer (%zu) than Find (%zu) and will be truncated in dict '%s:%d'.", Replace.value().size(), Find.value().size(), xmlPath.c_str(), keyPos.getLine()));
-            Replace.modifiableValue().setSize(Find.value().size(), 0);
+            Replace.setSize(Find.value().size(), 0); // 0 is ignored because we know that this call will truncate
           }
           return b;
         }
@@ -247,13 +247,8 @@ public:
       using super = XmlStringWArray;
       virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
         if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-        for ( size_t idx = 0 ; idx < value().size() ; ) {
-          if ( value()[idx] == "\\"_XS8 ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be '\\' for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-            value().removeAtPos(idx);
-          }else{
-            ++idx;
-          }
+        if ( value().contains("\\") ) {
+          return xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot contains '\\' for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
         }
         return true;
       }

@@ -19,11 +19,11 @@ public:
   bool isDefined() const { return m_defined; }
   void setDefined(bool b) { m_defined = b; }
   
-//  T& value() { return m_value; } // never allow to return a modifiable value. We need to hook ever assignment possible.
+//  T& value() { return m_value; } // never allow to return a modifiable value. Breaks encapsulation.
   const T& value() const {
 	  if ( !isDefined() ) {
       panic("get value of an undefined undefinable type");
-  }
+	  }
   	return m_value;
   }
   const T& dgetValue() const { return m_value; } // if !m_defined, m_value = T()

@@ -152,7 +152,6 @@ class XmlStringWArray : public XmlArray<XmlStringW>
     static const ValueType nullValue;
     ValueType array = ValueType();
 
-          ValueType& value()       { if ( !isDefined() ) log_technical_bug("%s : value is not defined", __PRETTY_FUNCTION__); return array; }
     const ValueType& value() const { if ( !isDefined() ) log_technical_bug("%s : value is not defined", __PRETTY_FUNCTION__); return array; }
 
     virtual void reset() override { super::reset(); array.setEmpty(); };
