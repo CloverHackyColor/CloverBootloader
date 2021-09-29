@@ -427,14 +427,7 @@ UINT64
 EFIAPI
 GetMemLogTscTicksPerSecond (VOID)
 {
-  EFI_STATUS        Status;
-  
-  if (mMemLog == NULL) {
-    Status = MemLogInit ();
-    if (EFI_ERROR(Status)) {
-      return 0;
-    }
-  }
+  if (mMemLog == NULL) return 0;
   return mMemLog->TscFreqSec;
 }
 

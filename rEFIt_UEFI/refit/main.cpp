@@ -2735,8 +2735,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   /*Status = */ //egMkDir(&self.getCloverDir(), L"misc");
   //Should apply to: "ACPI/origin/" too
 
-  // get TSC freq and init MemLog if needed
-  gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
+  MemLogInit();
   //gSettings.GUI.TextOnly = true;
 
   // bootstrap
@@ -2783,7 +2782,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 #ifdef JIEF_DEBUG
     gBS->Stall(2500000); // to give time to gdb to connect
-//  PauseForKey(L"press\n");
+//  PauseForKey("press\n"_XS8);
 #endif
   }
 
@@ -2793,8 +2792,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
 #ifdef CLOVER_BUILD
+  // BE CAREFUL. construct_globals_objects will call ctor on every static struct and classes.
+  // For example, if you do "gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond();" before this point, it will be erased by construct_globals_objects()
   construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
 #endif
+
+  gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step5");
