@@ -14,7 +14,7 @@
 #include "ConfigPlistClass.h"
 
 
-bool ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) {
+XBool ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) {
   if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
   for ( size_t idx=0 ; idx < SubEntries.size() ; ++idx ) SubEntries.ElementAt(idx).Parent = this;
   if ( Arguments.isDefined() && AddArguments.isDefined() ) {

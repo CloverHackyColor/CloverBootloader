@@ -21,7 +21,7 @@
 // Keyboard input
 //
 
-BOOLEAN ReadAllKeyStrokes(void)
+XBool ReadAllKeyStrokes(void)
 {
   panic("not yet");
 }
@@ -52,12 +52,12 @@ void EndlessIdleLoop(void)
 }
 
 
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+XBool CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 {
     panic("not yet");
 }
 
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+XBool CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 {
     panic("not yet");
 }

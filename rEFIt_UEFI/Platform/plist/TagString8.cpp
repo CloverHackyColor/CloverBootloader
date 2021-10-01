@@ -72,7 +72,7 @@ void TagString::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagString::operator == (const TagStruct& other) const
+XBool TagString::operator == (const TagStruct& other) const
 {
   if ( !other.isString() ) return false;
   return _string == other.getString()->_string;

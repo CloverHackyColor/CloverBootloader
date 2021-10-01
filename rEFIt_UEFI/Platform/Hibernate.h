@@ -8,17 +8,17 @@
 #ifndef PLATFORM_HIBERNATE_H_
 #define PLATFORM_HIBERNATE_H_
 
-/** Returns TRUE if given macOS on given volume is hibernated
+/** Returns true if given macOS on given volume is hibernated
  *  (/private/var/vm/sleepimage exists and it's modification time is close to volume modification time).
  */
-BOOLEAN
+XBool
 IsOsxHibernated (
   IN LOADER_ENTRY    *Entry
   );
 
 
 /** Prepares nvram vars needed for boot.efi to wake from hibernation. */
-BOOLEAN
+XBool
 PrepareHibernation (
   IN REFIT_VOLUME *Volume
   );

@@ -25,6 +25,6 @@ StartupSoundPlay(const EFI_FILE* Dir, CONST CHAR16* SoundFile);
 
 void GetOutputs();
 
-EFI_STATUS CheckSyncSound(BOOLEAN Stop);
+EFI_STATUS CheckSyncSound(XBool Stop);
 
 #endif /* PLATFORM_STARTUPSOUND_H_ */

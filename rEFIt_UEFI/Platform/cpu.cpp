@@ -142,7 +142,7 @@ void GetCPUProperties (void)
   gSettings.CPU.CpuFreqMHz = 0;
   gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, Kilo); //kHz -> Hz
   gCPUStructure.ProcessorInterconnectSpeed = 0;
-  gCPUStructure.Mobile = FALSE; //not same as gMobile
+  gCPUStructure.Mobile = false; //not same as gMobile
   
   if (!gCPUStructure.CurrentSpeed) {
     gCPUStructure.CurrentSpeed = (UINT32)DivU64x32(gCPUStructure.TSCCalibr + (Mega >> 1), Mega);
@@ -212,13 +212,13 @@ void GetCPUProperties (void)
     for (s = str; *s != '\0'; s++){
       if (*s != ' ') break; //remove leading spaces
     }
-    AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
+    gCPUStructure.BrandString.takeValueFrom(s);
+    gCPUStructure.BrandString.trim();
     
-    if (!strncmp((const CHAR8*)gCPUStructure.BrandString, CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48))) {
-      gCPUStructure.BrandString[0] = '\0';
+    if ( gCPUStructure.BrandString.isEqual(CPU_STRING_UNKNOWN) ) {
+      gCPUStructure.BrandString.setEmpty();
     }
-    gCPUStructure.BrandString[47] = '\0';
-    DBG("BrandString = %s\n", gCPUStructure.BrandString);
+    DBG("BrandString = %s\n", gCPUStructure.BrandString.c_str());
   }
   
   //Calculate Nr of Cores
@@ -278,16 +278,16 @@ void GetCPUProperties (void)
   }
   
 //  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][ECX]) != 0) {
-//    SSSE3 = TRUE;
+//    SSSE3 = true;
 //  }
-  gCPUStructure.Turbo = FALSE;
+  gCPUStructure.Turbo = false;
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support
     DoCpuid(6, gCPUStructure.CPUID[CPUID_6]);
     gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & BIT1) != 0);
     DBG(" The CPU%s supported turbo\n", gCPUStructure.Turbo?"":" not");
     //get cores and threads
-    BOOLEAN PerfBias = (gCPUStructure.CPUID[CPUID_6][ECX] & BIT3) != 0;
+    XBool PerfBias = (gCPUStructure.CPUID[CPUID_6][ECX] & BIT3) != 0;
     DBG(" Energy PerfBias is %s visible:\n", PerfBias?"":" not");
     switch (gCPUStructure.Model)
     {
@@ -368,18 +368,19 @@ void GetCPUProperties (void)
   //workaround for Xeon Harpertown and Yorkfield
   if ((gCPUStructure.Model == CPU_MODEL_PENRYN) &&
       (gCPUStructure.Cores == 0)) {
-    if ((AsciiStrStr(gCPUStructure.BrandString, "X54")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "E54")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "W35")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "X34")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "X33")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "L33")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "X32")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "L3426")) ||
-        (AsciiStrStr(gCPUStructure.BrandString, "L54"))) {
+    if ( gCPUStructure.BrandString.contains("X54") ||
+         gCPUStructure.BrandString.contains("E54") ||
+         gCPUStructure.BrandString.contains("W35") ||
+         gCPUStructure.BrandString.contains("X34") ||
+         gCPUStructure.BrandString.contains("X33") ||
+         gCPUStructure.BrandString.contains("L33") ||
+         gCPUStructure.BrandString.contains("X32") ||
+         gCPUStructure.BrandString.contains("L3426") ||
+         gCPUStructure.BrandString.contains("L54")
+    ) {
       gCPUStructure.Cores   = 4;
       gCPUStructure.Threads = 4;
-    } else if (AsciiStrStr(gCPUStructure.BrandString, "W36")) {
+    } else if ( gCPUStructure.BrandString.contains("W36") ) {
       gCPUStructure.Cores   = 6;
       gCPUStructure.Threads = 6;
     } else { //other Penryn and Wolfdale
@@ -397,14 +398,13 @@ void GetCPUProperties (void)
   }
   
   //workaround for N270. I don't know why it detected wrong
-  if ((gCPUStructure.Model == CPU_MODEL_ATOM) &&
-      (AsciiStrStr(gCPUStructure.BrandString, "270"))) {
+  if ((gCPUStructure.Model == CPU_MODEL_ATOM) && gCPUStructure.BrandString.contains("270") ) {
     gCPUStructure.Cores   = 1;
     gCPUStructure.Threads = 2;
   }
   
   //workaround for Quad
-  if (AsciiStrStr(gCPUStructure.BrandString, "Quad")) {
+  if ( gCPUStructure.BrandString.contains("Quad") ) {
     gCPUStructure.Cores   = 4;
     gCPUStructure.Threads = 4;
   }
@@ -530,7 +530,7 @@ void GetCPUProperties (void)
              MsgLog("MSR 0xE2 before patch %08llX\n", msr);
              if (msr & 0x8000) {
                MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
-               GlobalConfig.NeedPMfix = TRUE;
+               GlobalConfig.NeedPMfix = true;
              }
              //   AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
              //   msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
@@ -613,7 +613,7 @@ void GetCPUProperties (void)
            case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
              //case CPU_MODEL_WOLFDALE:// Core 2 Duo/Extreme, Xeon, 45nm, Desktop like Penryn but not Mobile
              if(AsmReadMsr64(MSR_IA32_PLATFORM_ID) & (1 << 28)){
-               gCPUStructure.Mobile = TRUE;
+               gCPUStructure.Mobile = true;
              }
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.MaxSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -636,7 +636,7 @@ void GetCPUProperties (void)
                gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, 200 * Mega);
              }
              gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5;
-             if (AsciiStrStr(gCPUStructure.BrandString, "P8400")) {
+             if ( gCPUStructure.BrandString.contains("P8400") ) {
                gCPUStructure.MaxRatio = 85;
                gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.TSCFrequency, 10), gCPUStructure.MaxRatio);
                DBG("workaround for Code2Duo P8400, MaxRatio=8.5\n");
@@ -1290,7 +1290,7 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_CELERON: //M520
           case CPU_MODEL_MEROM: // Merom
           case CPU_MODEL_PENRYN:// Penryn
-            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+            if ( gCPUStructure.BrandString.contains("Xeon") )
               return 0x402; // Xeon
           case CPU_MODEL_ATOM:  // Atom (45nm)
             return GetStandardCpuType();
@@ -1299,21 +1299,21 @@ UINT16 GetAdvancedCpuType()
             return 0x402;
             
           case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
-            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+            if ( gCPUStructure.BrandString.contains("Xeon") )
                return 0x501; // Xeon
             return 0x701; // Core i7
             
           case CPU_MODEL_FIELDS: // Lynnfield, Clarksfield, Jasper
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x601; // Core i5
             return 0x701; // Core i7
             
           case CPU_MODEL_DALES: // Intel Core i5, i7 LGA1156 (45nm) (Havendale, Auburndale)
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x901; // Core i3 //why not 902? Ask Apple
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x602; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x702; // Core i7
             if (gCPUStructure.Cores <= 2) {
               return 0x602;
@@ -1323,11 +1323,11 @@ UINT16 GetAdvancedCpuType()
           //case CPU_MODEL_ARRANDALE:
           case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) (Clarkdale, Arrandale)
             
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x901; // Core i3
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x601; // Core i5 - (M540 -> 0x0602)
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x701; // Core i7
             if (gCPUStructure.Cores <= 2) {
               return 0x601;
@@ -1336,26 +1336,26 @@ UINT16 GetAdvancedCpuType()
             
           case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core (Gulftown, Westmere-EP, Westmere-WS)
           case CPU_MODEL_WESTMERE_EX: // Intel Core i7 LGA1366 (45nm) 6 Core ???
-            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+            if ( gCPUStructure.BrandString.contains("Xeon") )
               return 0x501; // Xeon
             return 0x701; // Core i7
           case CPU_MODEL_SANDY_BRIDGE:  
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x903; // Core i3
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x603; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x703; // Core i7
             if (gCPUStructure.Cores <= 2) {
               return 0x603;
             }
             return 0x703;
           case CPU_MODEL_IVY_BRIDGE:             
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x903; // Core i3 - Apple doesn't use it
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x604; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x704; // Core i7
             if (gCPUStructure.Cores <= 2) {
               return 0x604;
@@ -1363,13 +1363,13 @@ UINT16 GetAdvancedCpuType()
             return 0x704;
           case CPU_MODEL_HASWELL_U5:
    //       case CPU_MODEL_SKYLAKE_S:
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) M"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) M") )
               return 0xB06; // Core M
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x906; // Core i3 - Apple doesn't use it
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x606; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x706; // Core i7
             if (gCPUStructure.Cores <= 2) {
               return 0x606;
@@ -1401,27 +1401,27 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_COMETLAKE_U:
         case CPU_MODEL_TIGERLAKE_C:
         case CPU_MODEL_TIGERLAKE_D:
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x605; // Core i5
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-8"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7-8") )
               return 0x709; // Core i7 CoffeeLake
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-9"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7-9") )
               return 0x1005; // Core i7 CoffeeLake
-          if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-1"))
+          if ( gCPUStructure.BrandString.contains("Core(TM) i7-1") )
             return 0x070B; // Core i7 IceLake
-           if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+           if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x705; // Core i7
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i9"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) i9") )
               return 0x1009; // Core i7 CoffeeLake
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m3"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) m3") )
               return 0xC05;
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m5"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) m5") )
               return 0xD05;
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) m7"))
+            if ( gCPUStructure.BrandString.contains("Core(TM) m7") )
               return 0xE05;
-            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+            if ( gCPUStructure.BrandString.contains("Xeon") )
               return 0xF01;
             if (gCPUStructure.Cores <= 2) {
               return 0x605;
@@ -1441,7 +1441,7 @@ MACHINE_TYPES GetDefaultModel()
     return MacPro61;
   }
   // TODO: Add more CPU models and configure the correct machines per CPU/GFX model
-  bool isMobile = getMobileFromSmbios();
+  XBool isMobile = getMobileFromSmbios();
   if(isMobile) {
     switch (gCPUStructure.Model)
     {
@@ -1470,8 +1470,7 @@ MACHINE_TYPES GetDefaultModel()
         break;
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:
-        if((AsciiStrStr(gCPUStructure.BrandString, "i3")) ||
-           (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
+        if ( gCPUStructure.BrandString.contains("i3") || gCPUStructure.BrandString.contains("i5") ) {
           DefaultType = MacBookPro81;
           break;
         }
@@ -1492,21 +1491,21 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacBookPro111;
         break;
       case CPU_MODEL_HASWELL_U5:  // Broadwell Mobile
-        if(AsciiStrStr(gCPUStructure.BrandString, "M")) {
+        if ( gCPUStructure.BrandString.contains("M") ) {
            DefaultType = MacBook81;
            break;
         }
         DefaultType = MacBookPro121;
         break;
       case CPU_MODEL_SKYLAKE_U:
-        if(AsciiStrStr(gCPUStructure.BrandString, "m")) {
+        if ( gCPUStructure.BrandString.contains("m") ) {
            DefaultType = MacBook91;
            break;
         }
         DefaultType = MacBookPro131;
         break;
       case CPU_MODEL_KABYLAKE1:
-        if(AsciiStrStr(gCPUStructure.BrandString, "Y")) {
+        if ( gCPUStructure.BrandString.contains("Y") ) {
            DefaultType = MacBook101;
            break;
         }
@@ -1550,7 +1549,7 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacPro41;
         break;
       case CPU_MODEL_FIELDS:
-        if(AsciiStrStr(gCPUStructure.BrandString, "Xeon")) {
+        if ( gCPUStructure.BrandString.contains("Xeon") ) {
           DefaultType = MacPro41;
           break;
         }
@@ -1573,12 +1572,11 @@ MACHINE_TYPES GetDefaultModel()
           DefaultType = MacMini51;
           break;
         }
-        if((AsciiStrStr(gCPUStructure.BrandString, "i3")) ||
-           (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
+        if ( gCPUStructure.BrandString.contains("i3") || gCPUStructure.BrandString.contains("i5") ) {
           DefaultType = iMac121;
           break;
         }
-        if(AsciiStrStr(gCPUStructure.BrandString, "i7")) {
+        if ( gCPUStructure.BrandString.contains("i7") ) {
           DefaultType = iMac122;
           break;
         }
@@ -1591,7 +1589,7 @@ MACHINE_TYPES GetDefaultModel()
           DefaultType = MacMini62;
           break;
         }
-        if (AsciiStrStr(gCPUStructure.BrandString, "i3")) {
+        if ( gCPUStructure.BrandString.contains("i3") ) {
           DefaultType = iMac131;
           break;
         }
@@ -1608,7 +1606,7 @@ MACHINE_TYPES GetDefaultModel()
         break;
       case CPU_MODEL_KABYLAKE1:
       case CPU_MODEL_KABYLAKE2:
-        if (AsciiStrStr(gCPUStructure.BrandString, "i5")) {
+        if ( gCPUStructure.BrandString.contains("i5") ) {
           DefaultType = iMac182;
           break;
         }
@@ -1617,7 +1615,7 @@ MACHINE_TYPES GetDefaultModel()
       case CPU_MODEL_HASWELL:
       case CPU_MODEL_HASWELL_E:
         DefaultType = iMac142;
-        if (AsciiStrStr(gCPUStructure.BrandString, "70S")) {
+        if ( gCPUStructure.BrandString.contains("70S") ) {
           DefaultType = iMac141;
           break;
         }

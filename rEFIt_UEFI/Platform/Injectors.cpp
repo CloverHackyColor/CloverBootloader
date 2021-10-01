@@ -290,7 +290,7 @@ EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
 ->LocateProtocol(gAppleGraphConfigProtocolGuid, 0, 78000000438/1F7DAEC8) = Success
  call sub_30150
   ->GetVariable(boot-gamma, gEfiAppleBootGuid, 0/50, 0, 0) = Not Found
- mRestored = TRUE;
+ mRestored = true;
 ->GraphConfig.RestoreConfig(2, 400, 1FFCE8B0, 1FFCE0B0, 1FFCD8B0) status=Success
 */
 
@@ -341,7 +341,7 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
 //EFIAPI
 //GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
 //                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
-//                 OUT BOOLEAN            *GopEnable
+//                 OUT XBool           *GopEnable
 //                 )
 //{
 //  DBG("GetQuirksConfig called\n");

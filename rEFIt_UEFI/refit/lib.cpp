@@ -68,8 +68,8 @@
 
 
 //XStringW         ThemePath;
-//BOOLEAN          gBootArgsChanged = FALSE;
-BOOLEAN          gThemeOptionsChanged = FALSE;
+//XBool            gBootArgsChanged = false;
+XBool              gThemeOptionsChanged = false;
 
 
 //
@@ -124,7 +124,7 @@ NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type)
   return PathSize;
 }
 
-BOOLEAN MetaiMatch (
+XBool MetaiMatch (
                     IN CONST CHAR16   *String,
                     IN CONST CHAR16   *Pattern
                     );
@@ -220,7 +220,7 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
   UINTN               PathIndex;
   EFI_LOADED_IMAGE    *LoadedImage;
   EFI_DEVICE_PATH     *DevicePath;
-  BOOLEAN             Seen;
+  XBool               Seen;
   
   MaxPaths--;  // leave space for the terminating NULL pointer
   
@@ -252,12 +252,12 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
     
     // Check if we have this device path in the list already
     // WARNING: This assumes the first node in the device path is unique!
-    Seen = FALSE;
+    Seen = false;
     for (PathIndex = 0; PathIndex < PathCount; PathIndex++) {
       if (DevicePathNodeLength(DevicePath) != DevicePathNodeLength(PathList[PathIndex]))
         continue;
       if (CompareMem(DevicePath, PathList[PathIndex], DevicePathNodeLength(DevicePath)) == 0) {
-        Seen = TRUE;
+        Seen = true;
         break;
       }
     }
@@ -280,25 +280,25 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
 // volume functions
 //
 
-static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootable)
+static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT XBool *Bootable)
 {
   EFI_STATUS              Status;
-  UINT8                   *SectorBuffer;
+  UINT8                  *SectorBuffer;
   UINTN                   i;
-  //MBR_PARTITION_INFO      *MbrTable;
-  //BOOLEAN                 MbrTableFound;
-  UINTN       BlockSize = 0;
-  CHAR16      volumeName[255];
-  CHAR8         tmp[64];
-  UINT32        VCrc32;
-  //  CHAR16      *kind = NULL;
+  //MBR_PARTITION_INFO   *MbrTable;
+  //XBool                 MbrTableFound;
+  UINTN                   BlockSize = 0;
+  CHAR16                  volumeName[255];
+  CHAR8                   tmp[64];
+  UINT32                  VCrc32;
+  //CHAR16               *kind = NULL;
   
-  Volume->HasBootCode = FALSE;
+  Volume->HasBootCode = false;
   Volume->LegacyOS->IconName.setEmpty();
   Volume->LegacyOS->Name.setEmpty();
   //  Volume->BootType = BOOTING_BY_MBR; //default value
   Volume->BootType = BOOTING_BY_EFI;
-  *Bootable = FALSE;
+  *Bootable = false;
   
   if ((Volume->BlockIO == NULL) || (!Volume->BlockIO->Media->MediaPresent))
     return;
@@ -315,8 +315,8 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   if (!EFI_ERROR(Status) && (SectorBuffer[1] != 0)) {
     // calc crc checksum of first 2 sectors - it's used later for legacy boot BIOS drive num detection
     // note: possible future issues with AF 4K disks
-    *Bootable = TRUE;
-    Volume->HasBootCode = TRUE; //we assume that all CD are bootable
+    *Bootable = true;
+    Volume->HasBootCode = true; //we assume that all CD are bootable
     /*      DBG("check SectorBuffer\n");
      for (i=0; i<32; i++) {
      DBG("%2hhX ", SectorBuffer[i]);
@@ -395,8 +395,8 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       /*
        // apianti - does this detect every partition as legacy?
        if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
-       *Bootable = TRUE;
-       Volume->HasBootCode = TRUE;
+       *Bootable = true;
+       Volume->HasBootCode = true;
        //    DBG("The volume has bootcode\n");
        Volume->LegacyOS->IconName = L"legacy";
        Volume->LegacyOS->Name = L"Legacy";
@@ -410,14 +410,14 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           CompareMem(SectorBuffer + 6, "LILO", 4) == 0 ||
           CompareMem(SectorBuffer + 3, "SYSLINUX", 8) == 0 ||
           FindMem(SectorBuffer, 2048, "ISOLINUX", 8) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"linux"_XSW;
         Volume->LegacyOS->Name = L"Linux"_XSW;
         Volume->LegacyOS->Type = OSTYPE_LIN;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"grub,linux"_XSW;
         Volume->LegacyOS->Name = L"Linux"_XSW;
         Volume->BootType = BOOTING_BY_PBR;
@@ -425,7 +425,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) { //reboot Clover
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"clover";
         Volume->LegacyOS->Name = L"Clover";
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -437,7 +437,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
                   *((UINT32 *)(SectorBuffer + 506)) == 50000 &&
                   *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                  FindMem(SectorBuffer, 2048, "Starting the BTX loader", 23) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"freebsd,linux"_XSW;
         Volume->LegacyOS->Name = L"FreeBSD"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -446,7 +446,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
       } else if (FindMem(SectorBuffer, 512, "!Loading", 8) >= 0 ||
                  FindMem(SectorBuffer, 2048, "/cdboot\0/CDBOOT\0", 16) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"openbsd,linux"_XSW;
         Volume->LegacyOS->Name = L"OpenBSD"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -454,14 +454,14 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
       } else if (FindMem(SectorBuffer, 512, "Not a bootxx image", 18) >= 0 ||
                  *((UINT32 *)(SectorBuffer + 1028)) == 0x7886b6d1) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"netbsd,linux"_XSW;
         Volume->LegacyOS->Name = L"NetBSD"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 2048, "NTLDR", 5) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"win"_XSW;
         Volume->LegacyOS->Name = L"Windows"_XSW;
         Volume->LegacyOS->Type = OSTYPE_WIN;
@@ -469,7 +469,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
         
       } else if (FindMem(SectorBuffer, 2048, "BOOTMGR", 7) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"vista,win"_XSW;
         Volume->LegacyOS->Name = L"Windows"_XSW;
         Volume->LegacyOS->Type = OSTYPE_WIN;
@@ -477,7 +477,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
       } else if (FindMem(SectorBuffer, 512, "CPUBOOT SYS", 11) >= 0 ||
                  FindMem(SectorBuffer, 512, "KERNEL  SYS", 11) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"freedos,win"_XSW;
         Volume->LegacyOS->Name = L"FreeDOS"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -485,21 +485,21 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 
       } else if (FindMem(SectorBuffer, 512, "OS2LDR", 6) >= 0 ||
                  FindMem(SectorBuffer, 512, "OS2BOOT", 7) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"ecomstation"_XSW;
         Volume->LegacyOS->Name = L"eComStation"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "Be Boot Loader", 14) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"beos"_XSW;
         Volume->LegacyOS->Name = L"BeOS"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "yT Boot Loader", 14) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"zeta"_XSW;
         Volume->LegacyOS->Name = L"ZETA"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -507,7 +507,7 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
       } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
                  FindMem(SectorBuffer, 512, "haiku_loader", 12) >= 0) {
-        Volume->HasBootCode = TRUE;
+        Volume->HasBootCode = true;
         Volume->LegacyOS->IconName = L"haiku"_XSW;
         Volume->LegacyOS->Name = L"Haiku"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
@@ -527,11 +527,11 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 #endif
 
     if (FindMem(SectorBuffer, 512, "Non-system disk", 15) >= 0)   // dummy FAT boot sector
-      Volume->HasBootCode = FALSE;
+      Volume->HasBootCode = false;
 
 #ifdef JIEF_DEBUG
-////*Bootable = TRUE;
-//Volume->HasBootCode = TRUE;
+////*Bootable = true;
+//Volume->HasBootCode = true;
 //Volume->LegacyOS->IconName = L"win"_XSW;
 //Volume->LegacyOS->Name = L"Windows"_XSW;
 //Volume->LegacyOS->Type = OSTYPE_WIN;
@@ -542,14 +542,14 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     /*
      // apianti - this is littered with bugs and probably not needed lol
      if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55) {
-     MbrTableFound = FALSE;
+     MbrTableFound = false;
      MbrTable = (MBR_PARTITION_INFO *)(SectorBuffer + 446);
      for (i = 0; i < 4; i++)
      if (MbrTable[i].StartLBA && MbrTable[i].Size)
-     MbrTableFound = TRUE;
+     MbrTableFound = true;
      for (i = 0; i < 4; i++)
      if (MbrTable[i].Flags != 0x00 && MbrTable[i].Flags != 0x80)
-     MbrTableFound = FALSE;
+     MbrTableFound = false;
      if (MbrTableFound) {
      Volume->MbrPartitionTable = (__typeof__(Volume->MbrPartitionTable))AllocatePool(4 * 16);
      CopyMem(Volume->MbrPartitionTable, MbrTable, 4 * 16);
@@ -576,7 +576,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   //  UINTN                   BufferSize = 255;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
-  BOOLEAN                 Bootable;
+  XBool                   Bootable;
   //  EFI_INPUT_KEY           Key;
   
   // get device path
@@ -612,7 +612,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     return Status;
   }
   
-  Bootable = FALSE;
+  Bootable = false;
   if (Volume->BlockIO->Media->BlockSize == 2048){
 //    DBG("        Found optical drive\n");
     Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -689,14 +689,14 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
     
     /*  what is the bread?
-     // Bootable = TRUE;
+     // Bootable = true;
      
      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
      DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
-     Volume->IsAppleLegacy = TRUE;             // legacy BIOS device entry
+     Volume->IsAppleLegacy = true;             // legacy BIOS device entry
      // TODO: also check for Boot Camp GUID
      //gEfiPartTypeSystemPartGuid
-     Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
+     Bootable = false;   // this handle's BlockIO is just an alias for the whole device
      DBG("AppleLegacy device\n");
      }
      */
@@ -769,7 +769,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     }
 #endif
-    Volume->HasBootCode = FALSE;
+    Volume->HasBootCode = false;
   }
   
   // open the root directory of the volume
@@ -900,13 +900,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 static void ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
 {
   EFI_STATUS              Status;
-  REFIT_VOLUME            *Volume;
+  REFIT_VOLUME           *Volume;
   UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
   UINTN                   i;
   UINTN                   LogicalPartitionIndex = 4;
-  UINT8                   *SectorBuffer;
-  BOOLEAN                 Bootable;
-  MBR_PARTITION_INFO      *EMbrTable;
+  UINT8                  *SectorBuffer;
+  XBool                   Bootable;
+  MBR_PARTITION_INFO     *EMbrTable;
   
   ExtBase = MbrEntry->StartLBA;
   SectorBuffer = (__typeof__(SectorBuffer))AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
@@ -937,7 +937,7 @@ static void ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
         // found a logical partition
         Volume = new REFIT_VOLUME;
         Volume->DiskKind = WholeDiskVolume->DiskKind;
-        Volume->IsMbrPartition = TRUE;
+        Volume->IsMbrPartition = true;
         Volume->MbrPartitionIndex = LogicalPartitionIndex++;
         Volume->VolName = SWPrintf("Partition %llu", Volume->MbrPartitionIndex + 1);
         Volume->BlockIO = WholeDiskVolume->BlockIO;
@@ -945,10 +945,10 @@ static void ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
         Volume->WholeDiskBlockIO = WholeDiskVolume->BlockIO;
         Volume->WholeDiskDeviceHandle = WholeDiskVolume->DeviceHandle;
         
-        Bootable = FALSE;
+        Bootable = false;
         ScanVolumeBootcode(Volume, &Bootable);
         if (!Bootable)
-          Volume->HasBootCode = FALSE;
+          Volume->HasBootCode = false;
         
         Volumes.AddReference(Volume, false);
 //        AddListElement((void ***) &Volumes, &VolumesCount, Volume);
@@ -994,7 +994,7 @@ void ScanVolumes(void)
     
 	  DBG("- [%02llu]: Volume:", HandleIndex);
     
-    Volume->Hidden = FALSE; // default to not hidden
+    Volume->Hidden = false; // default to not hidden
     
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
@@ -1003,7 +1003,7 @@ void ScanVolumes(void)
         if ( Volume->DevicePathString.containsIC(gSettings.GUI.HVHideStrings[HVi]) ||
              Volume->VolName.containsIC(gSettings.GUI.HVHideStrings[HVi])
            ) {
-          Volume->Hidden = TRUE;
+          Volume->Hidden = true;
           DBG("        hiding this volume\n");
         }
       }
@@ -1034,7 +1034,7 @@ void ScanVolumes(void)
     SelfVolume->DiskKind = DISK_KIND_BOOTER;
     SelfVolume->VolName = L"Clover"_XSW;
     SelfVolume->LegacyOS->Type = OSTYPE_EFI;
-    SelfVolume->HasBootCode = TRUE;
+    SelfVolume->HasBootCode = true;
     SelfVolume->BootType = BOOTING_BY_PBR;
     //   AddListElement((void ***) &Volumes, &VolumesCount, SelfVolume);
     //    DBG("SelfVolume Nr %d created\n", VolumesCount);
@@ -1098,7 +1098,7 @@ void ScanVolumes(void)
         // TODO: mark entry as non-bootable if it is an extended partition
         
         // now we're reasonably sure the association is correct...
-        Volume->IsMbrPartition = TRUE;
+        Volume->IsMbrPartition = true;
         Volume->MbrPartitionTable = MbrTable;
         Volume->MbrPartitionIndex = PartitionIndex;
         if (Volume->VolName.isEmpty())
@@ -1219,7 +1219,7 @@ REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName)
 // file and dir functions
 //
 
-BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
+XBool FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
 {
   EFI_STATUS  Status;
   EFI_FILE    *TestFile = NULL;
@@ -1229,17 +1229,17 @@ BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
     if (TestFile && TestFile->Close) {
       TestFile->Close(TestFile);
     }
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
-BOOLEAN FileExists(const EFI_FILE *Root, const XStringW& RelativePath)
+XBool FileExists(const EFI_FILE *Root, const XStringW& RelativePath)
 {
 	return FileExists(Root, RelativePath.wc_str());
 }
 
-BOOLEAN FileExists(const EFI_FILE& Root, const XStringW& RelativePath)
+XBool FileExists(const EFI_FILE& Root, const XStringW& RelativePath)
 {
   return FileExists(&Root, RelativePath.wc_str());
 }
@@ -1249,7 +1249,7 @@ EFI_DEVICE_PATH_PROTOCOL* FileDevicePath(IN EFI_HANDLE Device, IN CONST XStringW
   return FileDevicePath(Device, FileName.wc_str());
 }
 
-BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
+XBool DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
 {
   EFI_STATUS  Status;
   EFI_FILE    *File;
@@ -1266,7 +1266,7 @@ BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
       // error
       //DBG(" FileInfo is NULL\n");
       File->Close(File);
-      return FALSE;
+      return false;
     }
     //DBG(" FileInfo attr: %hhX\n", FileInfo->Attribute);
     if ((FileInfo->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY) {
@@ -1274,7 +1274,7 @@ BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
       //DBG(" File is DIR\n");
       FreePool(FileInfo);
       File->Close(File);
-      return FALSE;
+      return false;
     }
     FreePool(FileInfo);
     // it's a file - delete it
@@ -1284,7 +1284,7 @@ BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
     
     return Status == EFI_SUCCESS;
   }
-  return FALSE;
+  return false;
 }
 
 EFI_STATUS DirNextEntry(const EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode)
@@ -1353,15 +1353,15 @@ void DirIterOpen(const EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL
   if (RelativePath == NULL) {
     DirIter->LastStatus = EFI_SUCCESS;
     DirIter->DirHandle = BaseDir;
-    DirIter->CloseDirHandle = FALSE;
+    DirIter->CloseDirHandle = false;
   } else {
     DirIter->LastStatus = BaseDir->Open(BaseDir, const_cast<EFI_FILE**>(&(DirIter->DirHandle)), RelativePath, EFI_FILE_MODE_READ, 0);
-    DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? FALSE : TRUE;
+    DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? false : true;
   }
   DirIter->LastFileInfo = NULL;
 }
 
-BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONST CHAR16 *FilePattern OPTIONAL,
+XBool DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONST CHAR16 *FilePattern OPTIONAL,
                     OUT EFI_FILE_INFO **DirEntry)
 {
   if (DirIter->LastFileInfo != NULL) {
@@ -1370,14 +1370,14 @@ BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONS
   }
   
   if (EFI_ERROR(DirIter->LastStatus))
-    return FALSE;   // stop iteration
+    return false;   // stop iteration
   
   for (;;) {
     DirIter->LastStatus = DirNextEntry(DirIter->DirHandle, &(DirIter->LastFileInfo), FilterMode);
     if (EFI_ERROR(DirIter->LastStatus))
-      return FALSE;
+      return false;
     if (DirIter->LastFileInfo == NULL)  // end of listing
-      return FALSE;
+      return false;
     if (FilePattern != NULL) {
       if ((DirIter->LastFileInfo->Attribute & EFI_FILE_DIRECTORY))
         break;
@@ -1389,7 +1389,7 @@ BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONS
   }
   
   *DirEntry = DirIter->LastFileInfo;
-  return TRUE;
+  return true;
 }
 
 EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter)
@@ -1406,7 +1406,7 @@ EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter)
 //
 // file name manipulation
 //
-BOOLEAN
+XBool
 MetaiMatch (
             IN CONST CHAR16   *String,
             IN CONST CHAR16   *Pattern
@@ -1414,10 +1414,10 @@ MetaiMatch (
 {
 	if (!mUnicodeCollation) {
 		// quick fix for driver loading on UEFIs without UnicodeCollation
-		//return FALSE;
-		return TRUE; //this is wrong anyway
+		//return false;
+		return true; //this is wrong anyway
 	}
-	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, String, Pattern);
+	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, String, Pattern) == TRUE;
 }
 
 
@@ -1531,7 +1531,7 @@ XStringW DevicePathToXStringW (
     const EFI_DEVICE_PATH_PROTOCOL     *DevPath
   )
 {
-  CHAR16* DevicePathStr = ConvertDevicePathToText (DevPath, TRUE, TRUE);
+  CHAR16* DevicePathStr = ConvertDevicePathToText (DevPath, true, true);
   XStringW returnValue;
   returnValue.stealValueFrom(DevicePathStr); // do not FreePool FilePath, it's now owned by returnValue
   return returnValue;
@@ -1547,7 +1547,7 @@ XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
   CHAR16      *Char;
   CONST CHAR16      *Tail;
   
-  FilePath = ConvertDevicePathToText(DevPath, TRUE, TRUE);
+  FilePath = ConvertDevicePathToText(DevPath, true, true);
   // fix / into '\\'
   if (FilePath != NULL) {
     for (Char = FilePath; *Char != L'\0'; Char++) {
@@ -1590,7 +1590,7 @@ XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return NullXStringW;
 }
 
-BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
+XBool DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
 {
   UINTN                     dataSize            = 0;
   UINT8                     *data               = NULL;
@@ -1618,9 +1618,9 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   }
   if (data) {
     FreePool(data);
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 // EOF

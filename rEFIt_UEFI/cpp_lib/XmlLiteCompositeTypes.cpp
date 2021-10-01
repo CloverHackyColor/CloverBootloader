@@ -24,7 +24,7 @@
 //  }
 //}
 //
-//bool XmlComposite::isTheNextTag(XmlLiteParser* xmlLiteParser)
+//XBool XmlComposite::isTheNextTag(XmlLiteParser* xmlLiteParser)
 //{
 //  XmlCompositeField* fields;
 //  size_t nb;
@@ -39,7 +39,7 @@
 //  return false;
 //}
 //
-//bool XmlComposite::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+//XBool XmlComposite::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 //{
 //  XmlCompositeField* fields;
 //  size_t nb;
@@ -65,7 +65,7 @@
 //}
 //
 //
-//bool XmlComposite::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors)
+//XBool XmlComposite::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors)
 //{
 //  XmlCompositeField* fields;
 //  size_t nb;

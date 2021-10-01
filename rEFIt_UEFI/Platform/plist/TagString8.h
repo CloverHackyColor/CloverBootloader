@@ -22,12 +22,12 @@ public:
   const TagString& operator = (const TagString&); // Can be defined if needed
   virtual ~TagString() { }
   
-  virtual bool operator == (const TagStruct& other) const;
+  virtual XBool operator == (const TagStruct& other) const;
 
   virtual TagString* getString() { return this; }
   virtual const TagString* getString() const { return this; }
 
-  virtual bool isString() const { return true; }
+  virtual XBool isString() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "String8"_XS8; }
   static TagString* getEmptyTag();
   virtual void FreeTag();

@@ -76,7 +76,7 @@ EFI_STATUS ClearSecureBootKeys(void)
 // Enroll the secure boot keys
 EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
                                 IN UINTN    AuthorizedDatabaseSize,
-                                IN BOOLEAN  WantDefaultKeys)
+                                IN XBool    WantDefaultKeys)
 {
   EFI_STATUS Status;
 

@@ -52,11 +52,11 @@ static EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
 static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 static EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-static BOOLEAN egHasGraphics = FALSE;
+static XBool egHasGraphics = false;
 static UINTN egScreenWidth  = 0; //1024;
 static UINTN egScreenHeight = 0; //768;
 
-static BOOLEAN IgnoreConsoleSetMode = FALSE;
+static XBool IgnoreConsoleSetMode = false;
 static EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentForcedConsoleMode = EfiConsoleControlScreenText;
 static EFI_CONSOLE_CONTROL_PROTOCOL_GET_MODE ConsoleControlGetMode = NULL;
 static EFI_CONSOLE_CONTROL_PROTOCOL_SET_MODE ConsoleControlSetMode = NULL;
@@ -71,9 +71,9 @@ egConsoleControlGetMode(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, OUT EFI_CONSOLE_C
     if (IgnoreConsoleSetMode) {
         *Mode = CurrentForcedConsoleMode;
         if (GopUgaExists)
-            *GopUgaExists = TRUE;
+            *GopUgaExists = true;
         if (StdInLocked)
-            *StdInLocked = FALSE;
+            *StdInLocked = false;
         return EFI_SUCCESS;
     }
 
@@ -355,7 +355,7 @@ EFI_STATUS egSetScreenResolution(IN const CHAR16 *WidthHeight)
     return EFI_UNSUPPORTED;
 }
 
-void egInitScreen(IN BOOLEAN SetMaxResolution)
+void egInitScreen(IN XBool SetMaxResolution)
 {
     EFI_STATUS Status;
     UINT32 Width, Height, Depth, RefreshRate;
@@ -394,7 +394,7 @@ void egInitScreen(IN BOOLEAN SetMaxResolution)
     egDumpSetConsoleVideoModes();
 
     // get screen size
-    egHasGraphics = FALSE;
+    egHasGraphics = false;
     if (GraphicsOutput != NULL) {
  //       egDumpGOPVideoModes();
         if (gSettings.GUI.ScreenResolution.notEmpty()) {
@@ -410,7 +410,7 @@ void egInitScreen(IN BOOLEAN SetMaxResolution)
         }
         egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
-        egHasGraphics = TRUE;
+        egHasGraphics = true;
     } 
     //is there anybody ever see UGA protocol???
     else if (UgaDraw != NULL) {
@@ -421,7 +421,7 @@ void egInitScreen(IN BOOLEAN SetMaxResolution)
         } else {
             egScreenWidth  = Width;
             egScreenHeight = Height;
-            egHasGraphics = TRUE;
+            egHasGraphics = true;
         }
     }
 }
@@ -449,24 +449,24 @@ XString8 egScreenDescription(void)
     }
 }
 
-BOOLEAN egHasGraphicsMode(void)
+XBool egHasGraphicsMode(void)
 {
     return egHasGraphics;
 }
 
-BOOLEAN egIsGraphicsModeEnabled(void)
+XBool egIsGraphicsModeEnabled(void)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
 
     if (ConsoleControl != NULL) {
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
-        return (CurrentMode == EfiConsoleControlScreenGraphics) ? TRUE : FALSE;
+        return (CurrentMode == EfiConsoleControlScreenGraphics) ? true : false;
     }
     
-    return FALSE;
+    return false;
 }
 
-void egSetGraphicsModeEnabled(IN BOOLEAN Enable)
+void egSetGraphicsModeEnabled(IN XBool Enable)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
     EFI_CONSOLE_CONTROL_SCREEN_MODE NewMode;
@@ -486,11 +486,11 @@ void egSetGraphicsModeEnabled(IN BOOLEAN Enable)
             if (!Enable) {
                 // Don't allow switching to text mode, but report that we are in text mode when queried
                 CurrentForcedConsoleMode = EfiConsoleControlScreenText;
-                IgnoreConsoleSetMode = TRUE;
+                IgnoreConsoleSetMode = true;
                 return;
             }
             // Allow mode switching to work normally again
-            IgnoreConsoleSetMode = FALSE;
+            IgnoreConsoleSetMode = false;
         }
 
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
@@ -599,7 +599,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
                 gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
             }
             for (UINTN Index = 0; Index < HandleCount; Index++) {
-                gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+                gBS->ConnectController (HandleBuffer[Index], NULL, NULL, true);
             }
             if (HandleBuffer != NULL) {
                 FreePool(HandleBuffer);

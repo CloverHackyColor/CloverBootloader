@@ -65,7 +65,7 @@ extern "C" {
 void EnableSecureBoot(void)
 {
   EFI_STATUS  Status = EFI_NOT_FOUND;
-  BOOLEAN     WantDefaultKeys;
+  XBool WantDefaultKeys;
   CONST CHAR16     *ErrorString = NULL;
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
@@ -80,11 +80,11 @@ void EnableSecureBoot(void)
   UINT32 AuthenticationStatus = 0;
   UINTN  FileSize = 0;
   // Open the file buffer
-  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getCloverDirFullDevicePath(), &FileSize, &AuthenticationStatus);
+  void  *FileBuffer = GetFileBufferByFilePath(false, &self.getCloverDirFullDevicePath(), &FileSize, &AuthenticationStatus);
   if (FileBuffer != NULL) {
     if (FileSize > 0) {
       // Retrieve the certificates
-      CloverSignature = GetImageSignatureDatabase(FileBuffer, FileSize, &CloverSignatureSize, FALSE);
+      CloverSignature = GetImageSignatureDatabase(FileBuffer, FileSize, &CloverSignatureSize, false);
       if (CloverSignature != NULL) {
         if (CloverSignatureSize > 0) {
           // Found signature
@@ -218,64 +218,64 @@ STATIC EFI_SECURITY_FILE_AUTHENTICATION_STATE gSecurityFileAuthentication;
 STATIC EFI_SECURITY2_FILE_AUTHENTICATION      gSecurity2FileAuthentication;
 
 // Pre check the secure boot policy
-STATIC BOOLEAN EFIAPI
+STATIC XBool EFIAPI
 PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatus,
                          IN     CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
   CHAR16 *DevicePathStr;
   UINTN   Index;
   if ((AuthenticationStatus == NULL) || (DevicePath == NULL)) {
-    return FALSE;
+    return false;
   }
   switch (gSettings.Boot.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_ALLOW:
     // Allow all images
     *AuthenticationStatus = EFI_SUCCESS;
-    return TRUE;
+    return true;
 
   case SECURE_BOOT_POLICY_WHITELIST:
     // Check the white list for this image
     DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
-      return FALSE;
+      return false;
     }
     for (Index = 0; Index < gSettings.Boot.SecureBootWhiteList.size(); ++Index) {
       if ((gSettings.Boot.SecureBootWhiteList[Index].notEmpty()) &&
           (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
-        return TRUE;
+        return true;
       }
     }
-    return TRUE;
+    return true;
 
   case SECURE_BOOT_POLICY_BLACKLIST:
     // Check the black list for this image
     DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
-      return FALSE;
+      return false;
     }
     for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
       if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
           (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
         // Black listed
-        return TRUE;
+        return true;
       }
     }
     *AuthenticationStatus = EFI_SUCCESS;
-    return TRUE;
+    return true;
 
   case SECURE_BOOT_POLICY_USER:
     DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr == NULL) {
-      return FALSE;
+      return false;
     }
     // Check the black list for this image
     for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
       if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
           (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
         // Black listed
-        return TRUE;
+        return true;
       }
     }
     // Check the white list for this image
@@ -284,16 +284,16 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
           (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
-        return TRUE;
+        return true;
       }
     }
     break;
   }
-  return FALSE;
+  return false;
 }
 
 // Check the secure boot policy
-STATIC BOOLEAN EFIAPI
+STATIC XBool EFIAPI
 CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatus,
                       IN     CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
                       IN     void                           *FileBuffer,
@@ -313,12 +313,12 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
 
     case SECURE_BOOT_POLICY_DENY:
     default:
-      return TRUE;
+      return true;
 
     case SECURE_BOOT_POLICY_INSERT:
       // If this is forced mode then no insert
       if (GlobalConfig.SecureBootSetupMode) {
-        return TRUE;
+        return true;
       }
       break;
     }
@@ -328,18 +328,18 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
     // Insert image signature
     AppendImageToAuthorizedDatabase(DevicePath, FileBuffer, FileSize);
     *AuthenticationStatus = EFI_SUCCESS;
-    return TRUE;
+    return true;
 
   case SECURE_BOOT_POLICY_ALLOW:
     // Allow all images
     *AuthenticationStatus = EFI_SUCCESS;
-    return TRUE;
+    return true;
 
   case SECURE_BOOT_POLICY_DENY:
      // Deny all images
-     return TRUE;
+     return true;
   }
-  return FALSE;
+  return false;
 }
 
 
@@ -375,7 +375,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
                             IN CONST EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
                             IN void                              *FileBuffer,
                             IN UINTN                              FileSize,
-                            IN BOOLEAN                            BootPolicy)
+                            IN XBool                              BootPolicy)
 {
   EFI_STATUS Status = EFI_SECURITY_VIOLATION;
   // Check secure boot policy

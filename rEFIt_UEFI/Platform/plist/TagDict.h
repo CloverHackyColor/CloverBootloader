@@ -22,13 +22,13 @@ public:
   const TagDict& operator = (const TagDict&); // Can be defined if needed
   virtual ~TagDict() { }
   
-  virtual bool operator == (const TagStruct& other) const;
-  virtual bool debugIsEqual(const TagStruct& other, const XString8& label) const;
+  virtual XBool operator == (const TagStruct& other) const;
+  virtual XBool debugIsEqual(const TagStruct& other, const XString8& label) const;
 
   virtual TagDict* getDict() { return this; }
   virtual const TagDict* getDict() const { return this; }
 
-  virtual bool isDict() const { return true; }
+  virtual XBool isDict() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Dict"_XS8; }
   static TagDict* getEmptyTag();
   virtual void FreeTag();

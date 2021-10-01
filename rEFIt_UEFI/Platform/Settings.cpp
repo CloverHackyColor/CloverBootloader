@@ -63,7 +63,7 @@ INTN OldChosenTheme;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 UINTN OldChosenAudio;
-BOOLEAN                        SavePreBootLog;
+XBool                            SavePreBootLog;
 UINT8                            DefaultAudioVolume;
 INTN LayoutBannerOffset = 64;
 INTN LayoutTextOffset = 0;
@@ -94,17 +94,17 @@ XStringWArray                   DsdtsList;
 XObjArray<HDA_OUTPUTS>          AudioList;
 
 // firmware
-BOOLEAN                         gFirmwareClover             = FALSE;
+XBool                           gFirmwareClover             = false;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
-//BOOLEAN                         defDSM;
-//UINT16                          dropDSM;
+//XBool                         defDSM;
+//UINT16                        dropDSM;
 
-BOOLEAN                         ResumeFromCoreStorage = false;
-//BOOLEAN                         gRemapSmBiosIsRequire;
+XBool                           ResumeFromCoreStorage = false;
+//XBool                         gRemapSmBiosIsRequire;
 
 // QPI
-//BOOLEAN                         SetTable132                 = FALSE;
+//XBool                         SetTable132                 = false;
 
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
@@ -186,7 +186,7 @@ XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
   return LoadOptions;
 }
 
-UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
+UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(XBool NoCachesDefault) const
 {
   UINT8 Flags = parent.getFlags(NoCachesDefault);
   if ( settings._Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
@@ -226,7 +226,7 @@ const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
 };
 
 
-bool SETTINGS_DATA::GUIClass::getDarkEmbedded(bool isDaylight) const {
+XBool SETTINGS_DATA::GUIClass::getDarkEmbedded(XBool isDaylight) const {
   if ( EmbeddedThemeType.isEqualIC("Dark") ) return true;
   if ( EmbeddedThemeType.isEqualIC("Daytime") ) return !isDaylight;
   return false;
@@ -369,17 +369,17 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     {
       ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
       DBG(" - [%02zd]: Drop table : %.4s, %16llx : ", idx, (const char*)&settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
-      bool Dropped = FALSE;
+      XBool Dropped = false;
       while (DropTable) {
         if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
              (!settingsData.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId)) &&
              (!settingsData.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable->Length == settingsData.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
             (!settingsData.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId))) {
-          DropTable->MenuItem.BValue = TRUE;
+          DropTable->MenuItem.BValue = true;
           DropTable->OtherOS = settingsData.ACPI.ACPIDropTablesArray[idx].OtherOS;
-          GlobalConfig.DropSSDT         = FALSE; // if one item=true then dropAll=false by default
+          GlobalConfig.DropSSDT         = false; // if one item=true then dropAll=false by default
           //DBG(" true");
-          Dropped = TRUE;
+          Dropped = true;
         }
         DropTable = DropTable->Next;
       }
@@ -419,7 +419,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //  DBG("4: GlobalConfig.C3Latency=%x\n", GlobalConfig.C3Latency);
 
   if (settingsData.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
-    GlobalConfig.HWP = TRUE;
+    GlobalConfig.HWP = true;
     AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
     if ( settingsData.CPU.HWPValue.isDefined() ) {
       AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, settingsData.CPU.HWPValue.value());
@@ -467,7 +467,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     if (NowHour >= 24 ) NowHour -= 24;
     ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
   } else {
-    ThemeX.Daylight = TRUE;
+    ThemeX.Daylight = true;
   }
 
   ThemeX.DarkEmbedded = settingsData.GUI.getDarkEmbedded(ThemeX.Daylight);
@@ -586,7 +586,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //  NGFX = 0;
 //  NHDA = 0;
 //  AudioList.setEmpty();
-//  //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
+//  //Arpt.Valid = false; //global variables initialized by 0 - c-language
 //  XStringW GopDevicePathStr;
 //  XStringW DevicePathStr;
 //
@@ -694,13 +694,13 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //              }
 //              gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
 //              //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08X\n", gfx->Connectors);
-//              gfx->ConnChanged = FALSE;
+//              gfx->ConnChanged = false;
 //
 //              SlotDevice                  = &gSettings.Smbios.SlotDevices[0];
 //              SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //              SlotDevice->BusNum          = (UINT8)Bus;
 //              SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//              SlotDevice->Valid           = TRUE;
+//              SlotDevice->Valid           = true;
 //              SlotDevice->SlotName        = "PCI Slot 0"_XS8;
 //              SlotDevice->SlotID          = 1;
 //              SlotDevice->SlotType        = SlotTypePciExpressX16;
@@ -712,7 +712,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //              DBG(" - GFX: Model=%s (Intel)\n", gfx->Model);
 //              gfx->Ports = 1;
 //              gfx->Connectors = (1 << NGFX);
-//              gfx->ConnChanged = FALSE;
+//              gfx->ConnChanged = false;
 //              break;
 //
 //            case 0x10de:
@@ -767,7 +767,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //              SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //              SlotDevice->BusNum          = (UINT8)Bus;
 //              SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//              SlotDevice->Valid           = TRUE;
+//              SlotDevice->Valid           = true;
 //              SlotDevice->SlotName = "PCI Slot 0"_XS8;
 //              SlotDevice->SlotID          = 1;
 //              SlotDevice->SlotType        = SlotTypePciExpressX16;
@@ -778,7 +778,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //          snprintf (gfx->Model, 64, "pci%hx,%hx", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
 //              gfx->Ports  = 1;
 //              gfx->Connectors = (1 << NGFX);
-//              gfx->ConnChanged = FALSE;
+//              gfx->ConnChanged = false;
 //
 //              break;
 //          }
@@ -792,7 +792,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //          SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //          SlotDevice->BusNum          = (UINT8)Bus;
 //          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = TRUE;
+//          SlotDevice->Valid           = true;
 //          SlotDevice->SlotName = "AirPort"_XS8;
 //          SlotDevice->SlotID          = 0;
 //          SlotDevice->SlotType        = SlotTypePciExpressX1;
@@ -830,7 +830,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //          SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //          SlotDevice->BusNum          = (UINT8)Bus;
 //          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = TRUE;
+//          SlotDevice->Valid           = true;
 //          SlotDevice->SlotName = "Ethernet"_XS8;
 //          SlotDevice->SlotID          = 2;
 //          SlotDevice->SlotType        = SlotTypePciExpressX1;
@@ -875,7 +875,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //          SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //          SlotDevice->BusNum          = (UINT8)Bus;
 //          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = TRUE;
+//          SlotDevice->Valid           = true;
 //          SlotDevice->SlotName = "FireWire"_XS8;
 //          SlotDevice->SlotID          = 3;
 //          SlotDevice->SlotType        = SlotTypePciExpressX4;
@@ -902,7 +902,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 //            SlotDevice->SegmentGroupNum = (UINT16)Segment;
 //            SlotDevice->BusNum          = (UINT8)Bus;
 //            SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//            SlotDevice->Valid           = TRUE;
+//            SlotDevice->Valid           = true;
 //            SlotDevice->SlotName = "HDMI port"_XS8;
 //            SlotDevice->SlotID          = 5;
 //            SlotDevice->SlotType        = SlotTypePciExpressX4;
@@ -943,8 +943,8 @@ SetDevices (LOADER_ENTRY *Entry)
   UINTN               Bus;
   UINTN               Device;
   UINTN               Function;
-  BOOLEAN             StringDirty = FALSE;
-  BOOLEAN             TmpDirty    = FALSE;
+  XBool               StringDirty = false;
+  XBool               TmpDirty    = false;
   UINT32              Rcba;
   UINT32              Hptc;
   DevPropDevice *device = NULL;
@@ -990,7 +990,7 @@ SetDevices (LOADER_ENTRY *Entry)
       }else{
         DBG("Skip disabled properties with Path=%ls, Key=%s\n", Prop.DevicePathAsString.wc_str(), Prop2.Key.c_str());
       }
-      StringDirty = TRUE;
+      StringDirty = true;
     }
   }
 
@@ -1022,9 +1022,9 @@ SetDevices (LOADER_ENTRY *Entry)
         PCIdevice.revision                   = Pci.Hdr.RevisionID;
         PCIdevice.subclass                   = Pci.Hdr.ClassCode[0];
         PCIdevice.class_id                   = *((UINT16*)(Pci.Hdr.ClassCode+1));
-        PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-        PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-        PCIdevice.used                       = FALSE;
+        PCIdevice.subsys_id_union.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+        PCIdevice.subsys_id_union.subsys.device_id = Pci.Device.SubsystemID;
+        PCIdevice.used                       = false;
 
         //if (gSettings.Devices.AddPropertyArray.size() == 0xFFFE) {  //yyyy it means Arbitrary  // Looks like NrAddProperties == 0xFFFE is not used anymore
         //------------------
@@ -1039,7 +1039,7 @@ SetDevices (LOADER_ENTRY *Entry)
           }
           if (!PCIdevice.used) {
             device = devprop_add_device_pci(device_inject_string, &PCIdevice, NULL);
-            PCIdevice.used = TRUE;
+            PCIdevice.used = true;
           }
           for ( size_t jdx = 0 ; jdx < Prop.CustomPropertyArray.size() ; ++jdx ) {
             const SETTINGS_DATA::DevicesClass::SimplePropertyClass& Prop2 = Prop.CustomPropertyArray[jdx];
@@ -1051,7 +1051,7 @@ SetDevices (LOADER_ENTRY *Entry)
                 devprop_add_value(device, Prop2.Key, Prop2.Value);
               }
             }
-            StringDirty = TRUE;
+            StringDirty = true;
           }
         }
         //------------------
@@ -1796,7 +1796,7 @@ SetDevices (LOADER_ENTRY *Entry)
         mProperties       = (UINT8*)(UINTN)BufferPtr;
         //     DBG(gDeviceProperties);
         //     DBG("\n");
-        //     StringDirty = FALSE;
+        //     StringDirty = false;
         //-------
         mPropSize = (UINT32)hex2bin(newDeviceProperties, mProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe as hex2bin return <= MAXUINT32
         gDeviceProperties = newDeviceProperties.forgetDataWithoutFreeing(); // do this AFTER hex2bin
@@ -1859,7 +1859,7 @@ ApplySettings()
 
   // to determine the use of Table 132
   if (gSettings.CPU.QPI) {
-    GlobalConfig.SetTable132 = TRUE;
+    GlobalConfig.SetTable132 = true;
     //DBG("QPI: use Table 132\n");
   }
   else {
@@ -1868,7 +1868,7 @@ ApplySettings()
       case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
       case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
       case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-        GlobalConfig.SetTable132 = TRUE;
+        GlobalConfig.SetTable132 = true;
         DBG("QPI: use Table 132\n");
         break;
       default:
@@ -1882,7 +1882,7 @@ ApplySettings()
   return EFI_SUCCESS;
 }
 
-XStringW GetOtherKextsDir (BOOLEAN On)
+XStringW GetOtherKextsDir (XBool On)
 {
   if ( !selfOem.isKextsDirFound() ) return NullXStringW;
   if ( FileExists(&selfOem.getKextsDir(), On ? L"Other" : L"Off") ) {
@@ -1943,11 +1943,11 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 // Do we need that with OC ? For old version ?
 //EFI_STATUS LOADER_ENTRY::SetFSInjection()
 //{
-//  EFI_STATUS           Status;
+//  EFI_STATUS            Status;
 //  FSINJECTION_PROTOCOL *FSInject;
 //  XStringW              SrcDir;
-//  //BOOLEAN              InjectionNeeded = FALSE;
-//  //BOOLEAN              BlockCaches     = FALSE;
+//  //XBool               InjectionNeeded = false;
+//  //XBool               BlockCaches     = false;
 //  FSI_STRING_LIST      *Blacklist      = 0;
 //  FSI_STRING_LIST      *ForceLoadKexts = NULL;
 //
@@ -1964,7 +1964,7 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 //  // check if blocking of caches is needed
 //  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES) || LoadOptions.contains("-f")  ) {
 //    MsgLog ("Blocking kext caches\n");
-//    //  BlockCaches = TRUE;
+//    //  BlockCaches = true;
 //    // add caches to blacklist
 //    Blacklist = FSInject->CreateStringList();
 //    if (Blacklist == NULL) {
@@ -2030,7 +2030,7 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 //  // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
 //  //SrcDir = NULL;
 //  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
-//    SrcDir = GetOtherKextsDir(TRUE);
+//    SrcDir = GetOtherKextsDir(true);
 //    Status = FSInject->Install(
 //                                Volume->DeviceHandle,
 //                                L"\\System\\Library\\Extensions",

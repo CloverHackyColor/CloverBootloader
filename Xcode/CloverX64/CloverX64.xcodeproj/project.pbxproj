@@ -1058,6 +1058,7 @@
 		9AF4D970263014C600487D15 /* Volume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D96C263014C600487D15 /* Volume.cpp */; };
 		9AF4D971263014C600487D15 /* Volume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D96C263014C600487D15 /* Volume.cpp */; };
 		9AF4D972263014C600487D15 /* Volume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D96C263014C600487D15 /* Volume.cpp */; };
+		9AF5454E2702627F00CEC8FD /* XBool.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF5454C2702627F00CEC8FD /* XBool.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1421,6 +1422,7 @@
 		9AF4D936263004E200487D15 /* XmlLiteCompositeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteCompositeTypes.h; sourceTree = "<group>"; };
 		9AF4D96B263014C500487D15 /* Volume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Volume.h; sourceTree = "<group>"; };
 		9AF4D96C263014C600487D15 /* Volume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Volume.cpp; sourceTree = "<group>"; };
+		9AF5454C2702627F00CEC8FD /* XBool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XBool.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1943,6 +1945,7 @@
 				9A8788CD26186897000B9362 /* XStringArray.cpp */,
 				9A8788CF26186897000B9362 /* XStringArray.h */,
 				9A8788D026186897000B9362 /* XToolsCommon.h */,
+				9AF5454C2702627F00CEC8FD /* XBool.h */,
 			);
 			path = cpp_foundation;
 			sourceTree = "<group>";
@@ -2060,6 +2063,7 @@
 				9A87892D26186897000B9362 /* operatorNewDelete.h in Headers */,
 				9A878C3626186898000B9362 /* bootscreen.h in Headers */,
 				9A878AF826186897000B9362 /* HdaCodecDump.h in Headers */,
+				9AF5454E2702627F00CEC8FD /* XBool.h in Headers */,
 				9A87890926186897000B9362 /* stdarg.h in Headers */,
 				9A8789C626186897000B9362 /* rename_helper.h in Headers */,
 				9A878B4F26186897000B9362 /* DataHub.h in Headers */,
@@ -3262,6 +3266,7 @@
 					DISABLE_SECURE_BOOT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_SHADOW = YES;
@@ -3315,6 +3320,11 @@
 					"-Weffc++",
 					"-Wunused-local-typedefs",
 				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-include",
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_foundation/XBool.h,
+				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
@@ -3323,6 +3333,8 @@
 					"-Wno-gnu-zero-variadic-macro-arguments",
 					"-Wignored-qualifiers",
 					"-Wreorder",
+					"-Wmissing-braces",
+					"-Wnon-pod-varargs",
 				);
 			};
 			name = Debug;
@@ -3355,6 +3367,7 @@
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_SHADOW = YES;
@@ -3408,6 +3421,11 @@
 					"-Weffc++",
 					"-Wunused-local-typedefs",
 				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-include",
+					$PROJECT_DIR/../../rEFIt_UEFI/cpp_foundation/XBool.h,
+				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
@@ -3416,6 +3434,8 @@
 					"-Wno-gnu-zero-variadic-macro-arguments",
 					"-Wignored-qualifiers",
 					"-Wreorder",
+					"-Wmissing-braces",
+					"-Wnon-pod-varargs",
 				);
 			};
 			name = Release;

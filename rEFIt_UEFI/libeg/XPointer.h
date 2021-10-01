@@ -22,8 +22,8 @@ protected:
   UINT64	LastClickTime;  //not EFI_TIME
   EFI_SIMPLE_POINTER_STATE    State;
   MOUSE_EVENT MouseEvent;
-  bool Alive;
-  bool night;
+  XBool Alive;
+  XBool night;
 
 public:
   XPointer() : SimplePointerProtocol(NULL), PointerImage(NULL),
@@ -39,13 +39,13 @@ public:
 
 
   void Hide();
-  bool isAlive();
+  XBool isAlive();
   EFI_STATUS MouseBirth();
   void KillMouse();
-  void UpdatePointer(bool daylight);
-  bool MouseInRect(EG_RECT *Place);
+  void UpdatePointer(XBool daylight);
+  XBool MouseInRect(EG_RECT *Place);
 
-  bool isEmpty() const { return PointerImage->isEmpty(); }
+  XBool isEmpty() const { return PointerImage->isEmpty(); }
   void ClearEvent() { MouseEvent = NoEvents; }
   MOUSE_EVENT GetEvent();
   EG_RECT& GetPlace() { return newPlace; }

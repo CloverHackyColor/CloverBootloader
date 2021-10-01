@@ -105,8 +105,8 @@ XIcon::~XIcon()
   // memory leak : we can't free (yet?) ImageSVG and ImageSVGnight because operator might have copied it
 }
 
-XIcon::XIcon(INTN Index, bool TakeEmbedded) : Id(Index), Name(), Image(), ImageNight(), Native(false),
-  ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(0)
+XIcon::XIcon(INTN Index, XBool TakeEmbedded) : Id(Index), Name(), Image(), ImageNight(), Native(false),
+  ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(false)
 {
 //  Id = Index;
 //  Name.setEmpty();
@@ -248,7 +248,7 @@ EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
   return Status;
 }
 
-XImage* XIcon::GetBest(bool night, bool *free)
+XImage* XIcon::GetBest(XBool night, XBool *free)
 {
 #if 1
   if (ImageSVG) {

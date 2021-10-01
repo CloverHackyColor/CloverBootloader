@@ -113,9 +113,9 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
     if (gMobile) {
       switch (gCPUStructure.Model) {
         case CPU_MODEL_IVY_BRIDGE:
-          if (AsciiStrStr(gCPUStructure.BrandString, "U")) {
+          if ( gCPUStructure.BrandString.contains("U") ) {
             Aplf = 0;
-          } else if (AsciiStrStr(gCPUStructure.BrandString, "M")) {
+          } else if ( gCPUStructure.BrandString.contains("M") ) {
             Aplf = 4;
           }
           break;
@@ -137,7 +137,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
       }
     }
   } else {
-    gSettings.ACPI.SSDT.Generate.GenerateAPLF = FALSE;
+    gSettings.ACPI.SSDT.Generate.GenerateAPLF = false;
   }
 
   if (Number > 0) {
@@ -503,11 +503,11 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
 SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINTN Number)
 {
-  BOOLEAN c2_enabled = GlobalConfig.EnableC2;
-  BOOLEAN c3_enabled;
-  BOOLEAN c4_enabled = GlobalConfig.EnableC4;
-//  BOOLEAN c6_enabled = GlobalConfig.EnableC6;
-  BOOLEAN cst_using_systemio = gSettings.ACPI.SSDT.EnableISS;
+  XBool c2_enabled = GlobalConfig.EnableC2;
+  XBool c3_enabled;
+  XBool c4_enabled = GlobalConfig.EnableC4;
+//  XBool c6_enabled = GlobalConfig.EnableC6;
+  XBool cst_using_systemio = gSettings.ACPI.SSDT.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
   UINT8   cstates_count;
   UINT32  acpi_cpu_p_blk;

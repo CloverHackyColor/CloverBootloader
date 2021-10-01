@@ -18,7 +18,7 @@ protected:
   {
       using super = XmlUInt32;
     public:
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         if ( isDefined()  &&  (value() <= 100 || value() >= 20000) ) {
           return xmlLiteParser->addError(generateErrors, S8Printf("FrequencyMHz must be >200 and <20000 tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
@@ -30,7 +30,7 @@ protected:
   {
       using super = XmlUInt16;
     public:
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         return xmlLiteParser->addWarning(generateErrors, S8Printf("Latency is replaced by ACPI/SSDT/C3Latency, value ignored. tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
       }
@@ -75,23 +75,23 @@ public:
   
   CPU_Class() {}
   
-  uint16_t dgetQPI() const { return QPI.isDefined() ? QPI.value() : false; };
-  uint32_t dgetCpuFreqMHz() const { return FrequencyMHz.isDefined() ? FrequencyMHz.value() : false; };
+  uint16_t dgetQPI() const { return QPI.isDefined() ? QPI.value() : 0; };
+  uint32_t dgetCpuFreqMHz() const { return FrequencyMHz.isDefined() ? FrequencyMHz.value() : 0; };
   uint16_t dgetCpuType() const { return Type.isDefined() ? Type.value() : GetAdvancedCpuType(); };
-  bool dgetQEMU() const { return QEMU.isDefined() ? QEMU.value() : false; };
-  bool dgetUseARTFreq() const { return UseARTFrequency.isDefined() ? UseARTFrequency.value() : false; };
-  uint32_t dgetBusSpeed() const { return BusSpeedkHz.isDefined() ? BusSpeedkHz.value() : false; };
+  XBool dgetQEMU() const { return QEMU.isDefined() ? QEMU.value() : XBool(false); };
+  XBool dgetUseARTFreq() const { return UseARTFrequency.isDefined() ? UseARTFrequency.value() : XBool(false); };
+  uint32_t dgetBusSpeed() const { return BusSpeedkHz.isDefined() ? BusSpeedkHz.value() : 0; };
   undefinable_bool dget_EnableC6() const { return C6.isDefined() ? undefinable_bool(C6.value()) : undefinable_bool(); };
   undefinable_bool dget_EnableC4() const { return C4.isDefined() ? undefinable_bool(C4.value()) : undefinable_bool(); };
   undefinable_bool dget_EnableC2() const { return C2.isDefined() ? undefinable_bool(C2.value()) : undefinable_bool(); };
   undefinable_uint16 dget_C3Latency() const { return Latency.isDefined() ? undefinable_uint16(Latency.value()) : undefinable_uint16(); };
   uint8_t dgetSavingMode() const { return SavingMode.isDefined() ? SavingMode.value() : 0xFF; };
-  bool dgetHWPEnable() const { return HWPEnable.isDefined() ? HWPEnable.value() : false; };
+  XBool dgetHWPEnable() const { return HWPEnable.isDefined() ? HWPEnable.value() : XBool(false); };
   undefinable_uint32 dgetHWPValue() const { return HWPValue.isDefined() ? undefinable_uint32(HWPValue.value()) : undefinable_uint32(); };
   uint8_t dgetTDP() const { return TDP.isDefined() ? TDP.value() : false; };
-  bool dgetTurboDisabled() const { return TurboDisable.isDefined() ? TurboDisable.value() : false; };
+  XBool dgetTurboDisabled() const { return TurboDisable.isDefined() ? TurboDisable.value() : XBool(false); };
 
-  bool dgetUserChange() const { return BusSpeedkHz.isDefined(); };
+  XBool dgetUserChange() const { return BusSpeedkHz.isDefined(); };
 
   undefinable_bool getUseARTFreq() const { return UseARTFrequency.isDefined() ? undefinable_bool(UseARTFrequency.value()) : undefinable_bool(); };
 

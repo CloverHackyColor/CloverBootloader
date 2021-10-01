@@ -48,7 +48,7 @@ EFI_STATUS
 PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion);
 
 EFI_STATUS
-PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT);
+PatchACPI_OtherOS(CONST CHAR16* OsSubdir, XBool DropSSDT);
 
 UINT8
 Checksum8 (
@@ -61,7 +61,7 @@ void FixChecksum(EFI_ACPI_DESCRIPTION_HEADER* Table);
 
 void
 SaveOemDsdt (
-  BOOLEAN FullPatch
+  XBool FullPatch
   );
 
 void

@@ -34,7 +34,7 @@ protected:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
 public:
-  decltype(Inject)::ValueType dgetUSBInjection() const { return Inject.isDefined() ? Inject.value() : true; };
+  decltype(Inject)::ValueType dgetUSBInjection() const { return Inject.isDefined() ? Inject.value() : XBool(true); };
   const decltype(AddClockID)::ValueType& dgetInjectClockID() const { return AddClockID.isDefined() ? AddClockID.value() : AddClockID.nullValue; };
   const decltype(FixOwnership)::ValueType& dgetUSBFixOwnership() const { return FixOwnership.isDefined() ? FixOwnership.value() : FixOwnership.nullValue; };
   const decltype(HighCurrent)::ValueType& dgetHighCurrent() const { return HighCurrent.isDefined() ? HighCurrent.value() : HighCurrent.nullValue; };

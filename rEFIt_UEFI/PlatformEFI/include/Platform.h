@@ -15,6 +15,7 @@ Headers collection for procedures
 
 #ifdef __cplusplus
 #include <Library/printf_lite.h>
+#include "../cpp_foundation/XBool.h"
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"

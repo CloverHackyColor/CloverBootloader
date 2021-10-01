@@ -175,7 +175,7 @@ DisconnectVga ( void )
       Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
       if (!EFI_ERROR(Status))
       {
-        if(IS_PCI_VGA(&Pci) == TRUE)
+        if(IS_PCI_VGA(&Pci) == true)
         {
           // disconnect VGA
           DBG("Disonnecting VGA\n");
@@ -199,11 +199,11 @@ DisconnectVga ( void )
   @param  BiosInt Processor interrupt vector to invoke
   @param  Reg     Register contexted passed into (and returned) from thunk to 16-bit mode
   
-  @retval TRUE   Thunk completed, and there were no BIOS errors in the target code.
+  @retval true   Thunk completed, and there were no BIOS errors in the target code.
                  See Regs for status.
-  @retval FALSE  There was a BIOS erro in the target code.  
+  @retval false  There was a BIOS erro in the target code.  
 **/
-BOOLEAN
+XBool
 EFIAPI
 LegacyBiosInt86 (
 //  IN  BIOS_VIDEO_DEV                 *BiosDev,
@@ -214,8 +214,8 @@ LegacyBiosInt86 (
   UINTN                 Status;
   UINTN                 Eflags;
   IA32_REGISTER_SET     ThunkRegSet;
-  BOOLEAN               Ret;
-  UINT16                *Stack16;
+  XBool                 Ret;
+  UINT16               *Stack16;
   
   ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
   ThunkRegSet.E.EFLAGS.Bits.Reserved_0 = 1;
@@ -252,7 +252,7 @@ LegacyBiosInt86 (
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
 //  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
-    return FALSE;
+    return false;
   }
   
   Stack16 = (UINT16 *)((UINT8 *) mThunkContext->RealModeBuffer + mThunkContext->RealModeBufferSize - sizeof (UINT16));
@@ -271,7 +271,7 @@ LegacyBiosInt86 (
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
 //  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
-    return FALSE;
+    return false;
   }
 
   //
@@ -295,12 +295,12 @@ LegacyBiosInt86 (
 
   CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
-  Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
+  Ret = Regs->E.EFLAGS.Bits.CF == 1;
 
   return Ret;
 }
 
-BOOLEAN
+XBool
 EFIAPI
 LegacyBiosFarCall86 (
 //  IN  EFI_LEGACY_BIOS_THUNK_PROTOCOL  *This,
@@ -311,17 +311,17 @@ LegacyBiosFarCall86 (
 //  IN  UINTN                           StackSize
   )
 {
-  UINTN                 Status;
-  UINT32                Eflags;
-  IA32_REGISTER_SET     ThunkRegSet;
-  BOOLEAN               Ret;
-  UINT16                *Stack16;
+  UINTN                    Status;
+  UINT32                   Eflags;
+  IA32_REGISTER_SET        ThunkRegSet;
+  XBool                    Ret;
+  UINT16                  *Stack16;
 //	UINT16				BiosInt = 0x100;
-  EFI_TPL                 OriginalTpl;
+  EFI_TPL                  OriginalTpl;
   EFI_TIMER_ARCH_PROTOCOL *Timer;
-  UINT64                  TimerPeriod = 0;
+  UINT64                   TimerPeriod = 0;
 #if ENABLE_PS2MOUSE_LEGACYBOOT == 1
-  UINT16                  LegacyMaskOld, LegacyMaskNew;
+  UINT16                   LegacyMaskOld, LegacyMaskNew;
 #endif
 
   // Disconnect EFI VGA driver (and switch to Text VGA Mode)
@@ -449,7 +449,7 @@ LegacyBiosFarCall86 (
 
 	CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 	
-	Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
+	Ret = Regs->E.EFLAGS.Bits.CF == 1;
 
   // Connect VGA EFI Driver
   BdsLibConnectAllDriversToAllControllers();

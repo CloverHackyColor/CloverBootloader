@@ -88,7 +88,7 @@ public:
       };
 
       virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         if ( Inject.isDefined() ) {
           if ( Inject.value() ) {
@@ -147,9 +147,9 @@ public:
       const decltype(ATI)::ValueType& dgetATI() const { return ATI.isDefined() ? ATI.value() : ATI.nullValue; };
       const decltype(NVidia)::ValueType& dgetNVidia() const { return NVidia.isDefined() ? NVidia.value() : NVidia.nullValue; };
       friend class XmlInjectUnion;
-      bool isInjectIntelDefined() const { return Intel.isDefined(); };
-      bool isInjectATIDefined() const { return ATI.isDefined(); };
-      bool isInjectNVidiaDefined() const { return NVidia.isDefined(); };
+      XBool isInjectIntelDefined() const { return Intel.isDefined(); };
+      XBool isInjectATIDefined() const { return ATI.isDefined(); };
+      XBool isInjectNVidiaDefined() const { return NVidia.isDefined(); };
     };
 
     class XmlInjectUnion: public XmlUnion
@@ -160,7 +160,7 @@ public:
         XmlUnionField m_fields[2] = { xmlBool, xmlDict};
         virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
       public:
-        bool dgetGraphicsInjector() const {
+        XBool dgetGraphicsInjector() const {
           if ( xmlBool.isDefined() ) return xmlBool.value();
           return false;
         }
@@ -168,9 +168,9 @@ public:
       const decltype(Graphics_Inject_Class::ATI)::ValueType& dgetInjectATI() const { return xmlBool.isDefined() ? xmlBool.value() : xmlDict.isDefined() ? xmlDict.dgetATI() : decltype(Graphics_Inject_Class::ATI)::nullValue; };
       const decltype(Graphics_Inject_Class::NVidia)::ValueType& dgetInjectNVidia() const { return xmlBool.isDefined() ? xmlBool.value() : xmlDict.isDefined() ? xmlDict.dgetNVidia() : decltype(Graphics_Inject_Class::NVidia)::nullValue; };
 
-      bool isInjectIntelDefined() const { return xmlBool.isDefined() || xmlDict.isInjectIntelDefined(); };
-      bool isInjectATIDefined() const { return xmlBool.isDefined() || xmlDict.isInjectATIDefined(); };
-      bool isInjectNVidiaDefined() const { return xmlBool.isDefined() || xmlDict.isInjectNVidiaDefined(); };
+      XBool isInjectIntelDefined() const { return xmlBool.isDefined() || xmlDict.isInjectIntelDefined(); };
+      XBool isInjectATIDefined() const { return xmlBool.isDefined() || xmlDict.isInjectATIDefined(); };
+      XBool isInjectNVidiaDefined() const { return xmlBool.isDefined() || xmlDict.isInjectNVidiaDefined(); };
     };
     
 protected:

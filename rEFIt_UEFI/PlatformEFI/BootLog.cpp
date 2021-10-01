@@ -271,7 +271,7 @@ void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 
    // Print message to log buffer
    VA_START(Marker, FormatString);
-   MemLogfVA(TRUE, DebugMode, FormatString, Marker);
+   MemLogfVA(true, DebugMode, FormatString, Marker);
    VA_END(Marker);
 }
 
@@ -281,7 +281,7 @@ void InitBooterLog(void)
 }
 
 
-EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
+EFI_STATUS SetupBooterLog(XBool AllowGrownSize)
 {
   EFI_STATUS              Status = EFI_SUCCESS;
   CHAR8                   *MemLogBuffer;
@@ -353,6 +353,6 @@ void EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...)
 
    // Print message to log buffer
    VA_START(Marker, FormatString);
-   MemLogVA(TRUE, 1, FormatString, Marker);
+   MemLogVA(true, 1, FormatString, Marker);
    VA_END(Marker);
 }

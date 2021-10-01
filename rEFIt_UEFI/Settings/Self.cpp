@@ -5,8 +5,8 @@
  *      Author: jief
  */
 
-#include "../Settings/Self.h"
 #include <Platform.h>
+#include "../Settings/Self.h"
 #include "../refit/lib.h"
 
 #ifndef DEBUG_ALL
@@ -21,7 +21,7 @@
 #define DBG(...) DebugLog(DEBUG_SELF, __VA_ARGS__)
 #endif
 
-EFI_STATUS Self::__initialize(bool debugMsg, EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** SelfLoadedImagePtr, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** SelfSimpleVolumePtr, EFI_FILE** SelfVolumeRootDirPtr, XStringW* CloverDirFullPathPtr, XStringW* efiFileNamePtr, EFI_FILE** CloverDirPtr)
+EFI_STATUS Self::__initialize(XBool debugMsg, EFI_HANDLE SelfImageHandle, EFI_LOADED_IMAGE** SelfLoadedImagePtr, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** SelfSimpleVolumePtr, EFI_FILE** SelfVolumeRootDirPtr, XStringW* CloverDirFullPathPtr, XStringW* efiFileNamePtr, EFI_FILE** CloverDirPtr)
 {
   EFI_STATUS Status;
 
@@ -131,7 +131,7 @@ Self self;
 
 constexpr const LStringW THEMES_DIRNAME = L"Themes"_XSW;
 
-EFI_STATUS Self::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
+EFI_STATUS Self::_openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir)
 {
   EFI_STATUS Status;
   Status = m_CloverDir->Open(m_CloverDir, efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
@@ -206,7 +206,7 @@ EFI_STATUS Self::_initialize()
 //
 //  // Do this before the next check.
 //  if ( !m_CloverDirFullPath.startWith('\\') ) {
-//    //CHAR16* f = ConvertDevicePathToText(m_SelfLoadedImage->FilePath, TRUE, TRUE);
+//    //CHAR16* f = ConvertDevicePathToText(m_SelfLoadedImage->FilePath, true, true);
 //    //panic("Bad format for m_CloverDirFullPath(%ls). It must start with a '\\'.\nConvertDevicePathToText=%ls", m_CloverDirFullPath.wc_str(), f);
 //    //
 //    // Some firmware seems to not put a '\' at the begining. Do not panic anymore, just add it.

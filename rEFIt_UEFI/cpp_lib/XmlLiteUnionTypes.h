@@ -51,9 +51,9 @@ public:
 
   virtual void reset() override;
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 };
 
 
@@ -67,7 +67,7 @@ class XmlBoolOrString : public XmlUnion
 public:
   XmlBool xmlBool = XmlBool();
   XmlString8 xmlString8 = XmlString8();
-  virtual const char* getDescription() override { return "bool or string"; };
+  virtual const char* getDescription() override { return "XBool or string"; };
   XmlUnionField m_fields[2] = { xmlBool, xmlString8 };
   virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 };
@@ -79,7 +79,7 @@ class XmlInt8OrBool : public XmlUnion
 public:
   XmlInt8 xmlInt8 = XmlInt8();
   XmlBool xmlBool = XmlBool();
-  virtual const char* getDescription() override { return "int8 or bool"; };
+  virtual const char* getDescription() override { return "int8 or XBool"; };
   XmlUnionField m_fields[2] = { xmlInt8, xmlBool };
   virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 };
@@ -90,7 +90,7 @@ class XmlInt64OrBool : public XmlUnion
 public:
   XmlInt64 xmlInt64 = XmlInt64();
   XmlBool xmlBool = XmlBool();
-  virtual const char* getDescription() override { return "int64 or bool"; };
+  virtual const char* getDescription() override { return "int64 or XBool"; };
   XmlUnionField m_fields[2] = { xmlInt64, xmlBool };
   virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 };
@@ -104,7 +104,7 @@ public:
   XmlString8 xmlString8 = XmlString8();
   XmlData xmlData = XmlData();
   
-  virtual const char* getDescription() override { return "bool|string|data"; };
+  virtual const char* getDescription() override { return "XBool|string|data"; };
   XmlUnionField m_fields[3] = { xmlBool, xmlString8, xmlData };
   virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 };

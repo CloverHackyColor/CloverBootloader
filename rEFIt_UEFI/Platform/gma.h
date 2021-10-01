@@ -7,8 +7,8 @@
 //#include "device_inject.h"
 //#include "../gui/menu_items/menu_items.h"
 
-//BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev); // do not use LOADER_ENTRY to avoid dependency
-BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev);
+//XBool setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev); // do not use LOADER_ENTRY to avoid dependency
+XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev);
 
 struct gma_gpu_t {
 	UINT32 device;

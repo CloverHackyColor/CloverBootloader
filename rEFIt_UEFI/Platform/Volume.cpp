@@ -25,9 +25,9 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   CONST CHAR16*    SystemPlistP;
   CONST CHAR16*    SystemPlistS;
 
-  BOOLEAN    HasRock;
-  BOOLEAN    HasPaper;
-  BOOLEAN    HasScissors;
+  XBool HasRock;
+  XBool HasPaper;
+  XBool HasScissors;
 
   Status = EFI_NOT_FOUND;
   if (Volume == NULL) {

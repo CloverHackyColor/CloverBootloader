@@ -75,7 +75,7 @@ void TagDict::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagDict::operator == (const TagStruct& other) const
+XBool TagDict::operator == (const TagStruct& other) const
 {
   if ( !other.isDict() ) return false;
   if ( _dictContent.size() != other.getDict()->_dictContent.size() ) {
@@ -89,7 +89,7 @@ bool TagDict::operator == (const TagStruct& other) const
   return true;
 }
 
-bool TagDict::debugIsEqual(const TagStruct& other, const XString8& label) const
+XBool TagDict::debugIsEqual(const TagStruct& other, const XString8& label) const
 {
   if ( !other.isDict()) {
     MsgLog("counterpart of '%s' is not a dict\n", label.c_str());

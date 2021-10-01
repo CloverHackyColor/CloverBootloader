@@ -21,7 +21,7 @@ class Devices_Audio_Class : public XmlDict
       XmlString8AllowEmpty xmlString8 = XmlString8AllowEmpty(); // TODO: change XmlString8AllowEmpty for XmlString8AllowEmpty
       XmlUnionField m_fields[2] = { xmlInt32, xmlString8};
       virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
         if ( !xmlString8.isDefined() ) return true;
 //        if ( xmlString8.value().isEqualIC("Detect") ) return true;
@@ -45,14 +45,14 @@ class Devices_Audio_Class : public XmlDict
     };
   public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-//  virtual bool validate(XmlLiteParser* xmlLiteParser, const char* name, XmlAbstractType* xmlTyp, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors) override;
+//  virtual XBool validate(XmlLiteParser* xmlLiteParser, const char* name, XmlAbstractType* xmlTyp, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors) override;
 
   const decltype(ResetHDA)::ValueType& dgetResetHDA() const { return ResetHDA.isDefined() ? ResetHDA.value() : ResetHDA.nullValue; };
   const decltype(AFGLowPowerState)::ValueType& dgetAFGLowPowerState() const { return AFGLowPowerState.isDefined() ? AFGLowPowerState.value() : AFGLowPowerState.nullValue; };
 
-  bool dgetHDAInjection() const {
+  XBool dgetHDAInjection() const {
      if ( !Inject.isDefined() ) return false;
-     if ( Inject.xmlInt32.isDefined() ) return Inject.xmlInt32.value();
+     if ( Inject.xmlInt32.isDefined() ) return Inject.xmlInt32.value() != 0;
      if ( Inject.xmlString8.isDefined() ) {
        if ( Inject.xmlString8.value().startWithOrEqualToIC("n") ) return false;
        if ( Inject.xmlString8.value().startWithOrEqualToIC("0x") ) return true;

@@ -28,7 +28,7 @@ public:
 
   EFI_GUIDClass(const EFI_GUID& other) { Data1 = other.Data1; Data2 = other.Data2; Data3 = other.Data3; memcpy(Data4, other.Data4, sizeof(Data4)); }
   
-  bool operator == (const EFI_GUID& other) const {
+  XBool operator == (const EFI_GUID& other) const {
     if ( !(Data1 == other.Data1) ) return false;
     if ( !(Data2 == other.Data2) ) return false;
     if ( !(Data3 == other.Data3) ) return false;
@@ -40,20 +40,20 @@ public:
 extern const XString8 nullGuidAsString;
 extern EFI_GUID nullGuid;
 
-/** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+/** Returns true is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, typename IntegralType, enable_if( is_char(T) && is_integral(IntegralType) ) >
-BOOLEAN IsValidGuidString(const T* Str, IntegralType n)
+XBool IsValidGuidString(const T* Str, IntegralType n)
 {
   UINTN   Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
 
   if ( n != 36 ) {
-    return FALSE;
+    return false;
   }
 
   for (Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < 36; Index4IsValidGuidAsciiString++) {
     if (Index4IsValidGuidAsciiString == 8 || Index4IsValidGuidAsciiString == 13 || Index4IsValidGuidAsciiString == 18 || Index4IsValidGuidAsciiString == 23) {
       if (Str[Index4IsValidGuidAsciiString] != '-') {
-        return FALSE;
+        return false;
       }
     } else {
       if (!(
@@ -63,36 +63,36 @@ BOOLEAN IsValidGuidString(const T* Str, IntegralType n)
             )
           )
       {
-        return FALSE;
+        return false;
       }
     }
   }
 
-  return TRUE;
+  return true;
 }
 
-/** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+/** Returns true is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, enable_if( is___String(T) )>
-BOOLEAN IsValidGuidString(const T& Str)
+XBool IsValidGuidString(const T& Str)
 {
   if ( Str.isEmpty() ) return false;
   return IsValidGuidString(Str.data(), Str.length());
 }
 
-///** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+///** Returns true is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 //template <typename T, enable_if( is___String(T) )>
-//BOOLEAN IsValidGuidAsciiString(const T& Str)
+//XBool IsValidGuidAsciiString(const T& Str)
 //{
 //  UINTN   Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
 //
 //  if ( Str.length() != 36 ) {
-//    return FALSE;
+//    return false;
 //  }
 //
 //  for (Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < 36; Index4IsValidGuidAsciiString++) {
 //    if (Index4IsValidGuidAsciiString == 8 || Index4IsValidGuidAsciiString == 13 || Index4IsValidGuidAsciiString == 18 || Index4IsValidGuidAsciiString == 23) {
 //      if (Str[Index4IsValidGuidAsciiString] != '-') {
-//        return FALSE;
+//        return false;
 //      }
 //    } else {
 //      if (!(
@@ -102,12 +102,12 @@ BOOLEAN IsValidGuidString(const T& Str)
 //            )
 //          )
 //      {
-//        return FALSE;
+//        return false;
 //      }
 //    }
 //  }
 //
-//  return TRUE;
+//  return true;
 //}
 
 

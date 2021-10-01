@@ -67,7 +67,7 @@ public:
             class SlotClass : public XmlUInt64
             {
               using super = XmlUInt64;
-              virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+              virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                 if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
                 if ( !isDefined() ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot must be defined as a number between 0 and 15 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
                 if ( value() < 0 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot be negative. It must a number between 0 and 15 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -84,7 +84,7 @@ public:
             XmlString8AllowEmpty Serial = XmlString8AllowEmpty();
             class TypeClass: public XmlString8AllowEmpty {
                 using super = XmlString8AllowEmpty;
-                virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+                virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                   if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
                   if ( isDefined() ) {
                     if ( xstring8.isEqualIC("DDR") ) return true;
@@ -109,7 +109,7 @@ public:
 
             virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
             
-            virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+            virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
               if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
               if ( !Slot.isDefined() ) return false;
               return true;
@@ -136,7 +136,7 @@ public:
               // Cannot happen if validate has been done properly.
               panic("invalid value");
             }
-            bool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
+            XBool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
 
           };
           
@@ -168,9 +168,9 @@ public:
 
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
-        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          bool b = true;
+          XBool b = true;
           return b;
         }
 
@@ -204,7 +204,7 @@ public:
         
         class DeviceClass: public XmlString8AllowEmpty {
           using super = XmlString8AllowEmpty;
-          virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
             if ( isDefined() ) {
               if ( xstring8.isEqualIC("ATI") ) return true;
@@ -233,9 +233,9 @@ public:
 
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
-        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          bool b = true;
+          XBool b = true;
           return b;
         }
         const decltype(Device)::ValueType& dgetDevice() const { return Device.isDefined() ? Device.value() : Device.nullValue; };
@@ -307,7 +307,7 @@ public:
       {
           using super = XmlString8AllowEmpty;
         protected:
-          virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
             if ( !isDefined() ) return true;
             if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
@@ -320,7 +320,7 @@ public:
           using super = XmlString8Trimed;
         public:
           ProductNameClass() : super(true) {};
-          virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
             if ( !isDefined() ) {
               xmlLiteParser->addError(generateErrors, S8Printf("You must define ProductName in SMBIOS dict, line %d", keyPos.getLine()));
@@ -410,7 +410,7 @@ public:
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
     
     
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( !ProductName.isDefined() ) {
         return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
@@ -486,7 +486,7 @@ public:
       }
       return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMachineType
     }
-    bool hasModel() const { return ProductName.isDefined(); }
+    XBool hasModel() const { return ProductName.isDefined(); }
 
     MACHINE_TYPES dgetModel() const
     {
@@ -619,8 +619,8 @@ public:
 
     decltype(SmbiosVersion)::ValueType dgetSmbiosVersion() const { return SmbiosVersion.isDefined() ? SmbiosVersion.value() : 0x204; };
     decltype(MemoryRank)::ValueType dgetAttribute() const { return MemoryRank.isDefined() ? MemoryRank.value() : -1; };
-    decltype(Trust)::ValueType dgetTrustSMBIOS() const { return Trust.isDefined() ? Trust.value() : true; };
-    bool dgetInjectMemoryTables() const { return Memory.Modules.isDefined() && Memory.Modules.size() > 0 ? Memory.dgetSlotCounts() > 0 : false; };
+    decltype(Trust)::ValueType dgetTrustSMBIOS() const { return Trust.isDefined() ? Trust.value() : XBool(true); };
+    XBool dgetInjectMemoryTables() const { return Memory.Modules.isDefined() && Memory.Modules.size() > 0 ? Memory.dgetSlotCounts() > 0 : false; };
     decltype(PlatformFeature)::ValueType dgetgPlatformFeature() const {
       if ( PlatformFeature.isDefined() ) return PlatformFeature.value();
       return GetPlatformFeature(dgetModel());

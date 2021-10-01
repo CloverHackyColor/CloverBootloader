@@ -22,12 +22,12 @@ public:
   const TagFloat& operator = (const TagFloat&); // Can be defined if needed
   virtual ~TagFloat() { }
   
-  virtual bool operator == (const TagStruct& other) const;
+  virtual XBool operator == (const TagStruct& other) const;
 
   virtual TagFloat* getFloat() { return this; }
   virtual const TagFloat* getFloat() const { return this; }
 
-  virtual bool isFloat() const { return true; }
+  virtual XBool isFloat() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Float"_XS8; }
   static TagFloat* getEmptyTag();
   virtual void FreeTag();

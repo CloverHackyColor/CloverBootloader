@@ -23,7 +23,7 @@ bootMBR (
 
 EFI_STATUS
 bootPBR (
-  IN REFIT_VOLUME *volume, BOOLEAN SataReset
+  IN REFIT_VOLUME *volume, XBool SataReset
   );
 
 EFI_STATUS

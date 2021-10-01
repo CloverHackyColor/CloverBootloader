@@ -18,6 +18,13 @@
 typedef VOID (EFIAPI *MEM_LOG_CALLBACK) (IN INTN DebugMode, IN CHAR8 *LastMessage);
 
 
+EFI_STATUS
+EFIAPI
+MemLogInit (
+  VOID
+  );
+
+
 /**
   Prints a log message to memory buffer.
  

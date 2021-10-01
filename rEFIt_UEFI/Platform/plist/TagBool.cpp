@@ -71,7 +71,7 @@ void TagBool::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagBool::operator == (const TagStruct& other) const
+XBool TagBool::operator == (const TagStruct& other) const
 {
   if ( !other.isBool() ) return false;
   return value == other.getBool()->value;

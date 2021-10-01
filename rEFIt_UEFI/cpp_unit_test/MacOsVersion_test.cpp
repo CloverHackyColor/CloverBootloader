@@ -3,7 +3,7 @@
 #include "../cpp_foundation/XStringArray.h"
 
 //
-//static BOOLEAN IsOSValid_OLDOLD(const XString8& MatchOS, const XString8& CurrOS)
+//static XBool IsOSValid_OLDOLD(const XString8& MatchOS, const XString8& CurrOS)
 //{
 //  /* example for valid matches are:
 //   10.7, only 10.7 (10.7.1 will be skipped)
@@ -11,10 +11,10 @@
 //   10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
 //   */
 //
-//  BOOLEAN ret = FALSE;
+//  XBool ret = false;
 //
 //  if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
-//    return TRUE; //undefined matched corresponds to old behavior
+//    return true; //undefined matched corresponds to old behavior
 //  }
 //
 ////  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
@@ -24,7 +24,7 @@
 //  if (macthOsToc.size() == 2) {
 //    if (currOStoc.size() == 2) {
 //      if ( macthOsToc[0] == currOStoc[0] && macthOsToc[1] == currOStoc[1]) {
-//        ret = TRUE;
+//        ret = true;
 //      }
 //    }
 //  } else if (macthOsToc.size() == 3) {
@@ -32,20 +32,20 @@
 //      if ( macthOsToc[0] == currOStoc[0]
 //          && macthOsToc[1] == currOStoc[1]
 //          && macthOsToc[2] == currOStoc[2]) {
-//        ret = TRUE;
+//        ret = true;
 //      } else if ( macthOsToc[0] == currOStoc[0]
 //                 && macthOsToc[1] == currOStoc[1]
 //                 && macthOsToc[2].isEqualIC("x") ) {
-//        ret = TRUE;
+//        ret = true;
 //      }
 //    } else if (currOStoc.size() == 2) {
 //      if ( macthOsToc[0] == currOStoc[0]
 //          && macthOsToc[1] ==  currOStoc[1] ) {
-//        ret = TRUE;
+//        ret = true;
 //      } else if ( macthOsToc[0] == currOStoc[0]
 //                 && macthOsToc[1] ==  currOStoc[1]
 //                 && macthOsToc[2].isEqualIC("x") == 0 ) {
-//        ret = TRUE;
+//        ret = true;
 //      }
 //    }
 //  }
@@ -62,10 +62,10 @@ static bool IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
    10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
    */
 
-  bool ret = FALSE;
+  bool ret = false;
 
   if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
-    return TRUE; //undefined matched corresponds to old behavior
+    return true; //undefined matched corresponds to old behavior
   }
 
 //  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
@@ -82,7 +82,7 @@ static bool IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
   if (osToc.size() == 2) {
     if (currOStoc.size() == 2) {
       if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
-        ret = TRUE;
+        ret = true;
       }
     }
   } else if (osToc.size() == 3) {
@@ -90,20 +90,20 @@ static bool IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
       if ( osToc[0] == currOStoc[0]
           && osToc[1] == currOStoc[1]
           && osToc[2] == currOStoc[2]) {
-        ret = TRUE;
+        ret = true;
       } else if ( osToc[0] == currOStoc[0]
                  && osToc[1] == currOStoc[1]
                  && osToc[2].isEqualIC("x") ) {
-        ret = TRUE;
+        ret = true;
       }
     } else if (currOStoc.size() == 2) {
       if ( osToc[0] == currOStoc[0]
           && osToc[1] ==  currOStoc[1] ) {
-        ret = TRUE;
+        ret = true;
       } else if ( osToc[0] == currOStoc[0]
                  && osToc[1] ==  currOStoc[1]
                  && osToc[2].isEqualIC("x") == 0 ) {
-        ret = TRUE;
+        ret = true;
       }
     }
   }

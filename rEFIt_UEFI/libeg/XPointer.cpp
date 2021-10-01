@@ -33,7 +33,7 @@ void XPointer::Hide()
   }
 }
 
-bool XPointer::isAlive()
+XBool XPointer::isAlive()
 {
   return Alive;
 }
@@ -68,7 +68,7 @@ EFI_STATUS XPointer::MouseBirth()
     }
     MouseEvent = NoEvents;
     SimplePointerProtocol = NULL;
-    gSettings.GUI.Mouse.PointerEnabled = FALSE;
+    gSettings.GUI.Mouse.PointerEnabled = false;
     return Status;
   }
 
@@ -124,7 +124,7 @@ void XPointer::KillMouse()
   SimplePointerProtocol = NULL;
 }
 
-void XPointer::UpdatePointer(bool isDaylight) // cannot be called daylight because of a global var on macOS
+void XPointer::UpdatePointer(XBool isDaylight) // cannot be called daylight because of a global var on macOS
 {
   UINT64                    Now;
   EFI_STATUS                Status;
@@ -193,7 +193,7 @@ MOUSE_EVENT XPointer::GetEvent()
   return MouseEvent;
 }
 
-bool XPointer::MouseInRect(EG_RECT *Place)
+XBool XPointer::MouseInRect(EG_RECT *Place)
 {
   return  ((newPlace.XPos >= Place->XPos) &&
     (newPlace.XPos < (Place->XPos + (INTN)Place->Width)) &&

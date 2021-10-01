@@ -33,7 +33,7 @@ class PropertiesUnion: public XmlUnion
 
         uint8_t dgetBValue() const {
           if ( !parent.dgetEnabled() ) return false;
-          return xmlKey().isDefined() ? xmlKey().isEnabled() : false;
+          return xmlKey().isDefined() ? xmlKey().isEnabled() : XBool(false);
         }
         const keyType::ValueType& dgetKey() const { return xmlKey().isDefined() ? xmlKey().value() : xmlKey().nullValue; };
         XBuffer<uint8_t> dgetValue() const { return isDefined() ? value() : XBuffer<uint8_t>::NullXBuffer; };
@@ -55,7 +55,7 @@ class PropertiesUnion: public XmlUnion
     public:
       const keyType::ValueType& dgetLabel() const { return super::xmlKey().isDefined() ? xmlKey().value() : xmlKey().nullValue; };
       const keyType::ValueType& dgetDevicePathAsString() const { return xmlKey().isDefined() ? xmlKey().value() : xmlKey().nullValue; };
-      bool dgetEnabled() const { return xmlKey().isDefined() ? xmlKey().isEnabled() : false; };
+      XBool dgetEnabled() const { return xmlKey().isDefined() ? xmlKey().isEnabled() : XBool(false); };
 
     };
 

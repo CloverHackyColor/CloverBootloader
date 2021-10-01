@@ -5,6 +5,11 @@ Headers collection for procedures
 #ifndef __BOOTLOG__H__
 #define __BOOTLOG__H__
 
+
+#ifdef __cplusplus
+#include "../cpp_foundation/XBool.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,10 +41,12 @@ InitBooterLog (void);
 
 void closeDebugLog(void);
 
+#ifdef __cplusplus
 EFI_STATUS
 SetupBooterLog (
-  BOOLEAN AllowGrownSize
+  XBool AllowGrownSize
   );
+#endif
 
 EFI_STATUS
 SaveBooterLog (

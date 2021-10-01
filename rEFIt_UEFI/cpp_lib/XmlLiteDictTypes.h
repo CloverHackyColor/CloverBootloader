@@ -38,13 +38,13 @@ public:
 
   virtual void getFields(XmlDictField** fields, size_t* nb) { *fields = NULL; *nb = 0; };
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("dict"); }
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("dict"); }
 
-  virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound);
-  virtual XmlAbstractType& parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr);
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound);
+  virtual XmlAbstractType& parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr);
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 };
 
 
@@ -93,7 +93,7 @@ protected:
   XmlKeyType keyTmp = XmlKeyType();
   ValueArrayType m_valueArray = ValueArrayType();
 public:
-  bool ignoreCommented = true;
+  XBool ignoreCommented = true;
   
   _XmlRepeatingDict() : super() {};
   ~_XmlRepeatingDict() {};
@@ -109,18 +109,18 @@ public:
 
   virtual void getFields(XmlDictField** fields, size_t* nb) { panic("BUG : repeating dict don't use getFields()"); };
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("dict"); }
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("dict"); }
 
-//  virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound);
-  virtual XmlValueType* parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors);
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+//  virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound);
+  virtual XmlValueType* parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors);
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 
-//  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override;
+//  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 };
 
 
 template<class XmlKeyType, class XmlValueType, class ValueType>
-XmlValueType* _XmlRepeatingDict<XmlKeyType, XmlValueType, ValueType>::parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XmlValueType* _XmlRepeatingDict<XmlKeyType, XmlValueType, ValueType>::parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   keyTmp.reset();
   if ( keyTmp.parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors) ) {
@@ -150,7 +150,7 @@ XmlValueType* _XmlRepeatingDict<XmlKeyType, XmlValueType, ValueType>::parseKeyAn
 }
 
 template<class XmlKeyType, class XmlValueType, class ValueType>
-bool _XmlRepeatingDict<XmlKeyType, XmlValueType, ValueType>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors)
+XBool _XmlRepeatingDict<XmlKeyType, XmlValueType, ValueType>::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors)
 {
   WARNING_IF_DEFINED;
 
@@ -179,7 +179,7 @@ if ( xmlPath.startWithOrEqualToIC("/Devices/Properties"_XS8) ) {
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif
-//    bool keyFound;
+//    XBool keyFound;
 //    XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
 
     XmlParserPosition keyPos = xmlLiteParser->getPosition();
@@ -199,7 +199,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
         if ( xmlValueType != NULL )
         {
           if ( !xmlValueType->isDefined() ) panic("BUG: parseKeyAndValueFromXmlLite must not return an undefined item");
-          bool validated = xmlValueType->validate(xmlLiteParser, S8Printf("%s/%s", xmlPath.c_str(), keyTmp.value().c_str()), keyPos, generateErrors);
+          XBool validated = xmlValueType->validate(xmlLiteParser, S8Printf("%s/%s", xmlPath.c_str(), keyTmp.value().c_str()), keyPos, generateErrors);
           if ( validated ) {
             xmlValueType->setKey(keyTmp);
             addValue(xmlValueType);
@@ -349,9 +349,9 @@ class XmlRepeatingDict<XmlAddKey<XmkKeyType, XmlValueType>> : public _XmlRepeati
 //    const typename XmlClass::ValueType& value() const { return super::value(); }
 //
 ////    template<class OtherXStringArrayClass>
-////    bool operator ==(const OtherXStringArrayClass &aXStrings) const { return super::operator ==(aXStrings); }
+////    XBool operator ==(const OtherXStringArrayClass &aXStrings) const { return super::operator ==(aXStrings); }
 ////  template<class OtherXStringArrayClass>
-////  bool operator !=(const OtherXStringArrayClass &aXStrings) const { return super::operator !=(aXStrings); }
+////  XBool operator !=(const OtherXStringArrayClass &aXStrings) const { return super::operator !=(aXStrings); }
 //
 //};
 //

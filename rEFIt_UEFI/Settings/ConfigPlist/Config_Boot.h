@@ -31,9 +31,9 @@ class Boot_Class : public XmlDict
     XmlUnionField m_fields[3] = { xmlBool, xmlInt8, xmlString8 };
     virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
-      if ( xmlBool.isDefined() ) return true; // ok, whatever bool value is
+      if ( xmlBool.isDefined() ) return true; // ok, whatever XBool value is
       if ( xmlInt8.isDefined() ) {
         if ( xmlInt8.value() < -1 || xmlInt8.value() > 2 ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("XMPDetection can -1, 0, 1 or 2 for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
@@ -92,7 +92,7 @@ public:
     XmlData xmlData = XmlData();
     XmlUnionField m_fields[3] = { xmlBool, xmlString8, xmlData};
     virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       RETURN_IF_FALSE( super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
       if ( !xmlString8.isDefined() ) return true;
       if ( xmlString8.value().isEqualIC("Apple") ) return true;
@@ -134,25 +134,25 @@ public:
 
   /* dget method means get value and returns default if undefined. dget = short for defaultget */
   int64_t dgetTimeout() const { return Timeout.isDefined() ? Timeout.value() : -1; };
-  bool dgetSkipHibernateTimeout() const { return SkipHibernateTimeout.isDefined() ? SkipHibernateTimeout.value() : false; };
-  bool dgetDisableCloverHotkeys() const { return DisableCloverHotkeys.isDefined() ? DisableCloverHotkeys.value() : false; };
+  XBool dgetSkipHibernateTimeout() const { return SkipHibernateTimeout.isDefined() ? SkipHibernateTimeout.value() : XBool(false); };
+  XBool dgetDisableCloverHotkeys() const { return DisableCloverHotkeys.isDefined() ? DisableCloverHotkeys.value() : XBool(false); };
   const XString8& dgetBootArgs() const { return BootArgs.isDefined() ? BootArgs.value() : NullXString8; };
-  bool dgetNeverDoRecovery() const { return NeverDoRecovery.isDefined() ? NeverDoRecovery.value() : false; };
+  XBool dgetNeverDoRecovery() const { return NeverDoRecovery.isDefined() ? NeverDoRecovery.value() : XBool(false); };
   const decltype(DefaultVolume)::ValueType&  dgetDefaultVolume() const {
     if ( !DefaultVolume.isDefined() ) return DefaultVolume.nullValue;
     if ( DefaultVolume.value().isEqualIC("LastBootedVolume") ) return DefaultVolume.nullValue;
     return DefaultVolume.isDefined() ? DefaultVolume.value() : DefaultVolume.nullValue;
   };
   const XString8&  dgetDefaultLoader() const { return DefaultLoader.isDefined() ? DefaultLoader.value() : NullXString8; };
-  bool dgetDebugLog() const { return Debug.isDefined() ? Debug.value() : false; };
-  bool dgetFastBoot() const { return FastBoot.isDefined() ? FastBoot.value() : false; };
-  bool dgetNoEarlyProgress() const { return NoEarlyProgress.isDefined() ? NoEarlyProgress.value() : false; };
-  bool dgetNeverHibernate() const { return NeverHibernate.isDefined() ? NeverHibernate.value() : false; };
-  bool dgetStrictHibernate() const { return StrictHibernate.isDefined() ? StrictHibernate.value() : false; };
-  bool dgetRtcHibernateAware() const { return RtcHibernateAware.isDefined() ? RtcHibernateAware.value() : false; };
-  bool dgetHibernationFixup() const { return HibernationFixup.isDefined() ? HibernationFixup.value() : false; };
-  bool dgetSignatureFixup() const { return SignatureFixup.isDefined() ? SignatureFixup.value() : false; };
-  INT8 dgetSecureSetting() const { return isDefined() ? SecureBootSetupMode.isDefined() ? SecureBootSetupMode.value() : -1 : 0; }; // to Rename to SecureBootSetupMode // TODO: different default value if section is not defined
+  XBool dgetDebugLog() const { return Debug.isDefined() ? Debug.value() : XBool(false); };
+  XBool dgetFastBoot() const { return FastBoot.isDefined() ? FastBoot.value() : XBool(false); };
+  XBool dgetNoEarlyProgress() const { return NoEarlyProgress.isDefined() ? NoEarlyProgress.value() : XBool(false); };
+  XBool dgetNeverHibernate() const { return NeverHibernate.isDefined() ? NeverHibernate.value() : XBool(false); };
+  XBool dgetStrictHibernate() const { return StrictHibernate.isDefined() ? StrictHibernate.value() : XBool(false); };
+  XBool dgetRtcHibernateAware() const { return RtcHibernateAware.isDefined() ? RtcHibernateAware.value() : XBool(false); };
+  XBool dgetHibernationFixup() const { return HibernationFixup.isDefined() ? HibernationFixup.value() : XBool(false); };
+  XBool dgetSignatureFixup() const { return SignatureFixup.isDefined() ? SignatureFixup.value() : XBool(false); };
+  INT8 dgetSecureSetting() const { return isDefined() ? SecureBootSetupMode.isDefined() ? (int)SecureBootSetupMode.value() : -1 : 0; }; // to Rename to SecureBootSetupMode // TODO: different default value if section is not defined
   UINT8 dgetSecureBootPolicy() const {
     if ( !SecureBootPolicy.isDefined() ) return 0;
     if ( SecureBootPolicy.value().length() < 1 ) return 0;
@@ -190,14 +190,14 @@ public:
 //    return 0;
 //  };
   int8_t dgetXMPDetection() const { return XMPDetection.dgetValue(); }
-  XString8 dgetLegacyBoot(bool isFirmwareClover) const { return isDefined() ? Legacy.isDefined() ? Legacy.value() : isFirmwareClover ? "PBR"_XS8 : "LegacyBiosDefault"_XS8 : NullXString8; }; // TODO: different default value if section is not defined
+  XString8 dgetLegacyBoot(XBool isFirmwareClover) const { return isDefined() ? Legacy.isDefined() ? Legacy.value() : isFirmwareClover ? "PBR"_XS8 : "LegacyBiosDefault"_XS8 : NullXString8; }; // TODO: different default value if section is not defined
   UINT16 dgetLegacyBiosDefaultEntry() const { return LegacyBiosDefaultEntry.isDefined() ? LegacyBiosDefaultEntry.value() : 0; };
 
   const XString8& dgetCustomLogoAsXString8() const  { return CustomLogo.xmlString8.isDefined() ? CustomLogo.xmlString8.value() : NullXString8; };
   const XBuffer<UINT8>& dgetCustomLogoAsData() const  { return CustomLogo.xmlData.isDefined() ? CustomLogo.xmlData.value() : XBuffer<UINT8>::NullXBuffer; };
 
 /* calculated values */
-  bool dgetLastBootedVolume() const { return DefaultVolume.isDefined() ? DefaultVolume.value() == "LastBootedVolume"_XS8 : false; }
+  XBool dgetLastBootedVolume() const { return DefaultVolume.isDefined() ? DefaultVolume.value() == "LastBootedVolume"_XS8 : false; }
   UINT8 dgetCustomLogoType() const {
     if ( CustomLogo.xmlBool.isDefined() ) return CustomLogo.xmlBool.value() ? CUSTOM_BOOT_APPLE : CUSTOM_BOOT_USER_DISABLED;
     if ( CustomLogo.xmlString8.isDefined() ) {

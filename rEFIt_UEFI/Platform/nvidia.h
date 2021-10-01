@@ -56,7 +56,7 @@
 
 extern CHAR8* gDeviceProperties;
   
-//BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
+//XBool setup_nvidia_devprop(pci_dt_t *nvda_dev);
 
 typedef struct nvidia_pci_info_t
 {
@@ -180,7 +180,7 @@ extern const UINT8 default_NVPM[];
 extern const UINT8 default_dcfg_0[];
 extern const UINT8 default_dcfg_1[];
 
-BOOLEAN
+XBool
 setup_nvidia_devprop (
   pci_dt_t *nvda_dev
   );

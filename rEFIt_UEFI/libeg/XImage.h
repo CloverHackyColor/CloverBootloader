@@ -72,7 +72,7 @@ public:
   void setZero() { SetMem( (void*)GetPixelPtr(0, 0), GetSizeInBytes(), 0); }
 
   void setEmpty() { Width=0; Height=0; PixelData.setEmpty(); }
-  bool isEmpty() const { return PixelData.size() == 0; }
+  XBool isEmpty() const { return PixelData.size() == 0; }
 
 
   void Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color = { 0, 0, 0, 0 });
@@ -84,8 +84,8 @@ public:
   void CopyScaled(const XImage& Image, float scale = 0.f);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
   void CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect);
-  void Compose(const EG_RECT& OwnPlace, const EG_RECT& InputRect, const XImage& TopImage, bool Lowest, float TopScale = 0.f);
-  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest, float topScale = 0); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
+  void Compose(const EG_RECT& OwnPlace, const EG_RECT& InputRect, const XImage& TopImage, XBool Lowest, float TopScale = 0.f);
+  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, XBool Lowest, float topScale = 0); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB();
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
@@ -94,7 +94,7 @@ public:
 
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
-  void Draw(INTN x, INTN y, float scale, bool Opaque);
+  void Draw(INTN x, INTN y, float scale, XBool Opaque);
   void Draw(INTN x, INTN y, float scale); //can accept 0 scale as 1.f
   void Draw(INTN x, INTN y); 
   void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);

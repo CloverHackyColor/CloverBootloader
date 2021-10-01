@@ -21,17 +21,17 @@ extern "C" {
 // Keyboard input
 //
 
-BOOLEAN ReadAllKeyStrokes(void)
+XBool ReadAllKeyStrokes(void)
 {
-    BOOLEAN       GotKeyStrokes;
+    XBool         GotKeyStrokes;
     EFI_STATUS    Status;
     EFI_INPUT_KEY key;
 
-    GotKeyStrokes = FALSE;
+    GotKeyStrokes = false;
     for (;;) {
         Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
         if (Status == EFI_SUCCESS) {
-            GotKeyStrokes = TRUE;
+            GotKeyStrokes = true;
             continue;
         }
         break;
@@ -84,11 +84,11 @@ WaitForKeyPress(
 //void DebugPause(void)
 //{
 //    // show console and wait for key
-//    SwitchToText(FALSE);
+//    SwitchToText(false);
 //    PauseForKey(L"");
 //
 //    // reset error flag
-//    haveError = FALSE;
+//    haveError = false;
 //}
 //#endif
 
@@ -103,12 +103,12 @@ void EndlessIdleLoop(void)
 }
 
 
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+XBool CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 {
 //    CHAR16 ErrorName[64];
 
     if (!EFI_ERROR(Status))
-        return FALSE;
+        return false;
 
     MsgLog("Fatal Error: %s %ls\n", efiStrError(Status), where);
 
@@ -116,19 +116,19 @@ BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
     gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);
     printf("Fatal Error: %s %ls\n", efiStrError(Status), where);
     gST->ConOut->SetAttribute (gST->ConOut, EFI_LIGHTGRAY | EFI_BACKGROUND_BLACK);
-    haveError = TRUE;
+    haveError = true;
 
     //gBS->Exit(ImageHandle, ExitStatus, ExitDataSize, ExitData);
 
-    return TRUE;
+    return true;
 }
 
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+XBool CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 {
 //    CHAR16 ErrorName[64];
 
     if (!EFI_ERROR(Status))
-        return FALSE;
+        return false;
 
     MsgLog("Fatal Error: %s %ls\n", efiStrError(Status), where);
 
@@ -136,9 +136,9 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
     gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);
     printf("Error: %s %ls\n", efiStrError(Status), where);
     gST->ConOut->SetAttribute (gST->ConOut, EFI_LIGHTGRAY | EFI_BACKGROUND_BLACK);
-    haveError = TRUE;
+    haveError = true;
 
-    return TRUE;
+    return true;
 }
 
 

@@ -81,7 +81,7 @@ public:
     }
   }
 
-  void DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
+  void DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, XBool selected, INTN XPos, INTN YPos);
   void DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
 
   virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { MenuStyle(MENU_FUNCTION_INIT, ParamText); }

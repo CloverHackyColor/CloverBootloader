@@ -12,7 +12,7 @@
 
 
 /*
-static inline BOOLEAN aml_isvalidchar(char c)
+static inline XBool aml_isvalidchar(char c)
 {
 	return IS_UPPER(c) || IS_DIGIT(c) || c == '_';
 };
@@ -70,7 +70,7 @@ typedef struct aml_chunk AML_CHUNK;
 #define  AML_CHUNK_ARG3          0x6B
 
 
-BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node);
+XBool aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node);
 AML_CHUNK* aml_create_node(AML_CHUNK* parent);
 void aml_destroy_node(AML_CHUNK* node);
 AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, CONST UINT8* buffer, UINT32 size);

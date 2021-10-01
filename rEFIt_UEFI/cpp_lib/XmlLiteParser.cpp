@@ -19,25 +19,25 @@
 #endif
 
 
-bool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength)
+XBool strnnIsEqual(const char* key, size_t keyLength, const char* value, size_t valueLength)
 {
   if ( keyLength != valueLength ) return false;
   return strncmp(key, value, keyLength) == 0;
 }
 
-bool strnIsEqual(const char* key, size_t keyLength, const char* value)
+XBool strnIsEqual(const char* key, size_t keyLength, const char* value)
 {
   return strnnIsEqual(key, keyLength, value, strlen(value));
 }
 
 
-bool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength)
+XBool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength)
 {
   if ( keyLength != valueLength ) return false;
   return strncasecmp(key, value, keyLength) == 0;
 }
 
-bool strnIsEqualIC(const char* key, size_t keyLength, const char* value)
+XBool strnIsEqualIC(const char* key, size_t keyLength, const char* value)
 {
   return strnnIsEqualIC(key, keyLength, value, strlen(value));
 }
@@ -182,7 +182,7 @@ void XmlLiteParser::skipHeader()
 
 #define IS_TAGCHAR(x) (   ( x >= 'a' && x <='z' )  ||  ( x >= 'A' && x <='Z' )  ||  ( x >= '0' && x <= '9' )   )
 
-bool XmlLiteParser::getNextTag(const char** tag, size_t* length, bool* isOpeningTag, bool* isClosingTag, bool generateErrors)
+XBool XmlLiteParser::getNextTag(const char** tag, size_t* length, XBool* isOpeningTag, XBool* isClosingTag, XBool generateErrors)
 {
   if (tag == NULL) panic("tag == NULL");
 
@@ -297,11 +297,11 @@ void XmlLiteParser::getString(const char** string, size_t* length)
   moveForwardUntil('<');
 }
 
-#define RETURN_IF_FALSE(Expression) do { bool b = Expression; if ( !b ) return false; } while (0);
+#define RETURN_IF_FALSE(Expression) do { XBool b = Expression; if ( !b ) return false; } while (0);
 
-bool XmlLiteParser::getSimpleTag(const char** tag, size_t* tagLength, const char** value, size_t* valueLength, const char* expectedTag/*, bool valueCanBeEmpty*/, bool generateErrors)
+XBool XmlLiteParser::getSimpleTag(const char** tag, size_t* tagLength, const char** value, size_t* valueLength, const char* expectedTag/*, XBool valueCanBeEmpty*/, XBool generateErrors)
 {
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
   
   XmlParserPosition pos = getPosition();
   RETURN_IF_FALSE( getNextTag(tag, tagLength, &isOpeningTag, &isClosingTag, generateErrors) );
@@ -347,11 +347,11 @@ bool XmlLiteParser::getSimpleTag(const char** tag, size_t* tagLength, const char
 /*
  * The opening tag has been read. Skip until the closing tag
  */
-bool XmlLiteParser::skipUntilClosingTag(const char* tagToSkip, size_t tagToSkipLength, bool generateErrors)
+XBool XmlLiteParser::skipUntilClosingTag(const char* tagToSkip, size_t tagToSkipLength, XBool generateErrors)
 {
   const char* value;
   size_t valueLength;
-  bool b;
+  XBool b;
   
   getString(&value, &valueLength);
 
@@ -363,7 +363,7 @@ while ( valueLength > 0 && (*value == ' '  ||  *value == '\t' ||   *value == '\r
 
   const char* tag;
   size_t tagLength;
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
 
   XmlParserPosition pos = getPosition();
   b = getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, generateErrors);
@@ -396,12 +396,12 @@ while ( valueLength > 0 && (*value == ' '  ||  *value == '\t' ||   *value == '\r
   return true;
 }
 
-bool XmlLiteParser::skipNextTag(bool generateErrors)
+XBool XmlLiteParser::skipNextTag(XBool generateErrors)
 {
   const char* tag;
   size_t tagLength;
-  bool isOpeningTag, isClosingTag;
-  bool b;
+  XBool isOpeningTag, isClosingTag;
+  XBool b;
 
   XmlParserPosition pos = getPosition();
   b = getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, generateErrors);
@@ -414,13 +414,13 @@ bool XmlLiteParser::skipNextTag(bool generateErrors)
   return skipUntilClosingTag(tag, tagLength, generateErrors);
 }
 
-bool XmlLiteParser::getSimpleTagValue(const char* expectedTag, size_t expectedTagLength, const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, bool generateErrors)
+XBool XmlLiteParser::getSimpleTagValue(const char* expectedTag, size_t expectedTagLength, const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, XBool generateErrors)
 {
   const char* tag;
   size_t tagLength;
   
   *xmlParserPosition = getPosition();
-  bool b = getSimpleTag(&tag, &tagLength, value, valueLength, expectedTag, generateErrors);
+  XBool b = getSimpleTag(&tag, &tagLength, value, valueLength, expectedTag, generateErrors);
   if ( !b ) return false;
   if ( !strnnIsEqualIC(tag, tagLength, expectedTag, expectedTagLength) ) {
     addXmlError(generateErrors, S8Printf("Expecting a <%s> at line %d col %d", expectedTag, (*xmlParserPosition).line, (*xmlParserPosition).col));
@@ -439,7 +439,7 @@ bool XmlLiteParser::getSimpleTagValue(const char* expectedTag, size_t expectedTa
 }
 
 
-bool XmlLiteParser::getKeyTagValue(const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, bool generateErrors)
+XBool XmlLiteParser::getKeyTagValue(const char** value, size_t* valueLength, XmlParserPosition* xmlParserPosition, XBool generateErrors)
 {
   const char* tag;
   size_t tagLength;
@@ -447,7 +447,7 @@ bool XmlLiteParser::getKeyTagValue(const char** value, size_t* valueLength, XmlP
 #endif
   moveForwardUntilSignificant(); // to get the position more accurate
   *xmlParserPosition = getPosition();
-  bool b = getSimpleTag(&tag, &tagLength, value, valueLength, "key", generateErrors);
+  XBool b = getSimpleTag(&tag, &tagLength, value, valueLength, "key", generateErrors);
   if ( !b ) {
     currentPos = *xmlParserPosition;
     return false;
@@ -478,11 +478,11 @@ printf("\n");
 }
 
 
-bool XmlLiteParser::consumeOpeningTag(const char* expectedTag, bool generateErrors)
+XBool XmlLiteParser::consumeOpeningTag(const char* expectedTag, XBool generateErrors)
 {
   const char* tag;
   size_t length;
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
 
   auto pos = currentPos;
 
@@ -501,11 +501,11 @@ bool XmlLiteParser::consumeOpeningTag(const char* expectedTag, bool generateErro
   return true;
 }
 
-bool XmlLiteParser::consumeClosingTag(const char* expectedTag, bool generateErrors)
+XBool XmlLiteParser::consumeClosingTag(const char* expectedTag, XBool generateErrors)
 {
   const char* tag;
   size_t length;
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
 
   auto pos = currentPos;
 
@@ -522,11 +522,11 @@ bool XmlLiteParser::consumeClosingTag(const char* expectedTag, bool generateErro
   return true;
 }
 
-bool XmlLiteParser::nextTagIsOpeningTag(const char* expectedTag)
+XBool XmlLiteParser::nextTagIsOpeningTag(const char* expectedTag)
 {
   const char* tag;
   size_t length;
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
 
   XmlParserPosition pos = getPosition();
   RETURN_IF_FALSE ( getNextTag(&tag, &length, &isOpeningTag, &isClosingTag, false) );
@@ -537,11 +537,11 @@ bool XmlLiteParser::nextTagIsOpeningTag(const char* expectedTag)
   return true;
 }
 
-bool XmlLiteParser::nextTagIsClosingTag(const char* expectedTag)
+XBool XmlLiteParser::nextTagIsClosingTag(const char* expectedTag)
 {
   const char* tag;
   size_t length;
-  bool isOpeningTag, isClosingTag;
+  XBool isOpeningTag, isClosingTag;
 
   XmlParserPosition pos = getPosition();
   RETURN_IF_FALSE ( getNextTag(&tag, &length, &isOpeningTag, &isClosingTag, false) );

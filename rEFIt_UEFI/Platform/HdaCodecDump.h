@@ -33,33 +33,33 @@
 #define HDA_MAX_NAMELEN		32
 
 typedef struct {
-	UINT8 NodeId;
-    UINT8 Type;
-    UINT32 Capabilities;
-    UINT8 DefaultUnSol;
-    UINT32 ConnectionListLength;
-    UINT8 ConnectionSelect;
-    UINT16 Connections[HDA_MAX_CONNS];
-    UINT32 SupportedPowerStates;
-    UINT32 DefaultPowerState;
-    BOOLEAN AmpOverride;
-    UINT32 AmpInCapabilities;
-    UINT32 AmpOutCapabilities;
-	UINT8 AmpInLeftDefaultGainMute[HDA_MAX_CONNS];
-	UINT8 AmpInRightDefaultGainMute[HDA_MAX_CONNS];
-    UINT8 AmpOutLeftDefaultGainMute;
-    UINT8 AmpOutRightDefaultGainMute;
-    UINT32 SupportedPcmRates;
-    UINT32 SupportedFormats;
-    UINT16 DefaultConvFormat;
-    UINT8 DefaultConvStreamChannel;
-    UINT8 DefaultConvChannelCount;
-    UINT32 PinCapabilities;
-    UINT8 DefaultEapd;
-    UINT8 DefaultPinControl;
-    UINT32 DefaultConfiguration;
-    UINT32 VolumeCapabilities;
-    UINT8 DefaultVolume;
+	UINT8 NodeId = 0;
+  UINT8 Type = 0;
+  UINT32 Capabilities = 0;
+  UINT8 DefaultUnSol = 0;
+  UINT32 ConnectionListLength = 0;
+  UINT8 ConnectionSelect = 0;
+  UINT16 Connections[HDA_MAX_CONNS] = { 0 };
+  UINT32 SupportedPowerStates = 0;
+  UINT32 DefaultPowerState = 0;
+  XBool AmpOverride = false;
+  UINT32 AmpInCapabilities = 0;
+  UINT32 AmpOutCapabilities = 0;
+  UINT8 AmpInLeftDefaultGainMute[HDA_MAX_CONNS] = { 0 };
+	UINT8 AmpInRightDefaultGainMute[HDA_MAX_CONNS] = { 0 };
+  UINT8 AmpOutLeftDefaultGainMute = 0;
+  UINT8 AmpOutRightDefaultGainMute = 0;
+  UINT32 SupportedPcmRates = 0;
+  UINT32 SupportedFormats = 0;
+  UINT16 DefaultConvFormat = 0;
+  UINT8 DefaultConvStreamChannel = 0;
+  UINT8 DefaultConvChannelCount = 0;
+  UINT32 PinCapabilities = 0;
+  UINT8 DefaultEapd = 0;
+  UINT8 DefaultPinControl = 0;
+  UINT32 DefaultConfiguration = 0;
+  UINT32 VolumeCapabilities = 0;
+  UINT8 DefaultVolume = 0;
 } HdaWidget;
 
 typedef struct {

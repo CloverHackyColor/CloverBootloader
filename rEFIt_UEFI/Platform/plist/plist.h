@@ -50,9 +50,9 @@ public:
 //  static TagStruct* getEmptyArrayTag();
   virtual void FreeTag() = 0;
   
-  virtual bool operator == (const TagStruct& other) const = 0;
-  virtual bool operator != (const TagStruct& other) const { return !(*this == other); };
-  virtual bool debugIsEqual(const TagStruct& other, const XString8& label) const;
+  virtual XBool operator == (const TagStruct& other) const = 0;
+  virtual XBool operator != (const TagStruct& other) const { return !(*this == other); };
+  virtual XBool debugIsEqual(const TagStruct& other, const XString8& label) const;
 
   virtual void sprintf(unsigned int ident, XString8* s) const = 0;
   void printf(unsigned int ident) const;
@@ -100,25 +100,25 @@ public:
 
 #endif
 
-  virtual bool isDict() const { return false; }
-  virtual bool isKey() const { return false; }
-  virtual bool isString() const { return false; }
-  virtual bool isInt64() const { return false; }
-  virtual bool isFloat() const { return false; }
-  virtual bool isBool() const { return false; }
-  virtual bool isData() const { return false; }
-  virtual bool isDate() const { return false; }
-  virtual bool isArray() const { return false; }
+  virtual XBool isDict() const { return false; }
+  virtual XBool isKey() const { return false; }
+  virtual XBool isString() const { return false; }
+  virtual XBool isInt64() const { return false; }
+  virtual XBool isFloat() const { return false; }
+  virtual XBool isBool() const { return false; }
+  virtual XBool isData() const { return false; }
+  virtual XBool isDate() const { return false; }
+  virtual XBool isArray() const { return false; }
 
   virtual const XString8 getTypeAsXString8() const = 0;
 
 
   // Convenience method
-  bool isTrue() const;
-  bool isFalse() const;
-  bool isTrueOrYy() const;
-  bool isTrueOrYes() const;
-  bool isFalseOrNn() const;
+  XBool isTrue() const;
+  XBool isFalse() const;
+  XBool isTrueOrYy() const;
+  XBool isTrueOrYes() const;
+  XBool isFalseOrNn() const;
 };
 
 #include "TagDict.h"
@@ -139,12 +139,12 @@ GetNextTag (
   UINT32 *length
   );
 
-BOOLEAN
+XBool
 IsPropertyNotNullAndTrue(
   const TagStruct* Prop
   );
 
-BOOLEAN
+XBool
 IsPropertyNotNullAndFalse(
   const TagStruct* Prop
   );

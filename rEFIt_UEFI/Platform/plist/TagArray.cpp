@@ -46,7 +46,7 @@
 
 XObjArray<TagArray> TagArray::tagsFree;
 
-bool TagArray::operator == (const TagStruct& other) const
+XBool TagArray::operator == (const TagStruct& other) const
 {
   if ( !other.isArray() ) return false;
   if ( _arrayContent.size() != other.getArray()->arrayContent().size() ) {
@@ -60,7 +60,7 @@ bool TagArray::operator == (const TagStruct& other) const
   return true;
 }
 
-bool TagArray::debugIsEqual(const TagStruct& other, const XString8& label) const
+XBool TagArray::debugIsEqual(const TagStruct& other, const XString8& label) const
 {
   if ( !other.isArray() ) {
     MsgLog("counterpart of '%s' is not an array\n", label.c_str());

@@ -152,7 +152,7 @@ EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileNam
   EFI_STATUS          Status;
   EFI_FILE*           FileHandle;
   UINTN               BufferSize;
-  BOOLEAN             CreateNew = TRUE;
+  XBool               CreateNew = true;
   CONST CHAR16        *p = FileName + StrLen(FileName);
   CHAR16              DirName[256];
   UINTN               dirNameLen;
@@ -194,7 +194,7 @@ EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileNam
     Status = FileHandle->Delete(FileHandle);
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
-      CreateNew = FALSE; // will write into existing file (Slice - ???)
+      CreateNew = false; // will write into existing file (Slice - ???)
 //      DBG("RO FS %s\n", efiStrError(Status));
     }
   }

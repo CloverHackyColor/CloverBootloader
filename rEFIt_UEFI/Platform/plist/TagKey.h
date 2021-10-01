@@ -22,12 +22,12 @@ public:
   const TagKey& operator = (const TagKey&); // Can be defined if needed
   virtual ~TagKey() { }
   
-  virtual bool operator == (const TagStruct& other) const;
+  virtual XBool operator == (const TagStruct& other) const;
 
   virtual TagKey* getKey() { return this; }
   virtual const TagKey* getKey() const { return this; }
 
-  virtual bool isKey() const { return true; }
+  virtual XBool isKey() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Key"_XS8; }
   static TagKey* getEmptyTag();
   virtual void FreeTag();

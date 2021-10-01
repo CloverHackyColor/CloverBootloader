@@ -268,7 +268,7 @@ void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_REC
   }
 }
 
-void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest, float topScale)
+void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, XBool Lowest, float topScale)
 {
   EG_RECT OutPlace;
   OutPlace.XPos = PosX;
@@ -285,13 +285,13 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest, 
 }
 // TopScale is for scaling TopImage. = 0.f means no scale or = 1.f
 // InPlace is a place in TopImage before scaling
-void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XImage& TopImage, bool Lowest, float TopScale)
+void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XImage& TopImage, XBool Lowest, float TopScale)
 {
   INTN PosX = InPlace.XPos;
   INTN PosY = InPlace.YPos;
   INTN WArea = InPlace.Width;
   INTN HArea = InPlace.Height;
-  bool gray = false;
+  XBool gray = false;
   if (TopScale < 0) {
     gray = true;
     TopScale = -TopScale;
@@ -365,7 +365,7 @@ void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XIma
  * But pixels will be moved anyway so it's impossible without double copy
  *
  */
-//void XImage::ComposeOnBack(INTN PosX, INTN PosY, const XImage& BackImage, bool Lowest)
+//void XImage::ComposeOnBack(INTN PosX, INTN PosY, const XImage& BackImage, XBool Lowest)
 
 
 void XImage::FlipRB()
@@ -580,7 +580,7 @@ void XImage::Draw(INTN x, INTN y, float scale)
   Draw(x, y, scale, true);
 }
 
-void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
+void XImage::Draw(INTN x, INTN y, float scale, XBool Opaque)
 {
   //prepare images
   if (isEmpty()) {
@@ -749,7 +749,7 @@ EFI_STATUS XImage::LoadIcns(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName, 
     }
 
     // decode it
-//    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+//    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, true);
 //    Status = FromEGImage(NewImage);
     Status = FromICNS(FileData, FileDataLength, PixelSize);
     FreePool(FileData);

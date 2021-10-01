@@ -53,12 +53,12 @@ UINT8 hexstrtouint8 (const CHAR8* buf)
 	return i;
 }
 
-BOOLEAN IsHexDigit(char c) {
-	return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
+XBool IsHexDigit(char c) {
+	return (IS_DIGIT(c) || (IS_HEX(c)))?true:false;
 }
 
-BOOLEAN IsHexDigit(wchar_t c) {
-  return (IS_DIGIT(c) || (IS_HEX(c)))?TRUE:FALSE;
+XBool IsHexDigit(wchar_t c) {
+  return (IS_DIGIT(c) || (IS_HEX(c)))?true:false;
 }
 
 //out value is a number of byte.  out = len
@@ -72,7 +72,7 @@ BOOLEAN IsHexDigit(wchar_t c) {
 //
 //	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
 //    //		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
-//		return FALSE;
+//		return false;
 //	}
 //
 //	buf[2] = '\0';
@@ -143,5 +143,5 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 }
 
 
-BOOLEAN haveError = FALSE;
+XBool haveError = false;
 

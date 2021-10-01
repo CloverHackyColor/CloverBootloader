@@ -12,7 +12,7 @@
 
 
 
-XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound)
+XmlAbstractType& ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Fixes_Class::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound)
 {
 #ifdef JIEF_DEBUG
   if ( strncmp(keyValue, "FixHeaders", strlen("FixHeaders")) == 0 ) {

@@ -122,7 +122,7 @@ int repeatingdict_test2()
 gXmlLiteParser.printfErrorsAndWarnings();
 for ( size_t idx = 0 ; idx < dict.valueArray().size() ; idx++ ) {
   auto item = dict.valueArray()[idx];
-  printf("%s %d %s\n", dict.valueArray()[idx].key().c_str(), dict.valueArray()[idx].xmlBool.value(), dict.valueArray()[idx].xmlString.value().c_str());
+  printf("%s %d %s\n", dict.valueArray()[idx].key().c_str(), (bool)dict.valueArray()[idx].xmlBool.value(), dict.valueArray()[idx].xmlString.value().c_str());
 }
     if ( !b ) return breakpoint(1);
     if ( gXmlLiteParser.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);

@@ -70,7 +70,7 @@ static void SmbiosFillPatchingValues(const SETTINGS_DATA::SmbiosClass::RamSlotIn
   SmbiosFillPatchingValues(other.User, &Memory._User);
 }
 
-void SmbiosFillPatchingValues(bool _SetTable132, uint8_t pEnabledCores, uint16_t pRamSlotCount, const SlotDeviceArrayClass& SlotDeviceArray, const SETTINGS_DATA& globalSettings, const CPU_STRUCTURE& CPUStructure, SmbiosInjectedSettings* smbiosInjectedSettingsPtr)
+void SmbiosFillPatchingValues(XBool _SetTable132, uint8_t pEnabledCores, uint16_t pRamSlotCount, const SlotDeviceArrayClass& SlotDeviceArray, const SETTINGS_DATA& globalSettings, const CPU_STRUCTURE& CPUStructure, SmbiosInjectedSettings* smbiosInjectedSettingsPtr)
 {
   SmbiosInjectedSettings& smbiosInjectedSetting = *smbiosInjectedSettingsPtr;
   // from CPUStructure

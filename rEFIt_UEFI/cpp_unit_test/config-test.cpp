@@ -889,7 +889,9 @@ static const char* config_test = R"V0G0N(
 
 
 
+#ifndef RETURN_IF_FALSE
 #define RETURN_IF_FALSE(Expression) do { bool b = Expression; if ( !b ) return false; } while (0);
+#endif
 
 static int breakpoint(int i)
 {

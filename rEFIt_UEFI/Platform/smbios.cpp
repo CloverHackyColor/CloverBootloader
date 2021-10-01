@@ -94,9 +94,9 @@ UINT16      mHandle19;
 UINT16      mMemory17[MAX_RAM_SLOTS];
 UINT64      mInstalled[MAX_RAM_SLOTS];
 UINT64      mEnabled[MAX_RAM_SLOTS];
-BOOLEAN     gMobile;
+XBool       gMobile;
 UINT8       gBootStatus;
-BOOLEAN     Once;
+XBool       Once;
 
 MEM_STRUCTURE    gRAM;
 
@@ -155,7 +155,7 @@ SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE4_STR_IDX[] = {
 /* Functions */
 
 // validate the SMBIOS entry point structure
-BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure)
+XBool IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure)
 {
   UINTN                     I;
   UINT8                     Length;
@@ -163,7 +163,7 @@ BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStruc
   UINT8                     *BytePtr;
 
   if (!EntryPointStructure)
-    return FALSE;
+    return false;
 
   BytePtr = (UINT8*) EntryPointStructure;
   Length = EntryPointStructure->EntryPointLength;
@@ -462,7 +462,7 @@ void PatchTableType0(const SmbiosInjectedSettings& smbiosSettings)
   //dunno about latest version but there is a way to set good characteristics
   //if use patched AppleSMBIOS
   //----------------
-  Once = TRUE;
+  Once = true;
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE0_STR_IDX);
 
@@ -542,7 +542,7 @@ void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE1_STR_IDX);
 
   newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
-  Once = TRUE;
+  Once = true;
 
   EFI_GUID SmUUID;
   // macOs take all guid as BE guid, irrespective to the variant.
@@ -628,7 +628,7 @@ void PatchTableType2(const SmbiosInjectedSettings& smbiosSettings)
   if (smbiosSettings.BoardType == 11) {
     newSmbiosTable.Type2->FeatureFlag.Removable = 1;
   }
-  Once = TRUE;
+  Once = true;
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE2_STR_IDX);
 
@@ -664,7 +664,7 @@ DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, sm
   return;
 }
 
-bool getMobileFromSmbios()
+XBool getMobileFromSmbios()
 {
   // System Chassis Information
   //
@@ -684,7 +684,7 @@ void GetTableType3(SmbiosDiscoveredSettings* smbiosSettings)
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
   if (SmbiosTable.Raw == NULL) {
     DBG("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
-    gMobile = FALSE; //default value
+    gMobile = false; //default value
     return;
   }
   mHandle3 = SmbiosTable.Type3->Hdr.Handle;
@@ -722,7 +722,7 @@ void PatchTableType3(const SmbiosInjectedSettings& smbiosSettings)
   newSmbiosTable.Type3->NumberofPowerCords = 1;
   newSmbiosTable.Type3->ContainedElementCount = 0;
   newSmbiosTable.Type3->ContainedElementRecordLength = 0;
-  Once = TRUE;
+  Once = true;
 
   UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE3_STR_IDX);
 
@@ -847,7 +847,7 @@ void PatchTableType4(const SmbiosInjectedSettings& smbiosSettings)
     UniquifySmbiosTableStr(newSmbiosTable, SMBIOS_TABLE_TYPE4_STR_IDX);
 
     // TODO: Set SmbiosTable.Type4->ProcessorFamily for all implemented CPU models
-    Once = TRUE;
+    Once = true;
     if (smbiosSettings.Model == CPU_MODEL_ATOM) {
       newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelAtom;
     }
@@ -1043,7 +1043,7 @@ void PatchTableType7(const SmbiosInjectedSettings& smbiosSettings)
   // Handle = 0x0700 + CoreN<<2 + CacheN (4-level cache is supported
   // L1[CoreN] = Handle
 
-  BOOLEAN correctSD = FALSE;
+  XBool correctSD = false;
 
   //according to spec for Smbios v2.0 max handle is 0xFFFE, for v>2.0 (we made 2.6) max handle=0xFEFF.
   // Value 0xFFFF means no cache
@@ -1062,7 +1062,7 @@ void PatchTableType7(const SmbiosInjectedSettings& smbiosSettings)
     CopyMem((void*)newSmbiosTable.Type7, (void*)SmbiosTable.Type7, TableSize);
     correctSD = (newSmbiosTable.Type7->SocketDesignation == 0);
     CoreCache = newSmbiosTable.Type7->CacheConfiguration & 3;
-    Once = TRUE;
+    Once = true;
 
     //SSocketD = "L1-Cache";
     if(correctSD) {
@@ -1123,7 +1123,7 @@ void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
     DBG("SlotDevice[%hhu].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
     DBG("SlotDevice[%hhu].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
     DBG("SlotDevice[%hhu].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
-    DBG("SlotDevice[%hhu].Valid = %d\n", Index, smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
+    DBG("SlotDevice[%hhu].Valid = %d\n", Index, (bool)smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
   }
 #endif
 
@@ -1275,7 +1275,7 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
 {
   // Memory Device
   //
-  BOOLEAN Found;
+  XBool Found;
 
   // Get Table Type17 and count Size
   for (size_t Index = 0; Index < smbiosSettings->RamSlotCount; Index++) {  //how many tables there may be?
@@ -1295,14 +1295,14 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
       //  be skipped where others may not but it seems easier
       //  to just skip all entries that have an error - apianti
       // will try
-      Found = FALSE;
+      Found = false;
       for (INTN Index2 = 0; Index2 < 24; Index2++) {
         newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
         if (newSmbiosTable.Raw == NULL) {
           continue;
         }
         if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
-          Found = TRUE;
+          Found = true;
           DBG("Found memory information in table 18/%lld, type=0x%X, operation=0x%X syndrome=0x%X\n", Index2,
               newSmbiosTable.Type18->ErrorType,
               newSmbiosTable.Type18->ErrorOperation,
@@ -1334,7 +1334,7 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
     }
     // Determine if slot has size
     if (SmbiosTable.Type17->Size > 0) {
-      gRAM.SMBIOS[Index].InUse = TRUE;
+      gRAM.SMBIOS[Index].InUse = true;
       gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
       if (SmbiosTable.Type17->Size == 0x7FFF) {
         gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->ExtendedSize;
@@ -1342,7 +1342,7 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
     }
     // Determine if module frequency is sane value
     if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
-      gRAM.SMBIOS[Index].InUse = TRUE;
+      gRAM.SMBIOS[Index].InUse = true;
       gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
       if (SmbiosTable.Type17->Speed > gRAM.Frequency) {
         gRAM.Frequency = SmbiosTable.Type17->Speed;
@@ -1390,13 +1390,13 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings)
   UINT8   channelMap[MAX_RAM_SLOTS];
   UINT8   expectedCount = 0;
   UINT8   channels = 2;
-  BOOLEAN insertingEmpty = TRUE;
-  BOOLEAN trustSMBIOS = ((gRAM.SPDInUse == 0) || smbiosSettings.TrustSMBIOS);
-  BOOLEAN wrongSMBIOSBanks = FALSE;
-  BOOLEAN isMacPro = FALSE;
+  XBool insertingEmpty = true;
+  XBool trustSMBIOS = ((gRAM.SPDInUse == 0) || smbiosSettings.TrustSMBIOS);
+  XBool wrongSMBIOSBanks = false;
+  XBool isMacPro = false;
   MACHINE_TYPES Model = GetModelFromString(smbiosSettings.ProductName);
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61)) {
-    isMacPro = TRUE;
+    isMacPro = true;
   }
   // Inject user memory tables
   if (smbiosSettings.InjectMemoryTables)
@@ -1441,7 +1441,7 @@ DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", smbiosSettings.Memory.SlotCounts)
 DBG("gSettings.Smbios.Memory.UserChannels=%d\n", smbiosSettings.Memory.UserChannels);
 for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
   DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Frequency);
-  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
+  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, (bool)smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
   DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).ModuleSize);
   DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).PartNo.c_str());
   DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).SerialNo.c_str());
@@ -1460,7 +1460,7 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
       newSmbiosTable.Type17->DataWidth = 0xFFFF;
       newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + UserIndex);
       newSmbiosTable.Type17->FormFactor = (UINT8)(gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm);
-      newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
+      newSmbiosTable.Type17->TypeDetail.Synchronous = true;
       newSmbiosTable.Type17->DeviceSet = bank + 1;
       newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
       if (isMacPro) {
@@ -1536,11 +1536,11 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
           // Prefer the SPD information
           if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
             DBG("Not trusting SMBIOS because SPD reports more modules...\n");
-            trustSMBIOS = FALSE;
+            trustSMBIOS = false;
           } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
             if (gRAM.SPDInUse > 1) {
               DBG("Not trusting SMBIOS because SPD reports different modules...\n");
-              trustSMBIOS = FALSE;
+              trustSMBIOS = false;
             } else if (gRAM.SMBIOSInUse == 1) {
               channels = 1;
             }
@@ -1554,16 +1554,16 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
               }
             } else {
               DBG("Not trusting SMBIOS because SPD reports only one module...\n");
-              trustSMBIOS = FALSE;
+              trustSMBIOS = false;
             }
           } else {
             DBG("Not trusting SMBIOS because SPD reports less modules...\n");
-            trustSMBIOS = FALSE;
+            trustSMBIOS = false;
           }
         } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
           // Never trust a sneaky SMBIOS!
           DBG("Not trusting SMBIOS because it's being sneaky...\n");
-          trustSMBIOS = FALSE;
+          trustSMBIOS = false;
         }
       } else if (gRAM.SMBIOSInUse == 1) {
         channels = 1;
@@ -1743,10 +1743,10 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
       newSmbiosTable.Type17->TotalWidth = 0xFFFF;
       newSmbiosTable.Type17->DataWidth = 0xFFFF;
     }
-    Once = TRUE;
+    Once = true;
     newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + Index);
     newSmbiosTable.Type17->FormFactor = (UINT8)(gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm);
-    newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
+    newSmbiosTable.Type17->TypeDetail.Synchronous = true;
     newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
@@ -1828,7 +1828,7 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
       DBG("%s %s EMPTY\n", bankLocator.c_str(), deviceLocator.c_str());
       newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
     } else {
-      insertingEmpty = FALSE;
+      insertingEmpty = false;
       DBG("%s %s %dMHz %dMB(Ext:%dMB)\n", bankLocator.c_str(), deviceLocator.c_str(), newSmbiosTable.Type17->Speed,
           newSmbiosTable.Type17->Size, newSmbiosTable.Type17->ExtendedSize);
       if (newSmbiosTable.Type17->Size == 0x7FFF) {
@@ -2226,7 +2226,7 @@ void FinalizeSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
   EFI_PEI_HOB_POINTERS  HobStart;
   EFI_PHYSICAL_ADDRESS    *Table = NULL;
   //UINTN          TableLength = 0;
-//  BOOLEAN FoundTable3 = FALSE;
+//  XBool FoundTable3 = false;
 
   // Get Hob List
   HobStart.Raw = (__typeof_am__(HobStart.Raw))GetHobList();
@@ -2240,7 +2240,7 @@ void FinalizeSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
         //TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
         if (Table != NULL) {
           if (Index != 0) {
-//            FoundTable3 = TRUE;  //don't know how to use it. Real Mac have table3 in the format of table2
+//            FoundTable3 = true;  //don't know how to use it. Real Mac have table3 in the format of table2
             DBG("Found SMBIOS3 Table\n");
           }
           break;

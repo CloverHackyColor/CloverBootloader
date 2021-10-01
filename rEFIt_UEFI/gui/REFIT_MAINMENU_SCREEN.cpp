@@ -120,7 +120,7 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN X
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
     INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
     Back.CopyRect(ThemeX.Background, X, Y);
-    bool free = false;
+    XBool free = false;
     XImage *CurrSel = Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight, &free);
     Back.Compose(0, 0, *CurrSel, false, BadgeDim/128.f);
     Back.DrawOnBack(X, Y, Back);
@@ -163,7 +163,7 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
       // HIDEUI_ALL - included
       ((TextC == TEXT_CORNER_REVISION) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
       ((TextC == TEXT_CORNER_HELP) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
-      ((TextC == TEXT_CORNER_OPTIMUS) && (gSettings.GUI.ShowOptimus == FALSE))
+      ((TextC == TEXT_CORNER_OPTIMUS) && (gSettings.GUI.ShowOptimus == false))
       ) {
     return;
   }
@@ -212,7 +212,7 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
   DrawTextXY(Text, Xpos, UGAHeight - (INTN)(ThemeX.TextHeight * 1.5f), Align);
 }
 
-void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
+void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, XBool selected, INTN XPos, INTN YPos)
 {
   INTN MainSize = ThemeX.MainEntriesSize;
 //  XImage MainImage(MainSize, MainSize);
@@ -238,7 +238,7 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
   }
 
 //  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
-  bool free = false;
+  XBool free = false;
   XImage *MainImage = MainIcon.GetBest(!Daylight, &free);
 
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
@@ -371,7 +371,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       egGetScreenSize(&UGAWidth, &UGAHeight);
       InitAnime();
       SwitchToGraphicsAndClear();
-      //BltClearScreen(FALSE);
+      //BltClearScreen(false);
 
       EntriesGap = (int)(ThemeX.TileXSpace * ThemeX.Scale);
       EntriesWidth = ThemeX.row0TileSize;
@@ -453,7 +453,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       for (INTN i = 0; i <= ScrollState.MaxIndex; i++) {
         if (Entries[i].Row == 0) {
           if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
-            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?true:false,
                               itemPosX[i - ScrollState.FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
 
@@ -467,7 +467,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
             }
           }
         } else {
-          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?true:false,
                             itemPosX[i], row1PosY);
         }
       }
@@ -504,18 +504,18 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
     case MENU_FUNCTION_PAINT_SELECTION:
       HidePointer();
       if (Entries[ScrollState.LastSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], false,
                       itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible], row0PosY);
       } else {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], false,
                           itemPosX[ScrollState.LastSelection], row1PosY);
       }
 
       if (Entries[ScrollState.CurrentSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], true,
                       itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible], row0PosY);
       } else {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], true,
                           itemPosX[ScrollState.CurrentSelection], row1PosY);
       }
 
@@ -574,7 +574,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
       egGetScreenSize(&UGAWidth, &UGAHeight); //do this when needed
       InitAnime();
       SwitchToGraphicsAndClear();
-      //BltClearScreen(FALSE);
+      //BltClearScreen(false);
       //adjustable by theme.plist?
       EntriesPosY = (int)(LAYOUT_Y_EDGE * ThemeX.Scale);
       EntriesGap = (int)(ThemeX.TileYSpace * ThemeX.Scale);
@@ -641,11 +641,11 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
       for (INTN i = 0; i <= ScrollState.MaxIndex; i++) {
         if (Entries[i].Row == 0) {
           if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
-            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+            DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?true:false,
                               itemPosX[i - ScrollState.FirstVisible], itemPosY[i - ScrollState.FirstVisible]);
           }
         } else { //row1
-          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?1:0,
+          DrawMainMenuEntry(&Entries[i], (i == ScrollState.CurrentSelection)?true:false,
                             itemPosX[i], itemPosY[i]);
         }
       }
@@ -663,21 +663,21 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
     case MENU_FUNCTION_PAINT_SELECTION:
       HidePointer();
       if (Entries[ScrollState.LastSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], false,
                           itemPosX[ScrollState.LastSelection - ScrollState.FirstVisible],
                           itemPosY[ScrollState.LastSelection - ScrollState.FirstVisible]);
       } else {
-        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], FALSE,
+        DrawMainMenuEntry(&Entries[ScrollState.LastSelection], false,
                           itemPosX[ScrollState.LastSelection],
                           itemPosY[ScrollState.LastSelection]);
       }
 
       if (Entries[ScrollState.CurrentSelection].Row == 0) {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], true,
                           itemPosX[ScrollState.CurrentSelection - ScrollState.FirstVisible],
                           itemPosY[ScrollState.CurrentSelection - ScrollState.FirstVisible]);
       } else {
-        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], TRUE,
+        DrawMainMenuEntry(&Entries[ScrollState.CurrentSelection], true,
                           itemPosX[ScrollState.CurrentSelection],
                           itemPosY[ScrollState.CurrentSelection]);
       }

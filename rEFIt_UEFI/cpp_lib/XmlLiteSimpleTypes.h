@@ -40,7 +40,7 @@ static inline void WARNING_IF_DEFINED_breakpoint()
 class XmlAbstractType
 {
 private:
-    bool m_isDefined;
+    XBool m_isDefined;
 
 public:
   constexpr XmlAbstractType() : m_isDefined(false) {};
@@ -53,15 +53,15 @@ public:
     }
     m_isDefined = true;
   };
-  virtual bool isDefined() const { return m_isDefined; };
+  virtual XBool isDefined() const { return m_isDefined; };
   virtual void reset() { m_isDefined = false; };
   
-  virtual bool isKey() const { return false; }
+  virtual XBool isKey() const { return false; }
   virtual const XString8& getKey() const { return NullXString8; }
 //  virtual void setKey(const char* keyValue, size_t keyValueLength) {};
 
   
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) = 0;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) = 0;
   /*
    * Parse just get the tag and value and translate it to the underlying representation.
    * Return false if there is a parsing problem.
@@ -70,21 +70,21 @@ public:
    * In that case, ignoring the tag and trying to continue is possible.
    * It MUST NOT call validate.
    */
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) = 0;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) = 0;
 
   /*
    * Validate the value. Intended for subclasser.
    * Return false if value is not accepted.
    */
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) { (void)xmlLiteParser; (void)xmlPath; (void)keyPos; (void)generateErrors; return true; };
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) { (void)xmlLiteParser; (void)xmlPath; (void)keyPos; (void)generateErrors; return true; };
 
 };
 
 class NullXmlType : public XmlAbstractType
 {
   virtual const char* getDescription() override { return "null"; };
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override { (void)xmlLiteParser; (void)xmlPath; (void)generateErrors; panic("NullXmlType : can't call parseFromXmlLite"); };
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { (void)xmlLiteParser; return false; };
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override { (void)xmlLiteParser; (void)xmlPath; (void)generateErrors; panic("NullXmlType : can't call parseFromXmlLite"); };
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { (void)xmlLiteParser; return false; };
 };
 
 extern NullXmlType nullXmlType;
@@ -93,31 +93,31 @@ class XmlStrictBool : public XmlAbstractType
 {
   using super = XmlAbstractType;
 public:
-  using ValueType = bool;
+  using ValueType = XBool;
   static const ValueType nullValue;
 protected:
-  bool booll = false;
+  XBool booll;
 public:
-  constexpr XmlStrictBool() : super() {};
+  constexpr XmlStrictBool() : booll(false) {};
   constexpr XmlStrictBool(bool b) : booll(b) { /*if (b) b = 1;*/ }
 
-  virtual void reset() override { super::reset(); booll = 0; };
+  virtual void reset() override { super::reset(); booll = false; };
   virtual const char* getDescription() override { return "boolean"; };
 
-  const bool& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return booll; }
+  const XBool& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return booll; }
 
-  bool setBoolValue(bool b) { setDefined(); booll = b; return true; }
+  XBool setBoolValue(XBool b) { setDefined(); booll = b; return true; }
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("true") || xmlLiteParser->nextTagIsOpeningTag("false"); };
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("true") || xmlLiteParser->nextTagIsOpeningTag("false"); };
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlBool : public XmlStrictBool
 {
   using super = XmlStrictBool;
 public:
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
 };
 
 
@@ -125,8 +125,8 @@ class XmlBoolYesNo : public XmlStrictBool
 {
   using super = XmlBoolYesNo;
 public:
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
 };
 
 
@@ -139,12 +139,12 @@ public:
   static const ValueType nullValue;
 
 protected:
-  bool canBeEmpty = false;
+  XBool canBeEmpty = false;
   ValueType xstring8 = ValueType();
   
 public:
   XmlString8() : super() {};
-  XmlString8(bool _canBeEmpty) : super(), canBeEmpty(_canBeEmpty) {};
+  XmlString8(XBool _canBeEmpty) : super(), canBeEmpty(_canBeEmpty) {};
   virtual ~XmlString8() {};
 
   virtual const char* getDescription() override { return "string"; };
@@ -152,17 +152,16 @@ public:
     super::reset(); xstring8.setEmpty();
   };
 
-//  ValueType& value() { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
   virtual const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
 
-  virtual bool setStringValue(const ValueType& _value) { setDefined(); xstring8 = _value; return true; }
-  virtual bool setStringValue(const char* s, size_t size) { setDefined(); xstring8.strsicpy(s, size); return true; }
-  virtual bool stealStringValue(char* s, size_t size) { setDefined(); xstring8.stealValueFrom(s, size); return true; }
+  virtual XBool setStringValue(const ValueType& _value) { setDefined(); xstring8 = _value; return true; }
+  virtual XBool setStringValue(const char* s, size_t size) { setDefined(); xstring8.strsicpy(s, size); return true; }
+  virtual XBool stealStringValue(char* s, size_t size) { setDefined(); xstring8.stealValueFrom(s, size); return true; }
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string"); }
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string"); }
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
   // TODO validate !_canBeEmpty
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
 #ifdef JIEF_DEBUG
 if (xmlPath.containsIC("BoardSerialNumber"_XS8) ) {
   NOP;
@@ -187,24 +186,24 @@ public:
   static const ValueType nullValue;
 
 protected:
-  bool canBeEmpty = false;
+  XBool canBeEmpty = false;
   XStringW xstringW = ValueType();
   
 public:
   XmlStringW() : super() {};
-  XmlStringW(bool _canBeEmpty) : super(), canBeEmpty(_canBeEmpty) {};
+  XmlStringW(XBool _canBeEmpty) : super(), canBeEmpty(_canBeEmpty) {};
   virtual ~XmlStringW() {};
 
   virtual const char* getDescription() override { return "string"; };
   virtual void reset() override { super::reset(); xstringW.setEmpty(); };
 
   virtual const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstringW; }
-  virtual bool setStringValue(const char* s, size_t size) { setDefined(); xstringW.strsicpy(s, size); return true; }
+  virtual XBool setStringValue(const char* s, size_t size) { setDefined(); xstringW.strsicpy(s, size); return true; }
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string"); }
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string"); }
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
   // TODO validate !_canBeEmpty
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
     if ( !canBeEmpty && xstringW.isEmpty() ) {
       xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
@@ -228,8 +227,8 @@ class XmlString8Trimed : public XmlString8
   using super = XmlString8;
 public:
   XmlString8Trimed() : super(false) {};
-  XmlString8Trimed(bool allowEmpty) : super(allowEmpty) {};
-  virtual bool setStringValue(const char* s, size_t size) override { setDefined(); xstring8.strsicpy(s, size); xstring8.trim(); return true; }
+  XmlString8Trimed(XBool allowEmpty) : super(allowEmpty) {};
+  virtual XBool setStringValue(const char* s, size_t size) override { setDefined(); xstring8.strsicpy(s, size); xstring8.trim(); return true; }
 };
 
 class XmlKey : public XmlAbstractType
@@ -248,17 +247,17 @@ public:
   virtual const char* getDescription() override { return "key"; };
   virtual void reset() override { super::reset(); xstring8.setEmpty(); };
 
-  virtual bool isKey() const override { return true; }
+  virtual XBool isKey() const override { return true; }
   virtual const XString8& getKey() const override { return value(); }
 
   const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
 
-  virtual bool setStringValue(const char* s, size_t size) { setDefined(); xstring8.strsicpy(s, size); return true; }
+  virtual XBool setStringValue(const char* s, size_t size) { setDefined(); xstring8.strsicpy(s, size); return true; }
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("key"); }
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr);
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("key"); }
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr);
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
     if ( xstring8.isEmpty() ) return false;
     return true;
@@ -271,7 +270,7 @@ class XmlKeyDisablable : public XmlKey
 {
   using super = XmlKey;
 protected:
-  bool Disabled = false;
+  XBool Disabled = false;
 public:
   XmlKeyDisablable() {};
   ~XmlKeyDisablable() {};
@@ -280,11 +279,11 @@ public:
 
   virtual const char* getDescription() override { return "key(dis)"; };
 
-  bool isDisabled() const { return Disabled; }
-  bool isEnabled() const { return !Disabled; }
+  XBool isDisabled() const { return Disabled; }
+  XBool isEnabled() const { return !Disabled; }
   const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
 
-  virtual bool setStringValue(const char* s, size_t size) override {
+  virtual XBool setStringValue(const char* s, size_t size) override {
     setDefined();
     if ( size > 0 && s[0] == '!' ) {
       xstring8.strsicpy(s+1, size-1);
@@ -295,8 +294,8 @@ public:
     return true;
   }
 
-//  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+//  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
     if ( xstring8.isEqual("!") ) return false; // it's an empty disabled key
     return true;
@@ -324,22 +323,22 @@ public:
   virtual const char* getDescription() override { return "data"; };
   virtual void reset() override { super::reset(); m_value.setEmpty(); };
 
-  ValueType& modifiableValue() { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_value; }
   const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_value; }
 
-  bool setDataValue(const uint8_t* s, size_t size) { setDefined(); m_value.ncpy(s, size); return true; }
-  bool stealDataValue(uint8_t* s, size_t size) { setDefined(); m_value.stealValueFrom(s, size); return true; }
-  bool stealDataValue(uint8_t* s, size_t size, size_t allocatedSize) { setDefined(); m_value.stealValueFrom(s, size, allocatedSize); return true; }
+  XBool setDataValue(const uint8_t* s, size_t size) { setDefined(); m_value.ncpy(s, size); return true; }
+  XBool stealDataValue(uint8_t* s, size_t size) { setDefined(); m_value.stealValueFrom(s, size); return true; }
+  XBool stealDataValue(uint8_t* s, size_t size, size_t allocatedSize) { setDefined(); m_value.stealValueFrom(s, size, allocatedSize); return true; }
+  void setSize(size_t size, uint8_t elementToCopy) { m_value.setSize(size, elementToCopy); }
 
-  virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string") || xmlLiteParser->nextTagIsOpeningTag("data"); }
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("string") || xmlLiteParser->nextTagIsOpeningTag("data"); }
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlIntegerAbstract : public XmlAbstractType
 {
 public:
-  bool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
-  bool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, uint64_t* result, bool* negative, int64_t minimum, uint64_t maximum, bool generateErrors);
+  XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override;
+  XBool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, uint64_t* result, XBool* negative, int64_t minimum, uint64_t maximum, XBool generateErrors);
 };
 
 template<typename IntegralType/*, enable_if(is_integral(IntegralType))*/>
@@ -363,7 +362,7 @@ class XmlInteger : public XmlIntegerAbstract
     
     const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return m_value; }
 
-//    bool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, UINTN* result, bool* negative, INTN minimum, UINTN maximum, bool generateErrors);
+//    XBool parseXmlInteger(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, UINTN* result, XBool* negative, INTN minimum, UINTN maximum, XBool generateErrors);
 };
 template <class T>
 const typename XmlInteger<T>::ValueType XmlInteger<T>::nullValue = typename XmlInteger<T>::ValueType();
@@ -376,18 +375,18 @@ public:
 
   virtual const char* getDescription() override { return "uint8"; };
 
-  bool setUInt8Value(ValueType ui8) { setDefined(); m_value = ui8; return true; }
-  bool setUInt8Value(ValueType value, bool sign) {
+  XBool setUInt8Value(ValueType ui8) { setDefined(); m_value = ui8; return true; }
+  XBool setUInt8Value(ValueType value, XBool sign) {
     if ( sign ) { log_technical_bug("XmlUInt8 sign=true"); setUInt8Value(0); return false; }
     setUInt8Value(value);
     return true;
   }
-//  bool setUInt8Value(uint8_t value, bool sign, XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, bool generateErrors) {
+//  XBool setUInt8Value(uint8_t value, XBool sign, XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors) {
 //    setUInt8Value(value, sign);
 //    return validate(xmlLiteParser, xmlPath, pos, generateErrors);
 //  }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlInt8 : public XmlInteger<int8_t>
@@ -398,10 +397,10 @@ public:
 
   virtual const char* getDescription() override { return "int8"; };
 
-  bool setInt8Value(ValueType i8) { setDefined(); m_value = i8; return true; }
-  bool setInt8Value(ValueType value, bool sign) { if ( sign ) return setInt8Value(-value); else setInt8Value(value); return true; }
+  XBool setInt8Value(ValueType i8) { setDefined(); m_value = i8; return true; }
+  XBool setInt8Value(ValueType value, XBool sign) { if ( sign ) return setInt8Value(-value); else setInt8Value(value); return true; }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlUInt16 : public XmlInteger<uint16_t>
@@ -412,14 +411,14 @@ public:
   
   virtual const char* getDescription() override { return "uint16"; };
 
-  bool setUInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
-  bool setUInt16Value(ValueType value, bool sign) {
+  XBool setUInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
+  XBool setUInt16Value(ValueType value, XBool sign) {
     if ( sign ) { log_technical_bug("XmlUInt16 sign=true"); setUInt16Value(0); return false; }
     setUInt16Value(value);
     return true;
   }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlInt16 : public XmlInteger<int16_t>
@@ -430,10 +429,10 @@ public:
 
   virtual const char* getDescription() override { return "unt16"; };
 
-  bool setInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
-  bool setInt16Value(ValueType value, bool sign) { if ( sign ) return setInt16Value(-value); else setInt16Value(value); return true; }
+  XBool setInt16Value(ValueType ui16) { setDefined(); m_value = ui16; return true; }
+  XBool setInt16Value(ValueType value, XBool sign) { if ( sign ) return setInt16Value(-value); else setInt16Value(value); return true; }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlUInt32 : public XmlInteger<uint32_t>
@@ -444,14 +443,14 @@ public:
 
   virtual const char* getDescription() override { return "uint32"; };
 
-  bool setUInt32Value(ValueType ui32) { setDefined(); m_value = ui32; return true; }
-  bool setUInt32Value(ValueType value, bool sign) {
+  XBool setUInt32Value(ValueType ui32) { setDefined(); m_value = ui32; return true; }
+  XBool setUInt32Value(ValueType value, XBool sign) {
     if ( sign ) { log_technical_bug("XmlUInt32 sign=true"); setUInt32Value(0); return false; }
     setUInt32Value(value);
     return true;
   }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlInt32 : public XmlInteger<int32_t>
@@ -462,10 +461,10 @@ public:
 
   virtual const char* getDescription() override { return "int32"; };
 
-  bool setInt32Value(ValueType i32) { setDefined(); m_value = i32; return true; }
-  bool setInt32Value(ValueType value, bool sign) { if ( sign ) return setInt32Value(-value); else setInt32Value(value); return true; }
+  XBool setInt32Value(ValueType i32) { setDefined(); m_value = i32; return true; }
+  XBool setInt32Value(ValueType value, XBool sign) { if ( sign ) return setInt32Value(-value); else setInt32Value(value); return true; }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlUInt64 : public XmlInteger<uint64_t>
@@ -476,14 +475,14 @@ public:
 
   virtual const char* getDescription() override { return "uint64"; };
 
-  bool setUInt64Value(ValueType ui64) { setDefined(); m_value = ui64; return true; }
-  bool setUInt64Value(ValueType value, bool sign) {
+  XBool setUInt64Value(ValueType ui64) { setDefined(); m_value = ui64; return true; }
+  XBool setUInt64Value(ValueType value, XBool sign) {
     if ( sign ) { log_technical_bug("XmlUInt64 sign=true"); setUInt64Value(0); return false; }
     setUInt64Value(value);
     return true;
   }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 class XmlInt64 : public XmlInteger<int64_t>
@@ -494,10 +493,10 @@ public:
 
   virtual const char* getDescription() override { return "int64"; };
 
-  bool setInt64Value(ValueType i64) { setDefined(); m_value = i64; return true; }
-  bool setInt64Value(ValueType value, bool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
+  XBool setInt64Value(ValueType i64) { setDefined(); m_value = i64; return true; }
+  XBool setInt64Value(ValueType value, XBool sign) { if ( sign ) return setInt64Value(-value); else setInt64Value(value); return true; }
 
-  virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override;
+  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 };
 
 

@@ -22,7 +22,7 @@ extern "C" {
 class ABSTRACT_PATCH
 {
 public:
-  bool             Disabled = bool();
+  XBool            Disabled = XBool();
   XBuffer<UINT8>   Find = XBuffer<UINT8> ();
   XBuffer<UINT8>   Replace = XBuffer<UINT8> ();
   XBuffer<UINT8>   MaskFind = XBuffer<UINT8> ();
@@ -43,9 +43,9 @@ public:
   virtual ~ABSTRACT_PATCH() {}
   
 	#if __cplusplus > 201703L
-		bool operator == (const ABSTRACT_PATCH&) const = default;
+		XBool operator == (const ABSTRACT_PATCH&) const = default;
 	#endif
-  bool isEqual(const ABSTRACT_PATCH& other) const
+  XBool isEqual(const ABSTRACT_PATCH& other) const
   {
     if ( !(Disabled == other.Disabled ) ) return false;
     if ( !(Find == other.Find ) ) return false;
@@ -82,8 +82,8 @@ public:
   }
 
 /** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
-  bool IsPatchEnabledByBuildNumber(const XString8& Build);
-  bool IsPatchEnabled(const MacOsVersion& CurrOS);
+  XBool IsPatchEnabledByBuildNumber(const XString8& Build);
+  XBool IsPatchEnabled(const MacOsVersion& CurrOS);
 
 
 };
@@ -96,15 +96,15 @@ public:
 
 
 	#if __cplusplus > 201703L
-		bool operator == (const ABSTRACT_KEXT_OR_KERNEL_PATCH&) const = default;
+		XBool operator == (const ABSTRACT_KEXT_OR_KERNEL_PATCH&) const = default;
 	#endif
-  bool isEqual(const ABSTRACT_KEXT_OR_KERNEL_PATCH& other) const
+  XBool isEqual(const ABSTRACT_KEXT_OR_KERNEL_PATCH& other) const
   {
     if ( !super::isEqual (other) ) return false;
     if ( !(ProcedureName == other.ProcedureName ) ) return false;
     return true;
   }
-  bool takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::ABSTRACT_KEXT_OR_KERNEL_PATCH& other)
+  XBool takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::ABSTRACT_KEXT_OR_KERNEL_PATCH& other)
   {
     super::takeValueFrom(other);
     ProcedureName = other.dgetProcedureName();
@@ -119,15 +119,15 @@ class KEXT_PATCH : public ABSTRACT_KEXT_OR_KERNEL_PATCH
   using super = ABSTRACT_KEXT_OR_KERNEL_PATCH;
 public:
   XString8         Name = XString8();
-  bool             IsPlistPatch = BOOLEAN();
+  XBool            IsPlistPatch = XBool();
 
 
   virtual XString8 getName() const { return Name; }
 
 	#if __cplusplus > 201703L
-		bool operator == (const KEXT_PATCH&) const = default;
+		XBool operator == (const KEXT_PATCH&) const = default;
 	#endif
-  bool isEqual(const KEXT_PATCH& other) const
+  XBool isEqual(const KEXT_PATCH& other) const
   {
     if ( !super::isEqual (other) ) return false;
     if ( !(Name == other.Name ) ) return false;
@@ -150,9 +150,9 @@ public:
   virtual XString8 getName() const { return "kernel"_XS8; }
 
 	#if __cplusplus > 201703L
-		bool operator == (const KERNEL_PATCH&) const = default;
+		XBool operator == (const KERNEL_PATCH&) const = default;
 	#endif
-  bool isEqual(const KERNEL_PATCH& other) const
+  XBool isEqual(const KERNEL_PATCH& other) const
   {
     if ( !super::isEqual (other) ) return false;
     return true;
@@ -171,9 +171,9 @@ public:
   virtual XString8 getName() const { return "boot.efi"_XS8; }
 
 	#if __cplusplus > 201703L
-		bool operator == (const BOOT_PATCH&) const = default;
+		XBool operator == (const BOOT_PATCH&) const = default;
 	#endif
-  bool isEqual(const BOOT_PATCH& other) const
+  XBool isEqual(const BOOT_PATCH& other) const
   {
     if ( !super::isEqual (other) ) return false;
     return true;
@@ -187,15 +187,15 @@ public:
 class KERNEL_AND_KEXT_PATCHES
 {
 public:
-  bool KPDebug = bool();
-  bool KPKernelLapic = bool();
-  bool KPKernelXCPM = bool();
-  bool _KPKernelPm = bool();
-  bool KPPanicNoKextDump = bool();
-  bool _KPAppleIntelCPUPM = bool();
-  bool KPAppleRTC = bool();
-  bool EightApple = bool();
-  bool KPDELLSMBIOS = bool();  // Dell SMBIOS patch
+  XBool KPDebug = XBool();
+  XBool KPKernelLapic = XBool();
+  XBool KPKernelXCPM = XBool();
+  XBool _KPKernelPm = XBool();
+  XBool KPPanicNoKextDump = XBool();
+  XBool _KPAppleIntelCPUPM = XBool();
+  XBool KPAppleRTC = XBool();
+  XBool EightApple = XBool();
+  XBool KPDELLSMBIOS = XBool();  // Dell SMBIOS patch
   UINT32  FakeCPUID = UINT32();
   XString8 KPATIConnectorsController = XString8();
   XBuffer<UINT8> KPATIConnectorsData = XBuffer<UINT8>();
@@ -208,9 +208,9 @@ public:
   KERNEL_AND_KEXT_PATCHES() : ForceKextsToLoad(), KextPatches(), KernelPatches(), BootPatches() {}
   
 	#if __cplusplus > 201703L
-		bool operator == (const KERNEL_AND_KEXT_PATCHES&) const = default;
+		XBool operator == (const KERNEL_AND_KEXT_PATCHES&) const = default;
 	#endif
-  bool isEqual(const KERNEL_AND_KEXT_PATCHES& other) const
+  XBool isEqual(const KERNEL_AND_KEXT_PATCHES& other) const
   {
     if ( !(KPDebug == other.KPDebug ) ) return false;
     if ( !(KPKernelLapic == other.KPKernelLapic ) ) return false;

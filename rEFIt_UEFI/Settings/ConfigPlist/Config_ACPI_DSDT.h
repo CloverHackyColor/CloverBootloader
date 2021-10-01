@@ -35,8 +35,8 @@ public:
       ACPI_DSDT_Fix& operator = (const ACPI_DSDT_Fix&) = delete; // { panic("copy ctor"); }; // = delete;
 
       virtual const char* getDescription() override { panic("not defined"); };
-      virtual bool isTheNextTag(XmlLiteParser* xmlLiteParser) override { panic("not defined"); };
-      virtual bool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors) override { panic("not defined"); };
+      virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { panic("not defined"); };
+      virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override { panic("not defined"); };
 
       virtual void reset() override {
         super::reset();
@@ -48,10 +48,10 @@ public:
       const CHAR8* getOldName() const { return m_oldName; }
       uint32_t getBitData() const { return m_bitData; }
 
-      bool dgetOldEnabled() const { return oldEnabled.isDefined() ? oldEnabled.value() : false; };
-      bool dgetNewEnabled() const { return newEnabled.isDefined() ? newEnabled.value() : false; };
+      XBool dgetOldEnabled() const { return oldEnabled.isDefined() ? oldEnabled.value() : XBool(false); };
+      XBool dgetNewEnabled() const { return newEnabled.isDefined() ? newEnabled.value() : XBool(false); };
 
-      bool dgetEnabled() const {
+      XBool dgetEnabled() const {
         if ( oldEnabled.isDefined() && oldEnabled.value() ) return true;
         if ( newEnabled.isDefined() && newEnabled.value() ) return true;
         return false;
@@ -104,9 +104,9 @@ public:
         }
       };
 
-      virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, bool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, bool* keyFound) override;
+      virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound) override;
       
-      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+      virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
         if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
         if ( !isDefined() ) return true;
 //        if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
@@ -135,7 +135,7 @@ public:
         }
         return FixDsdt;
       }
-      bool dgetFixHeaders() const {
+      XBool dgetFixHeaders() const {
         return getFixHeaders().dgetEnabled();
       }
     };
@@ -147,7 +147,7 @@ public:
         class TgtBridgeClass : public XmlData
         {
           using super = XmlData;
-          virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
 #ifdef JIEF_DEBUG
 if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
   NOP;
@@ -175,8 +175,8 @@ if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
 
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
       public:
-        bool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : false; };
-        uint8_t dgetBValue() const { return Disabled.isDefined() ? Disabled.value() : false; };
+        XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
+        uint8_t dgetBValue() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
         XString8 dgetPatchDsdtLabel() const { return Comment.isDefined() ? Comment.value() : "(NoLabel)"_XS8; };
         const XBuffer<UINT8>& dgetPatchDsdtFind() const { return Find.isDefined() ? Find.value() : XBuffer<UINT8>::NullXBuffer; };
         const XBuffer<UINT8>& dgetPatchDsdtReplace() const { return Replace.isDefined() ? Replace.value() : XBuffer<UINT8>::NullXBuffer; };
@@ -211,8 +211,8 @@ public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
   XString8 dgetDsdtName() const { return Name.isDefined() && Name.value().notEmpty() ? Name.value() : "DSDT.aml"_XS8; };
-  bool dgetDebugDSDT() const { return Debug.isDefined() ? Debug.value() : false; };
-  bool dgetRtc8Allowed() const { return Rtc8Allowed.isDefined() ? Rtc8Allowed.value() : false; };
+  XBool dgetDebugDSDT() const { return Debug.isDefined() ? Debug.value() : XBool(false); };
+  XBool dgetRtc8Allowed() const { return Rtc8Allowed.isDefined() ? Rtc8Allowed.value() : XBool(false); };
   uint8_t dgetPNLF_UID() const { return isDefined() ? PNLF_UID.isDefined() ? PNLF_UID.value() : 0x0a : 0; }; // TODO: different default value if section is not defined
   uint32_t dgetFixDsdt() const {
     // priority is given to Fixes
@@ -221,8 +221,8 @@ public:
   };
 //  const ACPI_DSDT_Fixes_Class& getFixes() const { return Fixes; };
 //  const XmlArray<ACPI_DSDT_Patch_Class>& getPatches() const { return Patches; };
-  bool dgetReuseFFFF() const { return ReuseFFFF.isDefined() ? ReuseFFFF.value() : false; };
-  bool dgetSuspendOverride() const { return SuspendOverride.isDefined() ? SuspendOverride.value() : false; };
+  XBool dgetReuseFFFF() const { return ReuseFFFF.isDefined() ? ReuseFFFF.value() : XBool(false); };
+  XBool dgetSuspendOverride() const { return SuspendOverride.isDefined() ? SuspendOverride.value() : XBool(false); };
 
 };
 

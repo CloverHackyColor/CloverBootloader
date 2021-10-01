@@ -107,9 +107,9 @@ void toLowerStr(CHAR8 *tstr, IN CONST CHAR8 *str) {
     *tstr = '\0';
 }
 
-BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
+XBool LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 {
-    BOOLEAN inject = TRUE;
+    XBool inject = true;
     const TagStruct*  osBundleRequiredTag;
     XString8 osbundlerequired;
     
@@ -125,7 +125,7 @@ BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
              osbundlerequired != "local"_XS8  &&
              osbundlerequired != "console"_XS8  &&
              osbundlerequired != "network-root"_XS8 ) {
-            inject = FALSE;
+            inject = false;
         }
     }
     
@@ -136,7 +136,7 @@ BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 //extern void AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
 //XStringW infoPlistPath = getKextPlist(dir, KextEntry, &NoContents);
-XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents)
+XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, XBool* NoContents)
 {
   XStringW    TempName;
   
@@ -151,9 +151,9 @@ XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT
       MsgLog("Failed to load extra kext : %ls \n", TempName.wc_str());
       return L""_XSW;
     }
-    *NoContents = TRUE;
+    *NoContents = true;
   } else {
-    *NoContents = FALSE;
+    *NoContents = false;
   }
   return TempName;
 }
@@ -179,7 +179,7 @@ TagDict* LOADER_ENTRY::getInfoPlist(const XStringW& infoPlistPath)
 }
 
 //XString8 execpath = getKextExecPath(dir, KextEntry, dict, NoContents);
-XString8  LOADER_ENTRY::getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents)
+XString8  LOADER_ENTRY::getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, XBool NoContents)
 {
   const TagStruct* prop = NULL;
   XString8    TempName;
@@ -213,11 +213,11 @@ EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileN
   UINTN       executableBufferLength = 0;
 //  CHAR8*      bundlePathBuffer = NULL;
 //  UINTN       bundlePathBufferLength = 0;
-  XStringW    TempName;
-  TagDict*    dict = NULL;
+  XStringW              TempName;
+  TagDict*              dict = NULL;
   const TagStruct*      prop = NULL;
-  BOOLEAN     NoContents = FALSE;
-  BOOLEAN     inject = FALSE;
+  XBool                 NoContents = false;
+  XBool                 inject = false;
   _BooterKextFileInfo *infoAddr = NULL;
   _DeviceTreeBuffer *kext = (_DeviceTreeBuffer *)kext_v;
 
@@ -232,7 +232,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileN
       MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), efiStrError(Status));
       return EFI_NOT_FOUND;
     }
-    NoContents = TRUE;
+    NoContents = true;
   }
   if( ParseXML((CHAR8*)infoDictBuffer, &dict,infoDictBufferLength)!=0 ) {
     FreePool(infoDictBuffer);
@@ -338,7 +338,7 @@ UINT32 GetListCount(LIST_ENTRY const* List)
 //  return kextsSize;
 //}
 
-void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
+void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN XBool Force)
 {
    REFIT_DIR_ITER          PlugInIter;
    EFI_FILE_INFO           *PlugInFile;
@@ -504,14 +504,14 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
             MsgLog("  Force kext: %s\n", FileName.c_str());
             AddKext( Volume->RootDir, FileName, archCpuType);
             XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", FileName.c_str());
-            LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
+            LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, true);
           }
           DirIterClose(&PlugInIter);
         } else {
           XString8 Path = S8Printf("%ls", p);
           AddKext( Volume->RootDir, Path, archCpuType);
           XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", Path.c_str());
-          LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
+          LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, true);
         }
       }
     }
@@ -536,18 +536,18 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and macOSVersion folder
-  SrcDir = GetOtherKextsDir(TRUE);
+  SrcDir = GetOtherKextsDir(true);
   if ( SrcDir.notEmpty() ) {
     AddKextsFromDirInArray(SrcDir, archCpuType, kextArray);
   } else {
-    DBG("GetOtherKextsDir(TRUE) return NULL\n");
+    DBG("GetOtherKextsDir(true) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
-  SrcDir = GetOtherKextsDir(FALSE);
+  SrcDir = GetOtherKextsDir(false);
   if ( SrcDir.notEmpty() ) {
     AddKextsFromDirInArray(SrcDir, archCpuType, kextArray);
   } else {
-    DBG("GetOtherKextsDir(FALSE) return NULL\n");
+    DBG("GetOtherKextsDir(false) return NULL\n");
   }
 
   if ( macOSVersion.notEmpty() )

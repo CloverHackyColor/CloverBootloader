@@ -521,7 +521,7 @@ NSVGparser* nsvg__createParser()
   p->attr[0].fillRule = NSVG_FILLRULE_NONZERO;
   p->attr[0].hasFill = 1;
   p->attr[0].visible = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-  p->isText = FALSE;
+  p->isText = false;
 
   return p;
 }
@@ -2800,7 +2800,7 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     shape = (NSVGshape*)AllocateCopyPool(sizeof(NSVGshape), ref);
     if (!shape) return;
     memcpy(shape->xform, &xform[0], sizeof(float)*6);
-    shape->isSymbol = FALSE;
+    shape->isSymbol = false;
     shape->link = ref;
     shape->group = attr->group;
     AsciiStrCatS(shape->id, 64, "_lnk");
@@ -2815,7 +2815,7 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     if (!shape) return;
     memcpy(shape->xform, xform, sizeof(float)*6);
 //    nsvg__xformMultiply(shape->xform, &xform[0]);
-    shape->isSymbol = TRUE;
+    shape->isSymbol = true;
     shape->link = refSym->shapes;
     shape->group = attr->group;
     AsciiStrCpyS(shape->id, 64, attr->id);
@@ -3025,7 +3025,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           textFace[1].font = fontSVG;
           textFace[1].size = (INTN)text->fontSize;
           textFace[1].color = text->fontColor;
-          textFace[1].valid = TRUE;
+          textFace[1].valid = true;
           DBG("set message->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
@@ -3037,7 +3037,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           textFace[1].font = fontSVG;
           textFace[1].size = (INTN)text->fontSize;
           textFace[1].color = text->fontColor;
-          textFace[1].valid = TRUE;
+          textFace[1].valid = true;
           DBG("set message_night->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       } else if (strcmp(group->id, "MenuRows") == 0) {
@@ -3045,7 +3045,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           textFace[2].font = fontSVG;
           textFace[2].size = (INTN)text->fontSize;
           textFace[2].color = text->fontColor;
-          textFace[2].valid = TRUE;
+          textFace[2].valid = true;
           DBG("set menu->font=%s color=%X size=%f as in MenuRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
@@ -3053,14 +3053,14 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           textFace[2].font = fontSVG;
           textFace[2].size = (INTN)text->fontSize;
           textFace[2].color = text->fontColor;
-          textFace[2].valid = TRUE;
+          textFace[2].valid = true;
         break;
       } else if (strcmp(group->id, "HelpRows") == 0) {
         if (!textFace[0].valid) {
           textFace[0].font = fontSVG;
           textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
-          textFace[0].valid = TRUE;
+          textFace[0].valid = true;
           DBG("set help->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
@@ -3068,7 +3068,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           textFace[0].font = fontSVG;
           textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
-          textFace[0].valid = TRUE;
+          textFace[0].valid = true;
           DBG("set help_night->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       }
@@ -3079,7 +3079,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
   //add to head
   text->next = p->text;
   p->text = text;
-  p->isText = TRUE;
+  p->isText = true;
 }
 
 static void nsvg__parseCircle(NSVGparser* p, char** attr)
@@ -3311,7 +3311,7 @@ static void parseImage(NSVGparser* p, char** dict)
   if (len == 0) {
     DBG("image not decoded from base64\n");
   }
-//  NewImage = egDecodePNG(tmpData, len, TRUE);
+//  NewImage = egDecodePNG(tmpData, len, true);
   NewImage->FromPNG(tmpData, len);
   pt->image = (void *)NewImage;
   if (tmpData) {
@@ -3589,7 +3589,7 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
 void XTheme::parseTheme(void* parser, char** dict)
 {
   NSVGparser* p = (NSVGparser*)parser;
-  BOOLEAN found = FALSE;
+  XBool found = false;
   UINT32 Color = 0x80808080; //default value
   for (int i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
@@ -3641,7 +3641,7 @@ void XTheme::parseTheme(void* parser, char** dict)
         SelectionColor = Color;
       }
     } else if (strcmp(dict[i], "SelectionColor_night") == 0) {
-      found = TRUE;
+      found = true;
       if (!ThemeX.Daylight) {
         SelectionColor = getIntegerDict(dict[i + 1]);
       }
@@ -3831,7 +3831,7 @@ CHAR16 nsvg__parseUnicode(const char *s)
   return A;
 }
 
-static void nsvg__parseGlyph(NSVGparser* p, char** dict, BOOLEAN missing)
+static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
 {
   //glyph-name="E_d" unicode="Ed" horiz-adv-x="1289" d="M679 ..."/>
   /*
@@ -3867,7 +3867,7 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, BOOLEAN missing)
         if (strcmp(dict[i+1], "nonmarkingreturn") == 0) {
           glyph->unicode = L'\n';
         } else if (strcmp(dict[i+1], ".notdef") == 0) {
-          missing = TRUE;
+          missing = true;
         }
       }
     }
@@ -3918,9 +3918,9 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
   } else if (strcmp(el, "font-face") == 0) {
     nsvg__parseFontFace(p, dict);
   } else if (strcmp(el, "missing-glyph") == 0) {
-    nsvg__parseGlyph(p, dict, TRUE);
+    nsvg__parseGlyph(p, dict, true);
   } else if (strcmp(el, "glyph") == 0) {
-    nsvg__parseGlyph(p, dict, FALSE);
+    nsvg__parseGlyph(p, dict, false);
   } else if (strcmp(el, "style") == 0) {
     p->styleFlag = 1;
   } else if (strcmp(el, "g") == 0) {
@@ -3928,7 +3928,7 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
     nsvg__parseGroup(p, dict);
   } else if (strcmp(el, "text") == 0) {
     nsvg__pushAttr(p);
-    p->isText = 1;
+    p->isText = true;
     nsvg__parseText(p, dict);
   } else if (strcmp(el, "tspan") == 0) {
     nsvg__pushAttr(p);
@@ -4048,7 +4048,7 @@ static void nsvg__endElement(void* ud, const char* el)
     nsvg__popAttr(p);
   } else if (strcmp(el, "text") == 0) {
     nsvg__popAttr(p);
-    p->isText = 0;
+    p->isText = false;
     //  } else if (strcmp(el, "tspan") == 0) {
     //    nsvg__popAttr(p);
 
@@ -4097,7 +4097,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
         if (letter == L'C') {
           DBG("Found glyph %X, point[0]=(%d,%d) points=%d\n", letter,
               (int)shape->paths->pts[0], (int)shape->paths->pts[1], shape->paths->npts);
-          shape->debug = TRUE;
+          shape->debug = true;
         }
       } */
       break;
@@ -4145,7 +4145,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   }
 
   shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-  shape->isText = TRUE;
+  shape->isText = true;
   nsvg__xformIdentity(shape->xform);
   //scale convert shape from glyph size to user's font-size
   shape->xform[0] = scale; //1.f;

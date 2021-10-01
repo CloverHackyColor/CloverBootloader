@@ -196,21 +196,21 @@ extern PLATFORMDATA ApplePlatformData[];
 void SetDMISettingsForModel(MACHINE_TYPES Model, SETTINGS_DATA* settingsData, REFIT_CONFIG* liveConfig);
 MACHINE_TYPES GetModelFromString (const XString8& ProductName);
 
-bool isReleaseDateWithYear20(MACHINE_TYPES Model);
+XBool isReleaseDateWithYear20(MACHINE_TYPES Model);
 XString8 GetReleaseDate (MACHINE_TYPES Model);
 uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeatures(MACHINE_TYPES Model);
 uint64_t GetExtFwFeatures(MACHINE_TYPES Model);
 uint64_t GetExtFwFeaturesMask(MACHINE_TYPES Model);
-bool GetMobile(MACHINE_TYPES Model);
+XBool GetMobile(MACHINE_TYPES Model);
 UINT64 GetPlatformFeature(MACHINE_TYPES Model);
-void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RBr[8]);
-void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, bool isMobile, char RPlt[8]);
+void getRBr(MACHINE_TYPES Model, UINT32 CPUModel, XBool isMobile, char RBr[8]);
+void getRPlt(MACHINE_TYPES Model, UINT32 CPUModel, XBool isMobile, char RPlt[8]);
 
 int compareBiosVersion(const XString8& version1, const XString8& version2);
-bool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2);
-bool isBiosVersionEquel(const XString8& version1, const XString8& version2);
+XBool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2);
+XBool isBiosVersionEquel(const XString8& version1, const XString8& version2);
 
 int compareReleaseDate(const XString8& date1, const XString8& date2);
 

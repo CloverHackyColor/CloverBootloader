@@ -128,7 +128,7 @@ To validate and reject bad input, override the method validate. Imagine we have 
 class CountClass : public XmlInt64
 {
   using super = XmlInt64;
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
     if ( value() < -2 ) {
         xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot be negative. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -168,7 +168,7 @@ class MyDictClass : public XmlDict
     };
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( !type.isDefined() ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -208,7 +208,7 @@ class MyDictClass : public XmlDict
     };
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
       if ( !type.isDefined() ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
@@ -326,7 +326,7 @@ int32_t valueOne = array[1].value(); // == 2
 
 ### Union
 
-Sometimes, a value can be, for example, a bool or a string. In that case it's easy to declare. Just subclass XmlUnion :
+Sometimes, a value can be, for example, a XBool or a string. In that case it's easy to declare. Just subclass XmlUnion :
 
 ```
 class XmlBoolOrString : public XmlUnion
@@ -335,10 +335,10 @@ class XmlBoolOrString : public XmlUnion
 public:
   XmlBool xmlBool = XmlBool();
   XmlString8 xmlString8 = XmlString8();
-  virtual const char* getDescription() override { return "bool or string"; };
+  virtual const char* getDescription() override { return "XBool or string"; };
   XmlUnionField m_fields[2] = { xmlBool, xmlString8 };
   virtual void getFields(XmlUnionField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 };
 ```
 
-In this example, the value will be tried to be parsed as a bool. If it doesn't work, the next possibility is tried. Here it's xmlString8. You can create union with any kind of field you create, including dict and arrays.
+In this example, the value will be tried to be parsed as a XBool. If it doesn't work, the next possibility is tried. Here it's xmlString8. You can create union with any kind of field you create, including dict and arrays.

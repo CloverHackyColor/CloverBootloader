@@ -959,7 +959,7 @@ CONST CHAR8 *get_gma_model(UINT16 id)
 }
 
 
-BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev)
+XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev)
 {
   UINTN           j;
   UINTN           i;
@@ -970,12 +970,12 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
   UINT32          FakeID;
   UINT32          DualLink = 1;
 //  UINT64          os_version = AsciiOSVersionToUint64(macOSVersion);
-  BOOLEAN         SetUGAWidth = FALSE;
-  BOOLEAN         SetUGAHeight = FALSE;
-  BOOLEAN         Injected = FALSE;
-  BOOLEAN         SetFake = FALSE;
-  BOOLEAN         SetSnb = FALSE;
-  BOOLEAN         SetIg = FALSE;
+  XBool           SetUGAWidth = false;
+  XBool           SetUGAHeight = false;
+  XBool           Injected = false;
+  XBool           SetFake = false;
+  XBool           SetSnb = false;
+  XBool           SetIg = false;
 
   MACHINE_TYPES   MacModel = GetModelFromString(gSettings.Smbios.ProductName);
 
@@ -998,14 +998,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
   // Resolution
   switch (UGAWidth) {
     case 640:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 360:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
 			  DBG("  Found one ninth of a Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 480:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
 			  DBG("  Found VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1014,14 +1014,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 800:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 480:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
 			  DBG("  Found Wide VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 600:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
 			  DBG("  Found Super VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1030,23 +1030,23 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 854:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 480) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Full Wide VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 960:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 540:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found one quarter of Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 640:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Double-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1055,18 +1055,18 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 1024:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 576:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Super VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 600:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Super VGA Display - 17:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1075,31 +1075,31 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 1152:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 864) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1280:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 720:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide XGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 800:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1024:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1108,41 +1108,41 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 1366:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 768) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Full Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1400:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 1050) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Super XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1440:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 900) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Wide XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1600:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 900:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1151,10 +1151,10 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 1680:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 1050:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1163,14 +1163,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 1920:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 1080:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1179,14 +1179,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 2048:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 1152:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1536:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1195,18 +1195,18 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 2560:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 1440:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1600:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad Wide XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1215,27 +1215,27 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 2880:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 1800) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 3200:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 1800:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Quad Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Quad Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1244,14 +1244,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 3840:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 2160:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Ultra HD, 4K Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1260,27 +1260,27 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 4096:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       if(UGAHeight == 3072) {
-        SetUGAHeight = TRUE;
+        SetUGAHeight = true;
         DBG("  Found Hex XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
         DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 5120:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 2880:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Ultra HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 3200:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Hex XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4096:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Hex Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1289,14 +1289,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 6400:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 4096:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Hex Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Hex Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1305,14 +1305,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       }
       break;
     case 7680:
-      SetUGAWidth = TRUE;
+      SetUGAWidth = true;
       switch (UGAHeight) {
         case 4320:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Full Ultra HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
-          SetUGAHeight = TRUE;
+          SetUGAHeight = true;
           DBG("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
@@ -1331,11 +1331,11 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
 
   if (gma_dev && !gma_dev->used) {
     device = devprop_add_device_pci(device_inject_string, gma_dev, NULL);
-    gma_dev->used = TRUE;
+    gma_dev->used = true;
   }
 
   if (!device) {
-    return FALSE;
+    return false;
   }
 
   if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
@@ -1343,7 +1343,7 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       if (gSettings.Devices.AddPropertyArray[i].Device != DEV_INTEL) {
         continue;
       }
-      Injected = TRUE;
+      Injected = true;
 
       if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
         //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
@@ -1468,7 +1468,7 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
     FakeID = gSettings.Devices.FakeID.FakeIntel & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
-    SetFake = TRUE;
+    SetFake = true;
 	  MsgLog("  FakeID Intel GFX = 0x%08x\n", gSettings.Devices.FakeID.FakeIntel);
   } else {
     DBG("  FakeID Intel GFX: not set\n");
@@ -1486,7 +1486,7 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       if (GlobalConfig.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&GlobalConfig.IgPlatform, 4);
 		  MsgLog("  snb-platform-id = 0x%08x\n", GlobalConfig.IgPlatform);
-        SetSnb = TRUE;
+        SetSnb = true;
       } else {
         DBG("  snb-platform-id: not set\n");
       }
@@ -1495,7 +1495,7 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
       if (GlobalConfig.IgPlatform != 0) {
         devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&GlobalConfig.IgPlatform, 4);
 		  MsgLog("  ig-platform-id = 0x%08x\n", GlobalConfig.IgPlatform);
-        SetIg = TRUE;
+        SetIg = true;
       } else {
         DBG("  ig-platform-id: not set\n");
       }
@@ -1504,7 +1504,7 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
 
   if (gSettings.Devices.NoDefaultProperties) {
     MsgLog("  Intel: no default properties\n");
-    return TRUE;
+    return true;
   }
 
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
@@ -3344,14 +3344,14 @@ BOOLEAN setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& Buil
 
     default:
 		  DBG("  Intel card id=%hX unsupported, please report to the clover thread\n", gma_dev->device_id);
-      return FALSE;
+      return false;
   }
 
 #if DEBUG_GMA == 2
   gBS->Stall(5000000);
 #endif
 
-  return TRUE;
+  return true;
 }
 //thanks to jalavoui
 #if 0

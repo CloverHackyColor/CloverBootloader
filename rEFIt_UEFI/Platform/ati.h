@@ -245,7 +245,7 @@ typedef struct {
   const CHAR8         *cfg_name;
   UINT8               ports;
   UINT32              flags;
-  BOOLEAN             posted;
+  XBool               posted;
 } card_t;
 
 // Chip flags
@@ -278,32 +278,32 @@ typedef struct {
 
 typedef struct {
   UINT32    flags;
-  BOOLEAN   all_ports;
+  XBool     all_ports;
   CONST CHAR8     *name;
-  BOOLEAN   (*get_value)(value_t *val, INTN index, BOOLEAN Sier);
+  XBool     (*get_value)(value_t *val, INTN index, XBool Sier);
   value_t   default_val;
 } AtiDevProp;
 
-BOOLEAN get_bootdisplay_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_vrammemory_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_edid_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_display_type(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_name_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_nameparent_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_model_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_vrammemsize_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_binimage_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_binimage_owr(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_romrevision_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_deviceid_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_mclk_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_sclk_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_refclk_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_platforminfo_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_vramtotalsize_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier);
-BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier);
+XBool get_bootdisplay_val(value_t *val, INTN index, XBool Sier);
+XBool get_vrammemory_val(value_t *val, INTN index, XBool Sier);
+XBool get_edid_val(value_t *val, INTN index, XBool Sier);
+XBool get_display_type(value_t *val, INTN index, XBool Sier);
+XBool get_name_val(value_t *val, INTN index, XBool Sier);
+XBool get_nameparent_val(value_t *val, INTN index, XBool Sier);
+XBool get_model_val(value_t *val, INTN index, XBool Sier);
+XBool get_conntype_val(value_t *val, INTN index, XBool Sier);
+XBool get_vrammemsize_val(value_t *val, INTN index, XBool Sier);
+XBool get_binimage_val(value_t *val, INTN index, XBool Sier);
+XBool get_binimage_owr(value_t *val, INTN index, XBool Sier);
+XBool get_romrevision_val(value_t *val, INTN index, XBool Sier);
+XBool get_deviceid_val(value_t *val, INTN index, XBool Sier);
+XBool get_mclk_val(value_t *val, INTN index, XBool Sier);
+XBool get_sclk_val(value_t *val, INTN index, XBool Sier);
+XBool get_refclk_val(value_t *val, INTN index, XBool Sier);
+XBool get_platforminfo_val(value_t *val, INTN index, XBool Sier);
+XBool get_vramtotalsize_val(value_t *val, INTN index, XBool Sier);
+XBool get_dual_link_val(value_t *val, INTN index, XBool Sier);
+XBool get_name_pci_val(value_t *val, INTN index, XBool Sier);
 
 // Constants. Can be defined even if DONT_DEFINE_GLOBALS
 extern const radeon_card_info_t radeon_cards[];
@@ -314,7 +314,7 @@ extern AtiDevProp ati_devprop_list[];
 extern const CHAR8 *chip_family_name[];
 #endif
 
-BOOLEAN
+XBool
 setup_ati_devprop (
   LOADER_ENTRY *Entry,
   pci_dt_t     *ati_dev

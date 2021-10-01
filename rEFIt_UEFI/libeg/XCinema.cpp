@@ -58,7 +58,7 @@ const XImage& FILM::GetImage(INTN Index) const
   return NullImage;
 }
 
-const XImage& FILM::GetImage(bool *free) const
+const XImage& FILM::GetImage(XBool *free) const
 {
   /*
    * for SVG anime we have to generate new XImage using CurrentFrame as an argument

@@ -31,9 +31,9 @@ public:
 
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
     
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-      bool b = true;
+      XBool b = true;
       if ( !Address.isDefined() || Address.value() == 0) {
         if ( Enabled.isDefined() && Enabled.value() ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Enabled is ignored because Address is not defined or 0 in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
       }
@@ -66,17 +66,17 @@ public:
       XmlBool ThirdPartyDrives = XmlBool();
       XmlBool XhciPortLimit = XmlBool();
       
-      bool dgetAppleXcpmExtraMsrs() const { return AppleXcpmExtraMsrs.isDefined() ? AppleXcpmExtraMsrs.value() : AppleXcpmExtraMsrs.nullValue; };
-      bool dgetAppleXcpmForceBoost() const { return AppleXcpmForceBoost.isDefined() ? AppleXcpmForceBoost.value() : AppleXcpmForceBoost.nullValue; };
-      bool dgetDisableIoMapper() const { return DisableIoMapper.isDefined() ? DisableIoMapper.value() : DisableIoMapper.nullValue; };
-      bool dgetDisableLinkeditJettison() const { return DisableLinkeditJettison.isDefined() ? DisableLinkeditJettison.value() : DisableLinkeditJettison.nullValue; };
-      bool dgetDummyPowerManagement() const { return DummyPowerManagement.isDefined() ? DummyPowerManagement.value() : DummyPowerManagement.nullValue; };
-      bool dgetExtendBTFeatureFlags() const { return ExtendBTFeatureFlags.isDefined() ? ExtendBTFeatureFlags.value() : ExtendBTFeatureFlags.nullValue; };
-      bool dgetExternalDiskIcons() const { return ExternalDiskIcons.isDefined() ? ExternalDiskIcons.value() : ExternalDiskIcons.nullValue; };
-      bool dgetIncreasePciBarSize() const { return IncreasePciBarSize.isDefined() ? IncreasePciBarSize.value() : IncreasePciBarSize.nullValue; };
-      bool dgetPowerTimeoutKernelPanic() const { return PowerTimeoutKernelPanic.isDefined() ? PowerTimeoutKernelPanic.value() : PowerTimeoutKernelPanic.nullValue; };
-      bool dgetThirdPartyDrives() const { return ThirdPartyDrives.isDefined() ? ThirdPartyDrives.value() : ThirdPartyDrives.nullValue; };
-      bool dgetXhciPortLimit() const { return XhciPortLimit.isDefined() ? XhciPortLimit.value() : XhciPortLimit.nullValue; };
+      XBool dgetAppleXcpmExtraMsrs() const { return AppleXcpmExtraMsrs.isDefined() ? AppleXcpmExtraMsrs.value() : AppleXcpmExtraMsrs.nullValue; };
+      XBool dgetAppleXcpmForceBoost() const { return AppleXcpmForceBoost.isDefined() ? AppleXcpmForceBoost.value() : AppleXcpmForceBoost.nullValue; };
+      XBool dgetDisableIoMapper() const { return DisableIoMapper.isDefined() ? DisableIoMapper.value() : DisableIoMapper.nullValue; };
+      XBool dgetDisableLinkeditJettison() const { return DisableLinkeditJettison.isDefined() ? DisableLinkeditJettison.value() : DisableLinkeditJettison.nullValue; };
+      XBool dgetDummyPowerManagement() const { return DummyPowerManagement.isDefined() ? DummyPowerManagement.value() : DummyPowerManagement.nullValue; };
+      XBool dgetExtendBTFeatureFlags() const { return ExtendBTFeatureFlags.isDefined() ? ExtendBTFeatureFlags.value() : ExtendBTFeatureFlags.nullValue; };
+      XBool dgetExternalDiskIcons() const { return ExternalDiskIcons.isDefined() ? ExternalDiskIcons.value() : ExternalDiskIcons.nullValue; };
+      XBool dgetIncreasePciBarSize() const { return IncreasePciBarSize.isDefined() ? IncreasePciBarSize.value() : IncreasePciBarSize.nullValue; };
+      XBool dgetPowerTimeoutKernelPanic() const { return PowerTimeoutKernelPanic.isDefined() ? PowerTimeoutKernelPanic.value() : PowerTimeoutKernelPanic.nullValue; };
+      XBool dgetThirdPartyDrives() const { return ThirdPartyDrives.isDefined() ? ThirdPartyDrives.value() : ThirdPartyDrives.nullValue; };
+      XBool dgetXhciPortLimit() const { return XhciPortLimit.isDefined() ? XhciPortLimit.value() : XhciPortLimit.nullValue; };
       
       OcKernelQuirks_Class(const Quirks_Class& _parent) /*: parent(_parent)*/ {}
   };
@@ -103,23 +103,23 @@ public:
       XmlBool SignalAppleOS = XmlBool();
       XmlBool SyncRuntimePermissions = XmlBool();
       
-      bool dgetAvoidRuntimeDefrag() const { return parent.isDefined() ? AvoidRuntimeDefrag.isDefined() ? AvoidRuntimeDefrag.value() : true : false; }; // TODO: different default value if section is not defined
-      bool dgetDevirtualiseMmio() const { return DevirtualiseMmio.isDefined() ? DevirtualiseMmio.value() : DevirtualiseMmio.nullValue; };
-      bool dgetDisableSingleUser() const { return DisableSingleUser.isDefined() ? DisableSingleUser.value() : DisableSingleUser.nullValue; };
-      bool dgetDisableVariableWrite() const { return DisableVariableWrite.isDefined() ? DisableVariableWrite.value() : DisableVariableWrite.nullValue; };
-      bool dgetDiscardHibernateMap() const { return DiscardHibernateMap.isDefined() ? DiscardHibernateMap.value() : DiscardHibernateMap.nullValue; };
-      bool dgetEnableSafeModeSlide() const { return parent.isDefined() ? EnableSafeModeSlide.isDefined() ? EnableSafeModeSlide.value() : true : false; }; // TODO: different default value if section is not defined
-      bool dgetEnableWriteUnprotector() const { return parent.isDefined() ? EnableWriteUnprotector.isDefined() ? EnableWriteUnprotector.value() : true : EnableWriteUnprotector.nullValue; }; // TODO: different default value if section is not defined
-      bool dgetForceExitBootServices() const { return ForceExitBootServices.isDefined() ? ForceExitBootServices.value() : ForceExitBootServices.nullValue; };
-      bool dgetProtectMemoryRegions() const { return ProtectMemoryRegions.isDefined() ? ProtectMemoryRegions.value() : ProtectMemoryRegions.nullValue; };
-      bool dgetProtectSecureBoot() const { return ProtectSecureBoot.isDefined() ? ProtectSecureBoot.value() : ProtectSecureBoot.nullValue; };
-      bool dgetProtectUefiServices() const { return ProtectUefiServices.isDefined() ? ProtectUefiServices.value() : ProtectUefiServices.nullValue; };
-      bool dgetProvideCustomSlide() const { return ProvideCustomSlide.isDefined() ? ProvideCustomSlide.value() : ProvideCustomSlide.nullValue; };
+      XBool dgetAvoidRuntimeDefrag() const { return parent.isDefined() ? AvoidRuntimeDefrag.isDefined() ? AvoidRuntimeDefrag.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
+      XBool dgetDevirtualiseMmio() const { return DevirtualiseMmio.isDefined() ? DevirtualiseMmio.value() : DevirtualiseMmio.nullValue; };
+      XBool dgetDisableSingleUser() const { return DisableSingleUser.isDefined() ? DisableSingleUser.value() : DisableSingleUser.nullValue; };
+      XBool dgetDisableVariableWrite() const { return DisableVariableWrite.isDefined() ? DisableVariableWrite.value() : DisableVariableWrite.nullValue; };
+      XBool dgetDiscardHibernateMap() const { return DiscardHibernateMap.isDefined() ? DiscardHibernateMap.value() : DiscardHibernateMap.nullValue; };
+      XBool dgetEnableSafeModeSlide() const { return parent.isDefined() ? EnableSafeModeSlide.isDefined() ? EnableSafeModeSlide.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
+      XBool dgetEnableWriteUnprotector() const { return parent.isDefined() ? EnableWriteUnprotector.isDefined() ? EnableWriteUnprotector.value() : XBool(true) : EnableWriteUnprotector.nullValue; }; // TODO: different default value if section is not defined
+      XBool dgetForceExitBootServices() const { return ForceExitBootServices.isDefined() ? ForceExitBootServices.value() : ForceExitBootServices.nullValue; };
+      XBool dgetProtectMemoryRegions() const { return ProtectMemoryRegions.isDefined() ? ProtectMemoryRegions.value() : ProtectMemoryRegions.nullValue; };
+      XBool dgetProtectSecureBoot() const { return ProtectSecureBoot.isDefined() ? ProtectSecureBoot.value() : ProtectSecureBoot.nullValue; };
+      XBool dgetProtectUefiServices() const { return ProtectUefiServices.isDefined() ? ProtectUefiServices.value() : ProtectUefiServices.nullValue; };
+      XBool dgetProvideCustomSlide() const { return ProvideCustomSlide.isDefined() ? ProvideCustomSlide.value() : ProvideCustomSlide.nullValue; };
       uint8_t dgetProvideMaxSlide() const { return ProvideMaxSlide.isDefined() ? ProvideMaxSlide.value() : ProvideMaxSlide.nullValue; };
-      bool dgetRebuildAppleMemoryMap() const { return RebuildAppleMemoryMap.isDefined() ? RebuildAppleMemoryMap.value() : RebuildAppleMemoryMap.nullValue; };
-      bool dgetSetupVirtualMap() const { return parent.isDefined() ? SetupVirtualMap.isDefined() ? SetupVirtualMap.value() : true : SetupVirtualMap.nullValue; }; // TODO: different default value if section is not defined
-      bool dgetSignalAppleOS() const { return SignalAppleOS.isDefined() ? SignalAppleOS.value() : SignalAppleOS.nullValue; };
-      bool dgetSyncRuntimePermissions() const { return parent.isDefined() ? SyncRuntimePermissions.isDefined() ? SyncRuntimePermissions.value() : true : false; }; // TODO: different default value if section is not defined
+      XBool dgetRebuildAppleMemoryMap() const { return RebuildAppleMemoryMap.isDefined() ? RebuildAppleMemoryMap.value() : RebuildAppleMemoryMap.nullValue; };
+      XBool dgetSetupVirtualMap() const { return parent.isDefined() ? SetupVirtualMap.isDefined() ? SetupVirtualMap.value() : XBool(true) : SetupVirtualMap.nullValue; }; // TODO: different default value if section is not defined
+      XBool dgetSignalAppleOS() const { return SignalAppleOS.isDefined() ? SignalAppleOS.value() : SignalAppleOS.nullValue; };
+      XBool dgetSyncRuntimePermissions() const { return parent.isDefined() ? SyncRuntimePermissions.isDefined() ? SyncRuntimePermissions.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
 
       OcBooterQuirks_Class(const Quirks_Class& _parent) : parent(_parent) {}
   };
@@ -170,14 +170,14 @@ public:
   
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
     if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    bool b = true;
+    XBool b = true;
     return b;
   }
   const decltype(FuzzyMatch)::ValueType& dgetFuzzyMatch() const { return FuzzyMatch.isDefined() ? FuzzyMatch.value() : FuzzyMatch.nullValue; };
   const decltype(KernelCache)::ValueType& dgetOcKernelCache() const { return KernelCache.isDefined() ? KernelCache.value() : KernelCache.nullValue; };
-//  bool dgetProvideConsoleGop() const { return ProvideConsoleGopEnable.isDefined() ? ProvideConsoleGopEnable.value() : ProvideConsoleGopEnable.nullValue; };
+//  XBool dgetProvideConsoleGop() const { return ProvideConsoleGopEnable.isDefined() ? ProvideConsoleGopEnable.value() : ProvideConsoleGopEnable.nullValue; };
   UINT32 dgetQuirksMask() const {
     UINT32 mask = 0;
     mask  |= OcBooterQuirks.dgetAvoidRuntimeDefrag() ? QUIRK_DEFRAG:0;

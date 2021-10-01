@@ -282,7 +282,7 @@ DeleteNvramVariable (
   return Status;
 }
 
-BOOLEAN
+XBool
 IsDeletableVariable (
   IN CHAR16    *Name,
   IN EFI_GUID  *Guid
@@ -299,7 +299,7 @@ IsDeletableVariable (
       CompareGuid(Guid, &gAppleSecureBootVariableGuid) ||
       CompareGuid(Guid, &gAppleTamperResistantBootSecureVariableGuid) ||
       CompareGuid(Guid, &gAppleTamperResistantBootEfiUserVariableGuid)) {
-    return TRUE;
+    return true;
 
   // Disable Clover Boot Options from being deleted
   // Global variable boot options
@@ -308,26 +308,26 @@ IsDeletableVariable (
     // I.e. BootOrder, Boot####, DriverOrder, Driver####
     if (!StrnCmp (Name, L"Boot", StrLen(L"Boot")) ||
         !StrnCmp (Name, L"Driver", StrLen(L"Driver"))) {
-      return TRUE;
+      return true;
     }*/
 
   // Lilu / OpenCore extensions
   } else if (CompareGuid (Guid, &gOcVendorVariableGuid) ||
              CompareGuid(Guid, &gOcReadOnlyVariableGuid) ||
              CompareGuid(Guid, &gOcWriteOnlyVariableGuid)) {
-    return TRUE;
+    return true;
 
   // Ozmozis extensions
   } else if (CompareGuid (Guid, &mOzmosisProprietary1Guid) ||
              CompareGuid (Guid, &mOzmosisProprietary2Guid)) {
-    return TRUE;
+    return true;
 
   // BootChime
   } else if (CompareGuid (Guid, &gBootChimeVendorVariableGuid)) {
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 #ifdef JIEF_DEBUG
@@ -372,7 +372,7 @@ ResetNativeNvram ()
   CHAR16          *Name;
   UINTN           NameSize;
   UINTN           NewNameSize;
-  BOOLEAN         Restart = TRUE;
+  XBool           Restart = true;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
   EFI_FILE* FileHandle;
@@ -385,11 +385,11 @@ ResetNativeNvram ()
     return Status;
   }
     
-  while (TRUE) {
+  while (true) {
     if (Restart) {
       ZeroMem (&Guid, sizeof(Guid));
       ZeroMem (Name, sizeof(Name));
-      Restart = FALSE;
+      Restart = false;
     }
       
     NewNameSize = NameSize;
@@ -414,7 +414,7 @@ ResetNativeNvram ()
         Status = DeleteNvramVariable(Name, &Guid);
         if (!EFI_ERROR(Status)) {
           //DBG("OK\n");
-          Restart = TRUE;
+          Restart = true;
         } else {
           //DBG("FAIL (%s)\n", efiStrError(Status));
           break;
@@ -492,7 +492,7 @@ INT8 SAdr[4] = {0, 0, 3, 0};
 INT8 SNum[1] = {1};
 
 void
-GetSmcKeys (BOOLEAN WriteToSMC)
+GetSmcKeys (XBool WriteToSMC)
 {
   EFI_STATUS                  Status;
   CHAR16                      *Name;
@@ -522,7 +522,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
     gAppleSmc = NULL;
   }
 
-  while (TRUE) {
+  while (true) {
     NewNameSize = NameSize;
     Status = gRT->GetNextVariableName (&NewNameSize, Name, &Guid);
     if (Status == EFI_BUFFER_TOO_SMALL) {
@@ -629,14 +629,14 @@ EFI_GUID
 #define DBG_DP(...)
 //#define DBG_DP(...) DBG(__VA_ARGS__)
 
-/** Returns TRUE if dev paths are equal. Ignores some differences. */
-BOOLEAN
+/** Returns true if dev paths are equal. Ignores some differences. */
+XBool
 BootVolumeDevicePathEqual (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
-  BOOLEAN          Equal;
+  XBool            Equal;
   UINT8            Type1;
   UINT8            SubType1;
   UINT8            Type2;
@@ -645,14 +645,14 @@ BootVolumeDevicePathEqual (
   UINTN            Len2;
   SATA_DEVICE_PATH *SataNode1;
   SATA_DEVICE_PATH *SataNode2;
-  BOOLEAN          ForceEqualNodes;
+  XBool            ForceEqualNodes;
 
 
 //  DBG_DP ("   BootVolumeDevicePathEqual:\n    %ls\n    %ls\n", FileDevicePathToStr (DevicePath1), FileDevicePathToStr (DevicePath2));
 //  DBG_DP ("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
   
-  Equal = FALSE;
-  while (TRUE) {
+  Equal = false;
+  while (true) {
     Type1    = DevicePathType (DevicePath1);
     SubType1 = DevicePathSubType (DevicePath1);
     Len1     = DevicePathNodeLength (DevicePath1);
@@ -661,7 +661,7 @@ BootVolumeDevicePathEqual (
     SubType2 = DevicePathSubType (DevicePath2);
     Len2     = DevicePathNodeLength (DevicePath2);
     
-    ForceEqualNodes = FALSE;
+    ForceEqualNodes = false;
     
 //    DBG_DP ("    N1: (%d, %d, %lld)", Type1, SubType1, Len1);
 //    DBG_DP (" N2: (%d, %d, %lld)", Type2, SubType2, Len2);
@@ -681,12 +681,12 @@ BootVolumeDevicePathEqual (
     if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
       if ((Type2 == HARDWARE_DEVICE_PATH && SubType2 == HW_VENDOR_DP)
           || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_NVME_NAMESPACE_DP)) {
-        ForceEqualNodes = TRUE;
+        ForceEqualNodes = true;
       }
     } else if (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_SATA_DP &&
               ((Type1 == HARDWARE_DEVICE_PATH && SubType1 == HW_VENDOR_DP)
                 || (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_NVME_NAMESPACE_DP))) {
-      ForceEqualNodes = TRUE;
+      ForceEqualNodes = true;
     }
     
     //
@@ -694,7 +694,7 @@ BootVolumeDevicePathEqual (
     // we'll assume Acpi dev path nodes to be equal to cover that
     //
     if (Type1 == ACPI_DEVICE_PATH && Type2 == ACPI_DEVICE_PATH) {
-      ForceEqualNodes = TRUE;
+      ForceEqualNodes = true;
     }
     
     if (ForceEqualNodes) {
@@ -716,7 +716,7 @@ BootVolumeDevicePathEqual (
     //
     if (IsDevicePathEnd (DevicePath1)) {
       // END node - they are the same
-      Equal = TRUE;
+      Equal = true;
  //     DBG_DP (" - END = equal\n");
       break;
     }
@@ -760,8 +760,8 @@ BootVolumeDevicePathEqual (
 }
 
 
-/** Returns TRUE if dev paths contain the same MEDIA_DEVICE_PATH. */
-BOOLEAN
+/** Returns true if dev paths contain the same MEDIA_DEVICE_PATH. */
+XBool
 BootVolumeMediaDevicePathNodesEqual (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
@@ -769,12 +769,12 @@ BootVolumeMediaDevicePathNodesEqual (
 {
     DevicePath1 = Clover_FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
     if (DevicePath1 == NULL) {
-        return FALSE;
+        return false;
     }
 
     DevicePath2 = Clover_FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
     if (DevicePath2 == NULL) {
-        return FALSE;
+        return false;
     }
     
     return (DevicePathNodeLength (DevicePath1) == DevicePathNodeLength (DevicePath1))
@@ -1177,7 +1177,7 @@ PutNvramPlistToRtVars ()
         keyTag->keyStringValue() == "BootNext"_XS8 ) {
       VendorGuid = &gEfiGlobalVariableGuid;
       // it may happen only in this case
-      gSettings.Boot.HibernationFixup = TRUE;
+      gSettings.Boot.HibernationFixup = true;
     }
 
   //    AsciiStrToUnicodeStrS(Tag.stringValue(), KeyBuf, 128);
@@ -1243,7 +1243,7 @@ FindStartupDiskVolume (
 //  LOADER_ENTRY *LoaderEntry;
 //  REFIT_VOLUME *Volume;
   REFIT_VOLUME *DiskVolume;
-  BOOLEAN      IsPartitionVolume;
+  XBool        IsPartitionVolume;
   XStringW     LoaderPath;
   XStringW     EfiBootVolumeStr;
   

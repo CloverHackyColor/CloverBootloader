@@ -153,7 +153,7 @@ void ConfigManager::DiscoverDevices()
               }
               gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
               //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08X\n", gfx->Connectors);
-              gfx->ConnChanged = FALSE;
+              gfx->ConnChanged = false;
 
               DiscoveredSlotDeviceClass* SlotDevice = new DiscoveredSlotDeviceClass;
               SlotDeviceArrayNonConst.AddReference(SlotDevice, true);
@@ -161,7 +161,7 @@ void ConfigManager::DiscoverDevices()
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-              //SlotDevice->Valid           = TRUE;
+              //SlotDevice->Valid           = true;
               SlotDevice->SlotName        = "PCI Slot 0"_XS8;
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
@@ -173,7 +173,7 @@ void ConfigManager::DiscoverDevices()
               DBG(" - GFX: Model=%s (Intel)\n", gfx->Model.c_str());
               gfx->Ports = 1;
               gfx->Connectors = (1 << GfxPropertiesArrayNonConst.size());
-              gfx->ConnChanged = FALSE;
+              gfx->ConnChanged = false;
               break;
             }
             case 0x10de: {
@@ -227,7 +227,7 @@ void ConfigManager::DiscoverDevices()
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-              //SlotDevice->Valid           = TRUE;
+              //SlotDevice->Valid           = true;
               SlotDevice->SlotName = "PCI Slot 0"_XS8;
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
@@ -238,7 +238,7 @@ void ConfigManager::DiscoverDevices()
               gfx->Model.S8Printf("pci%hx,%hx", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
               gfx->Ports  = 1;
               gfx->Connectors = (1 << GfxPropertiesArrayNonConst.size());
-              gfx->ConnChanged = FALSE;
+              gfx->ConnChanged = false;
 
               break;
             }
@@ -265,7 +265,7 @@ void ConfigManager::DiscoverDevices()
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-          //SlotDevice->Valid           = TRUE;
+          //SlotDevice->Valid           = true;
           SlotDevice->SlotName = "AirPort"_XS8;
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
@@ -305,7 +305,7 @@ void ConfigManager::DiscoverDevices()
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-          //SlotDevice->Valid           = TRUE;
+          //SlotDevice->Valid           = true;
           SlotDevice->SlotName = "Ethernet"_XS8;
           SlotDevice->SlotID          = 2;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
@@ -346,7 +346,7 @@ void ConfigManager::DiscoverDevices()
           //
           if ( Mmio != NULL ) {
             UINTN Offset = 0;
-            BOOLEAN Swab = FALSE;
+            XBool Swab = false;
             UINT32 Mac0, Mac4;
             switch ( Vendor ) {
               case 0x11ab:   //Marvell Yukon
@@ -372,7 +372,7 @@ void ConfigManager::DiscoverDevices()
                 break;
               case 0x1969:   //Atheros
                 Offset = L1C_STAD0;
-                Swab = TRUE;
+                Swab = true;
                 break;
               case 0x8086:   //Intel
                 if (PreviousVendor == Vendor) {
@@ -420,7 +420,7 @@ void ConfigManager::DiscoverDevices()
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-          //SlotDevice->Valid           = TRUE;
+          //SlotDevice->Valid           = true;
           SlotDevice->SlotName = "FireWire"_XS8;
           SlotDevice->SlotID          = 3;
           SlotDevice->SlotType        = SlotTypePciExpressX4;
@@ -448,7 +448,7 @@ void ConfigManager::DiscoverDevices()
             SlotDevice->SegmentGroupNum = (UINT16)Segment;
             SlotDevice->BusNum          = (UINT8)Bus;
             SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-            //SlotDevice->Valid           = TRUE;
+            //SlotDevice->Valid           = true;
             SlotDevice->SlotName = "HDMI port"_XS8;
             SlotDevice->SlotID          = 5;
             SlotDevice->SlotType        = SlotTypePciExpressX4;
@@ -524,7 +524,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   }
   
   XmlLiteParser xmlLiteParser;
-  bool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
+  XBool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
   if ( xmlLiteParser.getErrorsAndWarnings().size() ) {
     if ( xmlLiteParser.getErrorsAndWarnings().size() > 1 ) {
       DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
@@ -713,10 +713,10 @@ void ConfigManager::applySettings() const
     if ( gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE )
     {
       if ( !configPlist.ACPI.SSDT.Generate.getGeneratePStates().isDefined() )
-        gSettings.ACPI.SSDT.Generate.GeneratePStates = TRUE;
+        gSettings.ACPI.SSDT.Generate.GeneratePStates = true;
 
       if ( !configPlist.ACPI.SSDT.Generate.getGenerateCStates().isDefined() )
-        gSettings.ACPI.SSDT.Generate.GenerateCStates = TRUE;
+        gSettings.ACPI.SSDT.Generate.GenerateCStates = true;
 
       // backward compatibility, APFS, APLF, PluginType follow PStates
       if ( !configPlist.ACPI.SSDT.Generate.getGenerateAPSN().isDefined() )
@@ -729,7 +729,7 @@ void ConfigManager::applySettings() const
         gSettings.ACPI.SSDT.Generate.GeneratePluginType = gSettings.ACPI.SSDT.Generate.GeneratePStates;
 
       if ( !configPlist.ACPI.SSDT.getEnableC6().isDefined() )
-        gSettings.ACPI.SSDT._EnableC6 = TRUE;
+        gSettings.ACPI.SSDT._EnableC6 = true;
 
       if ( !configPlist.ACPI.SSDT.getPluginType().isDefined() )
         gSettings.ACPI.SSDT.PluginType = 1;
@@ -855,7 +855,7 @@ void ConfigManager::applySettings() const
     // to determine the use of Table 132
     if ( gSettings.CPU.QPI )
     {
-      GlobalConfig.SetTable132 = TRUE;
+      GlobalConfig.SetTable132 = true;
       //DBG("QPI: use Table 132\n");
     } else
     {
@@ -865,7 +865,7 @@ void ConfigManager::applySettings() const
         case CPU_MODEL_WESTMERE: // Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
         case CPU_MODEL_NEHALEM_EX: // Core i7, Nehalem-Ex Xeon, "Beckton"
         case CPU_MODEL_WESTMERE_EX: // Core i7, Nehalem-Ex Xeon, "Eagleton"
-          GlobalConfig.SetTable132 = TRUE;
+          GlobalConfig.SetTable132 = true;
           DBG("QPI: use Table 132\n");
           break;
         default:

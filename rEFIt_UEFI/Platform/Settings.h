@@ -33,7 +33,7 @@
 //};
 
 extern CONST CHAR8      *AudioOutputNames[];
-extern BOOLEAN           gFirmwareClover;
+extern XBool             gFirmwareClover;
 
 
 class HDA_OUTPUTS
@@ -59,8 +59,8 @@ typedef struct {
 //UINT16            Height;
   CHAR8             Model[64];
   CHAR8             Config[64];
-  BOOLEAN           LoadVBios;
-//BOOLEAN           PatchVBios;
+  XBool             LoadVBios;
+//XBool             PatchVBios;
   UINTN             Segment;
   UINTN             Bus;
   UINTN             Device;
@@ -68,7 +68,7 @@ typedef struct {
   EFI_HANDLE        Handle;
   UINT8             *Mmio;
   UINT32            Connectors;
-  BOOLEAN           ConnChanged;
+  XBool             ConnChanged;
 } GFX_PROPERTIES;
 
 typedef struct {
@@ -93,9 +93,9 @@ public:
 	XString8 Name = XString8();
   
 #if __cplusplus > 201703L
-  bool operator == (const ACPI_NAME&) const = default;
+  XBool operator == (const ACPI_NAME&) const = default;
 #endif
-  bool isEqual(const ACPI_NAME& other) const
+  XBool isEqual(const ACPI_NAME& other) const
   {
     if ( !(Name == other.Name) ) return false;
     return true;
@@ -126,9 +126,9 @@ public:
   XString8 renameTo = XString8();
   
 #if __cplusplus > 201703L
-  bool operator == (const ACPI_RENAME_DEVICE&) const = default;
+  XBool operator == (const ACPI_RENAME_DEVICE&) const = default;
 #endif
-  bool isEqual(const ACPI_RENAME_DEVICE& other) const
+  XBool isEqual(const ACPI_RENAME_DEVICE& other) const
   {
     if ( !acpiName.isEqual(other.acpiName) ) return false;
     if ( !(renameTo == other.renameTo) ) return false;
@@ -161,9 +161,9 @@ public:
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem = INPUT_ITEM();
-  BOOLEAN         OtherOS;
+  XBool           OtherOS;
 
-  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(0) {}
+  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(false) {}
   ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
   const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
   ~ACPI_DROP_TABLE() {}
@@ -177,12 +177,12 @@ class CUSTOM_LOADER_SUBENTRY;
 //template<class C> class XmlArray;
 
 //void CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
                    
 class CUSTOM_LOADER_SUBENTRY_SETTINGS
 {
 public:
-  bool                   Disabled = 0;
+  XBool                  Disabled = false;
 public: // temporary, must be protected:
   // member defined with _ prefix should not be accessed from outside. I left them public for now for CompareCustomEntries()
   undefinable_XString8   _Arguments = undefinable_XString8();
@@ -194,9 +194,9 @@ public: // temporary, must be protected:
   undefinable_bool       _NoCaches = undefinable_bool();
   
 #if __cplusplus > 201703L
-  bool operator == (const CUSTOM_LOADER_SUBENTRY_SETTINGS&) const = default;
+  XBool operator == (const CUSTOM_LOADER_SUBENTRY_SETTINGS&) const = default;
 #endif
-  bool isEqual(const CUSTOM_LOADER_SUBENTRY_SETTINGS& other) const
+  XBool isEqual(const CUSTOM_LOADER_SUBENTRY_SETTINGS& other) const
   {
     if ( !(Disabled == other.Disabled) ) return false;
     if ( !(_Arguments == other._Arguments) ) return false;
@@ -219,7 +219,7 @@ public: // temporary, must be protected:
 public:
 
 //  friend void ::CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//  friend BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//  friend XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
 //  friend class ::CUSTOM_LOADER_SUBENTRY;
 };
 
@@ -234,7 +234,7 @@ public:
   CUSTOM_LOADER_SUBENTRY(const CUSTOM_LOADER_ENTRY& _customLoaderEntry, const CUSTOM_LOADER_SUBENTRY_SETTINGS& _settings) : parent(_customLoaderEntry), settings(_settings) {}
   
   XString8Array getLoadOptions() const;
-  UINT8 getFlags(bool NoCachesDefault) const;
+  UINT8 getFlags(XBool NoCachesDefault) const;
 
   const XString8& getTitle() const;
   const XString8& getFullTitle() const;
@@ -244,7 +244,7 @@ public:
 class CUSTOM_LOADER_ENTRY_SETTINGS;
 //
 //void CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
-//BOOLEAN FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+//XBool FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
 
 extern const XString8 defaultInstallTitle;
 extern const XString8 defaultRecoveryTitle;
@@ -261,7 +261,7 @@ public:
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXELClass(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& other) { Blue = other.Blue; Green = other.Green; Red = other.Red; Reserved = other.Reserved; }
   
-	bool operator == (const EFI_GRAPHICS_OUTPUT_BLT_PIXELClass& other) const {
+	XBool operator == (const EFI_GRAPHICS_OUTPUT_BLT_PIXELClass& other) const {
 		if ( !(Blue == other.Blue) ) return false;
 		if ( !(Green == other.Green) ) return false;
 		if ( !(Red == other.Red) ) return false;
@@ -273,7 +273,7 @@ public:
 class CUSTOM_LOADER_ENTRY_SETTINGS
 {
 public:
-  bool                    Disabled = 0;
+  XBool                   Disabled = false;
   XBuffer<UINT8>          ImageData = XBuffer<UINT8>();
   XBuffer<UINT8>          DriveImageData = XBuffer<UINT8>();
   XStringW                Volume = XStringW();
@@ -283,10 +283,10 @@ public:
   XString8                FullTitle = XStringW();
   XStringW                Settings = XStringW(); // path of a config.plist that'll be read at the beginning of startloader
   char32_t                Hotkey = 0;
-  BOOLEAN                 CommonSettings = 0;
+  XBool                   CommonSettings = false;
 //  UINT8                   Flags = 0;
-  bool                    Hidden = 0;
-  bool                    AlwaysHidden = 0;
+  XBool                   Hidden = false;
+  XBool                   AlwaysHidden = false;
   UINT8                   Type = 0;
   UINT8                   VolumeType = 0;
   UINT8                   KernelScan = KERNEL_SCAN_ALL;
@@ -304,14 +304,14 @@ public: // temporary, must be protected:
   UINT8                   CustomLogoTypeSettings = 0;
   XStringW                m_ImagePath = XStringW();
 
-  bool                 ForceTextMode = 0; // 2021-04-22
+  XBool                   ForceTextMode = false; // 2021-04-22
 
 public:
   
 #if __cplusplus > 201703L
-  bool operator == (const CUSTOM_LOADER_ENTRY_SETTINGS&) const = default;
+  XBool operator == (const CUSTOM_LOADER_ENTRY_SETTINGS&) const = default;
 #endif
-  bool isEqual(const CUSTOM_LOADER_ENTRY_SETTINGS& other) const
+  XBool isEqual(const CUSTOM_LOADER_ENTRY_SETTINGS& other) const
   {
     if ( !(Disabled == other.Disabled) ) return false;
     if ( !(ImageData == other.ImageData) ) return false;
@@ -417,7 +417,7 @@ public:
 
   XString8Array getLoadOptions() const;
   
-  UINT8 getFlags(bool NoCachesDefault) const {
+  UINT8 getFlags(XBool NoCachesDefault) const {
     UINT8 Flags = 0;
     if ( settings.Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
     if ( settings.AlwaysHidden ) Flags = OSFLAG_SET(Flags, OSFLAG_DISABLED);
@@ -440,7 +440,7 @@ public:
 class CUSTOM_LEGACY_ENTRY_SETTINGS
 {
 public:
-  bool                 Disabled = 0;
+  XBool                Disabled = false;
   XStringW             ImagePath = XStringW();
   XBuffer<UINT8>       ImageData = XBuffer<UINT8>();
   XStringW             DriveImagePath = XStringW();
@@ -450,15 +450,15 @@ public:
   XStringW             Title = XStringW();
   char32_t             Hotkey = 0;
 //  UINT8                Flags = 0;
-  bool                 Hidden = 0;
-  bool                 AlwaysHidden = 0;
+  XBool                Hidden = false;
+  XBool                AlwaysHidden = false;
   UINT8                Type = 0;
   UINT8                VolumeType = 0;
 
 #if __cplusplus > 201703L
-  bool operator == (const CUSTOM_LEGACY_ENTRY_SETTINGS&) const = default;
+  XBool operator == (const CUSTOM_LEGACY_ENTRY_SETTINGS&) const = default;
 #endif
-  bool isEqual(const CUSTOM_LEGACY_ENTRY_SETTINGS& other) const
+  XBool isEqual(const CUSTOM_LEGACY_ENTRY_SETTINGS& other) const
   {
     if ( !(Disabled == other.Disabled) ) return false;
     if ( !(ImagePath == other.ImagePath) ) return false;
@@ -528,7 +528,7 @@ public:
 class CUSTOM_TOOL_ENTRY_SETTINGS
 {
 public:
-  bool               Disabled = 0;
+  XBool              Disabled = false;
   XStringW           ImagePath = XStringW();
   XBuffer<UINT8>     ImageData = XBuffer<UINT8>();
   XStringW           Volume = XStringW();
@@ -539,14 +539,14 @@ public:
   XStringW           Title = XStringW();
   char32_t           Hotkey = 0;
 //  UINT8              Flags = 0;
-  bool               Hidden = 0;
-  bool               AlwaysHidden = 0;
+  XBool              Hidden = false;
+  XBool              AlwaysHidden = false;
   UINT8              VolumeType = 0;
   
 #if __cplusplus > 201703L
-  bool operator == (const CUSTOM_TOOL_ENTRY_SETTINGS&) const = default;
+  XBool operator == (const CUSTOM_TOOL_ENTRY_SETTINGS&) const = default;
 #endif
-  bool isEqual(const CUSTOM_TOOL_ENTRY_SETTINGS& other) const
+  XBool isEqual(const CUSTOM_TOOL_ENTRY_SETTINGS& other) const
   {
     if ( !(Disabled == other.Disabled) ) return false;
     if ( !(ImagePath == other.ImagePath) ) return false;
@@ -645,9 +645,9 @@ public:
   XBuffer<uint8_t> Replace = XBuffer<uint8_t>();
 
 #if __cplusplus > 201703L
-		bool operator == (const VBIOS_PATCH&) const = default;
+		XBool operator == (const VBIOS_PATCH&) const = default;
 #endif
-    bool isEqual(const VBIOS_PATCH& other) const
+    XBool isEqual(const VBIOS_PATCH& other) const
     {
       if ( !(Find == other.Find) ) return false;
       if ( !(Replace == other.Replace) ) return false;
@@ -666,7 +666,7 @@ class PatchVBiosBytesNewClass : public XObjArrayWithTakeValueFromXmlArray<VBIOS_
 public:
   
 #if __cplusplus > 201703L
-		bool operator == (const PatchVBiosBytesNewClass& other) const { return XObjArray<VBIOS_PATCH>::operator ==(other); }
+		XBool operator == (const PatchVBiosBytesNewClass& other) const { return XObjArray<VBIOS_PATCH>::operator ==(other); }
 #endif
 
   // Temporary bridge to old struct.
@@ -683,7 +683,7 @@ public:
     return size();
   }
 
-  bool isEqual(const PatchVBiosBytesNewClass& other) const
+  XBool isEqual(const PatchVBiosBytesNewClass& other) const
   {
   	return XObjArray<VBIOS_PATCH>::isEqual(other);
 //  	getVBIOS_PATCH_BYTES();
@@ -705,7 +705,7 @@ public:
 class SETTINGS_DATA;
 class ConfigPlistClass;
 class TagDict;
-//bool CompareOldNewSettings(const SETTINGS_DATA& , const ConfigPlistClass& );
+//XBool CompareOldNewSettings(const SETTINGS_DATA& , const ConfigPlistClass& );
 //EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
 
 class SETTINGS_DATA {
@@ -714,22 +714,22 @@ public:
   class BootClass {
     public:
       INTN                    Timeout = -1;
-      bool                    SkipHibernateTimeout = false;
-      bool                    DisableCloverHotkeys = false;
+      XBool                   SkipHibernateTimeout = false;
+      XBool                   DisableCloverHotkeys = false;
       XString8                BootArgs = XString8();
-      bool                    NeverDoRecovery = 0;
-      bool                    LastBootedVolume = false;
+      XBool                   NeverDoRecovery = false;
+      XBool                   LastBootedVolume = false;
       XStringW                DefaultVolume = XStringW();
       XStringW                DefaultLoader = XStringW();
-      bool                    DebugLog = false;
-      bool                    FastBoot = false;
-      bool                    NoEarlyProgress = false;
-      bool                    NeverHibernate = false;
-      bool                    StrictHibernate = false;
-      bool                    RtcHibernateAware = false;
-      bool                    HibernationFixup = false;
-      bool                    SignatureFixup = false;
-      INT8                   SecureSetting = 0; // 0 == false, 1 == true, -1 == undefined
+      XBool                   DebugLog = false;
+      XBool                   FastBoot = false;
+      XBool                   NoEarlyProgress = false;
+      XBool                   NeverHibernate = false;
+      XBool                   StrictHibernate = false;
+      XBool                   RtcHibernateAware = false;
+      XBool                   HibernationFixup = false;
+      XBool                   SignatureFixup = false;
+      INT8                    SecureSetting = 0; // 0 == false, 1 == true, -1 == undefined
       //UINT8                   SecureBoot = 0;
       //UINT8                   SecureBootSetupMode = 0;
       UINT8                   SecureBootPolicy = 0;
@@ -745,9 +745,9 @@ public:
       XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
       
 #if __cplusplus > 201703L
-		bool operator == (const BootClass&) const = default;
+		XBool operator == (const BootClass&) const = default;
 #endif
-      bool isEqual(const BootClass& other) const
+      XBool isEqual(const BootClass& other) const
       {
         if ( !(Timeout == other.Timeout) ) return false;
         if ( !(SkipHibernateTimeout == other.SkipHibernateTimeout) ) return false;
@@ -820,12 +820,12 @@ public:
           };
           UINT64   TableId = 0;
           UINT32   TabLength = 0;
-          bool     OtherOS = 0;
+          XBool    OtherOS = false;
           
 #if __cplusplus > 201703L
-          bool operator == (const ACPIDropTablesClass&) const = default;
+          XBool operator == (const ACPIDropTablesClass&) const = default;
 #endif
-          bool isEqual(const ACPIDropTablesClass& other) const
+          XBool isEqual(const ACPIDropTablesClass& other) const
           {
             if ( !(Signature == other.Signature) ) return false;
             if ( !(TableId == other.TableId) ) return false;
@@ -848,7 +848,7 @@ public:
           class DSDT_Patch
           {
           public :
-            bool             Disabled = bool();
+            XBool            Disabled = XBool();
             XString8         PatchDsdtLabel = XString8();
             XBuffer<UINT8>   PatchDsdtFind = XBuffer<UINT8>();
             XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
@@ -856,9 +856,9 @@ public:
             INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM(); // Not read from config.plist. Should be moved out.
 
 #if __cplusplus > 201703L
-            bool operator == (const DSDT_Patch&) const = default;
+            XBool operator == (const DSDT_Patch&) const = default;
 #endif
-            bool isEqual(const DSDT_Patch& other) const
+            XBool isEqual(const DSDT_Patch& other) const
             {
               if ( !(Disabled == other.Disabled) ) return false;
               if ( !(PatchDsdtLabel == other.PatchDsdtLabel) ) return false;
@@ -880,20 +880,20 @@ public:
           };
 
           XStringW                DsdtName = XStringW();
-          bool                    DebugDSDT = 0;
-          bool                    Rtc8Allowed = 0;
+          XBool                   DebugDSDT = false;
+          XBool                   Rtc8Allowed = false;
           UINT8                   PNLF_UID = 0;
           UINT32                  FixDsdt = 0;
-          bool                    ReuseFFFF = 0;
-          bool                    SuspendOverride = 0;
+          XBool                   ReuseFFFF = false;
+          XBool                   SuspendOverride = false;
 //          XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
           XObjArrayWithTakeValueFromXmlArray<DSDT_Patch, ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class>
                                   DSDTPatchArray = XObjArrayWithTakeValueFromXmlArray<DSDT_Patch, ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class>();
 
 #if __cplusplus > 201703L
-          bool operator == (const DSDTClass&) const = default;
+          XBool operator == (const DSDTClass&) const = default;
 #endif
-          bool isEqual(const DSDTClass& other) const
+          XBool isEqual(const DSDTClass& other) const
           {
             if ( !(DsdtName == other.DsdtName) ) return false;
             if ( !(DebugDSDT == other.DebugDSDT) ) return false;
@@ -924,16 +924,16 @@ public:
           class GenerateClass
           {
             public:
-              bool                 GeneratePStates = 0;
-              bool                 GenerateCStates = 0;
-              bool                 GenerateAPSN = 0;
-              bool                 GenerateAPLF = 0;
-              bool                 GeneratePluginType = 0;
+              XBool                GeneratePStates = false;
+              XBool                GenerateCStates = false;
+              XBool                GenerateAPSN = false;
+              XBool                GenerateAPLF = false;
+              XBool                GeneratePluginType = false;
 
 #if __cplusplus > 201703L
-              bool operator == (const GenerateClass&) const = default;
+              XBool operator == (const GenerateClass&) const = default;
 #endif
-              bool isEqual(const GenerateClass& other) const
+              XBool isEqual(const GenerateClass& other) const
               {
                 if ( !(GeneratePStates == other.GeneratePStates) ) return false;
                 if ( !(GenerateCStates == other.GenerateCStates) ) return false;
@@ -952,27 +952,27 @@ public:
               }
           };
 
-          bool                    DropSSDTSetting = 0;
-          bool                    NoOemTableId = 0;
-          bool                    NoDynamicExtract = 0;
-          bool                    EnableISS = 0;
-          bool                    EnableC7 = 0;
-          bool                    _EnableC6 = 0;
-          bool                    _EnableC4 = 0;
-          bool                    _EnableC2 = 0;
+          XBool                   DropSSDTSetting = false;
+          XBool                   NoOemTableId = false;
+          XBool                   NoDynamicExtract = false;
+          XBool                   EnableISS = false;
+          XBool                   EnableC7 = false;
+          XBool                   _EnableC6 = false;
+          XBool                   _EnableC4 = false;
+          XBool                   _EnableC2 = false;
           UINT16                  _C3Latency = 0;
           UINT8                   PLimitDict = 0;
           UINT8                   UnderVoltStep = 0;
-          bool                    DoubleFirstState = 0;
+          XBool                   DoubleFirstState = false;
           UINT8                   MinMultiplier = 0;
           UINT8                   MaxMultiplier = 0;
           UINT8                   PluginType = 0;
           GenerateClass           Generate = GenerateClass();
           
 #if __cplusplus > 201703L
-          bool operator == (const SSDTClass&) const = default;
+          XBool operator == (const SSDTClass&) const = default;
 #endif
-          bool isEqual(const SSDTClass& other) const
+          XBool isEqual(const SSDTClass& other) const
           {
             if ( !(DropSSDTSetting == other.DropSSDTSetting) ) return false;
             if ( !(NoOemTableId == other.NoOemTableId) ) return false;
@@ -1015,13 +1015,13 @@ public:
 
       UINT64                            ResetAddr = 0;
       UINT8                             ResetVal = 0;
-      bool                              SlpSmiEnable = 0;
-      bool                              FixHeaders = 0;
-      bool                              FixMCFG = 0;
-      bool                              NoASPM = 0;
-      bool                              smartUPS = 0;
-      bool                              PatchNMI = 0;
-      bool                              AutoMerge = 0;
+      XBool                             SlpSmiEnable = false;
+      XBool                             FixHeaders = false;
+      XBool                             FixMCFG = false;
+      XBool                             NoASPM = false;
+      XBool                             smartUPS = false;
+      XBool                             PatchNMI = false;
+      XBool                             AutoMerge = false;
       XStringWArray                     DisabledAML = XStringWArray();
       XString8Array                     SortedACPI = XString8Array();
 //      XObjArray<ACPI_RENAME_DEVICE>     DeviceRename = XObjArray<ACPI_RENAME_DEVICE>();
@@ -1066,9 +1066,9 @@ public:
       SSDTClass SSDT =                  SSDTClass();
         
 #if __cplusplus > 201703L
-      bool operator == (const ACPIClass&) const = default;
+      XBool operator == (const ACPIClass&) const = default;
 #endif
-      bool isEqual(const ACPIClass& other) const
+      XBool isEqual(const ACPIClass& other) const
       {
         if ( !(ResetAddr == other.ResetAddr) ) return false;
         if ( !(ResetVal == other.ResetVal) ) return false;
@@ -1112,14 +1112,14 @@ public:
       class MouseClass {
         public:
           INTN                 PointerSpeed = 0;
-          bool                 PointerEnabled = 0;
+          XBool                PointerEnabled = false;
           UINT64               DoubleClickTime = 0;
-          bool                 PointerMirror = 0;
+          XBool                PointerMirror = false;
           
 #if __cplusplus > 201703L
-          bool operator == (const MouseClass&) const = default;
+          XBool operator == (const MouseClass&) const = default;
 #endif
-          bool isEqual(const MouseClass& other) const
+          XBool isEqual(const MouseClass& other) const
           {
             if ( !(PointerSpeed == other.PointerSpeed) ) return false;
             if ( !(PointerEnabled == other.PointerEnabled) ) return false;
@@ -1137,17 +1137,17 @@ public:
       } ;
       class ScanClass {
         public:
-          bool                 DisableEntryScan = 0;
-          bool                 DisableToolScan = 0;
+          XBool                DisableEntryScan = false;
+          XBool                DisableToolScan = false;
           UINT8                KernelScan = 0;
-          bool                 LinuxScan = 0;
-          bool                 LegacyFirst = false;
-          bool                 NoLegacy = false;
+          XBool                LinuxScan = false;
+          XBool                LegacyFirst = false;
+          XBool                NoLegacy = false;
           
 #if __cplusplus > 201703L
-          bool operator == (const ScanClass&) const = default;
+          XBool operator == (const ScanClass&) const = default;
 #endif
-          bool isEqual(const ScanClass& other) const
+          XBool isEqual(const ScanClass& other) const
           {
             if ( !(DisableEntryScan == other.DisableEntryScan) ) return false;
             if ( !(DisableToolScan == other.DisableToolScan) ) return false;
@@ -1170,18 +1170,18 @@ public:
 
       INT32                   Timezone = 0xFF;
       XStringW                Theme = XStringW();
-      //bool                    DarkEmbedded = 0;
+      //XBool                   DarkEmbedded = 0;
       XString8                EmbeddedThemeType = XString8();
-      bool                    PlayAsync = 0;
-      bool                    CustomIcons = false;
-      bool                    TextOnly = false;
-      bool                    ShowOptimus = false;
+      XBool                   PlayAsync = false;
+      XBool                   CustomIcons = false;
+      XBool                   TextOnly = false;
+      XBool                   ShowOptimus = false;
       XStringW                ScreenResolution = XStringW();
-      bool                    ProvideConsoleGop = 0;
+      XBool                   ProvideConsoleGop = false;
       INTN                    ConsoleMode = 0;
       XString8                Language = XString8();
       LanguageCode            languageCode = english;
-      bool                    KbdPrevLang = 0;
+      XBool                   KbdPrevLang = false;
       XString8Array           HVHideStrings = XString8Array();
       ScanClass               Scan =        ScanClass();
       MouseClass              Mouse =      MouseClass();
@@ -1195,12 +1195,12 @@ public:
     XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>
                             CustomToolSettings = XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>();
 
-      bool getDarkEmbedded(bool isDaylight) const;
+      XBool getDarkEmbedded(XBool isDaylight) const;
     
 #if __cplusplus > 201703L
-      bool operator == (const GUIClass&) const = default;
+      XBool operator == (const GUIClass&) const = default;
 #endif
-      bool isEqual(const GUIClass& other) const
+      XBool isEqual(const GUIClass& other) const
       {
         if ( !(Timezone == other.Timezone) ) return false;
         if ( !(Theme == other.Theme) ) return false;
@@ -1253,23 +1253,23 @@ public:
       UINT16                  QPI = 0;
       UINT32                  CpuFreqMHz = 0;
       UINT16                  CpuType = 0;
-      bool                    QEMU = 0;
-      bool                    UseARTFreq = 0;
+      XBool                   QEMU = false;
+      XBool                   UseARTFreq = false;
       UINT32                  BusSpeed = 0; //in kHz
-      bool                    UserChange = 0;
+      XBool                   UserChange = false;
       UINT8                   SavingMode = 0;
-      bool                    HWPEnable = false;
+      XBool                   HWPEnable = false;
       undefinable_uint32      HWPValue = undefinable_uint32();
       UINT8                   TDP = 0;
-      bool                    TurboDisabled = 0;
+      XBool                   TurboDisabled = false;
       undefinable_bool        _EnableC6 = undefinable_bool();
       undefinable_bool        _EnableC4 = undefinable_bool();
       undefinable_bool        _EnableC2 = undefinable_bool();
       
 #if __cplusplus > 201703L
-		bool operator == (const CPUClass&) const = default;
+		XBool operator == (const CPUClass&) const = default;
 #endif
-    bool isEqual(const CPUClass& other) const
+    XBool isEqual(const CPUClass& other) const
     {
       if ( !(QPI == other.QPI) ) return false;
       if ( !(CpuFreqMHz == other.CpuFreqMHz) ) return false;
@@ -1310,24 +1310,24 @@ public:
 
   class SystemParametersClass {
     public:
-      bool                 WithKexts = true;
-      bool                 WithKextsIfNoFakeSMC = 0;
-      bool                 NoCaches = 0;
+      XBool                WithKexts = true;
+      XBool                WithKextsIfNoFakeSMC = false;
+      XBool                NoCaches = false;
       uint16_t   BacklightLevel = 0xFFFF;
-      bool BacklightLevelConfig = false;
+      XBool BacklightLevelConfig = false;
       XString8             CustomUuid = XString8();
     public: // temporary, must be protected:
       UINT8                _InjectSystemID = 2; // 0=false, 1=true, other value = default.
     public:
-      bool                 NvidiaWeb = 0;
+      XBool                NvidiaWeb = false;
       
 //      friend class ::SETTINGS_DATA;
 //      friend unsigned long long ::GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
         
 #if __cplusplus > 201703L
-      bool operator == (const SystemParametersClass&) const = default;
+      XBool operator == (const SystemParametersClass&) const = default;
 #endif
-      bool isEqual(const SystemParametersClass& other) const
+      XBool isEqual(const SystemParametersClass& other) const
       {
         if ( !(WithKexts == other.WithKexts) ) return false;
         if ( !(WithKextsIfNoFakeSMC == other.WithKextsIfNoFakeSMC) ) return false;
@@ -1356,7 +1356,7 @@ public:
     public:
       class EDIDClass {
         public:
-          bool                    InjectEDID = bool();
+          XBool                   InjectEDID = XBool();
           XBuffer<UINT8>          CustomEDID = XBuffer<UINT8> ();
           UINT16                  VendorEDID = UINT16();
           UINT16                  ProductEDID = UINT16();
@@ -1364,9 +1364,9 @@ public:
           UINT8                   EdidFixVideoInputSignal = UINT8();
           
 #if __cplusplus > 201703L
-          bool operator == (const EDIDClass&) const = default;
+          XBool operator == (const EDIDClass&) const = default;
 #endif
-          bool isEqual(const EDIDClass& other) const
+          XBool isEqual(const EDIDClass& other) const
           {
             if ( !(InjectEDID == other.InjectEDID) ) return false;
             if ( !(CustomEDID == other.CustomEDID) ) return false;
@@ -1389,15 +1389,15 @@ public:
       
       class InjectAsDictClass {
         public:
-          bool GraphicsInjector = bool();
-          bool InjectIntel = bool();
-          bool InjectATI = bool();
-          bool InjectNVidia = bool();
+          XBool GraphicsInjector = XBool();
+          XBool InjectIntel = XBool();
+          XBool InjectATI = XBool();
+          XBool InjectNVidia = XBool();
         
 #if __cplusplus > 201703L
-        bool operator == (const InjectAsDictClass&) const = default;
+        XBool operator == (const InjectAsDictClass&) const = default;
 #endif
-        bool isEqual(const InjectAsDictClass& other) const
+        XBool isEqual(const InjectAsDictClass& other) const
         {
           if ( !(GraphicsInjector == other.GraphicsInjector) ) return false;
           if ( !(InjectIntel == other.InjectIntel) ) return false;
@@ -1422,12 +1422,12 @@ public:
           UINT32            SubId = 0;
           UINT64            VideoRam = 0;
           UINTN             VideoPorts = 0;
-          bool           LoadVBios = 0;
+          XBool          LoadVBios = false;
         
 #if __cplusplus > 201703L
-        bool operator == (const GRAPHIC_CARD&) const = default;
+        XBool operator == (const GRAPHIC_CARD&) const = default;
 #endif
-        bool isEqual(const GRAPHIC_CARD& other) const
+        XBool isEqual(const GRAPHIC_CARD& other) const
         {
           if ( !(Signature == other.Signature) ) return false;
           if ( !(Model == other.Model) ) return false;
@@ -1450,18 +1450,18 @@ public:
         }
       };
 
-      bool                     PatchVBios = bool();
+      XBool                    PatchVBios = XBool();
       PatchVBiosBytesNewClass  PatchVBiosBytes = PatchVBiosBytesNewClass();
 //      undefinable_bool InjectAsBool = undefinable_bool();
-      bool                 RadeonDeInit = bool();
-      bool                 LoadVBios = bool();
-      UINT64               VRAM = bool();
+      XBool                RadeonDeInit = XBool();
+      XBool                LoadVBios = XBool();
+      UINT64               VRAM = XBool();
       UINT32               RefCLK = UINT32();
       XStringW             FBName = XStringW();
       UINT16               VideoPorts = UINT16();
-      bool                 NvidiaGeneric = bool();
-      bool                 NvidiaNoEFI = bool();
-      bool                 NvidiaSingle = bool();
+      XBool                NvidiaGeneric = XBool();
+      XBool                NvidiaNoEFI = XBool();
+      XBool                NvidiaSingle = XBool();
       XArray<UINT8>        Dcfg = XArray<UINT8>();
       XArray<UINT8>        NVCAP = XArray<UINT8>();
       INT8                 BootDisplay = INT8();
@@ -1480,9 +1480,9 @@ public:
       }
       
 #if __cplusplus > 201703L
-      bool operator == (const GraphicsClass&) const = default;
+      XBool operator == (const GraphicsClass&) const = default;
 #endif
-      bool isEqual(const GraphicsClass& other) const
+      XBool isEqual(const GraphicsClass& other) const
       {
         if ( !(PatchVBios == other.PatchVBios) ) return false;
         if ( !PatchVBiosBytes.isEqual(other.PatchVBiosBytes) ) return false;
@@ -1530,10 +1530,10 @@ public:
         NVIDIACardList.takeValueFrom(configPlist.NVIDIA);
       }
 
-      //bool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
-      //bool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
-      //bool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
-      //bool InjectNVidia() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectNVidia; }
+      //XBool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
+      //XBool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
+      //XBool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
+      //XBool InjectNVidia() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectNVidia; }
 
   };
   
@@ -1542,15 +1542,15 @@ public:
       
       class AudioClass {
         public:
-          bool                    ResetHDA = bool();
-          bool                    HDAInjection = bool();
+          XBool                   ResetHDA = XBool();
+          XBool                   HDAInjection = XBool();
           INT32                   HDALayoutId = INT32();
-          bool                    AFGLowPowerState = bool();
+          XBool                   AFGLowPowerState = XBool();
         
 #if __cplusplus > 201703L
-        bool operator == (const AudioClass&) const = default;
+        XBool operator == (const AudioClass&) const = default;
 #endif
-        bool isEqual(const AudioClass& other) const
+        XBool isEqual(const AudioClass& other) const
         {
           if ( !(ResetHDA == other.ResetHDA) ) return false;
           if ( !(HDAInjection == other.HDAInjection) ) return false;
@@ -1568,17 +1568,17 @@ public:
       };
       class USBClass {
         public:
-          bool                 USBInjection = bool();
-          bool                 USBFixOwnership = bool();
-          bool                 InjectClockID = bool();
-          bool                 HighCurrent = bool();
-          bool                 NameEH00 = bool();
-          bool                 NameXH00 = bool(); // is it used?
+          XBool                USBInjection = XBool();
+          XBool                USBFixOwnership = XBool();
+          XBool                InjectClockID = XBool();
+          XBool                HighCurrent = XBool();
+          XBool                NameEH00 = XBool();
+          XBool                NameXH00 = XBool(); // is it used?
         
 #if __cplusplus > 201703L
-        bool operator == (const USBClass&) const = default;
+        XBool operator == (const USBClass&) const = default;
 #endif
-        bool isEqual(const USBClass& other) const
+        XBool isEqual(const USBClass& other) const
         {
           if ( !(USBInjection == other.USBInjection) ) return false;
           if ( !(USBFixOwnership == other.USBFixOwnership) ) return false;
@@ -1613,9 +1613,9 @@ public:
         AddPropertyClass() {}
 
 #if __cplusplus > 201703L
-        bool operator == (const AddPropertyClass&) const = default;
+        XBool operator == (const AddPropertyClass&) const = default;
 #endif
-        bool isEqual(const AddPropertyClass& other) const
+        XBool isEqual(const AddPropertyClass& other) const
         {
           if ( !(Device == other.Device) ) return false;
           if ( !(Key == other.Key) ) return false;
@@ -1650,9 +1650,9 @@ public:
         SimplePropertyClass() {}
 
 #if __cplusplus > 201703L
-        bool operator == (const SimplePropertyClass&) const = default;
+        XBool operator == (const SimplePropertyClass&) const = default;
 #endif
-        bool isEqual(const SimplePropertyClass& other) const
+        XBool isEqual(const SimplePropertyClass& other) const
         {
           if ( !(Key == other.Key) ) return false;
           if ( !(Value == other.Value) ) return false;
@@ -1684,7 +1684,7 @@ public:
           {
           public:
             
-            bool                            Enabled = true;
+            XBool                           Enabled = true;
             XStringW                        DevicePathAsString = XStringW();
             // XString8                     Label = XString8(); // Label is the same as DevicePathAsString, so it's not needed.
             XObjArrayWithTakeValueFromXmlRepeatingDict<SimplePropertyClass, ConfigPlistClass::DevicesClass::PropertiesUnion::Property> propertiesArray = XObjArrayWithTakeValueFromXmlRepeatingDict<SimplePropertyClass, ConfigPlistClass::DevicesClass::PropertiesUnion::Property>();
@@ -1707,9 +1707,9 @@ public:
 #endif
 
 #if __cplusplus > 201703L
-            bool operator == (const PropertyClass&) const = default;
+            XBool operator == (const PropertyClass&) const = default;
 #endif
-            bool isEqual(const PropertyClass& other) const
+            XBool isEqual(const PropertyClass& other) const
             {
               if ( !(Enabled == other.Enabled) ) return false;
               if ( !(DevicePathAsString == other.DevicePathAsString) ) return false;
@@ -1730,9 +1730,9 @@ public:
           XObjArrayWithTakeValueFromXmlRepeatingDict<PropertyClass, ConfigPlistClass::DevicesClass::PropertiesUnion::Properties4DeviceClass> PropertyArray = XObjArrayWithTakeValueFromXmlRepeatingDict<PropertyClass, ConfigPlistClass::DevicesClass::PropertiesUnion::Properties4DeviceClass>();
         
 #if __cplusplus > 201703L
-          bool operator == (const PropertiesClass&) const = default;
+          XBool operator == (const PropertiesClass&) const = default;
 #endif
-          bool isEqual(const PropertiesClass& other) const
+          XBool isEqual(const PropertiesClass& other) const
           {
             if ( !(propertiesAsString == other.propertiesAsString) ) return false;
             if ( !PropertyArray.isEqual(other.PropertyArray) ) return false;
@@ -1753,9 +1753,9 @@ public:
         
           ArbitraryPropertyClass() {}
 #if __cplusplus > 201703L
-          bool operator == (const ArbitraryPropertyClass&) const = default;
+          XBool operator == (const ArbitraryPropertyClass&) const = default;
 #endif
-          bool isEqual(const ArbitraryPropertyClass& other) const
+          XBool isEqual(const ArbitraryPropertyClass& other) const
           {
             if ( !(Device == other.Device) ) return false;
             if ( !(Label == other.Label) ) return false;
@@ -1783,9 +1783,9 @@ public:
           UINT32                  FakeIMEI = UINT32();  //106
         
 #if __cplusplus > 201703L
-        bool operator == (const FakeIDClass&) const = default;
+        XBool operator == (const FakeIDClass&) const = default;
 #endif
-        bool isEqual(const FakeIDClass& other) const
+        XBool isEqual(const FakeIDClass& other) const
         {
           if ( !(FakeATI == other.FakeATI) ) return false;
           if ( !(FakeNVidia == other.FakeNVidia) ) return false;
@@ -1810,15 +1810,15 @@ public:
         }
       };
 
-      bool                 StringInjector = bool();
-      bool                 IntelMaxBacklight = bool();
-      bool                 IntelBacklight = bool();
+      XBool                StringInjector = XBool();
+      XBool                IntelMaxBacklight = XBool();
+      XBool                IntelBacklight = XBool();
       UINT32               IntelMaxValue = UINT32();
-      bool                 LANInjection = bool();
-      bool                 HDMIInjection = bool();
-      bool                 NoDefaultProperties = bool();
-      bool                 UseIntelHDMI = bool();
-      bool                 ForceHPET = bool();
+      XBool                LANInjection = XBool();
+      XBool                HDMIInjection = XBool();
+      XBool                NoDefaultProperties = XBool();
+      XBool                UseIntelHDMI = XBool();
+      XBool                ForceHPET = XBool();
       UINT32               DisableFunctions = UINT32();
       XString8             AirportBridgeDeviceName = XString8();
       AudioClass           Audio = AudioClass();
@@ -1831,9 +1831,9 @@ public:
 
     
 #if __cplusplus > 201703L
-		bool operator == (const DevicesClass&) const = default;
+		XBool operator == (const DevicesClass&) const = default;
 #endif
-    bool isEqual(const DevicesClass& other) const
+    XBool isEqual(const DevicesClass& other) const
     {
       if ( !(StringInjector == other.StringInjector) ) return false;
       if ( !(IntelMaxBacklight == other.IntelMaxBacklight) ) return false;
@@ -1882,7 +1882,7 @@ public:
     public:
       void FillDevicePropertiesOld(SETTINGS_DATA& gSettings, const TagDict* DevicesDict);
       
-      bool compareDevProperty(const XString8& label, const DEV_PROPERTY& oldProp, const DEV_PROPERTY& newProp) const
+      XBool compareDevProperty(const XString8& label, const DEV_PROPERTY& oldProp, const DEV_PROPERTY& newProp) const
       {
         if ( newProp.Device != oldProp.Device )
         {
@@ -1958,7 +1958,7 @@ printf("%s", "");
         return true;
       }
       
-      bool compareOldAndCompatibleArb()
+      XBool compareOldAndCompatibleArb()
       {
 //        {
 //          size_t oldArbIdx = 0;
@@ -2050,12 +2050,12 @@ printf("%s", "");
         public :
           UINTN        address = 0;
           XString8     comment = XString8();
-          bool         enabled = 0;
+          XBool        enabled = false;
           
 	#if __cplusplus > 201703L
-          bool operator == (const MMIOWhiteList&) const = default;
+          XBool operator == (const MMIOWhiteList&) const = default;
 	#endif
-          bool isEqual(const MMIOWhiteList& other) const
+          XBool isEqual(const MMIOWhiteList& other) const
           {
             if ( !(address == other.address) ) return false;
             if ( !(comment == other.comment) ) return false;
@@ -2072,28 +2072,28 @@ printf("%s", "");
       class OcKernelQuirksClass
       {
         public:
-        //  bool AppleCpuPmCfgLock = false;
-        //  bool AppleXcpmCfgLock = false;
-          bool AppleXcpmExtraMsrs = false;
-          bool AppleXcpmForceBoost = false;
-        //  bool CustomSmbiosGuid = false;
-          bool DisableIoMapper = false;
-          bool DisableLinkeditJettison = false;
-        //  bool DisableRtcChecksum = false;
-          bool DummyPowerManagement = false;
-          bool ExtendBTFeatureFlags = false;
-          bool ExternalDiskIcons = false;
-          bool IncreasePciBarSize = false;
-        //  bool LapicKernelPanic = false;
-        //  bool PanicNoKextDump = false;
-          bool PowerTimeoutKernelPanic = false;
-          bool ThirdPartyDrives = false;
-          bool XhciPortLimit = false;
+        //  XBool AppleCpuPmCfgLock = false;
+        //  XBool AppleXcpmCfgLock = false;
+          XBool AppleXcpmExtraMsrs = false;
+          XBool AppleXcpmForceBoost = false;
+        //  XBool CustomSmbiosGuid = false;
+          XBool DisableIoMapper = false;
+          XBool DisableLinkeditJettison = false;
+        //  XBool DisableRtcChecksum = false;
+          XBool DummyPowerManagement = false;
+          XBool ExtendBTFeatureFlags = false;
+          XBool ExternalDiskIcons = false;
+          XBool IncreasePciBarSize = false;
+        //  XBool LapicKernelPanic = false;
+        //  XBool PanicNoKextDump = false;
+          XBool PowerTimeoutKernelPanic = false;
+          XBool ThirdPartyDrives = false;
+          XBool XhciPortLimit = false;
           
 #if __cplusplus > 201703L
-          bool operator == (const OcKernelQuirksClass&) const = default;
+          XBool operator == (const OcKernelQuirksClass&) const = default;
 #endif
-          bool isEqual(const OcKernelQuirksClass& other) const
+          XBool isEqual(const OcKernelQuirksClass& other) const
           {
             if ( !(AppleXcpmExtraMsrs == other.AppleXcpmExtraMsrs) ) return false;
             if ( !(AppleXcpmForceBoost == other.AppleXcpmForceBoost) ) return false;
@@ -2127,28 +2127,28 @@ printf("%s", "");
       class OcBooterQuirksClass
       {
        public:
-        bool AvoidRuntimeDefrag = false;
-        bool DevirtualiseMmio = false;
-        bool DisableSingleUser = false;
-        bool DisableVariableWrite = false;
-        bool DiscardHibernateMap = false;
-        bool EnableSafeModeSlide = false;
-        bool EnableWriteUnprotector = false;
-        bool ForceExitBootServices = false;
-        bool ProtectMemoryRegions = false;
-        bool ProtectSecureBoot = false;
-        bool ProtectUefiServices = false;
-        bool ProvideCustomSlide = false;
+        XBool AvoidRuntimeDefrag = false;
+        XBool DevirtualiseMmio = false;
+        XBool DisableSingleUser = false;
+        XBool DisableVariableWrite = false;
+        XBool DiscardHibernateMap = false;
+        XBool EnableSafeModeSlide = false;
+        XBool EnableWriteUnprotector = false;
+        XBool ForceExitBootServices = false;
+        XBool ProtectMemoryRegions = false;
+        XBool ProtectSecureBoot = false;
+        XBool ProtectUefiServices = false;
+        XBool ProvideCustomSlide = false;
         uint8_t ProvideMaxSlide = false;
-        bool RebuildAppleMemoryMap = false;
-        bool SetupVirtualMap = false;
-        bool SignalAppleOS = false;
-        bool SyncRuntimePermissions = false;
+        XBool RebuildAppleMemoryMap = false;
+        XBool SetupVirtualMap = false;
+        XBool SignalAppleOS = false;
+        XBool SyncRuntimePermissions = false;
         
 #if __cplusplus > 201703L
-        bool operator == (const OcBooterQuirksClass&) const = default;
+        XBool operator == (const OcBooterQuirksClass&) const = default;
 #endif
-        bool isEqual(const OcBooterQuirksClass& other) const
+        XBool isEqual(const OcBooterQuirksClass& other) const
         {
           if ( !(AvoidRuntimeDefrag == other.AvoidRuntimeDefrag) ) return false;
           if ( !(DevirtualiseMmio == other.DevirtualiseMmio) ) return false;
@@ -2192,7 +2192,7 @@ printf("%s", "");
 
       };
       
-      bool                     FuzzyMatch = bool();
+      XBool                    FuzzyMatch = XBool();
       XString8                 OcKernelCache = XString8();
 //      UINTN MaxSlide;
       OcKernelQuirksClass         OcKernelQuirks = OcKernelQuirksClass();
@@ -2201,9 +2201,9 @@ printf("%s", "");
       UINT32                   QuirksMask = 0;
     
 #if __cplusplus > 201703L
-      bool operator == (const QuirksClass&) const = default;
+      XBool operator == (const QuirksClass&) const = default;
 #endif
-      bool isEqual(const QuirksClass& other) const
+      XBool isEqual(const QuirksClass& other) const
       {
         if ( !(FuzzyMatch == other.FuzzyMatch) ) return false;
         if ( !(OcKernelCache == other.OcKernelCache) ) return false;
@@ -2229,15 +2229,15 @@ printf("%s", "");
       class RT_VARIABLES
       {
         public:
-          bool     Disabled = bool();
+          XBool    Disabled = XBool();
           XString8 Comment = XStringW();
           XStringW Name = XStringW();
           EFI_GUIDClass Guid = EFI_GUIDClass();
 
 #if __cplusplus > 201703L
-          bool operator == (const RT_VARIABLES&) const = default;
+          XBool operator == (const RT_VARIABLES&) const = default;
 #endif
-          bool isEqual(const RT_VARIABLES& other) const
+          XBool isEqual(const RT_VARIABLES& other) const
           {
             if ( !(Disabled == other.Disabled) ) return false;
             if ( !(Comment == other.Comment) ) return false;
@@ -2262,14 +2262,14 @@ printf("%s", "");
       XString8                BooterCfgStr = XString8();
     XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block> BlockRtVariableArray = XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block>();
 
-      bool GetLegacyLanAddress() const {
+      XBool GetLegacyLanAddress() const {
         return RtROMAsString.isEqualIC("UseMacAddr0") || RtROMAsString.isEqualIC("UseMacAddr1");
       }
     
 #if __cplusplus > 201703L
-		bool operator == (const RtVariablesClass&) const = default;
+		XBool operator == (const RtVariablesClass&) const = default;
 #endif
-    bool isEqual(const RtVariablesClass& other) const
+    XBool isEqual(const RtVariablesClass& other) const
     {
       if ( !(RtROMAsString == other.RtROMAsString) ) return false;
       if ( !(RtROMAsData == other.RtROMAsData) ) return false;
@@ -2311,9 +2311,9 @@ printf("%s", "");
               SlotDeviceClass() {}
 
 #if __cplusplus > 201703L
-              bool operator == (const SLOT_DEVICE&) const = default;
+              XBool operator == (const SLOT_DEVICE&) const = default;
 #endif
-              bool isEqual(const SlotDeviceClass& other) const
+              XBool isEqual(const SlotDeviceClass& other) const
               {
                 if ( !(SmbiosIndex == other.SmbiosIndex) ) return false;
                 if ( !(SlotID == other.SlotID) ) return false;
@@ -2333,7 +2333,7 @@ printf("%s", "");
         class SlotDeviceArrayClass : public XObjArrayWithTakeValueFromXmlArray<SlotDeviceClass, SmbiosPlistClass::SmbiosDictClass::SlotDeviceDictClass>
         {
           public:
-            bool doesSlotForIndexExist(uint8_t idx2Look4) const {
+            XBool doesSlotForIndexExist(uint8_t idx2Look4) const {
               for ( size_t idx = 0 ; idx < size() ; ++idx ) {
                 if ( ElementAt(idx).SmbiosIndex == idx2Look4 ) return true;
               }
@@ -2363,14 +2363,14 @@ printf("%s", "");
           XString8 PartNo = XString8();
           XString8 SerialNo = XString8();
           UINT8   Type = UINT8();
-          bool  InUse = bool();
+          XBool InUse = XBool();
 
           RamSlotInfo() {}
 
           #if __cplusplus > 201703L
-            bool operator == (const RamSlotInfo&) const = default;
+            XBool operator == (const RamSlotInfo&) const = default;
           #endif
-          bool isEqual(const RamSlotInfo& other) const
+          XBool isEqual(const RamSlotInfo& other) const
           {
             if ( !(Slot == other.Slot ) ) return false;
             if ( !(ModuleSize == other.ModuleSize ) ) return false;
@@ -2382,7 +2382,7 @@ printf("%s", "");
             if ( !(InUse == other.InUse ) ) return false;
             return true;
           }
-          bool takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass& other)
+          XBool takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass& other)
           {
             Slot = other.dgetSlotNo();
             ModuleSize = other.dgetModuleSize();
@@ -2405,9 +2405,9 @@ printf("%s", "");
             RamSlotInfoArrayClass() {}
 
 #if __cplusplus > 201703L
-            bool operator == (const RamSlotInfoArrayClass&) const = default;
+            XBool operator == (const RamSlotInfoArrayClass&) const = default;
 #endif
-            bool isEqual(const RamSlotInfoArrayClass& other) const
+            XBool isEqual(const RamSlotInfoArrayClass& other) const
             {
               if ( !(SlotCounts == other.SlotCounts) ) return false;
               if ( !(UserChannels == other.UserChannels) ) return false;
@@ -2444,7 +2444,7 @@ printf("%s", "");
       XString8                BoardVersion = XString8();
       UINT8                   BoardType = UINT8();
       // SMBIOS TYPE3
-      bool                    Mobile = bool();
+      XBool                   Mobile = XBool();
       UINT8                   ChassisType = UINT8();
       XString8                ChassisManufacturer = XString8();
       XString8                ChassisAssetTag = XString8();
@@ -2459,12 +2459,12 @@ printf("%s", "");
 //      XString8                   MemorySpeed;
       // SMBIOS TYPE131
       // SMBIOS TYPE132
-      bool                    TrustSMBIOS = 0;
-      bool                    InjectMemoryTables = bool(); // same as Memory.SlotCounts
+      XBool                   TrustSMBIOS = false;
+      XBool                   InjectMemoryTables = XBool(); // same as Memory.SlotCounts
       // SMBIOS TYPE133
       UINT64                  gPlatformFeature = UINT64();
       // PatchTableType11
-      bool                    NoRomInfo = bool();
+      XBool                   NoRomInfo = XBool();
 
       UINT32                  FirmwareFeatures = UINT32();
       UINT32                  FirmwareFeaturesMask = UINT32();
@@ -2476,9 +2476,9 @@ printf("%s", "");
     SmbiosClass() {}
     
 #if __cplusplus > 201703L
-    bool operator == (const SmbiosClass&) const = default;
+    XBool operator == (const SmbiosClass&) const = default;
 #endif
-    bool isEqual(const SmbiosClass& other) const
+    XBool isEqual(const SmbiosClass& other) const
     {
       // SMBIOS TYPE0
       if ( !(BiosVendor == other.BiosVendor) ) return false;
@@ -2587,9 +2587,9 @@ printf("%s", "");
       }
       
 #if __cplusplus > 201703L
-      bool operator == (const BootGraphicsClass&) const = default;
+      XBool operator == (const BootGraphicsClass&) const = default;
 #endif
-      bool isEqual(const BootGraphicsClass& other) const
+      XBool isEqual(const BootGraphicsClass& other) const
       {
         if ( !(DefaultBackgroundColor == other.DefaultBackgroundColor) ) return false;
         if ( !(UIScale == other.UIScale) ) return false;
@@ -2623,16 +2623,16 @@ printf("%s", "");
 
 //other
 //  UINT16                  DropOEM_DSM; // not used anymore.
-//  BOOLEAN                 LpcTune; // never set to true.
+//  XBool                LpcTune; // never set to true.
 
   SETTINGS_DATA() {}
 //  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
 //  const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
 
 #if __cplusplus > 201703L
-  bool operator == (const SETTINGS_DATA&) const = default;
+  XBool operator == (const SETTINGS_DATA&) const = default;
 #endif
-  bool isEqual(const SETTINGS_DATA& other) const
+  XBool isEqual(const SETTINGS_DATA& other) const
   {
     if ( !Boot.isEqual(other.Boot) ) return false;
     if ( !ACPI.isEqual(other.ACPI) ) return false;
@@ -2673,25 +2673,25 @@ printf("%s", "");
   const XString8& getUUID(EFI_GUIDClass* efiGuid);
   // If CustomUuid is defined, return false by default
   // If SmUUID is defined, return true by default.
-  bool ShouldInjectSystemID() {
+  XBool ShouldInjectSystemID() {
     if ( SystemParameters.CustomUuid.notEmpty() &&  SystemParameters.CustomUuid != nullGuidAsString ) {
       if ( SystemParameters._InjectSystemID == 2 ) return false;
-      else return SystemParameters._InjectSystemID;
+      else return SystemParameters._InjectSystemID != 0;
     }
     if ( Smbios.SmUUID.isEmpty() || Smbios.SmUUID == nullGuidAsString ) return false;
     if ( SystemParameters._InjectSystemID == 2 ) return true;
-    return SystemParameters._InjectSystemID;
+    return SystemParameters._InjectSystemID != 0;
   }
   
-  bool getEnableC6() const {
+  XBool getEnableC6() const {
     if ( CPU._EnableC6.isDefined() ) return CPU._EnableC6.value();
     return ACPI.SSDT._EnableC6;
   }
-  bool getEnableC4() const {
+  XBool getEnableC4() const {
     if ( CPU._EnableC4.isDefined() ) return CPU._EnableC4.value();
     return ACPI.SSDT._EnableC4;
   }
-  bool getEnableC2() const {
+  XBool getEnableC2() const {
     if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2.value();
     return ACPI.SSDT._EnableC2;
   }
@@ -2762,7 +2762,7 @@ extern INTN                            OldChosenTheme;
 extern INTN                            OldChosenConfig;
 extern INTN                            OldChosenDsdt;
 extern UINTN                            OldChosenAudio;
-extern BOOLEAN                        SavePreBootLog;
+extern XBool                       SavePreBootLog;
 extern UINT8                            DefaultAudioVolume;
 
 
@@ -2772,7 +2772,7 @@ extern UINT8                            DefaultAudioVolume;
 //extern UINTN                          NHDA;
 //extern UINT16                         gCPUtype;
 extern SETTINGS_DATA                  gSettings;
-extern BOOLEAN                        gFirmwareClover;
+extern XBool                       gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern EFI_EDID_DISCOVERED_PROTOCOL   *EdidDiscovered;
 //extern UINT8                          *gEDID;
@@ -2781,7 +2781,7 @@ extern UINTN                           gEvent;
 
 extern UINT16                          gBacklightLevel;
 
-//extern BOOLEAN                         defDSM;
+//extern XBool                        defDSM;
 //extern UINT16                          dropDSM;
 
 //extern TagDict*                          gConfigDict[];
@@ -2797,8 +2797,8 @@ extern XObjArray<ACPI_PATCHED_AML>       ACPIPatchedAML;
 extern CHAR16                         *IconFormat;
 
 
-extern BOOLEAN                        ResumeFromCoreStorage;
-//extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
+extern XBool                       ResumeFromCoreStorage;
+//extern XBool                       gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
@@ -2811,29 +2811,29 @@ class REFIT_CONFIG
 {
 public:
   UINTN       DisableFlags = 0; //to disable some volume types (optical, firewire etc)
-  BOOLEAN     Quiet = true;
-  BOOLEAN     SpecialBootMode = false; // content of nvram var "aptiofixflag"
+  XBool       Quiet = true;
+  XBool       SpecialBootMode = false; // content of nvram var "aptiofixflag"
 
-  BOOLEAN       gBootChanged = FALSE;
-  BOOLEAN       gThemeChanged = FALSE;
-  BOOLEAN       NeedPMfix = FALSE;
+  XBool       gBootChanged = false;
+  XBool       gThemeChanged = false;
+  XBool       NeedPMfix = false;
   ACPI_DROP_TABLE         *ACPIDropTables = NULL;
 
   UINT8                   CustomLogoType = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
   XImage                  *CustomLogo = 0;
 
-  bool                    DropSSDT = 0; // init with gSettings.Boot.DropSSDTSetting. Put back to false if one table is dropped (see afterGetUserSettings)
+  XBool                   DropSSDT = false; // init with gSettings.Boot.DropSSDTSetting. Put back to false if one table is dropped (see afterGetUserSettings)
 
   UINT8                   SecureBoot = 0;
   UINT8                   SecureBootSetupMode = 0;
 
-  BOOLEAN                 SetTable132 = 0;
-  BOOLEAN                 HWP = 0;
+  XBool                   SetTable132 = false;
+  XBool                   HWP = false;
 
-  bool                EnableC6 = 0;
-  bool                EnableC4 = 0;
-  bool                EnableC2 = 0;
-  uint16_t              C3Latency = 0;
+  XBool                   EnableC6 = false;
+  XBool                   EnableC4 = false;
+  XBool                   EnableC2 = false;
+  uint16_t                C3Latency = 0;
 
   XObjArray<CUSTOM_LOADER_ENTRY> CustomEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
   XObjArray<CUSTOM_LEGACY_ENTRY> CustomLegacyEntries = XObjArray<CUSTOM_LEGACY_ENTRY>();
@@ -2842,28 +2842,28 @@ public:
   INTN                    Codepage = 0xC0;
   INTN                    CodepageSize = 0xC0;
 
-  bool KPKernelPm = bool();
-  bool KPAppleIntelCPUPM = bool();
+  XBool                   KPKernelPm = XBool();
+  XBool                   KPAppleIntelCPUPM = XBool();
 
   XBuffer<UINT8>          RtROM = XBuffer<UINT8>();
   XString8                RtMLB = XString8();
 
-  bool Turbo = true;
+  XBool Turbo = true;
 
-  XString8                   OEMProductFromSmbios = XString8();
-  XString8                   OEMVendorFromSmbios = XString8();
-  XString8                   OEMBoardFromSmbios = XString8();
-  UINT8                      EnabledCores = 0;
+  XString8                OEMProductFromSmbios = XString8();
+  XString8                OEMVendorFromSmbios = XString8();
+  XString8                OEMBoardFromSmbios = XString8();
+  UINT8                   EnabledCores = 0;
 
 //  XStringW                   ConfigName; // Set but never used
 
-  UINT32 OptionsBits = 0;
-  UINT32 FlagsBits = 0;
+  UINT32                  OptionsBits = 0;
+  UINT32                  FlagsBits = 0;
 
   XStringW                    BlockKexts = XStringW();
   // KernelAndKextPatches
-  BOOLEAN                 KextPatchesAllowed = true;
-  BOOLEAN                 KernelPatchesAllowed = true; //From GUI: Only for user patches, not internal Clover
+  XBool                   KextPatchesAllowed = true;
+  XBool                   KernelPatchesAllowed = true; //From GUI: Only for user patches, not internal Clover
 
   XString8 BiosVersionUsed = XString8();
   XString8 EfiVersionUsed = XString8();
@@ -2880,7 +2880,7 @@ public:
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }
 
-  bool isFastBoot() { return SpecialBootMode || gSettings.Boot.FastBoot; }
+  XBool isFastBoot() { return SpecialBootMode || gSettings.Boot.FastBoot; }
 
 } ;
 
@@ -2914,7 +2914,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 void afterGetUserSettings(SETTINGS_DATA& gSettings);
 
 XStringW
-GetOtherKextsDir (BOOLEAN On);
+GetOtherKextsDir (XBool On);
 
 XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion);
 

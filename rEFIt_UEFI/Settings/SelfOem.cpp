@@ -30,7 +30,7 @@ constexpr const LStringW KEXTS_DIRNAME = L"Kexts"_XSW;
 SelfOem selfOem;
 
 
-//EFI_STATUS SelfOem::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
+//EFI_STATUS SelfOem::_openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir)
 //{
 //  EFI_STATUS Status;
 //  Status = self.getCloverDir().Open(&self.getCloverDir(), efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
@@ -45,7 +45,7 @@ SelfOem selfOem;
 //}
 
 
-bool SelfOem::_checkOEMPath()
+XBool SelfOem::_checkOEMPath()
 {
   EFI_STATUS Status;
 
@@ -63,7 +63,7 @@ bool SelfOem::_checkOEMPath()
     m_OemDir = NULL;
     return false;
   }
-  BOOLEAN res2 = FileExists(m_OemDir, SWPrintf("%s.plist", m_ConfName.c_str()));
+  XBool res2 = FileExists(m_OemDir, SWPrintf("%s.plist", m_ConfName.c_str()));
   if ( !res2 ) {
     DBG("_checkOEMPath looked for config file at '%ls\\%ls\\%s.plist'. File doesn't exist.\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), m_ConfName.c_str());
     m_OemDir->Close(m_OemDir);
@@ -74,7 +74,7 @@ bool SelfOem::_checkOEMPath()
   return true;
 }
 
-bool SelfOem::_setOemPathRelToSelfDir(bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray)
+XBool SelfOem::_setOemPathRelToSelfDir(XBool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray)
 {
   for ( size_t idx = 0 ; idx < lanCardArray.size() ; ++idx ) {
     m_OemPathRelToSelfDir.SWPrintf("OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", OEMProduct.c_str(), lanCardArray[idx].MacAddress[0], lanCardArray[idx].MacAddress[1], lanCardArray[idx].MacAddress[2], lanCardArray[idx].MacAddress[3], lanCardArray[idx].MacAddress[4], lanCardArray[idx].MacAddress[5]);
@@ -170,7 +170,7 @@ EFI_STATUS SelfOem::_initialize()
   return EFI_SUCCESS;
 }
 
-EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray)
+EFI_STATUS SelfOem::initialize(const XString8& confName, XBool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, const XObjArray<LanCardClass>& lanCardArray)
 {
   if ( m_ConfName.notEmpty() ) {
     log_technical_bug("%s : cannot be called twice. Use reinitialize.", __PRETTY_FUNCTION__);

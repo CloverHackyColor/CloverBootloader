@@ -161,7 +161,7 @@ BdsLibConnectDevicePath (
           PreviousHandle = Handle;
           //
           // Connect all drivers that apply to Handle and RemainingDevicePath,
-          // the Recursive flag is FALSE so only one level will be expanded.
+          // the Recursive flag is false so only one level will be expanded.
           //
           // Do not check the connect status here, if the connect controller fail,
           // then still give the chance to do dispatch, because partial
@@ -174,7 +174,7 @@ BdsLibConnectDevicePath (
           //    change, then avoid the dispatch, we have chance to continue the
           //    next connection
           //
-          gBS->ConnectController (Handle, NULL, RemainingDevicePath, FALSE);
+          gBS->ConnectController (Handle, NULL, RemainingDevicePath, false);
         }
       }
       //
@@ -229,7 +229,7 @@ BdsLibConnectAllEfi (
 
   for (Index = 0; Index < HandleCount; Index++) {
     //Status = 
-    gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+    gBS->ConnectController (HandleBuffer[Index], NULL, NULL, true);
   }
 
   if (HandleBuffer != NULL) {
@@ -432,8 +432,8 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 	EFI_HANDLE				*HandleBuffer = NULL;
 	UINT32            *HandleType = NULL;
 	UINTN             HandleIndex;
-	BOOLEAN           Parent;
-	BOOLEAN           Device;
+	XBool             Parent;
+	XBool             Device;
 	EFI_PCI_IO_PROTOCOL*	PciIo = NULL;
 	PCI_TYPE00				Pci;
   
@@ -447,18 +447,18 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 		if (EFI_ERROR(Status))
 			goto Done;
     
-		Device = TRUE;
+		Device = true;
 		
 		if (HandleType[Index] & EFI_HANDLE_TYPE_DRIVER_BINDING_HANDLE)
-			Device = FALSE;
+			Device = false;
 		if (HandleType[Index] & EFI_HANDLE_TYPE_IMAGE_HANDLE)
-			Device = FALSE;
+			Device = false;
     
 		if (Device) {					
-			Parent = FALSE;
+			Parent = false;
 			for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
 				if (HandleType[HandleIndex] & EFI_HANDLE_TYPE_PARENT_HANDLE)
-					Parent = TRUE;
+					Parent = true;
 			}
       
 			if (!Parent) {
@@ -467,12 +467,12 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 					if (!EFI_ERROR(Status)) {
 						Status = PciIo->Pci.Read (PciIo,EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
 						if (!EFI_ERROR(Status)) {
-							if(IS_PCI_VGA(&Pci)==TRUE) {
+							if(IS_PCI_VGA(&Pci)==true) {
 								gBS->DisconnectController(AllHandleBuffer[Index], NULL, NULL);
 							}
 						}
 					}
-					Status = gBS->ConnectController(AllHandleBuffer[Index], NULL, NULL, TRUE);
+					Status = gBS->ConnectController(AllHandleBuffer[Index], NULL, NULL, true);
 				}
 			}
 		}
@@ -552,7 +552,7 @@ BdsLibConnectUsbDevByShortFormDP(
   UINTN                                 Index;
   EFI_PCI_IO_PROTOCOL                   *PciIo;
   UINT8                                 Class[3];
-  BOOLEAN                               AtLeastOneConnected;
+  XBool                                 AtLeastOneConnected;
 
   //
   // Check the passed in parameters
@@ -579,7 +579,7 @@ BdsLibConnectUsbDevByShortFormDP(
   //
   // Find the usb host controller firstly, then connect with the remaining device path
   //
-  AtLeastOneConnected = FALSE;
+  AtLeastOneConnected = false;
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
                   &gEfiPciIoProtocolGuid,
@@ -607,10 +607,10 @@ BdsLibConnectUsbDevByShortFormDP(
                               HandleArray[Index],
                               NULL,
                               RemainingDevicePath,
-                              FALSE
+                              false
                               );
               if (!EFI_ERROR(Status)) {
-                AtLeastOneConnected = TRUE;
+                AtLeastOneConnected = true;
               }
             }
           }

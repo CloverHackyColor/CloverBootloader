@@ -37,7 +37,7 @@
 #endif
 
 
-BOOLEAN     smbIntel;
+XBool       smbIntel;
 UINT8				smbPage;
 
 CONST CHAR8 *spd_memory_types[] =
@@ -599,7 +599,7 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
   UINT32			base, mmio, hostc;
   UINT16			Command;
   //RAM_SLOT_INFO*  slot;
-  //BOOLEAN			fullBanks;
+  //XBool			fullBanks;
   UINT8*			spdbuf;
 //  UINT16			vid, did;
 
@@ -645,7 +645,7 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                   );
 
     base &= 0xFFFE;
-    smbIntel = TRUE;
+    smbIntel = true;
   }
   else {
     /*Status = */PciIo->Pci.Read (
@@ -656,7 +656,7 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                   &base
                                   );
     base &= 0xFFFC;
-    smbIntel = FALSE;
+    smbIntel = false;
   }
   /*Status = */PciIo->Pci.Read (
                                 PciIo,
@@ -843,12 +843,12 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
            gRAM.SPD[i].PartNo.c_str(),
            gRAM.SPD[i].SerialNo.c_str());
 
-    gRAM.SPD[i].InUse = TRUE;
+    gRAM.SPD[i].InUse = true;
     ++(gRAM.SPDInUse);
     //}
 
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
-    //gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && !fullBanks && TotalCount == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
+    //gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==false && !fullBanks && TotalCount == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
 
     //slot->spd = NULL;
 

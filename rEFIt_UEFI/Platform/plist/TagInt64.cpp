@@ -73,7 +73,7 @@ void TagInt64::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagInt64::operator == (const TagStruct& other) const
+XBool TagInt64::operator == (const TagStruct& other) const
 {
   if ( !other.isInt64() ) return false;
   return value == other.getInt64()->value;

@@ -138,16 +138,16 @@ typedef struct SEGMENT {
 //extern UINT32       *dtLength;
 //extern UINT8        *KernelData;
 //extern UINT32       KernelSlide;
-//extern BOOLEAN      isKernelcache;
-//extern BOOLEAN      is64BitKernel;
-//extern BOOLEAN      gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-//extern BOOLEAN      gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
+//extern XBool        isKernelcache;
+//extern XBool        is64BitKernel;
+//extern XBool        gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+//extern XBool        gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
 
 
 //extern UINT32       DisplayVendor[];
 //void findCPUfamily();
 
-//extern BOOLEAN                         SSSE3;
+//extern XBool        SSSE3;
 
 
 //UINT64 kernelsize;

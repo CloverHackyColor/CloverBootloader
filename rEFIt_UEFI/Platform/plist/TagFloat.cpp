@@ -73,7 +73,7 @@ void TagFloat::FreeTag()
   tagsFree.AddReference(this, true);
 }
 
-bool TagFloat::operator == (const TagStruct& other) const
+XBool TagFloat::operator == (const TagStruct& other) const
 {
   if ( !other.isFloat() ) return false;
   return value == other.getFloat()->value;

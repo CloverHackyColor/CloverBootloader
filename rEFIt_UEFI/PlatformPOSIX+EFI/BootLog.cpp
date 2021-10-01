@@ -52,7 +52,7 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 	}
 }
 
-bool gEnableCloverLog = false;
+XBool gEnableCloverLog = false;
 
 // Changed MsgLog(...) it now calls this function
 //  with DebugMode == 0. - apianti

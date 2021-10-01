@@ -105,8 +105,8 @@ typedef struct {
   EFI_LOAD_FILE_PROTOCOL        *LoadFile;        // Information valid for l#:
   
   EFI_IP_ADDRESS                ServerIp;         // Information valid for t:
-  BOOLEAN                       IsDirty;
-  BOOLEAN                       IsBufferValid;
+  XBool                         IsDirty;
+  XBool                         IsBufferValid;
                            
 } EFI_OPEN_FILE;
 

@@ -369,12 +369,12 @@ DONE:
   return Status;
 }
 
-EFI_STATUS CheckSyncSound(BOOLEAN Stop)
+EFI_STATUS CheckSyncSound(XBool Stop)
 {
   EFI_STATUS Status;
   AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
   EFI_HDA_IO_PROTOCOL *HdaIo;
-  BOOLEAN StreamRunning = FALSE;
+  BOOLEAN StreamRunning = false;
   if (!AudioIo) {
     return EFI_NOT_STARTED;
   }

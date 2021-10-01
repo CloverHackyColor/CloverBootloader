@@ -344,9 +344,9 @@ STATIC REFIT_SIMPLE_MENU_ENTRY_TAG   NoMessageEntry(XStringW().takeValueFrom(L"N
 //REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* Title, CONST CHAR16* TimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
 STATIC REFIT_MENU_SCREEN  YesNoMessageMenu(0, XStringW(), XStringW(), &YesMessageEntry, &NoMessageEntry);
 // Display a yes/no prompt
-BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
+XBool YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
-  BOOLEAN            Result = FALSE;
+  XBool              Result = false;
   UINTN              MenuExit;
   CreateInfoLines(Message, &YesNoMessageMenu.InfoLines);
   YesNoMessageMenu.Title = Title;
@@ -356,7 +356,7 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
     MenuExit = YesNoMessageMenu.RunMenu(&ChosenEntry);
     if ( ChosenEntry != NULL  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()  &&  ChosenEntry->getREFIT_SIMPLE_MENU_ENTRY_TAG()->Tag == TAG_YES  &&
         ((MenuExit == MENU_EXIT_ENTER) || (MenuExit == MENU_EXIT_DETAILS))) {
-      Result = TRUE;
+      Result = true;
       MenuExit = MENU_EXIT_ENTER;
     }
   } while (MenuExit != MENU_EXIT_ENTER);
@@ -364,34 +364,34 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
   return Result;
 }
 // Ask user for file path from directory menu
-BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+XBool AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
                                   const CHAR16 *ParentPath OPTIONAL, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   //REFIT_MENU_SCREEN   Menu = { 0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
-  //                             0, NULL, FALSE, FALSE, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL};
+  //                             0, NULL, false, false, 0, 0, 0, 0, { 0, 0, 0, 0 }, NULL};
   // Check parameters
   if ((Volume == NULL) || (Dir == NULL) || (Result == NULL)) {
-    return FALSE;
+    return false;
   }
   // TODO: Generate directory menu
-  return FALSE;
+  return false;
 }
 
 #define TAG_OFFSET 1000
 
 //STATIC REFIT_MENU_SCREEN InitialMenu = {0, L"Please Select File...", NULL, 0, NULL,
-//  0, NULL, NULL, FALSE, FALSE, 0, 0, 0, 0,
+//  0, NULL, NULL, false, false, 0, 0, 0, 0,
 //  { 0, 0, 0, 0 }, NULL};
 //STATIC REFIT_MENU_SCREEN  InitialMenu(0, L"Please Select File..."_XSW, XStringW());
 // Ask user for file path from volumes menu
-BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+XBool AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   REFIT_MENU_SCREEN   Menu(0, L"Please Select File..."_XSW, XStringW());
   UINTN               Index = 0, /*Count = 0,*/ MenuExit;
-  BOOLEAN             Responded = FALSE;
+  XBool               Responded = false;
   if (Result == NULL) {
-    return FALSE;
+    return false;
   }
   // Create volume entries
   for (Index = 0; Index < Volumes.size(); ++Index) {
@@ -421,7 +421,7 @@ BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVI
           if (!AskUserForFilePathFromDir(Title, &Volumes[Index], NULL, Volumes[Index].RootDir, Result)) {
             continue;
           }
-          Responded = TRUE;
+          Responded = true;
         }
       }
       break;
@@ -432,11 +432,11 @@ BOOLEAN AskUserForFilePathFromVolumes(const CHAR16 *Title OPTIONAL, OUT EFI_DEVI
 }
 
 // Ask user for file path
-BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
+XBool AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   EFI_FILE *Dir = NULL;
   if (Result == NULL) {
-    return FALSE;
+    return false;
   }
   if (Root != NULL) {
     // Get the file path
@@ -474,10 +474,10 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
                   FreePool(Info);
                   Dir->Close(Dir);
                   *Result = Root;
-                  return TRUE;
+                  return true;
                 } else {
                   // Ask user other wise
-                  BOOLEAN Success = AskUserForFilePathFromDir(Title, Volume, FilePath, Dir, Result);
+                  XBool Success = AskUserForFilePathFromDir(Title, Volume, FilePath, Dir, Result);
                   FreePool(Info);
                   Dir->Close(Dir);
                   return Success;

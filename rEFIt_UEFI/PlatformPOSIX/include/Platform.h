@@ -32,6 +32,10 @@
 //#pragma clang diagnostic ignored "-Wc99-extensions"
 
 #ifdef __cplusplus
+#include "../../cpp_foundation/XBool.h"
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
