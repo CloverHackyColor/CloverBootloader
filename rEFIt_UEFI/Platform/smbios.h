@@ -17,22 +17,21 @@ extern "C" {
 
 // The maximum number of RAM slots to detect
 // even for 3-channels chipset X58 there are no more then 8 slots
-#define MAX_RAM_SLOTS 24
-static_assert(MAX_RAM_SLOTS < UINT8_MAX, "MAX_RAM_SLOTS < UINT8_MAX"); // Important
+const uint8_t MAX_RAM_SLOTS = 24;
 
 // The maximum sane frequency for a RAM module
 #define MAX_RAM_FREQUENCY 5000
 
 class RAM_SLOT_INFO {
 public:
-  UINT64   Slot = UINT64();
-  UINT32   ModuleSize = UINT32();
-  UINT32   Frequency = UINT32();
-  XString8 Vendor = XString8();
-  XString8 PartNo = XString8();
-  XString8 SerialNo = XString8();
-  UINT8    Type = UINT8();
-  XBool    InUse = false;
+  UINT32   ModuleSize     = 0;
+  UINT32   Frequency      = 0;
+  XString8 Vendor         = XString8();
+  XString8 PartNo         = XString8();
+  XString8 SerialNo       = XString8();
+  UINT8    Type           = 0;
+  UINT8    SlotIndex      = 0;
+//  XBool    InUse = false;
 
   RAM_SLOT_INFO() {}
 };
@@ -40,21 +39,28 @@ extern const RAM_SLOT_INFO nullRAM_SLOT_INFO;
 
 class SmbiosMemoryConfigurationClass {
   public:
-    UINT8         SlotCounts = UINT8();
+    UINT8         SlotCount = UINT8();
     UINT8         UserChannels = UINT8();
     XObjArray<RAM_SLOT_INFO> _User = XObjArray<RAM_SLOT_INFO>();
 
     SmbiosMemoryConfigurationClass() {}
 
     void setEmpty() {
-      SlotCounts = 0;
+      SlotCount = 0;
       UserChannels = 0;
       _User.setEmpty();
     }
-  
+
+    XBool doesSlotForIndexExist(uint8_t idx2Look4) const {
+      for ( size_t idx = 0 ; idx < _User.size() ; ++idx ) {
+        if ( _User[idx].SlotIndex == idx2Look4 ) return true;
+      }
+      return false;
+    }
+
     const RAM_SLOT_INFO& getSlotInfoForSlotID(UINT64 Slot) const {
       for ( size_t idx = 0 ; idx < _User.size() ; ++idx ) {
-        if ( _User[idx].Slot == Slot ) return _User[idx];
+        if ( _User[idx].SlotIndex == Slot ) return _User[idx];
       }
       return nullRAM_SLOT_INFO;
     }
@@ -86,14 +92,15 @@ class SmbiosDiscoveredSettings
     XString8 OEMBoardFromSmbios       = XString8();
     XString8 OEMProductFromSmbios     = XString8();
     XString8 OEMVendorFromSmbios      = XString8();
-    uint8_t EnabledCores                 = 0;
+    uint8_t  EnabledCores             = 0;
     
-    uint16_t RamSlotCount = 0; // this is maxed out to MAX_RAM_SLOTS
+    remove_const(decltype(MAX_RAM_SLOTS)) RamSlotCount = 0; // this is discovered in GetTableType16(). Can be max out to MAX_RAM_SLOTS
+    static_assert(numeric_limits<decltype(MAX_RAM_SLOTS)>::max() <= numeric_limits<decltype(RamSlotCount)>::max(), "RamSlotCount wrong type");
 
     // gCPUStructure
     UINT64                ExternalClock = 0;
-    UINT32                CurrentSpeed = 0;
-    UINT32                MaxSpeed = 0;
+    UINT32                CurrentSpeed  = 0;
+    UINT32                MaxSpeed      = 0;
 
     SmbiosDiscoveredSettings() {}
 };
@@ -102,13 +109,13 @@ class SmbiosDiscoveredSettings
  * All settings that'll be injected goes into this struct.
  * Goal : No globals used by patchTablexxx functions
  * The method that initialises this is SmbiosFillPatchingValues()
- * Q: Why is this intersting ? Isn't it just copy and we should let smbios.cpp access globals, like gCPUStructure ?
- * A: Problems with globals, is that don't control where they are accessed from.
+ * Q: Why is this interesting ? Isn't it just copy and we should let smbios.cpp access globals, like gCPUStructure ?
+ * A: Problems with globals, is that you don't know  where they are accessed from.
  *    Imagine you have a wrong information sent to Smbios.
- *    Putting a breakpoint or a log in SmbiosInjectedSettings::takeValueFrom, you immediatley know if the problem is
+ *    Putting a breakpoint or a log in SmbiosInjectedSettings::takeValueFrom, you immediately know if the problem is
  *    on the Clover side (wrong info given by Clover) or on the Smbios patch side (Right info but wrong way of patching smbios table).
  *    This way, Smbios is a layer (or toolbox) independent of Clover.
- *    SmbiosInjectedSettings is a "touch point" (some say "bridge") between layer. Of course it has to have only 1 or 2, easily identifiable.
+ *    SmbiosInjectedSettings is a "touch point" (some say "bridge") between layer. Of course there should only be 1 (or 2), easily identifiable "touch point".
  *    SmbiosFillPatchingValues() is THE place to make some checks, gather values and be sure of what to send to the patching functions.
  *
  *    NOTE : I know it's tempting not to do it because it's a lot of copy/paste. But it's so much a time saver later to have better/simpler design...
@@ -218,22 +225,61 @@ class SmbiosInjectedSettings
     SmbiosInjectedSettings() {}
 };
 
+class RAM_SLOT_INFO_Array
+{
+  XObjArray<RAM_SLOT_INFO> m_RAM_SLOT_INFO_Array = XObjArray<RAM_SLOT_INFO>();
+public:
+
+  const XBool doesSlotForIndexExist(uint8_t idx2Look4) const {
+    for ( size_t idx = 0 ; idx < m_RAM_SLOT_INFO_Array.size() ; ++idx ) {
+      if ( m_RAM_SLOT_INFO_Array[idx].SlotIndex == idx2Look4 ) return true;
+    }
+    return false;
+  }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const RAM_SLOT_INFO& getSlotInfoForSlotIndex(IntegralType nIndex) {
+//DebugLog(1, "SPDArray:[] : index = %lld, size=%zd\n", (uint64_t)nIndex, m_RAM_SLOT_INFO_Array.size());
+    if ( nIndex < 0 ) {
+      log_technical_bug("%s : nIndex < 0", __PRETTY_FUNCTION__);
+      return nullRAM_SLOT_INFO;
+    }
+    for ( size_t idx = 0 ; idx < m_RAM_SLOT_INFO_Array.size() ; ++idx ) {
+      if ( m_RAM_SLOT_INFO_Array[idx].SlotIndex == (unsigned_type(IntegralType))nIndex ) return m_RAM_SLOT_INFO_Array[idx];
+    }
+    return nullRAM_SLOT_INFO;
+  }
+  
+  size_t getSlotCount() const
+  {
+    size_t max = 0;
+    for ( size_t idx = 0 ; idx < m_RAM_SLOT_INFO_Array.size() ; ++idx ) {
+      if ( m_RAM_SLOT_INFO_Array[idx].ModuleSize > 0 ) {
+        if ( m_RAM_SLOT_INFO_Array[idx].SlotIndex > max ) max = m_RAM_SLOT_INFO_Array[idx].SlotIndex;
+      }
+    }
+    return max+1;
+  };
+
+  size_t size() const { return m_RAM_SLOT_INFO_Array.size(); }
+
+  void AddReference(RAM_SLOT_INFO* rsiPtr, XBool freeIt) { m_RAM_SLOT_INFO_Array.AddReference(rsiPtr, freeIt); }
+};
+
 class MEM_STRUCTURE
 {
 public:
-  UINT32        Frequency = UINT32();
-  UINT32        Divider = UINT32();
-  UINT8         TRC = UINT8();
-  UINT8         TRP = UINT8();
-  UINT8         RAS = UINT8();
-  UINT8         Channels = UINT8();
-  UINT8         Slots = UINT8();
-  UINT8         Type = UINT8();
-  UINT8         SPDInUse = UINT8();
-  UINT8         SMBIOSInUse = UINT8();
+  UINT32        Frequency   = 0;
+  UINT32        Divider     = 0;
+  UINT8         TRC         = 0;
+  UINT8         TRP         = 0;
+  UINT8         RAS         = 0;
+  UINT8         Channels    = 0;
+  UINT8         Slots       = 0;
+  UINT8         Type        = 0;
 
-  RAM_SLOT_INFO SPD[MAX_RAM_SLOTS * 4];
-  RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS * 4];
+  RAM_SLOT_INFO_Array SPD    = RAM_SLOT_INFO_Array();
+  RAM_SLOT_INFO_Array SMBIOS = RAM_SLOT_INFO_Array();
 
 };
 

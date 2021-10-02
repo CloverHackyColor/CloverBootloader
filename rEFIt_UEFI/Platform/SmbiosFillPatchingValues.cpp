@@ -39,14 +39,13 @@ static void SmbiosFillPatchingValues(const SETTINGS_DATA::SmbiosClass::RamSlotIn
 {
   RAM_SLOT_INFO& ramSlotInfo = *ramSlotInfoPtr;
 
-  ramSlotInfo.Slot = other.Slot;
+  ramSlotInfo.SlotIndex = other.SlotIndex;
   ramSlotInfo.ModuleSize = other.ModuleSize;
   ramSlotInfo.Frequency = other.Frequency;
   ramSlotInfo.Vendor = other.Vendor;
   ramSlotInfo.PartNo = other.PartNo;
   ramSlotInfo.SerialNo = other.SerialNo;
   ramSlotInfo.Type = other.Type;
-  ramSlotInfo.InUse = other.InUse;
 }
 
 static void SmbiosFillPatchingValues(const XObjArray<SETTINGS_DATA::SmbiosClass::RamSlotInfo>& settingRamSlotInfoArray, XObjArray<RAM_SLOT_INFO>* ramSlotInfoArrayPtr)
@@ -65,7 +64,7 @@ static void SmbiosFillPatchingValues(const SETTINGS_DATA::SmbiosClass::RamSlotIn
 {
   SmbiosMemoryConfigurationClass& Memory = *MemoryPtr;
   
-  Memory.SlotCounts = other.SlotCounts;
+  Memory.SlotCount = other.SlotCount;
   Memory.UserChannels = other.UserChannels;
   SmbiosFillPatchingValues(other.User, &Memory._User);
 }
@@ -144,7 +143,12 @@ void SmbiosFillPatchingValues(XBool _SetTable132, uint8_t pEnabledCores, uint16_
   smbiosInjectedSetting.SetTable132 = _SetTable132;
   smbiosInjectedSetting.QPI = globalSettings.CPU.QPI;
 
-  smbiosInjectedSetting.RamSlotCount = pRamSlotCount;
+  // If globalSettings.Smbios.RamSlotInfoArray.SlotCount is defined, the user wants to override
+  if ( globalSettings.Smbios.RamSlotInfoArray.SlotCount > 0 ) {
+    smbiosInjectedSetting.RamSlotCount = globalSettings.Smbios.RamSlotInfoArray.SlotCount;
+  }else{
+    smbiosInjectedSetting.RamSlotCount = pRamSlotCount;
+  }
 }
 
 

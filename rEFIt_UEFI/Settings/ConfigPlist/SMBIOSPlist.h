@@ -21,6 +21,7 @@
 #include <IndustryStandard/SmBios.h> // for Smbios memory type
 #include "../../Platform/guid.h"
 #include "../../Platform/platformdata.h"
+#include "../../Platform/smbios.h"
 //#include "../cpu.h"
 
 #include "../../cpp_lib/undefinable.h"
@@ -64,24 +65,15 @@ public:
           public:
             static ModuleDictClass NullValue;
             
-            class SlotClass : public XmlUInt64
+            class SlotIndexClass : public XmlUInt8
             {
-              using super = XmlUInt64;
+              using super = XmlUInt8;
               virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
                 if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-                if ( !isDefined() ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot must be defined as a number between 0 and 15 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-                if ( value() < 0 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot be negative. It must a number between 0 and 15 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-                if ( value() > 15 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot > 15. It must a number between 0 and 15 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+                if ( value() >= MAX_RAM_SLOTS ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot >= MAX_RAM_SLOTS. It must a number between 0 and %d at '%s:%d'", MAX_RAM_SLOTS-1, xmlPath.c_str(), keyPos.getLine()));
                 return true;
               }
             };
-
-            XmlUInt64 Slot = XmlUInt64();
-            XmlUInt32 Size = XmlUInt32();
-            XmlUInt32 Frequency = XmlUInt32();
-            XmlString8AllowEmpty Vendor = XmlString8AllowEmpty();
-            XmlString8AllowEmpty Part = XmlString8AllowEmpty();
-            XmlString8AllowEmpty Serial = XmlString8AllowEmpty();
             class TypeClass: public XmlString8AllowEmpty {
                 using super = XmlString8AllowEmpty;
                 virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
@@ -95,10 +87,18 @@ public:
                   return xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be \"DDR\", \"DDR2\", \"DDR3\" or \"DDR4\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
                 }
               public:
-            } Type = TypeClass();
+            };
+
+            SlotIndexClass SlotIndex = SlotIndexClass();
+            XmlUInt32 Size = XmlUInt32();
+            XmlUInt32 Frequency = XmlUInt32();
+            XmlString8AllowEmpty Vendor = XmlString8AllowEmpty();
+            XmlString8AllowEmpty Part = XmlString8AllowEmpty();
+            XmlString8AllowEmpty Serial = XmlString8AllowEmpty();
+            TypeClass Type = TypeClass();
 
             XmlDictField m_fields[7] = {
-              {"Slot", Slot},
+              {"Slot", SlotIndex},
               {"Size", Size},
               {"Frequency", Frequency},
               {"Vendor", Vendor},
@@ -110,12 +110,15 @@ public:
             virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
             
             virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-              if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-              if ( !Slot.isDefined() ) return false;
-              return true;
+              XBool b = true;
+              if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) b = false;
+              if ( !SlotIndex.isDefined() ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Slot must be defined as a number between 0 and %d at '%s:%d'", MAX_RAM_SLOTS-1, xmlPath.c_str(), keyPos.getLine()));
+              if ( !Size.isDefined() ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Size must be defined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+              return b;
             }
 
-            const decltype(Slot)::ValueType& dgetSlotNo() const { return Slot.isDefined() ? Slot.value() : Slot.nullValue; };
+            // Currently a UInt8, so value is 0..255. Careful if you change for a bigger uint type !
+            const decltype(SlotIndex)::ValueType& dgetSlotIndex() const { return SlotIndex.isDefined() ? SlotIndex.value() : SlotIndex.nullValue; };
             const decltype(Size)::ValueType& dgetModuleSize() const { return Size.isDefined() ? Size.value() : Size.nullValue; };
             const decltype(Frequency)::ValueType& dgetFrequency() const { return Frequency.isDefined() ? Frequency.value() : Frequency.nullValue; };
             const decltype(Vendor)::ValueType& dgetVendor() const { return Vendor.isDefined() ? Vendor.value() : Vendor.nullValue; };
@@ -136,17 +139,50 @@ public:
               // Cannot happen if validate has been done properly.
               panic("invalid value");
             }
-            XBool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
+//            XBool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
 
           };
           
           class ModuleArrayClass : public XmlArray<ModuleDictClass>
           {
+              using super = XmlArray<ModuleDictClass>;
             public:
-              
-              const ModuleDictClass& dgetSolt(size_t slotNo) const {
+
+              virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
+                if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+                if ( size() > UINT8_MAX ) {
+                  xmlLiteParser->addWarning(generateErrors, S8Printf("You cannot declare more then 256 memory modules in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+                  while ( size() > 256 ) RemoveAtIndex(size()-1);
+                }
+
+                for ( size_t i = 0 ; i < size() ; i++ ) {
+                  for ( size_t j = i+1 ; j < size() ; ) {
+                    if ( ElementAt(i).SlotIndex.value() >= ElementAt(j).SlotIndex.value() ) {
+                      xmlLiteParser->addWarning(generateErrors, S8Printf("Ignore duplicate memory module for slot %d at '%s:%d'", ElementAt(i).SlotIndex.value(), xmlPath.c_str(), keyPos.getLine()));
+                      RemoveAtIndex(j);
+                    }else{
+                      j++;
+                    }
+                  }
+                }
+
+                return true;
+              }
+
+              decltype(ModuleDictClass::SlotIndex)::ValueType dgetCalculatedSlotCount() const {
+                if ( !isDefined() ) return 0;
+                uint8_t max = 0;
+                for ( size_t idx = 0 ; idx < size() ; ++idx ) {
+                  if ( ElementAt(idx).dgetModuleSize() > 0 ) {
+                    if ( ElementAt(idx).dgetSlotIndex() > max ) max = ElementAt(idx).dgetSlotIndex();
+                  }
+                }
+                return max+1;
+              };
+
+              const ModuleDictClass& dgetSoltAtIndex(size_t slotIndex) const {
                 for ( size_t idx = 0; idx < size(); ++idx ) {
-                  if ( ElementAt(idx).dgetSlotNo() == slotNo )
+                  if ( ElementAt(idx).dgetSlotIndex() == slotIndex )
                    return ElementAt(idx);
                 }
                 return ModuleDictClass::NullValue;
@@ -171,28 +207,40 @@ public:
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
           XBool b = true;
+          for ( size_t i = 0 ; i < Modules.size() ; ) {
+            if ( Modules[i].SlotIndex.value() >= SlotCount.value() ) {
+              xmlLiteParser->addWarning(generateErrors, S8Printf("Ignore memory module with slot >= SlotCount at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+              Modules.RemoveAtIndex(i);
+            }else{
+              i++;
+            }
+          }
+          if ( SlotCount.value() < Modules.dgetCalculatedSlotCount() ) {
+            log_technical_bug("SlotCount.value() < Modules.dgetCalculatedSlotCount()");
+            SlotCount.setUInt8Value(Modules.dgetCalculatedSlotCount());
+          }
           return b;
         }
 
-        decltype(SlotCount)::ValueType dgetSlotCountSetting() const { return SlotCount.isDefined() ? SlotCount.value() : 0; };
+        decltype(SlotCount)::ValueType dgetSlotCount() const { return SlotCount.isDefined() ? SlotCount.value() : 0; };
         const decltype(Channels)::ValueType& dgetUserChannels() const { return Channels.isDefined() ? Channels.value() : Channels.nullValue; };
         
-        decltype(SlotCount)::ValueType dgetSlotMax() const {
-          if ( !isDefined() || !Modules.isDefined() || Modules.size() == 0 ) return 0;
-          uint8_t max = 0;
-          for ( size_t idx = 0 ; idx < Modules.size() ; ++idx ) {
-            if ( Modules[idx].dgetModuleSize() > 0 ) {
-              if ( Modules[idx].dgetSlotNo() > UINT8_MAX ) {
-                log_technical_bug("Modules[idx].dgetSlotNo() > UINT8_MAX");
-              }else{
-                if ( Modules[idx].dgetSlotNo() > max ) max = (uint8_t)Modules[idx].dgetSlotNo(); // safe cast Modules[idx].dgetSlotNo() is <= UINT8_MAX
-              }
-            }
-          }
-          return max+1;
-        };
-        
-        decltype(SlotCount)::ValueType dgetSlotCounts() const { return dgetSlotCountSetting() > dgetSlotMax() ? dgetSlotCountSetting() : dgetSlotMax(); };
+//        decltype(SlotCount)::ValueType dgetSlotMax() const {
+//          if ( !isDefined() || !Modules.isDefined() || Modules.size() == 0 ) return 0;
+//          uint8_t max = 0;
+//          for ( size_t idx = 0 ; idx < Modules.size() ; ++idx ) {
+//            if ( Modules[idx].dgetModuleSize() > 0 ) {
+//              if ( Modules[idx].dgetSlotIndex() > UINT8_MAX ) {
+//                log_technical_bug("Modules[idx].dgetSlotNo() > UINT8_MAX");
+//              }else{
+//                if ( Modules[idx].dgetSlotIndex() > max ) max = (uint8_t)Modules[idx].dgetSlotIndex(); // safe cast Modules[idx].dgetSlotNo() is <= UINT8_MAX
+//              }
+//            }
+//          }
+//          return max+1;
+//        };
+//
+//        decltype(SlotCount)::ValueType dgetSlotCounts() const { return dgetSlotCountSetting() > dgetSlotMax() ? dgetSlotCountSetting() : dgetSlotMax(); };
 
       };
 
@@ -620,7 +668,7 @@ public:
     decltype(SmbiosVersion)::ValueType dgetSmbiosVersion() const { return SmbiosVersion.isDefined() ? SmbiosVersion.value() : 0x204; };
     decltype(MemoryRank)::ValueType dgetAttribute() const { return MemoryRank.isDefined() ? MemoryRank.value() : -1; };
     decltype(Trust)::ValueType dgetTrustSMBIOS() const { return Trust.isDefined() ? Trust.value() : XBool(true); };
-    XBool dgetInjectMemoryTables() const { return Memory.Modules.isDefined() && Memory.Modules.size() > 0 ? Memory.dgetSlotCounts() > 0 : false; };
+    XBool dgetInjectMemoryTables() const { return Memory.Modules.isDefined() && Memory.Modules.size() > 0 ? Memory.dgetSlotCount() > 0 : false; };
     decltype(PlatformFeature)::ValueType dgetgPlatformFeature() const {
       if ( PlatformFeature.isDefined() ) return PlatformFeature.value();
       return GetPlatformFeature(dgetModel());
