@@ -199,25 +199,25 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
               if (p_states_count > 32)
                 p_states_count = 32;
                 DBG("PStates count=%d\n", p_states_count);
-							
+
                 vidstep = ((maximum.Control.VID_FID.VID << 2) - (minimum.Control.VID_FID.VID << 2)) / (p_states_count - 1);
-							
+
                 for (u = 0; u < p_states_count; u++) {
                   UINT8 i = u - invalid;
-								
+
                   p_states[i].CID = maximum.CID - u;
                   p_states[i].Control.VID_FID.FID = (UINT8)(p_states[i].CID >> 1);
-								
+
                   if (p_states[i].Control.VID_FID.FID < 0x6) {
                     if (cpu_dynamic_fsb)
                       p_states[i].Control.VID_FID.FID = (p_states[i].Control.VID_FID.FID << 1) | 0x80;
                   } else if (cpu_noninteger_bus_ratio) {
                     p_states[i].Control.VID_FID.FID = p_states[i].Control.VID_FID.FID | (0x40 * (p_states[i].CID & 0x1));
                   }
-								
+
                   if (i && p_states[i].Control.VID_FID.FID == p_states[i-1].Control.VID_FID.FID)
                     invalid++;
-								
+
                   p_states[i].Control.VID_FID.VID = ((maximum.Control.VID_FID.VID << 2) - (vidstep * u)) >> 2;
                   if (u < p_states_count - 1) {
                     p_states[i].Control.VID_FID.VID -= gSettings.ACPI.SSDT.UnderVoltStep;
@@ -231,7 +231,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     UINT32 halffsb = (fsb + 1) >> 1;                                  // = 100
                     UINT32 frequency = (multiplier * fsb);                            // = 1600
                   
-                    p_states[i].Frequency = (UINT32)(frequency + (half * halffsb)) >> dfsb;	// = 1600/2=800
+                    p_states[i].Frequency = (UINT32)(frequency + (half * halffsb)) >> dfsb; // = 1600/2=800
                   }
                 }
               p_states_count -= invalid;

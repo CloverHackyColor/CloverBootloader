@@ -55,10 +55,12 @@
  Mac-FA842E06C61E91C5 iMac15,1
  
  GFX0+IGPU
- Mac-63001698E7A34814 iMac19,2
+ Mac-63001698E7A34814 iMac19,2 Vega
  Mac-77F17D7DA9285301 iMac18,2 Radeon Pro 555  devID=67ef
  Mac-AA95B1DDAB278B95 iMac19,1 Radeon Pro 570X devID=67df
  Mac-BE088AF8C5EB4FA2 iMac18,3 Radeon Pro 575 == RX480/580 devID=67df
+ Mac-AF89B6D9451A490B (Monterey) iMac20,2 RX5700XT
+ Mac-CFF7D910A743CAAF (Monterey) iMac20,1
  
  GFX0+IGPU+display
  Mac-7BA5B2D9E42DDD94 iMacPro1,1
@@ -265,10 +267,12 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Pro"_XS8, "1.0"_XS8, "C02ZPHACPG8W"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j152f"_XS8, 0 },
   //MacBookPro16,2 / MacBook Pro (13-inch, 2020, Four Thunderbolt 3 ports)
+    //IceLake, Intel Iris Plus Graphics
   { "MacBookPro16,2"_XS8, "MBP162.88Z.F000.B00.2107050225"_XS8, "1715.0.57.0.0"_XS8, "Mac-5F9802EFE386AA28"_XS8, // Intel Core i7-1068NG7 @ 2.30 GHz type=0x060b
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CLHACML7H"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j214k"_XS8, 0 },
   //MacBookPro16,3 / MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports)
+    //Intel Core i5 or Core i7 (8257U, 8557U) ("Coffee Lake"), Intel Iris Plus Graphics 645
   { "MacBookPro16,3"_XS8, "MBP163.88Z.F000.B00.2107050231"_XS8, "1715.0.57.0.0"_XS8, "Mac-E7203C0F68AA0004"_XS8, // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CJHACP3XY"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j223"_XS8, 0 },
@@ -333,9 +337,10 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air"_XS8, "1.0"_XS8, "FVFXJHACLYWM"_XS8, "Air-Enclosure"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "j140a"_XS8, 0 },
   //MacBookAir9,1 / MacBook Air (Retina, 13-inch, 2020)
+   // Intel Core i3, i5, or i7 (1000NG4, 1030NG7, 1060NG7) ("Ice Lake")
   { "MacBookAir9,1"_XS8, "MBA91.88Z.F000.B00.2107050235"_XS8, "1715.0.57.0.0"_XS8, "Mac-0CFF9C7C2B63DF8D"_XS8, // Intel Core i5-1030NG7 @ 1.10 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFCCHACMNHP"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "j230k"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j223k"_XS8, 0 },
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, ""_XS8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini"_XS8, "1.0"_XS8, "W8702N1JU35"_XS8, "Mini-Aluminum"_XS8,
@@ -493,6 +498,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac"_XS8, "1.0"_XS8, "C02TDHACJ1GJ"_XS8, "iMac-Aluminum"_XS8,
     0x02, 0x41, 0x0f, 0, 0, 0x02, "j133_4_5"_XS8, "j135"_XS8, 0xf07009 },
   //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
+    //AMD Radeon Pro 570X, Radeon Pro 575X, Radeon Pro 580X, or Radeon Pro Vega 48
   { "iMac19,1"_XS8, "IM191.88Z.F000.B00.2106222356"_XS8, "1554.140.20.0.0"_XS8, "Mac-AA95B1DDAB278B95"_XS8, // Intel Core i9-9900K @ 3.60 GHz
     "iMac"_XS8, "1.0"_XS8, "C02Y9HACJV3P"_XS8, "iMac-Aluminum"_XS8,
     0x02, 0x46, 0x0f, 0, 0, 0x12, "j138_9"_XS8, "j138"_XS8, 0xf0d009 },
@@ -501,11 +507,13 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac"_XS8, "1.0"_XS8, "C02Y9HACJWDW"_XS8, "iMac-Aluminum"_XS8,
     0x02, 0x47, 0x0f, 0, 0, 0x03, "j138_9"_XS8, "j138"_XS8, 0xf0d009 },
   //iMac20,1 / iMac (Retina 5K, 27-inch, 2020) Intel Core i5-10500 @ 3.10 GHz
+    //AMD Radeon Pro 5300, Radeon Pro 5500 XT, Radeon Pro 5700, or Radeon Pro 5700 XT
   { "iMac20,1"_XS8, "IM201.88Z.F000.B00.2107050239"_XS8, "1715.0.57.0.0"_XS8, "Mac-CFF7D910A743CAAF"_XS8,
     "iMac"_XS8, "1.0"_XS8, "C02D3HACPN5T"_XS8, "iMac-Aluminum"_XS8,
     0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
 //    0x02, 0x46, 0x0f, 0, 0, 0x12, "j185"_XS8, "j185"_XS8, 0xf0d009 },
   //iMac20,2 / iMac (Retina 5K, 27-inch, 2020) Intel Core i9-10910 @ 3.60 GHz
+    //AMD Radeon Pro 5300, Radeon Pro 5500 XT, Radeon Pro 5700, or Radeon Pro 5700 XT
   { "iMac20,2"_XS8, "IM201.88Z.F000.B00.2107050239"_XS8, "1715.0.57.0.0"_XS8, "Mac-AF89B6D9451A490B"_XS8,
     "iMac"_XS8, "1.0"_XS8, "C02D2HAC046M"_XS8, "iMac-Aluminum"_XS8,
     0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},

@@ -341,7 +341,7 @@ MSR C001006B  0000-0000-0000-0000
 
 
 
-typedef struct {
+typedef struct CPU_STRUCTURE {
  //values from CPUID
   UINT32                  CPUID[CPUID_MAX][4] = {{0}};
   UINT32                  Vendor = 0;
