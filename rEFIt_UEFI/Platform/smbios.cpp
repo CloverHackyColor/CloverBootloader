@@ -89,11 +89,10 @@ UINT32      mTotalSystemMemory;
 UINT64      gTotalMemory;
 UINT16      mHandle3;
 UINT16      mHandle16 = 0x1000;
-UINT16      mHandle17[MAX_RAM_SLOTS];
+//UINT16      mHandle17[MAX_RAM_SLOTS];
 UINT16      mHandle19;
-UINT16      mMemory17[MAX_RAM_SLOTS];
-UINT64      mInstalled[MAX_RAM_SLOTS];
-UINT64      mEnabled[MAX_RAM_SLOTS];
+//UINT64      mInstalled[MAX_RAM_SLOTS];
+//UINT64      mEnabled[MAX_RAM_SLOTS];
 XBool       gMobile;
 UINT8       gBootStatus;
 XBool       Once;
@@ -965,35 +964,35 @@ void PatchTableType4(const SmbiosInjectedSettings& smbiosSettings)
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
     }
 
-#ifdef JIEF_DEBUG
-DBG("newSmbiosTable.Type4->AssetTag=%d\n", newSmbiosTable.Type4->AssetTag);
-DBG("newSmbiosTable.Type4->CoreCount=%d\n", newSmbiosTable.Type4->CoreCount);
-DBG("newSmbiosTable.Type4->CoreCount2=%d\n", newSmbiosTable.Type4->CoreCount2);
-DBG("newSmbiosTable.Type4->CurrentSpeed=%d\n", newSmbiosTable.Type4->CurrentSpeed);
-DBG("newSmbiosTable.Type4->EnabledCoreCount=%d\n", newSmbiosTable.Type4->EnabledCoreCount);
-DBG("newSmbiosTable.Type4->EnabledCoreCount2=%d\n", newSmbiosTable.Type4->EnabledCoreCount2);
-DBG("newSmbiosTable.Type4->ExternalClock=%d\n", newSmbiosTable.Type4->ExternalClock);
-DBG("newSmbiosTable.Type4->L1CacheHandle=%d\n", newSmbiosTable.Type4->L1CacheHandle);
-DBG("newSmbiosTable.Type4->L2CacheHandle=%d\n", newSmbiosTable.Type4->L2CacheHandle);
-DBG("newSmbiosTable.Type4->L3CacheHandle=%d\n", newSmbiosTable.Type4->L3CacheHandle);
-DBG("newSmbiosTable.Type4->MaxSpeed=%d\n", newSmbiosTable.Type4->MaxSpeed);
-DBG("newSmbiosTable.Type4->PartNumber=%d\n", newSmbiosTable.Type4->PartNumber);
-DBG("newSmbiosTable.Type4->ProcessorCharacteristics=%d\n", newSmbiosTable.Type4->ProcessorCharacteristics);
-DBG("newSmbiosTable.Type4->ProcessorFamily=%d\n", newSmbiosTable.Type4->ProcessorFamily);
-DBG("newSmbiosTable.Type4->ProcessorFamily2=%d\n", newSmbiosTable.Type4->ProcessorFamily2);
-DBG("newSmbiosTable.Type4->ProcessorId.FeatureFlags=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags);
-DBG("newSmbiosTable.Type4->ProcessorId.Signatur=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.Signature);
-DBG("newSmbiosTable.Type4->ProcessorManufacturer=%d\n", newSmbiosTable.Type4->ProcessorManufacturer);
-DBG("newSmbiosTable.Type4->ProcessorType=%d\n", newSmbiosTable.Type4->ProcessorType);
-DBG("newSmbiosTable.Type4->ProcessorUpgrade=%d\n", newSmbiosTable.Type4->ProcessorUpgrade);
-DBG("newSmbiosTable.Type4->ProcessorVersion=%d\n", newSmbiosTable.Type4->ProcessorVersion);
-DBG("newSmbiosTable.Type4->SerialNumber=%d\n", newSmbiosTable.Type4->SerialNumber);
-DBG("newSmbiosTable.Type4->Socket=%d\n", newSmbiosTable.Type4->Socket);
-DBG("newSmbiosTable.Type4->Status=%d\n", newSmbiosTable.Type4->Status);
-DBG("newSmbiosTable.Type4->ThreadCount=%d\n", newSmbiosTable.Type4->ThreadCount);
-DBG("newSmbiosTable.Type4->ThreadCount2=%d\n", newSmbiosTable.Type4->ThreadCount2);
-DBG("newSmbiosTable.Type4->Voltage=%d\n", *(UINT8*)&newSmbiosTable.Type4->Voltage);
-#endif
+//#ifdef JIEF_DEBUG
+//DBG("newSmbiosTable.Type4->AssetTag=%d\n", newSmbiosTable.Type4->AssetTag);
+//DBG("newSmbiosTable.Type4->CoreCount=%d\n", newSmbiosTable.Type4->CoreCount);
+//DBG("newSmbiosTable.Type4->CoreCount2=%d\n", newSmbiosTable.Type4->CoreCount2);
+//DBG("newSmbiosTable.Type4->CurrentSpeed=%d\n", newSmbiosTable.Type4->CurrentSpeed);
+//DBG("newSmbiosTable.Type4->EnabledCoreCount=%d\n", newSmbiosTable.Type4->EnabledCoreCount);
+//DBG("newSmbiosTable.Type4->EnabledCoreCount2=%d\n", newSmbiosTable.Type4->EnabledCoreCount2);
+//DBG("newSmbiosTable.Type4->ExternalClock=%d\n", newSmbiosTable.Type4->ExternalClock);
+//DBG("newSmbiosTable.Type4->L1CacheHandle=%d\n", newSmbiosTable.Type4->L1CacheHandle);
+//DBG("newSmbiosTable.Type4->L2CacheHandle=%d\n", newSmbiosTable.Type4->L2CacheHandle);
+//DBG("newSmbiosTable.Type4->L3CacheHandle=%d\n", newSmbiosTable.Type4->L3CacheHandle);
+//DBG("newSmbiosTable.Type4->MaxSpeed=%d\n", newSmbiosTable.Type4->MaxSpeed);
+//DBG("newSmbiosTable.Type4->PartNumber=%d\n", newSmbiosTable.Type4->PartNumber);
+//DBG("newSmbiosTable.Type4->ProcessorCharacteristics=%d\n", newSmbiosTable.Type4->ProcessorCharacteristics);
+//DBG("newSmbiosTable.Type4->ProcessorFamily=%d\n", newSmbiosTable.Type4->ProcessorFamily);
+//DBG("newSmbiosTable.Type4->ProcessorFamily2=%d\n", newSmbiosTable.Type4->ProcessorFamily2);
+//DBG("newSmbiosTable.Type4->ProcessorId.FeatureFlags=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags);
+//DBG("newSmbiosTable.Type4->ProcessorId.Signatur=%d\n", *(UINT32*)&newSmbiosTable.Type4->ProcessorId.Signature);
+//DBG("newSmbiosTable.Type4->ProcessorManufacturer=%d\n", newSmbiosTable.Type4->ProcessorManufacturer);
+//DBG("newSmbiosTable.Type4->ProcessorType=%d\n", newSmbiosTable.Type4->ProcessorType);
+//DBG("newSmbiosTable.Type4->ProcessorUpgrade=%d\n", newSmbiosTable.Type4->ProcessorUpgrade);
+//DBG("newSmbiosTable.Type4->ProcessorVersion=%d\n", newSmbiosTable.Type4->ProcessorVersion);
+//DBG("newSmbiosTable.Type4->SerialNumber=%d\n", newSmbiosTable.Type4->SerialNumber);
+//DBG("newSmbiosTable.Type4->Socket=%d\n", newSmbiosTable.Type4->Socket);
+//DBG("newSmbiosTable.Type4->Status=%d\n", newSmbiosTable.Type4->Status);
+//DBG("newSmbiosTable.Type4->ThreadCount=%d\n", newSmbiosTable.Type4->ThreadCount);
+//DBG("newSmbiosTable.Type4->ThreadCount2=%d\n", newSmbiosTable.Type4->ThreadCount2);
+//DBG("newSmbiosTable.Type4->Voltage=%d\n", *(UINT8*)&newSmbiosTable.Type4->Voltage);
+//#endif
 
     Handle = LogSmbiosTable(newSmbiosTable);
   }
@@ -1016,18 +1015,22 @@ void PatchTableType6(const SmbiosInjectedSettings& smbiosSettings)
       continue;
     }
     SizeField = SmbiosTable.Type6->InstalledSize.InstalledOrEnabledSize & 0x7F;
+    UINT64 mInstalled = 0;
     if (SizeField < 0x7D) {
-      mInstalled[Index]  =  LShiftU64(1ULL, 20 + SizeField);
+      mInstalled  =  LShiftU64(1ULL, 20 + SizeField);
     } else if (SizeField == 0x7F) {
-      mInstalled[Index]  = 0;
-    } else
-      mInstalled[Index]  =  4096ULL * (1024ULL * 1024ULL);
-    MsgLog("Table 6 MEMORY_MODULE %zu Installed %llX ", Index, mInstalled[Index]);
+      mInstalled  = 0;
+    } else {
+      mInstalled  =  4096ULL * (1024ULL * 1024ULL);
+    }
+    MsgLog("Table 6 MEMORY_MODULE %zu Installed %llX ", Index, mInstalled);
+    UINT64 mEnabled = 0;
     if (SizeField >= 0x7D) {
-      mEnabled[Index]    = 0;
-    } else
-      mEnabled[Index]    = LShiftU64(1ULL, 20 + ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F));
-	  MsgLog("... enabled %llX \n", mEnabled[Index]);
+      mEnabled    = 0;
+    } else {
+      mEnabled = LShiftU64(1ULL, 20 + ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F));
+    }
+    MsgLog("... enabled %llX \n", mEnabled);
     LogSmbiosTable(SmbiosTable);
   }
 
@@ -1115,17 +1118,17 @@ void PatchTableType9(const SmbiosInjectedSettings& smbiosSettings)
   // SlotType = 32bit PCI/SlotTypePciExpressX1/x4/x16
   // real PC -> PCI, real Mac -> PCIe
 
-#ifdef JIEF_DEBUG
-  for (uint8_t Index = 0; Index <= 15; Index++) {
-    DBG("SlotDevice[%hhu].BusNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum);
-    DBG("SlotDevice[%hhu].DevFuncNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum);
-    DBG("SlotDevice[%hhu].SegmentGroupNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum);
-    DBG("SlotDevice[%hhu].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
-    DBG("SlotDevice[%hhu].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
-    DBG("SlotDevice[%hhu].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
-    DBG("SlotDevice[%hhu].Valid = %d\n", Index, (bool)smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
-  }
-#endif
+//#ifdef JIEF_DEBUG
+//  for (uint8_t Index = 0; Index <= 15; Index++) {
+//    DBG("SlotDevice[%hhu].BusNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).BusNum);
+//    DBG("SlotDevice[%hhu].DevFuncNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).DevFuncNum);
+//    DBG("SlotDevice[%hhu].SegmentGroupNum = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SegmentGroupNum);
+//    DBG("SlotDevice[%hhu].SlotID = %hhd\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotID);
+//    DBG("SlotDevice[%hhu].SlotType = %d\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotType);
+//    DBG("SlotDevice[%hhu].SlotName = %s\n", Index, smbiosSettings.SlotDevices.getSlotForIndex(Index).SlotName.c_str());
+//    DBG("SlotDevice[%hhu].Valid = %d\n", Index, (bool)smbiosSettings.SlotDevices.isSlotForIndexValid(Index));
+//  }
+//#endif
 
   for (uint8_t Index = 0; Index < 15; Index++) {
     if (smbiosSettings.SlotDevices.isSlotForIndexValid(Index)) {
@@ -1228,6 +1231,17 @@ void GetTableType16(SmbiosDiscoveredSettings* smbiosSettings)
       continue;
     }
 	  DBG("Type 16 Index = %zu\n", Index);
+
+    if ( SmbiosTable.Type16->NumberOfMemoryDevices > numeric_limits<decltype(smbiosSettings->RamSlotCount)>::max() ) {
+      DBG("SmbiosTable.Type16->NumberOfMemoryDevices report too many devices (%d). Maxing out smbiosSettings->RamSlotCount to %d.\n", SmbiosTable.Type16->NumberOfMemoryDevices, MAX_RAM_SLOTS);
+      smbiosSettings->RamSlotCount = MAX_RAM_SLOTS;
+      break;
+    }
+    if ( SmbiosTable.Type16->NumberOfMemoryDevices > numeric_limits<decltype(smbiosSettings->RamSlotCount)>::max() - smbiosSettings->RamSlotCount ) {
+      DBG("smbiosSettings->RamSlotCount(%d) + SmbiosTable.Type16->NumberOfMemoryDevices(%d) is too many devices. Maxing out smbiosSettings->RamSlotCount to %d.\n", smbiosSettings->RamSlotCount, SmbiosTable.Type16->NumberOfMemoryDevices, MAX_RAM_SLOTS);
+      smbiosSettings->RamSlotCount = MAX_RAM_SLOTS;
+      break;
+    }
     smbiosSettings->RamSlotCount += SmbiosTable.Type16->NumberOfMemoryDevices;
   }
   if ( smbiosSettings->RamSlotCount == 0 ) {
@@ -1266,16 +1280,47 @@ void PatchTableType16(const SmbiosInjectedSettings& smbiosSettings)
   // newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
   // MemoryErrorInformationHandle
   newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
-  newSmbiosTable.Type16->NumberOfMemoryDevices = MIN(smbiosSettings.RamSlotCount, MAX_RAM_SLOTS);
-  DBG("NumberOfMemoryDevices = %d\n", MIN(smbiosSettings.RamSlotCount, MAX_RAM_SLOTS));
+  newSmbiosTable.Type16->NumberOfMemoryDevices = smbiosSettings.RamSlotCount; // RamSlotCount is <= MAX_RAM_SLOTS), see GetTableType16()
+  DBG("NumberOfMemoryDevices = %d\n", smbiosSettings.RamSlotCount);
   LogSmbiosTable(newSmbiosTable);
 }
 
 void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
 {
+//#ifdef JIEF_DEBUG
+//{
+//  RAM_SLOT_INFO* rsiPtr = NULL;
+//  rsiPtr = new RAM_SLOT_INFO;
+//  RAM_SLOT_INFO& rsi = *rsiPtr;
+//  rsi.Frequency = 2587;
+//  rsi.ModuleSize = 8192;
+//  rsi.PartNo.takeValueFrom("M393A1K43BB1-CTD");
+//  rsi.SerialNo.takeValueFrom("24B63C90");
+//  rsi.SlotIndex = 0;
+//  rsi.Type = 17;
+//  rsi.Vendor.takeValueFrom("Samsung");
+//  gRAM.SMBIOS.AddReference(rsiPtr, true);
+//}
+//{
+//  RAM_SLOT_INFO* rsiPtr = NULL;
+//  rsiPtr = new RAM_SLOT_INFO;
+//  RAM_SLOT_INFO& rsi = *rsiPtr;
+//  rsi.Frequency = 2587;
+//  rsi.ModuleSize = 8192;
+//  rsi.PartNo.takeValueFrom("M393A1K43BB1-CTD");
+//  rsi.SerialNo.takeValueFrom("24B63C91");
+//  rsi.SlotIndex = 1;
+//  rsi.Type = 17;
+//  rsi.Vendor.takeValueFrom("Samsung");
+//  gRAM.SMBIOS.AddReference(rsiPtr, true);
+//}
+//  DBG("JIEF_DEBUG : force memory modules\n");
+//  return;
+//#endif
+
   // Memory Device
   //
-  XBool Found;
+  XBool FoundOneTable;
 
   // Get Table Type17 and count Size
   for (size_t Index = 0; Index < smbiosSettings->RamSlotCount; Index++) {  //how many tables there may be?
@@ -1284,9 +1329,10 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
       //      DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
       continue;
     }
-#ifndef JIEF_DEBUG // it's all 0 in VMWare
+    FoundOneTable = true;
+//#ifndef JIEF_DEBUG // it's all 0 in VMWare
 	  DBG("Type 17 Index = %zu\n", Index);
-#endif
+//#endif
     //gDMI->CntMemorySlots++;
     if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
       DBG("Table has error information, checking\n"); //why skipping?
@@ -1295,7 +1341,7 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
       //  be skipped where others may not but it seems easier
       //  to just skip all entries that have an error - apianti
       // will try
-      Found = false;
+      XBool Found = false;
       for (INTN Index2 = 0; Index2 < 24; Index2++) {
         newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
         if (newSmbiosTable.Raw == NULL) {
@@ -1332,18 +1378,23 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
         }
       }
     }
+    RAM_SLOT_INFO* rsiPtr = NULL;
     // Determine if slot has size
     if (SmbiosTable.Type17->Size > 0) {
-      gRAM.SMBIOS[Index].InUse = true;
-      gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
+      rsiPtr = new RAM_SLOT_INFO;
+      RAM_SLOT_INFO& rsi = *rsiPtr;
+
+      rsi.ModuleSize = SmbiosTable.Type17->Size;
       if (SmbiosTable.Type17->Size == 0x7FFF) {
-        gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->ExtendedSize;
+        rsi.ModuleSize = SmbiosTable.Type17->ExtendedSize;
       }
     }
     // Determine if module frequency is sane value
     if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
-      gRAM.SMBIOS[Index].InUse = true;
-      gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+      if ( rsiPtr == NULL ) rsiPtr = new RAM_SLOT_INFO;
+      RAM_SLOT_INFO& rsi = *rsiPtr;
+
+      rsi.Frequency = SmbiosTable.Type17->Speed;
       if (SmbiosTable.Type17->Speed > gRAM.Frequency) {
         gRAM.Frequency = SmbiosTable.Type17->Speed;
       }
@@ -1353,56 +1404,66 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
 #endif
     }
     // Fill rest of information if in use
-    if (gRAM.SMBIOS[Index].InUse) {
-      ++(gRAM.SMBIOSInUse);
-      gRAM.SMBIOS[Index].Vendor.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer));
-      gRAM.SMBIOS[Index].Vendor.trim();
-      gRAM.SMBIOS[Index].SerialNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber));
-      gRAM.SMBIOS[Index].SerialNo.trim();
-      gRAM.SMBIOS[Index].PartNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber));
-      gRAM.SMBIOS[Index].PartNo.trim();
-    }
-    //    DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
-    //    DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
-    if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
-      DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
-      DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
+    if ( rsiPtr != NULL ) {
+      //++(gRAM.SMBIOSInUse);
+      RAM_SLOT_INFO& rsi = *rsiPtr;
+
+      rsi.SlotIndex = Index;
+      rsi.Vendor.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer));
+      rsi.Vendor.trim();
+      rsi.SerialNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber));
+      rsi.SerialNo.trim();
+      rsi.PartNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber));
+      rsi.PartNo.trim();
+      
+      gRAM.SMBIOS.AddReference(rsiPtr, true);
+
+      DBG("SmbiosTable.Type17->SlotIndex = %d\n", rsi.SlotIndex);
+      DBG("SmbiosTable.Type17->ModuleSize = %dMB\n", rsi.ModuleSize);
+      DBG("SmbiosTable.Type17->Type = %d\n", rsi.Type);
+      DBG("SmbiosTable.Type17->Frequency = %dMHz\n", rsi.Frequency);
       DBG("SmbiosTable.Type17->Bank/Device = %s %s\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
-      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[Index].Vendor.c_str());
-      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[Index].SerialNo.c_str());
-      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[Index].PartNo.c_str());
+      DBG("SmbiosTable.Type17->Vendor = %s\n", rsi.Vendor.c_str());
+      DBG("SmbiosTable.Type17->SerialNo = %s\n", rsi.SerialNo.c_str());
+      DBG("SmbiosTable.Type17->PartNo = %s\n", rsi.PartNo.c_str());
     }
 
     /*
      if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
      mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
-     mMemory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
+     m Memory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
      }
      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
      */
   }
+  if ( !FoundOneTable ) {
+    DBG("No table 17 found\n");
+  }
 }
 
-void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings)
+void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT16>* mMemory17Ptr, XArray<UINT16>* mHandle17Ptr)
 {
+  XArray<UINT16>& mMemory17 = *mMemory17Ptr;
+  XArray<UINT16>& mHandle17 = *mHandle17Ptr;
   XString8   deviceLocator;
   XString8   bankLocator;
-  UINT8   channelMap[MAX_RAM_SLOTS];
+  UINT8   channelMap[mMemory17.size()]; // mMemory17.size() == SlotCounts
   UINT8   expectedCount = 0;
   UINT8   channels = 2;
   XBool insertingEmpty = true;
-  XBool trustSMBIOS = ((gRAM.SPDInUse == 0) || smbiosSettings.TrustSMBIOS);
+  XBool trustSMBIOS = ( gRAM.SPD.size() == 0  ||  smbiosSettings.TrustSMBIOS);
   XBool wrongSMBIOSBanks = false;
   XBool isMacPro = false;
+
   MACHINE_TYPES Model = GetModelFromString(smbiosSettings.ProductName);
-  if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61)) {
+  if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61) || (Model == MacPro71)) {
     isMacPro = true;
   }
   // Inject user memory tables
   if (smbiosSettings.InjectMemoryTables)
   {
     DBG("Injecting user memory modules to SMBIOS\n");
-    if (smbiosSettings.Memory.SlotCounts == 0) {
+    if (smbiosSettings.Memory._User.size() == 0) {
       DBG("User SMBIOS contains no memory modules\n");
       return;
     }
@@ -1411,46 +1472,46 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings)
     if ( UserChannels == 0 || UserChannels > 8 ) {
       UserChannels = 1;
     }
-    auto SlotCounts = smbiosSettings.Memory.SlotCounts;
-    if ( SlotCounts >= MAX_RAM_SLOTS ) {
-      SlotCounts = MAX_RAM_SLOTS;
-    }
     DBG("Channels: %d\n", UserChannels);
     // Setup interleaved channel map
     if (channels >= 2) {
       UINT8 doubleChannels = (UINT8)UserChannels << 1;
-      for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
         channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
                                     ((Index / UserChannels) % 2) + ((Index % UserChannels) << 1));
       }
     } else {
-      for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
         channelMap[Index] = (UINT8)Index;
       }
     }
     DBG("Interleave:");
-    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
       DBG(" %d", channelMap[Index]);
     }
     DBG("\n");
     // Memory Device
     //
     // Inject tables
-#ifdef JIEF_DEBUG
-DBG("gSettings.Smbios.Memory.SlotCounts=%d\n", smbiosSettings.Memory.SlotCounts);
-DBG("gSettings.Smbios.Memory.UserChannels=%d\n", smbiosSettings.Memory.UserChannels);
-for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
-  DBG("gSettings.Smbios.Memory.User[%lld].Frequency=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Frequency);
-  DBG("gSettings.Smbios.Memory.User[%lld].InUse=%d\n", Index, (bool)smbiosSettings.Memory.getSlotInfoForSlotID(Index).InUse);
-  DBG("gSettings.Smbios.Memory.User[%lld].ModuleSize=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).ModuleSize);
-  DBG("gSettings.Smbios.Memory.User[%lld].PartNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).PartNo.c_str());
-  DBG("gSettings.Smbios.Memory.User[%lld].SerialNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).SerialNo.c_str());
-  DBG("gSettings.Smbios.Memory.User[%lld].Type=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Type);
-  DBG("gSettings.Smbios.Memory.User[%lld].Vendor=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Vendor.c_str());
-}
-#endif
+    DBG("user SMBIOS data:\n");
+    DBG("  smbiosSettings.RamSlotCount=%d\n", smbiosSettings.RamSlotCount);
+    DBG("  smbiosSettings.Memory.SlotCounts=%d\n", smbiosSettings.Memory.SlotCount);
+    DBG("  smbiosSettings.Memory.UserChannels=%d\n", smbiosSettings.Memory.UserChannels);
+    for (size_t Index = 0; Index < smbiosSettings.RamSlotCount; Index++) {
+      if ( smbiosSettings.Memory.doesSlotForIndexExist(Index) ) {
+        DBG("  smbiosSettings.Memory slot %zu\n", Index);
+        DBG("    smbiosSettings.Memory[%zu].ModuleSize=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).ModuleSize);
+        DBG("    smbiosSettings.Memory[%zu].Type=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Type);
+        DBG("    smbiosSettings.Memory[%zu].Frequency=%d\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Frequency);
+        DBG("    smbiosSettings.Memory[%zu].Vendor=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).Vendor.c_str());
+        DBG("    smbiosSettings.Memory[%zu].PartNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).PartNo.c_str());
+        DBG("    smbiosSettings.Memory[%zu].SerialNo=%s\n", Index, smbiosSettings.Memory.getSlotInfoForSlotID(Index).SerialNo.c_str());
+      }else{
+        DBG("  smbiosSettings.Memory slot %zu is not defined\n", Index);
+      }
+    }
 
-    for (size_t Index = 0; Index < SlotCounts; Index++) {
+    for (size_t Index = 0; Index < mMemory17.size(); Index++) {
       UINTN UserIndex = channelMap[Index];
       UINT8 bank = (UINT8)(Index / UserChannels);
       ZeroMem((void*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
@@ -1471,12 +1532,8 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, bankLocator);
       }
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, deviceLocator);
-      if ((smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).InUse) && (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize > 0)) {
-        DBG("user SMBIOS data:\n");
-        DBG("SmbiosTable.Type17->Vendor = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor.c_str());
-        DBG("SmbiosTable.Type17->SerialNumber = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).SerialNo.c_str());
-        DBG("SmbiosTable.Type17->PartNumber = %s\n", smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).PartNo.c_str());
-
+      if ( smbiosSettings.Memory.doesSlotForIndexExist(UserIndex) && smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).ModuleSize > 0 )
+      {
         if (smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor.notEmpty()) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Vendor);
         } else {
@@ -1522,34 +1579,36 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
       DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     return;
+  }else{
+    DBG("Do not inject memory table\n");
   }
   // Prevent inserting empty tables
-  if ((gRAM.SPDInUse == 0) && (gRAM.SMBIOSInUse == 0)) {
+  if ((gRAM.SPD.size() == 0) && (gRAM.SMBIOS.size() == 0)) {
     DBG("SMBIOS and SPD contain no modules in use\n");
     return;
   }
   // Detect whether the SMBIOS is trusted information
   if (trustSMBIOS) {
-    if (gRAM.SMBIOSInUse != 0) {
-      if (gRAM.SPDInUse != 0) {
-        if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
+    if (gRAM.SMBIOS.size() != 0) {
+      if (gRAM.SPD.size() != 0) {
+        if (gRAM.SPD.size() != gRAM.SMBIOS.size()) {
           // Prefer the SPD information
-          if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
+          if (gRAM.SPD.size() > gRAM.SMBIOS.size()) {
             DBG("Not trusting SMBIOS because SPD reports more modules...\n");
             trustSMBIOS = false;
-          } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
-            if (gRAM.SPDInUse > 1) {
+          } else if (gRAM.SPD.doesSlotForIndexExist(0) || !gRAM.SMBIOS.doesSlotForIndexExist(0)) {
+            if (gRAM.SPD.size() > 1) {
               DBG("Not trusting SMBIOS because SPD reports different modules...\n");
               trustSMBIOS = false;
-            } else if (gRAM.SMBIOSInUse == 1) {
+            } else if (gRAM.SMBIOS.size() == 1) {
               channels = 1;
             }
-          } else if (gRAM.SPDInUse == 1) {
+          } else if (gRAM.SPD.size() == 1) {
             // The SMBIOS may contain table for built-in module
-            if (gRAM.SMBIOSInUse <= 2) {
-              if (!gRAM.SMBIOS[0].InUse || !gRAM.SPD[2].InUse ||
-                  (gRAM.SMBIOS[0].Frequency != gRAM.SPD[2].Frequency) ||
-                  (gRAM.SMBIOS[0].ModuleSize != gRAM.SPD[2].ModuleSize)) {
+            if (gRAM.SMBIOS.size() <= 2) {
+              if (!gRAM.SMBIOS.doesSlotForIndexExist(0) || !gRAM.SPD.doesSlotForIndexExist(2) ||
+                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).Frequency != gRAM.SPD.getSlotInfoForSlotIndex(2).Frequency) ||
+                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize != gRAM.SPD.getSlotInfoForSlotIndex(2).ModuleSize)) {
                 channels = 1;
               }
             } else {
@@ -1560,12 +1619,12 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
             DBG("Not trusting SMBIOS because SPD reports less modules...\n");
             trustSMBIOS = false;
           }
-        } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
+        } else if (gRAM.SPD.doesSlotForIndexExist(0) != gRAM.SMBIOS.doesSlotForIndexExist(0)) {
           // Never trust a sneaky SMBIOS!
           DBG("Not trusting SMBIOS because it's being sneaky...\n");
           trustSMBIOS = false;
         }
-      } else if (gRAM.SMBIOSInUse == 1) {
+      } else if (gRAM.SMBIOS.size() == 1) {
         channels = 1;
       }
     }
@@ -1574,11 +1633,11 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
     DBG("Trusting SMBIOS...\n");
   }
   // Determine expected slot count
-  expectedCount = (smbiosSettings.Memory.SlotCounts != 0) ? smbiosSettings.Memory.SlotCounts : gRAM.SPDInUse;
+  expectedCount = (smbiosSettings.RamSlotCount != 0) ? smbiosSettings.RamSlotCount : gRAM.SPD.getSlotCount();
   if (trustSMBIOS) {
     // Use the smbios in use count
-    if (expectedCount < gRAM.SMBIOSInUse) {
-      expectedCount = gRAM.SMBIOSInUse;
+    if (expectedCount < gRAM.SMBIOS.getSlotCount()) {
+      expectedCount = gRAM.SMBIOS.getSlotCount();
     }
     // Check if smbios has a good total count
     if ( (!gMobile || smbiosSettings.RamSlotCount == 2)  &&  expectedCount < smbiosSettings.RamSlotCount ) {
@@ -1601,8 +1660,8 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
   }
   // Check for interleaved channels
   if (channels >= 2) {
-    wrongSMBIOSBanks = ((gRAM.SMBIOS[1].InUse != gRAM.SPD[1].InUse) ||
-                        (gRAM.SMBIOS[1].ModuleSize != gRAM.SPD[1].ModuleSize));
+    wrongSMBIOSBanks = ((gRAM.SMBIOS.doesSlotForIndexExist(1) != gRAM.SPD.doesSlotForIndexExist(1)) ||
+                        (gRAM.SMBIOS.getSlotInfoForSlotIndex(1).ModuleSize != gRAM.SPD.getSlotInfoForSlotIndex(1).ModuleSize));
   }
   if (wrongSMBIOSBanks) {
     DBG("Detected alternating SMBIOS channel banks\n");
@@ -1610,62 +1669,62 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
   // Determine if using triple or quadruple channel
   if (smbiosSettings.Memory.UserChannels != 0) {
     channels = smbiosSettings.Memory.UserChannels;
-  } else if (gRAM.SPDInUse == 0) {
+  } else if (gRAM.SPD.size() == 0) {
     if (trustSMBIOS) {
-      if ((gRAM.SMBIOSInUse % 4) == 0) {
+      if ((gRAM.SMBIOS.size() % 4) == 0) {
         // Quadruple channel
         if ((wrongSMBIOSBanks &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[3].InUse) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[3].ModuleSize)) ||
-            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[6].InUse) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[6].ModuleSize))) {
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(1)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(2)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(3)) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(1).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(2).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(3).ModuleSize)) ||
+            ((gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(2)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(4)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(6)) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(2).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(4).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(6).ModuleSize))) {
               channels = 4;
             }
-      } else if ((gRAM.SMBIOSInUse % 3) == 0) {
+      } else if ((gRAM.SMBIOS.size() % 3) == 0) {
         // Triple channel
         if ((wrongSMBIOSBanks &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize)) ||
-            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize))) {
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(1)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(2)) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(1).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(2).ModuleSize)) ||
+            ((gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(2)) &&
+             (gRAM.SMBIOS.doesSlotForIndexExist(0) == gRAM.SMBIOS.doesSlotForIndexExist(4)) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(2).ModuleSize) &&
+             (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SMBIOS.getSlotInfoForSlotIndex(4).ModuleSize))) {
               channels = 3;
             }
-      } else if (!wrongSMBIOSBanks && ((gRAM.SMBIOSInUse % 2) != 0)) {
+      } else if (!wrongSMBIOSBanks && ((gRAM.SMBIOS.size() % 2) != 0)) {
         channels = 1;
       }
     }
-  } else if ((gRAM.SPDInUse % 4) == 0) {
+  } else if ((gRAM.SPD.size() % 4) == 0) {
     // Quadruple channel
-    if ((gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[6].InUse) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[6].ModuleSize)) {
+    if ((gRAM.SPD.doesSlotForIndexExist(0) == gRAM.SPD.doesSlotForIndexExist(2)) &&
+        (gRAM.SPD.doesSlotForIndexExist(0) == gRAM.SPD.doesSlotForIndexExist(4)) &&
+        (gRAM.SPD.doesSlotForIndexExist(0) == gRAM.SPD.doesSlotForIndexExist(6)) &&
+        (gRAM.SPD.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SPD.getSlotInfoForSlotIndex(2).ModuleSize) &&
+        (gRAM.SPD.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SPD.getSlotInfoForSlotIndex(4).ModuleSize) &&
+        (gRAM.SPD.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SPD.getSlotInfoForSlotIndex(6).ModuleSize)) {
       channels = 4;
     }
-  } else if ((gRAM.SPDInUse % 3) == 0) {
+  } else if ((gRAM.SPD.size() % 3) == 0) {
     // Triple channel
-    if ((gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize)) {
+    if ((gRAM.SPD.doesSlotForIndexExist(0) == gRAM.SPD.doesSlotForIndexExist(2)) &&
+        (gRAM.SPD.doesSlotForIndexExist(0) == gRAM.SPD.doesSlotForIndexExist(4)) &&
+        (gRAM.SPD.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SPD.getSlotInfoForSlotIndex(2).ModuleSize) &&
+        (gRAM.SPD.getSlotInfoForSlotIndex(0).ModuleSize == gRAM.SPD.getSlotInfoForSlotIndex(4).ModuleSize)) {
       channels = 3;
     }
-  } else if ((gRAM.SPD[0].InUse != gRAM.SPD[2].InUse) ||
-             ((gRAM.SPDInUse % 2) != 0)) {
+  } else if ((gRAM.SPD.doesSlotForIndexExist(0) != gRAM.SPD.doesSlotForIndexExist(2)) ||
+             ((gRAM.SPD.size() % 2) != 0)) {
     channels = 1;
   }
   // Can't have less than the number of channels
@@ -1679,64 +1738,67 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
   // Setup interleaved channel map
   if (channels >= 2) {
     UINT8 doubleChannels = (UINT8)channels << 1;
-    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
       channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
                                   ((Index / channels) % 2) + ((Index % channels) << 1));
     }
   } else {
-    for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
       channelMap[Index] = (UINT8)Index;
     }
   }
   DBG("Interleave:");
-  for (size_t Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+  for (size_t Index = 0; Index < mMemory17.size(); ++Index) {
     DBG(" %d", channelMap[Index]);
   }
   DBG("\n");
   // Memory Device
   //
-  for (size_t Index = 0; Index < smbiosSettings.RamSlotCount; Index++) {
-    UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
-    UINTN SPDIndex = channelMap[Index];
+  for (size_t Index = 0; Index < mMemory17.size(); Index++) {
+    size_t SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
+    size_t SPDIndex = channelMap[Index];
     UINT8 bank = (UINT8)Index / channels;
     if (!insertingEmpty && (Index > expectedCount) &&
-        !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+        !gRAM.SPD.doesSlotForIndexExist(SPDIndex) && (!trustSMBIOS || !gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex))) {
       continue;
     }
     SmbiosTable = GetSmbiosTableFromType(EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
-    if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse && (SmbiosTable.Raw != NULL)) {
-      DBG("trusted SMBIOS data:\n");
-      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor.c_str());
-      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[SMBIOSIndex].SerialNo.c_str());
-      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo.c_str());
+    if (trustSMBIOS && gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex) && (SmbiosTable.Raw != NULL)) {
+      DBG("trusted SMBIOS data, table index %zu:\n", SMBIOSIndex);
+      DBG("  gRAM.SMBIOS[%zu]->ModuleSize = %d\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).ModuleSize);
+      DBG("  gRAM.SMBIOS[%zu]->Type = %d\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Type);
+      DBG("  gRAM.SMBIOS[%zu]->Frequency = %d\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Frequency);
+      DBG("  gRAM.SMBIOS[%zu]->Vendor = %s\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor.c_str());
+      DBG("  gRAM.SMBIOS[%zu]->PartNo = %s\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).PartNo.c_str());
+      DBG("  gRAM.SMBIOS[%zu]->SerialNo = %s\n", SMBIOSIndex, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).SerialNo.c_str());
 
       TableSize = SmbiosTableLength(SmbiosTable);
       CopyMem((void*)newSmbiosTable.Type17, (void *)SmbiosTable.Type17, TableSize);
       newSmbiosTable.Type17->AssetTag = 0;
-      if ( gRAM.SMBIOS[SMBIOSIndex].Vendor.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
-//        gSettings.MemoryManufacturer.takeValueFrom(gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      if ( gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor);
       } else {
-        //        newSmbiosTable.Type17->Manufacturer = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
-      if ( gRAM.SMBIOS[SMBIOSIndex].SerialNo.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
-//        gSettings.MemorySerialNumber.takeValueFrom(gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+      if ( gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).SerialNo.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).SerialNo);
       } else {
-        //        newSmbiosTable.Type17->SerialNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
-      if ( gRAM.SMBIOS[SMBIOSIndex].PartNo.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
-//        gSettings.MemoryPartNumber.takeValueFrom(gRAM.SMBIOS[SMBIOSIndex].PartNo);
-        DBG(" partNum=%s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo.c_str());
+      if ( gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).PartNo.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).PartNo);
+        //DBG("  Update PartNumber to %s\n", gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).PartNo.c_str());
       } else {
         //       newSmbiosTable.Type17->PartNumber = 0;
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber,  unknown);
-        DBG(" partNum unknown\n");
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
+        //DBG("  Set PartNumber unknown\n");
       }
     } else {
+      DBG("!trusted SMBIOS data, Table index %zu:", SMBIOSIndex);
+      if ( !trustSMBIOS ) DBG("!trustSMBIOS ");
+      if ( !gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex) ) DBG("!gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex) ");
+      if ( SmbiosTable.Raw == NULL ) DBG("SmbiosTable.Raw == NULL ");
+      DBG("\n");
       ZeroMem((void*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
@@ -1750,54 +1812,54 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
     newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
-    if (gRAM.SPD[SPDIndex].InUse) {
+    if (gRAM.SPD.doesSlotForIndexExist(SPDIndex)) {
       DBG("SPD data in use:\n");
-      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SPD[SPDIndex].Vendor.c_str());
-      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SPD[SPDIndex].SerialNo.c_str());
-      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SPD[SPDIndex].PartNo.c_str());
+      DBG("  gRAM.SPD[%zu]->ModuleSize = %d\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).ModuleSize);
+      DBG("  gRAM.SPD[%zu]->Type = %d\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Type);
+      DBG("  gRAM.SPD[%zu]->Frequency = %d\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Frequency);
+      DBG("  gRAM.SPD[%zu]->Vendor = %s\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Vendor.c_str());
+      DBG("  gRAM.SPD[%zu]->SerialNo = %s\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).SerialNo.c_str());
+      DBG("  gRAM.SPD[%zu]->PartNo = %s\n", SPDIndex, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).PartNo.c_str());
 
-      if ( gRAM.SPD[SPDIndex].Vendor.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
-//        gSettings.MemoryManufacturer.takeValueFrom(gRAM.SPD[SPDIndex].Vendor);
+      if ( gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Vendor.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Vendor);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
       }
-      if ( gRAM.SPD[SPDIndex].SerialNo.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
-//        gSettings.MemorySerialNumber.takeValueFrom(gRAM.SPD[SPDIndex].SerialNo);
+      if ( gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).SerialNo.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).SerialNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
       }
-      if ( gRAM.SPD[SPDIndex].PartNo.notEmpty() ) {
-        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
-//		  gSettings.MemoryPartNumber.takeValueFrom(gRAM.SPD[SPDIndex].PartNo);
+      if ( gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).PartNo.notEmpty() ) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).PartNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
       }
-      if (gRAM.Frequency > gRAM.SPD[SPDIndex].Frequency) {
-        newSmbiosTable.Type17->Speed = (UINT16)gRAM.Frequency;
+      if (gRAM.Frequency > gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Frequency) {
+        newSmbiosTable.Type17->Speed = (UINT16)gRAM.Frequency; // unsafe cast
       } else {
-        newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
+        newSmbiosTable.Type17->Speed = gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Frequency;
       }
-      if (gRAM.SPD[SPDIndex].ModuleSize > 0x7FFF) {
+      if (gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).ModuleSize > 0x7FFF) {
         newSmbiosTable.Type17->Size = 0x7FFF;
-        newSmbiosTable.Type17->ExtendedSize = gRAM.SPD[SPDIndex].ModuleSize;
+        newSmbiosTable.Type17->ExtendedSize = gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).ModuleSize;
       } else {
-        newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
+        newSmbiosTable.Type17->Size = gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).ModuleSize;
       }
-      newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
+      newSmbiosTable.Type17->MemoryType = gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Type;
     }
-    if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency)) {
-      DBG("Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
-      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency;
+    if (trustSMBIOS && gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex) &&
+        (newSmbiosTable.Type17->Speed < gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Frequency)) {
+      DBG("  Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Frequency);
+      newSmbiosTable.Type17->Speed = gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Frequency;
     }
-    if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-        gRAM.SMBIOS[SMBIOSIndex].Vendor.notEmpty() &&
-        ( gRAM.SPD[SPDIndex].Vendor.isEmpty() || gRAM.SPD[SPDIndex].Vendor == "NoName"_XS8 )
+    if (trustSMBIOS && gRAM.SMBIOS.doesSlotForIndexExist(SMBIOSIndex) &&
+        gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor.notEmpty() &&
+        ( gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Vendor.isEmpty() || gRAM.SPD.getSlotInfoForSlotIndex(SPDIndex).Vendor == "NoName"_XS8 )
     ) {
-      DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor.c_str());
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      DBG("  Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor.c_str());
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS.getSlotInfoForSlotIndex(SMBIOSIndex).Vendor);
     }
 
 //    gSettings.MemorySpeed.S8Printf("%d", newSmbiosTable.Type17->Speed);
@@ -1823,7 +1885,7 @@ for (uint64_t Index = 0; Index < smbiosSettings.Memory.SlotCounts; Index++) {
     } else {
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, bankLocator);
     }
-	  DBG("SMBIOS Type 17 Index = %zd => %llu %llu:\n", Index, SMBIOSIndex, SPDIndex);
+    DBG("  SMBIOS Type 17 Index = %zd => SMBIOSIndex=%zu SPDIndex=%zu:\n", Index, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("%s %s EMPTY\n", bankLocator.c_str(), deviceLocator.c_str());
       newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
@@ -1900,7 +1962,7 @@ PatchTableType19 (const SmbiosInjectedSettings& smbiosSettings)
   return ;
 }
 
-void PatchTableType20 (const SmbiosInjectedSettings& smbiosSettings)
+void PatchTableType20 (const SmbiosInjectedSettings& smbiosSettings, const XArray<UINT16>& mMemory17, const XArray<UINT16>& mHandle17)
 {
   UINTN  j = 0, k = 0, m = 0;
   //
@@ -1921,10 +1983,9 @@ void PatchTableType20 (const SmbiosInjectedSettings& smbiosSettings)
         newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
         k = newSmbiosTable.Type20->EndingAddress;
         m += mMemory17[j];
-		  DBG("Type20[%zu]->End = 0x%llX, Type17[%llu] = %llX\n",
-            Index, k, j, m);
+		    DBG("Type20[%zu]->End = 0x%llX, Type17[%llu] = %llX\n", Index, k, j, m);
         //        DBG(" MemoryDeviceHandle = 0x%X\n", newSmbiosTable.Type20->MemoryDeviceHandle);
-        mMemory17[j] = 0; // used
+        //mMemory17[j] = 0; // used
         break;
       }
       //  DBG("\n");
@@ -2174,6 +2235,7 @@ EFI_STATUS PrepatchSmbios(SmbiosDiscoveredSettings* smbiosSettings)
   GetTableType2(smbiosSettings);
   GetTableType3(smbiosSettings);
   GetTableType4(smbiosSettings);
+  // GetTableType16() will initialize smbiosSettings->RamSlotCount. Could be MAX_RAM_SLOTS.
   GetTableType16(smbiosSettings);
   GetTableType17(smbiosSettings);
   GetTableType32(smbiosSettings); //get BootStatus here to decide what to do
@@ -2201,10 +2263,20 @@ void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
     PatchTableType11(smbiosSettings);
   }
   PatchTableTypeSome();
-  PatchTableType17(smbiosSettings);
+  auto SlotCounts = smbiosSettings.RamSlotCount;
+  if ( SlotCounts >= MAX_RAM_SLOTS ) {
+    log_technical_bug("GetTableType16() assign smbiosSettings.RamSlotCount a value bigger than MAX_RAM_SLOTS");
+    SlotCounts = MAX_RAM_SLOTS;
+  }
+  XArray<UINT16> mMemory17;
+  mMemory17.Add(0, SlotCounts);
+  XArray<UINT16> mHandle17;
+  mHandle17.Add(0, SlotCounts);
+
+  PatchTableType17(smbiosSettings, &mMemory17, &mHandle17);
   PatchTableType16(smbiosSettings);
   PatchTableType19(smbiosSettings);
-  PatchTableType20(smbiosSettings);
+  PatchTableType20(smbiosSettings, mMemory17, mHandle17);
   PatchTableType128(smbiosSettings);
   PatchTableType130(smbiosSettings);
   PatchTableType131(smbiosSettings);

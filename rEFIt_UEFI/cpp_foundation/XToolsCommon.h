@@ -12,6 +12,65 @@
 #ifdef __cplusplus
 
 #include <stddef.h> // size_t
+#include <stdint.h> // CHAR_MIN etc.
+
+
+
+template< class T > struct _xtools__remove_ref                { typedef T type; };
+template< class T > struct _xtools__remove_ref<T&>            { typedef T type; };
+
+template< class T > struct _xtools__remove_const                { typedef T type; };
+template< class T > struct _xtools__remove_const<const T>       { typedef T type; };
+template< class T > struct _xtools__remove_const<const T&>       { typedef T& type; };
+template< class T > struct _xtools__remove_const<const T*>       { typedef T* type; };
+
+template< class T > struct _xtools__remove_const_ptr                { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<const T>       { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<T*>       { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<const T*>       { typedef T type; };
+template< class T, int n > struct _xtools__remove_const_ptr<T[n]>       { typedef T type; };
+template< class T, int n > struct _xtools__remove_const_ptr<const T[n]>       { typedef T type; };
+
+
+
+template <class _Tp>
+struct __numeric_limits {};
+
+template <> struct __numeric_limits<              char> {static constexpr char min() { return CHAR_MIN; }
+                                                       static constexpr char max() { return CHAR_MAX; } };
+template <> struct __numeric_limits<       signed char> {static constexpr signed char min() { return SCHAR_MIN; }
+                                                       static constexpr signed char max() { return SCHAR_MAX; } };
+template <> struct __numeric_limits<     unsigned char> {static constexpr unsigned char min() { return 0; }
+                                                       static constexpr unsigned char max() { return UCHAR_MAX; } };
+template <> struct __numeric_limits<          char16_t> {static constexpr char16_t min() { return 0; }
+                                                       static constexpr char16_t max() { return UINT16_MAX; } };
+template <> struct __numeric_limits<          char32_t> {static constexpr char32_t min() { return 0; }
+                                                       static constexpr char32_t max() { return UINT32_MAX; } };
+template <> struct __numeric_limits<           wchar_t> {static constexpr wchar_t min() { return 0; }
+                                                       static constexpr wchar_t max() { return __WCHAR_MAX__; } };
+template <> struct __numeric_limits<             short> {static constexpr short min() { return SHRT_MIN; }
+                                                       static constexpr short max() { return SHRT_MAX; } };
+template <> struct __numeric_limits<    unsigned short> {static constexpr unsigned short min() { return 0; }
+                                                       static constexpr unsigned short max() { return USHRT_MAX; } };
+template <> struct __numeric_limits<               int> {static constexpr int min() { return INT_MIN; }
+                                                       static constexpr int max() { return INT_MAX; } };
+template <> struct __numeric_limits<      unsigned int> {static constexpr unsigned int min() { return 0; }
+                                                       static constexpr unsigned int max() { return UINT_MAX; } };
+template <> struct __numeric_limits<              long> {static constexpr long min() { return LONG_MIN; }
+                                                       static constexpr long max() { return LONG_MAX; } };
+template <> struct __numeric_limits<     unsigned long> {static constexpr unsigned long min() { return 0; }
+                                                       static constexpr unsigned long max() { return ULONG_MAX; } };
+template <> struct __numeric_limits<         long long> {static constexpr long long min() { return LLONG_MIN; }
+                                                       static constexpr long long max() { return LLONG_MAX; } };
+template <> struct __numeric_limits<unsigned long long> {static constexpr unsigned long long min() { return 0; }
+                                                       static constexpr unsigned long long max() { return ULLONG_MAX; } };
+
+template <class _Tp>
+class numeric_limits : public __numeric_limits<typename _xtools__remove_const<_Tp>::type>
+{
+};
+
+
 
 struct _xtools__false_type {
     static constexpr bool value = false;
@@ -107,23 +166,6 @@ template <>           struct _xtools__is_bool_st<bool>                  : public
 //	{	// remove const
 //		typedef _Ty type;
 //	};
-
-
-template< class T > struct _xtools__remove_ref                { typedef T type; };
-template< class T > struct _xtools__remove_ref<T&>            { typedef T type; };
-
-template< class T > struct _xtools__remove_const                { typedef T type; };
-template< class T > struct _xtools__remove_const<const T>       { typedef T type; };
-template< class T > struct _xtools__remove_const<const T&>       { typedef T& type; };
-template< class T > struct _xtools__remove_const<const T*>       { typedef T* type; };
-
-template< class T > struct _xtools__remove_const_ptr                { typedef T type; };
-template< class T > struct _xtools__remove_const_ptr<const T>       { typedef T type; };
-template< class T > struct _xtools__remove_const_ptr<T*>       { typedef T type; };
-template< class T > struct _xtools__remove_const_ptr<const T*>       { typedef T type; };
-template< class T, int n > struct _xtools__remove_const_ptr<T[n]>       { typedef T type; };
-template< class T, int n > struct _xtools__remove_const_ptr<const T[n]>       { typedef T type; };
-
 
 // is_char_ptr
 template <class _Tp>  struct _xtools__is_char_ptr_st                        : public _xtools__false_type {};

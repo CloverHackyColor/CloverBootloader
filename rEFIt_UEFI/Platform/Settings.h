@@ -2356,14 +2356,13 @@ printf("%s", "");
 
         class RamSlotInfo {
         public:
-          UINT64  Slot = UINT64();
+          UINT64  SlotIndex = UINT64();
           UINT32  ModuleSize = UINT32();
           UINT32  Frequency = UINT32();
           XString8 Vendor = XString8();
           XString8 PartNo = XString8();
           XString8 SerialNo = XString8();
           UINT8   Type = UINT8();
-          XBool InUse = XBool();
 
           RamSlotInfo() {}
 
@@ -2372,33 +2371,31 @@ printf("%s", "");
           #endif
           XBool isEqual(const RamSlotInfo& other) const
           {
-            if ( !(Slot == other.Slot ) ) return false;
+            if ( !(SlotIndex == other.SlotIndex ) ) return false;
             if ( !(ModuleSize == other.ModuleSize ) ) return false;
             if ( !(Frequency == other.Frequency ) ) return false;
             if ( !(Vendor == other.Vendor ) ) return false;
             if ( !(PartNo == other.PartNo ) ) return false;
             if ( !(SerialNo == other.SerialNo ) ) return false;
             if ( !(Type == other.Type ) ) return false;
-            if ( !(InUse == other.InUse ) ) return false;
             return true;
           }
           XBool takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass& other)
           {
-            Slot = other.dgetSlotNo();
+            SlotIndex = other.dgetSlotIndex();
             ModuleSize = other.dgetModuleSize();
             Frequency = other.dgetFrequency();
             Vendor = other.dgetVendor();
             PartNo = other.dgetPartNo();
             SerialNo = other.dgetSerialNo();
             Type = other.dgetType();
-            InUse = other.dgetInUse();
             return true;
           }
         };
 
         class RamSlotInfoArrayClass {
           public:
-            UINT8         SlotCounts = UINT8();
+            UINT8         SlotCount = UINT8();
             UINT8         UserChannels = UINT8();
             XObjArrayWithTakeValueFromXmlArray<RamSlotInfo, SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass> User = XObjArrayWithTakeValueFromXmlArray<RamSlotInfo, SmbiosPlistClass::SmbiosDictClass::MemoryDictClass::ModuleDictClass>();
 
@@ -2409,14 +2406,14 @@ printf("%s", "");
 #endif
             XBool isEqual(const RamSlotInfoArrayClass& other) const
             {
-              if ( !(SlotCounts == other.SlotCounts) ) return false;
+              if ( !(SlotCount == other.SlotCount) ) return false;
               if ( !(UserChannels == other.UserChannels) ) return false;
               if ( !(User.isEqual(other.User)) ) return false;
               return true;
             }
             void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass& configPlist)
             {
-              SlotCounts = configPlist.dgetSlotCounts();
+              SlotCount = configPlist.dgetSlotCount();
               UserChannels = configPlist.dgetUserChannels();
               User.takeValueFrom(configPlist.Modules);
             }

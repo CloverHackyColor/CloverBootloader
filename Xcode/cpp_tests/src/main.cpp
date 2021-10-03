@@ -12,7 +12,7 @@
 #include "../../../PosixCompilation/xcode_utf_fixed.h"
 
 #include "../../../rEFIt_UEFI/cpp_unit_test/all_tests.h"
-
+#include "../../../rEFIt_UEFI/cpp_foundation/XToolsCommon.h"
 //class Boolean
 //{
 //    bool flag;
@@ -49,6 +49,8 @@ extern "C" int main(int argc, const char * argv[])
 //  b = (char*)NULL;
 //  b = (float)1.0;
 //  b = i;
-  
+  printf("%d", numeric_limits<int>::min());
+  printf("%d", numeric_limits<int>::min());
+
 	return all_tests() ? 0 : -1 ;
 }
