@@ -1420,7 +1420,7 @@ void GetTableType17(SmbiosDiscoveredSettings* smbiosSettings)
 
       DBG("SmbiosTable.Type17->SlotIndex = %d\n", rsi.SlotIndex);
       DBG("SmbiosTable.Type17->ModuleSize = %dMB\n", rsi.ModuleSize);
-      DBG("SmbiosTable.Type17->Type = %dMB\n", rsi.Type);
+      DBG("SmbiosTable.Type17->Type = %d\n", rsi.Type);
       DBG("SmbiosTable.Type17->Frequency = %dMHz\n", rsi.Frequency);
       DBG("SmbiosTable.Type17->Bank/Device = %s %s\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
       DBG("SmbiosTable.Type17->Vendor = %s\n", rsi.Vendor.c_str());
