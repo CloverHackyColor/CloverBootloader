@@ -32,7 +32,7 @@
 #define HDA_MAX_CONNS		32
 #define HDA_MAX_NAMELEN		32
 
-typedef struct {
+typedef struct HdaWidget {
 	UINT8 NodeId = 0;
   UINT8 Type = 0;
   UINT32 Capabilities = 0;
@@ -62,7 +62,7 @@ typedef struct {
   UINT8 DefaultVolume = 0;
 } HdaWidget;
 
-typedef struct {
+typedef struct HdaCodec {
 	UINT8 Header[4];
 	CHAR8 Name[HDA_MAX_NAMELEN];
 	UINT8 CodecAddress;

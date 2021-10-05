@@ -340,7 +340,7 @@ PLATFORMDATA ApplePlatformData[] =
    // Intel Core i3, i5, or i7 (1000NG4, 1030NG7, 1060NG7) ("Ice Lake")
   { "MacBookAir9,1"_XS8, "MBA91.88Z.F000.B00.2107050235"_XS8, "1715.0.57.0.0"_XS8, "Mac-0CFF9C7C2B63DF8D"_XS8, // Intel Core i5-1030NG7 @ 1.10 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFCCHACMNHP"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "j223k"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j230k"_XS8, 0 },
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, ""_XS8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini"_XS8, "1.0"_XS8, "W8702N1JU35"_XS8, "Mini-Aluminum"_XS8,
