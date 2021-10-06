@@ -141,6 +141,10 @@ function mountRamDisk() {
 
 # Download #
 DownloadSource () {
+    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+       echo "Status: ${ISL_VERSION} not found."
+       cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
+    fi
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
@@ -160,15 +164,14 @@ DownloadSource () {
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
-        echo "Status: ${ISL_VERSION} not found."
+ #   if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+ #       echo "Status: ${ISL_VERSION} not found."
  #       curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
  #       curl -o download.tmp --remote-name https://github.com/Meinersbur/isl/archive/refs/tags/${ISL_VERSION}.tar.gz || exit 1
  #       curl -o download.tmp --remote-name https://codeload.github.com/Meinersbur/isl/tar.gz/refs/tags/isl-0.24
  #       curl -o download.tmp --remote-name https://github.com/CloverHackyColor/CloverBootloader/releases/download/5140/${ISL_VERSION}.tar.xz || exit 1
-
-        mv download.tmp ${ISL_VERSION}.tar.xz
-    fi
+ #       mv download.tmp ${ISL_VERSION}.tar.xz
+ #   fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
