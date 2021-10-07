@@ -95,7 +95,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
     if [[ $MYTOOLCHAIN == GCC53 ]]; then
       cd "${CLOVERROOT}"
-      ./build_gcc10.sh
+      ./build_gcc11.sh
     else
       MYTOOLCHAIN=XCODE8
     fi
