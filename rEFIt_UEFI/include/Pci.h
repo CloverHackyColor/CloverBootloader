@@ -35,7 +35,7 @@ typedef struct {
 	uint32_t	eb	:1;
 } pci_addr_t;
 
-typedef union {
+typedef union pci_dev_t {
   uint32_t    addr = 0;
 	pci_addr_t	bits;
 } pci_dev_t;

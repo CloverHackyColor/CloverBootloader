@@ -136,7 +136,7 @@ public:
   XBool operator != (const INPUT_ITEM& other) const { return !(*this == other); }
 };
 
-typedef struct {
+typedef struct REFIT_DIR_ITER {
   EFI_STATUS          LastStatus = 0;
   const EFI_FILE     *DirHandle = NULL;
   XBool               CloseDirHandle = false;

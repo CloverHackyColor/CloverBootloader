@@ -920,13 +920,14 @@ WriteSections64 (
           if (SymName == NULL) {
             SymName = (const UINT8 *)"<unknown>";
           }
-
+/*
           Error (NULL, 0, 3000, "Invalid",
                  "%s: Bad definition for symbol '%s'@%#llx or unsupported symbol type.  "
                  "For example, absolute and undefined symbols are not supported.",
                  mInImageName, SymName, Sym->st_value);
 
-          exit(EXIT_FAILURE);
+          exit(EXIT_FAILURE); */
+          continue;
         }
         SymShdr = GetShdrByIndex(Sym->st_shndx);
 
