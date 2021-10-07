@@ -291,7 +291,7 @@ if [[ -d .git ]]; then
   git fetch --recurse-submodules origin
   git log -n 1 > "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
   git status >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
-  git submodule foreach --recursive "git log -n 1 && git status" >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/status_${revision}-*.txt 
+  git submodule foreach --recursive "git log -n 1 && git status" >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/status_${revision}-*.txt
 else
   echo "Error: this is not a git repository, can't get info!"
 fi
@@ -332,7 +332,7 @@ PlistEDPlus() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
   mkdir -p $HOME/Desktop/ClovUtils
 fi
-cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.0.52/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
+cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.0.64/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
 hdiutil attach -quiet -noverify -nobrowse PlistEDPlus_Mac.dmg && cp -Rf /Volumes/bin\:release\:PlistEDPlus/PlistEDPlus.app $HOME/Desktop/ClovUtils
 hdiutil detach -force /Volumes/bin\:release\:PlistEDPlus
 rm -r $HOME/Desktop/ClovUtils/PlistEDPlus_Mac.dmg && open $HOME/Desktop/ClovUtils
@@ -342,7 +342,7 @@ Hackintool() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
   mkdir -p $HOME/Desktop/ClovUtils
 fi
-cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/headkaze/Hackintool/releases/download/3.5.2/Hackintool.zip -o Hackintool.zip
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/headkaze/Hackintool/releases/download/3.6.2/Hackintool.zip -o Hackintool.zip
 unzip -q Hackintool.zip && rm -r Hackintool.zip && open $HOME/Desktop/ClovUtils
 }
 
@@ -357,10 +357,10 @@ MaciASL() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
   mkdir -p $HOME/Desktop/ClovUtils
 fi
-cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/acidanthera/MaciASL/releases/download/1.6.1/MaciASL-1.6.1-RELEASE.dmg > MaciASL-1.6.1-RELEASE.dmg
-hdiutil attach -quiet -noverify -nobrowse MaciASL-1.6.1-RELEASE.dmg && cp -Rf /Volumes/MaciASL/MaciASL.app $HOME/Desktop/ClovUtils
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/acidanthera/MaciASL/releases/download/1.6.2/MaciASL-1.6.2-RELEASE.dmg > MaciASL-1.6.2-RELEASE.dmg
+hdiutil attach -quiet -noverify -nobrowse MaciASL-1.6.2-RELEASE.dmg && cp -Rf /Volumes/MaciASL/MaciASL.app $HOME/Desktop/ClovUtils
 hdiutil detach -force /Volumes/MaciASL
-rm -r $HOME/Desktop/ClovUtils/MaciASL-1.6.1-RELEASE.dmg && open $HOME/Desktop/ClovUtils
+rm -r $HOME/Desktop/ClovUtils/MaciASL-1.6.2-RELEASE.dmg && open $HOME/Desktop/ClovUtils
 }
 
 dmidecode() {
@@ -398,9 +398,9 @@ cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/SSDTTime 
 
 USBMap() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-  mkdir -p $HOME/Desktop/ClovUtils	
+  mkdir -p $HOME/Desktop/ClovUtils
 fi
-cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/USBMap 
+cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/USBMap
 open $HOME/Desktop/ClovUtils
 }
 
@@ -408,7 +408,7 @@ QtiASL() {
 if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
   mkdir -p $HOME/Desktop/ClovUtils
 fi
-cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.0.60/QtiASL_Mac.dmg > QtiASL_Mac.dmg
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.0.63/QtiASL_Mac.dmg > QtiASL_Mac.dmg
 hdiutil attach -quiet -noverify -nobrowse QtiASL_Mac.dmg && cp -Rf /Volumes/bin\:release\:QtiASL/QtiASL.app $HOME/Desktop/ClovUtils
 hdiutil detach -force /Volumes/bin\:release\:QtiASL
 rm -r $HOME/Desktop/ClovUtils/QtiASL_Mac.dmg && open $HOME/Desktop/ClovUtils
@@ -427,6 +427,14 @@ if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
 fi
 cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/corpnewt/gibMacOS && open $HOME/Desktop/ClovUtils
 }
+
+mountR/W() {
+if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
+  mkdir -p $HOME/Desktop/ClovUtils
+fi
+cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/jacklukem/BigSurmountsrw/releases/download/1.0/BigSurmountsrw2.app.zip -o BigSurmountsrw2.app.zip && open $HOME/Desktop/ClovUtils
+unzip -q $HOME/Desktop/ClovUtils/BigSurmountsrw2.app.zip && rm -r $HOME/Desktop/ClovUtils/BigSurmountsrw2.app.zip $HOME/Desktop/ClovUtils/__MACOSX
+} 
 
 
 testing() {
@@ -510,6 +518,7 @@ options=( 'Get CloverConfigPlistValidator'
           'Get QtiASL'
           'Get CsrDecode'
           'Get gibMacOS'
+					'Get mountR/W'
           'back to buildme'
           'quit')
 select opt in "${options[@]}"
@@ -565,6 +574,10 @@ select opt in "${options[@]}"
     ;;
     "Get gibMacOS")
       gibMacOS
+      break
+    ;;
+    "Get mountR/W")
+      mountR/W
       break
     ;;
     "back to buildme")
