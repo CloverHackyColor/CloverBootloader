@@ -518,7 +518,7 @@ options=( 'Get CloverConfigPlistValidator'
           'Get QtiASL'
           'Get CsrDecode'
           'Get gibMacOS'
-					'Get mountR/W'
+          'Get mountR/W'
           'back to buildme'
           'quit')
 select opt in "${options[@]}"
