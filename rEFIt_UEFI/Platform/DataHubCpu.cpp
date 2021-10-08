@@ -388,10 +388,16 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     SetNvramVariable(L"flagstate", &gEfiAppleBootGuid, Attributes, 32, &GlobalConfig.flagstate);
   }
 
-  // Hack for recovery by Asgorath
   if (gSettings.RtVariables.CsrActiveConfig != 0xFFFF) {
     SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.RtVariables.CsrActiveConfig), &gSettings.RtVariables.CsrActiveConfig);
   }
+
+  if (gSettings.RtVariables.HWTarget.notEmpty()) {
+    SetNvramXString8(L"BridgeOSHardwareModel", &gEfiAppleNvramGuid, Attributes, gSettings.RtVariables.HWTarget);
+  } else {
+    DeleteNvramVariable(L"BridgeOSHardwareModel", &gEfiAppleNvramGuid);
+  }
+
 /*
   if (gSettings.RtVariables.BooterConfig != 0) {
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.RtVariables.BooterConfig), &gSettings.RtVariables.BooterConfig);

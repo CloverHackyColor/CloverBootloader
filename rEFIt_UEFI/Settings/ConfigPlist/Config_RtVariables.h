@@ -135,16 +135,18 @@ protected:
   XmlUInt32 CsrActiveConfig = XmlUInt32();
   XmlUInt16 BooterConfig = XmlUInt16();
   XmlString8AllowEmpty BooterCfg = XmlString8AllowEmpty();
+  XmlString8AllowEmpty HWTarget = XmlString8AllowEmpty();
 public:
   XmlArray<Devices_RtVariables_Block> Block = XmlArray<Devices_RtVariables_Block>();
 
-  XmlDictField m_fields[6] = {
+  XmlDictField m_fields[7] = {
     {"ROM", ROM},
     {"MLB", MLB},
     {"CsrActiveConfig", CsrActiveConfig},
     {"BooterConfig", BooterConfig},
     {"BooterCfg", BooterCfg},
     {"Block", Block},
+    {"HWTarget", HWTarget},
   };
 
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
@@ -169,7 +171,7 @@ public:
   decltype(CsrActiveConfig)::ValueType dgetCsrActiveConfig() const { return CsrActiveConfig.isDefined() ? CsrActiveConfig.value() : 0xFFFF; }; // 0xFFFF = not set
   const decltype(BooterConfig)::ValueType& dgetBooterConfig() const { return BooterConfig.isDefined() ? BooterConfig.value() : BooterConfig.nullValue; };
   const decltype(BooterCfg)::ValueType& dgetBooterCfgStr() const { return BooterCfg.isDefined() ? BooterCfg.value() : BooterCfg.nullValue; };
-
+  const decltype(HWTarget)::ValueType& dgetHWTarget() const { return HWTarget.isDefined() ? HWTarget.value() : HWTarget.nullValue; };// "j160"_XS8; };
 };
 
 
