@@ -2260,6 +2260,7 @@ printf("%s", "");
       UINT32                  CsrActiveConfig = UINT32();
       UINT16                  BooterConfig = UINT16();
       XString8                BooterCfgStr = XString8();
+      XString8                HWTarget = XString8();
     XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block> BlockRtVariableArray = XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block>();
 
       XBool GetLegacyLanAddress() const {
@@ -2277,6 +2278,7 @@ printf("%s", "");
       if ( !(CsrActiveConfig == other.CsrActiveConfig) ) return false;
       if ( !(BooterConfig == other.BooterConfig) ) return false;
       if ( !(BooterCfgStr == other.BooterCfgStr) ) return false;
+      if ( !(HWTarget == other.HWTarget) ) return false;
       if ( !BlockRtVariableArray.isEqual(other.BlockRtVariableArray) ) return false;
       return true;
     }
@@ -2289,6 +2291,7 @@ printf("%s", "");
       BooterConfig = configPlist.dgetBooterConfig();
       BooterCfgStr = configPlist.dgetBooterCfgStr();
       BlockRtVariableArray.takeValueFrom(configPlist.Block);
+      HWTarget = configPlist.dgetHWTarget();
     }
 
   };

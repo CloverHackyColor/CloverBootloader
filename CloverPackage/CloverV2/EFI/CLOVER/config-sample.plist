@@ -243,9 +243,11 @@
 		<key>BooterConfig</key>
 		<string>0x28</string>
 		<key>CsrActiveConfig</key>
-		<string>0x3E7</string>
+		<string>0xA85</string>
 		<key>MLB</key>
-		<string>C02032109R5DC771H</string>
+		<string>C02032109R6DC771H</string>
+		<key>#HWTarget</key>
+		<string>j160</string>
 		<key>Block</key>
 		<array>
 			<dict>
