@@ -900,7 +900,7 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   } else {
     Model = GetDefaultModel();
   }
-
+//  configPlist.getSMBIOS().ProductName.takeValueFrom(ApplePlatformData[Model].productName);  //no such function?
   if ( !EFI_ERROR(Status) ) {
     gSettings.takeValueFrom(configPlist); // if load failed, keep default value.
   }
@@ -920,7 +920,7 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
 
 /*
  * Fill LanCardArrayNonConst with what is found through UEFI
- * LanCardArrayNonConst must be empty before clling, as there is no handling of duplicates (although it would be easy to do !)
+ * LanCardArrayNonConst must be empty before calling, as there is no handling of duplicates (although it would be easy to do !)
  */
 void ConfigManager::GetUEFIMacAddress()
 {

@@ -243,7 +243,7 @@
 		<key>BooterConfig</key>
 		<string>0x28</string>
 		<key>CsrActiveConfig</key>
-		<string>0xA85</string>
+		<string>0xA87</string>
 		<key>MLB</key>
 		<string>C02032109R6DC771H</string>
 		<key>#HWTarget</key>

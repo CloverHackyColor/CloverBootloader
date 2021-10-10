@@ -460,9 +460,9 @@ public:
     
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-      if ( !ProductName.isDefined() ) {
-        return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
-      }
+//      if ( !ProductName.isDefined() ) {
+//        return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
+//      }
       if ( BiosVersion.isDefined() ) {
         if ( !BiosVersion.value().contains(".") ) {
           xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' doesn't contains a dot in dict '%s:%d'.", BiosVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine()));
@@ -480,7 +480,7 @@ public:
                 BiosVersion.reset();
               }
             }else{
-              xmlLiteParser->addWarning(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+//              xmlLiteParser->addWarning(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
             }
           }
         }
@@ -530,7 +530,7 @@ public:
     {
       if ( !ProductName.isDefined() ) {
         log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
-        return iMac132;
+        return GetDefaultModel();
       }
       return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMachineType
     }
