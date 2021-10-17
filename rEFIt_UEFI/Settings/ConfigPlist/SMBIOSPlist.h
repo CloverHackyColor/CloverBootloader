@@ -207,17 +207,26 @@ public:
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
           XBool b = true;
-          for ( size_t i = 0 ; i < Modules.size() ; ) {
-            if ( Modules[i].SlotIndex.value() >= SlotCount.value() ) {
-              xmlLiteParser->addWarning(generateErrors, S8Printf("Ignore memory module with slot >= SlotCount at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-              Modules.RemoveAtIndex(i);
-            }else{
-              i++;
-            }
+          if ( Modules.size() == 0 ) {
+            // whatever if SlotCount is defined or not, and whatever value, it's ok.
+            return b;
           }
-          if ( SlotCount.value() < Modules.dgetCalculatedSlotCount() ) {
-            log_technical_bug("SlotCount.value() < Modules.dgetCalculatedSlotCount()");
+          if ( !SlotCount.isDefined() ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("SlotCount is not defined in SMBIOS, but you defined memory modules. SlotCount adjusted to %d, which maybe wrong.", Modules.dgetCalculatedSlotCount())); // do not set b to false because value is auto-corrected, so it's now ok.
             SlotCount.setUInt8Value(Modules.dgetCalculatedSlotCount());
+          }else{
+            for ( size_t i = 0 ; i < Modules.size() ; ) {
+              if ( Modules[i].SlotIndex.value() >= SlotCount.value() ) {
+                xmlLiteParser->addWarning(generateErrors, S8Printf("Ignored memory module with slot >= SlotCount at '%s:%d'", xmlPath.c_str(), keyPos.getLine())); // do not set b to false because value is auto-corrected, so it's now ok.
+                Modules.RemoveAtIndex(i);
+              }else{
+                i++;
+              }
+            }
+            if ( SlotCount.value() < Modules.dgetCalculatedSlotCount() ) {
+              log_technical_bug("SlotCount.value() < Modules.dgetCalculatedSlotCount()");
+              SlotCount.setUInt8Value(Modules.dgetCalculatedSlotCount());
+            }
           }
           return b;
         }
