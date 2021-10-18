@@ -477,7 +477,7 @@ void FillInputs(XBool New)
 void ApplyInputs(void)
 {
 //  EFI_STATUS Status = EFI_NOT_FOUND;
-  MACHINE_TYPES Model;
+  MacModel Model;
   XBool NeedSave = true;
   INTN i = 0;
   UINTN j;

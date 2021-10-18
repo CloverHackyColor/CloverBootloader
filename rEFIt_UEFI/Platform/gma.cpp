@@ -977,7 +977,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
   XBool           SetSnb = false;
   XBool           SetIg = false;
 
-  MACHINE_TYPES   MacModel = GetModelFromString(gSettings.Smbios.ProductName);
+  MacModel   MacModel = GetModelFromString(gSettings.Smbios.ProductName);
 
   devicepath = get_pci_dev_path(gma_dev);
 

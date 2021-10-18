@@ -473,12 +473,12 @@ SetupDataForOSX(XBool Hibernate)
   UINT64     ARTFrequency;
   UINTN      Revision;
   UINT16     Zero = 0;
-  XBool      isRevLess = (ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[0] == 0 &&
-                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[1] == 0 &&
-                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[2] == 0 &&
-                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[3] == 0 &&
-                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[4] == 0 &&
-                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[5] == 0);
+  XBool      isRevLess = (ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[0] == 0 &&
+                          ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[1] == 0 &&
+                          ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[2] == 0 &&
+                          ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[3] == 0 &&
+                          ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[4] == 0 &&
+                          ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision[5] == 0);
 
   Revision = StrDecimalToUintn(gFirmwareRevision);
 
@@ -561,8 +561,8 @@ SetupDataForOSX(XBool Hibernate)
     // SMC helper
     if (!isRevLess) {
       LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &RBr,    8);
-      LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &ApplePlatformData[GlobalConfig.CurrentModel].smcConfig,   4);
-      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &ApplePlatformData[GlobalConfig.CurrentModel].smcRevision, 6);
+      LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &ApplePlatformDataArray[GlobalConfig.CurrentModel].smcConfig,   4);
+      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision, 6);
     }
     LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", RPlt,   8);
     LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Smbios.Mobile, 1);
@@ -578,8 +578,8 @@ SetupDataForOSX(XBool Hibernate)
   }
   if (!isRevLess) {
     AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&RBr);
-    AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&ApplePlatformData[GlobalConfig.CurrentModel].smcConfig);
-    AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&ApplePlatformData[GlobalConfig.CurrentModel].smcRevision);
+    AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&ApplePlatformDataArray[GlobalConfig.CurrentModel].smcConfig);
+    AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision);
   }
   AddSMCkey(SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, (SMC_DATA *)&RPlt);
   AddSMCkey(SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, (SMC_DATA *)&gSettings.Smbios.Mobile);

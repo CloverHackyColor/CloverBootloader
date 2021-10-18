@@ -1455,7 +1455,7 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
   XBool wrongSMBIOSBanks = false;
   XBool isMacPro = false;
 
-  MACHINE_TYPES Model = GetModelFromString(smbiosSettings.ProductName);
+  MacModel Model = GetModelFromString(smbiosSettings.ProductName);
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51) || (Model == MacPro61) || (Model == MacPro71)) {
     isMacPro = true;
   }

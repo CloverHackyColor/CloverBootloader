@@ -2794,7 +2794,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #ifdef CLOVER_BUILD
   // BE CAREFUL. construct_globals_objects will call ctor on every static struct and classes.
   // For example, if you do "gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond();" before this point, it will be erased by construct_globals_objects()
-  construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
+  construct_globals_objects(gImageHandle);
 #endif
 
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second

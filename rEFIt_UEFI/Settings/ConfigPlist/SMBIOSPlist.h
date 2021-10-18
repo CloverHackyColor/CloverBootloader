@@ -383,7 +383,7 @@ public:
               xmlLiteParser->addError(generateErrors, S8Printf("You must define ProductName in SMBIOS dict, line %d", keyPos.getLine()));
               return true;
             }
-            MACHINE_TYPES Model;
+            MacModel Model;
             Model = GetModelFromString(xstring8);
             if ( Model == MaxMachineType ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid ProductName '%s' in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
             return true;
@@ -484,8 +484,8 @@ public:
           }else{
             // Should we check the format of these 6 last chars ?
             if ( hasModel() ) {
-              if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformData[getModel()].firmwareVersion, BiosVersion.value()) ) {
-                xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformData[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+              if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
+                xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine()));
                 BiosVersion.reset();
               }
             }else{
@@ -535,7 +535,7 @@ public:
     /*
      * DO NOT call this if !ProductName.isDefined()
      */
-    MACHINE_TYPES getModel() const
+    MacModel getModel() const
     {
       if ( !ProductName.isDefined() ) {
         log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
@@ -545,7 +545,7 @@ public:
     }
     XBool hasModel() const { return ProductName.isDefined(); }
 
-    MACHINE_TYPES dgetModel() const
+    MacModel dgetModel() const
     {
       if ( !hasModel() ) return MaxMachineType;
       return getModel();
@@ -558,11 +558,11 @@ public:
 
     decltype(BiosVersion)::ValueType dgetBiosVersion() const {
       if ( BiosVersion.isDefined() ) return BiosVersion.value();
-      return ApplePlatformData[dgetModel()].firmwareVersion;
+      return ApplePlatformDataArray[dgetModel()].firmwareVersion;
     };
 
     decltype(EfiVersion)::ValueType dgetEfiVersion() const {
-      if ( !EfiVersion.isDefined() ) return ApplePlatformData[dgetModel()].efiversion;
+      if ( !EfiVersion.isDefined() ) return ApplePlatformDataArray[dgetModel()].efiversion;
       XString8 returnValue;
       returnValue = EfiVersion.value();
       returnValue.trim();
@@ -604,19 +604,19 @@ public:
 
     decltype(Version)::ValueType dgetSystemVersion() const {
       if ( Version.isDefined() ) return Version.value();
-      return ApplePlatformData[dgetModel()].systemVersion;
+      return ApplePlatformDataArray[dgetModel()].systemVersion;
     };
 
-    const decltype(SerialNumber)::ValueType& dgetSerialNr() const {
+    const decltype(SerialNumber)::ValueType dgetSerialNr() const {
       if ( SerialNumber.isDefined() ) return SerialNumber.value();
-      return ApplePlatformData[dgetModel()].serialNumber;
+      return ApplePlatformDataArray[dgetModel()].serialNumber;
     };
 
     decltype(SmUUID)::ValueType dgetSmUUID() const { return SmUUID.isDefined() ? SmUUID.value() : nullGuidAsString; };
 
     decltype(Family)::ValueType dgetFamilyName() const {
       if ( Family.isDefined() ) return Family.value();
-      return ApplePlatformData[dgetModel()].productFamily;
+      return ApplePlatformDataArray[dgetModel()].productFamily;
     };
 
     decltype(BoardManufacturer)::ValueType dgetBoardManufactureName() const {
@@ -632,7 +632,7 @@ public:
 
     decltype(BoardID)::ValueType dgetBoardNumber() const {
       if ( BoardID.isDefined() ) return BoardID.value();
-      return ApplePlatformData[dgetModel()].boardID;
+      return ApplePlatformDataArray[dgetModel()].boardID;
     };
 
     decltype(LocationInChassis)::ValueType dgetLocationInChassis() const {
@@ -646,7 +646,7 @@ public:
 
     decltype(BoardType)::ValueType dgetBoardType() const {
       if ( BoardType.isDefined() ) return BoardType.value();
-      MACHINE_TYPES Model = dgetModel();
+      MacModel Model = dgetModel();
       if ((Model > MacPro31) && (Model < MacPro71)) {
         return BaseBoardTypeProcessorMemoryModule; //0xB;
       } else {
@@ -671,7 +671,7 @@ public:
 
     decltype(ChassisAssetTag)::ValueType dgetChassisAssetTag() const {
       if ( ChassisAssetTag.isDefined() ) return ChassisAssetTag.value();
-      return ApplePlatformData[dgetModel()].chassisAsset;
+      return ApplePlatformDataArray[dgetModel()].chassisAsset;
     };
 
     decltype(SmbiosVersion)::ValueType dgetSmbiosVersion() const { return SmbiosVersion.isDefined() ? SmbiosVersion.value() : 0x204; };

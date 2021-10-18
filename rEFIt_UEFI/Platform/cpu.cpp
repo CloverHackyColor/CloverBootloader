@@ -1434,9 +1434,9 @@ UINT16 GetAdvancedCpuType()
   return GetStandardCpuType();
 }
 
-MACHINE_TYPES GetDefaultModel()
+MacModel GetDefaultModel()
 {
-  MACHINE_TYPES DefaultType = iMac132;
+  MacModel DefaultType = iMac132;
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
     return MacPro61;
   }

@@ -573,7 +573,7 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 }
 
 
-void ConfigManager::FillSmbiosWithDefaultValue(MACHINE_TYPES Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
+void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
 {
   GlobalConfig.CurrentModel = Model;
 
@@ -892,7 +892,7 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
-  MACHINE_TYPES  Model = iMac132;
+  MacModel  Model = iMac132;
   if ( smbiosPlist.SMBIOS.isDefined() && smbiosPlist.SMBIOS.hasModel()) {
     Model = smbiosPlist.SMBIOS.getModel();
   } else if ( configPlist.getSMBIOS().hasModel() ) {

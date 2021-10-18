@@ -164,7 +164,7 @@ public:
   ConfigManager& operator= (const ConfigManager &other) = delete;
   ConfigManager& operator= (ConfigManager &&other) = delete;
 
-  void FillSmbiosWithDefaultValue(MACHINE_TYPES Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass);
+  void FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass);
 
   /*
    * Look for {ConfName}.plist and smbios.plist and load them, "transfer" the settings into gSettings and call afterGetUserSettings()

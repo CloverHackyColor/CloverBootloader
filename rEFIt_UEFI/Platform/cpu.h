@@ -401,7 +401,7 @@ extern CPU_STRUCTURE                  gCPUStructure;
 void
 GetCPUProperties (void);
 
-MACHINE_TYPES
+MacModel
 GetDefaultModel ();
 
 UINT16

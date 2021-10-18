@@ -2870,7 +2870,7 @@ public:
   XString8 ReleaseDateUsed = XString8();
   
   UINT8  flagstate[32] = {0};
-  MACHINE_TYPES CurrentModel = MaxMachineType;
+  MacModel CurrentModel = MaxMachineType;
 
   UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
 
