@@ -154,7 +154,7 @@ public:
 
   virtual const ValueType& value() const { if ( !isDefined() ) panic("%s : value is not defined", __PRETTY_FUNCTION__); return xstring8; }
 
-  virtual XBool setStringValue(const ValueType& _value) { setDefined(); xstring8 = _value; return true; }
+  virtual XBool setStringValue(const LString8& _value) { setDefined(); xstring8 = _value; return true; }
   virtual XBool setStringValue(const char* s, size_t size) { setDefined(); xstring8.strsicpy(s, size); return true; }
   virtual XBool stealStringValue(char* s, size_t size) { setDefined(); xstring8.stealValueFrom(s, size); return true; }
 
@@ -228,7 +228,9 @@ class XmlString8Trimed : public XmlString8
 public:
   XmlString8Trimed() : super(false) {};
   XmlString8Trimed(XBool allowEmpty) : super(allowEmpty) {};
-  virtual XBool setStringValue(const char* s, size_t size) override { setDefined(); xstring8.strsicpy(s, size); xstring8.trim(); return true; }
+  virtual XBool setStringValue(const LString8& _value) override { xstring8 = _value; xstring8.trim(); if ( !xstring8.isEmpty() ) setDefined(); return true; }
+  virtual XBool setStringValue(const char* s, size_t size) override { xstring8.strsicpy(s, size); xstring8.trim(); if ( !xstring8.isEmpty() ) setDefined(); return true; }
+  virtual XBool stealStringValue(char* s, size_t size) override { xstring8.stealValueFrom(s, size); xstring8.trim(); if ( !xstring8.isEmpty() ) setDefined(); return true; }
 };
 
 class XmlKey : public XmlAbstractType

@@ -69,58 +69,58 @@ int getNextTag_tests()
   if ( !isClosingTag ) return breakpoint(15);
 
   //
-  // Test xmlLiteParser.getErrorsAndWarnings()
+  // Test xmlLiteParser.getXmlParserMessageArray()
   //
   gXmlLiteParserTest.init("foo1\n  foo2");
   gXmlLiteParserTest.moveForwardUntil(0);
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 7") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 7") ) return breakpoint(14);
 
   gXmlLiteParserTest.init("foo1\n  bar1");
   gXmlLiteParserTest.moveForwardUntil('b');
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 3") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 3") ) return breakpoint(14);
   
   gXmlLiteParserTest.init("foo1\n  </foo2/>");
   gXmlLiteParserTest.moveForwardUntil('<');
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 9") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 9") ) return breakpoint(14);
   
   gXmlLiteParserTest.init("foo1\n    </foo2");
   gXmlLiteParserTest.moveForwardUntil('<');
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 11") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 11") ) return breakpoint(14);
   
   gXmlLiteParserTest.init("foo1\n      </foo2 >");
   gXmlLiteParserTest.moveForwardUntil('<');
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 13") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 13") ) return breakpoint(14);
 
   gXmlLiteParserTest.init("foo1\n\n<foo2/");
   gXmlLiteParserTest.moveForwardUntil('/');
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 7") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 7") ) return breakpoint(14);
 
   gXmlLiteParserTest.init("foo1\n\n  <foo2/a");
   gXmlLiteParserTest.moveForwardUntil('/');
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 9") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 9") ) return breakpoint(14);
 
 
   return 0;
@@ -164,21 +164,21 @@ int getSimpleTag_tests()
   if ( b ) return breakpoint(4);
 
   //
-  // Test xmlLiteParser.getErrorsAndWarnings()
+  // Test xmlLiteParser.getXmlParserMessageArray()
   //
   gXmlLiteParserTest.init("\n\n  </key>k</key>");
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getSimpleTag(&tag, &tagLength, &value, &valueLength, "key", true);
   if ( b ) return breakpoint(4);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 3") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 3") ) return breakpoint(14);
   
   gXmlLiteParserTest.init("\n\n    <foo>k</foo>");
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getSimpleTag(&tag, &tagLength, &value, &valueLength, "key", true);
   if ( b ) return breakpoint(4);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 5") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 5") ) return breakpoint(14);
   
   gXmlLiteParserTest.init("\n\n    <key></key>");
   gXmlLiteParserTest.moveForwardUntilSignificant();
@@ -191,15 +191,15 @@ int getSimpleTag_tests()
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getSimpleTag(&tag, &tagLength, &value, &valueLength, "key", true);
   if ( b ) return breakpoint(4);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 11") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 11") ) return breakpoint(14);
 
   gXmlLiteParserTest.init("\n\n    <key>v</foo>");
   gXmlLiteParserTest.moveForwardUntilSignificant();
   b = gXmlLiteParserTest.getSimpleTag(&tag, &tagLength, &value, &valueLength, "key", true);
   if ( b ) return breakpoint(4);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 3 col 11") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 3 col 11") ) return breakpoint(14);
 
   return 0;
 }
@@ -261,9 +261,9 @@ int skip_tests()
   gXmlLiteParserTest.init("<string>v</string></key>foo"); // 'foo' is text after closing tag -> fail
   b = gXmlLiteParserTest.skipUntilClosingTag("key", strlen("key"), true);
   if ( b ) return breakpoint(1);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-auto msg = gXmlLiteParserTest.getErrorsAndWarnings()[0].msg;
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 1 col 25") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+auto msg = gXmlLiteParserTest.getXmlParserMessageArray()[0].msg;
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 1 col 25") ) return breakpoint(14);
 
   gXmlLiteParserTest.init("<string>v</string></key><foo>"); // <foo> is the next tag -> success
   b = gXmlLiteParserTest.skipUntilClosingTag("key", strlen("key"), true);
@@ -285,15 +285,15 @@ auto msg = gXmlLiteParserTest.getErrorsAndWarnings()[0].msg;
   gXmlLiteParserTest.moveForwardUntil('k');
   b = gXmlLiteParserTest.skipUntilClosingTag("key", strlen("key"), true);
   if ( b ) return breakpoint(2);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 4 col 2") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 4 col 2") ) return breakpoint(14);
 
   // Cannot have a tag containing chars AND subtag
   gXmlLiteParserTest.init("<string>v</string>k</key>");
   b = gXmlLiteParserTest.skipUntilClosingTag("key", strlen("key"), true);
   if ( b ) return breakpoint(2);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 1 col 19") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 1 col 19") ) return breakpoint(14);
 
   
   // Cannot have a tag containing chars AND subtag
@@ -301,8 +301,8 @@ auto msg = gXmlLiteParserTest.getErrorsAndWarnings()[0].msg;
   gXmlLiteParserTest.moveForwardUntil('<');
   b = gXmlLiteParserTest.skipNextTag(true);
   if ( b ) return breakpoint(2);
-  if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
-  if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("line 2 col 2") ) return breakpoint(14);
+  if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(13);
+  if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("line 2 col 2") ) return breakpoint(14);
   
   return 0;
 }
@@ -430,18 +430,18 @@ int validate_dict_tests()
 
     gXmlLiteParserTest.init(config_test);
     b = mainDict.parseFromXmlLite(&gXmlLiteParserTest, "/"_XS8, true);
-//gXmlLiteParser.printfErrorsAndWarnings();
+//gXmlLiteParser.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
-    if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("Test1Bool tag") ) return breakpoint(14);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("Test1Bool tag") ) return breakpoint(14);
 
     if ( !b ) return breakpoint(1);
     gXmlLiteParserTest.init(config_test);
     mainDict.validate(&gXmlLiteParserTest, "/"_XS8, XmlParserPosition(), true);
-//gXmlLiteParser.printfErrorsAndWarnings();
+//gXmlLiteParser.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
-    if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("ict1 tag") ) return breakpoint(14);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("ict1 tag") ) return breakpoint(14);
     
   return 0;
 }
@@ -483,17 +483,17 @@ int validate_array_tests()
 
     gXmlLiteParserTest.init(config_test);
     b = mainDict.parseFromXmlLite(&gXmlLiteParserTest, "/"_XS8, true);
-//gXmlLiteParser.printfErrorsAndWarnings();
+//gXmlLiteParser.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
-    if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("Expecting <true/> <false/>") ) return breakpoint(14);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("Expecting <true/> <false/>") ) return breakpoint(14);
 
     gXmlLiteParserTest.init(config_test);
     mainDict.validate(&gXmlLiteParserTest, "/"_XS8, XmlParserPosition(), true);
-//gXmlLiteParser.printfErrorsAndWarnings();
+//gXmlLiteParser.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
-    if ( !gXmlLiteParserTest.getErrorsAndWarnings()[0].msg.contains("dict2 tag") ) return breakpoint(14);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParserTest.getXmlParserMessageArray()[0].msg.contains("dict2 tag") ) return breakpoint(14);
     
     return 0;
 }
@@ -534,9 +534,9 @@ int documentation_test1()
     gXmlLiteParserTest.moveForwardUntilSignificant();
     gXmlLiteParserTest.skipHeader();
     b = MyDict.parseFromXmlLite(&gXmlLiteParserTest, "/"_XS8, true);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -586,9 +586,9 @@ int documentation_test2()
     
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -638,9 +638,9 @@ int documentation_test3()
 
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -723,9 +723,9 @@ int documentation_test4()
 
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -792,9 +792,9 @@ int documentation_test5()
 
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -830,9 +830,9 @@ int documentation_test6()
     
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
    
     return 0;
 }
@@ -871,9 +871,9 @@ int documentation_test7()
     
     
     b = MyDict.parse(config_test, strlen(config_test), "/"_XS8, &gXmlLiteParserTest);
-gXmlLiteParserTest.printfErrorsAndWarnings();
+gXmlLiteParserTest.printfXmlParserMessage();
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParserTest.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParserTest.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
     
     XObjArray<XmlAddKey<XmlKey, XmlInt32>> array = MyDict.keyIntPairs.valueArray();
     XString8 keyOne = array[1].key();

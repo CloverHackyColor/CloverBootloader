@@ -357,9 +357,9 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount].ItemType = Decimal;  //85
   InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.Smbios.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.BiosVersionUsed.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.BiosVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //87
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.ReleaseDateUsed.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.BiosReleaseDate.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.DoubleFirstState;
@@ -433,7 +433,7 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount++].IValue = 116;
 
   InputItems[InputItemsCount].ItemType = ASString;  //117
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.EfiVersionUsed.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.EfiVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //118
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RtVariables.BooterCfgStr.c_str());
 
@@ -806,8 +806,8 @@ void ApplyInputs(void)
     // let's fill all other fields based on this ProductName
     // to serve as default
     Model = GetModelFromString(gSettings.Smbios.ProductName);
-    if (Model != MaxMachineType) {
-      SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
+    if (Model != MaxMacModel) {
+      SetDMISettingsForModel(Model, &gSettings);
     }
   }
 
@@ -841,11 +841,11 @@ void ApplyInputs(void)
   }
   i++; //86
   if (InputItems[i].Valid) {
-	  GlobalConfig.BiosVersionUsed = InputItems[i].SValue;
+	  gSettings.Smbios.BiosVersion = InputItems[i].SValue;
   }
   i++; //87
   if (InputItems[i].Valid) {
-	  GlobalConfig.ReleaseDateUsed = InputItems[i].SValue;
+	  gSettings.Smbios.BiosReleaseDate = InputItems[i].SValue;
   }
 
   i++; //88
@@ -1016,7 +1016,7 @@ void ApplyInputs(void)
   }
   i++; //117
   if (InputItems[i].Valid) {
-	  GlobalConfig.EfiVersionUsed = InputItems[i].SValue;
+	  gSettings.Smbios.EfiVersion = InputItems[i].SValue;
   }
   i++; //118
   if (InputItems[i].Valid) {

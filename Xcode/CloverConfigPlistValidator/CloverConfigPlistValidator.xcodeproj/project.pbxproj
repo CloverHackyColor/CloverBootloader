@@ -24,6 +24,7 @@
 		9A3BA374261E7A3F009E8B0F /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA9E50025CD2FF400BD5E8B /* Utils.cpp */; };
 		9A3BA375261E7A5E009E8B0F /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA923C325CD5B1F00BD5E8B /* guid.cpp */; };
 		9A3BA376261E7AF7009E8B0F /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */; };
+		9A3E3A50271F35C40077F37E /* VersionString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3E3A4F271F35C40077F37E /* VersionString.cpp */; };
 		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
 		9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */; };
@@ -100,6 +101,8 @@
 		9A36E4E324F3B537007A1107 /* xml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xml.h; sourceTree = "<group>"; };
 		9A36E51D24F3B82A007A1107 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
 		9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = b64cdecode.cpp; sourceTree = "<group>"; };
+		9A3E3A4E271F35C40077F37E /* VersionString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionString.h; sourceTree = "<group>"; };
+		9A3E3A4F271F35C40077F37E /* VersionString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionString.cpp; sourceTree = "<group>"; };
 		9A4147662604F82900440186 /* undefinable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undefinable.h; sourceTree = "<group>"; };
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
@@ -321,6 +324,8 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A3E3A4F271F35C40077F37E /* VersionString.cpp */,
+				9A3E3A4E271F35C40077F37E /* VersionString.h */,
 				9A27557D263A02600095D456 /* CloverVersion.cpp */,
 				9A27557E263A02600095D456 /* CloverVersion.h */,
 				9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */,
@@ -757,6 +762,7 @@
 				9A071C49261A44080007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A8792F7261886F6000B9362 /* abort.cpp in Sources */,
 				9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */,
+				9A3E3A50271F35C40077F37E /* VersionString.cpp in Sources */,
 				9A3BA375261E7A5E009E8B0F /* guid.cpp in Sources */,
 				9A3BA372261E7931009E8B0F /* platformdata.cpp in Sources */,
 				9A2755752639E0500095D456 /* Config_Quirks.cpp in Sources */,

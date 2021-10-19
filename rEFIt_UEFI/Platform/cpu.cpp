@@ -1434,6 +1434,7 @@ UINT16 GetAdvancedCpuType()
   return GetStandardCpuType();
 }
 
+// GetDefaultModel() MUST NOT return MaxMacModel
 MacModel GetDefaultModel()
 {
   MacModel DefaultType = iMac132;

@@ -916,9 +916,8 @@ int config_plist_tests()
   xmlLiteParser.init(config_test, strlen(config_test));
 
   b = configPlistTest.parse(&xmlLiteParser, LString8("main"));
-  for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
-    if ( !xmlLiteParser.getErrorsAndWarnings()[idx].isError) printf("Warning: %s\n", xmlLiteParser.getErrorsAndWarnings()[idx].msg.c_str());
-    if ( xmlLiteParser.getErrorsAndWarnings()[idx].isError) printf("Error: %s\n", xmlLiteParser.getErrorsAndWarnings()[idx].msg.c_str());
+  for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
+    printf("%s\n", xmlLiteParser.getXmlParserMessageArray()[idx].getFormattedMsg().c_str());
   }
   if ( !b ) {
     return breakpoint(102);

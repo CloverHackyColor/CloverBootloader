@@ -58,6 +58,7 @@ extern "C" int main(int argc, const char * argv[])
       path = "config-nowarning-noerror.plist";
       path = "config-test2.plist";
       path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/config.plist";
+      //path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/smbios.plist";
   #endif
   
   if ( !path ) {
@@ -98,15 +99,17 @@ extern "C" int main(int argc, const char * argv[])
   xmlLiteParser.init(buf, st.st_size);
 
   b = configPlistTest.parse(&xmlLiteParser, LString8(""));
-  for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
-    const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
-    printf("%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
+  for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
+    const XmlParserMessage& xmlMsg = xmlLiteParser.getXmlParserMessageArray()[idx];
+    if ( xmlMsg.type != XmlParserMessageType::info ) {
+      printf("%s\n", xmlMsg.getFormattedMsg().c_str());
+    }
   }
   if ( b ) {
 //    if ( xmlLiteParser.getErrorsAndWarnings().size() > 0 ) {
 //      printf("parse return true, but there is error and warnings! BUG !!");
 //    }
-    if ( xmlLiteParser.getErrorsAndWarnings().size() == 0 ) {
+    if ( xmlLiteParser.getXmlParserMessageArray().size() == 0 ) {
       printf("Your plist looks so wonderful. Well done!\n");
     }
     return 0;

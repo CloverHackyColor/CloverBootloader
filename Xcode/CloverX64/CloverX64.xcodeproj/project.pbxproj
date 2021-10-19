@@ -115,6 +115,8 @@
 		9A2755482639DF1B0095D456 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787B826186896000B9362 /* xml_lite-test.cpp */; };
 		9A2755492639DF1B0095D456 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787B826186896000B9362 /* xml_lite-test.cpp */; };
 		9A27554A2639DF1C0095D456 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787B826186896000B9362 /* xml_lite-test.cpp */; };
+		9A3E3A4C271E2FAE0077F37E /* xml_lite-reapeatingdict-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3E3A4A271E2FAD0077F37E /* xml_lite-reapeatingdict-test.cpp */; };
+		9A3E3A4D271E2FAE0077F37E /* xml_lite-reapeatingdict-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A3E3A4B271E2FAE0077F37E /* xml_lite-reapeatingdict-test.h */; };
 		9A63C6CB24EBEF78000EB836 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A63C6CA24EBEF78000EB836 /* Version.h */; };
 		9A7D2E922636B4F300187064 /* CloverVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7D2E902636B4F200187064 /* CloverVersion.h */; };
 		9A7D2E932636B4F300187064 /* CloverVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D2E912636B4F300187064 /* CloverVersion.cpp */; };
@@ -1098,6 +1100,8 @@
 		9A2754E626396F2A0095D456 /* SmbiosFillPatchingValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmbiosFillPatchingValues.cpp; sourceTree = "<group>"; };
 		9A2754E726396F2B0095D456 /* SmbiosFillPatchingValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosFillPatchingValues.h; sourceTree = "<group>"; };
 		9A2754EE263985A90095D456 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9A3E3A4A271E2FAD0077F37E /* xml_lite-reapeatingdict-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "xml_lite-reapeatingdict-test.cpp"; sourceTree = "<group>"; };
+		9A3E3A4B271E2FAE0077F37E /* xml_lite-reapeatingdict-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "xml_lite-reapeatingdict-test.h"; sourceTree = "<group>"; };
 		9A63C6CA24EBEF78000EB836 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
 		9A7D2E902636B4F200187064 /* CloverVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloverVersion.h; sourceTree = "<group>"; };
 		9A7D2E912636B4F300187064 /* CloverVersion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloverVersion.cpp; sourceTree = "<group>"; };
@@ -1617,6 +1621,8 @@
 				9A8787B326186896000B9362 /* XArray_tests.h */,
 				9A8787AE26186896000B9362 /* XBuffer_tests.cpp */,
 				9A8787AC26186896000B9362 /* XBuffer_tests.h */,
+				9A3E3A4A271E2FAD0077F37E /* xml_lite-reapeatingdict-test.cpp */,
+				9A3E3A4B271E2FAE0077F37E /* xml_lite-reapeatingdict-test.h */,
 				9A8787B826186896000B9362 /* xml_lite-test.cpp */,
 				9A8787B026186896000B9362 /* xml_lite-test.h */,
 				9A8787C526186896000B9362 /* XObjArray_tests.cpp */,
@@ -2057,6 +2063,7 @@
 				9A878C2726186898000B9362 /* loader.h in Headers */,
 				9A878C9326186898000B9362 /* XStringAbstract.h in Headers */,
 				9A878A6B26186897000B9362 /* BasicIO.h in Headers */,
+				9A3E3A4D271E2FAE0077F37E /* xml_lite-reapeatingdict-test.h in Headers */,
 				9A8789F326186897000B9362 /* gma.h in Headers */,
 				9A87895A26186897000B9362 /* xml_lite-test.h in Headers */,
 				9A878B8B26186898000B9362 /* XTheme.h in Headers */,
@@ -2794,6 +2801,7 @@
 				9A878C6326186898000B9362 /* screen.cpp in Sources */,
 				9A87899C26186897000B9362 /* XArray_tests.cpp in Sources */,
 				9A878A1426186897000B9362 /* TagDate.cpp in Sources */,
+				9A3E3A4C271E2FAE0077F37E /* xml_lite-reapeatingdict-test.cpp in Sources */,
 				9A87891E26186897000B9362 /* BootLog.cpp in Sources */,
 				9AF4D943263004E200487D15 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878B8826186898000B9362 /* text.cpp in Sources */,

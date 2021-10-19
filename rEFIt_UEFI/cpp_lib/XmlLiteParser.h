@@ -23,12 +23,26 @@ XBool strnIsEqual(const char* key, size_t keyLength, const char* value);
 XBool strnnIsEqualIC(const char* key, size_t keyLength, const char* value, size_t valueLength);
 XBool strnIsEqualIC(const char* key, size_t keyLength, const char* value);
 
+enum class XmlParserMessageType
+{
+  error,
+  warning,
+  info
+};
+
 class XmlParserMessage
 {
   public:
-    XBool isError = true;
+    XmlParserMessageType type;
     XString8 msg;
-    XmlParserMessage(XBool _isError, const XString8& _msg) : isError(_isError), msg(_msg) {};
+    XmlParserMessage(XmlParserMessageType _type, const XString8& _msg) : type(_type), msg(_msg) {};
+    
+    XString8 getFormattedMsg() const {
+      if ( type == XmlParserMessageType::info ) return S8Printf("Info: %s", msg.c_str());
+      if ( type == XmlParserMessageType::warning ) return S8Printf("Warning: %s", msg.c_str());
+      if ( type == XmlParserMessageType::error ) return S8Printf("Error: %s", msg.c_str());
+      return msg;
+    }
 };
 
 class XmlLiteParser;
@@ -64,9 +78,9 @@ class XmlLiteParser
   XmlParserPosition currentPos = XmlParserPosition();
   XObjArray<XmlParserMessage> errorsAndWarnings = XObjArray<XmlParserMessage>();
 
-  XBool AddErrorOrWarning(XmlParserMessage* msg) {
+  XBool AddXmlParserMessage(XmlParserMessage* msg) {
     if ( errorsAndWarnings.size() < 500 ) errorsAndWarnings.AddReference(msg, true);
-    if ( errorsAndWarnings.size() == 500 ) errorsAndWarnings.AddReference(new XmlParserMessage(true, "Too many error. Stopping"_XS8), true);
+    if ( errorsAndWarnings.size() == 500 ) errorsAndWarnings.AddReference(new XmlParserMessage(XmlParserMessageType::error, "Too many error. Stopping"_XS8), true);
     return false;
   }
 public:
@@ -85,18 +99,23 @@ public:
   
   int getLine() { return currentPos.line; }
   int getCol() { return currentPos.col; }
-  XObjArray<XmlParserMessage>& getErrorsAndWarnings() { return errorsAndWarnings; }
+  XObjArray<XmlParserMessage>& getXmlParserMessageArray() { return errorsAndWarnings; }
   // Add warning, error and xml error always return false so you can return addWarning(...) from validate function
-  XBool addWarning(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(false, warning)); return false; }
-  XBool addError(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddErrorOrWarning(new XmlParserMessage(true, warning)); return false; }
+  XBool addInfo(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::info, warning)); return false; }
+  XBool addWarning(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::warning, warning)); return false; }
+  XBool addError(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::error, warning)); return false; }
   // Xml stuctural error. Parsing should probably stop.
   XBool addXmlError(XBool generateErrors, const XString8& warning) {
-    if ( generateErrors ) {xmlParsingError = true;  AddErrorOrWarning(new XmlParserMessage(true, warning));}
+    if ( generateErrors ) {xmlParsingError = true;  AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::error, warning));}
     return false;
   }
-  void printfErrorsAndWarnings() {
-    for ( size_t idx = 0 ; idx < getErrorsAndWarnings().size() ; idx++ ) {
-      printf("%s: %s\n", getErrorsAndWarnings()[idx].isError ? "Error" : "Warning", getErrorsAndWarnings()[idx].msg.c_str());
+  void printfXmlParserMessage() {
+    for ( size_t idx = 0 ; idx < getXmlParserMessageArray().size() ; idx++ ) {
+      printf("%s: %s\n", getXmlParserMessageArray()[idx].type == XmlParserMessageType::error ? "Error"
+                       : getXmlParserMessageArray()[idx].type == XmlParserMessageType::warning ? "Warning"
+                       : getXmlParserMessageArray()[idx].type == XmlParserMessageType::info ? "Info"
+                       : ""
+                       , getXmlParserMessageArray()[idx].msg.c_str());
     }
   }
 

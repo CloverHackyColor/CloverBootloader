@@ -49,7 +49,7 @@ for ( size_t idx = 0 ; idx < dict.valueArray().size() ; idx++ ) {
   printf("%s %s\n", dict.valueArray()[idx].key().c_str(), dict.valueArray()[idx].value().c_str());
 }
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParser.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
 //    if ( mainDict.arrayValue()[0].key() != "key1.1"_XS8 ) return breakpoint(14);
 //    if ( mainDict.arrayValue()[0].value() != "foo1.1"_XS8 ) return breakpoint(14);
 //    if ( mainDict.arrayValue()[1].key() != "key1.2"_XS8 ) return breakpoint(14);
@@ -119,13 +119,13 @@ int repeatingdict_test2()
 
     gXmlLiteParser.init(config_test);
     b = dict.parseFromXmlLite(&gXmlLiteParser, "/"_XS8, true);
-gXmlLiteParser.printfErrorsAndWarnings();
+gXmlLiteParser.getXmlParserMessageArray();
 for ( size_t idx = 0 ; idx < dict.valueArray().size() ; idx++ ) {
   auto item = dict.valueArray()[idx];
   printf("%s %d %s\n", dict.valueArray()[idx].key().c_str(), (bool)dict.valueArray()[idx].xmlBool.value(), dict.valueArray()[idx].xmlString.value().c_str());
 }
     if ( !b ) return breakpoint(1);
-    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 0 ) return breakpoint(1);
+    if ( gXmlLiteParser.getXmlParserMessageArray().size() != 0 ) return breakpoint(1);
     if ( dict.valueArray()[0].xmlBool.value() != true ) return breakpoint(14);
     if ( dict.valueArray()[0].xmlString.value() != "foo2.1"_XS8 ) return breakpoint(14);
     if ( dict.valueArray()[1].xmlBool.value() != false ) return breakpoint(14);

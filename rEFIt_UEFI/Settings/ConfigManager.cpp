@@ -525,15 +525,15 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   
   XmlLiteParser xmlLiteParser;
   XBool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
-  if ( xmlLiteParser.getErrorsAndWarnings().size() ) {
-    if ( xmlLiteParser.getErrorsAndWarnings().size() > 1 ) {
+  if ( xmlLiteParser.getXmlParserMessageArray().size() ) {
+    if ( xmlLiteParser.getXmlParserMessageArray().size() > 1 ) {
       DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
     }else{
       DebugLog(2, "There is a problem in plist '%ls'\n", configPlistPath.wc_str());
     }
-    for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
-      const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
-      DebugLog(2, "%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
+    for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
+      const XmlParserMessage& xmlMsg = xmlLiteParser.getXmlParserMessageArray()[idx];
+      DebugLog(2, "%s\n", xmlMsg.getFormattedMsg().c_str());
     }
     DebugLog(2, "Use CloverConfigPlistValidator or look in the log\n");
   }
@@ -542,7 +542,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
     Status = EFI_LOAD_ERROR;
   }
 
-  if ( !parsingOk || xmlLiteParser.getErrorsAndWarnings().size() > 0 ) gBS->Stall(3000000); // 3 seconds delay
+  if ( !parsingOk || xmlLiteParser.getXmlParserMessageArray().size() > 0 ) gBS->Stall(3000000); // 3 seconds delay
 
 return Status;
 }
@@ -553,6 +553,7 @@ return Status;
  */
 EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
 {
+  configPlist.SMBIOS.defaultMacModel = GetDefaultModel();
   EFI_STATUS Status = LoadPlist(ConfName, &configPlist);
 
   return Status;
@@ -564,6 +565,7 @@ EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
  */
 EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 {
+  smbiosPlist.SMBIOS.defaultMacModel = GetDefaultModel();
   EFI_STATUS Status = LoadPlist(ConfName, &smbiosPlist);
 
   if ( EFI_ERROR(Status) ) {
@@ -575,80 +577,85 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
 {
-  GlobalConfig.CurrentModel = Model;
+// Checks are now done in SmbiosDictClass
 
-  //GlobalConfig.BiosVersionUsed = ApplePlatformData[Model].firmwareVersion;
-  // Check for BiosVersion and BiosReleaseDate by Sherlocks
-  if ( smbiosDictClass.getBiosVersion().isDefined() ) {
-    int c = compareBiosVersion(GlobalConfig.BiosVersionUsed, smbiosDictClass.dgetBiosVersion());
-    if ( c == 0 ) {
-      DBG("Found same BiosVersion in clover and config\n");
-    }else
-    if ( c < 0 ) {
-      DBG("Using latest BiosVersion from config\n");
-      GlobalConfig.BiosVersionUsed = smbiosDictClass.dgetBiosVersion();
-    }else{
-      DBG("Using latest BiosVersion from clover\n");
-    }
-  }else{
-    DBG("BiosVersion: not set, Using BiosVersion from clover\n");
-  }
-  DBG("BiosVersion: %s\n", GlobalConfig.BiosVersionUsed.c_str());
-
-
-  //GlobalConfig.ReleaseDateUsed = GetReleaseDate(Model); // AppleReleaseDate
-  int compareReleaseDateResult = 0;
-  if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) {
-    compareReleaseDateResult = compareReleaseDate(GetReleaseDate(Model), smbiosDictClass.dgetBiosReleaseDate());
-    if ( compareReleaseDateResult == 0 ) {
-      DBG("Found same BiosReleaseDate in clover and config\n");
-    }else
-    if ( compareReleaseDateResult == -1 ) {
-      DBG("Using latest BiosReleaseDate from config\n");
-      GlobalConfig.ReleaseDateUsed = smbiosDictClass.dgetBiosReleaseDate();
-    }else
-    if ( compareReleaseDateResult == 1 ) {
-      DBG("Using latest BiosReleaseDate from clover\n");
-    }
-  }else{
-    DBG("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
-  }
-  if ( !smbiosDictClass.getBiosReleaseDate().isDefined() || compareReleaseDateResult == -2 )
-  {
-    //DBG("Found unknown date format from config\n");
-    size_t len = GlobalConfig.ReleaseDateUsed.length();
-    const char* j = GlobalConfig.BiosVersionUsed.c_str();
-
-    j += AsciiStrLen(j);
-    while (*j != '.') {
-      j--;
-    }
-
-    if ( len == 8 ) {
-      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-      //DBG("Using the date of used BiosVersion\n");
-    } else if ( len == 10 ) {
-      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-      //DBG("Using the date of used BiosVersion\n");
-    }
-  }
-  DBG("BiosReleaseDate: %s\n", GlobalConfig.ReleaseDateUsed.c_str());
+//  //gSettings.Smbios.BiosVersion = ApplePlatformData[Model].firmwareVersion;
+//  // Check for BiosVersion and BiosReleaseDate by Sherlocks
+//  if ( smbiosDictClass.getBiosVersion().isDefined() ) {
+//    int c = compareBiosVersion(gSettings.Smbios.BiosVersion, smbiosDictClass.dgetBiosVersion());
+//    if ( c == 0 ) {
+//      DBG("Found same BiosVersion in clover and config\n");
+//    }else
+//    if ( c < 0 ) {
+//      DBG("Using latest BiosVersion from config\n");
+//      gSettings.Smbios.BiosVersion = smbiosDictClass.dgetBiosVersion();
+//    }else{
+//      DBG("Using latest BiosVersion from clover\n");
+//    }
+//  }else{
+//    DBG("BiosVersion: not set, Using BiosVersion from clover\n");
+//  }
+//  DBG("BiosVersion: %s\n", gSettings.Smbios.BiosVersion.c_str());
+  if ( smbiosDictClass.getBiosVersion().isDefined() ) gSettings.Smbios.BiosVersion = smbiosDictClass.getBiosVersion().value();
 
 
+//  //gSettings.Smbios.BiosReleaseDate = GetReleaseDate(Model); // AppleReleaseDate
+//  int compareReleaseDateResult = 0;
+//  if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) {
+//    compareReleaseDateResult = compareReleaseDate(GetReleaseDate(Model), smbiosDictClass.dgetBiosReleaseDate());
+//    if ( compareReleaseDateResult == 0 ) {
+//      DBG("Found same BiosReleaseDate in clover and config\n");
+//    }else
+//    if ( compareReleaseDateResult == -1 ) {
+//      DBG("Using latest BiosReleaseDate from config\n");
+//      gSettings.Smbios.BiosReleaseDate = smbiosDictClass.dgetBiosReleaseDate();
+//    }else
+//    if ( compareReleaseDateResult == 1 ) {
+//      DBG("Using latest BiosReleaseDate from clover\n");
+//    }
+//  }else{
+//    DBG("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
+//  }
+//  if ( !smbiosDictClass.getBiosReleaseDate().isDefined() || compareReleaseDateResult == -2 )
+//  {
+//    //DBG("Found unknown date format from config\n");
+//    size_t len = gSettings.Smbios.BiosReleaseDate.length();
+//    const char* j = gSettings.Smbios.BiosVersion.c_str();
+//
+//    j += AsciiStrLen(j);
+//    while (*j != '.') {
+//      j--;
+//    }
+//
+//    if ( len == 8 ) {
+//      gSettings.Smbios.BiosReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+//      //DBG("Using the date of used BiosVersion\n");
+//    } else if ( len == 10 ) {
+//      gSettings.Smbios.BiosReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+//      //DBG("Using the date of used BiosVersion\n");
+//    }
+//  }
+//  DBG("BiosReleaseDate: %s\n", gSettings.Smbios.BiosReleaseDate.c_str());
 
-//  GlobalConfig.EfiVersionUsed.takeValueFrom(ApplePlatformData[Model].efiversion);
-  if ( smbiosDictClass.getEfiVersion().isDefined() ) {
-    if (AsciiStrVersionToUint64(GlobalConfig.EfiVersionUsed, 4, 5) > AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
-      DBG("Using latest EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
-    } else if (AsciiStrVersionToUint64(GlobalConfig.EfiVersionUsed, 4, 5) < AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
-      GlobalConfig.EfiVersionUsed = smbiosDictClass.dgetEfiVersion();
-      DBG("Using latest EfiVersion from config: %s\n", GlobalConfig.EfiVersionUsed.c_str());
-    } else {
-      DBG("Using EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
-    }
-  } else if ( GlobalConfig.EfiVersionUsed.notEmpty() ) {
-    DBG("Using EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
-  }
+  if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) gSettings.Smbios.BiosReleaseDate = smbiosDictClass.getBiosReleaseDate().value();
+
+
+
+////  gSettings.Smbios.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
+//  if ( smbiosDictClass.getEfiVersion().isDefined() ) {
+//    if (AsciiStrVersionToUint64(gSettings.Smbios.EfiVersion, 4, 5) > AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
+//      DBG("Using latest EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
+//    } else if (AsciiStrVersionToUint64(gSettings.Smbios.EfiVersion, 4, 5) < AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
+//      gSettings.Smbios.EfiVersion = smbiosDictClass.dgetEfiVersion();
+//      DBG("Using latest EfiVersion from config: %s\n", gSettings.Smbios.EfiVersion.c_str());
+//    } else {
+//      DBG("Using EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
+//    }
+//  } else if ( gSettings.Smbios.EfiVersion.notEmpty() ) {
+//    DBG("Using EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
+//  }
+
+  if ( smbiosDictClass.getEfiVersion().isDefined() ) gSettings.Smbios.EfiVersion = smbiosDictClass.getEfiVersion().value();
 
 
   if ( smbiosDictClass.getBiosVendor().isDefined() ) gSettings.Smbios.BiosVendor = smbiosDictClass.getBiosVendor().value();
@@ -674,6 +681,21 @@ void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlist
   if ( smbiosDictClass.getBoardType().isDefined() ) gSettings.Smbios.BoardType = smbiosDictClass.getBoardType().value();
   if ( smbiosDictClass.getChassisType().isDefined() ) gSettings.Smbios.ChassisType = smbiosDictClass.getChassisType().value();
   if ( smbiosDictClass.getMobile().isDefined() ) gSettings.Smbios.Mobile = smbiosDictClass.getMobile().value();
+
+  // Debug messages. Not sure we need them anymore...
+  if ( smbiosDictClass.getBiosVersion().isDefined() ) {
+    DBG("Using latest BiosVersion from config instead of default '%s'\n", ApplePlatformDataArray[Model].firmwareVersion.c_str());
+  }
+  if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) {
+    DBG("Using latest BiosReleaseDate from config instead of default '%s'\n", GetReleaseDate(Model).c_str());
+  }
+  if ( smbiosDictClass.getEfiVersion().isDefined() ) {
+    DBG("Using latest EfiVersion from config instead of default '%s'\n", ApplePlatformDataArray[Model].efiversion.c_str());
+  }
+  DBG("BiosVersion: %s\n", gSettings.Smbios.BiosVersion.c_str());
+  DBG("BiosReleaseDate: %s\n", gSettings.Smbios.BiosReleaseDate.c_str());
+  DBG("EfiVersion: %s\n", gSettings.Smbios.EfiVersion.c_str());
+
 }
 
 void ConfigManager::applySettings() const
@@ -892,26 +914,28 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
-  MacModel  Model = iMac132;
+  GlobalConfig.CurrentModel = iMac132;
   if ( smbiosPlist.SMBIOS.isDefined() && smbiosPlist.SMBIOS.hasModel()) {
-    Model = smbiosPlist.SMBIOS.getModel();
+    GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.getModel();
   } else if ( configPlist.getSMBIOS().hasModel() ) {
-    Model = configPlist.getSMBIOS().getModel();
+    GlobalConfig.CurrentModel = configPlist.getSMBIOS().getModel();
   } else {
-    Model = GetDefaultModel();
+    log_technical_bug("No MacModel. SmbiosDictClass::defaultMacModel must be initialized before reading config or smbios plist.");
+    GlobalConfig.CurrentModel = GetDefaultModel();
   }
-//  configPlist.getSMBIOS().ProductName.takeValueFrom(ApplePlatformData[Model].productName);  //no such function?
+
   if ( !EFI_ERROR(Status) ) {
     gSettings.takeValueFrom(configPlist); // if load failed, keep default value.
   }
-  // TODO improve this (avoid to delete settings to re-import them !)
-  // restore default value for SMBIOS (delete values from configPlist)
-  SetDMISettingsForModel(Model, &gSettings, &GlobalConfig);
-  // import values from configPlist if they are defined
-  FillSmbiosWithDefaultValue(Model, configPlist.getSMBIOS());
+  // Fill in default for model
+  SetDMISettingsForModel(GlobalConfig.CurrentModel, &gSettings);
+
+  // NOTE : values from smbios.plist and config.plist will be merge if both exist.
+  // Import values from configPlist if they are defined
+  FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
   if ( smbiosPlist.SMBIOS.isDefined() ) {
-    // import values from smbiosPlist if they are defined
-    FillSmbiosWithDefaultValue(Model, smbiosPlist.SMBIOS);
+    // Import values from smbiosPlist if they are defined
+    FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, smbiosPlist.SMBIOS);
   }
 
   applySettings();

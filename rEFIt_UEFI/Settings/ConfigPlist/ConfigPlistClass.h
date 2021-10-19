@@ -73,7 +73,6 @@ public:
   GUI_Class GUI = GUI_Class();
   Graphics_Class Graphics; // Cannot do this :  = Graphics_Class(*this); because of a MSVC bug. Compilation failed at ssignment of m_fields because all member become const.
   KernelAndKextPatches_Class KernelAndKextPatches = KernelAndKextPatches_Class();
-protected:
   SmbiosPlistClass::SmbiosDictClass SMBIOS = SmbiosPlistClass::SmbiosDictClass(); // use the same dict as for standalone smbios plist
 public:
   SystemParameters_Class SystemParameters = SystemParameters_Class();

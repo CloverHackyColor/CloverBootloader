@@ -2864,13 +2864,9 @@ public:
   // KernelAndKextPatches
   XBool                   KextPatchesAllowed = true;
   XBool                   KernelPatchesAllowed = true; //From GUI: Only for user patches, not internal Clover
-
-  XString8 BiosVersionUsed = XString8();
-  XString8 EfiVersionUsed = XString8();
-  XString8 ReleaseDateUsed = XString8();
   
   UINT8  flagstate[32] = {0};
-  MacModel CurrentModel = MaxMachineType;
+  MacModel CurrentModel = MaxMacModel;
 
   UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
 

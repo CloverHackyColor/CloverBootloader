@@ -83,8 +83,8 @@ constexpr bool ApplePlatformDataArrayClass::asserts()
 
 const PLATFORMDATA& ApplePlatformDataArrayClass::operator [] (MacModel m)
 {
-  if ( m >= MaxMachineType ) {
-    log_technical_bug("ApplePlatformDataArrayClass : m >= MaxMachineType");
+  if ( m >= MaxMacModel ) {
+    log_technical_bug("ApplePlatformDataArrayClass : m >= MaxMacModel");
     return ApplePlatformDataArrayClass::m_ApplePlatformDataArrayClass[getDefaultModel()];
   }
   for ( size_t idx = 0 ; idx < sizeof(m_ApplePlatformDataArrayClass)/sizeof(m_ApplePlatformDataArrayClass[0]) ; idx++ ) {
@@ -436,7 +436,7 @@ XBool GetMobile(MacModel Model)
     case Xserve21:
     case Xserve31:
       return false;
-    case MaxMachineType: // currently a copy of iMac132
+    case MaxMacModel: // currently a copy of iMac132
       return false;
     default: // bug, unknown Apple model
       log_technical_bug("%s : cannot find model %d\n", __PRETTY_FUNCTION__, Model);
@@ -773,11 +773,11 @@ XString8 GetReleaseDate(MacModel Model)
   return returnValue;
 }
 
-void SetDMISettingsForModel(MacModel Model, SETTINGS_DATA* settingsData, REFIT_CONFIG* liveConfig)
+void SetDMISettingsForModel(MacModel Model, SETTINGS_DATA* settingsData)
 {
-  liveConfig->BiosVersionUsed = ApplePlatformDataArray[Model].firmwareVersion;
-  liveConfig->ReleaseDateUsed = GetReleaseDate(Model); // AppleReleaseDate
-  liveConfig->EfiVersionUsed.takeValueFrom(ApplePlatformDataArray[Model].efiversion);
+  settingsData->Smbios.BiosVersion = ApplePlatformDataArray[Model].firmwareVersion;
+  settingsData->Smbios.BiosReleaseDate = GetReleaseDate(Model);
+  settingsData->Smbios.EfiVersion = ApplePlatformDataArray[Model].efiversion;
 
   settingsData->Smbios.BiosVendor = AppleBiosVendor;
   settingsData->Smbios.ManufactureName = settingsData->Smbios.BiosVendor;
@@ -810,13 +810,13 @@ MacModel GetModelFromString(const XString8& ProductName)
 {
   MacModel i;
 
-  for (i = (MacModel)(0); i < MaxMachineType; i = (MacModel)(i + 1)) {
+  for (i = (MacModel)(0); i < MaxMacModel; i = (MacModel)(i + 1)) {
     if ( ProductName == MachineModelName[i] ) {
       return i;
     }
   }
   // return ending enum as "not found"
-  return MaxMachineType;
+  return MaxMacModel;
 }
 
 uint8_t GetChassisTypeFromModel(MacModel Model)

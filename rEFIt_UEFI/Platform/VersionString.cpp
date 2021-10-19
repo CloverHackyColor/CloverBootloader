@@ -48,7 +48,7 @@ UINT64 AsciiStrVersionToUint64(const XString8& Version_, UINT8 MaxDigitByPart, U
         part_value = max_part_value;
     }
     else if (Version[idx] == '.') {
-      result = MultU64x64(result, part_mult) + part_value;
+      result = (result *  part_mult) + part_value;
       part_value = 0;
       MaxParts--;
     }
@@ -56,7 +56,7 @@ UINT64 AsciiStrVersionToUint64(const XString8& Version_, UINT8 MaxDigitByPart, U
   }
 
   while (MaxParts--) {
-    result = MultU64x64(result, part_mult) + part_value;
+    result = (result *  part_mult) + part_value;
     part_value = 0; // part_value is only used at first pass
   }
 

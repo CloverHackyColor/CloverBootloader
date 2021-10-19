@@ -22,6 +22,7 @@
 #include "../../Platform/guid.h"
 #include "../../Platform/platformdata.h"
 #include "../../Platform/smbios.h"
+#include "../../Platform/VersionString.h" // for AsciiStrVersionToUint64
 //#include "../cpu.h"
 
 #include "../../cpp_lib/undefinable.h"
@@ -385,16 +386,50 @@ public:
             }
             MacModel Model;
             Model = GetModelFromString(xstring8);
-            if ( Model == MaxMachineType ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid ProductName '%s' in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            if ( Model == MaxMacModel ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid ProductName '%s' in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            return true;
+          }
+      };
+
+      class BiosVersionClass : public XmlString8Trimed
+      {
+          using super = XmlString8Trimed;
+        public:
+          BiosVersionClass() : super(true) {};
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
+            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+            if ( !value().contains(".") ) {
+              return xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' doesn't contains a dot in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+            }
+            size_t rindex = value().rindexOf(".");
+            if ( value().length() - rindex < 7 ) {
+              return xmlLiteParser->addWarning(generateErrors, S8Printf("Last part of BiosVersion '%s' must be at least 6 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+            }
+            // Should we check the format of these 6 last chars ?
+            return true;
+          }
+      };
+
+      class BiosReleaseDateClass : public XmlString8Trimed
+      {
+          using super = XmlString8Trimed;
+        public:
+          BiosReleaseDateClass() : super(true) {};
+          virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
+            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+            if ( value().length() != 8  &&  value().length() != 10 ) {
+              return xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' must 8 or 10 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+            }
+            // Should we check the format of these 8 or 10 last chars ?
             return true;
           }
       };
 
   protected:
     XmlString8Trimed BiosVendor = XmlString8Trimed(true); // true = allow empty
-    XmlString8Trimed BiosVersion = XmlString8Trimed(true); // RomVersion
+    BiosVersionClass BiosVersion = BiosVersionClass(); // RomVersion
     XmlString8AllowEmpty EfiVersion = XmlString8AllowEmpty();
-    XmlString8Trimed BiosReleaseDate = XmlString8Trimed(true);
+    BiosReleaseDateClass BiosReleaseDate = BiosReleaseDateClass();
 
     XmlString8Trimed Manufacturer = XmlString8Trimed(true);
     ProductNameClass ProductName = ProductNameClass();
@@ -427,6 +462,8 @@ public:
     XmlUInt64 ExtendedFirmwareFeatures = XmlUInt64(); // gFwFeatures
     XmlUInt64 ExtendedFirmwareFeaturesMask = XmlUInt64();
   public:
+    MacModel defaultMacModel = MaxMacModel;
+
     MemoryDictClass Memory = MemoryDictClass();
     SlotDeviceArrayClass Slots = SlotDeviceArrayClass();
 
@@ -469,30 +506,44 @@ public:
     
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-//      if ( !ProductName.isDefined() ) {
+      if ( !ProductName.isDefined() ) {
 //        return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
-//      }
-      if ( BiosVersion.isDefined() ) {
-        if ( !BiosVersion.value().contains(".") ) {
-          xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' doesn't contains a dot in dict '%s:%d'.", BiosVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine()));
-          BiosVersion.reset();
-        }else{
-          size_t rindex = BiosVersion.value().rindexOf(".");
-          if ( BiosVersion.value().length() - rindex < 7 ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("Last part of BiosVersion '%s' must be at least 6 chars in dict '%s:%d'.", BiosVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+        if ( defaultMacModel < MaxMacModel ) {
+          ProductName.setStringValue(MachineModelName[defaultMacModel]);
+        }
+      }
+      if ( hasModel() ) {
+        if ( BiosVersion.isDefined() ) {
+          if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine()));
             BiosVersion.reset();
-          }else{
-            // Should we check the format of these 6 last chars ?
-            if ( hasModel() ) {
-              if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
-                xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine()));
-                BiosVersion.reset();
-              }
-            }else{
-//              xmlLiteParser->addWarning(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-            }
           }
         }
+        if ( BiosReleaseDate.isDefined() ) {
+          int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(getModel()), BiosReleaseDate.value());
+          if ( compareReleaseDateResult == 0 ) {
+            // This is just 'info'. It's useless but fine to define the same as default.
+            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine()));
+            BiosReleaseDate.reset();
+          }else
+          if ( compareReleaseDateResult == 1 ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine()));
+            BiosReleaseDate.reset();
+          }
+        }
+        if ( EfiVersion.isDefined() ) {
+          if ( AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) > AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            EfiVersion.reset();
+          } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
+            xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+          }
+        }
+      }else{
+        // This is supposed to never happen within Clover, because Clover initialise defaultMacModel.
+        // ccpv doesn't initialise defaultMacModel yet.
+        // If ccpv, let's say nothing at the moment
+        //xmlLiteParser->addInfo(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
       }
       return true; // we don't want to invalidate the whole dict
     }
@@ -538,16 +589,18 @@ public:
     MacModel getModel() const
     {
       if ( !ProductName.isDefined() ) {
+        // This must not happen in Clover because Clover set a defaultMacModel
+        // This must ot happen in ccpv because ccpv doesn't call dget... methods
         log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
-        return GetDefaultModel();
+        return iMac132; // cannot return GetDefaultModel() because we don't want to link runtime configuration to the xml reading layer.
       }
-      return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMachineType
+      return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMacModel
     }
     XBool hasModel() const { return ProductName.isDefined(); }
 
     MacModel dgetModel() const
     {
-      if ( !hasModel() ) return MaxMachineType;
+      if ( !hasModel() ) return MaxMacModel;
       return getModel();
     }
 
