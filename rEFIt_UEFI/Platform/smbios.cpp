@@ -2264,7 +2264,7 @@ void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
   }
   PatchTableTypeSome();
   auto SlotCounts = smbiosSettings.RamSlotCount;
-  if ( SlotCounts >= MAX_RAM_SLOTS ) {
+  if ( SlotCounts > MAX_RAM_SLOTS ) {
     log_technical_bug("GetTableType16() assign smbiosSettings.RamSlotCount a value bigger than MAX_RAM_SLOTS");
     SlotCounts = MAX_RAM_SLOTS;
   }
