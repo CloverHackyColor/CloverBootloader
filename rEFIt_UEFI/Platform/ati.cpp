@@ -493,17 +493,18 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x6939,  CHIP_FAMILY_TONGA,    "ATI Radeon R9 285",          kBaladi },
 
   /* Polaris12 */
-  { 0x6980,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6981,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6985,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6986,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x6995,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",        kNull },
-  { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",        kNull },
+  { 0x6980,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x6981,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x6985,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x6986,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x6995,  CHIP_FAMILY_GREENLAND, "AMD Radeon Polaris 12",     kNull },
+  { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",          kNull },
 
-  { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",        kNull },
+  { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",             kNull },
 
-  { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",        kNull },
+  { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",            kNull },
+  { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
    6901 Topaz PRO [Radeon R5 M255]
