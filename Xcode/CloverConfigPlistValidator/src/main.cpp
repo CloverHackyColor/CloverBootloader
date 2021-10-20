@@ -92,23 +92,23 @@ extern "C" int main(int argc, const char * argv[])
   }
   buf[st.st_size] = 0; // should not be needed.
   
-  bool b;
   ConfigPlistClass configPlistTest;
   
   XmlLiteParser xmlLiteParser;
   xmlLiteParser.init(buf, st.st_size);
 
-  b = configPlistTest.parse(&xmlLiteParser, LString8(""));
+  configPlistTest.parse(&xmlLiteParser, LString8(""));
+  bool b = true;
   for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
     const XmlParserMessage& xmlMsg = xmlLiteParser.getXmlParserMessageArray()[idx];
     if ( xmlMsg.type != XmlParserMessageType::info ) {
       printf("%s\n", xmlMsg.getFormattedMsg().c_str());
+      b = false;
+    }else{
+      // One day, create a command line option to display info messages.
     }
   }
   if ( b ) {
-//    if ( xmlLiteParser.getErrorsAndWarnings().size() > 0 ) {
-//      printf("parse return true, but there is error and warnings! BUG !!");
-//    }
     if ( xmlLiteParser.getXmlParserMessageArray().size() == 0 ) {
       printf("Your plist looks so wonderful. Well done!\n");
     }
