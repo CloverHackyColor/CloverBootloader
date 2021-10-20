@@ -12,22 +12,6 @@ int BootOptions_tests()
 //	printf("XStringW_tests -> Enter\n");
 #endif
 
-//	{
-//		XString LoadOptions;
-//		
-//		LoadOptions = AddLoadOption(LoadOptions, "opt1"_XS8);
-//		LoadOptions = AddLoadOption(LoadOptions, "opt2"_XS8);
-//		LoadOptions = AddLoadOption(LoadOptions, "opt3"_XS8);
-//		
-//		if ( LoadOptions != "opt1 opt2 opt3"_XS8 ) return 10;
-//		
-//		XString LoadOptions1 = RemoveLoadOption(LoadOptions, "opt1"_XS8);
-//		if ( LoadOptions1 != "opt2 opt3"_XS8 ) return 11;
-//		XString LoadOptions2 = RemoveLoadOption(LoadOptions, "opt2"_XS8);
-//		if ( LoadOptions2 != "opt1 opt3"_XS8 ) return 12;
-//		XString LoadOptions3 = RemoveLoadOption(LoadOptions, "opt3"_XS8);
-//		if ( LoadOptions3 != "opt1 opt2"_XS8 ) return 13;
-//	}
 	{
 		XString8Array LoadOptions;
 		

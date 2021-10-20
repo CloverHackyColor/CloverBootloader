@@ -10,9 +10,6 @@
 
 #include "../cpp_foundation/XString.h"
 
-//XString AddLoadOption(IN const XString& LoadOptions, IN const XString& LoadOption);
-//XString RemoveLoadOption(IN const XString& LoadOptions, IN const XString& LoadOption);
-
 INTN
 StrniCmp (
   IN CONST CHAR16 *Str1,

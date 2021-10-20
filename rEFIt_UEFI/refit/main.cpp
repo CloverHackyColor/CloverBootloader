@@ -2597,109 +2597,6 @@ GetListOfThemes ()
   DirIterClose(&DirIter);
 }
 
-////
-//// analyze self.getSelfLoadedImage().LoadOptions to extract Default Volume and Default Loader
-//// input and output data are global
-////
-//void
-//GetBootFromOption(void)
-//{
-//  UINT8  *Data = (UINT8*)self.getSelfLoadedImage().LoadOptions;
-//  UINTN  Len = self.getSelfLoadedImage().LoadOptionsSize;
-//  UINTN  NameSize, Name2Size;
-//
-//  Data += 4; //skip signature as we already here
-//  NameSize = *(UINT16*)Data;
-//
-//  Data += 2; // pointer to Volume name
-//  settingsData.Boot.DefaultVolume.strncpy((__typeof__(settingsData.Boot.DefaultVolume.wc_str()))Data, NameSize);
-//
-//  Data += NameSize;
-//  Name2Size = Len - NameSize;
-//  if (Name2Size != 0) {
-//    settingsData.Boot.DefaultLoader.strncpy((__typeof__(settingsData.Boot.DefaultVolume.wc_str()))Data, NameSize);
-//  }
-//
-//  DBG("Clover started with option to boot %ls from %ls\n",
-//      settingsData.Boot.DefaultLoader.notEmpty() ? settingsData.Boot.DefaultLoader.wc_str() : L"legacy",
-//      settingsData.Boot.DefaultVolume.wc_str());
-//}
-
-//void
-//ParseLoadOptions (
-//                  OUT  XStringW* ConfNamePtr,
-//                  OUT  TagDict** Dict
-//                  )
-//{
-//  CHAR8 *End;
-//  CHAR8 *Start;
-//  UINTN TailSize;
-//  UINTN i;
-//  CONST CHAR8 *PlistStrings[]  =
-//  {
-//    "<?xml",
-//    "<!DOCTYPE plist",
-//    "<plist",
-//    "<dict>",
-//    "\0"
-//  };
-//
-//  UINTN PlistStringsLen;
-//  *Dict                  = NULL;
-//
-//  XStringW& ConfName = *ConfNamePtr;
-//
-//  Start = (CHAR8*)self.getSelfLoadedImage().LoadOptions;
-//  End   = (CHAR8*)((CHAR8*)self.getSelfLoadedImage().LoadOptions + self.getSelfLoadedImage().LoadOptionsSize);
-//  while ((Start < End) && ((*Start == ' ') || (*Start == '\\') || (*Start == '/')))
-//  {
-//    ++Start;
-//  }
-//
-//  TailSize = End - Start;
-//  //DBG("TailSize = %d\n", TailSize);
-//
-//  if ((TailSize) <= 0) {
-//    return;
-//  }
-//
-//  for (i = 0; PlistStrings[i][0] != '\0'; i++) {
-//    PlistStringsLen = AsciiStrLen(PlistStrings[i]);
-//    //DBG("PlistStrings[%d] = %s\n", i, PlistStrings[i]);
-//    if (PlistStringsLen < TailSize) {
-//      if (AsciiStriNCmp(PlistStrings[i], Start, PlistStringsLen)) {
-//        DBG(" - found plist string = %s, parse XML in LoadOptions\n", PlistStrings[i]);
-//        if (ParseXML(Start, Dict, TailSize) != EFI_SUCCESS) {
-//          *Dict = NULL;
-//          DBG("  - [!] xml in load options is bad\n");
-//          return;
-//        }
-//        return;
-//      }
-//    }
-//  }
-//
-//  while ((End > Start) && ((*End == ' ') || (*End == '\\') || (*End == '/'))) {
-//    --End;
-//  }
-//
-//  TailSize = End - Start;
-//  //  DBG("TailSize2 = %d\n", TailSize);
-//
-//  if (TailSize > 6) {
-//    if (AsciiStriNCmp(".plist", End - 6, 6)) {
-//      End      -= 6;
-//      TailSize -= 6;
-//      //      DBG("TailSize3 = %d\n", TailSize);
-//    }
-//  } else if (TailSize <= 0) {
-//    return;
-//  }
-//
-//  ConfName.strncpy(Start, TailSize + 1);
-//}
-
-
 //
 // main entry point
 //
@@ -2718,25 +2615,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             i;
-  //UINT64            TscDiv;
-  //UINT64            TscRemainder = 0;
-//  LOADER_ENTRY      *LoaderEntry;
-//  XStringW          ConfName;
-//  TagDict*          smbiosTags = NULL;
-//  XBool          UniteConfigs = false;
   EFI_TIME          Now;
   XBool             HaveDefaultVolume;
   REFIT_MENU_SCREEN BootScreen;
   BootScreen.isBootScreen = true; //other screens will be constructed as false
-  // CHAR16            *InputBuffer; //, *Y;
-  //  EFI_INPUT_KEY Key;
-
-  // Init assets dir: misc
-  /*Status = */ //egMkDir(&self.getCloverDir(), L"misc");
-  //Should apply to: "ACPI/origin/" too
 
   MemLogInit();
-  //gSettings.GUI.TextOnly = true;
 
   // bootstrap
   gST       = SystemTable;
