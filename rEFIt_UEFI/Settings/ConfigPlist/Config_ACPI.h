@@ -77,12 +77,9 @@ public:
       {
         using super = XmlString8AllowEmpty;
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-          if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          if ( !isDefined() ) return true;
-          if ( xstring8.length() == 4 ) return true;
-          xmlLiteParser->addWarning(generateErrors, S8Printf("Expect a string of 4 chars for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-          return true; // TODO : we should return false, but currently Clover accept string that are not 4 chars long.
-//          return false; // parsing can continue.
+          bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+          if ( xstring8.length() != 4 ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Expect a string of 4 chars for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+          return b;
         }
 
       } Signature = Signature_Class();

@@ -70,22 +70,21 @@ public:
             {
               using super = XmlUInt8;
               virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-                if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-                if ( value() >= MAX_RAM_SLOTS ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot >= MAX_RAM_SLOTS. It must a number between 0 and %d at '%s:%d'", MAX_RAM_SLOTS-1, xmlPath.c_str(), keyPos.getLine()));
-                return true;
+                bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+                if ( value() >= MAX_RAM_SLOTS ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Slot cannot >= MAX_RAM_SLOTS. It must a number between 0 and %d at '%s:%d'", MAX_RAM_SLOTS-1, xmlPath.c_str(), keyPos.getLine()));
+                return b;
               }
             };
             class TypeClass: public XmlString8AllowEmpty {
                 using super = XmlString8AllowEmpty;
                 virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-                  if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-                  if ( isDefined() ) {
-                    if ( xstring8.isEqualIC("DDR") ) return true;
-                    if ( xstring8.isEqualIC("DDR2") ) return true;
-                    if ( xstring8.isEqualIC("DDR3") ) return true;
-                    if ( xstring8.isEqualIC("DDR4") ) return true;
-                  }
-                  return xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be \"DDR\", \"DDR2\", \"DDR3\" or \"DDR4\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+                  bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+                  if ( xstring8.isEqualIC("DDR") ) return b;
+                  if ( xstring8.isEqualIC("DDR2") ) return b;
+                  if ( xstring8.isEqualIC("DDR3") ) return b;
+                  if ( xstring8.isEqualIC("DDR4") ) return b;
+                  b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be \"DDR\", \"DDR2\", \"DDR3\" or \"DDR4\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+                  return b;
                 }
               public:
             };
@@ -150,7 +149,7 @@ public:
             public:
 
               virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-                if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+                bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
                 if ( size() > UINT8_MAX ) {
                   xmlLiteParser->addWarning(generateErrors, S8Printf("You cannot declare more then 256 memory modules in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
                   while ( size() > 256 ) RemoveAtIndex(size()-1);
@@ -167,7 +166,7 @@ public:
                   }
                 }
 
-                return true;
+                return b;
               }
 
               decltype(ModuleDictClass::SlotIndex)::ValueType dgetCalculatedSlotCount() const {
@@ -206,8 +205,7 @@ public:
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-          if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          XBool b = true;
+          bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
           if ( Modules.size() == 0 ) {
             // whatever if SlotCount is defined or not, and whatever value, it's ok.
             return b;
@@ -263,19 +261,18 @@ public:
         class DeviceClass: public XmlString8AllowEmpty {
           using super = XmlString8AllowEmpty;
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-            if ( isDefined() ) {
-              if ( xstring8.isEqualIC("ATI") ) return true;
-              if ( xstring8.isEqualIC("NVidia") ) return true;
-              if ( xstring8.isEqualIC("IntelGFX") ) return true;
-              if ( xstring8.isEqualIC("LAN") ) return true;
-              if ( xstring8.isEqualIC("WIFI") ) return true;
-              if ( xstring8.isEqualIC("Firewire") ) return true;
-              if ( xstring8.isEqualIC("HDMI") ) return true;
-              if ( xstring8.isEqualIC("USB") ) return true;
-              if ( xstring8.isEqualIC("NVME") ) return true;
-            }
-            return xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be \"ATI\", \"NVidia\", \"IntelGFX\", \"LAN\", \"WIFI\", \"Firewire\", \"HDMI\", \"USB\" or \"NVME\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+            if ( xstring8.isEqualIC("ATI") ) return b;
+            if ( xstring8.isEqualIC("NVidia") ) return b;
+            if ( xstring8.isEqualIC("IntelGFX") ) return b;
+            if ( xstring8.isEqualIC("LAN") ) return b;
+            if ( xstring8.isEqualIC("WIFI") ) return b;
+            if ( xstring8.isEqualIC("Firewire") ) return b;
+            if ( xstring8.isEqualIC("HDMI") ) return b;
+            if ( xstring8.isEqualIC("USB") ) return b;
+            if ( xstring8.isEqualIC("NVME") ) return b;
+            b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be \"ATI\", \"NVidia\", \"IntelGFX\", \"LAN\", \"WIFI\", \"Firewire\", \"HDMI\", \"USB\" or \"NVME\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+            return b;
           }
         } Device = DeviceClass();
         XmlUInt8 ID = XmlUInt8();
@@ -292,8 +289,7 @@ public:
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-          if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          XBool b = true;
+          bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
           return b;
         }
         const decltype(Device)::ValueType& dgetDevice() const { return Device.isDefined() ? Device.value() : Device.nullValue; };
@@ -366,10 +362,9 @@ public:
           using super = XmlString8AllowEmpty;
         protected:
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-            if ( !isDefined() ) return true;
-            if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
-            return true;
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+            if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            return b;
           }
       };
 
@@ -379,15 +374,11 @@ public:
         public:
           ProductNameClass() : super(true) {};
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-            if ( !isDefined() ) {
-              xmlLiteParser->addError(generateErrors, S8Printf("You must define ProductName in SMBIOS dict, line %d", keyPos.getLine()));
-              return true;
-            }
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
             MacModel Model;
             Model = GetModelFromString(xstring8);
-            if ( Model == MaxMacModel ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid ProductName '%s' in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
-            return true;
+            if ( Model == MaxMacModel ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid ProductName '%s' in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            return b;
           }
       };
 
@@ -397,16 +388,17 @@ public:
         public:
           BiosVersionClass() : super(true) {};
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
             if ( !value().contains(".") ) {
-              return xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' doesn't contains a dot in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+              b = xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' doesn't contains a dot in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+            }else{
+              size_t rindex = value().rindexOf(".");
+              if ( value().length() - rindex < 7 ) {
+                b = xmlLiteParser->addWarning(generateErrors, S8Printf("Last part of BiosVersion '%s' must be at least 6 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+              }
+              // Should we check the format of these 6 last chars ?
             }
-            size_t rindex = value().rindexOf(".");
-            if ( value().length() - rindex < 7 ) {
-              return xmlLiteParser->addWarning(generateErrors, S8Printf("Last part of BiosVersion '%s' must be at least 6 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
-            }
-            // Should we check the format of these 6 last chars ?
-            return true;
+            return b;
           }
       };
 
@@ -416,12 +408,12 @@ public:
         public:
           BiosReleaseDateClass() : super(true) {};
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
             if ( value().length() != 8  &&  value().length() != 10 ) {
-              return xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' must 8 or 10 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
+              b = xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' must 8 or 10 chars in dict '%s:%d'.", value().c_str(), xmlPath.c_str(), keyPos.getLine()));
             }
             // Should we check the format of these 8 or 10 last chars ?
-            return true;
+            return b;
           }
       };
 
@@ -505,7 +497,7 @@ public:
     
     
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       if ( !ProductName.isDefined() ) {
 //        return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
         if ( defaultMacModel < MaxMacModel ) {
@@ -515,7 +507,7 @@ public:
       if ( hasModel() ) {
         if ( BiosVersion.isDefined() ) {
           if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosVersion.reset();
           }
         }
@@ -523,20 +515,20 @@ public:
           int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(getModel()), BiosReleaseDate.value());
           if ( compareReleaseDateResult == 0 ) {
             // This is just 'info'. It's useless but fine to define the same as default.
-            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine()));
+            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosReleaseDate.reset();
           }else
           if ( compareReleaseDateResult == 1 ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine()));
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosReleaseDate.reset();
           }
         }
         if ( EfiVersion.isDefined() ) {
           if ( AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) > AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             EfiVersion.reset();
           } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
-            xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
           }
         }
       }else{
@@ -545,7 +537,7 @@ public:
         // If ccpv, let's say nothing at the moment
         //xmlLiteParser->addInfo(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
       }
-      return true; // we don't want to invalidate the whole dict
+      return b;
     }
 
 

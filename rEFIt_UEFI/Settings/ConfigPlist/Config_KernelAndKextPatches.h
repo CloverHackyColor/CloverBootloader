@@ -56,7 +56,6 @@ public:
 
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
           if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          XBool b = true;
           // TODO after switch to new parser : name.isEmpty()
           if ( !Find.isDefined() || Find.value().size() == 0 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Find has to be defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
           if ( !Replace.isDefined() || Replace.value().size() == 0 ) return xmlLiteParser->addWarning(generateErrors, S8Printf("One of Find or Replace has to be defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
@@ -64,7 +63,7 @@ public:
             xmlLiteParser->addWarning(generateErrors, S8Printf("Replace is longer (%zu) than Find (%zu) and will be truncated in dict '%s:%d'.", Replace.value().size(), Find.value().size(), xmlPath.c_str(), keyPos.getLine()));
             Replace.setSize(Find.value().size(), 0); // 0 is ignored because we know that this call will truncate
           }
-          return b;
+          return true;
         }
         
         XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
@@ -153,8 +152,7 @@ public:
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
         virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-          if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-          XBool b = true;
+          bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
           b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
           if ( !Name.isDefined() ) {
             b = xmlLiteParser->addWarning(generateErrors, S8Printf("Kernel patch is ignored because 'Name' is not defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
@@ -246,11 +244,11 @@ public:
     {
       using super = XmlStringWArray;
       virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-        if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+        bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
         if ( value().contains("\\") ) {
-          return xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot contains '\\' for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+          b = xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot contains '\\' for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
         }
-        return true;
+        return b;
       }
     };
     
@@ -321,7 +319,7 @@ public:
         ATIConnectorsData.reset();
         ATIConnectorsPatch.reset();
       }
-      return true;
+      return true; // Return true to not reset the dict.
     }
 
     XBool dgetKPDebug() const { return Debug.isDefined() ? Debug.value() : XBool(false); };

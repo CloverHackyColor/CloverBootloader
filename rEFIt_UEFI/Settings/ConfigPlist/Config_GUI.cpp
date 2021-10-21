@@ -15,11 +15,11 @@
 
 
 XBool ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) {
-  if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+  bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
   for ( size_t idx=0 ; idx < SubEntries.size() ; ++idx ) SubEntries.ElementAt(idx).Parent = this;
   if ( Arguments.isDefined() && AddArguments.isDefined() ) {
     xmlLiteParser->addError(generateErrors, S8Printf("Arguments is ignored because AddArguments is defined. Line %d.", keyPos.getLine()));
     Arguments.reset();
   }
-  return true;
+  return b;
 }

@@ -32,8 +32,7 @@ public:
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
     
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-      XBool b = true;
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       if ( !Address.isDefined() || Address.value() == 0) {
         if ( Enabled.isDefined() && Enabled.value() ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Enabled is ignored because Address is not defined or 0 in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
       }
@@ -171,8 +170,7 @@ public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    XBool b = true;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     return b;
   }
   const decltype(FuzzyMatch)::ValueType& dgetFuzzyMatch() const { return FuzzyMatch.isDefined() ? FuzzyMatch.value() : FuzzyMatch.nullValue; };

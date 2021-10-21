@@ -122,23 +122,21 @@ class MyTopLevelDictClass : public ConfigPlistAbstractClass
 
 ##### Validation of a single value
 
-To validate and reject bad input, override the method validate. Imagine we have an integer value that is a count between 0 and 15. Example 3 : 
+To validate and reject bad input, override the method validate. Imagine we have an integer value that is a count between -2 and 18. Example 3 : 
 
 ```
 class CountClass : public XmlInt64
 {
   using super = XmlInt64;
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     if ( value() < -2 ) {
-        xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot be negative. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-        return false;
+        b = xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot be negative. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
     }
     if ( value() > 18 ) {
-        xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot > 18. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-        return false;
+        b = xmlLiteParser->addWarning(generateErrors, S8Printf("Count cannot > 18. It must a number between -2 and 18 inclusive at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
     }
-    return true;
+    return b;
   }
 } Count = CountClass();
 ```
@@ -169,22 +167,20 @@ class MyDictClass : public XmlDict
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       if ( !type.isDefined() ) {
-          xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-          return false;
-      }
+          b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+      }else
       if ( type.value() == 1 ) {
         if ( subType.isDefined() ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("Type 1 cannot have a subtype at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-            return false;
+            b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type 1 cannot have a subtype at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
         }
       }else if ( type.value() == 2 ) {
         // nothing to do because subtype is optional, and if it exists, weknow that the value is correct because of th validation in MyXmlSubType
       }else{
         panic("There is a bug in MyXmlType::validate() !");
       }
-      return true;
+      return b;
     }
 };
 ```
@@ -209,31 +205,30 @@ class MyDictClass : public XmlDict
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       if ( !type.isDefined() ) {
-          xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-          return false;
-      }
+          b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type must befined at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+      }else
       if ( type.value() == 1 ) {
         if ( subType.isDefined() ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("Type 1 cannot have a subtype at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-            return false;
+            b = xmlLiteParser->addWarning(generateErrors, S8Printf("Type 1 cannot have a subtype in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
         }
       }else if ( type.value() == 2 ) {
         if ( subType.isDefined() ) {
-            if ( type.value() != 11 and type.value() != 12 )
-            xmlLiteParser->addWarning(generateErrors, S8Printf("SubType must be 11 or 12 at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-            return false;
+            if ( subType.value() != 11  &&  subType.value() != 12 ) {
+              b = xmlLiteParser->addWarning(generateErrors, S8Printf("SubType must be 11 or 12 at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+            }
         }else{
           // subtype is optional, so it's ok.
         }
       }else{
         xmlLiteParser->addWarning(generateErrors, S8Printf("Type must be 1 or 2 at '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-        // Let's think that we want to ignore this value but we syill want to keep the dict as the other field still has meaning.
-        type.reset(); // we only reset this field. We don't return false because that'll undefine the whole dict
-        subtype.reset(); // SubType means nothing without a Type.
+        // Let's think that we want to ignore this value but we still want to keep the dict as the other field still has meaning.
+        // That's why we don't set b to false
+        type.reset(); // We only reset this field. We don't return false because that'll undefine the whole dict
+        subType.reset(); // SubType means nothing without a Type.
       }
-      return true;
+      return b;
     }
 };
 ```

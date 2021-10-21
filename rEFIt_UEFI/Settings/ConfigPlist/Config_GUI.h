@@ -433,8 +433,8 @@ public:
             public:
               virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
               virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-                if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-                return true;
+                bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+                return b;
               }
 
               XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };

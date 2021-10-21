@@ -107,8 +107,7 @@ public:
       virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound) override;
       
       virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-        if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-        if ( !isDefined() ) return true;
+        bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
 //        if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
 //          log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
 //          return true; // Bug in ACPI_DSDT_Fixe_Array. We don't want to reset all the values, so return true.
@@ -117,7 +116,7 @@ public:
 //          xmlLiteParser->addWarning(generateErrors, S8Printf("FixHeaders is ACPI/DSDT in deprecated. Move it to ACPI."));
 //          return true; // return true because we handle this value anyway.
 //        }
-        return true;
+        return b;
       }
 
       const ACPI_DSDT_Fix& getFixHeaders() const {

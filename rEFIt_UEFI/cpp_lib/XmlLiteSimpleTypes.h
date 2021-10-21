@@ -167,12 +167,11 @@ if (xmlPath.containsIC("BoardSerialNumber"_XS8) ) {
   NOP;
 }
 #endif
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     if ( !canBeEmpty && xstring8.isEmpty() ) {
-      xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-      return false;
+      b = xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
     }
-    return true;
+    return b;
   }
 
 //  operator const XString8& () const { return xstring8; };
@@ -204,12 +203,11 @@ public:
   virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
   // TODO validate !_canBeEmpty
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     if ( !canBeEmpty && xstringW.isEmpty() ) {
-      xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-      return false;
+      b = xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty for tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
     }
-    return true;
+    return b;
   }
 
   operator const XStringW& () const { return xstringW; };
@@ -260,9 +258,9 @@ public:
   virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
   virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const char** keyValuePtr, size_t* keyValueLengthPtr);
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    if ( xstring8.isEmpty() ) return false;
-    return true;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+    if ( xstring8.isEmpty() ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("String cannot be empty at tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+    return b;
   }
 
   operator const XString8& () const { return xstring8; };
@@ -298,9 +296,9 @@ public:
 
 //  virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    if ( xstring8.isEqual("!") ) return false; // it's an empty disabled key
-    return true;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+    if ( xstring8.isEqual("!") ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Disabled key (prefix with '!') cannot be emptyString cannot be empty at tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+    return b;
   }
 
   operator const XString8& () const { return xstring8; };

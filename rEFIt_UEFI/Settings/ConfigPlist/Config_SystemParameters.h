@@ -16,20 +16,19 @@ public:
   class InjectKextsClass: public XmlBoolOrString {
     using super = XmlBoolOrString;
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-      if ( isDefined() && xmlString8.isDefined() ) {
-        if ( !xmlString8.value().isEqualIC("Detect") ) return xmlLiteParser->addWarning(generateErrors, S8Printf("InjectKexts must be a boolean or \"Detect\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      if ( xmlString8.isDefined() ) {
+        if ( !xmlString8.value().isEqualIC("Detect") ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("InjectKexts must be a boolean or \"Detect\" in dict '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
       }
-      return true;
+      return b;
     }
   };
   class CustomUUIDClass : public XmlString8AllowEmpty {
     using super = XmlString8AllowEmpty;
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-      if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-      if ( !isDefined() ) return true;
-      if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf(" invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
-      return true;
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf(" invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+      return b;
     }
   };
 
@@ -65,8 +64,7 @@ public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    XBool b = true;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     return b;
   }
 

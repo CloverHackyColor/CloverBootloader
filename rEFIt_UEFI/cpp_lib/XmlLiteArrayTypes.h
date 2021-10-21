@@ -106,7 +106,8 @@ XBool XmlArray<T>::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPat
   return true;
 }
 
-
+// The purpose of this class is to expose a ConstXString8Array instead of a XObjArray<XString8>. That way, usual XString8Array methods can be used.
+// References of XStringW are copied by the validate method.
 class XmlString8Array : public XmlArray<XmlString8>
 {
     using super = XmlArray<XmlString8>;
@@ -130,7 +131,7 @@ class XmlString8Array : public XmlArray<XmlString8>
     // Validate can remove invalid element. So we have to regenerate 'array'. There is no object copy, so it's very quick
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override
     {
-      XBool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       array.setEmpty();
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {
         array.AddReference(&super::ElementAt(idx).value(), false);
@@ -140,10 +141,8 @@ class XmlString8Array : public XmlArray<XmlString8>
 
 };
 
-//class XmlString8AllowEmptyArray : public XmlArray<XmlString8AllowEmpty>
-//{
-//};
-
+// The purpose of this class is to expose a ConstXStringWArray instead of a XObjArray<XStringW>. That way, usual XStringWArray methods can be used.
+// References of XStringW are copied by the validate method.
 class XmlStringWArray : public XmlArray<XmlStringW>
 {
     using super = XmlArray<XmlStringW>;
@@ -171,7 +170,7 @@ NOP;
     }
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override
     {
-      XBool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       // Validate can remove invalid element. So we have to regenerate 'array'. There is no object copy, so it's very quick
       array.setEmpty();
       for ( size_t idx = 0 ; idx < super::size() ; idx++ ) {

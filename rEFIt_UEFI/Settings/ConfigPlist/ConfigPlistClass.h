@@ -101,8 +101,7 @@ public:
   virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
 
   virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-    if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-    if ( !isDefined() ) return true;
+    bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
     if ( LString8(ACPI.DSDT.Fixes.ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
       log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
     }
@@ -119,7 +118,7 @@ public:
         }
       }
     }
-    return true;
+    return b;
   }
 
   const decltype(DisableDrivers)::ValueType& dgetDisabledDriverArray() const { return DisableDrivers.isDefined() ? DisableDrivers.value() : DisableDrivers.nullValue; };

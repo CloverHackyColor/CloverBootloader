@@ -21,10 +21,9 @@ public:
         class GuidClass : public XmlString8AllowEmpty {
           using super = XmlString8AllowEmpty;
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-            if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
-            if ( !isDefined() ) return true;
-            if ( !IsValidGuidString(xstring8) ) return xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid GUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
-            return true;
+            bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+            if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid GUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            return b;
           }
         };
       protected:
@@ -82,12 +81,12 @@ public:
 //      return false;
 //    }
 //    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-//if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+//      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
 //      if ( !xmlString8.isDefined() ) return true;
 //      if ( xmlString8.value().isEqualIC("UseMacAddr0") ) return true;
 //      if ( xmlString8.value().isEqualIC("UseMacAddr1") ) return true;
-//      xmlLiteParser->addWarning(generateErrors, S8Printf("Expecting an integer or \"Detect\" or \"No\" for tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-//      return false;
+//      b = xmlLiteParser->addWarning(generateErrors, S8Printf("Expecting an integer or \"Detect\" or \"No\" for tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+//      return b;
 //    }
     public:
 //      const decltype(xmlString8)::ValueType& dgetRtROMAsString() const { return xmlString8.isDefined() ? xmlString8.value() : xmlString8.nullValue; };
@@ -119,13 +118,13 @@ public:
 
 //  class ROMClass: public XmlData {
 //    virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
-//if ( !super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) ) return false;
+//      bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
 //      if ( "UseMacAddr0"_XS8.isEqualIC(value().CData()) ) return true;
 //      if ( "UseMacAddr1"_XS8.isEqualIC(value().CData()) ) return true;
 //      // TODO check length and format of ROM
 //      return true;
-//      xmlLiteParser->addWarning(generateErrors, S8Printf("Expecting \"UseMacAddr0\", \"UseMacAddr0\" or data tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
-//      return false;
+//      b = xmlLiteParser->addWarning(generateErrors, S8Printf("Expecting \"UseMacAddr0\", \"UseMacAddr0\" or data tag '%s:%d'", xmlPath.c_str(), keyPos.getLine()));
+//      return b;
 //    }
 //  };
 
