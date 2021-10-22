@@ -57,7 +57,7 @@ extern "C" int main(int argc, const char * argv[])
   #ifdef JIEF_DEBUG
       path = "config-nowarning-noerror.plist";
       path = "config-test2.plist";
-      path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/config.plist";
+      path = "/JiefLand/5.Devel/Clover/user config/mifjpn/2021-10-22/config.plist";
       //path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/smbios.plist";
   #endif
   
@@ -109,9 +109,7 @@ extern "C" int main(int argc, const char * argv[])
     }
   }
   if ( b ) {
-    if ( xmlLiteParser.getXmlParserMessageArray().size() == 0 ) {
-      printf("Your plist looks so wonderful. Well done!\n");
-    }
+    printf("Your plist looks so wonderful. Well done!\n");
     return 0;
   }else{
     return 1;
