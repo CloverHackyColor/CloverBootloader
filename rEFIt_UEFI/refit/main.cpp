@@ -123,9 +123,9 @@ XBool                gThemeNeedInit  = true;
 XBool                DoHibernateWake = false;
 
 
-EFI_HANDLE ConsoleInHandle;
-EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
-EFI_KEY_DATA KeyData;
+//EFI_HANDLE ConsoleInHandle;
+//EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
+//EFI_KEY_DATA KeyData;
 
 EFI_HANDLE AudioDriverHandle;
 XStringW OpenRuntimeEfiName;
@@ -2631,7 +2631,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   InitBooterLog();
 
-  ConsoleInHandle = SystemTable->ConsoleInHandle;
+//  ConsoleInHandle = SystemTable->ConsoleInHandle;
 
 //#define DEBUG_ERALY_CRASH
 #ifdef DEBUG_ERALY_CRASH
@@ -2765,11 +2765,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("UnicodeCollation Status=%s\n", efiStrError(Status));
   }
   
-  Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (void **)&SimpleTextEx);
-  if ( EFI_ERROR(Status) ) {
-    SimpleTextEx = NULL;
-  }
-  DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
+//  Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (void **)&SimpleTextEx);
+//  if ( EFI_ERROR(Status) ) {
+//    SimpleTextEx = NULL;
+//  }
+//  DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
 
   gConf.InitialisePlatform();
 
