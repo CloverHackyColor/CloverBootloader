@@ -90,7 +90,7 @@ typedef struct {
 class ACPI_NAME
 {
 public:
-	XString8 Name = XString8();
+  XString8 Name = XString8();
   
 #if __cplusplus > 201703L
   XBool operator == (const ACPI_NAME&) const = default;
@@ -100,10 +100,10 @@ public:
     if ( !(Name == other.Name) ) return false;
     return true;
   }
-  void takeValueFrom(const ACPI_NAME& configPlist)
-  {
-    //Name = configPlist.dgetName();
-  }
+//  void takeValueFrom(const ACPI_NAME& other)
+//  {
+//    Name = other.Name;
+//  }
 
   XString8Array getSplittedName() const {
     XString8Array splittedName = Split<XString8Array>(Name, ".");
@@ -134,10 +134,10 @@ public:
     if ( !(renameTo == other.renameTo) ) return false;
     return true;
   }
-  void takeValueFrom(const XmlAddKey<XmlKey, XmlString8>& configPlist)
+  void takeValueFrom(const XmlAddKey<XmlKey, XmlString8>& other)
   {
-    acpiName.Name = configPlist.key();
-    renameTo = configPlist.value();
+    acpiName.Name = other.key();
+    renameTo = other.value();
   }
 
   XString8 getRenameTo() const {
@@ -172,12 +172,6 @@ public:
 class CUSTOM_LOADER_SUBENTRY_SETTINGS;
 class CUSTOM_LOADER_SUBENTRY;
 
-//class ConfigPlistClass;
-//class ConfigPlistClass::GUI_Custom_Entry_Class;
-//template<class C> class XmlArray;
-
-//void CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
                    
 class CUSTOM_LOADER_SUBENTRY_SETTINGS
 {
@@ -206,21 +200,16 @@ public: // temporary, must be protected:
     if ( !(_NoCaches == other._NoCaches) ) return false;
     return true;
   }
-  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_SubEntry_Class& configPlist)
+  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_SubEntry_Class& other)
   {
-    Disabled = configPlist.dgetDisabled();
-    _Arguments = configPlist.dget_Arguments();
-    _AddArguments = configPlist.dget_AddArguments();
-    _FullTitle = configPlist.dget_FullTitle();
-    _Title = configPlist.dget_Title();
-    _NoCaches = configPlist.dget_NoCaches();
+    Disabled = other.dgetDisabled();
+    _Arguments = other.dget_Arguments();
+    _AddArguments = other.dget_AddArguments();
+    _FullTitle = other.dget_FullTitle();
+    _Title = other.dget_Title();
+    _NoCaches = other.dget_NoCaches();
   }
 
-public:
-
-//  friend void ::CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-//  friend XBool FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
-//  friend class ::CUSTOM_LOADER_SUBENTRY;
 };
 
 class CUSTOM_LOADER_ENTRY;
@@ -240,11 +229,7 @@ public:
   const XString8& getFullTitle() const;
 };
 
-//class GUI_Custom_Entry_Class;
 class CUSTOM_LOADER_ENTRY_SETTINGS;
-//
-//void CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
-//XBool FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN XBool SubEntry);
 
 extern const XString8 defaultInstallTitle;
 extern const XString8 defaultRecoveryTitle;
@@ -257,17 +242,17 @@ extern const XStringW defaultRecoveryDriveImagePath;
 class EFI_GRAPHICS_OUTPUT_BLT_PIXELClass : public EFI_GRAPHICS_OUTPUT_BLT_PIXEL
 {
 public:
-	EFI_GRAPHICS_OUTPUT_BLT_PIXELClass() { Blue = 0; Green = 0; Red = 0; Reserved = 0; }
+  EFI_GRAPHICS_OUTPUT_BLT_PIXELClass() { Blue = 0; Green = 0; Red = 0; Reserved = 0; }
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXELClass(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& other) { Blue = other.Blue; Green = other.Green; Red = other.Red; Reserved = other.Reserved; }
   
-	XBool operator == (const EFI_GRAPHICS_OUTPUT_BLT_PIXELClass& other) const {
-		if ( !(Blue == other.Blue) ) return false;
-		if ( !(Green == other.Green) ) return false;
-		if ( !(Red == other.Red) ) return false;
-		if ( !(Reserved == other.Reserved) ) return false;
-		return true;
-	}
+  XBool operator == (const EFI_GRAPHICS_OUTPUT_BLT_PIXELClass& other) const {
+    if ( !(Blue == other.Blue) ) return false;
+    if ( !(Green == other.Green) ) return false;
+    if ( !(Red == other.Red) ) return false;
+    if ( !(Reserved == other.Reserved) ) return false;
+    return true;
+  }
 };
 
 class CUSTOM_LOADER_ENTRY_SETTINGS
@@ -342,39 +327,36 @@ public:
     if ( !(ForceTextMode == other.ForceTextMode) ) return false;
     return true;
   }
-  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class& configPlist)
+  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class& other)
   {
-    Disabled = configPlist.dgetDisabled();
-    ImageData = configPlist.dgetImageData();
-    DriveImageData = configPlist.dgetDriveImageData();
-    Volume = configPlist.dgetVolume();
-    Path = configPlist.dgetPath();
-    Arguments = configPlist.dgetArguments();
-    AddArguments = configPlist.dgetAddArguments();
-    FullTitle = configPlist.dgetFullTitle();
-    Settings = configPlist.dgetSettings();
-    Hotkey = configPlist.dgetHotkey();
-    CommonSettings = configPlist.dgetCommonSettings();
-    Hidden = configPlist.dgetHidden();
-    AlwaysHidden = configPlist.dgetAlwaysHidden();
-    Type = configPlist.dgetType();
-    VolumeType = configPlist.dgetVolumeType();
-    KernelScan = configPlist.dgetKernelScan();
-    CustomLogoAsXString8 = configPlist.dgetCustomLogoAsXString8();
-    CustomLogoAsData = configPlist.dgetCustomLogoAsData();
-    BootBgColor = configPlist.dgetBootBgColor();
-    InjectKexts = configPlist.dgetInjectKexts();
-    NoCaches = configPlist.dgetNoCaches();
-    SubEntriesSettings.takeValueFrom(configPlist.SubEntries);
-    m_DriveImagePath = configPlist.dgetm_DriveImagePath();
-    m_Title = configPlist.dgetm_Title();
-    CustomLogoTypeSettings = configPlist.dgetCustomLogoTypeSettings();
-    m_ImagePath = configPlist.dgetm_ImagePath();
-    ForceTextMode = configPlist.dgetForceTextMode();
+    Disabled = other.dgetDisabled();
+    ImageData = other.dgetImageData();
+    DriveImageData = other.dgetDriveImageData();
+    Volume = other.dgetVolume();
+    Path = other.dgetPath();
+    Arguments = other.dgetArguments();
+    AddArguments = other.dgetAddArguments();
+    FullTitle = other.dgetFullTitle();
+    Settings = other.dgetSettings();
+    Hotkey = other.dgetHotkey();
+    CommonSettings = other.dgetCommonSettings();
+    Hidden = other.dgetHidden();
+    AlwaysHidden = other.dgetAlwaysHidden();
+    Type = other.dgetType();
+    VolumeType = other.dgetVolumeType();
+    KernelScan = other.dgetKernelScan();
+    CustomLogoAsXString8 = other.dgetCustomLogoAsXString8();
+    CustomLogoAsData = other.dgetCustomLogoAsData();
+    BootBgColor = other.dgetBootBgColor();
+    InjectKexts = other.dgetInjectKexts();
+    NoCaches = other.dgetNoCaches();
+    SubEntriesSettings.takeValueFrom(other.SubEntries);
+    m_DriveImagePath = other.dgetm_DriveImagePath();
+    m_Title = other.dgetm_Title();
+    CustomLogoTypeSettings = other.dgetCustomLogoTypeSettings();
+    m_ImagePath = other.dgetm_ImagePath();
+    ForceTextMode = other.dgetForceTextMode();
   }
-
-  friend class ::CUSTOM_LOADER_ENTRY;
-//  friend void ::CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
 
 
   const XString8& dgetTitle() const {
@@ -475,21 +457,21 @@ public:
     if ( !(VolumeType == other.VolumeType) ) return false;
     return true;
   }
-  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Legacy_Class& configPlist)
+  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Legacy_Class& other)
   {
-    Disabled = configPlist.dgetDisabled();
-    ImagePath = configPlist.dgetImagePath();
-    ImageData = configPlist.dgetImageData();
-    DriveImagePath = configPlist.dgetDriveImagePath();
-    DriveImageData = configPlist.dgetDriveImageData();
-    Volume = configPlist.dgetVolume();
-    FullTitle = configPlist.dgetFullTitle();
-    Title = configPlist.dgetTitle();
-    Hotkey = configPlist.dgetHotkey();
-    Hidden = configPlist.dgetHidden();
-    AlwaysHidden = configPlist.dgetAlwaysHidden();
-    Type = configPlist.dgetType();
-    VolumeType = configPlist.dgetVolumeType();
+    Disabled = other.dgetDisabled();
+    ImagePath = other.dgetImagePath();
+    ImageData = other.dgetImageData();
+    DriveImagePath = other.dgetDriveImagePath();
+    DriveImageData = other.dgetDriveImageData();
+    Volume = other.dgetVolume();
+    FullTitle = other.dgetFullTitle();
+    Title = other.dgetTitle();
+    Hotkey = other.dgetHotkey();
+    Hidden = other.dgetHidden();
+    AlwaysHidden = other.dgetAlwaysHidden();
+    Type = other.dgetType();
+    VolumeType = other.dgetVolumeType();
   }
 };
 
@@ -562,20 +544,20 @@ public:
     if ( !(VolumeType == other.VolumeType) ) return false;
     return true;
   }
-  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class& configPlist)
+  void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class& other)
   {
-    Disabled = configPlist.dgetDisabled();
-    ImagePath = configPlist.dgetImagePath();
-    ImageData = configPlist.dgetImageData();
-    Volume = configPlist.dgetVolume();
-    Path = configPlist.dgetPath();
-    Arguments = configPlist.dgetArguments();
-    FullTitle = configPlist.dgetFullTitle();
-    Title = configPlist.dgetTitle();
-    Hotkey = configPlist.dgetHotkey();
-    Hidden = configPlist.dgetHidden();
-    AlwaysHidden = configPlist.dgetAlwaysHidden();
-    VolumeType = configPlist.dgetVolumeType();
+    Disabled = other.dgetDisabled();
+    ImagePath = other.dgetImagePath();
+    ImageData = other.dgetImageData();
+    Volume = other.dgetVolume();
+    Path = other.dgetPath();
+    Arguments = other.dgetArguments();
+    FullTitle = other.dgetFullTitle();
+    Title = other.dgetTitle();
+    Hotkey = other.dgetHotkey();
+    Hidden = other.dgetHidden();
+    AlwaysHidden = other.dgetAlwaysHidden();
+    VolumeType = other.dgetVolumeType();
   }
 
 };
@@ -645,7 +627,7 @@ public:
   XBuffer<uint8_t> Replace = XBuffer<uint8_t>();
 
 #if __cplusplus > 201703L
-		XBool operator == (const VBIOS_PATCH&) const = default;
+    XBool operator == (const VBIOS_PATCH&) const = default;
 #endif
     XBool isEqual(const VBIOS_PATCH& other) const
     {
@@ -653,10 +635,10 @@ public:
       if ( !(Replace == other.Replace) ) return false;
       return true;
     }
-    void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_PatchVBiosBytes_Class& configPlist)
+    void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_PatchVBiosBytes_Class& other)
     {
-      Find = configPlist.dgetFind();
-      Replace = configPlist.dgetReplace();
+      Find = other.dgetFind();
+      Replace = other.dgetReplace();
     }
 };
 
@@ -666,7 +648,7 @@ class PatchVBiosBytesNewClass : public XObjArrayWithTakeValueFromXmlArray<VBIOS_
 public:
   
 #if __cplusplus > 201703L
-		XBool operator == (const PatchVBiosBytesNewClass& other) const { return XObjArray<VBIOS_PATCH>::operator ==(other); }
+    XBool operator == (const PatchVBiosBytesNewClass& other) const { return XObjArray<VBIOS_PATCH>::operator ==(other); }
 #endif
 
   // Temporary bridge to old struct.
@@ -685,8 +667,8 @@ public:
 
   XBool isEqual(const PatchVBiosBytesNewClass& other) const
   {
-  	return XObjArray<VBIOS_PATCH>::isEqual(other);
-//  	getVBIOS_PATCH_BYTES();
+    return XObjArray<VBIOS_PATCH>::isEqual(other);
+//    getVBIOS_PATCH_BYTES();
 //    if ( VBIOS_PATCH_BYTES_array.size() != other.VBIOS_PATCH_BYTES_array.size() ) return false;
 //    for ( size_t idx = 0 ; idx < VBIOS_PATCH_BYTES_array.size() ; ++idx ) {
 //      if ( VBIOS_PATCH_BYTES_array[idx].NumberOfBytes != other[idx].Find.size() ) return false;
@@ -695,7 +677,7 @@ public:
 //    }
 //    return true;
   }
-//  void takeValueFrom(const PatchVBiosBytesNewClass& configPlist)
+//  void takeValueFrom(const PatchVBiosBytesNewClass& other)
 //  {
 //  }
 
@@ -745,7 +727,7 @@ public:
       XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
       
 #if __cplusplus > 201703L
-		XBool operator == (const BootClass&) const = default;
+    XBool operator == (const BootClass&) const = default;
 #endif
       XBool isEqual(const BootClass& other) const
       {
@@ -777,34 +759,34 @@ public:
         if ( !(CustomLogoAsData == other.CustomLogoAsData) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::Boot_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::Boot_Class& other)
       {
-        Timeout = configPlist.dgetTimeout();
-        SkipHibernateTimeout = configPlist.dgetSkipHibernateTimeout();
-        DisableCloverHotkeys = configPlist.dgetDisableCloverHotkeys();
-        BootArgs = configPlist.dgetBootArgs();
-        NeverDoRecovery = configPlist.dgetNeverDoRecovery();
-        LastBootedVolume = configPlist.dgetLastBootedVolume();
-        DefaultVolume = configPlist.dgetDefaultVolume();
-        DefaultLoader = configPlist.dgetDefaultLoader();
-        DebugLog = configPlist.dgetDebugLog();
-        FastBoot = configPlist.dgetFastBoot();
-        NoEarlyProgress = configPlist.dgetNoEarlyProgress();
-        NeverHibernate = configPlist.dgetNeverHibernate();
-        StrictHibernate = configPlist.dgetStrictHibernate();
-        RtcHibernateAware = configPlist.dgetRtcHibernateAware();
-        HibernationFixup = configPlist.dgetHibernationFixup();
-        SignatureFixup = configPlist.dgetSignatureFixup();
-        SecureSetting = configPlist.dgetSecureSetting();
-        SecureBootPolicy = configPlist.dgetSecureBootPolicy();
-        SecureBootWhiteList = configPlist.dgetSecureBootWhiteList();
-        SecureBootBlackList = configPlist.dgetSecureBootBlackList();
-        XMPDetection = configPlist.dgetXMPDetection();
-        LegacyBoot = configPlist.dgetLegacyBoot(gFirmwareClover);
-        LegacyBiosDefaultEntry = configPlist.dgetLegacyBiosDefaultEntry();
-        CustomLogoType = configPlist.dgetCustomLogoType();
-        CustomLogoAsXString8 = configPlist.dgetCustomLogoAsXString8();
-        CustomLogoAsData = configPlist.dgetCustomLogoAsData();
+        Timeout = other.dgetTimeout();
+        SkipHibernateTimeout = other.dgetSkipHibernateTimeout();
+        DisableCloverHotkeys = other.dgetDisableCloverHotkeys();
+        BootArgs = other.dgetBootArgs();
+        NeverDoRecovery = other.dgetNeverDoRecovery();
+        LastBootedVolume = other.dgetLastBootedVolume();
+        DefaultVolume = other.dgetDefaultVolume();
+        DefaultLoader = other.dgetDefaultLoader();
+        DebugLog = other.dgetDebugLog();
+        FastBoot = other.dgetFastBoot();
+        NoEarlyProgress = other.dgetNoEarlyProgress();
+        NeverHibernate = other.dgetNeverHibernate();
+        StrictHibernate = other.dgetStrictHibernate();
+        RtcHibernateAware = other.dgetRtcHibernateAware();
+        HibernationFixup = other.dgetHibernationFixup();
+        SignatureFixup = other.dgetSignatureFixup();
+        SecureSetting = other.dgetSecureSetting();
+        SecureBootPolicy = other.dgetSecureBootPolicy();
+        SecureBootWhiteList = other.dgetSecureBootWhiteList();
+        SecureBootBlackList = other.dgetSecureBootBlackList();
+        XMPDetection = other.dgetXMPDetection();
+        LegacyBoot = other.dgetLegacyBoot(gFirmwareClover);
+        LegacyBiosDefaultEntry = other.dgetLegacyBiosDefaultEntry();
+        CustomLogoType = other.dgetCustomLogoType();
+        CustomLogoAsXString8 = other.dgetCustomLogoAsXString8();
+        CustomLogoAsData = other.dgetCustomLogoAsData();
       }
   };
   
@@ -833,12 +815,12 @@ public:
             if ( !(OtherOS == other.OtherOS) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::ACPI_Class::ACPI_DropTables_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::ACPI_Class::ACPI_DropTables_Class& other)
           {
-            Signature = configPlist.dgetSignature();
-            TableId = configPlist.dgetTableId();
-            TabLength = configPlist.dgetTabLength();
-            OtherOS = configPlist.dgetOtherOS();
+            Signature = other.dgetSignature();
+            TableId = other.dgetTableId();
+            TabLength = other.dgetTabLength();
+            OtherOS = other.dgetOtherOS();
           }
       };
       
@@ -868,14 +850,14 @@ public:
               if ( !(PatchDsdtMenuItem == other.PatchDsdtMenuItem) ) return false;
               return true;
             }
-            void takeValueFrom(const ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class& configPlist)
+            void takeValueFrom(const ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class& other)
             {
-              Disabled = configPlist.dgetDisabled();
-              PatchDsdtLabel = configPlist.dgetPatchDsdtLabel();
-              PatchDsdtFind = configPlist.dgetPatchDsdtFind();
-              PatchDsdtReplace = configPlist.dgetPatchDsdtReplace();
-              PatchDsdtTgt = configPlist.dgetPatchDsdtTgt();
-              PatchDsdtMenuItem.BValue = !configPlist.dgetDisabled();
+              Disabled = other.dgetDisabled();
+              PatchDsdtLabel = other.dgetPatchDsdtLabel();
+              PatchDsdtFind = other.dgetPatchDsdtFind();
+              PatchDsdtReplace = other.dgetPatchDsdtReplace();
+              PatchDsdtTgt = other.dgetPatchDsdtTgt();
+              PatchDsdtMenuItem.BValue = !other.dgetDisabled();
             }
           };
 
@@ -886,7 +868,6 @@ public:
           UINT32                  FixDsdt = 0;
           XBool                   ReuseFFFF = false;
           XBool                   SuspendOverride = false;
-//          XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
           XObjArrayWithTakeValueFromXmlArray<DSDT_Patch, ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class>
                                   DSDTPatchArray = XObjArrayWithTakeValueFromXmlArray<DSDT_Patch, ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class>();
 
@@ -905,16 +886,16 @@ public:
             if ( !DSDTPatchArray.isEqual(other.DSDTPatchArray) ) return false;
             return true;
           }
-        void takeValueFrom(const ConfigPlistClass::ACPI_Class::DSDT_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::ACPI_Class::DSDT_Class& other)
           {
-            DsdtName = configPlist.dgetDsdtName();
-            DebugDSDT = configPlist.dgetDebugDSDT();
-            Rtc8Allowed = configPlist.dgetRtc8Allowed();
-            PNLF_UID = configPlist.dgetPNLF_UID();
-            FixDsdt = configPlist.dgetFixDsdt();
-            ReuseFFFF = configPlist.dgetReuseFFFF();
-            SuspendOverride = configPlist.dgetSuspendOverride();
-            DSDTPatchArray.takeValueFrom(configPlist.Patches);
+            DsdtName = other.dgetDsdtName();
+            DebugDSDT = other.dgetDebugDSDT();
+            Rtc8Allowed = other.dgetRtc8Allowed();
+            PNLF_UID = other.dgetPNLF_UID();
+            FixDsdt = other.dgetFixDsdt();
+            ReuseFFFF = other.dgetReuseFFFF();
+            SuspendOverride = other.dgetSuspendOverride();
+            DSDTPatchArray.takeValueFrom(other.Patches);
           }
       };
       
@@ -942,13 +923,13 @@ public:
                 if ( !(GeneratePluginType == other.GeneratePluginType) ) return false;
                 return true;
               }
-              void takeValueFrom(const ConfigPlistClass::ACPI_Class::SSDT_Class::XmlUnionGenerate& configPlist)
+              void takeValueFrom(const ConfigPlistClass::ACPI_Class::SSDT_Class::XmlUnionGenerate& other)
               {
-                GeneratePStates = configPlist.dgetGeneratePStates();
-                GenerateCStates = configPlist.dgetGenerateCStates();
-                GenerateAPSN = configPlist.dgetGenerateAPSN();
-                GenerateAPLF = configPlist.dgetGenerateAPLF();
-                GeneratePluginType = configPlist.dgetGeneratePluginType();
+                GeneratePStates = other.dgetGeneratePStates();
+                GenerateCStates = other.dgetGenerateCStates();
+                GenerateAPSN = other.dgetGenerateAPSN();
+                GenerateAPLF = other.dgetGenerateAPLF();
+                GeneratePluginType = other.dgetGeneratePluginType();
               }
           };
 
@@ -992,24 +973,24 @@ public:
             if ( !Generate.isEqual(other.Generate) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::ACPI_Class::SSDT_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::ACPI_Class::SSDT_Class& other)
           {
-            DropSSDTSetting = configPlist.dgetDropSSDTSetting();
-            NoOemTableId = configPlist.dgetNoOemTableId();
-            NoDynamicExtract = configPlist.dgetNoDynamicExtract();
-            EnableISS = configPlist.dgetEnableISS();
-            EnableC7 = configPlist.dgetEnableC7();
-            _EnableC6 = configPlist.dget_EnableC6();
-            _EnableC4 = configPlist.dget_EnableC4();
-            _EnableC2 = configPlist.dget_EnableC2();
-            _C3Latency = configPlist.dget_C3Latency();
-            PLimitDict = configPlist.dgetPLimitDict();
-            UnderVoltStep = configPlist.dgetUnderVoltStep();
-            DoubleFirstState = configPlist.dgetDoubleFirstState();
-            MinMultiplier = configPlist.dgetMinMultiplier();
-            MaxMultiplier = configPlist.dgetMaxMultiplier();
-            PluginType = configPlist.dgetPluginType();
-            Generate.takeValueFrom(configPlist.Generate);
+            DropSSDTSetting = other.dgetDropSSDTSetting();
+            NoOemTableId = other.dgetNoOemTableId();
+            NoDynamicExtract = other.dgetNoDynamicExtract();
+            EnableISS = other.dgetEnableISS();
+            EnableC7 = other.dgetEnableC7();
+            _EnableC6 = other.dget_EnableC6();
+            _EnableC4 = other.dget_EnableC4();
+            _EnableC2 = other.dget_EnableC2();
+            _C3Latency = other.dget_C3Latency();
+            PLimitDict = other.dgetPLimitDict();
+            UnderVoltStep = other.dgetUnderVoltStep();
+            DoubleFirstState = other.dgetDoubleFirstState();
+            MinMultiplier = other.dgetMinMultiplier();
+            MaxMultiplier = other.dgetMaxMultiplier();
+            PluginType = other.dgetPluginType();
+            Generate.takeValueFrom(other.Generate);
           }
       };
 
@@ -1029,39 +1010,22 @@ public:
 //                                        DeviceRename = XObjArrayWithTakeValueFrom<ACPI_RENAME_DEVICE, ConfigPlistClass::ACPI_Class::ACPI_RenamesDevices_Class>();
       class DeviceRename_Array : public XObjArray<ACPI_RENAME_DEVICE> {
        public:
-        void takeValueFrom(const ConfigPlistClass::ACPI_Class::ACPI_RenamesDevices_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::ACPI_Class::ACPI_RenamesDevices_Class& other)
         {
           size_t idx;
-          for ( idx = 0 ; idx < configPlist.size() ; ++idx ) {
-            if ( idx < size() ) ElementAt(idx).takeValueFrom(configPlist.getAtIndex(idx));
+          for ( idx = 0 ; idx < other.size() ; ++idx ) {
+            if ( idx < size() ) ElementAt(idx).takeValueFrom(other.getAtIndex(idx));
             else {
               ACPI_RENAME_DEVICE* s = new ACPI_RENAME_DEVICE;
-              s->takeValueFrom(configPlist.getAtIndex(idx));
+              s->takeValueFrom(other.getAtIndex(idx));
               AddReference(s, true);
             }
           }
           while ( idx < size() ) RemoveAtIndex(idx);
         }
       } DeviceRename = DeviceRename_Array();
-//      XObjArray<ACPIDropTablesClass>    ACPIDropTablesArray = XObjArray<ACPIDropTablesClass>();
       XObjArrayWithTakeValueFromXmlArray<ACPIDropTablesClass, ConfigPlistClass::ACPI_Class::ACPI_DropTables_Class>
                                         ACPIDropTablesArray = XObjArrayWithTakeValueFromXmlArray<ACPIDropTablesClass, ConfigPlistClass::ACPI_Class::ACPI_DropTables_Class>();
-//      class ACPIDropTablesArrayClass : public XObjArray<ACPIDropTablesClass> {
-//       public:
-//        void takeValueFrom(const XmlArray<ConfigPlistClass::ACPI_Class::ACPI_DropTables_Class>& configPlist)
-//        {
-//          size_t idx;
-//          for ( idx = 0 ; idx < configPlist.size() ; ++idx ) {
-//            if ( idx < size() ) ElementAt(idx).takeValueFrom(configPlist[idx]);
-//            else {
-//              ACPIDropTablesClass* s = new ACPIDropTablesClass;
-//              s->takeValueFrom(configPlist[idx]);
-//              AddReference(s, true);
-//            }
-//          }
-//          while ( idx < size() ) RemoveAtIndex(idx);
-//        }
-//      } ACPIDropTablesArray = ACPIDropTablesArrayClass();
       DSDTClass DSDT =                  DSDTClass();
       SSDTClass SSDT =                  SSDTClass();
         
@@ -1087,23 +1051,23 @@ public:
         if ( !SSDT.isEqual(other.SSDT) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::ACPI_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::ACPI_Class& other)
       {
-        ResetAddr = configPlist.dgetResetAddr();
-        ResetVal = configPlist.dgetResetVal();
-        SlpSmiEnable = configPlist.dgetSlpSmiEnable();
-        FixHeaders = configPlist.dgetFixHeaders() || configPlist.DSDT.Fixes.dgetFixHeaders();
-        FixMCFG = configPlist.dgetFixMCFG();
-        NoASPM = configPlist.dgetNoASPM();
-        smartUPS = configPlist.dgetsmartUPS();
-        PatchNMI = configPlist.dgetPatchNMI();
-        AutoMerge = configPlist.dgetAutoMerge();
-        DisabledAML = configPlist.dgetDisabledAML();
-        SortedACPI = configPlist.dgetSortedACPI();
-        DeviceRename.takeValueFrom(configPlist.RenameDevices);
-        ACPIDropTablesArray.takeValueFrom(configPlist.ACPIDropTablesArray);
-        DSDT.takeValueFrom(configPlist.DSDT);
-        SSDT.takeValueFrom(configPlist.SSDT);
+        ResetAddr = other.dgetResetAddr();
+        ResetVal = other.dgetResetVal();
+        SlpSmiEnable = other.dgetSlpSmiEnable();
+        FixHeaders = other.dgetFixHeaders() || other.DSDT.Fixes.dgetFixHeaders();
+        FixMCFG = other.dgetFixMCFG();
+        NoASPM = other.dgetNoASPM();
+        smartUPS = other.dgetsmartUPS();
+        PatchNMI = other.dgetPatchNMI();
+        AutoMerge = other.dgetAutoMerge();
+        DisabledAML = other.dgetDisabledAML();
+        SortedACPI = other.dgetSortedACPI();
+        DeviceRename.takeValueFrom(other.RenameDevices);
+        ACPIDropTablesArray.takeValueFrom(other.ACPIDropTablesArray);
+        DSDT.takeValueFrom(other.DSDT);
+        SSDT.takeValueFrom(other.SSDT);
       }
   };
 
@@ -1127,12 +1091,12 @@ public:
             if ( !(PointerMirror == other.PointerMirror) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Mouse_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Mouse_Class& other)
           {
-            PointerSpeed = configPlist.dgetPointerSpeed();
-            PointerEnabled = configPlist.dgetPointerEnabled();
-            DoubleClickTime = configPlist.dgetDoubleClickTime();
-            PointerMirror = configPlist.dgetPointerMirror();
+            PointerSpeed = other.dgetPointerSpeed();
+            PointerEnabled = other.dgetPointerEnabled();
+            DoubleClickTime = other.dgetDoubleClickTime();
+            PointerMirror = other.dgetPointerMirror();
           }
       } ;
       class ScanClass {
@@ -1157,14 +1121,14 @@ public:
             if ( !(NoLegacy == other.NoLegacy) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Scan_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::GUI_Class::GUI_Scan_Class& other)
           {
-            DisableEntryScan = configPlist.dgetDisableEntryScan();
-            DisableToolScan = configPlist.dgetDisableToolScan();
-            KernelScan = configPlist.dgetKernelScan();
-            LinuxScan = configPlist.dgetLinuxScan();
-            LegacyFirst = configPlist.dgetLegacyFirst();
-            NoLegacy = configPlist.dgetNoLegacy();
+            DisableEntryScan = other.dgetDisableEntryScan();
+            DisableToolScan = other.dgetDisableToolScan();
+            KernelScan = other.dgetKernelScan();
+            LinuxScan = other.dgetLinuxScan();
+            LegacyFirst = other.dgetLegacyFirst();
+            NoLegacy = other.dgetNoLegacy();
           }
       };
 
@@ -1185,15 +1149,12 @@ public:
       XString8Array           HVHideStrings = XString8Array();
       ScanClass               Scan =        ScanClass();
       MouseClass              Mouse =      MouseClass();
-//      XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS> CustomEntriesSettings = XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>();
       XObjArrayWithTakeValueFromXmlArray<CUSTOM_LOADER_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class>
                               CustomEntriesSettings = XObjArrayWithTakeValueFromXmlArray<CUSTOM_LOADER_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Entry_Class>();
-//      XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS> CustomLegacySettings = XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS>();
       XObjArrayWithTakeValueFromXmlArray<CUSTOM_LEGACY_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Legacy_Class>
                               CustomLegacySettings = XObjArrayWithTakeValueFromXmlArray<CUSTOM_LEGACY_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Legacy_Class>();
-//      XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>   CustomToolSettings = XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>();
-    XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>
-                            CustomToolSettings = XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>();
+      XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>
+                              CustomToolSettings = XObjArrayWithTakeValueFromXmlArray<CUSTOM_TOOL_ENTRY_SETTINGS, ConfigPlistClass::GUI_Class::GUI_Custom_Class::GUI_Custom_Tool_Class>();
 
       XBool getDarkEmbedded(XBool isDaylight) const;
     
@@ -1223,27 +1184,27 @@ public:
         if ( !CustomToolSettings.isEqual(other.CustomToolSettings) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::GUI_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::GUI_Class& other)
       {
-        Timezone = configPlist.dgetTimezone();
-        Theme = configPlist.dgetTheme();
-        EmbeddedThemeType = configPlist.dgetEmbeddedThemeType();
-        PlayAsync = configPlist.dgetPlayAsync();
-        CustomIcons = configPlist.dgetCustomIcons();
-        TextOnly = configPlist.dgetTextOnly();
-        ShowOptimus = configPlist.dgetShowOptimus();
-        ScreenResolution = configPlist.dgetScreenResolution();
-        ProvideConsoleGop = configPlist.dgetProvideConsoleGop();
-        ConsoleMode = configPlist.dgetConsoleMode();
-        Language = configPlist.dgetLanguage();
-        languageCode = configPlist.dgetlanguageCode();
-        KbdPrevLang = configPlist.dgetKbdPrevLang();
-        HVHideStrings = configPlist.dgetHVHideStrings();
-        Scan.takeValueFrom(configPlist.Scan);
-        Mouse.takeValueFrom(configPlist.Mouse);
-        CustomEntriesSettings.takeValueFrom(configPlist.Custom.Entries);
-        CustomLegacySettings.takeValueFrom(configPlist.Custom.Legacy);
-        CustomToolSettings.takeValueFrom(configPlist.Custom.Tool);
+        Timezone = other.dgetTimezone();
+        Theme = other.dgetTheme();
+        EmbeddedThemeType = other.dgetEmbeddedThemeType();
+        PlayAsync = other.dgetPlayAsync();
+        CustomIcons = other.dgetCustomIcons();
+        TextOnly = other.dgetTextOnly();
+        ShowOptimus = other.dgetShowOptimus();
+        ScreenResolution = other.dgetScreenResolution();
+        ProvideConsoleGop = other.dgetProvideConsoleGop();
+        ConsoleMode = other.dgetConsoleMode();
+        Language = other.dgetLanguage();
+        languageCode = other.dgetlanguageCode();
+        KbdPrevLang = other.dgetKbdPrevLang();
+        HVHideStrings = other.dgetHVHideStrings();
+        Scan.takeValueFrom(other.Scan);
+        Mouse.takeValueFrom(other.Mouse);
+        CustomEntriesSettings.takeValueFrom(other.Custom.Entries);
+        CustomLegacySettings.takeValueFrom(other.Custom.Legacy);
+        CustomToolSettings.takeValueFrom(other.Custom.Tool);
       }
 
   };
@@ -1267,7 +1228,7 @@ public:
       undefinable_bool        _EnableC2 = undefinable_bool();
       
 #if __cplusplus > 201703L
-		XBool operator == (const CPUClass&) const = default;
+    XBool operator == (const CPUClass&) const = default;
 #endif
     XBool isEqual(const CPUClass& other) const
     {
@@ -1288,23 +1249,23 @@ public:
       if ( !(_EnableC2 == other._EnableC2) ) return false;
       return true;
     }
-    void takeValueFrom(const ConfigPlistClass::CPU_Class& configPlist)
+    void takeValueFrom(const ConfigPlistClass::CPU_Class& other)
     {
-      QPI = configPlist.dgetQPI();
-      CpuFreqMHz = configPlist.dgetCpuFreqMHz();
-      CpuType = configPlist.dgetCpuType();
-      QEMU = configPlist.dgetQEMU();
-      UseARTFreq = configPlist.dgetUseARTFreq();
-      BusSpeed = configPlist.dgetBusSpeed();
-      UserChange = configPlist.dgetUserChange();
-      SavingMode = configPlist.dgetSavingMode();
-      HWPEnable = configPlist.dgetHWPEnable();
-      HWPValue = configPlist.dgetHWPValue();
-      TDP = configPlist.dgetTDP();
-      TurboDisabled = configPlist.dgetTurboDisabled();
-      _EnableC6 = configPlist.dget_EnableC6();
-      _EnableC4 = configPlist.dget_EnableC4();
-      _EnableC2 = configPlist.dget_EnableC2();
+      QPI = other.dgetQPI();
+      CpuFreqMHz = other.dgetCpuFreqMHz();
+      CpuType = other.dgetCpuType();
+      QEMU = other.dgetQEMU();
+      UseARTFreq = other.dgetUseARTFreq();
+      BusSpeed = other.dgetBusSpeed();
+      UserChange = other.dgetUserChange();
+      SavingMode = other.dgetSavingMode();
+      HWPEnable = other.dgetHWPEnable();
+      HWPValue = other.dgetHWPValue();
+      TDP = other.dgetTDP();
+      TurboDisabled = other.dgetTurboDisabled();
+      _EnableC6 = other.dget_EnableC6();
+      _EnableC4 = other.dget_EnableC4();
+      _EnableC2 = other.dget_EnableC2();
     }
   };
 
@@ -1320,10 +1281,7 @@ public:
       UINT8                _InjectSystemID = 2; // 0=false, 1=true, other value = default.
     public:
       XBool                NvidiaWeb = false;
-      
-//      friend class ::SETTINGS_DATA;
-//      friend unsigned long long ::GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
-        
+
 #if __cplusplus > 201703L
       XBool operator == (const SystemParametersClass&) const = default;
 #endif
@@ -1339,16 +1297,16 @@ public:
         if ( !(NvidiaWeb == other.NvidiaWeb) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::SystemParameters_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::SystemParameters_Class& other)
       {
-        WithKexts = configPlist.dgetWithKexts();
-        WithKextsIfNoFakeSMC = configPlist.dgetWithKextsIfNoFakeSMC();
-        NoCaches = configPlist.dgetNoCaches();
-        BacklightLevel = configPlist.dgetBacklightLevel();
-        BacklightLevelConfig = configPlist.dgetBacklightLevelConfig();
-        CustomUuid = configPlist.dgetCustomUuid();
-        _InjectSystemID = configPlist.dget_InjectSystemID();
-        NvidiaWeb = configPlist.dgetNvidiaWeb();
+        WithKexts = other.dgetWithKexts();
+        WithKextsIfNoFakeSMC = other.dgetWithKextsIfNoFakeSMC();
+        NoCaches = other.dgetNoCaches();
+        BacklightLevel = other.dgetBacklightLevel();
+        BacklightLevelConfig = other.dgetBacklightLevelConfig();
+        CustomUuid = other.dgetCustomUuid();
+        _InjectSystemID = other.dget_InjectSystemID();
+        NvidiaWeb = other.dgetNvidiaWeb();
       }
   };
 
@@ -1376,14 +1334,14 @@ public:
             if ( !(EdidFixVideoInputSignal == other.EdidFixVideoInputSignal) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_EDID_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_EDID_Class& other)
           {
-            InjectEDID = configPlist.dgetInjectEDID();
-            CustomEDID = configPlist.dgetCustomEDID();
-            VendorEDID = configPlist.dgetVendorEDID();
-            ProductEDID = configPlist.dgetProductEDID();
-            EdidFixHorizontalSyncPulseWidth = configPlist.dgetEdidFixHorizontalSyncPulseWidth();
-            EdidFixVideoInputSignal = configPlist.dgetEdidFixVideoInputSignal();
+            InjectEDID = other.dgetInjectEDID();
+            CustomEDID = other.dgetCustomEDID();
+            VendorEDID = other.dgetVendorEDID();
+            ProductEDID = other.dgetProductEDID();
+            EdidFixHorizontalSyncPulseWidth = other.dgetEdidFixHorizontalSyncPulseWidth();
+            EdidFixVideoInputSignal = other.dgetEdidFixVideoInputSignal();
           }
       };
       
@@ -1405,12 +1363,12 @@ public:
           if ( !(InjectNVidia == other.InjectNVidia) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::Graphics_Class::XmlInjectUnion& configPlist)
+        void takeValueFrom(const ConfigPlistClass::Graphics_Class::XmlInjectUnion& other)
         {
-          GraphicsInjector = configPlist.dgetGraphicsInjector();
-          InjectIntel = configPlist.dgetInjectIntel();
-          InjectATI = configPlist.dgetInjectATI();
-          InjectNVidia = configPlist.dgetInjectNVidia();
+          GraphicsInjector = other.dgetGraphicsInjector();
+          InjectIntel = other.dgetInjectIntel();
+          InjectATI = other.dgetInjectATI();
+          InjectNVidia = other.dgetInjectNVidia();
         }
       };
 
@@ -1438,15 +1396,15 @@ public:
           if ( !(LoadVBios == other.LoadVBios) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_ATI_NVIDIA_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::Graphics_Class::Graphics_ATI_NVIDIA_Class& other)
         {
-          Signature = configPlist.dgetSignature();
-          Model = configPlist.dgetModel();
-          Id = configPlist.dgetId();
-          SubId = configPlist.dgetSubId();
-          VideoRam = configPlist.dgetVideoRam();
-          VideoPorts = configPlist.dgetVideoPorts();
-          LoadVBios = configPlist.dgetLoadVBios();
+          Signature = other.dgetSignature();
+          Model = other.dgetModel();
+          Id = other.dgetId();
+          SubId = other.dgetSubId();
+          VideoRam = other.dgetVideoRam();
+          VideoPorts = other.dgetVideoPorts();
+          LoadVBios = other.dgetLoadVBios();
         }
       };
 
@@ -1506,28 +1464,28 @@ public:
         if ( !NVIDIACardList.isEqual(other.NVIDIACardList) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::Graphics_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::Graphics_Class& other)
       {
-        PatchVBios = configPlist.dgetPatchVBios();
-        PatchVBiosBytes.takeValueFrom(configPlist.PatchVBiosBytesArray);
-        RadeonDeInit = configPlist.dgetRadeonDeInit();
-        LoadVBios = configPlist.dgetLoadVBios();
-        VRAM = configPlist.dgetVRAM();
-        RefCLK = configPlist.dgetRefCLK();
-        FBName = configPlist.dgetFBName();
-        VideoPorts = configPlist.dgetVideoPorts();
-        NvidiaGeneric = configPlist.dgetNvidiaGeneric();
-        NvidiaNoEFI = configPlist.dgetNvidiaNoEFI();
-        NvidiaSingle = configPlist.dgetNvidiaSingle();
-        Dcfg = configPlist.dgetDcfg();
-        NVCAP = configPlist.dgetNVCAP();
-        BootDisplay = configPlist.dgetBootDisplay();
-        DualLink = configPlist.dgetDualLink();
-        _IgPlatform = configPlist.dget_IgPlatform();
-        EDID.takeValueFrom(configPlist.EDID);
-        InjectAsDict.takeValueFrom(configPlist.Inject);
-        ATICardList.takeValueFrom(configPlist.ATI);
-        NVIDIACardList.takeValueFrom(configPlist.NVIDIA);
+        PatchVBios = other.dgetPatchVBios();
+        PatchVBiosBytes.takeValueFrom(other.PatchVBiosBytesArray);
+        RadeonDeInit = other.dgetRadeonDeInit();
+        LoadVBios = other.dgetLoadVBios();
+        VRAM = other.dgetVRAM();
+        RefCLK = other.dgetRefCLK();
+        FBName = other.dgetFBName();
+        VideoPorts = other.dgetVideoPorts();
+        NvidiaGeneric = other.dgetNvidiaGeneric();
+        NvidiaNoEFI = other.dgetNvidiaNoEFI();
+        NvidiaSingle = other.dgetNvidiaSingle();
+        Dcfg = other.dgetDcfg();
+        NVCAP = other.dgetNVCAP();
+        BootDisplay = other.dgetBootDisplay();
+        DualLink = other.dgetDualLink();
+        _IgPlatform = other.dget_IgPlatform();
+        EDID.takeValueFrom(other.EDID);
+        InjectAsDict.takeValueFrom(other.Inject);
+        ATICardList.takeValueFrom(other.ATI);
+        NVIDIACardList.takeValueFrom(other.NVIDIA);
       }
 
       //XBool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
@@ -1558,12 +1516,12 @@ public:
           if ( !(AFGLowPowerState == other.AFGLowPowerState) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_Audio_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_Audio_Class& other)
         {
-          ResetHDA = configPlist.dgetResetHDA();
-          HDAInjection = configPlist.dgetHDAInjection();
-          HDALayoutId = configPlist.dgetHDALayoutId();
-          AFGLowPowerState = configPlist.dgetAFGLowPowerState();
+          ResetHDA = other.dgetResetHDA();
+          HDAInjection = other.dgetHDAInjection();
+          HDALayoutId = other.dgetHDALayoutId();
+          AFGLowPowerState = other.dgetAFGLowPowerState();
         }
       };
       class USBClass {
@@ -1588,14 +1546,14 @@ public:
           if ( !(NameXH00 == other.NameXH00) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_USB_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_USB_Class& other)
         {
-          USBInjection = configPlist.dgetUSBInjection();
-          USBFixOwnership = configPlist.dgetUSBFixOwnership();
-          InjectClockID = configPlist.dgetInjectClockID();
-          HighCurrent = configPlist.dgetHighCurrent();
-          NameEH00 = configPlist.dgetNameEH00();
-          //NameXH00 = configPlist.dgetNameXH00();
+          USBInjection = other.dgetUSBInjection();
+          USBFixOwnership = other.dgetUSBFixOwnership();
+          InjectClockID = other.dgetInjectClockID();
+          HighCurrent = other.dgetHighCurrent();
+          NameEH00 = other.dgetNameEH00();
+          //NameXH00 = other.dgetNameXH00();
         }
       };
 
@@ -1626,15 +1584,15 @@ public:
 //          if ( !(Label == other.Label) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_AddProperties_Dict_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_AddProperties_Dict_Class& other)
         {
-          Device = configPlist.dgetDevice();
-          Key = configPlist.dgetKey();
-          Value = configPlist.dgetValue();
-          ValueType = configPlist.dgetValueType();
-          MenuItem.BValue = !configPlist.dgetDisabled();
-//          DevicePathAsString = configPlist.dgetDevicePathAsString();
-//          Label = configPlist.dgetLabel();
+          Device = other.dgetDevice();
+          Key = other.dgetKey();
+          Value = other.dgetValue();
+          ValueType = other.dgetValueType();
+          MenuItem.BValue = !other.dgetDisabled();
+//          DevicePathAsString = other.dgetDevicePathAsString();
+//          Label = other.dgetLabel();
         }
       };
 
@@ -1660,19 +1618,19 @@ public:
           if ( !(MenuItem == other.MenuItem) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::SimplePropertyClass_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::SimplePropertyClass_Class& other)
         {
-          Key = configPlist.dgetKey();
-          Value = configPlist.dgetValue();
-          ValueType = configPlist.dgetValueType();
-          MenuItem.BValue = !configPlist.dgetDisabled();
+          Key = other.dgetKey();
+          Value = other.dgetValue();
+          ValueType = other.dgetValueType();
+          MenuItem.BValue = !other.dgetDisabled();
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion::Property& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion::Property& other)
         {
-          Key = configPlist.dgetKey();
-          Value = configPlist.dgetValue();
-          ValueType = configPlist.dgetValueType();
-          MenuItem.BValue = configPlist.dgetBValue();
+          Key = other.dgetKey();
+          Value = other.dgetValue();
+          ValueType = other.dgetValueType();
+          MenuItem.BValue = other.dgetBValue();
         }
       };
 
@@ -1717,12 +1675,12 @@ public:
               if ( !propertiesArray.isEqual(other.propertiesArray) ) return false;
               return true;
             }
-            void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion::Properties4DeviceClass& configPlist)
+            void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion::Properties4DeviceClass& other)
             {
-              Enabled = configPlist.dgetEnabled();
-              DevicePathAsString = configPlist.dgetDevicePathAsString();
-//              Label = configPlist.dgetLabel();
-              propertiesArray.takeValueFrom(configPlist);
+              Enabled = other.dgetEnabled();
+              DevicePathAsString = other.dgetDevicePathAsString();
+//              Label = other.dgetLabel();
+              propertiesArray.takeValueFrom(other);
             }
           };
 
@@ -1738,10 +1696,10 @@ public:
             if ( !PropertyArray.isEqual(other.PropertyArray) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion& configPlist)
+          void takeValueFrom(const ConfigPlistClass::DevicesClass::PropertiesUnion& other)
           {
-            propertiesAsString = configPlist.dgetpropertiesAsString();
-            PropertyArray.takeValueFrom(configPlist.PropertiesAsDict);
+            propertiesAsString = other.dgetpropertiesAsString();
+            PropertyArray.takeValueFrom(other.PropertiesAsDict);
           }
       };
 
@@ -1762,11 +1720,11 @@ public:
             if ( !CustomPropertyArray.isEqual(other.CustomPropertyArray) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_Arbitrary_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_Arbitrary_Class& other)
           {
-            Device = configPlist.dgetDevice();
-            Label = configPlist.dgetLabel();
-            CustomPropertyArray.takeValueFrom(configPlist.CustomProperties);
+            Device = other.dgetDevice();
+            Label = other.dgetLabel();
+            CustomPropertyArray.takeValueFrom(other.CustomProperties);
           }
       };
 
@@ -1797,16 +1755,16 @@ public:
           if ( !(FakeIMEI == other.FakeIMEI) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_FakeID_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::DevicesClass::Devices_FakeID_Class& other)
         {
-          FakeATI = configPlist.dgetFakeATI();
-          FakeNVidia = configPlist.dgetFakeNVidia();
-          FakeIntel = configPlist.dgetFakeIntel();
-          FakeLAN = configPlist.dgetFakeLAN();
-          FakeWIFI = configPlist.dgetFakeWIFI();
-          FakeSATA = configPlist.dgetFakeSATA();
-          FakeXHCI = configPlist.dgetFakeXHCI();
-          FakeIMEI = configPlist.dgetFakeIMEI();
+          FakeATI = other.dgetFakeATI();
+          FakeNVidia = other.dgetFakeNVidia();
+          FakeIntel = other.dgetFakeIntel();
+          FakeLAN = other.dgetFakeLAN();
+          FakeWIFI = other.dgetFakeWIFI();
+          FakeSATA = other.dgetFakeSATA();
+          FakeXHCI = other.dgetFakeXHCI();
+          FakeIMEI = other.dgetFakeIMEI();
         }
       };
 
@@ -1831,7 +1789,7 @@ public:
 
     
 #if __cplusplus > 201703L
-		XBool operator == (const DevicesClass&) const = default;
+    XBool operator == (const DevicesClass&) const = default;
 #endif
     XBool isEqual(const DevicesClass& other) const
     {
@@ -1854,25 +1812,25 @@ public:
       if ( !ArbitraryArray.isEqual(other.ArbitraryArray) ) return false;
       return true;
     }
-    void takeValueFrom(const ConfigPlistClass::DevicesClass& configPlist)
+    void takeValueFrom(const ConfigPlistClass::DevicesClass& other)
     {
-      StringInjector = configPlist.dgetStringInjector();
-      IntelMaxBacklight = configPlist.dgetIntelMaxBacklight();
-      IntelBacklight = configPlist.dgetIntelBacklight();
-      IntelMaxValue = configPlist.dgetIntelMaxValue();
-      LANInjection = configPlist.dgetLANInjection();
-      HDMIInjection = configPlist.dgetHDMIInjection();
-      NoDefaultProperties = configPlist.dgetNoDefaultProperties();
-      UseIntelHDMI = configPlist.dgetUseIntelHDMI();
-      ForceHPET = configPlist.dgetForceHPET();
-      DisableFunctions = configPlist.dgetDisableFunctions();
-      AirportBridgeDeviceName = configPlist.dgetAirportBridgeDeviceName();
-      Audio.takeValueFrom(configPlist.Audio);
-      USB.takeValueFrom(configPlist.USB);
-      FakeID.takeValueFrom(configPlist.FakeID);
-      AddPropertyArray.takeValueFrom(configPlist.AddProperties);
-      Properties.takeValueFrom(configPlist.Properties);
-      ArbitraryArray.takeValueFrom(configPlist.Arbitrary);
+      StringInjector = other.dgetStringInjector();
+      IntelMaxBacklight = other.dgetIntelMaxBacklight();
+      IntelBacklight = other.dgetIntelBacklight();
+      IntelMaxValue = other.dgetIntelMaxValue();
+      LANInjection = other.dgetLANInjection();
+      HDMIInjection = other.dgetHDMIInjection();
+      NoDefaultProperties = other.dgetNoDefaultProperties();
+      UseIntelHDMI = other.dgetUseIntelHDMI();
+      ForceHPET = other.dgetForceHPET();
+      DisableFunctions = other.dgetDisableFunctions();
+      AirportBridgeDeviceName = other.dgetAirportBridgeDeviceName();
+      Audio.takeValueFrom(other.Audio);
+      USB.takeValueFrom(other.USB);
+      FakeID.takeValueFrom(other.FakeID);
+      AddPropertyArray.takeValueFrom(other.AddProperties);
+      Properties.takeValueFrom(other.Properties);
+      ArbitraryArray.takeValueFrom(other.Arbitrary);
     }
 
       // 2021-04 : Following is temporary to compare with old way of storing properties.
@@ -2052,9 +2010,9 @@ printf("%s", "");
           XString8     comment = XString8();
           XBool        enabled = false;
           
-	#if __cplusplus > 201703L
+  #if __cplusplus > 201703L
           XBool operator == (const MMIOWhiteList&) const = default;
-	#endif
+  #endif
           XBool isEqual(const MMIOWhiteList& other) const
           {
             if ( !(address == other.address) ) return false;
@@ -2062,11 +2020,11 @@ printf("%s", "");
             if ( !(enabled == other.enabled) ) return false;
             return true;
           }
-        void takeValueFrom(const ConfigPlistClass::Quirks_Class::Quirks_MmioWhitelist_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::Quirks_Class::Quirks_MmioWhitelist_Class& other)
           {
-            address = configPlist.dgetaddress();
-            comment = configPlist.dgetcomment();
-            enabled = configPlist.dgetenabled();
+            address = other.dgetaddress();
+            comment = other.dgetcomment();
+            enabled = other.dgetenabled();
           }
       };
       class OcKernelQuirksClass
@@ -2108,19 +2066,19 @@ printf("%s", "");
             if ( !(XhciPortLimit == other.XhciPortLimit) ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcKernelQuirks_Class& configPlist)
+          void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcKernelQuirks_Class& other)
           {
-            AppleXcpmExtraMsrs = configPlist.dgetAppleXcpmExtraMsrs();
-            AppleXcpmForceBoost = configPlist.dgetAppleXcpmForceBoost();
-            DisableIoMapper = configPlist.dgetDisableIoMapper();
-            DisableLinkeditJettison = configPlist.dgetDisableLinkeditJettison();
-            DummyPowerManagement = configPlist.dgetDummyPowerManagement();
-            ExtendBTFeatureFlags = configPlist.dgetExtendBTFeatureFlags();
-            ExternalDiskIcons = configPlist.dgetExternalDiskIcons();
-            IncreasePciBarSize = configPlist.dgetIncreasePciBarSize();
-            PowerTimeoutKernelPanic = configPlist.dgetPowerTimeoutKernelPanic();
-            ThirdPartyDrives = configPlist.dgetThirdPartyDrives();
-            XhciPortLimit = configPlist.dgetXhciPortLimit();
+            AppleXcpmExtraMsrs = other.dgetAppleXcpmExtraMsrs();
+            AppleXcpmForceBoost = other.dgetAppleXcpmForceBoost();
+            DisableIoMapper = other.dgetDisableIoMapper();
+            DisableLinkeditJettison = other.dgetDisableLinkeditJettison();
+            DummyPowerManagement = other.dgetDummyPowerManagement();
+            ExtendBTFeatureFlags = other.dgetExtendBTFeatureFlags();
+            ExternalDiskIcons = other.dgetExternalDiskIcons();
+            IncreasePciBarSize = other.dgetIncreasePciBarSize();
+            PowerTimeoutKernelPanic = other.dgetPowerTimeoutKernelPanic();
+            ThirdPartyDrives = other.dgetThirdPartyDrives();
+            XhciPortLimit = other.dgetXhciPortLimit();
           }
       };
     
@@ -2169,25 +2127,25 @@ printf("%s", "");
           if ( !(SyncRuntimePermissions == other.SyncRuntimePermissions) ) return false;
           return true;
         }
-        void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcBooterQuirks_Class& configPlist)
+        void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcBooterQuirks_Class& other)
         {
-          AvoidRuntimeDefrag = configPlist.dgetAvoidRuntimeDefrag();
-          DevirtualiseMmio = configPlist.dgetDevirtualiseMmio();
-          DisableSingleUser = configPlist.dgetDisableSingleUser();
-          DisableVariableWrite = configPlist.dgetDisableVariableWrite();
-          DiscardHibernateMap = configPlist.dgetDiscardHibernateMap();
-          EnableSafeModeSlide = configPlist.dgetEnableSafeModeSlide();
-          EnableWriteUnprotector = configPlist.dgetEnableWriteUnprotector();
-          ForceExitBootServices = configPlist.dgetForceExitBootServices();
-          ProtectSecureBoot = configPlist.dgetProtectSecureBoot();
-          ProtectUefiServices = configPlist.dgetProtectUefiServices();
-          ProtectUefiServices = configPlist.dgetProtectUefiServices();
-          ProvideCustomSlide = configPlist.dgetProvideCustomSlide();
-          ProvideMaxSlide = configPlist.dgetProvideMaxSlide();
-          RebuildAppleMemoryMap = configPlist.dgetRebuildAppleMemoryMap();
-          SetupVirtualMap = configPlist.dgetSetupVirtualMap();
-          SignalAppleOS = configPlist.dgetSignalAppleOS();
-          SyncRuntimePermissions = configPlist.dgetSyncRuntimePermissions();
+          AvoidRuntimeDefrag = other.dgetAvoidRuntimeDefrag();
+          DevirtualiseMmio = other.dgetDevirtualiseMmio();
+          DisableSingleUser = other.dgetDisableSingleUser();
+          DisableVariableWrite = other.dgetDisableVariableWrite();
+          DiscardHibernateMap = other.dgetDiscardHibernateMap();
+          EnableSafeModeSlide = other.dgetEnableSafeModeSlide();
+          EnableWriteUnprotector = other.dgetEnableWriteUnprotector();
+          ForceExitBootServices = other.dgetForceExitBootServices();
+          ProtectSecureBoot = other.dgetProtectSecureBoot();
+          ProtectUefiServices = other.dgetProtectUefiServices();
+          ProtectUefiServices = other.dgetProtectUefiServices();
+          ProvideCustomSlide = other.dgetProvideCustomSlide();
+          ProvideMaxSlide = other.dgetProvideMaxSlide();
+          RebuildAppleMemoryMap = other.dgetRebuildAppleMemoryMap();
+          SetupVirtualMap = other.dgetSetupVirtualMap();
+          SignalAppleOS = other.dgetSignalAppleOS();
+          SyncRuntimePermissions = other.dgetSyncRuntimePermissions();
         }
 
       };
@@ -2213,14 +2171,14 @@ printf("%s", "");
         if ( !(QuirksMask == other.QuirksMask) ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::Quirks_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::Quirks_Class& other)
       {
-        FuzzyMatch = configPlist.dgetFuzzyMatch();
-        OcKernelCache = configPlist.dgetOcKernelCache();
-        OcKernelQuirks.takeValueFrom(configPlist.OcKernelQuirks);
-        OcBooterQuirks.takeValueFrom(configPlist.OcBooterQuirks);
-        mmioWhiteListArray.takeValueFrom(configPlist.MmioWhitelist);
-        QuirksMask = configPlist.dgetQuirksMask();
+        FuzzyMatch = other.dgetFuzzyMatch();
+        OcKernelCache = other.dgetOcKernelCache();
+        OcKernelQuirks.takeValueFrom(other.OcKernelQuirks);
+        OcBooterQuirks.takeValueFrom(other.OcBooterQuirks);
+        mmioWhiteListArray.takeValueFrom(other.MmioWhitelist);
+        QuirksMask = other.dgetQuirksMask();
       }
 };
 
@@ -2245,12 +2203,12 @@ printf("%s", "");
             if ( memcmp(&Guid, &other.Guid, sizeof(Guid)) != 0 ) return false;
             return true;
           }
-          void takeValueFrom(const ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block& configPlist)
+          void takeValueFrom(const ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block& other)
           {
-            Disabled = configPlist.dgetDisabled();
-            Comment = configPlist.dgetComment();
-            Name = configPlist.dgetName();
-            Guid = configPlist.dgetGuid();
+            Disabled = other.dgetDisabled();
+            Comment = other.dgetComment();
+            Name = other.dgetName();
+            Guid = other.dgetGuid();
           }
       };
         
@@ -2261,14 +2219,14 @@ printf("%s", "");
       UINT16                  BooterConfig = UINT16();
       XString8                BooterCfgStr = XString8();
       XString8                HWTarget = XString8();
-    XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block> BlockRtVariableArray = XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block>();
+      XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block> BlockRtVariableArray = XObjArrayWithTakeValueFromXmlArray<RT_VARIABLES, ConfigPlistClass::RtVariables_Class::Devices_RtVariables_Block>();
 
       XBool GetLegacyLanAddress() const {
         return RtROMAsString.isEqualIC("UseMacAddr0") || RtROMAsString.isEqualIC("UseMacAddr1");
       }
     
 #if __cplusplus > 201703L
-		XBool operator == (const RtVariablesClass&) const = default;
+    XBool operator == (const RtVariablesClass&) const = default;
 #endif
     XBool isEqual(const RtVariablesClass& other) const
     {
@@ -2282,16 +2240,16 @@ printf("%s", "");
       if ( !BlockRtVariableArray.isEqual(other.BlockRtVariableArray) ) return false;
       return true;
     }
-    void takeValueFrom(const ConfigPlistClass::RtVariables_Class& configPlist)
+    void takeValueFrom(const ConfigPlistClass::RtVariables_Class& other)
     {
-      RtROMAsString = configPlist.dgetRtROMAsString();
-      RtROMAsData = configPlist.dgetRtROMAsData();
-      RtMLBSetting = configPlist.dgetRtMLBSetting();
-      CsrActiveConfig = configPlist.dgetCsrActiveConfig();
-      BooterConfig = configPlist.dgetBooterConfig();
-      BooterCfgStr = configPlist.dgetBooterCfgStr();
-      BlockRtVariableArray.takeValueFrom(configPlist.Block);
-      HWTarget = configPlist.dgetHWTarget();
+      RtROMAsString = other.dgetRtROMAsString();
+      RtROMAsData = other.dgetRtROMAsData();
+      RtMLBSetting = other.dgetRtMLBSetting();
+      CsrActiveConfig = other.dgetCsrActiveConfig();
+      BooterConfig = other.dgetBooterConfig();
+      BooterCfgStr = other.dgetBooterCfgStr();
+      BlockRtVariableArray.takeValueFrom(other.Block);
+      HWTarget = other.dgetHWTarget();
     }
 
   };
@@ -2324,12 +2282,12 @@ printf("%s", "");
                 if ( !(SlotName == other.SlotName) ) return false;
                 return true;
               }
-              void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::SlotDeviceDictClass& configPlist)
+              void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::SlotDeviceDictClass& other)
               {
-                SmbiosIndex = configPlist.dgetDeviceN();
-                SlotID = configPlist.dgetSlotID();
-                SlotType = configPlist.dgetSlotType();
-                SlotName = configPlist.dgetSlotName();
+                SmbiosIndex = other.dgetDeviceN();
+                SlotID = other.dgetSlotID();
+                SlotType = other.dgetSlotType();
+                SlotName = other.dgetSlotName();
               }
         };
         
@@ -2414,11 +2372,11 @@ printf("%s", "");
               if ( !(User.isEqual(other.User)) ) return false;
               return true;
             }
-            void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass& configPlist)
+            void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass::MemoryDictClass& other)
             {
-              SlotCount = configPlist.dgetSlotCount();
-              UserChannels = configPlist.dgetUserChannels();
-              User.takeValueFrom(configPlist.Modules);
+              SlotCount = other.dgetSlotCount();
+              UserChannels = other.dgetUserChannels();
+              User.takeValueFrom(other.Modules);
             }
         };
 
@@ -2528,49 +2486,49 @@ printf("%s", "");
 //      if ( memcmp(REV, other.REV, sizeof(REV)) != 0 ) return false;
       return true;
     }
-    void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass& configPlist)
+    void takeValueFrom(const SmbiosPlistClass::SmbiosDictClass& other)
     {
       // SMBIOS TYPE0
-      BiosVendor = configPlist.dgetBiosVendor();
-      BiosVersion = configPlist.dgetBiosVersion();
-      EfiVersion = configPlist.dgetEfiVersion();
-      BiosReleaseDate = configPlist.dgetBiosReleaseDate();
+      BiosVendor = other.dgetBiosVendor();
+      BiosVersion = other.dgetBiosVersion();
+      EfiVersion = other.dgetEfiVersion();
+      BiosReleaseDate = other.dgetBiosReleaseDate();
       // SMBIOS TYPE1
-      ManufactureName = configPlist.dgetManufactureName();
-      ProductName = configPlist.dgetProductName();
-      SystemVersion = configPlist.dgetSystemVersion();
-      SerialNr = configPlist.dgetSerialNr();
-      SmUUID = configPlist.dgetSmUUID();
-      FamilyName = configPlist.dgetFamilyName();
+      ManufactureName = other.dgetManufactureName();
+      ProductName = other.dgetProductName();
+      SystemVersion = other.dgetSystemVersion();
+      SerialNr = other.dgetSerialNr();
+      SmUUID = other.dgetSmUUID();
+      FamilyName = other.dgetFamilyName();
       // SMBIOS TYPE2
-      BoardManufactureName = configPlist.dgetBoardManufactureName();
-      BoardSerialNumber = configPlist.dgetBoardSerialNumber();
-      BoardNumber = configPlist.dgetBoardNumber();
-      LocationInChassis = configPlist.dgetLocationInChassis();
-      BoardVersion = configPlist.dgetBoardVersion();
-      BoardType = configPlist.dgetBoardType();
+      BoardManufactureName = other.dgetBoardManufactureName();
+      BoardSerialNumber = other.dgetBoardSerialNumber();
+      BoardNumber = other.dgetBoardNumber();
+      LocationInChassis = other.dgetLocationInChassis();
+      BoardVersion = other.dgetBoardVersion();
+      BoardType = other.dgetBoardType();
       // SMBIOS TYPE3
-      Mobile = configPlist.dgetMobile();
-      ChassisType = configPlist.dgetChassisType();
-      ChassisManufacturer = configPlist.dgetChassisManufacturer();
-      ChassisAssetTag = configPlist.dgetChassisAssetTag();
+      Mobile = other.dgetMobile();
+      ChassisType = other.dgetChassisType();
+      ChassisManufacturer = other.dgetChassisManufacturer();
+      ChassisAssetTag = other.dgetChassisAssetTag();
       // SMBIOS TYPE17
-      SmbiosVersion = configPlist.dgetSmbiosVersion();
-      Attribute = configPlist.dgetAttribute();
+      SmbiosVersion = other.dgetSmbiosVersion();
+      Attribute = other.dgetAttribute();
       // SMBIOS TYPE132
-      TrustSMBIOS = configPlist.dgetTrustSMBIOS();
-      InjectMemoryTables = configPlist.dgetInjectMemoryTables();
+      TrustSMBIOS = other.dgetTrustSMBIOS();
+      InjectMemoryTables = other.dgetInjectMemoryTables();
       // SMBIOS TYPE133
-      gPlatformFeature = configPlist.dgetgPlatformFeature();
+      gPlatformFeature = other.dgetgPlatformFeature();
       // PatchTableType11
-      NoRomInfo = configPlist.dgetNoRomInfo();
+      NoRomInfo = other.dgetNoRomInfo();
       //SMBIOS TYPE128
-      FirmwareFeatures = configPlist.dgetFirmwareFeatures();
-      FirmwareFeaturesMask = configPlist.dgetFirmwareFeaturesMask();
-      ExtendedFirmwareFeatures = configPlist.dgetExtendedFirmwareFeatures();
-      ExtendedFirmwareFeaturesMask = configPlist.dgetExtendedFirmwareFeaturesMask();
-      RamSlotInfoArray.takeValueFrom(configPlist.Memory);
-      SlotDevices.takeValueFrom(configPlist.Slots);
+      FirmwareFeatures = other.dgetFirmwareFeatures();
+      FirmwareFeaturesMask = other.dgetFirmwareFeaturesMask();
+      ExtendedFirmwareFeatures = other.dgetExtendedFirmwareFeatures();
+      ExtendedFirmwareFeaturesMask = other.dgetExtendedFirmwareFeaturesMask();
+      RamSlotInfoArray.takeValueFrom(other.Memory);
+      SlotDevices.takeValueFrom(other.Slots);
     }
 
   };
@@ -2583,7 +2541,7 @@ printf("%s", "");
       uint32_t _flagstate = uint32_t();
 
       BootGraphicsClass() {
-//      	flagstate.memset(0, 32);
+//        flagstate.memset(0, 32);
       }
       
 #if __cplusplus > 201703L
@@ -2597,12 +2555,12 @@ printf("%s", "");
         if ( _flagstate != other._flagstate ) return false;
         return true;
       }
-      void takeValueFrom(const ConfigPlistClass::BootGraphics_Class& configPlist)
+      void takeValueFrom(const ConfigPlistClass::BootGraphics_Class& other)
       {
-        DefaultBackgroundColor = configPlist.dgetDefaultBackgroundColor();
-        UIScale = configPlist.dgetUIScale();
-        EFILoginHiDPI = configPlist.dgetEFILoginHiDPI();
-        _flagstate = configPlist.dget_flagstate();
+        DefaultBackgroundColor = other.dgetDefaultBackgroundColor();
+        UIScale = other.dgetUIScale();
+        EFILoginHiDPI = other.dgetEFILoginHiDPI();
+        _flagstate = other.dget_flagstate();
       }
   };
 
@@ -2650,21 +2608,21 @@ printf("%s", "");
     return true;
   }
 
-  void takeValueFrom(const ConfigPlistClass& configPlist)
+  void takeValueFrom(const ConfigPlistClass& other)
   {
-    Boot.takeValueFrom(configPlist.Boot);
-    ACPI.takeValueFrom(configPlist.ACPI);
-    GUI.takeValueFrom(configPlist.GUI);
-    CPU.takeValueFrom(configPlist.CPU);
-    SystemParameters.takeValueFrom(configPlist.SystemParameters);
-    KernelAndKextPatches.takeValueFrom(configPlist.KernelAndKextPatches);
-    Graphics.takeValueFrom(configPlist.Graphics);
-    DisabledDriverArray = configPlist.dgetDisabledDriverArray();
-    Quirks.takeValueFrom(configPlist.Quirks);
-    RtVariables.takeValueFrom(configPlist.RtVariables);
-    Devices.takeValueFrom(configPlist.Devices);
-    Smbios.takeValueFrom(configPlist.getSMBIOS());
-    BootGraphics.takeValueFrom(configPlist.BootGraphics);
+    Boot.takeValueFrom(other.Boot);
+    ACPI.takeValueFrom(other.ACPI);
+    GUI.takeValueFrom(other.GUI);
+    CPU.takeValueFrom(other.CPU);
+    SystemParameters.takeValueFrom(other.SystemParameters);
+    KernelAndKextPatches.takeValueFrom(other.KernelAndKextPatches);
+    Graphics.takeValueFrom(other.Graphics);
+    DisabledDriverArray = other.dgetDisabledDriverArray();
+    Quirks.takeValueFrom(other.Quirks);
+    RtVariables.takeValueFrom(other.RtVariables);
+    Devices.takeValueFrom(other.Devices);
+    Smbios.takeValueFrom(other.getSMBIOS());
+    BootGraphics.takeValueFrom(other.BootGraphics);
   }
 
   ~SETTINGS_DATA() {}
