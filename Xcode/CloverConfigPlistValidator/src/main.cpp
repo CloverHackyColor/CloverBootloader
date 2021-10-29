@@ -58,6 +58,7 @@ extern "C" int main(int argc, const char * argv[])
       path = "config-nowarning-noerror.plist";
       path = "config-test2.plist";
       path = "/JiefLand/5.Devel/Clover/user config/mifjpn/2021-10-22/config.plist";
+      path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/config.plist";
       //path = "/Volumes/CL_EFI_VMDK/EFI/CLOVER/smbios.plist";
   #endif
   
@@ -105,6 +106,7 @@ extern "C" int main(int argc, const char * argv[])
       printf("%s\n", xmlMsg.getFormattedMsg().c_str());
       b = false;
     }else{
+      printf("%s\n", xmlMsg.getFormattedMsg().c_str());
       // One day, create a command line option to display info messages.
     }
   }

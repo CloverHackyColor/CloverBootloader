@@ -626,7 +626,7 @@ void getRPlt(MacModel Model, UINT32 CPUModel, XBool isMobile, char RPlt[8]);
 
 int compareBiosVersion(const XString8& version1, const XString8& version2);
 XBool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& version2);
-XBool isBiosVersionEquel(const XString8& version1, const XString8& version2);
+XBool is2ndBiosVersionEqual(const XString8& version1, const XString8& version2);
 
 int compareReleaseDate(const XString8& date1, const XString8& date2);
 

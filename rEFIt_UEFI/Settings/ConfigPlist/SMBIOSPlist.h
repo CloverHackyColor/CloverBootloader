@@ -509,13 +509,17 @@ public:
           if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosVersion.reset();
+          }else
+          if ( is2ndBiosVersionEqual(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
+            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosVersion '%s' is the same as default. Dict '%s:%d'.", BiosVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            BiosVersion.reset();
           }
         }
         if ( BiosReleaseDate.isDefined() ) {
           int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(getModel()), BiosReleaseDate.value());
           if ( compareReleaseDateResult == 0 ) {
             // This is just 'info'. It's useless but fine to define the same as default.
-            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosReleaseDate.reset();
           }else
           if ( compareReleaseDateResult == 1 ) {
@@ -528,7 +532,7 @@ public:
             xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             EfiVersion.reset();
           } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
-            xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default. Dict '%s:%d'.", EfiVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
           }
         }
       }else{

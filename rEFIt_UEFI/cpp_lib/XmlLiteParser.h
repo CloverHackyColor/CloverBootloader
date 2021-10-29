@@ -100,6 +100,7 @@ public:
   int getLine() { return currentPos.line; }
   int getCol() { return currentPos.col; }
   XObjArray<XmlParserMessage>& getXmlParserMessageArray() { return errorsAndWarnings; }
+  size_t getXmlParserInfoMessageCount() const { size_t n=0 ; for ( size_t i=0 ; i < errorsAndWarnings.size() ; i++ ) if ( errorsAndWarnings[i].type == XmlParserMessageType::info ) ++n; return n; }
   // Add warning, error and xml error always return false so you can return addWarning(...) from validate function
   XBool addInfo(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::info, warning)); return false; }
   XBool addWarning(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::warning, warning)); return false; }

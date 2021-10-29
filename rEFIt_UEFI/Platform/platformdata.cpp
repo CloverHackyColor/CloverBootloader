@@ -1150,7 +1150,7 @@ XBool is2ndBiosVersionGreaterThan1st(const XString8& version1, const XString8& v
 {
   return compareBiosVersion(version1, version2) <= 0;
 }
-XBool isBiosVersionEquel(const XString8& version1, const XString8& version2)
+XBool is2ndBiosVersionEqual(const XString8& version1, const XString8& version2)
 {
   return compareBiosVersion(version1, version2) == 0;
 }

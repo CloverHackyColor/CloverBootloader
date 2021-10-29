@@ -525,15 +525,17 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   
   XmlLiteParser xmlLiteParser;
   XBool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
-  if ( xmlLiteParser.getXmlParserMessageArray().size() ) {
-    if ( xmlLiteParser.getXmlParserMessageArray().size() > 1 ) {
+  if ( xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 0 ) {
+    if ( xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 1 ) {
       DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
     }else{
       DebugLog(2, "There is a problem in plist '%ls'\n", configPlistPath.wc_str());
     }
     for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
       const XmlParserMessage& xmlMsg = xmlLiteParser.getXmlParserMessageArray()[idx];
-      DebugLog(2, "%s\n", xmlMsg.getFormattedMsg().c_str());
+      if ( xmlMsg.type != XmlParserMessageType::info ) {
+        DebugLog(2, "%s\n", xmlMsg.getFormattedMsg().c_str());
+      }
     }
     DebugLog(2, "Use CloverConfigPlistValidator or look in the log\n");
   }
@@ -542,7 +544,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
     Status = EFI_LOAD_ERROR;
   }
 
-  if ( !parsingOk || xmlLiteParser.getXmlParserMessageArray().size() > 0 ) gBS->Stall(3000000); // 3 seconds delay
+  if ( !parsingOk || xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 0 ) gBS->Stall(3000000); // 3 seconds delay
 
 return Status;
 }
