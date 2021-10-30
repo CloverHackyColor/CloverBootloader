@@ -379,7 +379,7 @@ XBool XmlIntegerAbstract::parseXmlInteger(XmlLiteParser* xmlLiteParser, const XS
   XBool atLeastOneDigit = false;
 
 #ifdef JIEF_DEBUG
-if ( xmlPath.contains("CsrActiveConfig") ) {
+if ( xmlPath.contains("Timeout") ) {
   int i=0; (void)i;
 }
 #endif

@@ -537,7 +537,15 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
         DebugLog(2, "%s\n", xmlMsg.getFormattedMsg().c_str());
       }
     }
-    DebugLog(2, "Use CloverConfigPlistValidator or look in the log\n");
+    DebugLog(2, "Use CloverConfigPlistValidator");
+    if ( plist->getSMBIOS().dgetModel() < MaxMacModel ) {
+      if ( xmlLiteParser.productNameNeeded ) DebugLog(2, " (with --productname=%s)", MachineModelName[plist->getSMBIOS().dgetModel()].c_str());
+    }else{
+      // This is NOT supposed to happen, since CLover set a default mac model
+      // If a default mac model is not set, a crash would probably happen earlier, but who knows
+      if ( xmlLiteParser.productNameNeeded ) DebugLog(2, "(with --productname=?)");
+    }
+    DebugLog(2, " or look in the log\n");
   }
   if ( !parsingOk ) {
     DebugLog(2, "Parsing error while parsing '%ls'.\n", configPlistPath.wc_str());
@@ -905,6 +913,8 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
 {
   DbgHeader("GetUserSettings");
 
+  DBG("GetDefaultModel()=%s\n", MachineModelName[GetDefaultModel()].c_str()); // GetDefaultModel do NOT return MaxMacModel, so MachineModelName[GetDefaultModel()] is always valid
+
   if ( !selfOem.isInitialized() ) {
     log_technical_bug("%s : !selfOem.isInitialized()", __PRETTY_FUNCTION__);
   }
@@ -916,19 +926,18 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   
   /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
-  GlobalConfig.CurrentModel = iMac132;
-  if ( smbiosPlist.SMBIOS.isDefined() && smbiosPlist.SMBIOS.hasModel()) {
-    GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.getModel();
-  } else if ( configPlist.getSMBIOS().hasModel() ) {
-    GlobalConfig.CurrentModel = configPlist.getSMBIOS().getModel();
+  if ( smbiosPlist.getSMBIOS().isDefined() && smbiosPlist.getSMBIOS().getProductName().isDefined() ) {
+    GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.dgetModel();
+  } else if ( configPlist.getSMBIOS().isDefined() && configPlist.getSMBIOS().getProductName().isDefined() ) {
+    GlobalConfig.CurrentModel = configPlist.getSMBIOS().dgetModel();
   } else {
-    log_technical_bug("No MacModel. SmbiosDictClass::defaultMacModel must be initialized before reading config or smbios plist.");
     GlobalConfig.CurrentModel = GetDefaultModel();
   }
 
   if ( !EFI_ERROR(Status) ) {
     gSettings.takeValueFrom(configPlist); // if load failed, keep default value.
   }
+
   // Fill in default for model
   SetDMISettingsForModel(GlobalConfig.CurrentModel, &gSettings);
 

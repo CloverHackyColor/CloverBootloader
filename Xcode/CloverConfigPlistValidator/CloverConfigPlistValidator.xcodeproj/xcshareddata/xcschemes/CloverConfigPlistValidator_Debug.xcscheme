@@ -64,16 +64,24 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "config-nowarning-noerror.plist"
-            isEnabled = "NO">
+            argument = "--productname=zziMac18,1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--info"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Volumes/CL_EFI_VMDK/EFI/CLOVER/config.plist&quot;"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "config-test2.plist"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;/JiefLand/5.Devel/Clover/user config/Slice/2021-04-29/config.plist&quot;"
-            isEnabled = "YES">
+            argument = "config-nowarning-noerror.plist"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
