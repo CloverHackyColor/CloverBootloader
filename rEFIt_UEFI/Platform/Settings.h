@@ -2102,7 +2102,7 @@ printf("%s", "");
         XBool SetupVirtualMap = false;
         XBool SignalAppleOS = false;
         XBool SyncRuntimePermissions = false;
-        uint8_t ResizeAppleGpuBars = 0; // 0 is NOT the default value if not set in config.plist. Default value if not set is returned by dgetResizeAppleGpuBars()
+        int8_t ResizeAppleGpuBars = 0; // 0 is NOT the default value if not set in config.plist. Default value if not set is returned by dgetResizeAppleGpuBars()
         
 #if __cplusplus > 201703L
         XBool operator == (const OcBooterQuirksClass&) const = default;
@@ -2127,7 +2127,7 @@ printf("%s", "");
           if ( !(SetupVirtualMap == other.SetupVirtualMap) ) return false;
           if ( !(SignalAppleOS == other.SignalAppleOS) ) return false;
           if ( !(SyncRuntimePermissions == other.SyncRuntimePermissions) ) return false;
-          if ( !(ResizeAppleGpuBars == other.ResizeAppleGpuBars) ) return false;
+
           return true;
         }
         void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcBooterQuirks_Class& other)
@@ -2150,7 +2150,6 @@ printf("%s", "");
           SetupVirtualMap = other.dgetSetupVirtualMap();
           SignalAppleOS = other.dgetSignalAppleOS();
           SyncRuntimePermissions = other.dgetSyncRuntimePermissions();
-          ResizeAppleGpuBars = other.dgetResizeAppleGpuBars();
         }
 
       };
