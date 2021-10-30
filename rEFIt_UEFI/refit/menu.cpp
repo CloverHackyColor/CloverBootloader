@@ -455,6 +455,8 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%016llX", gSettings.Smbios.ExtendedFirmwareFeatures);
   InputItems[InputItemsCount].ItemType = Hex;  //126
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%016llX", gSettings.Smbios.ExtendedFirmwareFeaturesMask);
+  InputItems[InputItemsCount].ItemType = Decimal;  //127
+  InputItems[InputItemsCount++].SValue.SWPrintf("%04d", gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars);
 
 
 
@@ -1089,6 +1091,19 @@ void ApplyInputs(void)
     gSettings.Smbios.ExtendedFirmwareFeaturesMask = StrHexToUint64(InputItems[i].SValue.wc_str());
     DBG("applied ExtendedFirmwareFeaturesMask=0x%llX\n", gSettings.Smbios.ExtendedFirmwareFeaturesMask);
   }
+  i++; //127
+  if (InputItems[i].Valid) {
+    INTN Minus = 0;
+    if (InputItems[i].SValue[0] == '-') {
+      Minus = 1;
+    }
+    gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
+    if (Minus) {
+      gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars = -gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars;
+    }
+    DBG(" set GpuBar = %d\n", gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars);
+  }
+
 
   if (NeedSave) {
     ApplySettings();
@@ -2581,11 +2596,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   SubScreen->AddMenuCheck("ProtectMemoryRegions",   QUIRK_REGION, 101);
   SubScreen->AddMenuCheck("ProtectSecureBoot",      QUIRK_SECURE, 101);
   SubScreen->AddMenuCheck("ProtectUefiServices",    QUIRK_UEFI, 101);
-  SubScreen->AddMenuItemInput(123, "ProvideConsoleGopEnable", false);
+//  SubScreen->AddMenuItemInput(123, "ProvideConsoleGopEnable", false);
   SubScreen->AddMenuCheck("ProvideCustomSlide",     QUIRK_CUSTOM, 101);
 //decimal
   SubScreen->AddMenuItemInput(122, "ProvideMaxSlide:", true);
   SubScreen->AddMenuCheck("RebuildAppleMemoryMap",  QUIRK_MAP, 101);
+  SubScreen->AddMenuItemInput(127, "ResizeAppleGpuBars:", true);
   SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
   SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
   SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);

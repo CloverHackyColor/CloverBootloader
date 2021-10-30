@@ -26,6 +26,7 @@
 #define QUIRK_VIRT    bit(13)
 #define QUIRK_OS      bit(14)
 #define QUIRK_PERM    bit(15)
+#define QUIRK_GPUBAR  bit(16)
 
 
 
