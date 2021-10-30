@@ -517,13 +517,13 @@ public:
         }
         if ( BiosReleaseDate.isDefined() ) {
           int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(getModel()), BiosReleaseDate.value());
+          if ( compareReleaseDateResult == 1 ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            BiosReleaseDate.reset();
+          }else
           if ( compareReleaseDateResult == 0 ) {
             // This is just 'info'. It's useless but fine to define the same as default.
             xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
-            BiosReleaseDate.reset();
-          }else
-          if ( compareReleaseDateResult == 1 ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             BiosReleaseDate.reset();
           }
         }
@@ -533,6 +533,7 @@ public:
             EfiVersion.reset();
           } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
             xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default. Dict '%s:%d'.", EfiVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            EfiVersion.reset();
           }
         }
       }else{

@@ -49,7 +49,7 @@ public:
 
 
 
-  // This is to mimic what's in settings. This is NOT a plist dict section. It is just cosmetic. TODO: remove that OC coupling in SETTINGS_DATA.
+  // This is to mimic what's in settings. This is NOT a plist dict section. It is just cosmetic.
   class OcKernelQuirks_Class {
     //const Quirks_Class& parent;
     public:
@@ -80,7 +80,7 @@ public:
       OcKernelQuirks_Class(const Quirks_Class& _parent) /*: parent(_parent)*/ {}
   };
 
-  // This is to mimic what's in settings. This is NOT a plist dict section. It is just cosmetic. TODO: remove that OC coupling in SETTINGS_DATA.
+  // This is to mimic what's in settings. This is NOT a plist dict section. It is just cosmetic.
   class OcBooterQuirks_Class {
       const Quirks_Class& parent;
     public:
@@ -101,6 +101,7 @@ public:
       XmlBool SetupVirtualMap = XmlBool();
       XmlBool SignalAppleOS = XmlBool();
       XmlBool SyncRuntimePermissions = XmlBool();
+      XmlInt8 ResizeAppleGpuBars = XmlInt8();
       
       XBool dgetAvoidRuntimeDefrag() const { return parent.isDefined() ? AvoidRuntimeDefrag.isDefined() ? AvoidRuntimeDefrag.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
       XBool dgetDevirtualiseMmio() const { return DevirtualiseMmio.isDefined() ? DevirtualiseMmio.value() : DevirtualiseMmio.nullValue; };
@@ -119,6 +120,7 @@ public:
       XBool dgetSetupVirtualMap() const { return parent.isDefined() ? SetupVirtualMap.isDefined() ? SetupVirtualMap.value() : XBool(true) : SetupVirtualMap.nullValue; }; // TODO: different default value if section is not defined
       XBool dgetSignalAppleOS() const { return SignalAppleOS.isDefined() ? SignalAppleOS.value() : SignalAppleOS.nullValue; };
       XBool dgetSyncRuntimePermissions() const { return parent.isDefined() ? SyncRuntimePermissions.isDefined() ? SyncRuntimePermissions.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
+      uint8_t dgetResizeAppleGpuBars() const { return parent.isDefined() && ResizeAppleGpuBars.isDefined() ? ResizeAppleGpuBars.value() : -1; };
 
       OcBooterQuirks_Class(const Quirks_Class& _parent) : parent(_parent) {}
   };
@@ -131,7 +133,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[31] = {
+  XmlDictField m_fields[32] = {
     {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
     {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
     {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -149,6 +151,7 @@ public:
     {"SetupVirtualMap", OcBooterQuirks.SetupVirtualMap},
     {"SignalAppleOS", OcBooterQuirks.SignalAppleOS},
     {"SyncRuntimePermissions", OcBooterQuirks.SyncRuntimePermissions},
+    {"ResizeAppleGpuBars", OcBooterQuirks.ResizeAppleGpuBars},
     {"MmioWhitelist", MmioWhitelist},
     {"FuzzyMatch", FuzzyMatch},
     {"KernelCache", KernelCache},

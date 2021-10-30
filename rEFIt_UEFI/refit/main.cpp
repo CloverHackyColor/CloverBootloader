@@ -1019,6 +1019,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap = gSettings.Quirks.OcBooterQuirks.SetupVirtualMap;
     mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS = gSettings.Quirks.OcBooterQuirks.SignalAppleOS;
     mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = gSettings.Quirks.OcBooterQuirks.SyncRuntimePermissions;
+    mOpenCoreConfiguration.Booter.Quirks.ResizeAppleGpuBars = gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars;
 
   #endif
 
