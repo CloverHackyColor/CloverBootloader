@@ -76,15 +76,16 @@ class XmlLiteParser
   char* p_start = NULL;
   char* p_end = NULL;
   XmlParserPosition currentPos = XmlParserPosition();
-  XObjArray<XmlParserMessage> errorsAndWarnings = XObjArray<XmlParserMessage>();
+  XObjArray<XmlParserMessage> XmlParserMessageArray = XObjArray<XmlParserMessage>();
 
   XBool AddXmlParserMessage(XmlParserMessage* msg) {
-    if ( errorsAndWarnings.size() < 500 ) errorsAndWarnings.AddReference(msg, true);
-    if ( errorsAndWarnings.size() == 500 ) errorsAndWarnings.AddReference(new XmlParserMessage(XmlParserMessageType::error, "Too many error. Stopping"_XS8), true);
+    if ( XmlParserMessageArray.size() < 500 ) XmlParserMessageArray.AddReference(msg, true);
+    if ( XmlParserMessageArray.size() == 500 ) XmlParserMessageArray.AddReference(new XmlParserMessage(XmlParserMessageType::error, "Too many error. Stopping"_XS8), true);
     return false;
   }
 public:
   XBool xmlParsingError = false;
+  XBool productNameNeeded = false;
 
   XmlLiteParser() {};
   XmlLiteParser(char* _p) : p_start(_p)
@@ -99,8 +100,8 @@ public:
   
   int getLine() { return currentPos.line; }
   int getCol() { return currentPos.col; }
-  XObjArray<XmlParserMessage>& getXmlParserMessageArray() { return errorsAndWarnings; }
-  size_t getXmlParserInfoMessageCount() const { size_t n=0 ; for ( size_t i=0 ; i < errorsAndWarnings.size() ; i++ ) if ( errorsAndWarnings[i].type == XmlParserMessageType::info ) ++n; return n; }
+  XObjArray<XmlParserMessage>& getXmlParserMessageArray() { return XmlParserMessageArray; }
+  size_t getXmlParserInfoMessageCount() const { size_t n=0 ; for ( size_t i=0 ; i < XmlParserMessageArray.size() ; i++ ) if ( XmlParserMessageArray[i].type == XmlParserMessageType::info ) ++n; return n; }
   // Add warning, error and xml error always return false so you can return addWarning(...) from validate function
   XBool addInfo(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::info, warning)); return false; }
   XBool addWarning(XBool generateErrors, const XString8& warning) { if ( generateErrors ) AddXmlParserMessage(new XmlParserMessage(XmlParserMessageType::warning, warning)); return false; }

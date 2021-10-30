@@ -500,47 +500,51 @@ public:
       bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
       if ( !ProductName.isDefined() ) {
 //        return xmlLiteParser->addWarning(generateErrors, S8Printf("ProductName is not defined, the whole SMBIOS dict is ignored at line %d.", keyPos.getLine()));
-        if ( defaultMacModel < MaxMacModel ) {
-          ProductName.setStringValue(MachineModelName[defaultMacModel]);
-        }
+//        if ( defaultMacModel < MaxMacModel ) {
+//          ProductName.setStringValue(MachineModelName[defaultMacModel]);
+//        }
       }
-      if ( hasModel() ) {
+      if ( dgetModel() < MaxMacModel ) {
         if ( BiosVersion.isDefined() ) {
-          if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[getModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+          if ( !is2ndBiosVersionGreaterThan1st(ApplePlatformDataArray[dgetModel()].firmwareVersion, BiosVersion.value()) ) {
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosVersion '%s' is before than default ('%s') -> ignored. Dict '%s:%d'.", BiosVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].firmwareVersion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             BiosVersion.reset();
           }else
-          if ( is2ndBiosVersionEqual(ApplePlatformDataArray[getModel()].firmwareVersion, BiosVersion.value()) ) {
+          if ( is2ndBiosVersionEqual(ApplePlatformDataArray[dgetModel()].firmwareVersion, BiosVersion.value()) ) {
             xmlLiteParser->addInfo(generateErrors, S8Printf("BiosVersion '%s' is the same as default. Dict '%s:%d'.", BiosVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             BiosVersion.reset();
           }
         }
         if ( BiosReleaseDate.isDefined() ) {
-          int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(getModel()), BiosReleaseDate.value());
+          int compareReleaseDateResult = compareReleaseDate(GetReleaseDate(dgetModel()), BiosReleaseDate.value());
           if ( compareReleaseDateResult == 1 ) {
-            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(getModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->addWarning(generateErrors, S8Printf("BiosReleaseDate '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), GetReleaseDate(dgetModel()).c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             BiosReleaseDate.reset();
           }else
           if ( compareReleaseDateResult == 0 ) {
             // This is just 'info'. It's useless but fine to define the same as default.
             xmlLiteParser->addInfo(generateErrors, S8Printf("BiosReleaseDate '%s' is the same as default. Dict '%s:%d'.", BiosReleaseDate.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             BiosReleaseDate.reset();
           }
         }
         if ( EfiVersion.isDefined() ) {
           if ( AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) > AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             EfiVersion.reset();
           } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
             xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default. Dict '%s:%d'.", EfiVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
+            xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             EfiVersion.reset();
           }
         }
       }else{
         // This is supposed to never happen within Clover, because Clover initialise defaultMacModel.
-        // ccpv doesn't initialise defaultMacModel yet.
-        // If ccpv, let's say nothing at the moment
-        //xmlLiteParser->addInfo(generateErrors, S8Printf("Cannot check validity of BiosVersion because ProductName is not set. Dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+        xmlLiteParser->addInfo(generateErrors, S8Printf("Cannot check validity of BiosVersion, BiosReleaseDate and EfiVersion because ProductName is not set in dict '%s:%d'. Define ProductName or run this tool with --productname=[your product name].", xmlPath.c_str(), keyPos.getLine()));
       }
       return b;
     }
@@ -580,25 +584,26 @@ public:
     const decltype(NoRomInfo)& getNoRomInfo() const { return NoRomInfo; }
 
 
-    /*
-     * DO NOT call this if !ProductName.isDefined()
-     */
-    MacModel getModel() const
-    {
-      if ( !ProductName.isDefined() ) {
-        // This must not happen in Clover because Clover set a defaultMacModel
-        // This must ot happen in ccpv because ccpv doesn't call dget... methods
-        log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
-        return iMac132; // cannot return GetDefaultModel() because we don't want to link runtime configuration to the xml reading layer.
-      }
-      return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMacModel
-    }
-    XBool hasModel() const { return ProductName.isDefined(); }
+//    /*
+//     * DO NOT call this if !ProductName.isDefined()
+//     */
+//    MacModel getModel() const
+//    {
+//      if ( !ProductName.isDefined() ) {
+//        // This must not happen in Clover because Clover set a defaultMacModel
+//        // This must ot happen in ccpv because ccpv doesn't call dget... methods
+//        log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
+//        return iMac132; // cannot return GetDefaultModel() because we don't want to link runtime configuration to the xml reading layer.
+//      }
+//      return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMacModel
+//    }
+//    XBool hasModel() const { return ProductName.isDefined(); }
 
     MacModel dgetModel() const
     {
-      if ( !hasModel() ) return MaxMacModel;
-      return getModel();
+      if ( ProductName.isDefined() ) return GetModelFromString(ProductName.value());
+      if ( defaultMacModel < MaxMacModel ) return defaultMacModel;
+      return MaxMacModel;
     }
 
     decltype(BiosVendor)::ValueType dgetBiosVendor() const {
@@ -763,6 +768,9 @@ public:
 
 public:
   SmbiosPlistClass() {};
+
+  const decltype(SMBIOS)& getSMBIOS() const { return SMBIOS; };
+
 
 };
 

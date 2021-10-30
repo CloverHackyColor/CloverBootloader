@@ -65,7 +65,7 @@ void XmlLiteParser::init(const char* buf, size_t size)
   currentPos.line = 1;
   currentPos.col = 1;
   
-  errorsAndWarnings.setEmpty();
+  XmlParserMessageArray.setEmpty();
 
   for ( size_t i = 0; i < size ; ++i) {
     if ( p_start[i] == 0 ) {
