@@ -118,7 +118,6 @@ public:
       XBool dgetProvideCustomSlide() const { return ProvideCustomSlide.isDefined() ? ProvideCustomSlide.value() : ProvideCustomSlide.nullValue; };
       uint8_t dgetProvideMaxSlide() const { return ProvideMaxSlide.isDefined() ? ProvideMaxSlide.value() : ProvideMaxSlide.nullValue; };
       XBool dgetRebuildAppleMemoryMap() const { return RebuildAppleMemoryMap.isDefined() ? RebuildAppleMemoryMap.value() : RebuildAppleMemoryMap.nullValue; };
-      int8_t dgetResizeAppleGpuBars() const { return ResizeAppleGpuBars.isDefined() ? ResizeAppleGpuBars.value() : (-1); };
       XBool dgetSetupVirtualMap() const { return parent.isDefined() ? SetupVirtualMap.isDefined() ? SetupVirtualMap.value() : XBool(true) : SetupVirtualMap.nullValue; }; // TODO: different default value if section is not defined
       XBool dgetSignalAppleOS() const { return SignalAppleOS.isDefined() ? SignalAppleOS.value() : SignalAppleOS.nullValue; };
       XBool dgetSyncRuntimePermissions() const { return parent.isDefined() ? SyncRuntimePermissions.isDefined() ? SyncRuntimePermissions.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined

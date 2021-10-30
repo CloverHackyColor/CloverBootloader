@@ -2099,7 +2099,6 @@ printf("%s", "");
         XBool ProvideCustomSlide = false;
         uint8_t ProvideMaxSlide = 0;
         XBool RebuildAppleMemoryMap = false;
-        int8_t ResizeAppleGpuBars = -1;
         XBool SetupVirtualMap = false;
         XBool SignalAppleOS = false;
         XBool SyncRuntimePermissions = false;
