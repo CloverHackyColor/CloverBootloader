@@ -444,27 +444,35 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>Symbolic patch example got lapic panic</string>
+				<string>Monterey RDRAND instruction #1</string>
 				<key>MatchOS</key>
-				<string>All</string>
+				<string>12</string>
 				<key>Disabled</key>
 				<true/>
 				<key>Procedure</key>
-				<string>_lapic_interrupt</string>
+				<string>_work_interval_port_type_render_server</string>
 				<key>RangeFind</key>
-				<integer>200</integer>
-				<key>StartPattern</key>
-				<data>ACnHeAAx241H+oM=</data>
-				<key>MaskStart</key>
-				<data>/////wA=</data>
+				<integer>3900</integer>
 				<key>Find</key>
-				<data>6AAA//+DAAAAAAAA</data>
-				<key>MaskFind</key>
-				<data>/wAA////AAAAAP//</data>
+				<data>D8fxc/sh8TnRc/WJyUiLlM3Q/f//</data>
 				<key>Replace</key>
-				<data>6AAA//8xwJCQkJCQ</data>
-				<key>MaskReplace</key>
-				<data>/wAA////////////</data>
+				<data>McmQkJAh8TnRc/WJyUiLlM3Q/f//</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Monterey RDRAND instruction #2</string>
+				<key>MatchOS</key>
+				<string>12</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Procedure</key>
+				<string>_panic_with_thread_context</string>
+				<key>RangeFind</key>
+				<integer>10100</integer>
+				<key>Find</key>
+				<data>D8fyc/uD4g+D+gd38w+3NEE=</data>
+				<key>Replace</key>
+				<data>MdKQkJCD4g+D+gd38w+3NEE=</data>
 			</dict>
 		</array>
 		<key>#ForceKextsToLoad</key>
