@@ -64,8 +64,8 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--productname=iMac18,1"
-            isEnabled = "NO">
+            argument = "--productname=zziMac18,1"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--info"

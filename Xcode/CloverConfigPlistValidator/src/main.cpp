@@ -155,6 +155,9 @@ extern "C" int main(int argc, char * const argv[])
   if ( ProductName.notEmpty() ) {
     // if a ProductName is specified in plist, this will be ignored.
     configPlistTest.SMBIOS.defaultMacModel = GetModelFromString(ProductName);
+    if ( configPlistTest.SMBIOS.defaultMacModel ) {
+      printf("Warning: ProductName specified in command line (%s) doesn't exist. Command line option ignored.\n", ProductName.c_str());
+    }
   }
 
   configPlistTest.parse(&xmlLiteParser, LString8(""));
