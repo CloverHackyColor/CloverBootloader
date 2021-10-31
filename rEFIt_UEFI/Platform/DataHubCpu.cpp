@@ -392,7 +392,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.RtVariables.CsrActiveConfig), &gSettings.RtVariables.CsrActiveConfig);
   }
 
-  if (gSettings.RtVariables.HWTarget.notEmpty()) {
+  if (gSettings.RtVariables.HWTarget.notEmpty() && (Entry->LoaderType != OSTYPE_OSX_INSTALLER) ) {
     SetNvramXString8(L"BridgeOSHardwareModel", &gEfiAppleNvramGuid, Attributes, gSettings.RtVariables.HWTarget);
   } else {
     DeleteNvramVariable(L"BridgeOSHardwareModel", &gEfiAppleNvramGuid);
