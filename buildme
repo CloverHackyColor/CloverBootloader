@@ -147,6 +147,28 @@ else
 fi
 }
 
+makeRelease() {
+checkTools
+
+# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+rm -rf "$CLOVERROOT"/Conf
+mkdir "$CLOVERROOT"/Conf
+
+cd "${CLOVERROOT}"
+if [[ -z "$WORKSPACE" ]]; then
+  export EDK_TOOLS_PATH="${PWD}"/BaseTools
+  set +u
+  source ./edksetup.sh BaseTools
+  set -u
+  cd "$CLOVERROOT"
+  WORKSPACE="${PWD}"
+fi
+
+echo "[BUILD CLOVER RELEASE]"
+./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
+}
+
 buildCCPV() {
 cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
 make
@@ -186,10 +208,10 @@ if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
 else
   local parameter=${1:-none}
   if [[ "${parameter}" == HFSPlus ]]; then
-    ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
+    #./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
     ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
   else
-    ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+    #./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
     ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
   fi
 fi
@@ -617,13 +639,13 @@ Please enter your choice: '
 options=( 'build Clover'
           'update Clover'
           'build Clover with HFSPlus'
-          'make pkg'
-          'make app'
-          'make app (with Clover)'
+          'make pkg'		  
           'make iso'
+          'make app'
           'build all'
+          'make Release'
           'test Clover'
-          'status'
+          'check status'
           'show diff'
           'open CloverV2/EFI/CLOVER directory'
           'update Clover (reset changes)'
@@ -652,37 +674,44 @@ do
       buildPkg
       break
     ;;
-    "make app")
-      buildApp
-      break
-    ;;
-    "make app (with Clover)")
-      buildApp withV2
-      break
-    ;;
     "make iso")
       buildIso
       break
     ;;
+    "make app")
+      buildApp withV2
+      break
+    ;;
+    # "make app (with Clover)")
+    #   buildApp withV2
+    #   break
+    # ;;
     "build all")
-      buildClover
+			buildClover
+			buildCCPV
+			BLC
+			buildPkg
+			buildIso
+      break
+    ;;
+    "make Release")
+      makeRelease
       buildCCPV
       BLC
       buildPkg
       buildIso
-      buildApp
       break
     ;;
     "test Clover")
       testing
       break
     ;;
-    "status")
+    "check status")
       checkStatus
       break
     ;;
     "show diff")
-      showdiff
+		  showdiff
       break
     ;;
     "open CloverV2/EFI/CLOVER directory")
