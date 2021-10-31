@@ -155,13 +155,13 @@ fi
 find "$backupRootDir" -type d -maxdepth 2 -empty -print0 2>/dev/null | xargs -0 rmdir
 find "$backupRootDir" -type d -maxdepth 1 -empty -print0 2>/dev/null | xargs -0 rmdir
 
-# Remove old CloverPrefpane
-pkg='@CLOVER_PACKAGE_IDENTITY@.cloverprefpane'
-location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
-pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
-  xargs -I @@ echo "$DEST_VOL/$location/@@"            | \
-  /usr/bin/grep -iE 'CloverUpdater|Clover.prefPane'    | \
-  xargs -I @@ rm -rf '@@'
+# # Remove old CloverPrefpane
+# pkg='@CLOVER_PACKAGE_IDENTITY@.cloverprefpane'
+# location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null | sed -n 's/^location: *//p')
+# pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
+#   xargs -I @@ echo "$DEST_VOL/$location/@@"            | \
+#   /usr/bin/grep -iE 'CloverUpdater|Clover.prefPane'    | \
+#   xargs -I @@ rm -rf '@@'
 
 # Remove files of old revision.
 pkgs=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkgs | /usr/bin/grep -iE '@CLOVER_PACKAGE_IDENTITY@.' | /usr/bin/grep -Ev 'ntfs|apfs|hfsplus')
