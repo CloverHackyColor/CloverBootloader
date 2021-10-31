@@ -9,7 +9,7 @@ printf "\n\e[1m%s\e[0m\n" "Usage: $0 [flag1 flag2...]"
 printf "\n%s" "The (optional) exclude flags are being passed to the buildpkg.sh script, when specified."
 printf "\n%s\n" "Possible flag values:"
 printf "\n\e[1m%s\e[0m\t%s" "--nothemes" "Excludes the Themes subpackage."
-printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
+# printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
 printf "\n\e[1m%s\e[0m\t\t%s" "--norc" "Excludes the RC scripts subpackage."
 printf "\n\e[1m%s\e[0m\t%s" "--nolegacy" "Excludes the CloverEFI subpackages."
 echo
@@ -18,7 +18,7 @@ echo
 while [[ $# -gt 0 ]]; do
 	case "${1}" in
 		--nothemes ) NOEXTRAS+=" --nothemes";;
-		--noprefpane ) NOEXTRAS+=" --noprefpane";;
+		# --noprefpane ) NOEXTRAS+=" --noprefpane";;
 		--norc ) NOEXTRAS+=" --norc";;
 		--nolegacy ) NOEXTRAS+=" --nolegacy";;
 		* ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !"; usage; exit 1;;
@@ -62,13 +62,13 @@ echo "========= Translating Resources ========"
 # Check that XCode is install properly
 xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
 if [[ -n "$xcode_path" ]]; then
-  # Make CloverUpdater
-  "${SRCROOT}"/CloverUpdater/translate_xib.sh # workaround for a bug in Xcode 10 Beta
-  make -C "${SRCROOT}"/CloverUpdater || exit $?
-  # Make CloverPrefpane
-  "${SRCROOT}"/CloverPrefpane/translate_xib.sh # workaround for a bug in Xcode 10 Beta
-  "${SRCROOT}"/CloverPrefpane/translate_source.sh # workaround for a bug in Xcode 10 Beta
-  make -C "${SRCROOT}"/CloverPrefpane || exit $?
+  # # Make CloverUpdater
+  # "${SRCROOT}"/CloverUpdater/translate_xib.sh # workaround for a bug in Xcode 10 Beta
+  # make -C "${SRCROOT}"/CloverUpdater || exit $?
+  # # Make CloverPrefpane
+  # "${SRCROOT}"/CloverPrefpane/translate_xib.sh # workaround for a bug in Xcode 10 Beta
+  # "${SRCROOT}"/CloverPrefpane/translate_source.sh # workaround for a bug in Xcode 10 Beta
+  # make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
   make -C "${SRCROOT}"/utils || exit $?
 # temporary use ready-to-use binaries
