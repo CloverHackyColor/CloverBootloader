@@ -605,11 +605,12 @@ static XStringW getDriversPath()
     } else {
       return L"drivers64"_XSW; //backward compatibility
     }
-  } else
-  if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
-    return L"drivers\\UEFI"_XSW;
+  } else if (FileExists(&self.getCloverDir(), L"drivers\\5142")) {
+      return L"drivers\\5142"_XSW;
+  } else if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
+      return L"drivers\\UEFI"_XSW;
   } else {
-    return L"drivers64UEFI"_XSW;
+      return L"drivers64UEFI"_XSW;
   }
 #else
   return L"drivers32"_XSW;
@@ -1814,7 +1815,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   DriversArrSize = 0;
   DriversArrNum = 0;
   DriversArr = NULL;
-  OpenRuntimeEfiName.setEmpty();
+ // OpenRuntimeEfiName.setEmpty();
 
 //only one driver with highest priority will obtain status "Loaded"
   DirIterOpen(&self.getCloverDir(), Path, &DirIter);
@@ -1857,18 +1858,27 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     if ( LStringW(DirEntry->FileName).containsIC("AptioMemoryFix") ) {
       continue;
     }
+
     if ( LStringW(DirEntry->FileName).containsIC("OpenRuntime") ) {
+      if (!OpenRuntimeEfiName.isEmpty()) {
+        DBG(" - OpenRuntime already detected\n");
+        continue;
+      }
       if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v12.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.7.5") ) {
         OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+        DBG(" - OpenRuntime-v12 for 075 taken from %ls\n", getDriversPath().wc_str());
       }else
       if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v12.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.7.3") ) {
         OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+        DBG(" - OpenRuntime-v12 for 073 taken from %ls\n", getDriversPath().wc_str());
       }else
       if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.5") ) {
         OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+        DBG(" - OpenRuntime-v11 for 065 taken from %ls\n", getDriversPath().wc_str());
       }else
       if ( LStringW(DirEntry->FileName).isEqualIC("OpenRuntime-v11.efi") && LString8(OPEN_CORE_VERSION).isEqual("0.6.1") ) {
         OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
+        DBG(" - OpenRuntime-v11 for 061 taken from %ls\n", getDriversPath().wc_str());
       }else
       if ( OpenRuntimeEfiName.isEmpty() ) {
         OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
@@ -2231,11 +2241,16 @@ static void LoadDrivers(void)
     } else {
       ScanDriverDir(L"drivers64", &DriversToConnect, &DriversToConnectNum);
     }
-  } else
-  if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
-    ScanDriverDir(L"drivers\\UEFI", &DriversToConnect, &DriversToConnectNum);
   } else {
-    ScanDriverDir(L"drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
+    OpenRuntimeEfiName.setEmpty();
+    if (FileExists(&self.getCloverDir(), L"drivers\\5142")) {
+      ScanDriverDir(L"drivers\\5142", &DriversToConnect, &DriversToConnectNum);
+    }
+    if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
+      ScanDriverDir(L"drivers\\UEFI", &DriversToConnect, &DriversToConnectNum);
+    } else {
+      ScanDriverDir(L"drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
+    }
   }
 #else
   ScanDriverDir(L"drivers32", &DriversToConnect, &DriversToConnectNum);
