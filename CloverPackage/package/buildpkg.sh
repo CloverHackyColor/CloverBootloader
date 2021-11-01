@@ -26,7 +26,7 @@ printf "\n%s" "The following flags are optional and exclude options (subpackages
 printf "\n%s" "Possible values:"
 echo
 printf "\n\e[1m%s\e[0m\t%s" "--nothemes" "Excludes the Themes subpackage."
-printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
+# printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
 printf "\n\e[1m%s\e[0m\t\t%s" "--norc" "Excludes the RC scripts subpackage."
 printf "\n\e[1m%s\e[0m\t%s\n\n" "--nolegacy" "Excludes the CloverEFI subpackages."
 }
@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
 		--symroot ) declare -r SYMROOT="${2}"; shift;; # ie. src/Clover/CloverPackage/sym
 		--builddir ) declare -r PKG_BUILD_DIR="${2}"; shift;; # ie. src/Clover/CloverPackage/sym/package
 		--nothemes ) NOEXTRAS+=", Clover Themes";;
-		--noprefpane ) NOEXTRAS+=", Clover Prefpane/Clover Updater";;
+		# --noprefpane ) NOEXTRAS+=", Clover Prefpane/Clover Updater";;
 		--norc ) NOEXTRAS+=", RC scripts";;
 		--nolegacy ) NOEXTRAS+=", CloverEFI";;
 		* ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !" >&2; usage; exit 1;;
@@ -1456,30 +1456,30 @@ if [[ -d "${SRCROOT}"/CloverConfigPlistValidator && ${NOEXTRAS} != *"CloverConfi
 # End build CloverConfigPlistValidator packages
 fi
 
-local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
-local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
-if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover && ${NOEXTRAS} != *"Clover Prefpane"* ]]; then
-# build CloverPrefpane package
-    echo "==================== Clover Prefpane ==================="
-    packagesidentity="$clover_package_identity"
-    choiceId="CloverPrefpane"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    # ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
-    #  "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
-    ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility  \
-     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/
-    ditto --noextattr --noqtn "$cloverUpdaterDir"/build/CloverUpdater.app  \
-     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/CloverUpdater.app
-    ditto --noextattr --noqtn "$cloverPrefpaneDir"/build/Clover.prefPane  \
-     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/PreferencePanes/"/Clover.prefPane
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
-                       --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --start-selected="checkFileExists('/bin/launchctl') &amp;&amp; choicePreviouslySelected('$packageRefId')" \
-              --start-enabled="checkFileExists('/bin/launchctl')"                                                       \
-              --pkg-refs="$packageRefId" "${choiceId}"
-# end CloverUpdater package
-fi
+# local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
+# local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
+# if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover && ${NOEXTRAS} != *"Clover Prefpane"* ]]; then
+# # build CloverPrefpane package
+#     echo "==================== Clover Prefpane ==================="
+#     packagesidentity="$clover_package_identity"
+#     choiceId="CloverPrefpane"
+#     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+#     # ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
+#     #  "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
+#     ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility  \
+#      "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/
+#     ditto --noextattr --noqtn "$cloverUpdaterDir"/build/CloverUpdater.app  \
+#      "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/CloverUpdater.app
+#     ditto --noextattr --noqtn "$cloverPrefpaneDir"/build/Clover.prefPane  \
+#      "${PKG_BUILD_DIR}/${choiceId}/Root/Library/PreferencePanes/"/Clover.prefPane
+#     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+#                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
+#     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+#     addChoice --start-selected="checkFileExists('/bin/launchctl') &amp;&amp; choicePreviouslySelected('$packageRefId')" \
+#               --start-enabled="checkFileExists('/bin/launchctl')"                                                       \
+#               --pkg-refs="$packageRefId" "${choiceId}"
+# # end CloverUpdater package
+# fi
 
 # build post install package
     echo "================= Post ================="
