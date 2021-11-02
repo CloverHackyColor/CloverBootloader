@@ -14,10 +14,10 @@ slimpkg1:
 	@${SRCROOT}/makepkg --nothemes
 
 slimpkg2:
-	@${SRCROOT}/makepkg --nothemes --noprefpane
+	@${SRCROOT}/makepkg --nothemes
 
 slimpkg3:
-	@${SRCROOT}/makepkg --nothemes --noprefpane --norc --nolegacy
+	@${SRCROOT}/makepkg --nothemes --norc --nolegacy
 
 updatepo:
 	@${SRCROOT}/package/translate.sh --update-po
