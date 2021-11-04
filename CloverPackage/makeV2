@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+#  alternate build for CloverV2
+
+cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
+ROOT="$PWD"
+SYMROOT="${ROOT}"/sym
+REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+
+zip -qr CloverV2-${REVISION}.zip CloverV2
+mv CloverV2-${REVISION}.zip $SYMROOT
+
+open sym
+
+exit 0
+

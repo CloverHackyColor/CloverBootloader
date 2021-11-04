@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover r5140\n"
-"POT-Creation-Date: 2021-09-28 19:01+0300\n"
+"Project-Id-Version: Clover r5142\n"
+"POT-Creation-Date: 2021-11-02 19:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

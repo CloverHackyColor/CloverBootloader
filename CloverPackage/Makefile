@@ -10,6 +10,9 @@ image iso: utils
 pkg installer:
 	@${SRCROOT}/makepkg
 
+zip archive:
+	@${SRCROOT}/makeV2
+
 slimpkg1:
 	@${SRCROOT}/makepkg --nothemes
 

@@ -306,6 +306,12 @@ echo "[BUILD ISO]"
 make iso
 }
 
+makeV2() {
+cd "${CLOVERROOT}"/CloverPackage
+echo "[BUILD CloverV2]"
+make zip
+}
+
 checkStatus() {
 revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
 cd "${CLOVERROOT}"
@@ -692,6 +698,7 @@ do
 			BLC
 			buildPkg
 			buildIso
+			makeV2
       break
     ;;
     "make Release")
@@ -700,6 +707,7 @@ do
       BLC
       buildPkg
       buildIso
+			makeV2
       break
     ;;
     "test Clover")
