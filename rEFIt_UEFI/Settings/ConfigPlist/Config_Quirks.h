@@ -102,6 +102,7 @@ public:
       XmlBool SetupVirtualMap = XmlBool();
       XmlBool SignalAppleOS = XmlBool();
       XmlBool SyncRuntimePermissions = XmlBool();
+      XmlBool ForceOcWriteFlash  = XmlBool();
       
       XBool dgetAvoidRuntimeDefrag() const { return parent.isDefined() ? AvoidRuntimeDefrag.isDefined() ? AvoidRuntimeDefrag.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
       XBool dgetDevirtualiseMmio() const { return DevirtualiseMmio.isDefined() ? DevirtualiseMmio.value() : DevirtualiseMmio.nullValue; };
@@ -121,7 +122,7 @@ public:
       XBool dgetSignalAppleOS() const { return SignalAppleOS.isDefined() ? SignalAppleOS.value() : SignalAppleOS.nullValue; };
       XBool dgetSyncRuntimePermissions() const { return parent.isDefined() ? SyncRuntimePermissions.isDefined() ? SyncRuntimePermissions.value() : XBool(true) : XBool(false); }; // TODO: different default value if section is not defined
       int8_t dgetResizeAppleGpuBars() const { return parent.isDefined() && ResizeAppleGpuBars.isDefined() ? ResizeAppleGpuBars.value() : -1; };
-
+      XBool dgetForceOcWriteFlash() const { return ForceOcWriteFlash.isDefined() ? ForceOcWriteFlash.value() : XBool(false); };
       OcBooterQuirks_Class(const Quirks_Class& _parent) : parent(_parent) {}
   };
   XmlArray<Quirks_MmioWhitelist_Class> MmioWhitelist = XmlArray<Quirks_MmioWhitelist_Class>();
@@ -133,7 +134,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[32] = {
+  XmlDictField m_fields[33] = {
     {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
     {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
     {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -142,6 +143,7 @@ public:
     {"EnableSafeModeSlide", OcBooterQuirks.EnableSafeModeSlide},
     {"EnableWriteUnprotector", OcBooterQuirks.EnableWriteUnprotector},
     {"ForceExitBootServices", OcBooterQuirks.ForceExitBootServices},
+	{"ForceOcWriteFlash", OcBooterQuirks.ForceOcWriteFlash},
     {"ProtectMemoryRegions", OcBooterQuirks.ProtectMemoryRegions},
     {"ProtectSecureBoot", OcBooterQuirks.ProtectSecureBoot},
     {"ProtectUefiServices", OcBooterQuirks.ProtectUefiServices},
@@ -166,6 +168,7 @@ public:
     {"PowerTimeoutKernelPanic", OcKernelQuirks.PowerTimeoutKernelPanic},
     {"ThirdPartyDrives", OcKernelQuirks.ThirdPartyDrives},
     {"XhciPortLimit", OcKernelQuirks.XhciPortLimit},
+
   };
 
   Quirks_Class() : OcKernelQuirks(*this), OcBooterQuirks(*this) {}

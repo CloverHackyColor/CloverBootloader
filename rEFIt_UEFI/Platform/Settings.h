@@ -2047,6 +2047,7 @@ printf("%s", "");
           XBool PowerTimeoutKernelPanic = false;
           XBool ThirdPartyDrives = false;
           XBool XhciPortLimit = false;
+
           
 #if __cplusplus > 201703L
           XBool operator == (const OcKernelQuirksClass&) const = default;
@@ -2064,6 +2065,7 @@ printf("%s", "");
             if ( !(PowerTimeoutKernelPanic == other.PowerTimeoutKernelPanic) ) return false;
             if ( !(ThirdPartyDrives == other.ThirdPartyDrives) ) return false;
             if ( !(XhciPortLimit == other.XhciPortLimit) ) return false;
+
             return true;
           }
           void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcKernelQuirks_Class& other)
@@ -2079,6 +2081,7 @@ printf("%s", "");
             PowerTimeoutKernelPanic = other.dgetPowerTimeoutKernelPanic();
             ThirdPartyDrives = other.dgetThirdPartyDrives();
             XhciPortLimit = other.dgetXhciPortLimit();
+
           }
       };
     
@@ -2103,6 +2106,7 @@ printf("%s", "");
         XBool SignalAppleOS = false;
         XBool SyncRuntimePermissions = false;
         int8_t ResizeAppleGpuBars = 0; // 0 is NOT the default value if not set in config.plist. Default value if not set is returned by dgetResizeAppleGpuBars()
+        XBool ForceOcWriteFlash = false;
         
 #if __cplusplus > 201703L
         XBool operator == (const OcBooterQuirksClass&) const = default;
@@ -2127,7 +2131,7 @@ printf("%s", "");
           if ( !(SetupVirtualMap == other.SetupVirtualMap) ) return false;
           if ( !(SignalAppleOS == other.SignalAppleOS) ) return false;
           if ( !(SyncRuntimePermissions == other.SyncRuntimePermissions) ) return false;
-
+          if ( !(ForceOcWriteFlash == other.ForceOcWriteFlash) ) return false;
           return true;
         }
         void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcBooterQuirks_Class& other)
@@ -2150,6 +2154,7 @@ printf("%s", "");
           SetupVirtualMap = other.dgetSetupVirtualMap();
           SignalAppleOS = other.dgetSignalAppleOS();
           SyncRuntimePermissions = other.dgetSyncRuntimePermissions();
+          ForceOcWriteFlash = other.dgetForceOcWriteFlash();
         }
 
       };

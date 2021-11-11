@@ -980,6 +980,9 @@ void LOADER_ENTRY::StartLoader()
   #ifdef USE_OC_SECTION_Nvram
     mOpenCoreConfiguration.Nvram.WriteFlash = true;
   #endif
+#ifndef USE_OC_SECTION_Uefi
+  mOpenCoreConfiguration.Uefi.Quirks.ForceOcWriteFlash = gSettings.Quirks.OcBooterQuirks.ForceOcWriteFlash;
+#endif
 
   #ifndef USE_OC_SECTION_Booter
 
