@@ -194,6 +194,13 @@ enum {
 //#define CPU_MODEL_COMETLAKE_S    0xA5 /* desktop CometLake */
 #define CPU_MODEL_COMETLAKE_Y    0xA5 /* aka 10th generation Amber Lake Y */
 #define CPU_MODEL_COMETLAKE_U    0xA6
+//From Clover collection
+#define CPU_MODEL_ATOM_TM       0x86  /* Tremont */
+#define CPU_MODEL_TIGERLAKE_C   0x8C  /* 11h generation Tiger Lake */
+#define CPU_MODEL_TIGERLAKE_D   0x8D  /* 11h generation Tiger Lake */
+#define CPU_MODEL_ALDERLAKE     0x97  /* 12h generation Alder Lake */
+#define CPU_MODEL_ROCKETLAKE    0xA7  /* 11h Rocket Lake */
+
 
 #define CPU_SOCKET_UNKNOWN  0x02
 #define CPU_SOCKET_PGA478   0x0F
