@@ -329,6 +329,8 @@ void GetCPUProperties (void)
       case CPU_MODEL_COMETLAKE_U:
       case CPU_MODEL_TIGERLAKE_C:
       case CPU_MODEL_TIGERLAKE_D:
+      case CPU_MODEL_ALDERLAKE:
+      case CPU_MODEL_ROCKETLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
@@ -520,8 +522,11 @@ void GetCPUProperties (void)
            case CPU_MODEL_COMETLAKE_S:
            case CPU_MODEL_COMETLAKE_Y:
            case CPU_MODEL_COMETLAKE_U:
-         case CPU_MODEL_TIGERLAKE_C:
-         case CPU_MODEL_TIGERLAKE_D:
+           case CPU_MODEL_TIGERLAKE_C:
+           case CPU_MODEL_TIGERLAKE_D:
+           case CPU_MODEL_ALDERLAKE:
+           case CPU_MODEL_ROCKETLAKE:
+
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
@@ -1400,8 +1405,10 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_COMETLAKE_S:
           case CPU_MODEL_COMETLAKE_Y:
           case CPU_MODEL_COMETLAKE_U:
-        case CPU_MODEL_TIGERLAKE_C:
-        case CPU_MODEL_TIGERLAKE_D:
+          case CPU_MODEL_TIGERLAKE_C:
+          case CPU_MODEL_TIGERLAKE_D:
+          case CPU_MODEL_ALDERLAKE:
+          case CPU_MODEL_ROCKETLAKE:
             if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
             if ( gCPUStructure.BrandString.contains("Core(TM) i5") )

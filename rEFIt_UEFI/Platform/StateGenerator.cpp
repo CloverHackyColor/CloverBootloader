@@ -163,10 +163,10 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
             cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0)?1:0;
             initial.Control.Control = (UINT16)AsmReadMsr64(MSR_IA32_PERF_STATUS);
-			  DBG("Initial control=0x%hX\n", initial.Control.Control);
+            DBG("Initial control=0x%hX\n", initial.Control.Control);
 						
             maximum.Control.Control = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
-			  DBG("Maximum control=0x%hX\n", maximum.Control.Control);
+            DBG("Maximum control=0x%hX\n", maximum.Control.Control);
             if (GlobalConfig.Turbo) {
               maximum.Control.VID_FID.FID++;
               MsgLog("Turbo FID=0x%hhX\n", maximum.Control.VID_FID.FID);
@@ -273,8 +273,10 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
           case CPU_MODEL_COMETLAKE_S:
           case CPU_MODEL_COMETLAKE_Y:
           case CPU_MODEL_COMETLAKE_U:
-        case CPU_MODEL_TIGERLAKE_C:
-        case CPU_MODEL_TIGERLAKE_D:
+          case CPU_MODEL_TIGERLAKE_C:
+          case CPU_MODEL_TIGERLAKE_D:
+          case CPU_MODEL_ALDERLAKE:
+          case CPU_MODEL_ROCKETLAKE:
          {
             maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.ACPI.SSDT.MaxMultiplier) {
@@ -343,6 +345,8 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_ICELAKE) ||
                     (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_C) ||
                     (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_D) ||
+                    (gCPUStructure.Model == CPU_MODEL_ROCKETLAKE) ||
+                    (gCPUStructure.Model == CPU_MODEL_ALDERLAKE) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_Y) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_U)) {
