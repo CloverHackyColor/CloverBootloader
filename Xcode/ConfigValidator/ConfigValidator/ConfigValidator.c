@@ -1,6 +1,7 @@
 #if 0
          CloverConfigPlistValidator, Credit: Jief_Machak
          ConfigValidator, Credit: chris1111
+         shc Version 3.8.9b, Copyright (c) 1994-2015 Francisco Rosales
 
 #endif
 
