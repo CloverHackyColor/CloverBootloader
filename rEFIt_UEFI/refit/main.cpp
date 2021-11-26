@@ -566,6 +566,7 @@ void CheckEmptyFB()
   (GlobalConfig.IgPlatform == 0x04120004) ||
   (GlobalConfig.IgPlatform == 0x19120001) ||
   (GlobalConfig.IgPlatform == 0x59120003) ||
+  (GlobalConfig.IgPlatform == 0x9BC80003) ||
   (GlobalConfig.IgPlatform == 0x3E910003);
   if (EmptyFB) {
     gSettings.Smbios.gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
@@ -580,7 +581,7 @@ size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kext
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
     if ( kextArray[kextIdx].FileName.contains(kextName) ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
 #else
       //it is impossible
