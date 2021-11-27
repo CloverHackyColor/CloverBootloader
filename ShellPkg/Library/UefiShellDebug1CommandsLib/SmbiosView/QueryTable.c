@@ -579,7 +579,36 @@ TABLE_ITEM  ProcessorUpgradeTable[] = {
   {
     0x38,
     L"Socket SP3r2"
+  },
+  {
+    0x39,
+    L"Socket LGA2066"
+  },
+  {
+    0x3A,
+    L"Socket BGA1392"
+  },
+  {
+    0x3B,
+    L"Socket BGA1510"
+  },
+  {
+    0x3C,
+    L"Socket BGA1528"
+  },
+  {
+    0x3D,
+    L"Socket LGA4189"
+  },
+  {
+    0x3E,
+    L"Socket LGA1200"
+  },
+  {
+    0x3F,
+    L"Socket LGA4677"
   }
+
 };
 
 TABLE_ITEM  ProcessorCharacteristicsTable[] = {
