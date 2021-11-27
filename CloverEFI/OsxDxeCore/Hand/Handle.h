@@ -248,6 +248,7 @@ CoreReleaseProtocolLock (
 
 /**
   Check whether a handle is a valid EFI_HANDLE
+  The gProtocolDatabaseLock must be owned
 
   @param  UserHandle             The handle to check
 

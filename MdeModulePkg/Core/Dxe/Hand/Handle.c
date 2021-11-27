@@ -1003,11 +1003,16 @@ CoreOpenProtocol (
   }
 
   //
+  // Lock the protocol database
+  //
+  CoreAcquireProtocolLock ();
+
+  //
   // Check for invalid UserHandle
   //
   Status = CoreValidateHandle (UserHandle);
   if (EFI_ERROR(Status)) {
-    return Status;
+	  goto Done;
   }
 
   //
@@ -1017,31 +1022,32 @@ CoreOpenProtocol (
   case EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER :
     Status = CoreValidateHandle (ImageHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+    	goto Done;
     }
     Status = CoreValidateHandle (ControllerHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+    	goto Done;
     }
     if (UserHandle == ControllerHandle) {
-      return EFI_INVALID_PARAMETER;
+    	Status = EFI_INVALID_PARAMETER;
+    	goto Done;
     }
     break;
   case EFI_OPEN_PROTOCOL_BY_DRIVER :
   case EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE :
     Status = CoreValidateHandle (ImageHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+    	goto Done;
     }
     Status = CoreValidateHandle (ControllerHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+      goto Done;
     }
     break;
   case EFI_OPEN_PROTOCOL_EXCLUSIVE :
     Status = CoreValidateHandle (ImageHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+    	goto Done;
     }
     break;
   case EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL :
@@ -1049,13 +1055,14 @@ CoreOpenProtocol (
   case EFI_OPEN_PROTOCOL_TEST_PROTOCOL :
     break;
   default:
-    return EFI_INVALID_PARAMETER;
+	  Status = EFI_INVALID_PARAMETER;
+	  goto Done;
   }
 
   //
   // Lock the protocol database
   //
-  CoreAcquireProtocolLock ();
+  //CoreAcquireProtocolLock ();
 
   //
   // Look at each protocol interface for a match
@@ -1239,30 +1246,36 @@ CoreCloseProtocol (
   OPEN_PROTOCOL_DATA  *OpenData;
 
   //
+  // Lock the protocol database
+  //
+  CoreAcquireProtocolLock ();
+
+  //
   // Check for invalid parameters
   //
   Status = CoreValidateHandle (UserHandle);
   if (EFI_ERROR(Status)) {
-    return Status;
+	  goto Done;
   }
   Status = CoreValidateHandle (AgentHandle);
   if (EFI_ERROR(Status)) {
-    return Status;
+	  goto Done;
   }
   if (ControllerHandle != NULL) {
     Status = CoreValidateHandle (ControllerHandle);
     if (EFI_ERROR(Status)) {
-      return Status;
+    	 goto Done;
     }
   }
   if (Protocol == NULL) {
-    return EFI_INVALID_PARAMETER;
+	  Status = EFI_INVALID_PARAMETER;
+	  goto Done;
   }
 
   //
   // Lock the protocol database
   //
-  CoreAcquireProtocolLock ();
+  //CoreAcquireProtocolLock ();
 
   //
   // Look at each protocol interface for a match
@@ -1435,12 +1448,6 @@ CoreProtocolsPerHandle (
   UINTN                               ProtocolCount;
   EFI_GUID                            **Buffer;
 
-  Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
-
-  Handle = (IHANDLE *)UserHandle;
 
   if (ProtocolBuffer == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -1455,6 +1462,14 @@ CoreProtocolsPerHandle (
   ProtocolCount = 0;
 
   CoreAcquireProtocolLock ();
+
+  Status = CoreValidateHandle (UserHandle);
+  if (EFI_ERROR(Status)) {
+    goto Done;
+  }
+
+  Handle = (IHANDLE *)UserHandle;
+
 
   for (Link = Handle->Protocols.ForwardLink; Link != &Handle->Protocols; Link = Link->ForwardLink) {
     ProtocolCount++;
