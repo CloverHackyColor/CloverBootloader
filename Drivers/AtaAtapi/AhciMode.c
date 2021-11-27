@@ -1686,7 +1686,7 @@ AhciAtaSmartSupport (
                    NULL
                    );
 
-        if (!EFI_ERROR(Status)) {
+ //       if (!EFI_ERROR(Status)) {
           /*Status = */AhciAtaSmartReturnStatusCheck (
                      PciIo,
                      AhciRegisters,
@@ -1694,7 +1694,7 @@ AhciAtaSmartSupport (
                      (UINT8)PortMultiplier,
                      AtaStatusBlock
                      );
-        }
+ //       }
       }
     }
 //    DEBUG ((EFI_D_INFO, "Enabled S.M.A.R.T feature at port [%d] PortMultiplier [%d]!\n",
