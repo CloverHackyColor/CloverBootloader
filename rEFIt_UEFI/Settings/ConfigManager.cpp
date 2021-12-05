@@ -563,6 +563,7 @@ return Status;
  */
 EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
 {
+  configPlist.reset();
   configPlist.SMBIOS.defaultMacModel = GetDefaultModel();
   EFI_STATUS Status = LoadPlist(ConfName, &configPlist);
 
@@ -575,6 +576,7 @@ EFI_STATUS ConfigManager::LoadConfigPlist(const XStringW& ConfName)
  */
 EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 {
+  smbiosPlist.reset();
   smbiosPlist.SMBIOS.defaultMacModel = GetDefaultModel();
   EFI_STATUS Status = LoadPlist(ConfName, &smbiosPlist);
 
