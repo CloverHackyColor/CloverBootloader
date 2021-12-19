@@ -447,6 +447,9 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   LangLen = 0;
   AddNvramVariable(L"wake-failure", &gEfiAppleBootGuid, Attributes, 5, &LangLen);
 
+  //clear OC present
+  DeleteNvramVariable(L"opencore-version", &gEfiAppleBootGuid);
+
   return EFI_SUCCESS;
 }
 

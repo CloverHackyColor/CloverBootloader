@@ -380,7 +380,7 @@ ResetNativeNvram ()
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
   NameSize = sizeof (CHAR16);
-  Name = (__typeof__(Name))AllocateZeroPool(NameSize);
+  Name = (__typeof__(Name))AllocatePool(NameSize);
   if (Name == NULL) {
     return Status;
   }
