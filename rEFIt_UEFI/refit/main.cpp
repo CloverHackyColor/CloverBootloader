@@ -462,7 +462,7 @@ void LOADER_ENTRY::FilterKernelPatches()
         KernelAndKextPatches.KernelPatches[i].Label.c_str(),
         macOSVersion.asString().c_str(),
         KernelAndKextPatches.KernelPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchOS.c_str() : "All",
-        KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "no"
+        KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "All"
       );
       if (!gSettings.KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
         KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = false;
@@ -492,7 +492,7 @@ void LOADER_ENTRY::FilterBootPatches()
           KernelAndKextPatches.BootPatches[i].Label.c_str(),
           macOSVersion.asString().c_str(),
           KernelAndKextPatches.BootPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchOS.c_str() : "All",
-          KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "no"
+          KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "All"
           );
       if (!gSettings.KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");

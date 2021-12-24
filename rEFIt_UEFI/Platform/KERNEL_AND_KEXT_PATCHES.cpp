@@ -25,6 +25,7 @@ XBool ABSTRACT_PATCH::IsPatchEnabledByBuildNumber(const XString8& Build)
   for (size_t i = 0; i < mos.size(); ++i) {
     // dot represent MatchOS
     MacOsVersion mosv = mos[i];
+    MsgLog("\n check matchBuild %s\n", mos[i].c_str());
     if ( mos[i].contains(Build) ) { // MatchBuild
       //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  true;
@@ -52,6 +53,7 @@ XBool ABSTRACT_PATCH::IsPatchEnabled(const MacOsVersion& CurrOS)
   for (size_t i = 0; i < mos.size(); ++i) {
     // dot represent MatchOS
     MacOsVersion mosv = mos[i];
+    MsgLog("\n check MatchOS %s\n", mos[i].c_str());
     if ( CurrOS.match(mos[i]) ) {
       //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  true;
