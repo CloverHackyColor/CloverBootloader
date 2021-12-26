@@ -446,7 +446,7 @@
 				<key>Comment</key>
 				<string>Monterey RDRAND instruction #1</string>
 				<key>MatchOS</key>
-				<string>12</string>
+				<string>12.x</string>
 				<key>Disabled</key>
 				<true/>
 				<key>Procedure</key>
@@ -462,7 +462,7 @@
 				<key>Comment</key>
 				<string>Monterey RDRAND instruction #2</string>
 				<key>MatchOS</key>
-				<string>12</string>
+				<string>12.x</string>
 				<key>Disabled</key>
 				<true/>
 				<key>Procedure</key>
