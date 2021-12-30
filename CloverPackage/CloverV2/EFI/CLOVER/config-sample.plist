@@ -1024,7 +1024,7 @@
 		<key>#ProductName</key>
 		<string>iMac13,2</string>
 		<key>#LocationInChassis</key>
-		<string>MLB</string>
+		<string>Part Component</string>
 		<key>#MemoryRank</key>
 		<integer>2</integer>
 		<key>#Memory</key>
