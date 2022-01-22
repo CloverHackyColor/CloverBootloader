@@ -271,9 +271,11 @@ uint32_t GetFwFeatures(MacModel Model)
 
 uint64_t GetExtFwFeatures(MacModel Model)
 {
-  // FirmwareFeatures for 12+
+  // (Extended)FirmwareFeatures for 12+
   switch ( Model )
   {
+  	case MacBookPro114:
+  	case MacBookPro115:
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro141:
@@ -282,6 +284,11 @@ uint64_t GetExtFwFeatures(MacModel Model)
     case iMac181:
     case iMac182:
     case iMac183:
+    case iMac191:
+    case iMac192:
+    case iMac201:
+    case iMac202:
+    case iMacPro11:
       return 0x8FC0FE177ull;
       break;
     case MacBook91:
@@ -298,15 +305,26 @@ uint64_t GetExtFwFeatures(MacModel Model)
     case MacBookPro161:
     case MacBookAir81:
     case MacBookAir82:
+    case MacBookAir91:
+    case MacBookPro162:
+    case MacBookPro163:
+    case MacBookPro164:
     case iMac161:
     case iMac162:
+    case MacMini71:
+    case MacMini81:
       return 0x8FC0FE137ull;
       break;
-    case MacBook61:
-    case MacBook71:
     case MacBook81:
       return 0x8FC0FE13Full;
       break;
+    case MacPro61:
+      return 0x8E80FE177ull;
+      break;
+    case MacPro71:
+      return 0x8FD8FF53Full;
+      break;
+
     default:
       return (uint64_t)GetFwFeatures(Model); //unknown - use oem SMBIOS value to be default
       break;

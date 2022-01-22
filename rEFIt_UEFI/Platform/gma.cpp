@@ -2335,13 +2335,13 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
           }
           break;
       }
-      switch (MacModel) {
-        case MacBook81:
+ //     switch (MacModel) {
+ //       case MacBook81:
           //devprop_add_value(device, "AAPL,ig-tcon-scaler", broadwell_hd_vals[0], 4);
-          break;
-        default:
-          break;
-      }
+ //         break;
+ //       default:
+ //         break;
+ //     }
       //devprop_add_value(device, "graphic-options", broadwell_hd_vals[1], 4);
       break;
 
@@ -2513,25 +2513,25 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
           }
           break;
       }
-      switch (GlobalConfig.IgPlatform) {
-        case (UINT32)0x19020001:
-        case (UINT32)0x19120001:
-        case (UINT32)0x19170001:
-        case (UINT32)0x19320001:
-          break;
-        default:
-          switch (MacModel) {
-            case MacBook91:
+//      switch (GlobalConfig.IgPlatform) {
+//       case (UINT32)0x19020001:
+//        case (UINT32)0x19120001:
+//        case (UINT32)0x19170001:
+//        case (UINT32)0x19320001:
+//          break;
+//        default:
+ //         switch (MacModel) {
+ //           case MacBook91:
               //devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[3], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerOff", skylake_hd_vals[4], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[5], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[6], 4);
               //devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
-              break;
-            case MacBookPro131:
-            case MacBookPro132:
-            case MacBookPro133:  // it has only the "graphic-options" value. However, we use built-in graphics.
+ //             break;
+ //           case MacBookPro131:
+ //           case MacBookPro132:
+ //           case MacBookPro133:  // it has only the "graphic-options" value. However, we use built-in graphics.
               //devprop_add_value(device, "AAPL,Gfx324", skylake_hd_vals[0], 4);
               //devprop_add_value(device, "AAPL00,PanelCycleDelay", skylake_hd_vals[2], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerDown", skylake_hd_vals[7], 4);
@@ -2539,12 +2539,12 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
               //devprop_add_value(device, "AAPL00,PanelPowerOn", skylake_hd_vals[9], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerUp", skylake_hd_vals[10], 4);
               //devprop_add_value(device, "graphic-options", skylake_hd_vals[11], 4);
-              break;
-            default:
-              break;
-          }
-          break;
-      }
+ //             break;
+ //           default:
+ //             break;
+ //         }
+ //         break;
+ //     }
 
       // if wakes up with an HDMI connected, sometimes this value causes force reboot in 10.14+
       if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8) ) {
@@ -2871,24 +2871,24 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
           }
           break;
       }
-      switch (GlobalConfig.IgPlatform) {
-        case (UINT32)0x59120003:
-        case (UINT32)0x59180002:
-          break;
-        default:
-          switch (MacModel) {
-            case MacBook101:
-            case MacBookAir81:
+//      switch (GlobalConfig.IgPlatform) {
+//        case (UINT32)0x59120003:
+//        case (UINT32)0x59180002:
+//          break;
+//        default:
+//          switch (MacModel) {
+//            case MacBook101:
+//            case MacBookAir81:
               //devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[3], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerOff", kabylake_hd_vals[4], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[5], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[6], 4);
               //devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
-              break;
-            case MacBookPro141:
-            case MacBookPro142:
-            case MacBookPro143:  // it has only the "graphic-options" value. However, we use built-in graphics.
+//              break;
+//            case MacBookPro141:
+//            case MacBookPro142:
+//            case MacBookPro143:  // it has only the "graphic-options" value. However, we use built-in graphics.
               //devprop_add_value(device, "AAPL,Gfx324", kabylake_hd_vals[0], 4);
               //devprop_add_value(device, "AAPL00,PanelCycleDelay", kabylake_hd_vals[2], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerDown", kabylake_hd_vals[7], 4);
@@ -2896,14 +2896,14 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
               //devprop_add_value(device, "AAPL00,PanelPowerOn", kabylake_hd_vals[9], 4);
               //devprop_add_value(device, "AAPL00,PanelPowerUp", kabylake_hd_vals[10], 4);
               //devprop_add_value(device, "graphic-options", kabylake_hd_vals[11], 4);
-              break;
-            default:
-              break;
-          }
-          break;
-      }
+//              break;
+//            default:
+//              break;
+//          }
+//          break;
+//      }
 
-      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      // if wakes up with an HDMI connected, sometimes this value causes force reboot in 10.14+
       if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.14"_XS8)) {
         devprop_add_value(device, "AAPL,GfxYTile", kabylake_hd_vals[1], 4);
       }

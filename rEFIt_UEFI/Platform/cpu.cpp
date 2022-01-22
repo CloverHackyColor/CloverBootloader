@@ -1497,7 +1497,7 @@ MacModel GetDefaultModel()
       case CPU_MODEL_HASWELL_ULT:
       case CPU_MODEL_CRYSTALWELL:
       case CPU_MODEL_BROADWELL_HQ:
-        DefaultType = MacBookPro111;
+        DefaultType = MacBookPro114;
         break;
       case CPU_MODEL_HASWELL_U5:  // Broadwell Mobile
         if ( gCPUStructure.BrandString.contains("M") ) {
@@ -1607,6 +1607,10 @@ MacModel GetDefaultModel()
         DefaultType = MacPro41;
         break;
       case CPU_MODEL_HASWELL_U5:
+        if ( gConf.GfxPropertiesArray.isCardAtPosIntel(0) ) {
+           DefaultType = MacMini71;
+           break;
+        }
         DefaultType = iMac151;
         break;
       case CPU_MODEL_SKYLAKE_D:  
