@@ -25,9 +25,9 @@ typedef struct {
 ///
 typedef struct {
   union {
-  UINT32  Signature;
+    UINT32  Signature;
     CHAR8   SignatureAs4Char[4];
-  };
+  } SignatureCommon;
   UINT32  Length;
   UINT8   Revision;
   UINT8   Checksum;

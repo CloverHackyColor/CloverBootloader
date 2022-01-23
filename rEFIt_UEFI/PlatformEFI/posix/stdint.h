@@ -7,7 +7,8 @@
 static_assert(sizeof(char) == 1, "sizeof(char) != 1");
 static_assert(sizeof(short) == 2, "sizeof(short) != 2");
 static_assert(sizeof(int) == 4, "sizeof(int) != 4");
-static_assert(sizeof(long) == 8, "sizeof(long) != 8"); // Jief : I think this break on Windows. Conditional compilation rquired to restore Windows compatibility
+//static_assert(sizeof(long) == 8, "sizeof(long) != 8"); // Jief : I think this break on Windows. Conditional compilation rquired to restore Windows compatibility
+//so why EDK2 never used "long". It uses INT32.
 static_assert(sizeof(long long) == 8, "sizeof(long long) != 8");
 static_assert(true, "true");
 #endif
