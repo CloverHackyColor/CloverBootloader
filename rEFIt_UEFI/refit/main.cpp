@@ -822,7 +822,7 @@ void LOADER_ENTRY::StartLoader()
 //      EFI_HANDLE Interface = NULL;
 //      Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
 //      if ( !EFI_ERROR(Status) ) {
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
 //        panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
 //#else
 //        DBG("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");

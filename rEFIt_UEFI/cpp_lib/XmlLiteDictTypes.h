@@ -175,7 +175,7 @@ if ( xmlPath.startWithOrEqualToIC("/Devices/Properties"_XS8) ) {
 //    xmlSubPath = xmlPath;
 //    xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
 //
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif

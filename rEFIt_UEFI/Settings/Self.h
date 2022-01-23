@@ -59,7 +59,7 @@ public:
   XBool isInitialized() const { return m_CloverDir != NULL; }
   void checkInitialized() const
   {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if ( !isInitialized() ) {
       panic("Self in not initialized");
     }

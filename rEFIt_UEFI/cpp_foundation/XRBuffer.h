@@ -65,7 +65,7 @@ class XRBuffer
 	void setIndex(IntegralType Idx)
   {
     if (Idx < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XBuffer::setIndex : Idx < 0. System halted\n");
 #else
       _Index = 0;
@@ -86,14 +86,14 @@ class XRBuffer
 	T& operator [](IntegralType i)
 	{
     if (i < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XRBuffer::operator [] : i < 0. System halted\n");
 #else
       return 0;
 #endif
     }
     if ( (unsigned_type(IntegralType))i >= m_size ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XRBuffer::operator [] : index >= m_size. System halted\n");
 #else
       return 0;
@@ -105,14 +105,14 @@ class XRBuffer
   const T& operator [](IntegralType i) const
   {
     if (i < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XRBuffer::operator [] : i < 0. System halted\n");
 #else
       return 0;
 #endif
    }
     if ( (unsigned_type(IntegralType))i >= m_size ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XRBuffer::operator [] : index > len. System halted\n");
 #else
       return 0;

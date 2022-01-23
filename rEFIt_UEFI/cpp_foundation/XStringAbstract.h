@@ -302,7 +302,7 @@ public:
 	char32_t char32At(IntegralType i) const
 	{
 		if (i < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("__String<T>::char32At(size_t i) : i < 0. System halted\n");
 #else
       return 0;
@@ -314,7 +314,7 @@ public:
 		do {
 			p = get_char32_from_string(p, &char32);
 			if (!char32) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
         if ( (unsigned_type(IntegralType))i == nb ) return 0; // no panic if we want to access the null terminator
 				panic("__String::char32At(size_t i) : i >= length(). System halted\n");
 #else
@@ -537,7 +537,7 @@ public:
   bool isEqualAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
   {
     
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if ( pos < 0 ) panic("XString::equalAtIC -> i < 0");
 #else
     if ( pos < 0 ) return false;

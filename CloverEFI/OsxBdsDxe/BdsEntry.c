@@ -564,7 +564,7 @@ BdsEntry (
   gST->FirmwareVendor = AllocateRuntimeCopyPool (StrSize (FirmwareVendor), FirmwareVendor);
 //  ASSERT (gST->FirmwareVendor != NULL);
 #ifdef FIRMWARE_REVISION
-  gST->FirmwareRevision = (1<<16) + (UINT32)StrDecimalToUintn(FIRMWARE_REVISION);
+  gST->FirmwareRevision = (2<<16) + (UINT32)StrDecimalToUintn(FIRMWARE_REVISION);
 #else  
   gST->FirmwareRevision = PcdGet32 (PcdFirmwareRevision);
 #endif

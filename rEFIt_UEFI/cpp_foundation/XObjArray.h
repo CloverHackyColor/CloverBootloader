@@ -525,7 +525,7 @@ void XObjArrayNC<TYPE>::CheckSize(size_t nNewSize, size_t nGrowBy)
 		nNewSize += nGrowBy + 1;
 		_Data = (XObjArrayEntry<TYPE> *)Xrealloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 			panic("XObjArrayNC<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %zu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
 #else
       m_allocatedSize = 0;

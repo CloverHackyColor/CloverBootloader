@@ -114,7 +114,7 @@ XBool TagDict::debugIsEqual(const TagStruct& other, const XString8& label) const
 
 INTN TagDict::dictKeyCount() const
 {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
   if ( !isDict() ) panic("TagStruct::dictKeyCount() : !isDict() ");
 #else
   if ( !isDict() ) return 0;

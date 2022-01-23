@@ -60,7 +60,7 @@ public:
   }
   void setDataValue(UINT8* data, UINTN dataLen)
   {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if ( data == NULL && dataLen != 0 ) panic("TagData::setDataValue() : data == NULL && dataLen != 0 ");
     if ( data != NULL && dataLen == 0 ) panic("TagData::setDataValue() : data != NULL && dataLen == 0 ");
 #else

@@ -45,7 +45,7 @@ XmlAbstractType& XmlDict::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, co
     XmlAbstractType& xmlAbstractType = xmlDictField.xmlAbstractType;
     if ( strnIsEqualIC(keyValue, keyValueLength, fieldName) )
     {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 if ( xmlPath.containsIC("/ACPI/RenameDevices") ) {
   (void)1;
 }
@@ -54,7 +54,7 @@ if ( strcmp(fieldName, "AutoMerge") == 0 ) {
 }
 #endif
       *keyFound = true;
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
 //  XmlParserPosition pos = xmlLiteParser->getPosition();
 //#endif
 
@@ -63,7 +63,7 @@ if ( strcmp(fieldName, "AutoMerge") == 0 ) {
 //        xmlAbstractType.reset();
 //      }
 //      if ( !xmlAbstractType.parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors) ) {
-////#ifdef DEBUG
+////#ifdef JIEF_DEBUG
 ////        xmlAbstractType.reset();
 ////        xmlLiteParser->restorePosition(pos);
 ////        xmlAbstractType.parseFromXmlLite(xmlLiteParser, xmlPath, false);
@@ -110,7 +110,7 @@ size_t* keyValueLengthPtr)
   if ( xmlPath.lastChar() == '/' ) xmlSubPath.S8Catf("%.*s", (int)keyValueLength, keyValue);
   else xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
 
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
 //XmlParserPosition valuePos = xmlLiteParser->getPosition();
 //#endif
 
@@ -125,7 +125,7 @@ size_t* keyValueLengthPtr)
     xmlLiteParser->skipNextTag(generateErrors); // return value doesn't need to be tested, because skipNextTag() set xmlLiteParser::xmlParsingError to true.
   }
 
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
 //  if ( xmlLiteParser->xmlParsingError ) {
 //    xmlLiteParser->restorePosition(valuePos);
 //    reset();
@@ -154,7 +154,7 @@ XBool XmlDict::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
 //    xmlSubPath = xmlPath;
 //    xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
 //
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif
@@ -211,14 +211,14 @@ XBool XmlDict::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, c
 //    XmlDictField& xmlDictField = fields[idx];
 //    XmlAbstractType& xmlAbstractType = xmlDictField.xmlAbstractType;
 //    XString8 subXmlPath = S8Printf("%s/%s", xmlPath.c_str(), xmlDictField.m_name);
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
 ////if ( subXmlPath == "/ACPI/DSDT/Name"_XS8 ) {
 //if ( subXmlPath == "/Boot/Policy"_XS8 ) {
 //  printf("");
 //}
 //#endif
 //    if ( !xmlAbstractType.validate(xmlLiteParser, subXmlPath, pos, generateErrors) ) {
-//      #ifdef DEBUG
+//      #ifdef JIEF_DEBUG
 ////        xmlAbstractType.validate(xmlLiteParser, subXmlPath, pos, false);
 //      #endif
 //      return false;

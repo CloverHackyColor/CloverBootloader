@@ -57,7 +57,7 @@ public:
   virtual void sprintf(unsigned int ident, XString8* s) const = 0;
   void printf(unsigned int ident) const;
   virtual void printf() const { printf(0); }
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
   virtual const TagDict* getDict() const { panic("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual const TagKey* getKey() const { panic("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual const TagString* getString() const { panic("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }

@@ -146,7 +146,7 @@ LogDataHubXString8(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
            const XString8& s)
 {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
 #else
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) return EFI_OUT_OF_RESOURCES;
@@ -159,7 +159,7 @@ LogDataHubXStringW(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
            const XStringW& s)
 {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
 #else
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) return EFI_OUT_OF_RESOURCES;

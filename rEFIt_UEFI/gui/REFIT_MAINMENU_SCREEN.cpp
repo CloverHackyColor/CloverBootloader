@@ -870,7 +870,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
       }else{
         // Here, it means MainChosenEntry->SubScreen != null, but MainChosenEntry->SubScreen->Entries.size() == 0.
         // This is a technical bug. GraphicsMenuStyle would crash.
-        #ifdef DEBUG
+        #ifdef JIEF_DEBUG
           panic("A sub menu doesn't have any entries");
         #else
           MenuExit = 0; // loop on main menu

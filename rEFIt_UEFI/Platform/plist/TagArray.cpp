@@ -151,7 +151,7 @@ const TagDict* TagArray::dictElementAt(size_t idx) const
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isDict() ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     panic("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
 #else
     return 0;
@@ -164,7 +164,7 @@ const TagArray* TagArray::arrayElementAt(size_t idx) const
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isArray() ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     panic("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
 #else
     return 0;

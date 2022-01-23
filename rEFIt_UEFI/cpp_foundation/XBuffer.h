@@ -41,7 +41,7 @@ protected:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   void stealValueFrom(T* p, IntegralType count) {
     if ( count < 0 ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XBuffer::stealValueFrom : count < 0. System halted\n");
 #else
       return;
@@ -86,7 +86,7 @@ public:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   T* dataSized(IntegralType size) {
     if ( size < 0 ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XBuffer::dataSized : size < 0. System halted\n");
 #else
       return NULL;
@@ -143,7 +143,7 @@ public:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   T& operator [](IntegralType i)
   {
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
     if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
     if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
 //#else
@@ -156,7 +156,7 @@ public:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   const T& operator [](IntegralType i) const
   {
-//#ifdef DEBUG
+//#ifdef JIEF_DEBUG
     if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
     if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
 //#else
@@ -176,7 +176,7 @@ public:
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   void memset(unsigned char c, IntegralType count) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if (count < 0) panic("XBuffer::memset : count < 0. System halted\n");
 #else
     if (count < 0) return;
@@ -187,7 +187,7 @@ public:
 
   template<typename IntegralType1, typename IntegralType2, enable_if( is_integral(IntegralType1) && is_integral(IntegralType2) )>
   void memsetAtPos(IntegralType1 pos, unsigned char c, IntegralType2 count) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if (pos < 0) panic("XBuffer::memset : pos < 0. System halted\n");
     if (count < 0) panic("XBuffer::memset : count < 0. System halted\n");
 #else
@@ -289,7 +289,7 @@ void XBuffer<T>::Initialize(const T* p, size_t count, size_t index)
     m_allocatedSize = count;
     _WData = (T*)malloc(m_allocatedSize);
     if ( !_WData ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XBuffer<T>::Initialize(%zu) : malloc returned NULL. System halted\n", count);
 #else
       return;
@@ -320,7 +320,7 @@ void XBuffer<T>::CheckAllocatedSize(size_t nNewSize, size_t nGrowBy)
     nNewSize += nGrowBy;
     _WData = (T*)Xrealloc(_WData, nNewSize*sizeof(T), m_allocatedSize);
     if ( !_WData ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("XBuffer<T>::CheckAllocatedSize(%zu, %zu) : Xrealloc(%" PRIuPTR " %zu, %zu) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(_WData), nNewSize, m_allocatedSize);
 #else
       m_allocatedSize = 0;

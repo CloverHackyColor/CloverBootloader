@@ -1350,7 +1350,7 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, const UINT8* bin, UINT32 N)
   return -1;
 }
 INT32 FindBin (UINT8 *dsdt, size_t len, const XBuffer<UINT8>& bin) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
   if ( len > MAX_INT32 ) panic("FindBin : len > MAX_INT32"); // check against INT32, even though parameter of FindBin is UINT32. Because return value is INT32, parameter should not be > MAX_INT32
   if ( bin.size() > MAX_INT32 ) panic("FindBin : bin.size() > MAX_INT32");
 #else

@@ -144,10 +144,10 @@ public:
   {
     if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
     if (nIndex < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("EntryArray::operator[] : i < 0. System halted\n");
 #else
-      return 0;
+      return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(0);
 #endif
     }
     size_t size = 0;
@@ -158,10 +158,10 @@ public:
       }
     }
     
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     panic("EntryArray::operator[] nIndex > size()");
 #else
-    return 0;
+    return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(0);
 #endif
 
   }
@@ -171,10 +171,10 @@ public:
   {
     if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
     if (nIndex < 0) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
       panic("EntryArray::operator[] : i < 0. System halted\n");
 #else
-      return 0;
+      return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(0);
 #endif
     }
     size_t size = 0;
@@ -184,10 +184,10 @@ public:
         size++;
       }
     }
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     panic("EntryArray::operator[] nIndex > size()");
 #else
-    return 0;
+    return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(0);
 #endif
   }
 
@@ -268,7 +268,7 @@ public:
   template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
   void moveBefore(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
     if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
@@ -293,7 +293,7 @@ public:
   template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
   void moveAfter(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
     if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");

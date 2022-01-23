@@ -59,7 +59,7 @@ class XArray
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const TYPE& ElementAt(IntegralType index) const
   {
-    #ifdef DEBUG
+    #ifdef JIEF_DEBUG
       if ( index < 0 ) {
         panic("XArray::ElementAt(int) -> Operator [] : index < 0");
       }
@@ -209,7 +209,7 @@ void XArray<TYPE>::CheckSize(size_t nNewSize, size_t nGrowBy)
 		nNewSize += nGrowBy;
 		m_data = (TYPE *)Xrealloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
-#ifdef DEBUG
+#ifdef JIEF_DEBUG
 			panic("XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
 #endif
 		}
@@ -231,7 +231,7 @@ void XArray<TYPE>::setSize(size_t l)
 {
 	CheckSize(l, 0); // be sure the size is allocated
 	m_len = l;
-	#ifdef DEBUG
+	#ifdef JIEF_DEBUG
 		if(m_len > m_allocatedSize) {
 			panic("XArray::SetLength(size_t) -> _Len > _Size");
 		}
