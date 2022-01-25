@@ -383,7 +383,7 @@ EFI_STATUS SaveHdaDumpBin()
 			continue;
 
 		HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
-		if(!HdaCodecDev || !HdaCodecDev->AudioFuncGroup)
+		if(!HdaCodecDev->AudioFuncGroup)
 			continue;
 		
 //		HdaCodecInfo = &HdaCodecDev->HdaCodecInfoData->HdaCodecInfo;

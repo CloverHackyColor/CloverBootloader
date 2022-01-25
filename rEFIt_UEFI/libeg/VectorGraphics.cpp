@@ -140,7 +140,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
       else {
         SVGimage->shapes = shapeNext;
       }
-      shapePrev->next = shapeNext;
+//      shapePrev->next = shapeNext; //already done or null pointer
     } //the shape in the group
     else {
       shapePrev = shape;

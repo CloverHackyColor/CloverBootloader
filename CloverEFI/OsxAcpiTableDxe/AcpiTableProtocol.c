@@ -1852,7 +1852,7 @@ AcpiTableAcpiTableConstructor (
   // at the beginning of the list of tables.  Some OS don't seem
   // to find it correctly if it is too far down the list.
   //
-  AcpiTableInstance->Rsdt1->SignatureCommon.Signature = EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
+  AcpiTableInstance->Rsdt1->Signature = EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
   AcpiTableInstance->Rsdt1->Length    = sizeof (EFI_ACPI_DESCRIPTION_HEADER);
   AcpiTableInstance->Rsdt1->Revision  = EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_REVISION;
   CopyMem(AcpiTableInstance->Rsdt1->OemId, EFI_ACPI_OEM_ID, 6);
@@ -1867,7 +1867,7 @@ AcpiTableAcpiTableConstructor (
   AcpiTableInstance->NumberOfTableEntries1  = 1;
   AcpiTableInstance->Rsdt1->Length          = AcpiTableInstance->Rsdt1->Length + sizeof(UINT32);
 
-  AcpiTableInstance->Rsdt3->SignatureCommon.Signature       = EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
+  AcpiTableInstance->Rsdt3->Signature       = EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
   AcpiTableInstance->Rsdt3->Length          = sizeof (EFI_ACPI_DESCRIPTION_HEADER);
   AcpiTableInstance->Rsdt3->Revision        = EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_TABLE_REVISION;
   CopyMem(AcpiTableInstance->Rsdt3->OemId, EFI_ACPI_OEM_ID, 6);
@@ -1885,7 +1885,7 @@ AcpiTableAcpiTableConstructor (
   //
   // Initialize Xsdt
   //
-  AcpiTableInstance->Xsdt->SignatureCommon.Signature  = EFI_ACPI_3_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
+  AcpiTableInstance->Xsdt->Signature  = EFI_ACPI_3_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE;
   AcpiTableInstance->Xsdt->Length     = sizeof (EFI_ACPI_DESCRIPTION_HEADER);
   AcpiTableInstance->Xsdt->Revision   = EFI_ACPI_3_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_REVISION;
   CopyMem(AcpiTableInstance->Xsdt->OemId, EFI_ACPI_OEM_ID, 6);

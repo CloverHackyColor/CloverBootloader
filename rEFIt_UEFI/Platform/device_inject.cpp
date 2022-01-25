@@ -80,7 +80,6 @@ XString8 get_pci_dev_path(pci_dt_t *PciDt)
     return NullXString8;
   returnValue = FileDevicePathToXStringW(DevicePath);
   return returnValue;
-
 }
 
 UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
@@ -342,6 +341,8 @@ void devprop_free_string(DevPropString *StringBuf)
   //	StringBuf = NULL;
 }
 
+static UINT8   builtin = 0x0;
+
 // Ethernet built-in device injection
 XBool set_eth_props(pci_dt_t *eth_dev)
 {
@@ -349,7 +350,6 @@ XBool set_eth_props(pci_dt_t *eth_dev)
 //  CHAR8           *devicepath;
 #endif
   DevPropDevice   *device = NULL;
-  UINT8           builtin = 0x0;
   XBool           Injected = false;
   UINTN           i;
   CHAR8           compatible[64];
@@ -422,8 +422,6 @@ XBool set_eth_props(pci_dt_t *eth_dev)
 #define PCI_IF_XHCI 0x30
 
 static UINT8   clock_id = 0;
-static UINT8   builtin = 0x0;
-
 static UINT16  current_available = 1200; //mA
 static UINT16  current_extra     = 700;
 static UINT16  current_in_sleep  = 1000;

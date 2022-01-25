@@ -268,8 +268,9 @@ UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
              ( Path.isEqualIC(OSXInstallerPaths[2])) ||
              ( Path.isEqualIC(OSXInstallerPaths[3])) ||
              ( Path.isEqualIC(OSXInstallerPaths[4])) ||
-             ( Path.isEqualIC(RockBoot)) || ( Path.isEqualIC(PaperBoot)) || ( Path.isEqualIC(ScissorBoot)) ||
-             (! Path.isEqualIC(L"\\.IABootFiles\\boot.efi") &&  Path.isEqualIC(L"\\.IAPhysicalMedia") &&  Path.isEqualIC(MACOSX_LOADER_PATH))
+             ( Path.isEqualIC(RockBoot)) || ( Path.isEqualIC(PaperBoot)) || ( Path.isEqualIC(ScissorBoot)) /* ||
+             (! Path.isEqualIC(L"\\.IABootFiles\\boot.efi") &&
+            	Path.isEqualIC(L"\\.IAPhysicalMedia")) */ //what is it???
              ) {
     return OSTYPE_OSX_INSTALLER;
   } else if ( Path.isEqualIC(L"\\com.apple.recovery.boot\\boot.efi")) {

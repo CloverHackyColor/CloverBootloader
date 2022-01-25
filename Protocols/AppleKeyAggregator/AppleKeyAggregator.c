@@ -67,13 +67,12 @@ KeyMapBubbleSort (
   UINTN  Index;
   UINTN  NoRemainingChilds2;
   UINT16 *OperandPtr;
-  UINT16 FirstChild;
   
   if (!Operand || !NoChilds) {
     return;
   }
   
-  if (Operand != NULL) {
+
     ++Operand;
     NoRemainingChilds = (NoChilds - 1);
     Index             = 1;
@@ -84,7 +83,7 @@ KeyMapBubbleSort (
       
       if (Index < NoChilds) {
         do {
-          FirstChild = Operand[-1];
+          UINT16 FirstChild = Operand[-1];
           
           if (FirstChild > *OperandPtr) {
             Operand[-1] = *OperandPtr;
@@ -99,7 +98,7 @@ KeyMapBubbleSort (
       ++Index;
       ++Operand;
     } while ((NoRemainingChilds--) > 0);
-  }
+
 }
 
 EFI_STATUS

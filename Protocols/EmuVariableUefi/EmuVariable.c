@@ -432,7 +432,8 @@ GetIndexFromSupportedLangCodes(
       //
       // Skip ';' characters in SupportedLang
       //
-      for (; *SupportedLang != '\0' && *SupportedLang == ';'; SupportedLang++);
+      //for (; *SupportedLang != '\0' && *SupportedLang == ';'; SupportedLang++);
+      while (*SupportedLang == ';') SupportedLang++; //no sense to check \0
       //
       // Determine the length of the next language code in SupportedLang
       //
@@ -530,7 +531,8 @@ GetLangFromSupportedLangCodes (
       //
       // Skip ';' characters in Supported
       //
-      for (; *Supported != '\0' && *Supported == ';'; Supported++);
+      //for (; *Supported != '\0' && *Supported == ';'; Supported++);
+      while (*Supported == ';') Supported++;
     }
   }
 }
@@ -622,7 +624,8 @@ VariableGetBestLanguage (
           //
           // Skip ';' characters in Supported
           //
-          for (; *Supported != '\0' && *Supported == ';'; Supported++);
+          //for (; *Supported != '\0' && *Supported == ';'; Supported++);
+          while (*Supported == ';') Supported++;
           //
           // Determine the length of the next language code in Supported
           //

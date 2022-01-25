@@ -749,13 +749,13 @@ BdsSetConsoleMode (
     NewRows                 = mBootTextModeRow;
   }
 
-  if (GraphicsOutput != NULL) {
+//  if (GraphicsOutput != NULL) {
     MaxGopMode  = GraphicsOutput->Mode->MaxMode;
-  }
+//  }
 
-  if (SimpleTextOut != NULL) {
+//  if (SimpleTextOut != NULL) {
     MaxTextMode = SimpleTextOut->Mode->MaxMode;
-  }
+//  }
 
   //
   // 1. If current video resolution is same with required video resolution,

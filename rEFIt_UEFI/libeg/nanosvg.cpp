@@ -71,7 +71,7 @@
 #define ceilf(x) CeilF(x)
 #define floorf(x) FloorF(x)
 #define acosf(x) AcosF(x)
-#define atan2f(x,y) Atan2F(x,y)
+#define atan2f(y,x) Atan2F(y,x)
 #define fabsf(x) FabsF(x)
 
 
@@ -447,7 +447,6 @@ static double nsvg__evalBezier(double t, double p0, double p1, double p2, double
 
 static void nsvg__curveBounds(float* bounds, float* curve)
 {
-  int i, j, count;
   double roots[2], a, b, c, b2ac, t, v;
   float* v0 = &curve[0];
   float* v1 = &curve[2];
@@ -466,11 +465,11 @@ static void nsvg__curveBounds(float* bounds, float* curve)
     return;
 
   // Add bezier curve inflection points in X and Y.
-  for (i = 0; i < 2; i++) {
+  for (int i = 0; i < 2; i++) {
     a = -3.0f * v0[i] + 9.0f * v1[i] - 9.0f * v2[i] + 3.0f * v3[i];
     b = 6.0f * v0[i] - 12.0f * v1[i] + 6.0f * v2[i];
     c = 3.0f * v1[i] - 3.0f * v0[i];
-    count = 0;
+    int count = 0;
     if (fabs(a) < NSVG_EPSILON) {
       if (fabs(b) > NSVG_EPSILON) {
         t = -c / b;
@@ -486,7 +485,7 @@ static void nsvg__curveBounds(float* bounds, float* curve)
         if (t > NSVG_EPSILON && t < 1.0-NSVG_EPSILON)          roots[count++] = t;
       }
     }
-    for (j = 0; j < count; j++) {
+    for (int  j = 0; j < count; j++) {
       v = nsvg__evalBezier(roots[j], v0[i], v1[i], v2[i], v3[i]);
       bounds[0+i] = nsvg__minf(bounds[0+i], (float)v);
       bounds[2+i] = nsvg__maxf(bounds[2+i], (float)v);
@@ -4232,10 +4231,10 @@ static void nsvg__content(void* ud, char* s)
     if (p->shapeFlag) {
       while (shape->next)
         shape = shape->next;
-      if (shape) {
-        memcpy(shape->title, s, len);
-        memset(shape->title + len, 0, lim-len);
-      }
+//      if (shape) {
+      memcpy(shape->title, s, len);
+      memset(shape->title + len, 0, lim-len);
+//      }
     } else { //not shape
       NSVGattrib* attr = nsvg__getAttr(p);
       memcpy(attr->title, s, len);

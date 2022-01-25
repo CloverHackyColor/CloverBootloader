@@ -61,7 +61,7 @@
 #define floorf(x) FloorF(x)
 #define fmodf(x,y) ModF(x,y)
 #define acosf(x) AcosF(x)
-#define atan2f(x,y) Atan2F(x,y)
+#define atan2f(y,x) Atan2F(y,x)
 //#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define fabsf(x) FabsF(x)
 

@@ -1773,7 +1773,7 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8> ToReplace)
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
 {
   size_t sizeoffset;
   INT32 adr;

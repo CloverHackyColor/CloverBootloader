@@ -66,13 +66,14 @@ XBool AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& _LoaderTit
 //  INTN               i;
   
 DBG("    AddLegacyEntry:\n");
+	if (Volume == NULL) {
+		DBG("  Volume==0\n");
+		return false;
+	}
 DBG("      FullTitle=%ls\n", FullTitle.wc_str());
 DBG("      LoaderTitle=%ls\n", _LoaderTitle.wc_str());
 DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
 
-  if (Volume == NULL) {
-    return false;
-  }
   // Ignore this loader if it's device path is already present in another loader
   for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
     REFIT_ABSTRACT_MENU_ENTRY& MainEntry = MainMenu.Entries[i];

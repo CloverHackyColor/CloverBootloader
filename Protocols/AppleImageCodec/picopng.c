@@ -573,9 +573,7 @@ void Inflator_inflateHuffmanBlock(VECTOR_8 *out, const UINT8 *in, UINT32 *bp, UI
 				vector8_resize(out, (*pos + 1) * 2); // reserve more room
 			out->data[(*pos)++] = (UINT8) code;
 		}
-		else
-			
-			if (code >= 257 && code <= 285)
+		else if (code <= 285)
       { // length code
         UINT32 length = LENBASE[code - 257], numextrabits = LENEXTRA[code - 257];
         UINT32 codeD;

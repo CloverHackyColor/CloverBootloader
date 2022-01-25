@@ -138,7 +138,7 @@ ScanTableInRSDT (
   EntryPtr = &Rsdt->Entry;
   for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
     Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-    if (Table->SignatureCommon.Signature == Signature) {
+    if (Table->Signature == Signature) {
       *FoundTable = Table;
       break;
     }
@@ -168,7 +168,7 @@ ScanTableInXSDT (
   for (Index = 0; Index < EntryCount; Index ++) {
     CopyMem(&EntryPtr, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
     Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(EntryPtr));
-    if (Table->SignatureCommon.Signature == Signature) {
+    if (Table->Signature == Signature) {
       *FoundTable = Table;
       break;
     }

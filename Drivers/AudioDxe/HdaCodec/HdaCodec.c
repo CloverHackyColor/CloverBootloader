@@ -778,7 +778,7 @@ HdaCodecDisableWidgetPath(
 {
   // Create variables.
   EFI_STATUS Status;
-  EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+  EFI_HDA_IO_PROTOCOL *HdaIo;
   UINT32 Response = 0;
   
   //DEBUG((DEBUG_INFO, "HdaCodecDisableWidgetPath(): start\n"));
@@ -787,6 +787,8 @@ HdaCodecDisableWidgetPath(
   if (HdaWidget == NULL)
     return EFI_INVALID_PARAMETER;
   
+  HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+
   // Crawl through widget path.
   while (HdaWidget != NULL) {
     // If Output, disable stream.
@@ -823,7 +825,7 @@ HdaCodecEnableWidgetPath(
 {
   // Create variables.
   EFI_STATUS Status;
-  EFI_HDA_IO_PROTOCOL *HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+  EFI_HDA_IO_PROTOCOL *HdaIo;
   UINT32 Response = 0;
   
   //DEBUG((DEBUG_INFO, "HdaCodecEnableWidgetPath(): start\n"));
@@ -832,6 +834,8 @@ HdaCodecEnableWidgetPath(
   if ((HdaWidget == NULL) || (Volume > EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME))
     return EFI_INVALID_PARAMETER;
   
+  HdaIo = HdaWidget->FuncGroup->HdaCodecDev->HdaIo;
+
   // Crawl through widget path.
   while (HdaWidget != NULL) {
     DEBUG((DEBUG_INFO, "Widget @ 0x%X setting up\n", HdaWidget->NodeId));

@@ -928,7 +928,7 @@ AhciDmaTransfer (
   }
   gBS->RestoreTPL (OldTpl);
 
-  if ((Task == NULL) || ((Task != NULL) && (!Task->IsStart))) {
+  if ((Task == NULL) || !Task->IsStart) {
     //
     // Mark the Task to indicate that it has been started.
     //
@@ -1039,7 +1039,7 @@ Exit:
   // context cleanup, then set the packet's Asb status.
   //
   if (Task == NULL ||
-      ((Task != NULL) && (Status != EFI_NOT_READY))
+       (Status != EFI_NOT_READY)
      ) {
     AhciStopCommand (
       PciIo,
@@ -1402,8 +1402,6 @@ AhciAtaSmartReturnStatusCheck (
 {
   EFI_STATUS              Status;
   EFI_ATA_COMMAND_BLOCK   AtaCommandBlock;
-  UINT8                   LBAMid;
-  UINT8                   LBAHigh;
   UINTN                   FisBaseAddr;
   UINT32                  Value;
 
@@ -1431,44 +1429,44 @@ AhciAtaSmartReturnStatusCheck (
              );
 
   if (EFI_ERROR(Status)) {
-    REPORT_STATUS_CODE (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
-      );
+//    REPORT_STATUS_CODE (
+//      EFI_ERROR_CODE | EFI_ERROR_MINOR,
+//      (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
+//      );
     return EFI_DEVICE_ERROR;
   }
 
-  REPORT_STATUS_CODE (
-    EFI_PROGRESS_CODE,
-    (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_ENABLE)
-    );
+//  REPORT_STATUS_CODE (
+//    EFI_PROGRESS_CODE,
+//    (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_ENABLE)
+//    );
 
   FisBaseAddr = (UINTN)AhciRegisters->AhciRFis + Port * sizeof (EFI_AHCI_RECEIVED_FIS);
 
   Value = *(UINT32 *) (FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET);
 
   if ((Value & EFI_AHCI_FIS_TYPE_MASK) == EFI_AHCI_FIS_REGISTER_D2H) {
-    LBAMid  = ((UINT8 *)(UINTN)(FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET))[5];
-    LBAHigh = ((UINT8 *)(UINTN)(FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET))[6];
+	  UINT8 LBAMid  = ((UINT8 *)(UINTN)(FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET))[5];
+	  UINT8 LBAHigh = ((UINT8 *)(UINTN)(FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET))[6];
 
     if ((LBAMid == 0x4f) && (LBAHigh == 0xc2)) {
       //
       // The threshold exceeded condition is not detected by the device
       //
-      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
-      REPORT_STATUS_CODE (
-            EFI_PROGRESS_CODE,
-            (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_UNDERTHRESHOLD)
-            );
+//      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
+//      REPORT_STATUS_CODE (
+//            EFI_PROGRESS_CODE,
+//            (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_UNDERTHRESHOLD)
+//            );
     } else if ((LBAMid == 0xf4) && (LBAHigh == 0x2c)) {
       //
       // The threshold exceeded condition is detected by the device
       //
-      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
-      REPORT_STATUS_CODE (
-           EFI_PROGRESS_CODE,
-           (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_OVERTHRESHOLD)
-           );
+//      DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
+//      REPORT_STATUS_CODE (
+//           EFI_PROGRESS_CODE,
+//           (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_OVERTHRESHOLD)
+//           );
     }
   }
 
