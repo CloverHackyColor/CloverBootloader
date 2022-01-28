@@ -1184,6 +1184,8 @@
 		<false/>
 		<key>XhciPortLimit</key>
 		<false/>
+		<key>ProvideCurrentCpuInfo</key>
+		<false/>
 	</dict>
 </dict>
 </plist>

@@ -2047,7 +2047,7 @@ printf("%s", "");
           XBool PowerTimeoutKernelPanic = false;
           XBool ThirdPartyDrives = false;
           XBool XhciPortLimit = false;
-
+          XBool ProvideCurrentCpuInfo = false;
           
 #if __cplusplus > 201703L
           XBool operator == (const OcKernelQuirksClass&) const = default;
@@ -2065,6 +2065,7 @@ printf("%s", "");
             if ( !(PowerTimeoutKernelPanic == other.PowerTimeoutKernelPanic) ) return false;
             if ( !(ThirdPartyDrives == other.ThirdPartyDrives) ) return false;
             if ( !(XhciPortLimit == other.XhciPortLimit) ) return false;
+            if ( !(ProvideCurrentCpuInfo == other.ProvideCurrentCpuInfo) ) return false;
 
             return true;
           }
@@ -2081,7 +2082,7 @@ printf("%s", "");
             PowerTimeoutKernelPanic = other.dgetPowerTimeoutKernelPanic();
             ThirdPartyDrives = other.dgetThirdPartyDrives();
             XhciPortLimit = other.dgetXhciPortLimit();
-
+            ProvideCurrentCpuInfo = other.dgetProvideCurrentCpuInfo();
           }
       };
     

@@ -64,6 +64,7 @@ public:
       XmlBool PowerTimeoutKernelPanic = XmlBool();
       XmlBool ThirdPartyDrives = XmlBool();
       XmlBool XhciPortLimit = XmlBool();
+      XmlBool ProvideCurrentCpuInfo = XmlBool();
       
       XBool dgetAppleXcpmExtraMsrs() const { return AppleXcpmExtraMsrs.isDefined() ? AppleXcpmExtraMsrs.value() : AppleXcpmExtraMsrs.nullValue; };
       XBool dgetAppleXcpmForceBoost() const { return AppleXcpmForceBoost.isDefined() ? AppleXcpmForceBoost.value() : AppleXcpmForceBoost.nullValue; };
@@ -76,6 +77,7 @@ public:
       XBool dgetPowerTimeoutKernelPanic() const { return PowerTimeoutKernelPanic.isDefined() ? PowerTimeoutKernelPanic.value() : PowerTimeoutKernelPanic.nullValue; };
       XBool dgetThirdPartyDrives() const { return ThirdPartyDrives.isDefined() ? ThirdPartyDrives.value() : ThirdPartyDrives.nullValue; };
       XBool dgetXhciPortLimit() const { return XhciPortLimit.isDefined() ? XhciPortLimit.value() : XhciPortLimit.nullValue; };
+      XBool dgetProvideCurrentCpuInfo() const { return ProvideCurrentCpuInfo.isDefined() ? ProvideCurrentCpuInfo.value() : ProvideCurrentCpuInfo.nullValue; };
       
       OcKernelQuirks_Class(const Quirks_Class& _parent) /*: parent(_parent)*/ {}
   };
@@ -168,7 +170,7 @@ public:
     {"PowerTimeoutKernelPanic", OcKernelQuirks.PowerTimeoutKernelPanic},
     {"ThirdPartyDrives", OcKernelQuirks.ThirdPartyDrives},
     {"XhciPortLimit", OcKernelQuirks.XhciPortLimit},
-
+    {"ProvideCurrentCpuInfo", OcKernelQuirks.ProvideCurrentCpuInfo},
   };
 
   Quirks_Class() : OcKernelQuirks(*this), OcBooterQuirks(*this) {}

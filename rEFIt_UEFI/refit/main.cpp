@@ -1068,7 +1068,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic = gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic;
     mOpenCoreConfiguration.Kernel.Quirks.ThirdPartyDrives = gSettings.Quirks.OcKernelQuirks.ThirdPartyDrives;
     mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit = gSettings.Quirks.OcKernelQuirks.XhciPortLimit;
-
+    mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo = gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo;
 
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1635,7 +1635,7 @@ void LOADER_ENTRY::StartLoader()
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
   DBG("Kernel quirks\n");
-  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d\n",
+  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d PCC %d\n",
       mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs,
@@ -1652,7 +1652,8 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.PanicNoKextDump,
       mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic,
       mOpenCoreConfiguration.Kernel.Quirks.ThirdPartyDrives,
-      mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit);
+      mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit,
+      mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo);
   
   DBG("Closing log\n");
   if (SavePreBootLog) {
