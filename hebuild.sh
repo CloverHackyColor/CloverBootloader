@@ -47,6 +47,7 @@ export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
 #export NASM_PREFIX=
+export PYTHON_COMMAND=python3
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
