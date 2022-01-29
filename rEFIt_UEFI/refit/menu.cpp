@@ -458,6 +458,9 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount].ItemType = Decimal;  //127
   InputItems[InputItemsCount++].SValue.SWPrintf("%04d", gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars);
 
+  InputItems[InputItemsCount].ItemType = BoolValue; //128
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo;
+
 
 
   //menu for drop table
@@ -1103,7 +1106,11 @@ void ApplyInputs(void)
     }
     DBG(" set GpuBar = %d\n", gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars);
   }
-
+  i++; //128
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo = InputItems[i].BValue != 0;
+     DBG("applied ProvideCurrentCpuInfo=%s\n", gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo ? "Y" : "N" );
+   }
 
   if (NeedSave) {
     ApplySettings();
@@ -1961,6 +1968,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuItemInput(105, "Kernel XCPM", false);
   SubScreen->AddMenuItemInput(48,  "Kernel PM", false);
   SubScreen->AddMenuItemInput(121, "Panic No Kext Dump", false);
+  SubScreen->AddMenuItemInput(128, "Provide CPU Info", false);
   SubScreen->AddMenuEntry(SubMenuKernelPatches(), true);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", false);
@@ -2603,7 +2611,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   SubScreen->AddMenuCheck("RebuildAppleMemoryMap",  QUIRK_MAP, 101);
   SubScreen->AddMenuItemInput(127, "ResizeAppleGpuBars:", true);
   SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
-  SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
+//  SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
   SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);
   
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
