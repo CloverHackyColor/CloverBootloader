@@ -1398,10 +1398,6 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_KABYLAKE1:
           case CPU_MODEL_KABYLAKE2:
           case CPU_MODEL_CANNONLAKE:
-          case CPU_MODEL_ICELAKE_A:
-          case CPU_MODEL_ICELAKE_C:
-          case CPU_MODEL_ICELAKE_D:
-          case CPU_MODEL_ICELAKE:
           case CPU_MODEL_COMETLAKE_S:
           case CPU_MODEL_COMETLAKE_Y:
           case CPU_MODEL_COMETLAKE_U:
@@ -1411,15 +1407,17 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_ROCKETLAKE:
             if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5-1") )
+              return 0x60A; // Core i5 CometLake
             if ( gCPUStructure.BrandString.contains("Core(TM) i5") )
               return 0x605; // Core i5
             if ( gCPUStructure.BrandString.contains("Core(TM) i7-8") )
               return 0x709; // Core i7 CoffeeLake
             if ( gCPUStructure.BrandString.contains("Core(TM) i7-9") )
               return 0x1005; // Core i7 CoffeeLake
-          if ( gCPUStructure.BrandString.contains("Core(TM) i7-1") )
-            return 0x070B; // Core i7 IceLake
-           if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7-1") )
+              return 0x100A; // Core i7 CometLake
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7") )
               return 0x705; // Core i7
             if ( gCPUStructure.BrandString.contains("Core(TM) i9") )
               return 0x1009; // Core i7 CoffeeLake
@@ -1434,6 +1432,16 @@ UINT16 GetAdvancedCpuType()
             if (gCPUStructure.Cores <= 2) {
               return 0x605;
             }
+            return 0x705;
+          case CPU_MODEL_ICELAKE_A:
+          case CPU_MODEL_ICELAKE_C:
+          case CPU_MODEL_ICELAKE_D:
+          case CPU_MODEL_ICELAKE:
+            if ( gCPUStructure.BrandString.contains("Core(TM) i5-1") )
+              return 0x060B; // Core i5 IceLake
+            if ( gCPUStructure.BrandString.contains("Core(TM) i7-1") )
+              return 0x070B; // Core i7 IceLake
+
             return 0x705;
         }
       }

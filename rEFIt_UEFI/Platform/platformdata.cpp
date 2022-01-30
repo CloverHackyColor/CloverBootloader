@@ -71,7 +71,7 @@
 /*
 MacBookPro 15,1 (J680AP) 15,2 (J132AP) 15,3 (J780AP) & 15,4 (J213AP)
 MacBookPro16,1 (J152FAP) 16,3 (J223AP) & 16,4 (J215AP
-MacBookPro16,2 (J214KAP)
+MacBookPro16,2 (J214kAP)  //small k
 MacBookAir8,1 (J140KAP) & 8,2 (J140AAP)
 MacBookAir9,1 (J230KAP)
 Macmini8,1 (J174AP)
@@ -544,7 +544,7 @@ UINT64 GetPlatformFeature(MacModel Model)
     case MacBookPro153:
     case MacBookPro154:
     case MacBookPro161:
-    case MacBookPro162:
+    case MacBookPro162: //there is also 0x3A
     case MacBookPro163:
     case MacBookPro164:
       return 0x32;
