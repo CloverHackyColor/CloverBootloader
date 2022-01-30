@@ -17,8 +17,9 @@ endif
 
 ConfigValidator:
 	@echo "Building ConfigValidator..."
-	@echo "ConfiValidator uses latest release of CloverConfigPlistValidator"
+	@echo "ConfiValidator uses release of User choice"
+	@$(CURDIR)/CreateBuild.sh
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)  >/dev/null
 	@echo [XCODE] $(PROGRAMS)
-
+		
 .PHONY: ConfigValidator clean
