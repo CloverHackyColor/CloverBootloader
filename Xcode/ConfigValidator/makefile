@@ -18,6 +18,9 @@ endif
 ConfigValidator:
 	@echo "Building ConfigValidator..."
 	@echo "ConfiValidator uses release of User choice"
+	@$/chmod 755 CreateBuild.sh
+	@$/chmod 755 ConfigValidator.sh
+	@$/chmod 755 shc
 	@$(CURDIR)/CreateBuild.sh
 	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)  >/dev/null
 	@echo [XCODE] $(PROGRAMS)
