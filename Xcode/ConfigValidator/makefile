@@ -17,7 +17,7 @@ endif
 
 ConfigValidator:
 	@echo "Building ConfigValidator..."
-	@echo "ConfiValidator uses release of User choice"
+	@echo "ConfigValidator uses release of User choice"
 	@$/chmod 755 CreateBuild.sh
 	@$/chmod 755 ConfigValidator.sh
 	@$/chmod 755 shc
