@@ -9,7 +9,7 @@ rm -rf /Private/tmp/CloverConfigPlistValidator.zip
 #Dialog Text
 read -r -d '' applescriptCode <<'EOF'
    set dialogText to text returned of (display dialog "
-Type the the numer of the CloverConfigPlistValidator you whant to use?
+Type the numer of the CloverConfigPlistValidator you whant to use?
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 The lowest you can start is ➢ 5143
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
