@@ -70,12 +70,12 @@
 // for HWTarget recommended values for T2 models (by Gradou)
 /*
 MacBookPro 15,1 (J680AP) 15,2 (J132AP) 15,3 (J780AP) & 15,4 (J213AP)
-MacBookPro16,1 (J152FAP) 16,3 (J223AP) & 16,4 (J215AP
+MacBookPro16,1 (J152fAP) 16,3 (J223AP) & 16,4 (J215AP
 MacBookPro16,2 (J214kAP)  //small k
-MacBookAir8,1 (J140KAP) & 8,2 (J140AAP)
-MacBookAir9,1 (J230KAP)
+MacBookAir8,1 (J140kAP) & 8,2 (J140aAP)
+MacBookAir9,1 (J230kAP)
 Macmini8,1 (J174AP)
-iMac20,1 (J185AP) & 20,2 (J185FAP)
+iMac20,1 (J185AP) & 20,2 (J185fAP)
 iMacPro1,1 (J137AP)
 MacPro7,1 (J160AP)
 */
