@@ -7,10 +7,9 @@
 import sys
 import locale
 
-if sys.platform == "darwin":
+if sys.platform == "darwin" and sys.version_info[0] < 3:
   DefaultLocal = locale.getdefaultlocale()[1]
   if DefaultLocal is None:
     DefaultLocal = 'UTF8'
-  if sys.version_info[0] < 3:
-    sys.setdefaultencoding(DefaultLocal)
+  sys.setdefaultencoding(DefaultLocal)
 

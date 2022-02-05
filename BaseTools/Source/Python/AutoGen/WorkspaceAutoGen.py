@@ -23,6 +23,7 @@ from Common.StringUtils import NormPath
 from Common.BuildToolError import *
 from Common.DataType import *
 from Common.Misc import *
+import json
 
 ## Regular expression for splitting Dependency Expression string into tokens
 gDepexTokenPattern = re.compile("(\(|\)|\w+| \S+\.inf)")
@@ -107,6 +108,10 @@ class WorkspaceAutoGen(AutoGen):
         #
         # Mark now build in AutoGen Phase
         #
+        #
+        # Collect Platform Guids to support Guid name in Fdfparser.
+        #
+        self.CollectPlatformGuids()
         GlobalData.gAutoGenPhase = True
         self.ProcessModuleFromPdf()
         self.ProcessPcdType()
@@ -127,7 +132,7 @@ class WorkspaceAutoGen(AutoGen):
 
         self.CreateBuildOptionsFile()
         self.CreatePcdTokenNumberFile()
-        self.CreateModuleHashInfo()
+        self.GeneratePlatformLevelHash()
 
     #
     # Merge Arch
@@ -152,6 +157,26 @@ class WorkspaceAutoGen(AutoGen):
             EdkLogger.error("build", PARAMETER_INVALID,
                             ExtraData="Build target [%s] is not supported by the platform. [Valid target: %s]"
                                       % (self.BuildTarget, " ".join(self.Platform.BuildTargets)))
+
+    def CollectPlatformGuids(self):
+        oriInfList = []
+        oriPkgSet = set()
+        PlatformPkg = set()
+        for Arch in self.ArchList:
+            Platform = self.BuildDatabase[self.MetaFile, Arch, self.BuildTarget, self.ToolChain]
+            oriInfList = Platform.Modules
+            for ModuleFile in oriInfList:
+                ModuleData = self.BuildDatabase[ModuleFile, Platform._Arch, Platform._Target, Platform._Toolchain]
+                oriPkgSet.update(ModuleData.Packages)
+                for Pkg in oriPkgSet:
+                    Guids = Pkg.Guids
+                    GlobalData.gGuidDict.update(Guids)
+            if Platform.Packages:
+                PlatformPkg.update(Platform.Packages)
+                for Pkg in PlatformPkg:
+                    Guids = Pkg.Guids
+                    GlobalData.gGuidDict.update(Guids)
+
     @cached_property
     def FdfProfile(self):
         if not self.FdfFile:
@@ -165,7 +190,7 @@ class WorkspaceAutoGen(AutoGen):
             if Fdf.CurrentFdName and Fdf.CurrentFdName in Fdf.Profile.FdDict:
                 FdDict = Fdf.Profile.FdDict[Fdf.CurrentFdName]
                 for FdRegion in FdDict.RegionList:
-                    if str(FdRegion.RegionType) is 'FILE' and self.Platform.VpdToolGuid in str(FdRegion.RegionDataList):
+                    if str(FdRegion.RegionType) == 'FILE' and self.Platform.VpdToolGuid in str(FdRegion.RegionDataList):
                         if int(FdRegion.Offset) % 8 != 0:
                             EdkLogger.error("build", FORMAT_INVALID, 'The VPD Base Address %s must be 8-byte aligned.' % (FdRegion.Offset))
             FdfProfile = Fdf.Profile
@@ -420,6 +445,7 @@ class WorkspaceAutoGen(AutoGen):
                     continue
                 ModuleData = self.BuildDatabase[ModuleFile, Arch, self.BuildTarget, self.ToolChain]
                 PkgSet.update(ModuleData.Packages)
+            PkgSet.update(Platform.Packages)
             Pkgs[Arch] = list(PkgSet)
         return Pkgs
 
@@ -527,12 +553,12 @@ class WorkspaceAutoGen(AutoGen):
                     PcdTokenNumber += str(Pa.PcdTokenNumber[Pcd.TokenCName, Pcd.TokenSpaceGuidCName])
         SaveFileOnChange(os.path.join(self.BuildDir, 'PcdTokenNumber'), PcdTokenNumber, False)
 
-    def CreateModuleHashInfo(self):
+    def GeneratePlatformLevelHash(self):
         #
         # Get set of workspace metafiles
         #
         AllWorkSpaceMetaFiles = self._GetMetaFiles(self.BuildTarget, self.ToolChain)
-
+        AllWorkSpaceMetaFileList = sorted(AllWorkSpaceMetaFiles, key=lambda x: str(x))
         #
         # Retrieve latest modified time of all metafiles
         #
@@ -543,16 +569,35 @@ class WorkspaceAutoGen(AutoGen):
         self._SrcTimeStamp = SrcTimeStamp
 
         if GlobalData.gUseHashCache:
+            FileList = []
             m = hashlib.md5()
-            for files in AllWorkSpaceMetaFiles:
-                if files.endswith('.dec'):
+            for file in AllWorkSpaceMetaFileList:
+                if file.endswith('.dec'):
                     continue
-                f = open(files, 'rb')
+                f = open(file, 'rb')
                 Content = f.read()
                 f.close()
                 m.update(Content)
-            SaveFileOnChange(os.path.join(self.BuildDir, 'AutoGen.hash'), m.hexdigest(), False)
-            GlobalData.gPlatformHash = m.hexdigest()
+                FileList.append((str(file), hashlib.md5(Content).hexdigest()))
+
+            HashDir = path.join(self.BuildDir, "Hash_Platform")
+            HashFile = path.join(HashDir, 'Platform.hash.' + m.hexdigest())
+            SaveFileOnChange(HashFile, m.hexdigest(), False)
+            HashChainFile = path.join(HashDir, 'Platform.hashchain.' + m.hexdigest())
+            GlobalData.gPlatformHashFile = HashChainFile
+            try:
+                with open(HashChainFile, 'w') as f:
+                    json.dump(FileList, f, indent=2)
+            except:
+                EdkLogger.quiet("[cache warning]: fail to save hashchain file:%s" % HashChainFile)
+
+            if GlobalData.gBinCacheDest:
+                # Copy platform hash files to cache destination
+                FileDir = path.join(GlobalData.gBinCacheDest, self.OutputDir, self.BuildTarget + "_" + self.ToolChain, "Hash_Platform")
+                CacheFileDir = FileDir
+                CreateDirectory(CacheFileDir)
+                CopyFileOnChange(HashFile, CacheFileDir)
+                CopyFileOnChange(HashChainFile, CacheFileDir)
 
         #
         # Write metafile list to build directory
@@ -563,7 +608,7 @@ class WorkspaceAutoGen(AutoGen):
         if not os.path.exists(self.BuildDir):
             os.makedirs(self.BuildDir)
         with open(os.path.join(self.BuildDir, 'AutoGen'), 'w+') as file:
-            for f in AllWorkSpaceMetaFiles:
+            for f in AllWorkSpaceMetaFileList:
                 print(f, file=file)
         return True
 
@@ -571,15 +616,16 @@ class WorkspaceAutoGen(AutoGen):
         if Pkg.PackageName in GlobalData.gPackageHash:
             return
 
-        PkgDir = os.path.join(self.BuildDir, Pkg.Arch, Pkg.PackageName)
+        PkgDir = os.path.join(self.BuildDir, Pkg.Arch, "Hash_Pkg", Pkg.PackageName)
         CreateDirectory(PkgDir)
-        HashFile = os.path.join(PkgDir, Pkg.PackageName + '.hash')
+        FileList = []
         m = hashlib.md5()
         # Get .dec file's hash value
         f = open(Pkg.MetaFile.Path, 'rb')
         Content = f.read()
         f.close()
         m.update(Content)
+        FileList.append((str(Pkg.MetaFile.Path), hashlib.md5(Content).hexdigest()))
         # Get include files hash value
         if Pkg.Includes:
             for inc in sorted(Pkg.Includes, key=lambda x: str(x)):
@@ -590,8 +636,27 @@ class WorkspaceAutoGen(AutoGen):
                         Content = f.read()
                         f.close()
                         m.update(Content)
-        SaveFileOnChange(HashFile, m.hexdigest(), False)
+                        FileList.append((str(File_Path), hashlib.md5(Content).hexdigest()))
         GlobalData.gPackageHash[Pkg.PackageName] = m.hexdigest()
+
+        HashDir = PkgDir
+        HashFile = path.join(HashDir, Pkg.PackageName + '.hash.' + m.hexdigest())
+        SaveFileOnChange(HashFile, m.hexdigest(), False)
+        HashChainFile = path.join(HashDir, Pkg.PackageName + '.hashchain.' + m.hexdigest())
+        GlobalData.gPackageHashFile[(Pkg.PackageName, Pkg.Arch)] = HashChainFile
+        try:
+            with open(HashChainFile, 'w') as f:
+                json.dump(FileList, f, indent=2)
+        except:
+            EdkLogger.quiet("[cache warning]: fail to save hashchain file:%s" % HashChainFile)
+
+        if GlobalData.gBinCacheDest:
+            # Copy Pkg hash files to cache destination dir
+            FileDir = path.join(GlobalData.gBinCacheDest, self.OutputDir, self.BuildTarget + "_" + self.ToolChain, Pkg.Arch, "Hash_Pkg", Pkg.PackageName)
+            CacheFileDir = FileDir
+            CreateDirectory(CacheFileDir)
+            CopyFileOnChange(HashFile, CacheFileDir)
+            CopyFileOnChange(HashChainFile, CacheFileDir)
 
     def _GetMetaFiles(self, Target, Toolchain):
         AllWorkSpaceMetaFiles = set()

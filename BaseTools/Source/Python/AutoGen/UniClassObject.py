@@ -12,7 +12,7 @@
 #
 from __future__ import print_function
 import Common.LongFilePathOs as os, codecs, re
-import distutils.util
+import shlex
 import Common.EdkLogger as EdkLogger
 from io import BytesIO
 from Common.BuildToolError import *
@@ -152,7 +152,7 @@ class Ucs2Codec(codecs.Codec):
 
 TheUcs2Codec = Ucs2Codec()
 def Ucs2Search(name):
-    if name == 'ucs-2':
+    if name in ['ucs-2', 'ucs_2']:
         return codecs.CodecInfo(
             name=name,
             encode=TheUcs2Codec.encode,
@@ -233,7 +233,7 @@ class UniFileClassObject(object):
     # Get Language definition
     #
     def GetLangDef(self, File, Line):
-        Lang = distutils.util.split_quoted((Line.split(u"//")[0]))
+        Lang = shlex.split(Line.split(u"//")[0])
         if len(Lang) != 3:
             try:
                 FileIn = UniFileClassObject.OpenUniFile(LongFilePath(File.Path))

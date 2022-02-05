@@ -160,6 +160,7 @@ class MetaFileParser(object):
         self.MetaFile = FilePath
         self._FileDir = self.MetaFile.Dir
         self._Defines = {}
+        self._Packages = []
         self._FileLocalMacros = {}
         self._SectionsMacroDict = defaultdict(dict)
 
@@ -328,6 +329,7 @@ class MetaFileParser(object):
                 S1 = ItemList[1].upper()
             else:
                 S1 = TAB_ARCH_COMMON
+            S1 = ReplaceMacro(S1, self._Macros)
             ArchList.add(S1)
 
             # S2 may be Platform or ModuleType
@@ -350,6 +352,13 @@ class MetaFileParser(object):
                             File=self.MetaFile, Line=self._LineIndex + 1, ExtraData=self._CurrentLine)
         # If the section information is needed later, it should be stored in database
         self._ValueList[0] = self._SectionName
+
+    ## [packages] section parser
+    @ParseMacro
+    def _PackageParser(self):
+        self._CurrentLine = CleanString(self._CurrentLine)
+        self._Packages.append(self._CurrentLine)
+        self._ValueList[0] = self._CurrentLine
 
     ## [defines] section parser
     @ParseMacro
@@ -848,6 +857,7 @@ class DscParser(MetaFileParser):
         TAB_LIBRARIES.upper()                       :   MODEL_EFI_LIBRARY_INSTANCE,
         TAB_LIBRARY_CLASSES.upper()                 :   MODEL_EFI_LIBRARY_CLASS,
         TAB_BUILD_OPTIONS.upper()                   :   MODEL_META_DATA_BUILD_OPTION,
+        TAB_PACKAGES.upper()                        :   MODEL_META_DATA_PACKAGE,
         TAB_PCDS_FIXED_AT_BUILD_NULL.upper()        :   MODEL_PCD_FIXED_AT_BUILD,
         TAB_PCDS_PATCHABLE_IN_MODULE_NULL.upper()   :   MODEL_PCD_PATCHABLE_IN_MODULE,
         TAB_PCDS_FEATURE_FLAG_NULL.upper()          :   MODEL_PCD_FEATURE_FLAG,
@@ -1339,6 +1349,7 @@ class DscParser(MetaFileParser):
             MODEL_META_DATA_DEFINE                          :   self.__ProcessDefine,
             MODEL_META_DATA_GLOBAL_DEFINE                   :   self.__ProcessDefine,
             MODEL_META_DATA_INCLUDE                         :   self.__ProcessDirective,
+            MODEL_META_DATA_PACKAGE                         :   self.__ProcessPackages,
             MODEL_META_DATA_CONDITIONAL_STATEMENT_IF        :   self.__ProcessDirective,
             MODEL_META_DATA_CONDITIONAL_STATEMENT_ELSE      :   self.__ProcessDirective,
             MODEL_META_DATA_CONDITIONAL_STATEMENT_IFDEF     :   self.__ProcessDirective,
@@ -1601,46 +1612,50 @@ class DscParser(MetaFileParser):
             # First search the include file under the same directory as DSC file
             #
             IncludedFile1 = PathClass(IncludedFile, self.MetaFile.Dir)
-            ErrorCode, ErrorInfo1 = IncludedFile1.Validate()
-            if ErrorCode != 0:
-                #
-                # Also search file under the WORKSPACE directory
-                #
-                IncludedFile1 = PathClass(IncludedFile, GlobalData.gWorkspace)
-                ErrorCode, ErrorInfo2 = IncludedFile1.Validate()
+            if self._Enabled:
+                ErrorCode, ErrorInfo1 = IncludedFile1.Validate()
                 if ErrorCode != 0:
-                    EdkLogger.error('parser', ErrorCode, File=self._FileWithError,
-                                    Line=self._LineIndex + 1, ExtraData=ErrorInfo1 + "\n" + ErrorInfo2)
+                    #
+                    # Also search file under the WORKSPACE directory
+                    #
+                    IncludedFile1 = PathClass(IncludedFile, GlobalData.gWorkspace)
+                    ErrorCode, ErrorInfo2 = IncludedFile1.Validate()
+                    if ErrorCode != 0:
+                        EdkLogger.error('parser', ErrorCode, File=self._FileWithError,
+                                        Line=self._LineIndex + 1, ExtraData=ErrorInfo1 + "\n" + ErrorInfo2)
 
-            self._FileWithError = IncludedFile1
+                self._FileWithError = IncludedFile1
 
-            FromItem = self._Content[self._ContentIndex - 1][0]
-            if self._InSubsection:
-                Owner = self._Content[self._ContentIndex - 1][8]
-            else:
-                Owner = self._Content[self._ContentIndex - 1][0]
-            IncludedFileTable = MetaFileStorage(self._RawTable.DB, IncludedFile1, MODEL_FILE_DSC, False, FromItem=FromItem)
-            Parser = DscParser(IncludedFile1, self._FileType, self._Arch, IncludedFileTable,
-                               Owner=Owner, From=FromItem)
+                FromItem = self._Content[self._ContentIndex - 1][0]
+                if self._InSubsection:
+                    Owner = self._Content[self._ContentIndex - 1][8]
+                else:
+                    Owner = self._Content[self._ContentIndex - 1][0]
+                IncludedFileTable = MetaFileStorage(self._RawTable.DB, IncludedFile1, MODEL_FILE_DSC, False, FromItem=FromItem)
+                Parser = DscParser(IncludedFile1, self._FileType, self._Arch, IncludedFileTable,
+                                   Owner=Owner, From=FromItem)
 
-            self.IncludedFiles.add (IncludedFile1)
+                self.IncludedFiles.add (IncludedFile1)
 
-            # set the parser status with current status
-            Parser._SectionName = self._SectionName
-            Parser._SubsectionType = self._SubsectionType
-            Parser._InSubsection = self._InSubsection
-            Parser._SectionType = self._SectionType
-            Parser._Scope = self._Scope
-            Parser._Enabled = self._Enabled
-            # Parse the included file
-            Parser.StartParse()
-            # Insert all records in the table for the included file into dsc file table
-            Records = IncludedFileTable.GetAll()
-            if Records:
-                self._Content[self._ContentIndex:self._ContentIndex] = Records
-                self._Content.pop(self._ContentIndex - 1)
-                self._ValueList = None
-                self._ContentIndex -= 1
+                # set the parser status with current status
+                Parser._SectionName = self._SectionName
+                Parser._SubsectionType = self._SubsectionType
+                Parser._InSubsection = self._InSubsection
+                Parser._SectionType = self._SectionType
+                Parser._Scope = self._Scope
+                Parser._Enabled = self._Enabled
+                # Parse the included file
+                Parser.StartParse()
+                # Insert all records in the table for the included file into dsc file table
+                Records = IncludedFileTable.GetAll()
+                if Records:
+                    self._Content[self._ContentIndex:self._ContentIndex] = Records
+                    self._Content.pop(self._ContentIndex - 1)
+                    self._ValueList = None
+                    self._ContentIndex -= 1
+
+    def __ProcessPackages(self):
+        self._ValueList[0] = ReplaceMacro(self._ValueList[0], self._Macros)
 
     def __ProcessSkuId(self):
         self._ValueList = [ReplaceMacro(Value, self._Macros, RaiseError=True)
@@ -1720,6 +1735,7 @@ class DscParser(MetaFileParser):
         MODEL_META_DATA_COMPONENT                       :   _ComponentParser,
         MODEL_META_DATA_BUILD_OPTION                    :   _BuildOptionParser,
         MODEL_UNKNOWN                                   :   MetaFileParser._Skip,
+        MODEL_META_DATA_PACKAGE                         :   MetaFileParser._PackageParser,
         MODEL_META_DATA_USER_EXTENSION                  :   MetaFileParser._SkipUserExtension,
         MODEL_META_DATA_SECTION_HEADER                  :   MetaFileParser._SectionHeaderParser,
         MODEL_META_DATA_SUBSECTION_HEADER               :   _SubsectionHeaderParser,

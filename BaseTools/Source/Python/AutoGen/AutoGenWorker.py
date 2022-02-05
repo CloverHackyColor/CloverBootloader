@@ -24,6 +24,7 @@ import traceback
 import sys
 from AutoGen.DataPipe import MemoryDataPipe
 import logging
+import time
 
 def clearQ(q):
     try:
@@ -111,7 +112,11 @@ class AutoGenManager(threading.Thread):
                     break
                 if badnews == "Done":
                     fin_num += 1
+                elif badnews == "QueueEmpty":
+                    EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), badnews))
+                    self.TerminateWorkers()
                 else:
+                    EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), badnews))
                     self.Status = False
                     self.TerminateWorkers()
                 if fin_num == len(self.autogen_workers):
@@ -128,12 +133,27 @@ class AutoGenManager(threading.Thread):
         clearQ(taskq)
         clearQ(self.feedback_q)
         clearQ(logq)
+        # Copy the cache queue itmes to parent thread before clear
+        cacheq = self.autogen_workers[0].cache_q
+        try:
+            cache_num = 0
+            while True:
+                item = cacheq.get()
+                if item == "CacheDone":
+                    cache_num += 1
+                else:
+                    GlobalData.gModuleAllCacheStatus.add(item)
+                if cache_num  == len(self.autogen_workers):
+                    break
+        except:
+            print ("cache_q error")
+
     def TerminateWorkers(self):
         self.error_event.set()
     def kill(self):
         self.feedback_q.put(None)
 class AutoGenWorkerInProcess(mp.Process):
-    def __init__(self,module_queue,data_pipe_file_path,feedback_q,file_lock,cache_lock,share_data,log_q,error_event):
+    def __init__(self,module_queue,data_pipe_file_path,feedback_q,file_lock,cache_q,log_q,error_event):
         mp.Process.__init__(self)
         self.module_queue = module_queue
         self.data_pipe_file_path =data_pipe_file_path
@@ -141,8 +161,7 @@ class AutoGenWorkerInProcess(mp.Process):
         self.feedback_q = feedback_q
         self.PlatformMetaFileSet = {}
         self.file_lock = file_lock
-        self.cache_lock = cache_lock
-        self.share_data = share_data
+        self.cache_q = cache_q
         self.log_q = log_q
         self.error_event = error_event
     def GetPlatformMetaFile(self,filepath,root):
@@ -184,12 +203,19 @@ class AutoGenWorkerInProcess(mp.Process):
             GlobalData.gDisableIncludePathCheck = False
             GlobalData.gFdfParser = self.data_pipe.Get("FdfParser")
             GlobalData.gDatabasePath = self.data_pipe.Get("DatabasePath")
+
+            GlobalData.gUseHashCache = self.data_pipe.Get("UseHashCache")
             GlobalData.gBinCacheSource = self.data_pipe.Get("BinCacheSource")
             GlobalData.gBinCacheDest = self.data_pipe.Get("BinCacheDest")
-            GlobalData.gCacheIR = self.share_data
+            GlobalData.gPlatformHashFile = self.data_pipe.Get("PlatformHashFile")
+            GlobalData.gModulePreMakeCacheStatus = dict()
+            GlobalData.gModuleMakeCacheStatus = dict()
+            GlobalData.gHashChainStatus = dict()
+            GlobalData.gCMakeHashFile = dict()
+            GlobalData.gModuleHashFile = dict()
+            GlobalData.gFileHashDict = dict()
             GlobalData.gEnableGenfdsMultiThread = self.data_pipe.Get("EnableGenfdsMultiThread")
             GlobalData.file_lock = self.file_lock
-            GlobalData.cache_lock = self.cache_lock
             CommandTarget = self.data_pipe.Get("CommandTarget")
             pcd_from_build_option = []
             for pcd_tuple in self.data_pipe.Get("BuildOptPcd"):
@@ -205,17 +231,22 @@ class AutoGenWorkerInProcess(mp.Process):
             GlobalData.FfsCmd = FfsCmd
             PlatformMetaFile = self.GetPlatformMetaFile(self.data_pipe.Get("P_Info").get("ActivePlatform"),
                                              self.data_pipe.Get("P_Info").get("WorkspaceDir"))
-            libConstPcd = self.data_pipe.Get("LibConstPcd")
-            Refes = self.data_pipe.Get("REFS")
-            GlobalData.libConstPcd = libConstPcd
-            GlobalData.Refes = Refes
             while True:
-                if self.module_queue.empty():
-                    break
                 if self.error_event.is_set():
                     break
                 module_count += 1
-                module_file,module_root,module_path,module_basename,module_originalpath,module_arch,IsLib = self.module_queue.get_nowait()
+                try:
+                    module_file,module_root,module_path,module_basename,module_originalpath,module_arch,IsLib = self.module_queue.get_nowait()
+                except Empty:
+                    EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), "Fake Empty."))
+                    time.sleep(0.01)
+                    continue
+                if module_file is None:
+                    EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), "Worker get the last item in the queue."))
+                    self.feedback_q.put("QueueEmpty")
+                    time.sleep(0.01)
+                    continue
+
                 modulefullpath = os.path.join(module_root,module_file)
                 taskname = " : ".join((modulefullpath,module_arch))
                 module_metafile = PathClass(module_file,module_root)
@@ -230,34 +261,47 @@ class AutoGenWorkerInProcess(mp.Process):
                 toolchain = self.data_pipe.Get("P_Info").get("ToolChain")
                 Ma = ModuleAutoGen(self.Wa,module_metafile,target,toolchain,arch,PlatformMetaFile,self.data_pipe)
                 Ma.IsLibrary = IsLib
-                if IsLib:
-                    if (Ma.MetaFile.File,Ma.MetaFile.Root,Ma.Arch,Ma.MetaFile.Path) in libConstPcd:
-                        Ma.ConstPcd = libConstPcd[(Ma.MetaFile.File,Ma.MetaFile.Root,Ma.Arch,Ma.MetaFile.Path)]
-                    if (Ma.MetaFile.File,Ma.MetaFile.Root,Ma.Arch,Ma.MetaFile.Path) in Refes:
-                        Ma.ReferenceModules = Refes[(Ma.MetaFile.File,Ma.MetaFile.Root,Ma.Arch,Ma.MetaFile.Path)]
-                if GlobalData.gBinCacheSource and CommandTarget in [None, "", "all"]:
-                    Ma.GenModuleFilesHash(GlobalData.gCacheIR)
-                    Ma.GenPreMakefileHash(GlobalData.gCacheIR)
-                    if Ma.CanSkipbyPreMakefileCache(GlobalData.gCacheIR):
-                       continue
+                # SourceFileList calling sequence impact the makefile string sequence.
+                # Create cached SourceFileList here to unify its calling sequence for both
+                # CanSkipbyPreMakeCache and CreateCodeFile/CreateMakeFile.
+                RetVal = Ma.SourceFileList
+                if GlobalData.gUseHashCache and not GlobalData.gBinCacheDest and CommandTarget in [None, "", "all"]:
+                    try:
+                        CacheResult = Ma.CanSkipbyPreMakeCache()
+                    except:
+                        CacheResult = False
+                        self.feedback_q.put(taskname)
+
+                    if CacheResult:
+                        self.cache_q.put((Ma.MetaFile.Path, Ma.Arch, "PreMakeCache", True))
+                        continue
+                    else:
+                        self.cache_q.put((Ma.MetaFile.Path, Ma.Arch, "PreMakeCache", False))
 
                 Ma.CreateCodeFile(False)
                 Ma.CreateMakeFile(False,GenFfsList=FfsCmd.get((Ma.MetaFile.Path, Ma.Arch),[]))
-
+                Ma.CreateAsBuiltInf()
                 if GlobalData.gBinCacheSource and CommandTarget in [None, "", "all"]:
-                    Ma.GenMakeHeaderFilesHash(GlobalData.gCacheIR)
-                    Ma.GenMakeHash(GlobalData.gCacheIR)
-                    if Ma.CanSkipbyMakeCache(GlobalData.gCacheIR):
+                    try:
+                        CacheResult = Ma.CanSkipbyMakeCache()
+                    except:
+                        CacheResult = False
+                        self.feedback_q.put(taskname)
+
+                    if CacheResult:
+                        self.cache_q.put((Ma.MetaFile.Path, Ma.Arch, "MakeCache", True))
                         continue
                     else:
-                        Ma.PrintFirstMakeCacheMissFile(GlobalData.gCacheIR)
-        except Empty:
-            pass
-        except:
-            traceback.print_exc(file=sys.stdout)
+                        self.cache_q.put((Ma.MetaFile.Path, Ma.Arch, "MakeCache", False))
+
+        except Exception as e:
+            EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), str(e)))
             self.feedback_q.put(taskname)
         finally:
+            EdkLogger.debug(EdkLogger.DEBUG_9, "Worker %s: %s" % (os.getpid(), "Done"))
             self.feedback_q.put("Done")
+            self.cache_q.put("CacheDone")
+
     def printStatus(self):
         print("Processs ID: %d Run %d modules in AutoGen " % (os.getpid(),len(AutoGen.Cache())))
         print("Processs ID: %d Run %d modules in AutoGenInfo " % (os.getpid(),len(AutoGenInfo.GetCache())))

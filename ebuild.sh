@@ -193,6 +193,7 @@ isNASMGood() {
   # nasm should be greater or equal to 2.12.02 to be good building Clover.
   # There was a bad macho relocation in outmacho.c, fixed by Zenith432
   # and accepted by nasm devel during 2.12.rcxx (release candidate)
+  # modern nasm is 2.15
 
   result=1
   local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
@@ -908,6 +909,16 @@ MainPostBuildScript() {
   local BOOTHFS="$CLOVERROOT"/BootHFS
   DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
   echo "Done!"
+  stopBuildEpoch=$(date -u "+%s")
+buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
+if [[ $buildTime -gt 59 ]]; then
+    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
+else
+    timeToBuild=$(printf "%ds" $((buildTime)))
+fi
+
+printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
+
 }
 
 # BUILD START #
@@ -915,6 +926,7 @@ MainPostBuildScript() {
 # Default locale
 export LC_ALL=POSIX
 
+startBuildEpoch=$(date -u "+%s")
 
 # Add toolchain bin directory to the PATH
 if [[ "$SYSNAME" != Linux ]]; then

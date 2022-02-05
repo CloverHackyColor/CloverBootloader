@@ -46,25 +46,17 @@ class MetaFileTable():
             self.TableName = "_%s_%s" % (FileType, len(DB.TblFile))
 
     def IsIntegrity(self):
+        Result = False
         try:
             TimeStamp = self.MetaFile.TimeStamp
             if not self.CurrentContent:
                 Result = False
             else:
                 Result = self.CurrentContent[-1][0] < 0
-            if not Result:
-                # update the timestamp in database
-                self.DB.SetFileTimeStamp(self.FileId, TimeStamp)
-                return False
-
-            if TimeStamp != self.DB.GetFileTimeStamp(self.FileId):
-                # update the timestamp in database
-                self.DB.SetFileTimeStamp(self.FileId, TimeStamp)
-                return False
         except Exception as Exc:
             EdkLogger.debug(EdkLogger.DEBUG_5, str(Exc))
             return False
-        return True
+        return Result
 
     def SetEndFlag(self):
         self.CurrentContent.append(self._DUMMY_)
@@ -162,7 +154,7 @@ class ModuleTable(MetaFileTable):
         if BelongsToItem is not None:
             result = [item for item in result if item[7] == BelongsToItem]
 
-        result = [ [r[2],r[3],r[4],r[5],r[6],r[0],r[9]] for r in result ]
+        result = [ [r[2],r[3],r[4],r[5],r[6],r[0],r[8]] for r in result ]
         return result
 
 ## Python class representation of table storing package data

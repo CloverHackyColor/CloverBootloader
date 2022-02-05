@@ -39,6 +39,7 @@ from Common.LongFilePathSupport import LongFilePath as LongFilePath
 from Common.MultipleWorkspace import MultipleWorkspace as mws
 from CommonDataClass.Exceptions import BadExpression
 from Common.caching import cached_property
+import struct
 
 ArrayIndex = re.compile("\[\s*[0-9a-fA-FxX]*\s*\]")
 ## Regular expression used to find out place holders in string template
@@ -81,19 +82,22 @@ def GetVariableOffset(mapfilepath, efifilepath, varnames):
 
     if len(lines) == 0: return None
     firstline = lines[0].strip()
+    if re.match('^\s*Address\s*Size\s*Align\s*Out\s*In\s*Symbol\s*$', firstline):
+        return _parseForXcodeAndClang9(lines, efifilepath, varnames)
     if (firstline.startswith("Archive member included ") and
         firstline.endswith(" file (symbol)")):
         return _parseForGCC(lines, efifilepath, varnames)
     if firstline.startswith("# Path:"):
-        return _parseForXcode(lines, efifilepath, varnames)
+        return _parseForXcodeAndClang9(lines, efifilepath, varnames)
     return _parseGeneral(lines, efifilepath, varnames)
 
-def _parseForXcode(lines, efifilepath, varnames):
+def _parseForXcodeAndClang9(lines, efifilepath, varnames):
     status = 0
     ret = []
     for line in lines:
         line = line.strip()
-        if status == 0 and line == "# Symbols:":
+        if status == 0 and (re.match('^\s*Address\s*Size\s*Align\s*Out\s*In\s*Symbol\s*$', line) \
+            or line == "# Symbols:"):
             status = 1
             continue
         if status == 1 and len(line) != 0:
@@ -1152,13 +1156,12 @@ def ParseFieldValue (Value):
         if Value[0] == '"' and Value[-1] == '"':
             Value = Value[1:-1]
         try:
-            Value = str(uuid.UUID(Value).bytes_le)
-            if Value.startswith("b'"):
-                Value = Value[2:-1]
-            Value = "'" + Value + "'"
+            Value = uuid.UUID(Value).bytes_le
+            ValueL, ValueH = struct.unpack('2Q', Value)
+            Value = (ValueH << 64 ) | ValueL
+
         except ValueError as Message:
             raise BadExpression(Message)
-        Value, Size = ParseFieldValue(Value)
         return Value, 16
     if Value.startswith('L"') and Value.endswith('"'):
         # Unicode String
@@ -1632,7 +1635,7 @@ class PeImageClass():
         ByteArray = array.array('B')
         ByteArray.fromfile(PeObject, 4)
         # PE signature should be 'PE\0\0'
-        if ByteArray.tostring() != b'PE\0\0':
+        if ByteArray.tolist() != [ord('P'), ord('E'), 0, 0]:
             self.ErrorInfo = self.FileName + ' has no valid PE signature PE00'
             return
 

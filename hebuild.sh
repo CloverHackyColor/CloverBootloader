@@ -47,7 +47,7 @@ export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 export CONF_PATH=${CONF_PATH:-}
 #export NASM_PREFIX=
-#export PYTHON_COMMAND=python3
+export PYTHON_COMMAND=python3
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
@@ -172,6 +172,10 @@ addEdk2BuildOption() {
 addEdk2BuildMacro() {
   local macro="$1"
   [[ "$macro" == "NO_GRUB_DRIVERS" ]] && M_NOGRUB=1
+  if [[ "$macro" == "USE_APPLE_HFSPLUS_DRIVER" && "$TARGETARCH" == "X64" ]]; then
+    [[ ! -e "${CLOVERROOT}"/FileSystems/HFSPlus/X64/HFSPlus.efi ]] && return
+    M_APPLEHFS=1
+  fi
   addEdk2BuildOption "-D" "$macro"
 }
 
@@ -241,7 +245,7 @@ usage() {
     print_option_help "-clang"     "use XCode Clang toolchain"
     print_option_help "-llvm"      "use LLVM toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain"
-    print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-9"
+    print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-11"
     print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5 toolchain, "
@@ -878,6 +882,16 @@ MainPostBuildScript() {
   local BOOTHFS="$CLOVERROOT"/BootHFS
   DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
   echo "Done!"
+  stopBuildEpoch=$(date -u "+%s")
+buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
+if [[ $buildTime -gt 59 ]]; then
+    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
+else
+    timeToBuild=$(printf "%ds" $((buildTime)))
+fi
+
+printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
+
 }
 
 # BUILD START #
@@ -885,6 +899,7 @@ MainPostBuildScript() {
 # Default locale
 export LC_ALL=POSIX
 
+startBuildEpoch=$(date -u "+%s")
 
 # Add toolchain bin directory to the PATH
 if [[ "$SYSNAME" != Linux ]]; then

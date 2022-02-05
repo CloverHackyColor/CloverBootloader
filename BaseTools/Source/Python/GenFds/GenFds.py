@@ -20,7 +20,7 @@ from linecache import getlines
 from io import BytesIO
 
 import Common.LongFilePathOs as os
-from Common.TargetTxtClassObject import TargetTxt
+from Common.TargetTxtClassObject import TargetTxtDict,gDefaultTargetTxtFile
 from Common.DataType import *
 import Common.GlobalData as GlobalData
 from Common import EdkLogger
@@ -207,9 +207,11 @@ def GenFdsApi(FdsCommandDict, WorkSpaceDataBase=None):
         GenFdsGlobalVariable.ConfDir = ConfDirectoryPath
         if not GlobalData.gConfDirectory:
             GlobalData.gConfDirectory = GenFdsGlobalVariable.ConfDir
-        BuildConfigurationFile = os.path.normpath(os.path.join(ConfDirectoryPath, "target.txt"))
+        BuildConfigurationFile = os.path.normpath(os.path.join(ConfDirectoryPath, gDefaultTargetTxtFile))
         if os.path.isfile(BuildConfigurationFile) == True:
             # if no build target given in command line, get it from target.txt
+            TargetObj = TargetTxtDict()
+            TargetTxt = TargetObj.Target
             if not GenFdsGlobalVariable.TargetName:
                 BuildTargetList = TargetTxt.TargetTxtDictionary[TAB_TAT_DEFINES_TARGET]
                 if len(BuildTargetList) != 1:
@@ -631,7 +633,10 @@ class GenFds(object):
             else:
                 Percentage = str((UsedSizeValue + 0.0) / TotalSizeValue)[0:4].lstrip('0.')
 
-            GenFdsGlobalVariable.InfLogger(Name + ' ' + '[' + Percentage + '%Full] ' + str(TotalSizeValue) + ' total, ' + str(UsedSizeValue) + ' used, ' + str(FreeSizeValue) + ' free')
+            GenFdsGlobalVariable.InfLogger(Name + ' ' + '[' + Percentage + '%Full] '\
+                                           + str(TotalSizeValue) + ' (' + hex(TotalSizeValue) + ')' + ' total, '\
+                                           + str(UsedSizeValue) + ' (' + hex(UsedSizeValue) + ')' + ' used, '\
+                                           + str(FreeSizeValue) + ' (' + hex(FreeSizeValue) + ')' + ' free')
 
     ## PreprocessImage()
     #

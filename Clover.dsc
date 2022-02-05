@@ -297,7 +297,7 @@
 ###################################################################################################
 [Components]
 
-!if $(FAMILY) == "MSFT"
+!ifdef MSFT
   DEFINE OC_INCLUDE_FLAG = /FI OpenCoreFromClover.h
 !else
   DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h
