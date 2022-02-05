@@ -64,9 +64,10 @@
  Mac-CFF7D910A743CAAF (Monterey) iMac20,1
  
  GFX0+IGPU+display
- Mac-7BA5B2D9E42DDD94 iMacPro1,1
+ Mac-7BA5B2D9E42DDD94 iMacPro1,1 Vega 56, no IGPU
  
  */
+
 // for HWTarget recommended values for T2 models (by Gradou)
 /*
 MacBookPro 15,1 (J680AP) 15,2 (J132AP) 15,3 (J780AP) & 15,4 (J213AP)
@@ -80,7 +81,47 @@ iMacPro1,1 (J137AP)
 MacPro7,1 (J160AP)
 */
 //--------------------------
+XString8 GetHWTarget(MacModel Model)
+{
+  switch ( Model )
+  {
+    case iMacPro11:
+      return "J137AP"_XS8;
+    case MacMini81:
+      return "J174AP"_XS8;
+    case iMac201:
+      return "J185AP"_XS8;
+    case iMac202:
+      return "J185fAP"_XS8;
+    case MacPro71:
+      return "J160AP"_XS8;
+    case MacBookPro151:
+      return "J680AP"_XS8;
+    case MacBookPro152:
+      return "J132AP"_XS8;
+    case MacBookPro153:
+      return "J780AP"_XS8;
+    case MacBookPro154:
+      return "J213AP"_XS8;
+    case MacBookPro161:
+      return "J152fAP"_XS8;
+    case MacBookPro162:
+      return "J214kAP"_XS8;
+    case MacBookPro163:
+      return "J223AP"_XS8;
+    case MacBookPro164:
+      return "J215AP"_XS8;
+    case MacBookAir81:
+      return "J140kAP"_XS8;
+    case MacBookAir82:
+      return "J140aAP"_XS8;
+    case MacBookAir91:
+      return "J230kAP"_XS8;
+    default:
+      return ""_XS8; // disabled
+  }
 
+}
 
 constexpr PLATFORMDATA ApplePlatformDataArrayClass::m_ApplePlatformDataArrayClass[];
 
@@ -134,14 +175,12 @@ uint32_t GetFwFeatures(MacModel Model)
     case MacBookPro91:
     case MacBookPro92:
       return 0xC00DE137;
-      break;
     case MacBookAir41:
     case MacBookAir42:
     case MacMini51:
     case MacMini52:
     case MacMini53:
       return 0xD00DE137;
-      break;
     case MacBookPro101:
     case MacBookPro102:
     case MacBookAir51:
@@ -152,30 +191,24 @@ uint32_t GetFwFeatures(MacModel Model)
     case iMac132:
     case iMac133:
       return 0xE00DE137;
-      break;
     case MacMini81:
       return 0xFD8FF467;
-      break;
     case MacBookAir61:
     case MacBookAir62:
     case iMac141:
     case iMac142:
     case iMac143:
       return 0xE00FE137;
-      break;
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
     case MacBookPro114:
     case MacBookPro115:
       return 0xE80FE137;
-      break;
     case iMac144:
       return 0xF00FE177;
-      break;
     case iMac151:
       return 0xF80FE177;
-      break;
     case MacBookPro131:
     case MacBookPro132:
     case MacBookPro141:
@@ -185,40 +218,32 @@ uint32_t GetFwFeatures(MacModel Model)
     case iMac182:
     case iMac183:
       return 0xFC0FE177;
-      break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
       return 0xFC0FE17F;
-      break;
     case iMacPro11:
       return 0xFD8FF53F;
-      break;
     case MacBookAir91:
       return 0xFD8FF42F;
-      break;
     case iMac191:
     case iMac192:
     case iMac201:
     case iMac202:
       return 0xFD8FF577;
-      break;
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
       return 0xFDAFF067;
-      break;
       // Verified list from Users
     case MacBookAir31:
     case MacBookAir32:
     case MacMini41:
       return 0xD00DE137;
-      break;
     case MacBookAir71:
     case MacBookAir72:
       return 0xE00FE137;
-      break;
     case iMac101:
     case iMac111:
     case iMac112:
@@ -227,16 +252,12 @@ uint32_t GetFwFeatures(MacModel Model)
     case iMac122:
     case MacMini71:
       return 0xE00DE137;
-      break;
     case MacPro51:
       return 0xE80FE137;
-      break;
     case MacPro61:
       return 0xE80FE177;
-      break;
     case MacPro71:
       return 0xFD8FF53F;
-      break;
     case MacBookPro61:
     case MacBookPro62:
     case MacBookPro71:
@@ -244,7 +265,6 @@ uint32_t GetFwFeatures(MacModel Model)
     case MacBookPro82:
     case MacBookPro83:
       return 0xC00DE137;
-      break;
     case MacBookPro121:
     case MacBookPro151:
     case MacBookPro152:
@@ -256,15 +276,12 @@ uint32_t GetFwFeatures(MacModel Model)
     case iMac161:
     case iMac162:
       return 0xFC0FE137;
-      break;
     case MacBook61:
     case MacBook71:
     case MacBook81:
       return 0xFC0FE13F;
-      break;
     default:
       return 0xE907F537; //unknown - use oem SMBIOS value to be default
-      break;
     }
 }
 
@@ -290,13 +307,11 @@ uint64_t GetExtFwFeatures(MacModel Model)
     case iMac202:
     case iMacPro11:
       return 0x8FC0FE177ull;
-      break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
       return 0x8FC0FE17Eull;
-      break;
     case MacBookPro121:
     case MacBookPro151:
     case MacBookPro152:
@@ -314,20 +329,15 @@ uint64_t GetExtFwFeatures(MacModel Model)
     case MacMini71:
     case MacMini81:
       return 0x8FC0FE137ull;
-      break;
     case MacBook81:
       return 0x8FC0FE13Full;
-      break;
     case MacPro61:
       return 0x8E80FE177ull;
-      break;
     case MacPro71:
       return 0x8FD8FF53Full;
-      break;
 
     default:
       return (uint64_t)GetFwFeatures(Model); //unknown - use oem SMBIOS value to be default
-      break;
   }
 }
 
@@ -487,9 +497,9 @@ UINT64 GetPlatformFeature(MacModel Model)
     case iMac181:
     case iMac182:
     case iMac183:
-    case MacPro71:
+    case iMac191:
+    case iMac192:
       return 0x00;
-      break;
     case MacMini61:
     case MacMini62:
     case iMac131:
@@ -501,7 +511,6 @@ UINT64 GetPlatformFeature(MacModel Model)
     case iMac144:
     case iMac151:
       return 0x01;
-      break;
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
@@ -511,15 +520,12 @@ UINT64 GetPlatformFeature(MacModel Model)
     case MacBookAir71:
     case MacBookAir72:
       return 0x02;
-      break;
     case MacMini71:
     case iMac161:
     case iMac162:
       return 0x03;
-      break;
     case MacPro61:
       return 0x04;
-      break;
     case MacBook81:
     case MacBook91:
     case MacBook101:
@@ -530,15 +536,12 @@ UINT64 GetPlatformFeature(MacModel Model)
     case MacBookPro142:
     case MacBookPro143:
       return 0x1A;
-      break;
     case iMacPro11:
     case MacMini81:
-    case iMac191:
-    case iMac192:
     case iMac201:
     case iMac202:
+    case MacPro71:
       return 0x20;
-      break;
     case MacBookPro151:
     case MacBookPro152:
     case MacBookPro153:
@@ -548,22 +551,13 @@ UINT64 GetPlatformFeature(MacModel Model)
     case MacBookPro163:
     case MacBookPro164:
       return 0x32;
-      break;
     case MacBookAir81:
     case MacBookAir82:
     case MacBookAir91:
       return 0x3A;
-      break;
       // It is nonsense, ASCII code сharacter "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
-      // Verified list from Users
-      // case MacBookPro153:
-      // case MacBookPro154:
-      // case MacBookPro161:
-      //   gSettings.Smbios.gPlatformFeature        = 0x02;
-      //   break;
     default:
       return 0xFFFF; // disabled
-      break;
     }
 }
 
@@ -806,6 +800,7 @@ XString8 GetReleaseDate(MacModel Model)
 
 void SetDMISettingsForModel(MacModel Model, SETTINGS_DATA* settingsData)
 {
+  GlobalConfig.CurrentModel = Model;
   settingsData->Smbios.BiosVersion = ApplePlatformDataArray[Model].firmwareVersion;
   settingsData->Smbios.BiosReleaseDate = GetReleaseDate(Model);
   settingsData->Smbios.EfiVersion = ApplePlatformDataArray[Model].efiversion;

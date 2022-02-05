@@ -84,7 +84,7 @@ GetEfiTimeInMs (
     UINT64 TimeMs;
     
     TimeMs = T->Year - 1900;
-    // is 64bit multiply workign in 32 bit?
+    // is 64bit multiply working in 32 bit?
     TimeMs = MultU64x32 (TimeMs, 12)   + T->Month;
     TimeMs = MultU64x32 (TimeMs, 31)   + T->Day; // counting with 31 day
     TimeMs = MultU64x32 (TimeMs, 24)   + T->Hour;
@@ -109,7 +109,7 @@ void *GetNvramVariable(
   //
   UINTN      IntDataSize = 0;
   
-  Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
+  Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
   if (IntDataSize == 0) {
     return NULL;
   }
@@ -123,7 +123,7 @@ void *GetNvramVariable(
       //
       // Read variable into the allocated buffer.
       //
-      Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, Data);
+      Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, Data);
       if (EFI_ERROR(Status)) {
         FreePool(Data);
         IntDataSize = 0;
@@ -150,7 +150,7 @@ XString8 GetNvramVariableAsXString8(
   //
   UINTN      IntDataSize = 0;
   
-  Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
+  Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
   if (IntDataSize == 0) {
     return NullXString8;
   }
@@ -186,7 +186,7 @@ SetNvramVariable (
   UINTN  OldDataSize = 0;
   UINT32 OldAttributes = 0;
   
-  DBG("SetNvramVariable (%ls, guid, 0x%X, %lld):", VariableName, Attributes, DataSize);
+  DBG("SetNvramVariable (%ls, %s, 0x%X, %lld):", VariableName, strguid(VendorGuid), Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, &OldAttributes, &OldDataSize);
   if (OldData != NULL) {
     // var already exists - check if it equal to new value
@@ -241,7 +241,7 @@ AddNvramVariable (
   EFI_STATUS Status;
   void       *OldData;
 
-  DBG("AddNvramVariable (%ls, guid, 0x%X, %lld):", VariableName, Attributes, DataSize);
+  DBG("AddNvramVariable (%ls, %s, 0x%X, %lld):", VariableName, strguid(VendorGuid), Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, NULL, NULL);
   if (OldData == NULL) {
     // set new value
@@ -267,8 +267,7 @@ AddNvramXString8(
 }
 
 /** Deletes NVRAM variable. */
-EFI_STATUS
-DeleteNvramVariable (
+EFI_STATUS DeleteNvramVariable (
   IN  CONST CHAR16 *VariableName,
   IN  EFI_GUID *VendorGuid
   )
@@ -277,7 +276,7 @@ DeleteNvramVariable (
     
   // Delete: attributes and data size = 0
   Status = gRT->SetVariable (VariableName, VendorGuid, 0, 0, NULL);
-  DBG("DeleteNvramVariable (%ls, guid = %s):\n", VariableName, efiStrError(Status));
+  DBG("DeleteNvramVariable (%ls, %s):\n", VariableName, strguid(VendorGuid));
     
   return Status;
 }
@@ -375,7 +374,7 @@ ResetNativeNvram ()
   XBool           Restart = true;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
-  EFI_FILE* FileHandle;
+  EFI_FILE	  *FileHandle;
 
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
@@ -700,8 +699,8 @@ BootVolumeDevicePathEqual (
     if (ForceEqualNodes) {
       // assume equal nodes
 //      DBG_DP (" - forcing equal nodes\n");
-      DevicePath1 = NextDevicePathNode (DevicePath1);
-      DevicePath2 = NextDevicePathNode (DevicePath2);
+      DevicePath1 = NextDevicePathNode(DevicePath1);
+      DevicePath2 = NextDevicePathNode(DevicePath2);
       continue;
     }
     
@@ -742,7 +741,7 @@ BootVolumeDevicePathEqual (
         break;
       }
 //      DBG_DP (" - forcing equal nodes");
-    } else if (CompareMem (DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) != 0) {
+    } else if (CompareMem(DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) != 0) {
         // Not equal
 //        DBG_DP (" - not equal\n");
         break;
@@ -752,8 +751,8 @@ BootVolumeDevicePathEqual (
     //
     // Advance to next node
     //
-    DevicePath1 = NextDevicePathNode (DevicePath1);
-    DevicePath2 = NextDevicePathNode (DevicePath2);
+    DevicePath1 = NextDevicePathNode(DevicePath1);
+    DevicePath2 = NextDevicePathNode(DevicePath2);
   }
   
   return Equal;
@@ -767,18 +766,18 @@ BootVolumeMediaDevicePathNodesEqual (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
-    DevicePath1 = Clover_FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
+    DevicePath1 = Clover_FindDevicePathNodeWithType(DevicePath1, MEDIA_DEVICE_PATH, 0);
     if (DevicePath1 == NULL) {
         return false;
     }
 
-    DevicePath2 = Clover_FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
+    DevicePath2 = Clover_FindDevicePathNodeWithType(DevicePath2, MEDIA_DEVICE_PATH, 0);
     if (DevicePath2 == NULL) {
         return false;
     }
     
-    return (DevicePathNodeLength (DevicePath1) == DevicePathNodeLength (DevicePath1))
-            && (CompareMem (DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) == 0);
+    return (DevicePathNodeLength(DevicePath1) == DevicePathNodeLength(DevicePath1))
+            && (CompareMem(DevicePath1, DevicePath2, DevicePathNodeLength(DevicePath1)) == 0);
 }
 
 
@@ -875,13 +874,13 @@ GetEfiBootDeviceFromNvram ()
   // if gEfiBootVolume contains FilePathNode, then split them into gEfiBootVolume dev path and gEfiBootLoaderPath
   //
   gEfiBootLoaderPath = NULL;
-  FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+  FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
   if (FileDevPath != NULL) {
     gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
     // copy DevPath and write end of path node after in place of file path node
     gEfiBootVolume = DuplicateDevicePath (gEfiBootVolume);
-    FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
-    SetDevicePathEndNode (FileDevPath);
+    FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    SetDevicePathEndNode(FileDevPath);
     // gEfiBootVolume now contains only Volume path
   }
 
@@ -892,9 +891,9 @@ GetEfiBootDeviceFromNvram ()
   // if this is GPT disk, extract GUID
   // gEfiBootDeviceGuid can be used as a flag for GPT disk then
   //
-  Guid = FindGPTPartitionGuidInDevicePath (gEfiBootVolume);
+  Guid = FindGPTPartitionGuidInDevicePath(gEfiBootVolume);
   if (Guid != NULL) {
-    gEfiBootDeviceGuid = (__typeof__(gEfiBootDeviceGuid))AllocatePool (sizeof(EFI_GUID));
+    gEfiBootDeviceGuid = (__typeof__(gEfiBootDeviceGuid))AllocatePool(sizeof(EFI_GUID));
     if (gEfiBootDeviceGuid != NULL) {
       CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
       DBG("  - Guid = %s\n", strguid(gEfiBootDeviceGuid));
@@ -1014,7 +1013,7 @@ LoadLatestNvramPlist()
         continue;
       }
       DBG(" Modified = ");
-      ModifTimeMs = GetEfiTimeInMs (&(FileInfo->ModificationTime));
+      ModifTimeMs = GetEfiTimeInMs(&(FileInfo->ModificationTime));
       DBG("%d-%d-%d %d:%d:%d (%lld ms)\n",
           FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
           FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,

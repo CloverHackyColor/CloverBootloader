@@ -547,7 +547,7 @@ class ApplePlatformDataArrayClass
       "iMac"_XS8, "1.0"_XS8, "C02D2HAC046M"_XS8, "iMac-Aluminum"_XS8,
       0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
   //    0x02, 0x47, 0x0f, 0, 0, 0x03, "j185f"_XS8, "j185f"_XS8, 0xf0d009 },
-    //iMacPro1,1 /iMac Pro (2017)
+    //iMacPro1,1 /iMac Pro (2017), Radeon Pro Vega 56, devID=0x6867
     { iMacPro11, "IMP11.88Z.F000.B00.2107050205"_XS8, "1715.0.57.0.0"_XS8, "Mac-7BA5B2D9E42DDD94"_XS8, // Intel Xeon W-2140B CPU @ 3.20 GHz
       "iMac Pro"_XS8, "1.0"_XS8, "C02VVHACHX87"_XS8, "iMacPro-Aluminum"_XS8,
       0, 0, 0, 0, 0, 0, ""_XS8, "j137"_XS8, 0 },
@@ -621,6 +621,7 @@ uint64_t GetExtFwFeatures(MacModel Model);
 uint64_t GetExtFwFeaturesMask(MacModel Model);
 XBool GetMobile(MacModel Model);
 UINT64 GetPlatformFeature(MacModel Model);
+XString8 GetHWTarget(MacModel Model);
 void getRBr(MacModel Model, UINT32 CPUModel, XBool isMobile, char RBr[8]);
 void getRPlt(MacModel Model, UINT32 CPUModel, XBool isMobile, char RPlt[8]);
 

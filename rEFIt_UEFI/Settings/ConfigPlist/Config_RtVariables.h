@@ -170,7 +170,7 @@ public:
   decltype(CsrActiveConfig)::ValueType dgetCsrActiveConfig() const { return CsrActiveConfig.isDefined() ? CsrActiveConfig.value() : 0xFFFF; }; // 0xFFFF = not set
   const decltype(BooterConfig)::ValueType& dgetBooterConfig() const { return BooterConfig.isDefined() ? BooterConfig.value() : BooterConfig.nullValue; };
   const decltype(BooterCfg)::ValueType& dgetBooterCfgStr() const { return BooterCfg.isDefined() ? BooterCfg.value() : BooterCfg.nullValue; };
-  const decltype(HWTarget)::ValueType& dgetHWTarget() const { return HWTarget.isDefined() ? HWTarget.value() : HWTarget.nullValue; };// "j160"_XS8; };
+  const decltype(HWTarget)::ValueType& dgetHWTarget() const { return HWTarget.isDefined() ? HWTarget.value() : HWTarget.nullValue; };
 };
 
 

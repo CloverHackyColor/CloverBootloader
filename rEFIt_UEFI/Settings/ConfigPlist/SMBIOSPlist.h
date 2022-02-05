@@ -591,7 +591,7 @@ public:
 //    {
 //      if ( !ProductName.isDefined() ) {
 //        // This must not happen in Clover because Clover set a defaultMacModel
-//        // This must ot happen in ccpv because ccpv doesn't call dget... methods
+//        // This must not happen in ccpv because ccpv doesn't call dget... methods
 //        log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
 //        return iMac132; // cannot return GetDefaultModel() because we don't want to link runtime configuration to the xml reading layer.
 //      }
