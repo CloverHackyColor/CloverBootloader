@@ -148,17 +148,17 @@ class BuildFile(object):
     ## cp if exist
     _CP_TEMPLATE_ = {
         WIN32_PLATFORM :   'if exist %(Src)s $(CP) %(Src)s %(Dst)s',
-        POSIX_PLATFORM :   "test -f %(Src)s && $(CP) %(Src)s %(Dst)s"
+        POSIX_PLATFORM :   "@test -f %(Src)s && $(CP) %(Src)s %(Dst)s"
     }
 
     _CD_TEMPLATE_ = {
         WIN32_PLATFORM :   'if exist %(dir)s cd %(dir)s',
-        POSIX_PLATFORM :   "test -e %(dir)s && cd %(dir)s"
+        POSIX_PLATFORM :   "@test -e %(dir)s && cd %(dir)s"
     }
 
     _MAKE_TEMPLATE_ = {
         WIN32_PLATFORM :   'if exist %(file)s "$(MAKE)" $(MAKE_FLAGS) -f %(file)s',
-        POSIX_PLATFORM :   'test -e %(file)s && "$(MAKE)" $(MAKE_FLAGS) -f %(file)s'
+        POSIX_PLATFORM :   '@test -e %(file)s && @"$(MAKE)" $(MAKE_FLAGS) -f %(file)s'
     }
 
     _INCLUDE_CMD_ = {
@@ -776,12 +776,12 @@ AT = $(AT_$(V))
             self.BuildTargetList.append('%s : %s' % (OutputFile, DepsFileString))
             CmdString = ' '.join(FfsCmdList).strip()
             CmdString = self.ReplaceMacro(CmdString)
-            self.BuildTargetList.append('\t%s' % CmdString)
+            self.BuildTargetList.append('\t@%s' % CmdString)
 
             self.ParseSecCmd(DepsFileList, Cmd[1])
             for SecOutputFile, SecDepsFile, SecCmd in self.FfsOutputFileList :
                 self.BuildTargetList.append('%s : %s' % (self.ReplaceMacro(SecOutputFile), self.ReplaceMacro(SecDepsFile)))
-                self.BuildTargetList.append('\t%s' % self.ReplaceMacro(SecCmd))
+                self.BuildTargetList.append('\t@%s' % self.ReplaceMacro(SecCmd))
             self.FfsOutputFileList = []
 
     def ParseSecCmd(self, OutputFileList, CmdTuple):

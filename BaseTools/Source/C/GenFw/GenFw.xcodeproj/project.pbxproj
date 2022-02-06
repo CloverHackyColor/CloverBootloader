@@ -33,6 +33,13 @@
 		9AD17D122559286800D22C6A /* Elf64Convert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Elf64Convert.c; sourceTree = "<group>"; };
 		9AD17D142559286F00D22C6A /* ElfConvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ElfConvert.c; sourceTree = "<group>"; };
 		9AD17D162559287800D22C6A /* GenFw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GenFw.c; sourceTree = "<group>"; };
+		A587244A27AFAD3A000532A2 /* elf_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = elf_common.h; sourceTree = "<group>"; };
+		A587244B27AFAD3A000532A2 /* elf32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = elf32.h; sourceTree = "<group>"; };
+		A587244E27AFAD45000532A2 /* Elf32Convert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Elf32Convert.h; sourceTree = "<group>"; };
+		A587244F27AFAD50000532A2 /* elf64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = elf64.h; sourceTree = "<group>"; };
+		A587245027AFAD5E000532A2 /* Elf64Convert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Elf64Convert.h; sourceTree = "<group>"; };
+		A587245127AFAD77000532A2 /* ElfConvert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElfConvert.h; sourceTree = "<group>"; };
+		A587245227AFAD82000532A2 /* GenFw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenFw.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,10 +73,17 @@
 		9A9A3A892559281200B97949 /* GenFw */ = {
 			isa = PBXGroup;
 			children = (
+				A587244F27AFAD50000532A2 /* elf64.h */,
 				9AD17D102559286100D22C6A /* Elf32Convert.c */,
+				A587244E27AFAD45000532A2 /* Elf32Convert.h */,
+				A587244A27AFAD3A000532A2 /* elf_common.h */,
+				A587244B27AFAD3A000532A2 /* elf32.h */,
 				9AD17D122559286800D22C6A /* Elf64Convert.c */,
+				A587245027AFAD5E000532A2 /* Elf64Convert.h */,
 				9AD17D142559286F00D22C6A /* ElfConvert.c */,
+				A587245127AFAD77000532A2 /* ElfConvert.h */,
 				9AD17D162559287800D22C6A /* GenFw.c */,
+				A587245227AFAD82000532A2 /* GenFw.h */,
 				9AC31D3625592B0400ABC5D3 /* libCommon.a */,
 			);
 			name = GenFw;
