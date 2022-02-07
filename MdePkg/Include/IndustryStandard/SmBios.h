@@ -809,7 +809,10 @@ typedef enum {
   ProcessorUpgradeSocketLGA2066   = 0x39,
   ProcessorUpgradeSocketBGA1392   = 0x3A,
   ProcessorUpgradeSocketBGA1510   = 0x3B,
-  ProcessorUpgradeSocketBGA1528   = 0x3C
+  ProcessorUpgradeSocketBGA1528   = 0x3C,
+  ProcessorUpgradeSocketLGA4189   = 0x3D,
+  ProcessorUpgradeSocketLGA1200   = 0x3E,
+  ProcessorUpgradeSocketLGA4677   = 0x3F
 } PROCESSOR_UPGRADE;
 
 ///
@@ -1391,11 +1394,14 @@ typedef struct {
 /// System Slots - Slot Characteristics 2.
 ///
 typedef struct {
-  UINT8  PmeSignalSupported      :1;
-  UINT8  HotPlugDevicesSupported :1;
-  UINT8  SmbusSignalSupported    :1;
-  UINT8  BifurcationSupported    :1;
-  UINT8  Reserved                :4;  ///< Set to 0.
+  UINT8    PmeSignalSupported      : 1;
+  UINT8    HotPlugDevicesSupported : 1;
+  UINT8    SmbusSignalSupported    : 1;
+  UINT8    BifurcationSupported    : 1;
+  UINT8    AsyncSurpriseRemoval    : 1;
+  UINT8    FlexbusSlotCxl10Capable : 1;
+  UINT8    FlexbusSlotCxl20Capable : 1;
+  UINT8    Reserved                : 1; ///< Set to 0.
 } MISC_SLOT_CHARACTERISTICS2;
 
 ///
@@ -1434,9 +1440,15 @@ typedef struct {
   //
   // Add for smbios 3.2
   //
-  UINT8                       DataBusWidth;
-  UINT8                       PeerGroupingCount;
-  MISC_SLOT_PEER_GROUP        PeerGroups[1];
+  UINT8                         DataBusWidth;
+  UINT8                         PeerGroupingCount;
+  MISC_SLOT_PEER_GROUP          PeerGroups[1];
+  //
+  // Add for smbios 3.4
+  //
+  UINT8                         SlotInformation;
+  UINT8                         SlotPhysicalWidth;
+  UINT16                        SlotPitch;
 } SMBIOS_TABLE_TYPE9;
 
 ///
@@ -1629,7 +1641,8 @@ typedef enum {
   MemoryArrayLocationPc98C20AddonCard      = 0xA0,
   MemoryArrayLocationPc98C24AddonCard      = 0xA1,
   MemoryArrayLocationPc98EAddonCard        = 0xA2,
-  MemoryArrayLocationPc98LocalBusAddonCard = 0xA3
+  MemoryArrayLocationPc98LocalBusAddonCard = 0xA3,
+  MemoryArrayLocationCXLAddonCard          = 0xA4
 } MEMORY_ARRAY_LOCATION;
 
 ///
@@ -1682,21 +1695,22 @@ typedef struct {
 /// Memory Device - Form Factor.
 ///
 typedef enum {
-  MemoryFormFactorOther                    = 0x01,
-  MemoryFormFactorUnknown                  = 0x02,
-  MemoryFormFactorSimm                     = 0x03,
-  MemoryFormFactorSip                      = 0x04,
-  MemoryFormFactorChip                     = 0x05,
-  MemoryFormFactorDip                      = 0x06,
-  MemoryFormFactorZip                      = 0x07,
-  MemoryFormFactorProprietaryCard          = 0x08,
-  MemoryFormFactorDimm                     = 0x09,
-  MemoryFormFactorTsop                     = 0x0A,
-  MemoryFormFactorRowOfChips               = 0x0B,
-  MemoryFormFactorRimm                     = 0x0C,
-  MemoryFormFactorSodimm                   = 0x0D,
-  MemoryFormFactorSrimm                    = 0x0E,
-  MemoryFormFactorFbDimm                   = 0x0F
+  MemoryFormFactorOther           = 0x01,
+  MemoryFormFactorUnknown         = 0x02,
+  MemoryFormFactorSimm            = 0x03,
+  MemoryFormFactorSip             = 0x04,
+  MemoryFormFactorChip            = 0x05,
+  MemoryFormFactorDip             = 0x06,
+  MemoryFormFactorZip             = 0x07,
+  MemoryFormFactorProprietaryCard = 0x08,
+  MemoryFormFactorDimm            = 0x09,
+  MemoryFormFactorTsop            = 0x0A,
+  MemoryFormFactorRowOfChips      = 0x0B,
+  MemoryFormFactorRimm            = 0x0C,
+  MemoryFormFactorSodimm          = 0x0D,
+  MemoryFormFactorSrimm           = 0x0E,
+  MemoryFormFactorFbDimm          = 0x0F,
+  MemoryFormFactorDie             = 0x10
 } MEMORY_FORM_FACTOR;
 
 ///
@@ -1763,13 +1777,17 @@ typedef struct {
 /// Memory Device - Memory Technology
 ///
 typedef enum {
-  MemoryTechnologyOther                     = 0x01,
-  MemoryTechnologyUnknown                   = 0x02,
-  MemoryTechnologyDram                      = 0x03,
-  MemoryTechnologyNvdimmN                   = 0x04,
-  MemoryTechnologyNvdimmF                   = 0x05,
-  MemoryTechnologyNvdimmP                   = 0x06,
-  MemoryTechnologyIntelPersistentMemory     = 0x07
+  MemoryTechnologyOther   = 0x01,
+  MemoryTechnologyUnknown = 0x02,
+  MemoryTechnologyDram    = 0x03,
+  MemoryTechnologyNvdimmN = 0x04,
+  MemoryTechnologyNvdimmF = 0x05,
+  MemoryTechnologyNvdimmP = 0x06,
+  //
+  // This definition is updated to represent Intel
+  // Optane DC Persistent Memory in SMBIOS spec 3.4.0
+  //
+  MemoryTechnologyIntelOptanePersistentMemory = 0x07
 } MEMORY_DEVICE_TECHNOLOGY;
 
 ///
@@ -1844,17 +1862,22 @@ typedef struct {
   //
   // Add for smbios 3.2.0
   //
-  UINT8                                     MemoryTechnology;   ///< The enumeration value from MEMORY_DEVICE_TECHNOLOGY
-  MEMORY_DEVICE_OPERATING_MODE_CAPABILITY   MemoryOperatingModeCapability;
-  SMBIOS_TABLE_STRING                       FirwareVersion;
-  UINT16                                    ModuleManufacturerID;
-  UINT16                                    ModuleProductID;
-  UINT16                                    MemorySubsystemControllerManufacturerID;
-  UINT16                                    MemorySubsystemControllerProductID;
-  UINT64                                    NonVolatileSize;
-  UINT64                                    VolatileSize;
-  UINT64                                    CacheSize;
-  UINT64                                    LogicalSize;
+  UINT8                                      MemoryTechnology;  ///< The enumeration value from MEMORY_DEVICE_TECHNOLOGY
+  MEMORY_DEVICE_OPERATING_MODE_CAPABILITY    MemoryOperatingModeCapability;
+  SMBIOS_TABLE_STRING                        FirmwareVersion;
+  UINT16                                     ModuleManufacturerID;
+  UINT16                                     ModuleProductID;
+  UINT16                                     MemorySubsystemControllerManufacturerID;
+  UINT16                                     MemorySubsystemControllerProductID;
+  UINT64                                     NonVolatileSize;
+  UINT64                                     VolatileSize;
+  UINT64                                     CacheSize;
+  UINT64                                     LogicalSize;
+  //
+  // Add for smbios 3.3.0
+  //
+  UINT32                                     ExtendedSpeed;
+  UINT32                                     ExtendedConfiguredMemorySpeed;
 } SMBIOS_TABLE_TYPE17;
 
 ///
@@ -2509,6 +2532,15 @@ typedef struct {
   UINT8                             BusNum;
   UINT8                             DevFuncNum;
 } SMBIOS_TABLE_TYPE41;
+
+///
+///  Management Controller Host Interface - Protocol Record Data Format.
+///
+typedef struct {
+  UINT8    ProtocolType;
+  UINT8    ProtocolTypeDataLen;
+  UINT8    ProtocolTypeData[1];
+} MC_HOST_INTERFACE_PROTOCOL_RECORD;
 
 ///
 /// Management Controller Host Interface - Interface Types.

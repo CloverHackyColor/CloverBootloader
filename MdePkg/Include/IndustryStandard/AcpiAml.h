@@ -171,9 +171,14 @@
 //
 // FieldElement OpCode
 //
-#define AML_FIELD_RESERVED_OP        0x00
-#define AML_FIELD_ACCESS_OP          0x01
-#define AML_FIELD_CONNECTION_OP      0x02
-#define AML_FIELD_EXT_ACCESS_OP      0x03
+#define AML_FIELD_RESERVED_OP    0x00
+#define AML_FIELD_ACCESS_OP      0x01
+#define AML_FIELD_CONNECTION_OP  0x02
+#define AML_FIELD_EXT_ACCESS_OP  0x03
+
+//
+// AML Name segment definitions
+//
+#define AML_NAME_SEG_SIZE  4
 
 #endif
