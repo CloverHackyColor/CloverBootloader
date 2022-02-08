@@ -213,7 +213,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 // Supports Power Chime sound at boot.
 //
 #define PT_FEATURE_SUPPORTS_POWER_CHIME        0x00000010 // 4
-#define PT_FEATURE_UNKNOWN_BIT5                0x00000020 // 5
+#define PT_FEATURE_HAS_T2_CHIP                 0x00000020 // 5
 #define PT_FEATURE_UNKNOWN_BIT6                0x00000040 // 6
 #define PT_FEATURE_UNKNOWN_BIT7                0x00000080 // 7
 #define PT_FEATURE_UNKNOWN_BIT8                0x00000100 // 8
