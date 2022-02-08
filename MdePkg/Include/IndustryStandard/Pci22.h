@@ -5,7 +5,7 @@
     PCI Local Bus Specification, 2.2
     PCI-to-PCI Bridge Architecture Specification, Revision 1.2
     PC Card Standard, 8.0
-    PCI Power Management Interface Specifiction, Revision 1.2
+    PCI Power Management Interface Specification, Revision 1.2
 
   Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
   Copyright (c) 2014 - 2015, Hewlett-Packard Development Company, L.P.<BR>
