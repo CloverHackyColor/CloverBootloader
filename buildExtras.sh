@@ -6,6 +6,11 @@
 # Enhanced by STLVNB on 13/04/2016. 
 #
 
+#sometimes we have to update curl and certificates
+# sudo port install curl +ssl +universal
+# sudo curl https://curl.se/ca/cacert.pem -o /etc/ssl/cert.pem
+# openssl x509 -text < /etc/ssl/cert.pem | grep -A2 Valid
+
 
 # Change PREFIX if you want nasm installed on different place
 #
@@ -41,7 +46,7 @@ if [ "$nasmcheck" == 200 ]; then
 	fi
 	export NASM_VERSION="${nasmVersInfo:154:$verLen}"
 else
-	export NASM_VERSION=2.14.02
+	export NASM_VERSION=2.15.05
 fi
 
 #

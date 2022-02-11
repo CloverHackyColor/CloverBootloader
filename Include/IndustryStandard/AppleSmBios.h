@@ -253,7 +253,7 @@ enum {
 };
 
 ///
-/// Apple Processor Type (Type 131).
+/// Apple Processor Type (Type 131). Not used in Monterey
 ///
 typedef struct {
   UINT8 MinorType;
@@ -273,7 +273,7 @@ typedef struct {
 } APPLE_SMBIOS_TABLE_TYPE131, SMBIOS_TABLE_TYPE131;
 
 ///
-/// Apple Processor Bus Speed (Type 132).
+/// Apple Processor Bus Speed (Type 132). Not used in Monterey
 ///
 typedef struct {
   SMBIOS_STRUCTURE      Hdr;
@@ -289,7 +289,7 @@ typedef struct {
 } SMBIOS_TABLE_TYPE133;
 
 ///
-/// Apple SMC Version (Type 134).
+/// Apple SMC Version (Type 134). Not used in Monterey
 ///
 typedef struct {
   SMBIOS_STRUCTURE      Hdr;
