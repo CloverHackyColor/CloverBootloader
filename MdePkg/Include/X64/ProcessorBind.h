@@ -215,7 +215,10 @@
   // To work with edk2 library, you need to compile them without -short-wchar.
   // And of course that cannot be used to create a launchable efi file !
   // But that works for unit tests that run on macOS, Linux, Windows...
+  // Slice: ???
+  // STATIC_ASSERT (˙sizeof (CHAR16)  == 2, "sizeof (CHAR16) does not meet UEFI Specification Data Type requirements");
     #define CHAR16 wchar_t
+  //   #define CHAR16 short
   #endif
 #else
   #if __WCHAR_MAX__ <= 0xFFFF

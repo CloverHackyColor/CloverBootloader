@@ -18,7 +18,7 @@ then
   echo clover_efi_file="$clover_efi_file"
 fi
 
-qemu_path="$SCRIPT_DIR"/qemu_portable-v4.2.0/qemu-system-x86_64
+#qemu_path="$SCRIPT_DIR"/qemu_portable-v4.2.0/qemu-system-x86_64
 qemu_path="$SCRIPT_DIR"/qemu_portable-v5.2.0/qemu-system-x86_64
 #set -x
 

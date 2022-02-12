@@ -831,8 +831,11 @@ STATIC_ASSERT (sizeof (UINT32)  == 4, "sizeof (UINT32) does not meet UEFI Specif
 STATIC_ASSERT (sizeof (INT64)   == 8, "sizeof (INT64) does not meet UEFI Specification Data Type requirements");
 STATIC_ASSERT (sizeof (UINT64)  == 8, "sizeof (UINT64) does not meet UEFI Specification Data Type requirements");
 STATIC_ASSERT (sizeof (CHAR8)   == 1, "sizeof (CHAR8) does not meet UEFI Specification Data Type requirements");
+#ifdef __cplusplus
+  //sizeof(CHAR16) == 4
+#else
 STATIC_ASSERT (sizeof (CHAR16)  == 2, "sizeof (CHAR16) does not meet UEFI Specification Data Type requirements");
-
+#endif
 //
 // The following three enum types are used to verify that the compiler
 // configuration for enum types is compliant with Section 2.3.1 of the
