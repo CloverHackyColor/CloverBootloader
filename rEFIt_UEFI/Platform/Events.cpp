@@ -29,9 +29,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #endif
 
 #if PATCH_DEBUG
-#define DBG(...)	printf(__VA_ARGS__);
+#define DBG(...)  printf(__VA_ARGS__);
 #else
-#define DBG(...)	
+#define DBG(...)  
 #endif
 
 ////
@@ -87,28 +87,28 @@ void CorrectMemoryMap(IN UINT32 memMap,
                       IN UINT32 memDescriptorSize,
                       IN OUT UINT32 *memMapSize)
 {
-	EfiMemoryRange*		memDescriptor;
-	UINT64              Bytes;
-	UINT32				Index;
+  EfiMemoryRange*    memDescriptor;
+  UINT64              Bytes;
+  UINT32        Index;
   CHAR16        tmp[80];
   EFI_INPUT_KEY Key;
 //  UINTN         ind;
-	//
-	//step 1. Check for last empty descriptors
-	//
+  //
+  //step 1. Check for last empty descriptors
+  //
  // PauseForKey(L"Check for last empty descriptors");
 //  gST->ConOut->OutputString (gST->ConOut, L"Check for last empty descriptors\n\r");
 //  gBS->Stall(2000000);
-	memDescriptor = (EfiMemoryRange *)(UINTN)(memMap + *memMapSize - memDescriptorSize);
-	while ((memDescriptor->NumberOfPages == 0) || (memDescriptor->NumberOfPages > (1<<25)))
-	{
-		memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor - memDescriptorSize);
-		*memMapSize -= memDescriptorSize;
-	}
-	//
-	//step 2. Add last desc about MEM4GB
-	//
-  /*	if (gTotalMemory > MEM4GB) {
+  memDescriptor = (EfiMemoryRange *)(UINTN)(memMap + *memMapSize - memDescriptorSize);
+  while ((memDescriptor->NumberOfPages == 0) || (memDescriptor->NumberOfPages > (1<<25)))
+  {
+    memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor - memDescriptorSize);
+    *memMapSize -= memDescriptorSize;
+  }
+  //
+  //step 2. Add last desc about MEM4GB
+  //
+  /*  if (gTotalMemory > MEM4GB) {
    //next descriptor
    memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
    memDescriptor->Type = EfiConventionalMemory;
@@ -118,7 +118,7 @@ void CorrectMemoryMap(IN UINT32 memMap,
    memDescriptor->Attribute = 0;
    *memMapSize += memDescriptorSize;
    }
-   */	
+   */  
   memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
   for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
     //
@@ -177,17 +177,17 @@ void CorrectMemoryMap(IN UINT32 memMap,
   *memMapSize += memDescriptorSize;
 
 
-	if(MEM_DEB) {
+  if(MEM_DEB) {
     gST->ConOut->OutputString (gST->ConOut, L"press any key to dump MemoryMap\r\n");
 //    gBS->Stall(2000000);
     WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
     
     gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-		
-//		PauseForKey(L"press any key to dump MemoryMap");
-		memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
-		for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
-			Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
+    
+//    PauseForKey(L"press any key to dump MemoryMap");
+    memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
+    for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
+      Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
                  snwprintf(tmp, 160, "%lX-%lX pages %lX type %lX attr %hhX \r\n\r\t",
                  memDescriptor->PhysicalStart, 
                  memDescriptor->PhysicalStart + Bytes - 1,
@@ -198,9 +198,9 @@ void CorrectMemoryMap(IN UINT32 memMap,
       gST->ConOut->OutputString (gST->ConOut, tmp);
 //      gBS->Stall(2000000);
       
-			memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
-			if (Index % 20 == 19) {
-				gST->ConOut->OutputString (gST->ConOut, L"press any key\r\n");
+      memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
+      if (Index % 20 == 19) {
+        gST->ConOut->OutputString (gST->ConOut, L"press any key\r\n");
         WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
 //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 /*        if (ReadAllKeyStrokes()) {  // remove buffered key strokes
@@ -212,10 +212,10 @@ void CorrectMemoryMap(IN UINT32 memMap,
         ReadAllKeyStrokes();        // empty the buffer to protect the menu
         WaitForCR();
  */
-  		}
-		}
-	}
-	
+      }
+    }
+  }
+  
 }
 #endif
 
@@ -257,26 +257,26 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
 */  
 
   gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-	//
-	// Patch kernel and kexts if needed
-	//
+  //
+  // Patch kernel and kexts if needed
+  //
 //  Jief : OpenCore is doing the kernel patching for all versions.
 //  LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
-//	if ( Entry && Entry->OSVersion.startWith("10") ) {
+//  if ( Entry && Entry->OSVersion.startWith("10") ) {
 //    Entry->KernelAndKextsPatcherStart();
 //  }
-	
+  
 #if 0  //it will be as a sample of possible patches in future
 //    gBS->Stall(2000000);
-	//PauseForKey(L"press any key to MemoryFix");
-	if (gSettings.MemoryFix) {
-    BootArgs1*				bootArgs1v;
-    BootArgs2*				bootArgs2v;
-    UINT8*						ptr=(UINT8*)(UINTN)0x100000;
-    //	DTEntry						efiPlatform;
-//    CHAR8*						dtreeRoot;
-    UINTN						archMode = sizeof(UINTN) * 8;
-    UINTN						Version = 0;
+  //PauseForKey(L"press any key to MemoryFix");
+  if (gSettings.MemoryFix) {
+    BootArgs1*        bootArgs1v;
+    BootArgs2*        bootArgs2v;
+    UINT8*            ptr=(UINT8*)(UINTN)0x100000;
+    //  DTEntry            efiPlatform;
+//    CHAR8*            dtreeRoot;
+    UINTN            archMode = sizeof(UINTN) * 8;
+    UINTN            Version = 0;
     
     while(true)
     {
@@ -318,7 +318,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
  //       DBG("bootArgs not found!\n");
         gST->ConOut->OutputString (gST->ConOut, L"bootArgs not found!");
         gBS->Stall(5000000);
-        //			return;
+        //      return;
         break;
       }
     }
@@ -334,12 +334,12 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
                        &bootArgs1v->MemoryMapSize);
 //      bootArgs1v->efiSystemTable = (UINT32)(UINTN)gST;
     }
-	}
+  }
 #endif
   
-	if (gSettings.Devices.USB.USBFixOwnership) {
+  if (gSettings.Devices.USB.USBFixOwnership) {
     FixOwnership();
-	}
+  }
 }
 
 void
@@ -381,44 +381,44 @@ OnSimpleFileSystem (
                     IN      void       *Context
                     )
 {
-	EFI_TPL		OldTpl;
-	
-	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-	gEvent = 1;
-	//  ReinitRefitLib();
-	//ScanVolumes();
-	//enter GUI
-	// DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
-	// MsgLog("OnSimpleFileSystem occured\n");
-	
-	gBS->RestoreTPL (OldTpl);
-	
+  EFI_TPL    OldTpl;
+  
+  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
+  gEvent = 1;
+  //  ReinitRefitLib();
+  //ScanVolumes();
+  //enter GUI
+  // DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
+  // MsgLog("OnSimpleFileSystem occured\n");
+  
+  gBS->RestoreTPL (OldTpl);
+  
 }  
 
 EFI_STATUS
 GuiEventsInitialize ()
 {
-	EFI_STATUS				Status;
-	EFI_EVENT				Event;
-	void*				  	RegSimpleFileSystem = NULL;
-	
-	gEvent = 0;
-	Status = gBS->CreateEvent (
-							   EVT_NOTIFY_SIGNAL,
-							   TPL_NOTIFY,
-							   OnSimpleFileSystem,
-							   NULL,
-							   &Event);
-	if(!EFI_ERROR(Status))
-	{
-		Status = gBS->RegisterProtocolNotify (
-											  &gEfiSimpleFileSystemProtocolGuid,
-											  Event,
-											  &RegSimpleFileSystem);
-	}
-	
-	
-	return Status;
+  EFI_STATUS        Status;
+  EFI_EVENT        Event;
+  void*            RegSimpleFileSystem = NULL;
+  
+  gEvent = 0;
+  Status = gBS->CreateEvent (
+                 EVT_NOTIFY_SIGNAL,
+                 TPL_NOTIFY,
+                 OnSimpleFileSystem,
+                 NULL,
+                 &Event);
+  if(!EFI_ERROR(Status))
+  {
+    Status = gBS->RegisterProtocolNotify (
+                        &gEfiSimpleFileSystemProtocolGuid,
+                        Event,
+                        &RegSimpleFileSystem);
+  }
+  
+  
+  return Status;
 }  
 
 //EFI_STATUS
@@ -517,141 +517,141 @@ WaitFor2EventWithTsc (
 EFI_STATUS
 EventsInitialize (IN LOADER_ENTRY *Entry)
 {
-	EFI_STATUS			Status;
-	void*           Registration = NULL;
-	
-	//
-	// Register the event to reclaim variable for OS usage.
-	//
-	//EfiCreateEventReadyToBoot(&OnReadyToBootEvent);
-	/*  EfiCreateEventReadyToBootEx (
-	 TPL_NOTIFY, 
-	 OnReadyToBoot, 
-	 NULL, 
-	 &OnReadyToBootEvent
-	 );  */           
-	
-	//
-	// Register notify for exit boot services
-	//
-	Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
-							   TPL_CALLBACK,
-							   OnExitBootServices, 
-							   Entry,
-							   &ExitBootServiceEvent);
+  EFI_STATUS      Status;
+  void*           Registration = NULL;
   
-	if(!EFI_ERROR(Status))
-	{
-		/*Status = */gBS->RegisterProtocolNotify (
+  //
+  // Register the event to reclaim variable for OS usage.
+  //
+  //EfiCreateEventReadyToBoot(&OnReadyToBootEvent);
+  /*  EfiCreateEventReadyToBootEx (
+   TPL_NOTIFY, 
+   OnReadyToBoot, 
+   NULL, 
+   &OnReadyToBootEvent
+   );  */           
+  
+  //
+  // Register notify for exit boot services
+  //
+  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                 TPL_CALLBACK,
+                 OnExitBootServices, 
+                 Entry,
+                 &ExitBootServiceEvent);
+  
+  if(!EFI_ERROR(Status))
+  {
+    /*Status = */gBS->RegisterProtocolNotify (
                  &gEfiStatusCodeRuntimeProtocolGuid,
                  ExitBootServiceEvent,
                  &Registration);
-	}
+  }
    
   
   
-	//
-	// Register the event to convert the pointer for runtime.
-	//
+  //
+  // Register the event to convert the pointer for runtime.
+  //
     /*
-	 gBS->CreateEventEx (
-	 EVT_NOTIFY_SIGNAL,
-	 TPL_NOTIFY,
-	 VirtualAddressChangeEvent,
-	 NULL,
-	 &gEfiEventVirtualAddressChangeGuid,
-	 &mVirtualAddressChangeEvent
-	 );
+   gBS->CreateEventEx (
+   EVT_NOTIFY_SIGNAL,
+   TPL_NOTIFY,
+   VirtualAddressChangeEvent,
+   NULL,
+   &gEfiEventVirtualAddressChangeGuid,
+   &mVirtualAddressChangeEvent
+   );
      */
-	// and what if EFI_ERROR?
-	return Status;
+  // and what if EFI_ERROR?
+  return Status;
 }
 
 EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 {
-	EFI_SCSI_IO_PROTOCOL            *ScsiIo = NULL;
-	EFI_SCSI_IO_SCSI_REQUEST_PACKET CommandPacket;
-//	UINT64                          Lun = 0;
-//	UINT8                           *Target;
-//	UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
-	EFI_STATUS                      Status; // = EFI_UNSUPPORTED;
-	UINT8                           Cdb[EFI_SCSI_OP_LENGTH_SIX];
-	USB_MASS_DEVICE                 *UsbMass = NULL;
-	EFI_BLOCK_IO_PROTOCOL           *BlkIo	= NULL;
-	EFI_BLOCK_IO_MEDIA              *Media;
-	UINT32                          Timeout;
-	UINT32                          CmdResult;
+  EFI_SCSI_IO_PROTOCOL            *ScsiIo = NULL;
+  EFI_SCSI_IO_SCSI_REQUEST_PACKET CommandPacket;
+//  UINT64                          Lun = 0;
+//  UINT8                           *Target;
+//  UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
+  EFI_STATUS                      Status; // = EFI_UNSUPPORTED;
+  UINT8                           Cdb[EFI_SCSI_OP_LENGTH_SIX];
+  USB_MASS_DEVICE                 *UsbMass = NULL;
+  EFI_BLOCK_IO_PROTOCOL           *BlkIo  = NULL;
+  EFI_BLOCK_IO_MEDIA              *Media;
+  UINT32                          Timeout;
+  UINT32                          CmdResult;
   
-	//
-	// Initialize SCSI REQUEST_PACKET and 6-byte Cdb
-	//
-	ZeroMem (&CommandPacket, sizeof (EFI_SCSI_IO_SCSI_REQUEST_PACKET));
-	ZeroMem (Cdb, EFI_SCSI_OP_LENGTH_SIX);
-	
-	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (void **) &ScsiIo);
-	if (ScsiIo) {
-//		Target = &TargetArray[0];
-//		ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
-		
-		
-		Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
-//		Cdb[1]  = (UINT8) (LShiftU64 (Lun, 5) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
-//		Cdb[1] |= 0x01;
-    Cdb[1]  = 0x01;
-		Cdb[4]  = ATA_CMD_SUBOP_EJECT_DISC;  
-		CommandPacket.Timeout = EFI_TIMER_PERIOD_SECONDS (3);
-		CommandPacket.Cdb = Cdb;
-		CommandPacket.CdbLength = (UINT8) sizeof (Cdb);
+  //
+  // Initialize SCSI REQUEST_PACKET and 6-byte Cdb
+  //
+  ZeroMem (&CommandPacket, sizeof (EFI_SCSI_IO_SCSI_REQUEST_PACKET));
+  ZeroMem (Cdb, EFI_SCSI_OP_LENGTH_SIX);
+  
+  Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (void **) &ScsiIo);
+  if (ScsiIo) {
+//    Target = &TargetArray[0];
+//    ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
     
-		Status = ScsiIo->ExecuteScsiCommand (ScsiIo, &CommandPacket, NULL);
-	} else {
-		Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (void **) &BlkIo);
-		if (BlkIo) {
-			UsbMass = USB_MASS_DEVICE_FROM_BLOCK_IO (BlkIo);
-			if (!UsbMass) {
-				MsgLog("no UsbMass\n");
-				Status = EFI_NOT_FOUND;
-				goto ON_EXIT;
-			}
-			Media   = &UsbMass->BlockIoMedia;
-			if (!Media) {
-				MsgLog("no BlockIoMedia\n");
-				Status = EFI_NO_MEDIA;
-				goto ON_EXIT;
-			}
-			
-			//
-			// If it is a removable media, such as CD-Rom or Usb-Floppy,
-			// need to detect the media before each read/write. While some of
-			// Usb-Flash is marked as removable media.
-			//
-      //TODO - DetectMedia will appear automatically. Do nothing?
-			if (!Media->RemovableMedia) {
-				//Status = UsbBootDetectMedia (UsbMass);
-        //	if (EFI_ERROR(Status)) {
-				Status = EFI_UNSUPPORTED;
+    
+    Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
+//    Cdb[1]  = (UINT8) (LShiftU64 (Lun, 5) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
+//    Cdb[1] |= 0x01;
+    Cdb[1]  = 0x01;
+    Cdb[4]  = ATA_CMD_SUBOP_EJECT_DISC;  
+    CommandPacket.Timeout = EFI_TIMER_PERIOD_SECONDS (3);
+    CommandPacket.Cdb = Cdb;
+    CommandPacket.CdbLength = (UINT8) sizeof (Cdb);
+    
+    Status = ScsiIo->ExecuteScsiCommand (ScsiIo, &CommandPacket, NULL);
+  } else {
+    Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (void **) &BlkIo);
+    if (BlkIo) {
+      UsbMass = USB_MASS_DEVICE_FROM_BLOCK_IO (BlkIo);
+      if (!UsbMass) {
+        MsgLog("no UsbMass\n");
+        Status = EFI_NOT_FOUND;
         goto ON_EXIT;
-        //	}
-			} 
-			
-			if (!(Media->MediaPresent)) {
-				Status = EFI_NO_MEDIA;
-				goto ON_EXIT;
-			}
-      //TODO - remember previous state		
-      /*		if (MediaId != Media->MediaId) {
+      }
+      Media   = &UsbMass->BlockIoMedia;
+      if (!Media) {
+        MsgLog("no BlockIoMedia\n");
+        Status = EFI_NO_MEDIA;
+        goto ON_EXIT;
+      }
+      
+      //
+      // If it is a removable media, such as CD-Rom or Usb-Floppy,
+      // need to detect the media before each read/write. While some of
+      // Usb-Flash is marked as removable media.
+      //
+      //TODO - DetectMedia will appear automatically. Do nothing?
+      if (!Media->RemovableMedia) {
+        //Status = UsbBootDetectMedia (UsbMass);
+        //  if (EFI_ERROR(Status)) {
+        Status = EFI_UNSUPPORTED;
+        goto ON_EXIT;
+        //  }
+      } 
+      
+      if (!(Media->MediaPresent)) {
+        Status = EFI_NO_MEDIA;
+        goto ON_EXIT;
+      }
+      //TODO - remember previous state    
+      /*    if (MediaId != Media->MediaId) {
        Status = EFI_MEDIA_CHANGED;
        goto ON_EXIT;
        }*/
-			
-			Timeout = USB_BOOT_GENERAL_CMD_TIMEOUT;
-			Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
-	//		Cdb[1]  = (UINT8) (USB_BOOT_LUN(UsbMass->Lun) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
-	//		Cdb[1] |= 0x01;
+      
+      Timeout = USB_BOOT_GENERAL_CMD_TIMEOUT;
+      Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
+  //    Cdb[1]  = (UINT8) (USB_BOOT_LUN(UsbMass->Lun) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
+  //    Cdb[1] |= 0x01;
       Cdb[1] = 0x01;
-			Cdb[4] = ATA_CMD_SUBOP_EJECT_DISC; //eject command. 
-		//	Status = EFI_UNSUPPORTED;
-			Status    = UsbMass->Transport->ExecCommand (
+      Cdb[4] = ATA_CMD_SUBOP_EJECT_DISC; //eject command. 
+    //  Status = EFI_UNSUPPORTED;
+      Status    = UsbMass->Transport->ExecCommand (
                                                    UsbMass->Context,
                                                    &Cdb,
                                                    sizeof(Cdb),
@@ -662,10 +662,10 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
                                                    &CmdResult
                                                    );
       
-      //ON_EXIT:			
-      //			gBS->RestoreTPL (OldTpl);
-		}
-	}
+      //ON_EXIT:      
+      //      gBS->RestoreTPL (OldTpl);
+    }
+  }
 ON_EXIT:
   return Status;
 }
