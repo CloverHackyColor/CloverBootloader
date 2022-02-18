@@ -995,15 +995,17 @@ static BPMNode* bpmnode_create(BPMLists* lists, int weight, unsigned index, BPMN
 
 /*sort the leaves with stable mergesort*/
 //qsort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
+/*
 static int bpmnode_compare(const void* a, const void* b)
 {
   int wa = ((const BPMNode*)a)->weight;
   int wb = ((const BPMNode*)b)->weight;
   if (wa < wb) return -1;
   if (wa > wb) return 1;
-  /*make the qsort a stable sort*/
+  //make the qsort a stable sort
   return 0; //(((const BPMNode*)a)->index < ((const BPMNode*)b)->index) ? 1 : -1;
 }
+*/
 
 #if BPM_SORT
 static void bpmnode_sort(BPMNode* leaves, size_t num) {
@@ -1094,7 +1096,16 @@ unsigned lodepng_huffman_code_lengths(unsigned* lengths, const unsigned* frequen
     BPMNode* node;
 
  //   bpmnode_sort(leaves, numpresent);
-    QuickSort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
+//    QuickSort(leaves, numpresent, sizeof(BPMNode), bpmnode_compare);
+
+    QuickSort(leaves, numpresent, sizeof(BPMNode), [](const void *a,const void *b)->int {
+      int wa = ((const BPMNode*)a)->weight;
+      int wb = ((const BPMNode*)b)->weight;
+      if (wa < wb) return -1;
+      if (wa > wb) return 1;
+      return 0;
+    });
+
     lists.listsize = maxbitlen;
     lists.memsize = 2 * maxbitlen * (maxbitlen + 1);
     lists.nextfree = 0;
