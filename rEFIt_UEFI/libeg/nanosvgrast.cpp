@@ -512,13 +512,13 @@ static void nsvg__squareCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 
 static void nsvg__roundCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p, float dx, float dy, float lineWidth, int ncap, int connect)
 {
-  int i;
+
   float w = lineWidth * 0.5f;
   float px = p->x, py = p->y;
   float dlx = dy, dly = -dx;
   float lx = 0, ly = 0, rx = 0, ry = 0, prevx = 0, prevy = 0;
 
-  for (i = 0; i < ncap; i++) {
+  for (int i = 0; i < ncap; i++) {
     float a = (float)i/(float)(ncap-1)*NSVG_PI;
     float ax = cosf(a) * w, ay = sinf(a) * w;
     float x = px - dlx*ax - dx*ay;
@@ -604,7 +604,7 @@ static void nsvg__miterJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 
 static void nsvg__roundJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0, NSVGpoint* p1, float lineWidth, int ncap)
 {
-  int i, n;
+  int n;
   float w = lineWidth * 0.5f;
   float dlx0 = p0->dy, dly0 = -p0->dx;
   float dlx1 = p1->dy, dly1 = -p1->dx;
@@ -625,7 +625,7 @@ static void nsvg__roundJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
   rx = right->x;
   ry = right->y;
 
-  for (i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     float u = (float)i/(float)(n-1);
     float a = a0 + u*da;
     float ax = cosf(a) * w, ay = sinf(a) * w;
@@ -669,7 +669,7 @@ static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints
   int ncap = nsvg__curveDivs(lineWidth*0.5f, NSVG_PI, r->tessTol);  // Calculate divisions per half circle.
   NSVGpoint left = {0,0,0,0,0,0,0,0,{0,0,0}}, right = {0,0,0,0,0,0,0,0,{0,0,0}}, firstLeft = {0,0,0,0,0,0,0,0,{0,0,0}}, firstRight = {0,0,0,0,0,0,0,0,{0,0,0}};
   NSVGpoint* p0, *p1;
-  int j, s, e;
+  int s, e;
 
   // Build stroke edges
   if (closed) {
@@ -703,7 +703,7 @@ static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints
       nsvg__roundCap(r, &left, &right, p0, dx, dy, lineWidth, ncap, 0);
   }
 
-  for (j = s; j < e; ++j) {
+  for (int j = s; j < e; ++j) {
     if (p1->flags & NSVG_PT_CORNER) {
       if (lineJoin == NSVG_JOIN_ROUND)
         nsvg__roundJoin(r, &left, &right, p0, p1, lineWidth, ncap);
@@ -737,12 +737,12 @@ static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints
 
 static void nsvg__prepareStroke(NSVGrasterizer* r, float miterLimit, int lineJoin)
 {
-  int i, j;
-  NSVGpoint* p0, *p1;
+
+  NSVGpoint *p0, *p1;
 
   p0 = &r->points[r->npoints-1];
   p1 = &r->points[0];
-  for (i = 0; i < r->npoints; i++) {
+  for (int i = 0; i < r->npoints; i++) {
     // Calculate segment direction and length
     p0->dx = p1->x - p0->x;
     p0->dy = p1->y - p0->y;
@@ -754,7 +754,7 @@ static void nsvg__prepareStroke(NSVGrasterizer* r, float miterLimit, int lineJoi
   // calculate joins
   p0 = &r->points[r->npoints-1];
   p1 = &r->points[0];
-  for (j = 0; j < r->npoints; j++) {
+  for (int j = 0; j < r->npoints; j++) {
     float dlx0, dly0, dlx1, dly1, dmr2, cross;
     dlx0 = p0->dy;
     dly0 = -p0->dx;
@@ -794,7 +794,7 @@ static void nsvg__prepareStroke(NSVGrasterizer* r, float miterLimit, int lineJoi
 
 static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float* xform)
 {
-  int i, j, closed;
+  int closed;
   NSVGpath* path;
   NSVGpoint* p0, *p1;
   NSVGpoint p;
@@ -822,7 +822,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
     p.x = path->pts[0];
     p.y = path->pts[1];
     nsvg__addPathPoint(r, &p, xform, NSVG_PT_CORNER);
-    for (i = 0; i < path->npts-1; i += 3) {
+    for (int i = 0; i < path->npts-1; i += 3) {
       float* pt = &path->pts[i*2];
       nsvg__flattenCubicBez2(r, pt, xform, NSVG_PT_CORNER);
     }
@@ -857,7 +857,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
 
       // Figure out dash offset.
       allDashLen = 0;
-      for (j = 0; j < shape->strokeDashCount; j++)
+      for (int j = 0; j < shape->strokeDashCount; j++)
         allDashLen += shape->strokeDashArray[j];
       if (shape->strokeDashCount & 1)
         allDashLen *= 2.0f;
@@ -872,7 +872,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
       }
       dashLen = (shape->strokeDashArray[idash] - dashOffset) * scale;
 
-      for (j = 1; j < r->npoints2; ) {
+      for (int j = 1; j < r->npoints2; ) {
         float dx = r->points2[j].x - cur->x;
         float dy = r->points2[j].y - cur->y;
         float dist = sqrtf(dx*dx + dy*dy);
@@ -1084,13 +1084,13 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
   //  static int once = 0;
   unsigned char* dst = row + x*4;
   if (cache->type == NSVG_PAINT_COLOR) {
-    int i, cr, cg, cb, ca;
+    int cr, cg, cb, ca;
     cr = cache->colors[0] & 0xff;
     cg = (cache->colors[0] >> 8) & 0xff;
     cb = (cache->colors[0] >> 16) & 0xff;
     ca = (cache->colors[0] >> 24) & 0xff;
 
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       int r,g,b;
       int a = nsvg__div255((int)cover[0] * ca);
       int ia = 255 - a;
@@ -1120,7 +1120,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     float* t = cache->xform;
 
     //    DumpFloat("cache grad xform", t, 6);
-    int i, cr, cg, cb, ca;
+    int cr, cg, cb, ca;
     unsigned int c;
     //x,y - pixels
     fx = (float)x;
@@ -1128,7 +1128,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     //    dx = 1.0f;
     gy = fx*t[1] + fy*t[3] + t[5]; //gradient direction. Point at cut
 
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       int r,g,b,a,ia;
       int level = cache->coarse;
       c = cache->colors[dither(nsvg__clampf(gy*(255.0f-level), 0, (float)(255-level)), level)]; //assumed gy = 0.0 ... 1.0f
@@ -1165,7 +1165,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     float fx, fy, gx, gy, gd;
     float* t = cache->xform;
     //    DumpFloat("cache grad xform", t, 6);
-    int i, cr, cg, cb, ca;
+    int cr, cg, cb, ca;
     unsigned int c;
     fx = (float)x;
     fy = (float)y;
@@ -1173,7 +1173,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     gx = fx*t[0] + fy*t[2] + t[4];
     gy = fx*t[1] + fy*t[3] + t[5];
 
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       int r,g,b,a,ia;
       gd = sqrtf(gx*gx + gy*gy);
       //     DBG("gx=%f gy=%f\n", gx, gy);
@@ -1271,7 +1271,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     float fx, fy, gx, gy, gd;
     float* t = cache->xform;
     //    DumpFloat("cache grad xform", t, 6);
-    int i, cr, cg, cb, ca;
+    int cr, cg, cb, ca;
     unsigned int c;
 
     fx = (float)x;
@@ -1280,7 +1280,7 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     gx = fx*t[0] + fy*t[2] + t[4];
     gy = fx*t[1] + fy*t[3] + t[5];
 
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       int r,g,b,a,ia;
       if ((gx == 0.f) && (gy == 0.f)) {
         c = 0;
@@ -1326,16 +1326,16 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
                                        NSVGcachedPaint* cache, char fillRule, NSVGclip* clip)
 {
   NSVGactiveEdge *active = NULL;
-  int y, s;
+
   int e = 0;
   int maxWeight = (255 / NSVG__SUBSAMPLES);  // weight per vertical scanline
   int xmin, xmax;
 
-  for (y = 0; y < r->height; y++) {
+  for (int y = 0; y < r->height; y++) {
     SetMem(r->scanline, r->width, 0);
     xmin = r->width;
     xmax = 0;
-    for (s = 0; s < NSVG__SUBSAMPLES; ++s) {
+    for (int s = 0; s < NSVG__SUBSAMPLES; ++s) {
       // find center of pixel for this scanline
       float scany = (float)(y*NSVG__SUBSAMPLES + s) + 0.5f;
       NSVGactiveEdge **step = &active;
@@ -1406,10 +1406,10 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
     if (xmax > r->width-1) xmax = r->width-1;
     if (xmin <= xmax) {
       //    nsvg__scanlineSolid(&r->bitmap[y * r->stride] + xmin*4, xmax-xmin+1, &r->scanline[xmin], xmin, y, tx,ty, scalex, scaley, cache);
-      int i, j;
-      for (i = 0; i < clip->count; i++) {
+
+      for (int i = 0; i < clip->count; i++) {
         unsigned char* stencil = &r->stencil[r->stencilSize * clip->index[i] + y * r->stencilStride];
-        for (j = xmin; j <= xmax; j++) {
+        for (int j = xmin; j <= xmax; j++) {
           if (((stencil[j / 8] >> (j % 8)) & 1) == 0) {
             r->scanline[j] = 0;
           }
@@ -1423,12 +1423,11 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
 
 static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int stride)
 {
-  int x,y;
 
   // Unpremultiply
-  for (y = 0; y < h; y++) {
+  for (int y = 0; y < h; y++) {
     unsigned char *row = &image[y*stride];
-    for (x = 0; x < w; x++) {
+    for (int x = 0; x < w; x++) {
       int r = row[0], g = row[1], b = row[2], a = row[3];
       if (a != 0) {
         row[0] = (unsigned char)(r*255/a);
@@ -1440,9 +1439,9 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
   }
 
   // Defringe
-  for (y = 0; y < h; y++) {
+  for (int y = 0; y < h; y++) {
     unsigned char *row = &image[y*stride];
-    for (x = 0; x < w; x++) {
+    for (int x = 0; x < w; x++) {
       int r = 0, g = 0, b = 0, a = row[3], n = 0;
       if (a == 0) {
         if (x-1 > 0 && row[-1] != 0) {
@@ -1483,7 +1482,7 @@ static void nsvg__unpremultiplyAlpha(unsigned char* image, int w, int h, int str
 
 static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape* shape, float *xformShape)
 {
-  int i, j;
+
   NSVGgradient* grad = paint->paint.gradient;
 
   float opacity = shape->opacity;
@@ -1525,7 +1524,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
     //}
     SetMem(cache->colors, sizeof(cache->colors), 0);
   } else if (grad->nstops == 1) {
-    for (i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; i++) {
       cache->colors[i] = nsvg__applyOpacity(grad->stops[i].color, opacity);
     }
   } else {  //nstops=2 as usual gradient
@@ -1538,11 +1537,11 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
     ub = nsvg__clampf(grad->stops[grad->nstops-1].offset, ua, 1);
     ia = (int)(ua * 255.0f);
     ib = (int)(ub * 255.0f);
-    for (i = 0; i < ia; i++) {
+    for (int i = 0; i < ia; i++) {
       cache->colors[i] = ca; //color from stop0
     }
 
-    for (i = 0; i < grad->nstops-1; i++) {
+    for (int i = 0; i < grad->nstops-1; i++) {
       //      ca = nsvg__applyOpacity(grad->stops[i].color, opacity);  //= color begin
       //      cb = nsvg__applyOpacity(grad->stops[i+1].color, opacity); //= color end
       ca = grad->stops[i].color;
@@ -1555,7 +1554,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
       if (count <= 0) continue;
       u = 0;
       du = 1.0f / (float)count;
-      for (j = 0; j < count; j++) {
+      for (int j = 0; j < count; j++) {
         cache->colors[ia+j] = nsvg__lerpRGBA(ca,cb,u, opacity);
         u += du;
       }
@@ -1565,7 +1564,7 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
     //        cache->colors[0], cache->colors[50], cache->colors[100], cache->colors[150],
     //        cache->colors[200], cache->colors[250]);
     //    }
-    for (i = ib; i < 256; i++) { //tail
+    for (int i = ib; i < 256; i++) { //tail
       cache->colors[i] = cb;
       //      cache->colors2[i] = cb;
     }
@@ -1683,7 +1682,7 @@ static void renderShape(NSVGrasterizer* r,
 {
   NSVGedge *e = NULL;
   NSVGcachedPaint cache;
-  int i;
+
   SetMem(&cache, sizeof(NSVGcachedPaint), 0);
 
   if (shape->fill.type != NSVG_PAINT_NONE) {
@@ -1693,7 +1692,7 @@ static void renderShape(NSVGrasterizer* r,
 
     nsvg__flattenShape(r, shape, xform);
     // Scale and translate edges
-    for (i = 0; i < r->nedges; i++) {
+    for (int i = 0; i < r->nedges; i++) {
       e = &r->edges[i];
       e->y0 *= NSVG__SUBSAMPLES;
       e->y1 *= NSVG__SUBSAMPLES;
@@ -1713,7 +1712,7 @@ static void renderShape(NSVGrasterizer* r,
     nsvg__flattenShapeStroke(r, shape, xform);
 
     // Scale and translate edges
-    for (i = 0; i < r->nedges; i++) {
+    for (int i = 0; i < r->nedges; i++) {
       e = &r->edges[i];
       e->y0 *= NSVG__SUBSAMPLES;
       e->y1 *= NSVG__SUBSAMPLES;
