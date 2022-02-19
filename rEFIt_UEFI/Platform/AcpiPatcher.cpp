@@ -254,6 +254,27 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   GlobalConfig.ACPIDropTables = DropTable;
 }
 
+
+/*
+ * There is the case when OemTableId ended by space like "TableID ".
+ * We will not see the space but comparison will fail.
+ */
+UINT64 OemTableId_NoSpace(UINT64 origin)
+{
+  UINT64 mask = 0xffULL << 56;
+  UINT64 space = 0x20ULL << 56;
+  do {
+    if ((mask & origin) == space) {
+      origin &= ~mask;
+    }
+    mask >>= 8;
+    space >>= 8;
+  } while (mask != 0 && ((mask & origin) == 0 || (mask & origin) == space));
+  return origin;
+}
+
+
+
 void GetAcpiTablesList()
 {
   DbgHeader("GetAcpiTablesList");
@@ -262,6 +283,22 @@ void GetAcpiTablesList()
   GlobalConfig.ACPIDropTables = NULL;
 
   DBG("Get Acpi Tables List ");
+/*
+  //for test
+  CHAR8 OTID[9];
+  OTID[8] = 0;
+  UINT64 TestTableId = 0x204449656c626154ULL; // <54 61 62 6c 65 49 44 20>
+  CopyMem(&OTID[0], &TestTableId, 8);
+  DBG("\n test          id=0x%08llx as str=%s\n", TestTableId, OTID);
+  TestTableId = OemTableId_NoSpace(TestTableId);
+  DBG("after convert id=0x%08llx as str=%s\n", TestTableId, OTID);
+
+  result:
+      test        id=0x204449656c626154 as str=TableID
+      after convert id=0x4449656c626154 as str=TableID
+
+*/
+
   if (Xsdt) {
     UINT32 Count = XsdtTableCount();
     UINT64* Ptr = XsdtEntryPtrFromIndex(0);
@@ -293,7 +330,6 @@ void GetAcpiTablesList()
   }
 }
 
-
 void DropTableFromRSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
 {
   if (!Rsdt || (0 == Signature && 0 == TableId)) {
@@ -321,7 +357,7 @@ void DropTableFromRSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
     CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
-          (!TableId || Table->OemTableId == TableId) &&
+          (!TableId || OemTableId_NoSpace(Table->OemTableId) == TableId) &&
           (!Length || Table->Length == Length))) {
       continue;
     }
@@ -362,7 +398,7 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
     CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
-          (!TableId || Table->OemTableId == TableId) &&
+          (!TableId || OemTableId_NoSpace(Table->OemTableId) == TableId) &&
           (!Length || Table->Length == Length))) {
       continue;
     }
