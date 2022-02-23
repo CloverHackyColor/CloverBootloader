@@ -5563,6 +5563,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
     DsdtLen = DeleteDevice("FDC0"_XS8, temp, DsdtLen);
     DsdtLen = DeleteDevice("ECP1"_XS8, temp, DsdtLen);
     DsdtLen = DeleteDevice("LPT1"_XS8, temp, DsdtLen);
+    DsdtLen = DeleteDevice("FDC_"_XS8, temp, DsdtLen);
   }
 
   if ((gSettings.ACPI.DSDT.FixDsdt & FIX_ACST)) {
