@@ -1533,9 +1533,17 @@ MacModel GetDefaultModel()
         DefaultType = MacBookPro133;
         break;
       case CPU_MODEL_KABYLAKE2:
-        DefaultType = MacBookPro143;
+      case CPU_MODEL_COMETLAKE_U:
+      case CPU_MODEL_COMETLAKE_Y:
+        DefaultType = MacBookPro151;
         break;
-      default:
+      case CPU_MODEL_ICELAKE:
+      case CPU_MODEL_ICELAKE_A:
+      case CPU_MODEL_ICELAKE_C:
+      case CPU_MODEL_ICELAKE_D:
+        DefaultType = MacBookPro161;
+        break;
+     default:
         if ( gConf.GfxPropertiesArray.hasNvidia() ) {
           DefaultType = MacBookPro51;
         } else
@@ -1643,6 +1651,10 @@ MacModel GetDefaultModel()
         break;
       case CPU_MODEL_BROADWELL_E5:
         DefaultType = MacPro61;
+        break;
+      case CPU_MODEL_ALDERLAKE:
+      case CPU_MODEL_COMETLAKE_S:
+        DefaultType = MacPro71;
         break;
       default:
         DefaultType = iMac132;
