@@ -11,6 +11,7 @@
 cd "$(dirname $0)"
 
 export CLOVERROOT=${CLOVERROOT:-$WORKSPACE}
+export DIR_TOOLS=${DIR_TOOLS:-$CLOVERROOT/toolchain/tools}
 export OR_DIR=${OR_DIR:-$CLOVERROOT/CloverPackage/CloverV2/EFI/CLOVER/drivers/off/UEFI/MemoryFix}
 version=v12
 
