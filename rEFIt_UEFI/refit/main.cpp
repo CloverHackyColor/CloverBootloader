@@ -1171,12 +1171,41 @@ void LOADER_ENTRY::StartLoader()
     }
 
   //DelegateKernelPatches();
+    //Force kexts is not ready
+/*
+    mOpenCoreConfiguration.Kernel.Force.Count = (UINT32)KernelAndKextPatches.ForceKextsToLoad.size();
+    mOpenCoreConfiguration.Kernel.Force.AllocCount = mOpenCoreConfiguration.Kernel.Force.Count;
+    mOpenCoreConfiguration.Kernel.Force.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Force.Values)); // sizeof(OC_KERNEL_FORCE_ENTRY)
+    mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY**)malloc(mOpenCoreConfiguration.Kernel.Force.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Force.Values)); // sizeof(OC_KERNEL_FORCE_ENTRY*) == sizeof(ptr)
+    memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, mOpenCoreConfiguration.Kernel.Force.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Force.Values));
 
-    for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; forceKextIdx++ )
+
+    for (size_t kextIdx = 0 ; kextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; kextIdx++ )
     {
-      const XStringW& forceKext = KernelAndKextPatches.ForceKextsToLoad[forceKextIdx];
-      DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
+      const XStringW& forceKext = KernelAndKextPatches.ForceKextsToLoad[kextIdx];
+  //("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
+      DBG("Bridge force kext to OC : Path=%ls\n", forceKext.wc_str());
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Force.Values))malloc(mOpenCoreConfiguration.Kernel.Force.ValueSize);
+      memset(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Force.ValueSize);
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Enabled = 1;
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Comment, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->MaxKernel, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->MinKernel, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier, "");
+
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ImageData = NULL;
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ImageDataSize = 0;
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistData = NULL;
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistDataSize = 0;
+
+  //    XString8 execpath = getKextExecPath(dirPath, KextEntry, dict, NoContents);
+      if (forceKext.notEmpty()) {
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath, S8Printf("%ls",forceKext.wc_str()).c_str());
+        DBG("assign executable as '%s'\n", mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath.Value);
+      }
     }
+ */
   #endif
 
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
