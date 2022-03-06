@@ -203,6 +203,7 @@ XString8  LOADER_ENTRY::getKextExecPath(const XStringW& dirPath, const SIDELOAD_
 
 //it seems no more used? Or???
 // FileName is better as a XString8 instead of XStringW because _BooterKextFileInfo will need an utf8.
+/*
 EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext_v)
 {
   EFI_STATUS  Status;
@@ -309,7 +310,7 @@ EFI_STATUS LOADER_ENTRY::AddKext(const EFI_FILE *RootDir, const XString8& FileNa
 
   return Status;
 }
-
+*/
 UINT32 GetListCount(LIST_ENTRY const* List)
 {
   LIST_ENTRY    *Link;
@@ -337,7 +338,7 @@ UINT32 GetListCount(LIST_ENTRY const* List)
 //  }
 //  return kextsSize;
 //}
-
+/*
 void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN XBool Force)
 {
    REFIT_DIR_ITER          PlugInIter;
@@ -357,7 +358,7 @@ void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirN
    }
    DirIterClose(&PlugInIter);
 }
-
+*/
 //void LOADER_ENTRY::AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType)
 //{
 //  XStringW                 FileName;
@@ -447,11 +448,12 @@ void LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, cpu_type_t arc
 
 }
 
+
 void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
 {
   XStringW                SrcDir;
-  REFIT_DIR_ITER          PlugInIter;
-  EFI_FILE_INFO          *PlugInFile;
+//  REFIT_DIR_ITER          PlugInIter;
+//  EFI_FILE_INFO          *PlugInFile;
 //  XString8                FileName;
 //  XString8                PlugIns;
 //  CONST CHAR16                  *Arch = NULL;
@@ -487,6 +489,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   }
 
   // Force kexts to load
+  /*
   if ( KernelAndKextPatches.ForceKextsToLoad.notEmpty() ) {
     for (size_t i = 0; i < KernelAndKextPatches.ForceKextsToLoad.size(); ++i) {
       MsgLog("  Force kext: %ls\n", KernelAndKextPatches.ForceKextsToLoad[i].wc_str());
@@ -502,39 +505,22 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
               continue;   // skip this
             XString8 FileName = S8Printf("%ls\\%ls", p, PlugInFile->FileName);
             MsgLog("  Force kext: %s\n", FileName.c_str());
-            AddKext( Volume->RootDir, FileName, archCpuType);
+            AddKext( Volume->RootDir, FileName, archCpuType, kextForceArray);
             XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", FileName.c_str());
             LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, true);
           }
           DirIterClose(&PlugInIter);
         } else {
           XString8 Path = S8Printf("%ls", p);
-          AddKext( Volume->RootDir, Path, archCpuType);
+          AddKext( Volume->RootDir, Path, archCpuType, kextForceArray);
           XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", Path.c_str());
           LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, true);
         }
       }
     }
   }
+  */
 
-//  XStringW UniOSVersion;
-//  UniOSVersion = macOSVersion;
-//  DBG("UniOSVersion == %ls\n", UniOSVersion.wc_str());
-//
-//  XStringW UniShortOSVersion;
-////  XString8 ShortOSVersion;
-//  if ( macOSVersion  < MacOsVersion("10.10"_XS8)) {
-//    // macOSVersion that are earlier than 10.10(form: 10.x.y)
-////    ShortOSVersion.strncpy(macOSVersion.c_str(), 4);
-//    UniShortOSVersion.strncpy(macOSVersion.c_str(), 4);
-//  } else {
-////    ShortOSVersion.strncpy(macOSVersion.c_str(), 5);
-//    UniShortOSVersion.strncpy(macOSVersion.c_str(), 5);
-//  }
-////  DBG("ShortOSVersion == %s\n", ShortOSVersion.c_str());
-//  DBG("UniShortOSVersion == %ls\n", UniShortOSVersion.wc_str());
-
-  // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and macOSVersion folder
   SrcDir = GetOtherKextsDir(true);
   if ( SrcDir.notEmpty() ) {
@@ -797,6 +783,7 @@ void LOADER_ENTRY::patch_mkext_v1(UINT8 *drvPtr)
 ////////////////////
 // OnExitBootServices
 ////////////////////
+#if 0
 EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength)
 {
   UINT8                             *dtEntry = (UINT8*)(UINTN) deviceTreeP;
@@ -940,7 +927,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   return EFI_SUCCESS;
 }
 
-
+#endif
 ////////////////////////////////////
 //
 // KernelBooterExtensionsPatch to load extra kexts besides kernelcache

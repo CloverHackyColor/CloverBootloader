@@ -1200,6 +1200,14 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistDataSize = 0;
 
   //    XString8 execpath = getKextExecPath(dirPath, KextEntry, dict, NoContents);
+   // for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
+   // ExecutablePath = Contents/MacOS/IOAudioFamily
+      if ( FileExists(Volume->VoduleDir, bundlePath) ) {
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
+      }else{
+        DBG("Cannot find kext bundlePath at '%s'\n", S8Printf("%ls",forceKext.wc_str()).c_str());
+      }
+
       if (forceKext.notEmpty()) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath, S8Printf("%ls",forceKext.wc_str()).c_str());
         DBG("assign executable as '%s'\n", mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath.Value);

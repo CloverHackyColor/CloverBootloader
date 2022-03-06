@@ -445,17 +445,18 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void          applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *repl, const CHAR8 *comment);
         
         EFI_STATUS    SetFSInjection();
-        EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
+//        EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
 //        EFI_STATUS    LoadKexts();
  //       int           is_mkext_v1(UINT8* drvPtr);
  //       void          patch_mkext_v1(UINT8 *drvPtr); //not used
  
-        EFI_STATUS LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
-        EFI_STATUS AddKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
-        void      LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN XBool Force);
+//        EFI_STATUS LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
+//        EFI_STATUS AddKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
+//        void      LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN XBool Force);
 //        void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
         void      AddKextsFromDirInArray(const XString8& SrcDir, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray);
         void      AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray);
+        void      AddForceKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray);
         void      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
         void      KextPatcherStart();
         void      PatchPrelinkedKexts();
