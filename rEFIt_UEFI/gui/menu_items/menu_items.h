@@ -360,7 +360,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				UINT8             LoaderType;
 				MacOsVersion      macOSVersion;
 				XString8          BuildVersion;
-        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
+				EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
 
 				UINT8             CustomBoot;
 				XImage            CustomLogo;
@@ -489,9 +489,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void DelegateKernelPatches();
         
         XBool checkOSBundleRequired(const TagDict* dict);
-        XStringW getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, XBool* NoContents);
-        TagDict* getInfoPlist(const XStringW& infoPlistPath);
-        XString8 getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, XBool NoContents);
+        XStringW getKextPlist(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, XBool* NoContents);
+        TagDict* getInfoPlist(const EFI_FILE& Root, const XStringW& infoPlistPath);
+        XString8 getKextExecPath(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, TagDict* dict, XBool NoContents);
 			} ;
 
 
