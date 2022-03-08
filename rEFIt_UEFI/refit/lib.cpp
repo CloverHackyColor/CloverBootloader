@@ -820,11 +820,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
           Status = FileHandle->Read(FileHandle, &BufferSize, Buffer);
           FileHandle->Close(FileHandle);
           if (!EFI_ERROR(Status)) {
-                // strip line endings
-                while (BufferSize > 0 && (Buffer[BufferSize-1]=='\n' || Buffer[BufferSize-1]=='\r')) {
-                  Buffer[--BufferSize]='\0';
-                }
-          	Volume->VolLabel = SWPrintf("%s", Buffer);
+              // strip line endings
+             while (BufferSize > 0 && (Buffer[BufferSize-1]=='\n' || Buffer[BufferSize-1]=='\r')) {
+               Buffer[--BufferSize]='\0';
+             }
+            Volume->VolLabel = SWPrintf("%s", Buffer);
           }
       }
   }
@@ -962,7 +962,7 @@ void ScanVolumes(void)
 {
   EFI_STATUS              Status;
   UINTN                   HandleCount = 0;
-  UINTN                   HandleIndex;
+//  UINTN                   HandleIndex;
   EFI_HANDLE              *Handles = NULL;
   REFIT_VOLUME            *WholeDiskVolume;
   UINTN                   VolumeIndex, VolumeIndex2;
@@ -983,7 +983,7 @@ void ScanVolumes(void)
     return;
 	DBG("Found %llu volumes with blockIO\n", HandleCount);
   // first pass: collect information about all handles
-  for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+  for (UINT32 HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
     REFIT_VOLUME* Volume = new REFIT_VOLUME;
     Volume->LegacyOS = new LEGACY_OS;
@@ -998,6 +998,7 @@ void ScanVolumes(void)
     
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
+      Volume->Index = HandleIndex;
       Volumes.AddReference(Volume, false);
       for (size_t HVi = 0; HVi < gSettings.GUI.HVHideStrings.size(); HVi++) {
         if ( Volume->DevicePathString.containsIC(gSettings.GUI.HVHideStrings[HVi]) ||

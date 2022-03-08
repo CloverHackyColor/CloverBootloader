@@ -57,6 +57,7 @@ public:
   XString8            ApfsContainerUUID = XString8();
   APPLE_APFS_VOLUME_ROLE  ApfsRole = 0;
   XString8Array        ApfsTargetUUIDArray = XString8Array(); // this is the array of folders that are named as UUID
+  UINTN              Index = 0;
 
   REFIT_VOLUME() {};
   REFIT_VOLUME(const REFIT_VOLUME& other) = delete; // Can be defined if needed
