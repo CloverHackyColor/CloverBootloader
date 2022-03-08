@@ -1114,6 +1114,7 @@ void LOADER_ENTRY::StartLoader()
       //CFBundleExecutable
       XBool NoContents = false;
       XStringW  infoPlistPath = getKextPlist(&self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
+      DBG("InfoPlistPath=%ls\n", infoPlistPath.wc_str());
       TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPath);
   //    XBool inject = checkOSBundleRequired(dict);
       XBool inject = true;
@@ -1162,7 +1163,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY**)malloc(valuesSize); // sizeof(OC_KERNEL_FORCE_ENTRY*) == sizeof(ptr)
     memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, valuesSize);
 
-    const XStringW empty;
+
 //    empty.setEmpty();
     for (size_t kextIdx = 0 ; kextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; kextIdx++ )
     {
@@ -1185,18 +1186,31 @@ void LOADER_ENTRY::StartLoader()
 
       XBool NoContents = false;
       REFIT_VOLUME * SystemVolume = Volume;
+      EFI_FILE* SysRoot = Volume->RootDir;
       if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
-	 DBG("boot from Preboot, index=%llu\n", Volume->Index);
-	 SystemVolume = &Volumes[Volume->Index+1];
-	 DBG("next volume has role=%d\n", SystemVolume->ApfsRole);
+        DBG("boot from Preboot, index=%llu\n", Volume->Index);
+        int numbers = Volumes.size();
+        int sysIndex;
+        for (sysIndex=Volume->Index; sysIndex<numbers; sysIndex++) {
+          SystemVolume = &Volumes[sysIndex];
+          SysRoot = SystemVolume->RootDir;
+          if (FileExists(SysRoot, forceKext.wc_str())) break;
+          SysRoot = NULL;
+        }
+        if (SysRoot != NULL) {
+          DBG("next volume has role=%d\n", SystemVolume->ApfsRole);
+        } else {
+          SysRoot = Volume->RootDir;
+          DBG("failed to find sysroot\n");
+        }
       }
-
-      XStringW  infoPlistPath = getKextPlist(SystemVolume->RootDir, empty, forceKext, &NoContents); //it will be fullPath, including dir
-      TagDict*    dictInfo = getInfoPlist(SystemVolume->RootDir, infoPlistPath);
+      const XStringW empty = SWPrintf("\\");
+      XStringW  infoPlistPath = getKextPlist(SysRoot, empty, forceKext, &NoContents); //it will be fullPath, including dir
+      TagDict*    dictInfo = getInfoPlist(SysRoot, infoPlistPath);
       if (dictInfo) {
-	DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
+        DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
       }
-      XString8 execpath = getKextExecPath(SystemVolume->RootDir, empty, forceKext, dictInfo, NoContents);
+      XString8 execpath = getKextExecPath(SysRoot, empty, forceKext, dictInfo, NoContents);
   //  for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
   //  ExecutablePath = Contents/MacOS/IOAudioFamily
 

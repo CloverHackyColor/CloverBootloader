@@ -147,9 +147,9 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE* Root, const XStringW& dirPat
   }
   
   TempName = SWPrintf("%ls\\%ls",  FullName.wc_str(), L"Contents\\Info.plist");
-#ifndef LESS_DEBUG
+//#ifndef LESS_DEBUG
   MsgLog("info plist path: %ls\n", TempName.wc_str());
-#endif
+//#endif
   if (!FileExists(Root, TempName)) {
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
