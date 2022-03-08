@@ -55,6 +55,8 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 EFI_PART_TYPE_LEGACY_MBR_GUID {0x024DEE41, 0x33E7, 0x11D3, {0x9D, 0x69, 0x00, 0x08, 0xC7, 0x81, 0xF3, 0x9F }};
 */
 //EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
+//APFS = 41504653-0000-11AA-AA11-00306543ECAC (Partition type)
+//
 
 //TODO - discover the follow guids
 //efi/configuration-table/5751DA6E-1376-4E02-BA92-D294FDD30901
