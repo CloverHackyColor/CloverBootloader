@@ -136,7 +136,7 @@ XBool LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 //extern void AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
 //XStringW infoPlistPath = getKextPlist(&self.getCloverDir(), dir, KextEntry, &NoContents);
-XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, XBool* NoContents)
+XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE* Root, const XStringW& dirPath, const XStringW& FileName, XBool* NoContents)
 {
   XStringW    TempName;
   XStringW    FullName;
@@ -150,10 +150,10 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE& Root, const XStringW& dirPat
 #ifndef LESS_DEBUG
   MsgLog("info plist path: %ls\n", TempName.wc_str());
 #endif
-  if (!FileExists(&Root, TempName)) {
+  if (!FileExists(Root, TempName)) {
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
-    if (!FileExists(&Root, TempName)) {
+    if (!FileExists(Root, TempName)) {
       MsgLog("Failed to load extra kext : %ls \n", TempName.wc_str());
       return L""_XSW;
     }
@@ -164,15 +164,15 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE& Root, const XStringW& dirPat
   return TempName;
 }
 
-//TagDict*    dict = getInfoPlist(infoPlistPath);
-TagDict* LOADER_ENTRY::getInfoPlist(const EFI_FILE& Root, const XStringW& infoPlistPath)
+//TagDict*    dict = getInfoPlist(Root, infoPlistPath);
+TagDict* LOADER_ENTRY::getInfoPlist(const EFI_FILE* Root, const XStringW& infoPlistPath)
 {
   EFI_STATUS  Status;
   UINT8*      infoDictBuffer = NULL;
   UINTN       infoDictBufferLength = 0;
   TagDict*    dict = NULL;
 
-  Status = egLoadFile(&Root, infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+  Status = egLoadFile(Root, infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
   if (!EFI_ERROR(Status)) {  //double check
     if( ParseXML((CHAR8*)infoDictBuffer, &dict, infoDictBufferLength)!=0 ) {
       MsgLog("Failed to parse Info.plist: %ls\n", infoPlistPath.wc_str());
@@ -185,7 +185,7 @@ TagDict* LOADER_ENTRY::getInfoPlist(const EFI_FILE& Root, const XStringW& infoPl
 }
 
 //XString8 execpath = getKextExecPath(dir, KextEntry.FileName, dict, NoContents);
-XString8  LOADER_ENTRY::getKextExecPath(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, TagDict* dict, XBool NoContents)
+XString8  LOADER_ENTRY::getKextExecPath(const EFI_FILE* Root, const XStringW& dirPath, const XStringW& FileName, TagDict* dict, XBool NoContents)
 {
   const TagStruct* prop = NULL;
   XString8    TempName;
@@ -199,7 +199,7 @@ XString8  LOADER_ENTRY::getKextExecPath(const EFI_FILE& Root, const XStringW& di
       TempName = S8Printf("Contents\\MacOS\\%s", Executable.c_str());
     }
     const XStringW& fullPath = SWPrintf("%ls\\%ls\\%s", dirPath.wc_str(), FileName.wc_str(), TempName.c_str());
-    if (!FileExists(&Root, fullPath)) {
+    if (!FileExists(Root, fullPath)) {
       MsgLog("Failed to load kext executable: %ls\n", FileName.wc_str());
       return ""_XS8; //no executable
     }

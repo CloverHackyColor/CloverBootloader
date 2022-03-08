@@ -817,20 +817,6 @@ void LOADER_ENTRY::StartLoader()
 
   if ( OSTYPE_IS_OSX(LoaderType) || OSTYPE_IS_OSX_RECOVERY(LoaderType) || OSTYPE_IS_OSX_INSTALLER(LoaderType) ) {
 
-      // These 2 drivers are now filtered and won't load. This check is currentmy useless.
-//    {
-//      EFI_HANDLE Interface = NULL;
-//      Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
-//      if ( !EFI_ERROR(Status) ) {
-//#ifdef JIEF_DEBUG
-//        panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
-//#else
-//        DBG("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
-//#endif
-//      }
-//    }
-
-
   // if OC is NOT initialized with OcMain, we need the following
   //  OcConfigureLogProtocol (
   //    9,
@@ -1042,8 +1028,6 @@ void LOADER_ENTRY::StartLoader()
       AddKextsInArray(&kextArray);
     }
 
-
-
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "x86_64");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.Quirks.OcKernelCache.c_str());
     mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
@@ -1080,8 +1064,8 @@ void LOADER_ENTRY::StartLoader()
     size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
     pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakeSMC.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
@@ -1129,8 +1113,8 @@ void LOADER_ENTRY::StartLoader()
   #if 1
       //CFBundleExecutable
       XBool NoContents = false;
-      XStringW  infoPlistPath = getKextPlist(self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
-      TagDict*  dict = getInfoPlist(self.getCloverDir(), infoPlistPath);
+      XStringW  infoPlistPath = getKextPlist(&self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
+      TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPath);
   //    XBool inject = checkOSBundleRequired(dict);
       XBool inject = true;
       if (inject) {
@@ -1143,7 +1127,7 @@ void LOADER_ENTRY::StartLoader()
         }else{
           DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
         }
-        XString8 execpath = getKextExecPath(self.getCloverDir(), dirPath, KextEntry.FileName, dict, NoContents);
+        XString8 execpath = getKextExecPath(&self.getCloverDir(), dirPath, KextEntry.FileName, dict, NoContents);
         if (execpath.notEmpty()) {
           OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, execpath.c_str());
           DBG("assign executable as '%s'\n", execpath.c_str());
@@ -1170,20 +1154,20 @@ void LOADER_ENTRY::StartLoader()
 
     }
 
-  //DelegateKernelPatches();
-    //Force kexts is not ready
-/*
+
     mOpenCoreConfiguration.Kernel.Force.Count = (UINT32)KernelAndKextPatches.ForceKextsToLoad.size();
     mOpenCoreConfiguration.Kernel.Force.AllocCount = mOpenCoreConfiguration.Kernel.Force.Count;
     mOpenCoreConfiguration.Kernel.Force.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Force.Values)); // sizeof(OC_KERNEL_FORCE_ENTRY)
-    mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY**)malloc(mOpenCoreConfiguration.Kernel.Force.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Force.Values)); // sizeof(OC_KERNEL_FORCE_ENTRY*) == sizeof(ptr)
-    memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, mOpenCoreConfiguration.Kernel.Force.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Force.Values));
+    int valuesSize = mOpenCoreConfiguration.Kernel.Force.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Force.Values);
+    mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY**)malloc(valuesSize); // sizeof(OC_KERNEL_FORCE_ENTRY*) == sizeof(ptr)
+    memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, valuesSize);
 
-  const XStringW& empty = ""_XSW;
+    const XStringW empty;
+//    empty.setEmpty();
     for (size_t kextIdx = 0 ; kextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; kextIdx++ )
     {
       const XStringW& forceKext = KernelAndKextPatches.ForceKextsToLoad[kextIdx];
-  //("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
+
       DBG("Bridge force kext to OC : Path=%ls\n", forceKext.wc_str());
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Force.Values))malloc(mOpenCoreConfiguration.Kernel.Force.ValueSize);
       memset(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Force.ValueSize);
@@ -1199,32 +1183,37 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistData = NULL;
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistDataSize = 0;
 
+      XBool NoContents = false;
+      REFIT_VOLUME * SystemVolume = Volume;
+      if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
+	 DBG("boot from Preboot, index=%llu\n", Volume->Index);
+	 SystemVolume = &Volumes[Volume->Index+1];
+	 DBG("next volume has role=%d\n", SystemVolume->ApfsRole);
+      }
 
-  XStringW  infoPlistPath = getKextPlist(Volume->RootDir, dirPath, forceKext, &NoContents); //it will be fullPath, including dir
-  //    XString8 execpath = getKextExecPath(Volume->RootDir, dirPath, forceKext, dict, NoContents);
+      XStringW  infoPlistPath = getKextPlist(SystemVolume->RootDir, empty, forceKext, &NoContents); //it will be fullPath, including dir
+      TagDict*    dictInfo = getInfoPlist(SystemVolume->RootDir, infoPlistPath);
+      if (dictInfo) {
+	DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
+      }
+      XString8 execpath = getKextExecPath(SystemVolume->RootDir, empty, forceKext, dictInfo, NoContents);
   //  for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
   //  ExecutablePath = Contents/MacOS/IOAudioFamily
-  //  XStringW plist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", uuidPrefix.c_str());
-  //  if ( !FileExists(Volume->RootDir, plist) ) {
-  //    plist = SWPrintf("%s\\System\\Library\\CoreServices\\ServerVersion.plist", uuidPrefix.c_str());
-  //    if ( !FileExists(Volume->RootDir, plist) ) {
-  //      plist.setEmpty();
-  //    }
-  //  }
+
 
       if ( FileExists(Volume->RootDir, forceKext.wc_str()) ) {
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
       }else{
         DBG("Cannot find kext bundlePath at '%s'\n", S8Printf("%ls",forceKext.wc_str()).c_str());
       }
       //then we have to find executablePath and plistPath
 
       if (forceKext.notEmpty()) {
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath, executablePath.c_str());
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath, execpath.c_str());
         DBG("assign executable as '%s'\n", mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath.Value);
       }
     }
- */
+
   #endif
 
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;

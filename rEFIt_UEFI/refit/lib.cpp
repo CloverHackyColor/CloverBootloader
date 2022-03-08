@@ -983,7 +983,7 @@ void ScanVolumes(void)
     return;
 	DBG("Found %llu volumes with blockIO\n", HandleCount);
   // first pass: collect information about all handles
-  for (UINT32 HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+  for (UINTN HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
     REFIT_VOLUME* Volume = new REFIT_VOLUME;
     Volume->LegacyOS = new LEGACY_OS;

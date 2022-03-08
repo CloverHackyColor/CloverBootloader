@@ -489,9 +489,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void DelegateKernelPatches();
         
         XBool checkOSBundleRequired(const TagDict* dict);
-        XStringW getKextPlist(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, XBool* NoContents);
-        TagDict* getInfoPlist(const EFI_FILE& Root, const XStringW& infoPlistPath);
-        XString8 getKextExecPath(const EFI_FILE& Root, const XStringW& dirPath, const XStringW& FileName, TagDict* dict, XBool NoContents);
+        XStringW getKextPlist(const EFI_FILE* Root, const XStringW& dirPath, const XStringW& FileName, XBool* NoContents);
+        TagDict* getInfoPlist(const EFI_FILE* Root, const XStringW& infoPlistPath);
+        XString8 getKextExecPath(const EFI_FILE* Root, const XStringW& dirPath, const XStringW& FileName, TagDict* dict, XBool NoContents);
 			} ;
 
 
