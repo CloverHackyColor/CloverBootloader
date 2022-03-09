@@ -760,7 +760,7 @@ void LOADER_ENTRY::StartLoader()
   EFI_TEXT_STRING         ConOutOutputString = 0;
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
-  CONST CHAR8                   *InstallerVersion;
+  CONST CHAR8             *InstallerVersion;
   NSVGfont                *font; // , *nextFont;
 
   DbgHeader("StartLoader");
@@ -1164,12 +1164,12 @@ void LOADER_ENTRY::StartLoader()
     memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, valuesSize);
 
 
-//    empty.setEmpty();
+
     for (size_t kextIdx = 0 ; kextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; kextIdx++ )
     {
       const XStringW& forceKext = KernelAndKextPatches.ForceKextsToLoad[kextIdx];
 
-      DBG("Bridge force kext to OC : Path=%ls\n", forceKext.wc_str());
+      DBG("Force kext to OC : Path=%ls\n", forceKext.wc_str());
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Force.Values))malloc(mOpenCoreConfiguration.Kernel.Force.ValueSize);
       memset(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Force.ValueSize);
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Enabled = 1;
@@ -1188,23 +1188,25 @@ void LOADER_ENTRY::StartLoader()
       REFIT_VOLUME * SystemVolume = Volume;
       EFI_FILE* SysRoot = Volume->RootDir;
       if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
+        //search for other partition
         DBG("boot from Preboot, index=%llu\n", Volume->Index);
         int numbers = Volumes.size();
-        int sysIndex;
-        for (sysIndex=Volume->Index; sysIndex<numbers; sysIndex++) {
+        int sysIndex = 0;
+        for (sysIndex=Volume->Index+1; sysIndex < numbers; sysIndex++) {
           SystemVolume = &Volumes[sysIndex];
           SysRoot = SystemVolume->RootDir;
-          if (FileExists(SysRoot, forceKext.wc_str())) break;
+          if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi" )) break;
+          DBG("volume %ls has no boot.efi\n", SystemVolume->VolName.wc_str());
           SysRoot = NULL;
         }
         if (SysRoot != NULL) {
-          DBG("next volume has role=%d\n", SystemVolume->ApfsRole);
+          DBG("next volume %d has role=%d and name %ls\n", sysIndex, SystemVolume->ApfsRole, SystemVolume->VolName.wc_str());
         } else {
           SysRoot = Volume->RootDir;
           DBG("failed to find sysroot\n");
         }
       }
-      const XStringW empty = SWPrintf("\\");
+      const XStringW empty; // = SWPrintf("\\"); //empty.setEmpty();
       XStringW  infoPlistPath = getKextPlist(SysRoot, empty, forceKext, &NoContents); //it will be fullPath, including dir
       TagDict*    dictInfo = getInfoPlist(SysRoot, infoPlistPath);
       if (dictInfo) {

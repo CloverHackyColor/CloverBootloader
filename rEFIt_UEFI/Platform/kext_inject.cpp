@@ -141,7 +141,7 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE* Root, const XStringW& dirPat
   XStringW    TempName;
   XStringW    FullName;
   if (dirPath.isEmpty()) {  //dirPath.isEmpty()
-    FullName = FileName;
+    FullName = SWPrintf("\\%ls", FileName.wc_str());
   } else {
     FullName = SWPrintf("%ls\\%ls", dirPath.wc_str(), FileName.wc_str());
   }
@@ -154,7 +154,7 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE* Root, const XStringW& dirPat
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
     if (!FileExists(Root, TempName)) {
-      MsgLog("Failed to load extra kext : %ls \n", TempName.wc_str());
+      MsgLog("Failed to load file : %ls \n", TempName.wc_str());
       return L""_XSW;
     }
     *NoContents = true;
