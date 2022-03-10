@@ -1187,6 +1187,9 @@ void LOADER_ENTRY::StartLoader()
       XBool NoContents = false;
       REFIT_VOLUME * SystemVolume = Volume;
       EFI_FILE* SysRoot = Volume->RootDir;
+      XStringW  infoPlistPath;
+      const XStringW empty;
+      TagDict*    dictInfo;
       if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
         //search for other partition
         DBG("boot from Preboot, index=%llu\n", Volume->Index);
@@ -1195,8 +1198,12 @@ void LOADER_ENTRY::StartLoader()
         for (sysIndex=Volume->Index+1; sysIndex < numbers; sysIndex++) {
           SystemVolume = &Volumes[sysIndex];
           SysRoot = SystemVolume->RootDir;
-          if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi" )) break;
-          DBG("volume %ls has no boot.efi\n", SystemVolume->VolName.wc_str());
+          infoPlistPath = getKextPlist(SysRoot, empty, forceKext, &NoContents);
+          dictInfo = getInfoPlist(SysRoot, infoPlistPath);
+          if (dictInfo) {
+             DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
+             break;
+           }
           SysRoot = NULL;
         }
         if (SysRoot != NULL) {
@@ -1206,18 +1213,13 @@ void LOADER_ENTRY::StartLoader()
           DBG("failed to find sysroot\n");
         }
       }
-      const XStringW empty; // = SWPrintf("\\"); //empty.setEmpty();
-      XStringW  infoPlistPath = getKextPlist(SysRoot, empty, forceKext, &NoContents); //it will be fullPath, including dir
-      TagDict*    dictInfo = getInfoPlist(SysRoot, infoPlistPath);
-      if (dictInfo) {
-        DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
-      }
+
       XString8 execpath = getKextExecPath(SysRoot, empty, forceKext, dictInfo, NoContents);
   //  for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
   //  ExecutablePath = Contents/MacOS/IOAudioFamily
 
 
-      if ( FileExists(Volume->RootDir, forceKext.wc_str()) ) {
+      if ( FileExists(SysRoot, forceKext.wc_str()) ) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
       }else{
         DBG("Cannot find kext bundlePath at '%s'\n", S8Printf("%ls",forceKext.wc_str()).c_str());
