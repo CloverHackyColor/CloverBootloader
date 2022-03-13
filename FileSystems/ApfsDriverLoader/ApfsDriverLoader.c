@@ -18,6 +18,23 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 //#include <AppleSupportPkgVersion.h>
 
+/*
+ * Booting from an Apple File System Partition
+You can locate the EFI driver by reading a few data structures, starting at a known physical address on disk. You donʼt need any support for reading or mounting Apple File System to locate the EFI driver. This design intentionally simplifies the steps needed to boot, which means the code needed to boot a piece of hardware or virtualization software can likewise be simpler. To boot using the embedded EFI driver, do the following:
+1. Read physical block zero from the partition. This block contains a copy of the container superblock, which is an instance of nx_superblock_t.
+2. Read the nx_o field of the superblock, which is an instance of obj_phys_t. Then read the o_cksum field of the nx_o field of the superblock, which contains the Fletcher 64 checksum of the object. Verify that the checksum is correct.
+3. Readthenx_magicfieldofthesuperblock.VerifythatthefieldʼsvalueisNX_MAGIC(thefour-charactercode 'BSXN').
+4. Read the nx_efi_jumpstart field of the superblock. This field contains the physical block address (also referred to as the physical object identifier) for the EFI jumpstart information, which is an instance of nx_efi_jumpstart_t.
+5. Read the nej_magic field of the EFI jumpstart information. Verify that the fieldʼs value is NX_EFI_JUMP START_MAGIC (the four-character code 'RDSJ').
+6. Read the nej_o field of the EFI jumpstart information, which is an instance of obj_phys_t. Then read the o_cksum field of the nej_o field of the jumpstart information, which contains the Fletcher 64 checksum of the object. Verify that the checksum is correct.
+7. Read the nej_version field of the EFI jumpstart information. This field contains the EFI jumpstart version number. Verify that the fieldʼs value is NX_EFI_JUMPSTART_VERSION (the number one).
+8. Read the nej_efi_file_len field of the jumpstart information. This field contains the length, in bytes, of the embedded EFI driver. Allocate a contiguous block of memory of at least that size, which youʼll later use to store the EFI driver.
+9. Read the nej_num_extents field of the jumpstart information, and then read that number of prange_t records from the nej_rec_extents field.
+10. ReadeachextentoftheEFIdriverintomemory,contiguously,intheordertheyʼrelisted.
+11. LoadtheEFIdriverandstartexecutingit.
+ *
+ */
+
 #define APPLE_SUPPORT_VERSION  L"2.0.9"
 #include "ApfsDriverLoader.h"
 #include "EfiComponentName.h"
@@ -368,7 +385,7 @@ LegacyApfsContainerScan (
   //
   // Check GPT Header signature.
   //
-  if (GptHeader->Header.Signature == EFI_PTAB_HEADER_ID) {
+  if (GptHeader->Header.Signature == EFI_PTAB_HEADER_ID) { //EFI PART
     //
     // Get partitions count.
     //

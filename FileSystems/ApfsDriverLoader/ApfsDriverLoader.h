@@ -45,7 +45,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define APFS_DRIVER_INFO_PRIVATE_DATA_SIGNATURE  SIGNATURE_32 ('A', 'F', 'J', 'S')
 
 //
-// Container Superblock definitions
+// Container Superblock definitions: physical block zero from the partition
 //
 #define APFS_CSB_SIGNATURE  SIGNATURE_32 ('N', 'X', 'S', 'B')
 #define APFS_CSB_MAX_FILE_SYSTEMS  100
@@ -65,7 +65,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define APFS_VSB_MODIFIED_NAMELEN 32
 
 //
-// EfiBootRecord block definitions
+// EfiBootRecord block definitions: nx_efi_jumpstart_t.
 //
 #define APFS_EFIBOOTRECORD_SIGNATURE  SIGNATURE_32 ('J', 'S', 'D', 'R')
 #define APFS_EFIBOOTRECORD_VERSION 1
@@ -158,9 +158,11 @@ typedef struct APFS_BLOCK_HEADER_
   Additionally the block IDs of all volumes are stored in the superblock.
   To map block IDs to block offsets a pointer to a block map b-tree is stored.
   This b-tree contains entries for each volume with its ID and offset.
+
+  Note that all fields are 64-bit aligned.
 **/
 #pragma pack(push, 1)
-typedef struct APFS_CSB_
+typedef struct APFS_CSB_  //struct nx_superblock
 {
   APFS_BLOCK_HEADER  BlockHeader;
   //
@@ -199,13 +201,13 @@ typedef struct APFS_CSB_
   UINT32             MaxFileSystems;
   UINT64             FileSystemOid[APFS_CSB_MAX_FILE_SYSTEMS];
   UINT64             Counters[APFS_CSB_NUM_COUNTERS];
-  PhysicalRange      BlockedOutPhysicalRange;
-  UINT64             EvictMappingTreeOid;
+  PhysicalRange      BlockedOutPhysicalRange; //prange_t
+  UINT64             EvictMappingTreeOid;     //oid_t
   UINT64             Flags;
   //
   // Pointer to JSDR block (EfiBootRecordBlock)
   //
-  INT64              EfiBootRecordBlock;
+  INT64              EfiBootRecordBlock; //paddr_t nx_efi_jumpstart;
   EFI_GUID           FusionUuid;
   PhysicalRange      KeyLocker;
   UINT64             EphermalInfo[APFS_CSB_EPH_INFO_COUNT];
@@ -213,6 +215,10 @@ typedef struct APFS_CSB_
   UINT64             FusionMtIod;
   UINT64             FusionWbcOid;
   PhysicalRange      FusionWbc;
+  //----------
+  uint64_t    nx_newest_mounted_version;
+  prange_t    nx_mkb_locker;
+
 } APFS_CSB;
 #pragma pack(pop)
 
