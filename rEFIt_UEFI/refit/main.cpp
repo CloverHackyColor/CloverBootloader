@@ -1202,9 +1202,9 @@ void LOADER_ENTRY::StartLoader()
     //      infoPlistPath = getKextPlist(SysRoot, empty,  forceKext, &NoContents);
           DBG("test volume %d, name %ls:\n", sysIndex, SystemVolume->VolName.wc_str());
 
-          if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi")) {
+ /*        if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi")) {
             DBG("boot.efi found on %d\n", sysIndex);
-          }
+         }
           REFIT_DIR_ITER  DirIter;
           EFI_FILE_INFO  *DirEntry = NULL;
           DirIterOpen(SysRoot, L"\\System\\Library\\Extensions\\AMDSupport.kext\\Contents\\MacOS\\", &DirIter);
@@ -1221,10 +1221,10 @@ void LOADER_ENTRY::StartLoader()
              break;
           }
 
-
-  //        if (SystemVolume->ApfsRole == APPLE_APFS_VOLUME_ROLE_SYSTEM) {
-  //           break;
-  //        }
+*/
+         if (SystemVolume->ApfsRole == APPLE_APFS_VOLUME_ROLE_SYSTEM) {
+             break;
+         }
 
 //          infoPlistPath =  SWPrintf("%ls\\%s",  forceKext.wc_str(), "Contents\\Info.plist");
 //          DBG("Info.plist = %ls\n", infoPlistPath.wc_str());
