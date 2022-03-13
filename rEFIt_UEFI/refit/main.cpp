@@ -1177,19 +1177,20 @@ void LOADER_ENTRY::StartLoader()
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Comment, "");
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->MaxKernel, "");
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->MinKernel, "");
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier, "");
+ //     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier, "");
 
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ImageData = NULL;
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ImageDataSize = 0;
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistData = NULL;
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistDataSize = 0;
 
-      XBool NoContents = false;
+//      XBool NoContents = false;
       REFIT_VOLUME * SystemVolume = Volume;
       EFI_FILE* SysRoot = Volume->RootDir;
-      XStringW  infoPlistPath;
-      const XStringW empty;
-      TagDict*    dictInfo;
+//      XStringW  infoPlistPath;
+//      const XStringW empty;
+      //TagDict*    dictInfo;
+
       if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
         //search for other partition
         DBG("boot from Preboot, index=%llu\n", Volume->Index);
@@ -1198,38 +1199,76 @@ void LOADER_ENTRY::StartLoader()
         for (sysIndex=Volume->Index+1; sysIndex < numbers; sysIndex++) {
           SystemVolume = &Volumes[sysIndex];
           SysRoot = SystemVolume->RootDir;
-          infoPlistPath = getKextPlist(SysRoot, empty, forceKext, &NoContents);
-          dictInfo = getInfoPlist(SysRoot, infoPlistPath);
-          if (dictInfo) {
-             DBG("Info.plist at %ls\n", infoPlistPath.wc_str());
-             break;
-           }
-          SysRoot = NULL;
-        }
-        if (SysRoot != NULL) {
-          DBG("next volume %d has role=%d and name %ls\n", sysIndex, SystemVolume->ApfsRole, SystemVolume->VolName.wc_str());
-        } else {
-          SysRoot = Volume->RootDir;
-          DBG("failed to find sysroot\n");
-        }
-      }
+    //      infoPlistPath = getKextPlist(SysRoot, empty,  forceKext, &NoContents);
+          DBG("test volume %d, name %ls:\n", sysIndex, SystemVolume->VolName.wc_str());
 
-      XString8 execpath = getKextExecPath(SysRoot, empty, forceKext, dictInfo, NoContents);
+          if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi")) {
+            DBG("boot.efi found on %d\n", sysIndex);
+          }
+          REFIT_DIR_ITER  DirIter;
+          EFI_FILE_INFO  *DirEntry = NULL;
+          DirIterOpen(SysRoot, L"\\System\\Library\\Extensions\\AMDSupport.kext\\Contents\\MacOS\\", &DirIter);
+          while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+            if (DirEntry->FileName[0] == '.') {
+              DBG("Skip dot entries: %ls\n", DirEntry->FileName);
+              continue;
+            }
+            DBG("%ls attr=%llu\n", DirEntry->FileName, DirEntry->Attribute);
+          }
+          DirIterClose(&DirIter);
+          if (FileExists(SysRoot, L"\\System\\Library\\Extensions\\AMDSupport.kext\\Contents\\MacOS\\AMDSupport")) {
+             DBG("AMDSupport found on %d\n", sysIndex); //never found
+             break;
+          }
+
+
+  //        if (SystemVolume->ApfsRole == APPLE_APFS_VOLUME_ROLE_SYSTEM) {
+  //           break;
+  //        }
+
+//          infoPlistPath =  SWPrintf("%ls\\%s",  forceKext.wc_str(), "Contents\\Info.plist");
+//          DBG("Info.plist = %ls\n", infoPlistPath.wc_str());
+//          dictInfo = getInfoPlist(SysRoot, infoPlistPath);
+//          if (dictInfo) {
+//             DBG("Info.plist found at %ls\n", infoPlistPath.wc_str());
+//             break;
+//           }
+//          SysRoot = NULL;
+        }
+ //       if (SysRoot != NULL) {
+ //         DBG("next volume %d has role=%d and name %ls\n", sysIndex, SystemVolume->ApfsRole, SystemVolume->VolName.wc_str());
+ //       } else {
+ //         SysRoot = Volume->RootDir;
+ //         DBG("failed to find sysroot\n");
+ //       }
+      }
+      mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ImageData = (UINT8*)SysRoot;
+
+  //    XString8 execpath = getKextExecPath(SysRoot, empty, forceKext, dictInfo, NoContents);
   //  for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
   //  ExecutablePath = Contents/MacOS/IOAudioFamily
+      int i1 = forceKext.rindexOf("\\") + 1;
+      int i2 = forceKext.rindexOf(".");
+      XStringW identifier = forceKext.subString(i1, i2 - i1);
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier, S8Printf("%ls", identifier.wc_str()).c_str());
+ //     DBG("index = {%d, %d}", i1, i2);
+      XString8 execpath = S8Printf("Contents\\MacOS\\%ls", identifier.wc_str());
+      DBG("calculated execpath=%s\n", execpath.c_str());
 
-
-      if ( FileExists(SysRoot, forceKext.wc_str()) ) {
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
-      }else{
-        DBG("Cannot find kext bundlePath at '%s'\n", S8Printf("%ls",forceKext.wc_str()).c_str());
-      }
+ //     if ( FileExists(SysRoot, forceKext.wc_str()) ) {
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->BundlePath, S8Printf("%ls",forceKext.wc_str()).c_str());
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->PlistPath, "Contents\\Info.plist");
+ //     }else{
+ //       DBG("Cannot find kext bundlePath at '%s'\n", S8Printf("%ls",forceKext.wc_str()).c_str());
+ //     }
       //then we have to find executablePath and plistPath
+        DBG("bundle path=%s\n", mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->BundlePath.Value);
 
-      if (forceKext.notEmpty()) {
+//      if (forceKext.notEmpty()) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath, execpath.c_str());
         DBG("assign executable as '%s'\n", mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->ExecutablePath.Value);
-      }
+//      }
+
     }
 
   #endif
