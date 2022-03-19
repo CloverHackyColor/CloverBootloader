@@ -220,8 +220,14 @@ typedef enum {
   kElqui,
   kCaroni,
   kFlorin,
+  kPython,
+  kAdder,
+  kHenbury,
+  kBelknap,
+  kCarswell,
   kRadeon, // this is absent FB if not set
   kCfgEnd
+
 } config_name_t;
 
 typedef struct {

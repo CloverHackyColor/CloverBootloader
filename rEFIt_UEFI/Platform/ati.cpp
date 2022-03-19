@@ -142,6 +142,12 @@ const card_config_t card_configs[] = {
   {"Elqui", 5},
   {"Caroni", 5},
   {"Florin", 6},
+  {"Python", 3},
+  {"Adder", 3},
+  {"Henbury",3},
+  {"Belknap",3},
+  {"Carswell",3},
+
   {"Radeon",4},
 };
 
@@ -320,7 +326,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x67CA,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CC,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
-  { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",         kBaladi },
+  { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",  kOrinoco },
 
   // Polaris 11
   { 0x67E0,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 460",             kAcre },
@@ -330,8 +336,8 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x67E8,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",             kAcre },  //fb=Caroni in 10.13.6
-  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        kNull },
+  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",           kAcre },  //fb=Caroni in 10.13.6
+  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        	 kNull },
 
   // PITCAIRN
   { 0x6800,  CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
