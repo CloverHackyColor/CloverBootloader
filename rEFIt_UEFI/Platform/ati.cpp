@@ -1287,7 +1287,7 @@ AtiDevProp ati_devprop_list[] = {
 
   // {FLAGTRUE, false, "ATY,MCLK",     get_mclk_val,   NULVAL       },
   // {FLAGTRUE, false, "ATY,SCLK",     get_sclk_val,   NULVAL       },
-  {FLAGTRUE, false, "ATY,RefCLK",    get_refclk_val,   DWRVAL(0x0a8c)  },
+  //{FLAGTRUE, false, "ATY,RefCLK",    get_refclk_val,   DWRVAL(0x0a8c)  },
 
   {FLAGTRUE, false, "ATY,PlatformInfo",   get_platforminfo_val, NULVAL     },
   {FLAGOLD,  false, "compatible",      get_name_pci_val,     NULVAL       },
@@ -1312,7 +1312,7 @@ XBool get_bootdisplay_val(value_t *val, INTN index, XBool Sier)
   v = 1;
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = (UINT8)v;
   return true;
 }
@@ -1334,7 +1334,7 @@ XBool get_dual_link_val(value_t *val, INTN index, XBool Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = (UINT8)v;
   return true;
 }
@@ -1415,6 +1415,8 @@ XBool get_name_pci_val(value_t *val, INTN index, XBool Sier)
   return true;
 }
 
+const char AMDRadeon[] = "AMD Radeon %s";
+
 XBool get_model_val(value_t *val, INTN index, XBool Sier)
 {
   CHAR8 *ModelName = (__typeof__(ModelName))AllocateZeroPool(35);
@@ -1428,25 +1430,25 @@ XBool get_model_val(value_t *val, INTN index, XBool Sier)
   } else {
     switch (card->pci_dev->revision) {
       case 0xC4:
-        snprintf(ModelName, 35, "AMD Radeon %s", "Pro 550");
+        snprintf(ModelName, 35, AMDRadeon, "Pro 550");
         break;
       case 0xC7:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 480");
+        snprintf(ModelName, 35, AMDRadeon, "RX 480");
         break;
       case 0xC5:
       case 0xCF:
       case 0xD7:
       case 0xE0:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 470");
+        snprintf(ModelName, 35, AMDRadeon, "RX 470");
         break;
       case 0xC2:
       case 0xC6:
       case 0xEF:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 570");
+        snprintf(ModelName, 35, AMDRadeon, "RX 570");
         break;
 
       default:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 580");
+        snprintf(ModelName, 35, AMDRadeon, "RX 580");
         break;
     }
     val->size = (UINT32)AsciiStrLen(ModelName);
@@ -1529,7 +1531,7 @@ XBool get_binimage_owr(value_t *val, INTN index, XBool Sier)
   }
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = 1;
   return true;
 }
@@ -1944,7 +1946,7 @@ XBool radeon_card_posted(void)
 {
   UINTN reg;
 //  ati_chip_family_t chip_family = card->info->chip_family;
-#if 1
+#if 0
   //dump radeon registers after BIOS POST
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_0_SCRATCH);
 //	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
