@@ -967,6 +967,7 @@ SetDevices (LOADER_ENTRY *Entry)
       MsgLog("Properties with Label=%ls ignored because getDevicePath() return NULL\n", Prop.DevicePathAsString.wc_str());
       continue;
     }
+
     device = devprop_add_device_pci(device_inject_string, NULL, DevicePath);
     DBG("add device: %ls\n", Prop.DevicePathAsString.wc_str());
     for ( size_t jdx = 0 ; jdx < Prop.propertiesArray.size() ; ++jdx ) {
@@ -1799,6 +1800,7 @@ SetDevices (LOADER_ENTRY *Entry)
         //     StringDirty = false;
         //-------
         mPropSize = (UINT32)hex2bin(newDeviceProperties, mProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe as hex2bin return <= MAXUINT32
+        // gDeviceProperties is not used
         gDeviceProperties = newDeviceProperties.forgetDataWithoutFreeing(); // do this AFTER hex2bin
         //     DBG("Final size of mProperties=%d\n", mPropSize);
         //---------

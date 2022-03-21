@@ -96,7 +96,6 @@ struct DevPropDevice {
 	struct DevPropString *string;
 	// ------------------------
 };
-
 typedef struct DevPropDevice  DevPropDevice;
 
 struct DevPropString {

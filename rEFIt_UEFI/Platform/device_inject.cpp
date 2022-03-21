@@ -4,7 +4,7 @@
  *
  *	Cleaned and merged by iNDi
  */
-// UEFI adaptation by usr-sse2, then slice, dmazar
+// UEFI adaptation by usr-sse2, then slice, dmazar, jief
 
 
 
@@ -133,7 +133,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   }
 
   if (!DevicePath && (PciDt != 0)) {
-  DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
+    DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
   }
   // 	DBG("devprop_add_device_pci %ls ", DevicePathToStr(DevicePath));
   if (!DevicePath)
@@ -280,19 +280,30 @@ XBool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer
   return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
 
+bool SameDevice(DevPropDevice* D1, DevPropDevice* D2)
+{
+  if (D1->num_pci_devpaths != D2->num_pci_devpaths) return false;
+  for (UINT32 x=0; x < D1->num_pci_devpaths; x++) {
+    if (D1->pci_dev_path[x].function != D2->pci_dev_path[x].function) return false;
+    if (D1->pci_dev_path[x].device != D2->pci_dev_path[x].device) return false;
+  }
+  return true;
+}
+
 XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
 {
   UINTN len = StringBuf->length * 2;
-  INT32 i = 0;
-  UINT32 x = 0;
+
   XBuffer<char> buffer;
   buffer.dataSized(len+1);
 
   //   DBG("devprop_generate_string\n");
+  //TODO здесь нужно сделать join одинаковых устройств StringBuf->entries[i] по признаку ->pci_dev_path[x] (отдельный опретаор сравнения)
 
   buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
-  while(i < StringBuf->numentries) {
+  for (int i = 0; i < StringBuf->numentries; i++) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
+    if (!dataptr) continue;
     buffer.S8Catf("%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
@@ -302,8 +313,8 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
 
-    for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
-    buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
+    for(int x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
+      buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
                   SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
@@ -314,10 +325,17 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
 
-    for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
+    for(UINT32 x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
       buffer.S8Catf("%02hhX", *dataptr++);
     }
-    i++;
+    //try to find same devices
+    for (int j=i+1; j < StringBuf->numentries; j++) {
+      if (!SameDevice(StringBuf->entries[i], StringBuf->entries[j])) continue;
+      for (UINT32 x = 0; x < (StringBuf->entries[j]->length) - (24 + (6 * StringBuf->entries[j]->num_pci_devpaths)); x++) {
+        buffer.S8Catf("%02hhX", *dataptr++);
+      }
+      StringBuf->entries[j]->data = NULL;
+    }
   }
   return buffer;
 }

@@ -331,7 +331,7 @@ const radeon_card_info_t radeon_cards[] = {
   // Polaris 11
   { 0x67E0,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 460",             kAcre },
   { 0x67E1,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67E3,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
+  { 0x67E3,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro WX4100",        kNull },
   { 0x67E7,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E8,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
@@ -510,6 +510,8 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",             kNull },
    // Navi10
   { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",            kNull },
+  // Navi15
+  { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
   // Navi21
   { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
   /*
@@ -2240,7 +2242,6 @@ XBool setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
       }
     }
   }
-
 
 	DBG("ATI %s %s %dMB (%s) [%04hX:%04hX] (subsys [%04hX:%04hX]):: %s\n",
       chip_family_name[card->info->chip_family], card->info->model_name,
