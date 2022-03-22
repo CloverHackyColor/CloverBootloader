@@ -171,10 +171,10 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     DevicePath = NextDevicePathNode(DevicePath);
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-//     			DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+    			DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
     } else {
       // not PCI path - break the loop
-      //			DBG("not PCI ");
+      			DBG(" break\n");
       break;
     }
   }
@@ -282,9 +282,12 @@ XBool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer
 
 bool SameDevice(DevPropDevice* D1, DevPropDevice* D2)
 {
+//  DBG("paths 1=%u 2=%u\n", D1->num_pci_devpaths, D2->num_pci_devpaths);
   if (D1->num_pci_devpaths != D2->num_pci_devpaths) return false;
   for (UINT32 x=0; x < D1->num_pci_devpaths; x++) {
+//    DBG("  funcs 1=%u 2=%u\n", D1->pci_dev_path[x].function, D2->pci_dev_path[x].function);
     if (D1->pci_dev_path[x].function != D2->pci_dev_path[x].function) return false;
+//    DBG("  devs 1=%u 2=%u\n", D1->pci_dev_path[x].device, D2->pci_dev_path[x].device);
     if (D1->pci_dev_path[x].device != D2->pci_dev_path[x].device) return false;
   }
   return true;
@@ -297,8 +300,7 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
   XBuffer<char> buffer;
   buffer.dataSized(len+1);
 
-  //   DBG("devprop_generate_string\n");
-  //TODO здесь нужно сделать join одинаковых устройств StringBuf->entries[i] по признаку ->pci_dev_path[x] (отдельный опретаор сравнения)
+//  DBG("devprop_generate_string\n");
 
   buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
   for (int i = 0; i < StringBuf->numentries; i++) {
@@ -331,12 +333,14 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
     //try to find same devices
     for (int j=i+1; j < StringBuf->numentries; j++) {
       if (!SameDevice(StringBuf->entries[i], StringBuf->entries[j])) continue;
+      dataptr = StringBuf->entries[j]->data;
       for (UINT32 x = 0; x < (StringBuf->entries[j]->length) - (24 + (6 * StringBuf->entries[j]->num_pci_devpaths)); x++) {
         buffer.S8Catf("%02hhX", *dataptr++);
       }
       StringBuf->entries[j]->data = NULL;
     }
   }
+//  DBG("string=%s\n", buffer.data());
   return buffer;
 }
 
