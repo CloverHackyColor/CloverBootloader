@@ -77,13 +77,13 @@ mkdir -p ${IMGROOT}/usr/bin
 echo "[MKDIR] ${IMGROOT}/usr/local/bin"
 mkdir -p "${IMGROOT}"/usr/local/bin
 cp -p "${SYMROOT}"/utils/* "${IMGROOT}"/usr/local/bin
-echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
-mkdir -p "${IMGROOT}/Library/Application Support/Clover"
-cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
-cp -pr "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${IMGROOT}/Library/Application Support/Clover/"
-echo "[MKDIR] ${IMGROOT}/Library/PreferencePanes"
-mkdir -p "${IMGROOT}/Library/PreferencePanes"
-cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
+#echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
+#mkdir -p "${IMGROOT}/Library/Application Support/Clover"
+#cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
+#cp -pr "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${IMGROOT}/Library/Application Support/Clover/"
+#echo "[MKDIR] ${IMGROOT}/Library/PreferencePanes"
+#mkdir -p "${IMGROOT}/Library/PreferencePanes"
+#cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 echo "[CP] $THEME"

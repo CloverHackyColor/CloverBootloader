@@ -96,7 +96,6 @@ struct DevPropDevice {
 	struct DevPropString *string;
 	// ------------------------
 };
-
 typedef struct DevPropDevice  DevPropDevice;
 
 struct DevPropString {
@@ -112,10 +111,10 @@ struct DevPropString {
 typedef struct DevPropString  DevPropString;
 
 #ifndef DONT_DEFINE_GLOBALS
-extern UINT32                          devices_number;
-extern DevPropString *device_inject_string;
-extern UINT8 *device_inject_stringdata;
-extern UINT32 device_inject_stringlength;
+extern UINT32         devices_number;
+extern DevPropString  *device_inject_string;
+extern UINT8          *device_inject_stringdata;
+extern UINT32         device_inject_stringlength;
 #endif
 
 DevPropString	*devprop_create_string(void);
@@ -129,6 +128,6 @@ void		    devprop_free_string(DevPropString *string);
 XBool set_eth_props(pci_dt_t *eth_dev);
 XBool set_usb_props(pci_dt_t *usb_dev);
 
-UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
+//UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
 
 #endif /* !__LIBSAIO_DEVICE_INJECT_H */

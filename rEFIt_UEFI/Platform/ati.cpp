@@ -142,6 +142,12 @@ const card_config_t card_configs[] = {
   {"Elqui", 5},
   {"Caroni", 5},
   {"Florin", 6},
+  {"Python", 3},
+  {"Adder", 3},
+  {"Henbury",3},
+  {"Belknap",3},
+  {"Carswell",3},
+
   {"Radeon",4},
 };
 
@@ -320,18 +326,18 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x67CA,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CC,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
   { 0x67CF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon Polaris 10",    kNull },
-  { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",         kBaladi },
+  { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",  kOrinoco },
 
   // Polaris 11
   { 0x67E0,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 460",             kAcre },
   { 0x67E1,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67E3,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
+  { 0x67E3,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro WX4100",        kNull },
   { 0x67E7,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E8,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
-  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",             kAcre },  //fb=Caroni in 10.13.6
-  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        kNull },
+  { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",           kAcre },  //fb=Caroni in 10.13.6
+  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        	 kNull },
 
   // PITCAIRN
   { 0x6800,  CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
@@ -504,6 +510,8 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",             kNull },
    // Navi10
   { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",            kNull },
+  // Navi15
+  { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
   // Navi21
   { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
   /*
@@ -1287,7 +1295,7 @@ AtiDevProp ati_devprop_list[] = {
 
   // {FLAGTRUE, false, "ATY,MCLK",     get_mclk_val,   NULVAL       },
   // {FLAGTRUE, false, "ATY,SCLK",     get_sclk_val,   NULVAL       },
-  {FLAGTRUE, false, "ATY,RefCLK",    get_refclk_val,   DWRVAL(0x0a8c)  },
+  //{FLAGTRUE, false, "ATY,RefCLK",    get_refclk_val,   DWRVAL(0x0a8c)  },
 
   {FLAGTRUE, false, "ATY,PlatformInfo",   get_platforminfo_val, NULVAL     },
   {FLAGOLD,  false, "compatible",      get_name_pci_val,     NULVAL       },
@@ -1312,7 +1320,7 @@ XBool get_bootdisplay_val(value_t *val, INTN index, XBool Sier)
   v = 1;
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = (UINT8)v;
   return true;
 }
@@ -1334,7 +1342,7 @@ XBool get_dual_link_val(value_t *val, INTN index, XBool Sier)
 
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = (UINT8)v;
   return true;
 }
@@ -1415,6 +1423,8 @@ XBool get_name_pci_val(value_t *val, INTN index, XBool Sier)
   return true;
 }
 
+const char AMDRadeon[] = "AMD Radeon %s";
+
 XBool get_model_val(value_t *val, INTN index, XBool Sier)
 {
   CHAR8 *ModelName = (__typeof__(ModelName))AllocateZeroPool(35);
@@ -1428,25 +1438,25 @@ XBool get_model_val(value_t *val, INTN index, XBool Sier)
   } else {
     switch (card->pci_dev->revision) {
       case 0xC4:
-        snprintf(ModelName, 35, "AMD Radeon %s", "Pro 550");
+        snprintf(ModelName, 35, AMDRadeon, "Pro 550");
         break;
       case 0xC7:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 480");
+        snprintf(ModelName, 35, AMDRadeon, "RX 480");
         break;
       case 0xC5:
       case 0xCF:
       case 0xD7:
       case 0xE0:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 470");
+        snprintf(ModelName, 35, AMDRadeon, "RX 470");
         break;
       case 0xC2:
       case 0xC6:
       case 0xEF:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 570");
+        snprintf(ModelName, 35, AMDRadeon, "RX 570");
         break;
 
       default:
-        snprintf(ModelName, 35, "AMD Radeon %s", "RX 580");
+        snprintf(ModelName, 35, AMDRadeon, "RX 580");
         break;
     }
     val->size = (UINT32)AsciiStrLen(ModelName);
@@ -1529,7 +1539,7 @@ XBool get_binimage_owr(value_t *val, INTN index, XBool Sier)
   }
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocatePool(4);
+  val->data = (__typeof__(val->data))AllocateZeroPool(4);
   *(val->data) = 1;
   return true;
 }
@@ -1944,7 +1954,7 @@ XBool radeon_card_posted(void)
 {
   UINTN reg;
 //  ati_chip_family_t chip_family = card->info->chip_family;
-#if 1
+#if 0
   //dump radeon registers after BIOS POST
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_0_SCRATCH);
 //	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
@@ -2232,7 +2242,6 @@ XBool setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
       }
     }
   }
-
 
 	DBG("ATI %s %s %dMB (%s) [%04hX:%04hX] (subsys [%04hX:%04hX]):: %s\n",
       chip_family_name[card->info->chip_family], card->info->model_name,

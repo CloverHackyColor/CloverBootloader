@@ -58,7 +58,7 @@ int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
 template<typename S, typename O>
 int XStringAbstract__startWithOrEqualTo(const S* src, const O* other, bool ignoreCase)
 {
-  size_t nb = 0;
+//  size_t nb = 0;
   const S* src2 = src;
   const O* other2 = other;
 
@@ -75,7 +75,7 @@ int XStringAbstract__startWithOrEqualTo(const S* src, const O* other, bool ignor
     if ( src_char32 != other_char32 ) return false;
     src2 = get_char32_from_string(src2, &src_char32);
     other2 = get_char32_from_string(other2, &other_char32);
-    nb += 1;
+//    nb += 1;
   };
   return true;
 }

@@ -4,7 +4,7 @@
  *
  *	Cleaned and merged by iNDi
  */
-// UEFI adaptation by usr-sse2, then slice, dmazar
+// UEFI adaptation by usr-sse2, then slice, dmazar, jief
 
 
 
@@ -114,10 +114,25 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   return res;
 }
 
-UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath)
+bool SameDevice(DevPropDevice* D1, DevPropDevice* D2)
 {
-	return 0;
+//  DBG("paths 1=%u 2=%u\n", D1->num_pci_devpaths, D2->num_pci_devpaths);
+  if (D1->num_pci_devpaths != D2->num_pci_devpaths) return false;
+  for (UINT32 x=0; x < D1->num_pci_devpaths; x++) {
+//    DBG("  funcs 1=%u 2=%u\n", D1->pci_dev_path[x].function, D2->pci_dev_path[x].function);
+    if (D1->pci_dev_path[x].function != D2->pci_dev_path[x].function) return false;
+//    DBG("  devs 1=%u 2=%u\n", D1->pci_dev_path[x].device, D2->pci_dev_path[x].device);
+    if (D1->pci_dev_path[x].device != D2->pci_dev_path[x].device) return false;
+  }
+  DBG("found same device\n");
+  return true;
 }
+
+
+//UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath)
+//{
+//	return 0;
+//}
 //Size = GetDevicePathSize (DevicePath);
 
 //dmazar: replaced by devprop_add_device_pci
@@ -132,8 +147,11 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     return NULL;
   }
 
+  //просмотреть StringBuf->entries[] в поисках такого же девайса
+  //SameDevice(DevPropDevice* D1, DevPropDevice* D2)
+
   if (!DevicePath && (PciDt != 0)) {
-  DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
+    DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
   }
   // 	DBG("devprop_add_device_pci %ls ", DevicePathToStr(DevicePath));
   if (!DevicePath)
@@ -171,10 +189,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     DevicePath = NextDevicePathNode(DevicePath);
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-//     			DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+ //   	DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
     } else {
       // not PCI path - break the loop
-      //			DBG("not PCI ");
       break;
     }
   }
@@ -195,7 +212,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
 
   device->string = StringBuf;
   device->data = NULL;
-  StringBuf->length += device->length;
+
 
   if(!StringBuf->entries) {
     StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
@@ -205,6 +222,16 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     }
   }
 
+  DevPropDevice* D1;
+  for (int i=0; i<StringBuf->numentries; i++) {
+    D1 = StringBuf->entries[i];
+    if (SameDevice(D1, device)) {
+      FreePool(device);
+      return D1;
+    }
+  }
+
+  StringBuf->length += device->length;
   StringBuf->entries[StringBuf->numentries++] = device;
 
   return device;
@@ -283,16 +310,16 @@ XBool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer
 XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
 {
   UINTN len = StringBuf->length * 2;
-  INT32 i = 0;
-  UINT32 x = 0;
+
   XBuffer<char> buffer;
   buffer.dataSized(len+1);
 
-  //   DBG("devprop_generate_string\n");
+//  DbgHeader("Devprop Generate String");
 
   buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
-  while(i < StringBuf->numentries) {
+  for (int i = 0; i < StringBuf->numentries; i++) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
+    if (!dataptr) continue;
     buffer.S8Catf("%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
@@ -302,8 +329,8 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
 
-    for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
-    buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
+    for(int x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
+      buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
                   SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
@@ -314,11 +341,12 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
 
-    for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
+    for(UINT32 x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
       buffer.S8Catf("%02hhX", *dataptr++);
     }
-    i++;
+
   }
+//  DBG("string=%s\n", buffer.data());
   return buffer;
 }
 

@@ -512,7 +512,7 @@ __attribute__((noinline, section(".printf_lite")))
 #endif
 static void print_ulonglong(UINT_BIGGEST_TYPE v, unsigned int base, PrintfParams* printfParams, int printfSign)
 {
-    	int n = 0;
+ //   	int n = 0;
     	unsigned INT_BIGGEST_TYPE d = 1;
 	#if PRINTF_LITE_FIELDWIDTH_SUPPORT == 1
     	int nbDigits = 1 + printfSign;
@@ -550,7 +550,7 @@ static void print_ulonglong(UINT_BIGGEST_TYPE v, unsigned int base, PrintfParams
 	#else
 			print_char_macro( (char)(dgt + '0'), printfParams);
 	#endif
-				n += 1;
+//				n += 1;
 		}
 }
 

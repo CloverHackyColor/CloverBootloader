@@ -44,7 +44,7 @@ UINT8* mProperties = NULL;
 CHAR8* gDeviceProperties = NULL;
 
 UINT32 cPropSize = 0;
-UINT8* cProperties = NULL;
+UINT8* cProperties = NULL; //this is properties as string
 CHAR8* BootOSName = NULL;
 
 UINT16 KeyboardVendor = 0x05ac; //Apple inc.

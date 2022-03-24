@@ -3037,7 +3037,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Now we have to reinit handles
   Status = ReinitRefitLib();
   if (EFI_ERROR(Status)){
-    DebugLog(2, " %s", efiStrError(Status));
+ //   DebugLog(2, " %s", efiStrError(Status));
     PauseForKey("Error reinit refit."_XS8);
 #ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
