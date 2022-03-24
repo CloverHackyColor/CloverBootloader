@@ -527,28 +527,28 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   XBool parsingOk = plist->parse((const CHAR8*)ConfigPtr, Size, ""_XS8, &xmlLiteParser);
   if ( xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 0 ) {
     if ( xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 1 ) {
-      DebugLog(2, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
+      DebugLog(1, "There are problems in plist '%ls'\n", configPlistPath.wc_str());
     }else{
-      DebugLog(2, "There is a problem in plist '%ls'\n", configPlistPath.wc_str());
+      DebugLog(1, "There is a problem in plist '%ls'\n", configPlistPath.wc_str());
     }
     for ( size_t idx = 0 ; idx < xmlLiteParser.getXmlParserMessageArray().size() ; idx++ ) {
       const XmlParserMessage& xmlMsg = xmlLiteParser.getXmlParserMessageArray()[idx];
       if ( xmlMsg.type != XmlParserMessageType::info ) {
-        DebugLog(2, "%s\n", xmlMsg.getFormattedMsg().c_str());
+        DebugLog(1, "%s\n", xmlMsg.getFormattedMsg().c_str());
       }
     }
-    DebugLog(2, "Use CloverConfigPlistValidator");
+    DebugLog(1, "Use CloverConfigPlistValidator");
     if ( plist->getSMBIOS().dgetModel() < MaxMacModel ) {
-      if ( xmlLiteParser.productNameNeeded ) DebugLog(2, " (with --productname=%s)", MachineModelName[plist->getSMBIOS().dgetModel()].c_str());
+      if ( xmlLiteParser.productNameNeeded ) DebugLog(1, " (with --productname=%s)", MachineModelName[plist->getSMBIOS().dgetModel()].c_str());
     }else{
       // This is NOT supposed to happen, since CLover set a default mac model
       // If a default mac model is not set, a crash would probably happen earlier, but who knows
-      if ( xmlLiteParser.productNameNeeded ) DebugLog(2, "(with --productname=?)");
+      if ( xmlLiteParser.productNameNeeded ) DebugLog(1, "(with --productname=?)");
     }
-    DebugLog(2, " or look in the log\n");
+    DebugLog(1, " or look in the log\n");
   }
   if ( !parsingOk ) {
-    DebugLog(2, "Parsing error while parsing '%ls'.\n", configPlistPath.wc_str());
+    DebugLog(1, "Parsing error while parsing '%ls'.\n", configPlistPath.wc_str());
     Status = EFI_LOAD_ERROR;
   }
 

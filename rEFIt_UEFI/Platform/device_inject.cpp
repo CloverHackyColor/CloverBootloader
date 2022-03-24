@@ -344,15 +344,7 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
     for(UINT32 x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
       buffer.S8Catf("%02hhX", *dataptr++);
     }
-    //try to find same devices
-    for (int j=i+1; j < StringBuf->numentries; j++) {
-      if (!SameDevice(StringBuf->entries[i], StringBuf->entries[j])) continue;
-      dataptr = StringBuf->entries[j]->data;
-      for (UINT32 x = 0; x < (StringBuf->entries[j]->length) - (24 + (6 * StringBuf->entries[j]->num_pci_devpaths)); x++) {
-        buffer.S8Catf("%02hhX", *dataptr++);
-      }
-      StringBuf->entries[j]->data = NULL;
-    }
+
   }
 //  DBG("string=%s\n", buffer.data());
   return buffer;
