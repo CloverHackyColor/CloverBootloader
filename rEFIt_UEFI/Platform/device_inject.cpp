@@ -114,10 +114,25 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   return res;
 }
 
-UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath)
+bool SameDevice(DevPropDevice* D1, DevPropDevice* D2)
 {
-	return 0;
+//  DBG("paths 1=%u 2=%u\n", D1->num_pci_devpaths, D2->num_pci_devpaths);
+  if (D1->num_pci_devpaths != D2->num_pci_devpaths) return false;
+  for (UINT32 x=0; x < D1->num_pci_devpaths; x++) {
+//    DBG("  funcs 1=%u 2=%u\n", D1->pci_dev_path[x].function, D2->pci_dev_path[x].function);
+    if (D1->pci_dev_path[x].function != D2->pci_dev_path[x].function) return false;
+//    DBG("  devs 1=%u 2=%u\n", D1->pci_dev_path[x].device, D2->pci_dev_path[x].device);
+    if (D1->pci_dev_path[x].device != D2->pci_dev_path[x].device) return false;
+  }
+  DBG("found same device\n");
+  return true;
 }
+
+
+//UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath)
+//{
+//	return 0;
+//}
 //Size = GetDevicePathSize (DevicePath);
 
 //dmazar: replaced by devprop_add_device_pci
@@ -131,6 +146,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   if (StringBuf == NULL /* || PciDt == NULL */) {
     return NULL;
   }
+
+  //просмотреть StringBuf->entries[] в поисках такого же девайса
+  //SameDevice(DevPropDevice* D1, DevPropDevice* D2)
 
   if (!DevicePath && (PciDt != 0)) {
     DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
@@ -171,10 +189,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     DevicePath = NextDevicePathNode(DevicePath);
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-    			DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+ //   	DBG("PCI[%d] f=%X, d=%X ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
     } else {
       // not PCI path - break the loop
-      			DBG(" break\n");
       break;
     }
   }
@@ -195,7 +212,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
 
   device->string = StringBuf;
   device->data = NULL;
-  StringBuf->length += device->length;
+
 
   if(!StringBuf->entries) {
     StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
@@ -205,6 +222,16 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
     }
   }
 
+  DevPropDevice* D1;
+  for (int i=0; i<StringBuf->numentries; i++) {
+    D1 = StringBuf->entries[i];
+    if (SameDevice(D1, device)) {
+      FreePool(device);
+      return D1;
+    }
+  }
+
+  StringBuf->length += device->length;
   StringBuf->entries[StringBuf->numentries++] = device;
 
   return device;
@@ -280,19 +307,6 @@ XBool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer
   return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
 
-bool SameDevice(DevPropDevice* D1, DevPropDevice* D2)
-{
-//  DBG("paths 1=%u 2=%u\n", D1->num_pci_devpaths, D2->num_pci_devpaths);
-  if (D1->num_pci_devpaths != D2->num_pci_devpaths) return false;
-  for (UINT32 x=0; x < D1->num_pci_devpaths; x++) {
-//    DBG("  funcs 1=%u 2=%u\n", D1->pci_dev_path[x].function, D2->pci_dev_path[x].function);
-    if (D1->pci_dev_path[x].function != D2->pci_dev_path[x].function) return false;
-//    DBG("  devs 1=%u 2=%u\n", D1->pci_dev_path[x].device, D2->pci_dev_path[x].device);
-    if (D1->pci_dev_path[x].device != D2->pci_dev_path[x].device) return false;
-  }
-  return true;
-}
-
 XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
 {
   UINTN len = StringBuf->length * 2;
@@ -300,7 +314,7 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
   XBuffer<char> buffer;
   buffer.dataSized(len+1);
 
-//  DBG("devprop_generate_string\n");
+//  DbgHeader("Devprop Generate String");
 
   buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
   for (int i = 0; i < StringBuf->numentries; i++) {
@@ -332,7 +346,7 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
     }
     //try to find same devices
     for (int j=i+1; j < StringBuf->numentries; j++) {
-      if (1 || !SameDevice(StringBuf->entries[i], StringBuf->entries[j])) continue;
+      if (!SameDevice(StringBuf->entries[i], StringBuf->entries[j])) continue;
       dataptr = StringBuf->entries[j]->data;
       for (UINT32 x = 0; x < (StringBuf->entries[j]->length) - (24 + (6 * StringBuf->entries[j]->num_pci_devpaths)); x++) {
         buffer.S8Catf("%02hhX", *dataptr++);
