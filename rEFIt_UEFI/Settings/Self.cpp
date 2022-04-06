@@ -136,7 +136,9 @@ EFI_STATUS Self::_openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir)
   EFI_STATUS Status;
   Status = m_CloverDir->Open(m_CloverDir, efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( EFI_ERROR(Status) ) {
-//    DBG("Error when opening dir '%ls\\%ls' : %s\n", m_CloverDirFullPath.wc_str(), path.wc_str(), efiStrError(Status));
+#ifdef JIEF_DEBUG
+    DBG("Error when opening dir '%ls\\%ls' : %s\n", m_CloverDirFullPath.wc_str(), path.wc_str(), efiStrError(Status));
+#endif
     *efiDir = NULL;
     *b = false;
   }else{
@@ -150,16 +152,18 @@ EFI_STATUS Self::_initialize()
 //  EFI_STATUS Status;
 
   /*Status = */__initialize(true, m_SelfImageHandle, &m_SelfLoadedImage, &m_SelfSimpleVolume, &m_SelfVolumeRootDir, &m_CloverDirFullPath, &m_efiFileName, &m_CloverDir);
+#ifdef JIEF_DEBUG
   if ( m_SelfLoadedImage == NULL ) log_technical_bug("Cannot get SelfLoadedImage");
   if ( m_SelfLoadedImage->DeviceHandle == NULL ) log_technical_bug("m_SelfLoadedImage->DeviceHandle == NULL");
   if ( m_SelfSimpleVolume == NULL ) log_technical_bug("Cannot get m_SelfSimpleVolume");
   if ( m_SelfVolumeRootDir == NULL ) log_technical_bug("Cannot get m_SelfVolumeRootDir");
   if ( m_CloverDirFullPath.isEmpty() ) log_technical_bug("Cannot get m_CloverDirFullPath");
-  m_CloverDirFullPath4Display = m_CloverDirFullPath;
-  m_CloverDirFullPath4Display.replaceAll('\\', '/');
   if ( m_efiFileName.isEmpty() ) log_technical_bug("Cannot get m_efiFileName");
   if ( m_CloverDir == NULL ) panic("Cannot open getSelfRootDir()"); // We have to panic, nothing would work without m_CloverDir
-  
+#endif
+  m_CloverDirFullPath4Display = m_CloverDirFullPath;
+  m_CloverDirFullPath4Display.replaceAll('\\', '/');
+
   m_SelfDevicePath = NULL;
   if ( m_SelfLoadedImage && m_SelfLoadedImage->DeviceHandle ) {
     m_SelfDevicePath = FileDevicePath(m_SelfLoadedImage->DeviceHandle, m_CloverDirFullPath + '\\' + m_efiFileName);
