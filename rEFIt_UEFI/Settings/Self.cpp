@@ -136,7 +136,7 @@ EFI_STATUS Self::_openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir)
   EFI_STATUS Status;
   Status = m_CloverDir->Open(m_CloverDir, efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( EFI_ERROR(Status) ) {
-    DBG("Error when opening dir '%ls\\%ls' : %s\n", m_CloverDirFullPath.wc_str(), path.wc_str(), efiStrError(Status));
+//    DBG("Error when opening dir '%ls\\%ls' : %s\n", m_CloverDirFullPath.wc_str(), path.wc_str(), efiStrError(Status));
     *efiDir = NULL;
     *b = false;
   }else{
