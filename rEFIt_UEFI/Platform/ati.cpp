@@ -514,6 +514,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
   // Navi21
   { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
+  { 0x73FF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6600XT",          kNull },
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
    6901 Topaz PRO [Radeon R5 M255]
