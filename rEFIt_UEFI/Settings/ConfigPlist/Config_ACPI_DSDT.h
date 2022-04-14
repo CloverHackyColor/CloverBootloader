@@ -163,13 +163,15 @@ if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
         XmlData Find = XmlData();
         XmlData Replace = XmlData();
         TgtBridgeClass TgtBridge = TgtBridgeClass();
+        XmlUInt64 Skip = XmlUInt64();
 
-        XmlDictField m_fields[5] = {
+        XmlDictField m_fields[6] = {
           {"Comment", Comment},
           {"Disabled", Disabled},
           {"Find", Find},
           {"Replace", Replace},
           {"TgtBridge", TgtBridge},
+          {"Skip", Skip},
         };
 
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
@@ -180,6 +182,7 @@ if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
         const XBuffer<UINT8>& dgetPatchDsdtFind() const { return Find.isDefined() ? Find.value() : XBuffer<UINT8>::NullXBuffer; };
         const XBuffer<UINT8>& dgetPatchDsdtReplace() const { return Replace.isDefined() ? Replace.value() : XBuffer<UINT8>::NullXBuffer; };
         const XBuffer<UINT8>& dgetPatchDsdtTgt() const { return TgtBridge.isDefined() ? TgtBridge.value() : XBuffer<UINT8>::NullXBuffer; };
+        const decltype(Skip)::ValueType& dgetSkip() const { return Skip.isDefined() ? Skip.value() : Skip.nullValue; };
     };
 
 protected:

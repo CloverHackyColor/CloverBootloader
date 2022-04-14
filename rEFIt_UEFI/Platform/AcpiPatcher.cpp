@@ -502,11 +502,15 @@ void PatchAllTables()
           if ( gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt.isEmpty() ) {
             Len = FixAny((UINT8*)NewTable, Len,
                          gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
-                         gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
             //DBG(" OK\n");
           }else{
             //DBG("Patching: renaming in bridge\n");
-            Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
+            Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt,
+                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
+                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
+                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
           }
         }
       }

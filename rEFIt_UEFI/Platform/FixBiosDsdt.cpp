@@ -1773,9 +1773,9 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip)
 {
-  size_t sizeoffset;
+  INT32 sizeoffset = 0; // Initialization just to silence warning.
   INT32 adr;
   UINT32 i;
   XBool found = false;
@@ -1788,10 +1788,20 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& ToFind, const XBuf
     MsgLog(" the patch is too large!\n");
     return len;
   }
-  sizeoffset = ToReplace.size() - ToFind.size();
-  if ( sizeoffset > MAX_INT32 ) {
-    DBG(" invalid patches (sizeoffset > MAX_INT32)!\n");
+  if (
+       (ToReplace.size() >= ToFind.size() && ToReplace.size() - ToFind.size() > MAX_INT32) ||
+       (ToReplace.size() <  ToFind.size() && ToFind.size() - ToReplace.size() > MAX_INT32) ) {
+    MsgLog(" invalid patch (sizeoffset > MAX_INT32)!\n");
     return len;
+  }
+  if ( ToReplace.size() >= ToFind.size() ) {
+    sizeoffset = (INT32)(ToReplace.size() - ToFind.size()); // Safe cast because of earlier check
+  }
+  if ( ToFind.size() > ToReplace.size() ) {
+    // I know that, on little endian machine, substracting 2 unsigned and assign it in a signed var would work.
+    // But it's good practice to not rely on the architecture.
+    sizeoffset = (INT32)(ToFind.size() - ToReplace.size()); // Safe cast because of earlier check
+    sizeoffset = -sizeoffset;
   }
   for (i = 20; i < len; ) {
     adr = FindBin(dsdt + i, len - i, ToFind);
@@ -1811,42 +1821,53 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& ToFind, const XBuf
 
 //    MsgLog(" (%X)", adr);
     found = true;
-    len = move_data(adr + i, dsdt, len, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
-    CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
-    len = CorrectOuterMethod(dsdt, len, adr + i - 2, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
-    len = CorrectOuters(dsdt, len, adr + i - 3, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
-    i += (UINT32)(adr + ToReplace.size()); // if there is no bug before, it should be safe cast.
+    if ( Skip == 0 )
+    {
+      len = move_data(adr + i, dsdt, len, sizeoffset);
+      CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
+      len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
+      len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
+      i += (UINT32)(adr + ToReplace.size()); // if there is no bug before, it should be safe cast.
+    }else{
+      MsgLog("Skip i=%d ",i);
+      i += (UINT32)(adr + ToFind.size()); // if there is no bug before, it should be safe cast.
+      Skip--;
+    }
   }
   MsgLog(" ]\n"); //should not be here
   return len;
 }
 
 //new method. by goodwin_c
-UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
+UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip)
 {
   INT32 adr;
   XBool found = false;
-  UINT32 i, k;
   UINT32 BrdADR = 0, BridgeSize;
 
   if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
-    DBG(" invalid patches!\n");
+    MsgLog(" invalid patch!\n");
     return len;
   }
 
   if (ToFind.size() != ToReplace.size()) {
-    DBG(" find/replace different size!\n");
+    MsgLog(" find/replace different size!\n");
     return len;
   }
 
-  DBG(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  MsgLog(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  if ( TgtBrgName.notEmpty() ) {
+    MsgLog("TgtBridge ");
+    for (size_t i=0 ; i<TgtBrgName.size() ; ++i) MsgLog("%02hhX", TgtBrgName[i]);
+    MsgLog(", ");
+  }
   if ((ToFind.size() + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG(" the patch is too large!\n");
     return len;
   }
 
   DBG("Start ByBridge Rename Fix\n");
-  for (i=0x20; len >= 10 && i < len - 10; i++) {
+  for (UINT32 i=0x20; len >= 10 && i < len - 10; i++) {
     if (CmpDev(dsdt, i, TgtBrgName)) {
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
@@ -1856,7 +1877,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrg
       if(!BridgeSize) continue;
       if(BridgeSize <= ToFind.size()) continue;
 
-      k = 0;
+      UINT32 k = 0;
       found = false;
       while (k <= 100) {
         adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind);
@@ -1876,7 +1897,12 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrg
         DBG(" (%X)", adr);
         found = true;
         if ( ToReplace.notEmpty() ) {
+          if ( Skip == 0 ) {
           CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
+          } else {
+            MsgLog("Skip adr=%d ",adr);
+            Skip--;
+          }
         }
         k++;
       }
@@ -5388,14 +5414,16 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
         if (gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt.isEmpty()) {
               DsdtLen = FixAny(temp, DsdtLen,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
-                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
 
         }else{
     //      DBG("Patching: renaming in bridge\n");
           DsdtLen = FixRenameByBridge2(temp, DsdtLen,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
-                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
 
         }
       } else {
