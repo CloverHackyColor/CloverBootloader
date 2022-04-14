@@ -348,6 +348,7 @@ uint64_t GetExtFwFeaturesMask(MacModel Model)
 
 XBool GetMobile(MacModel Model)
 {
+  XBool returnValue;
   // Mobile: the battery tab in Energy Saver
   switch ( Model )
     {
@@ -418,7 +419,8 @@ XBool GetMobile(MacModel Model)
     case MacBookAir81:
     case MacBookAir82:
     case MacBookAir91:
-      return true;
+      returnValue = true;
+      break;
     case MacMini11:
     case MacMini21:
     case MacMini31:
@@ -430,7 +432,8 @@ XBool GetMobile(MacModel Model)
     case MacMini62:
     case MacMini71:
     case MacMini81:
-      return false;
+      returnValue = false;
+      break;
     case iMac41:
     case iMac42:
     case iMac51:
@@ -464,7 +467,8 @@ XBool GetMobile(MacModel Model)
     case iMac201:
     case iMac202:
     case iMacPro11:
-      return false;
+      returnValue = false;
+      break;
     case MacPro11:
     case MacPro21:
     case MacPro31:
@@ -472,17 +476,22 @@ XBool GetMobile(MacModel Model)
     case MacPro51:
     case MacPro61:
     case MacPro71:
-      return false;
+      returnValue = false;
+      break;
     case Xserve11:
     case Xserve21:
     case Xserve31:
-      return false;
+      returnValue = false;
+      break;
     case MaxMacModel: // currently a copy of iMac132
-      return false;
+      returnValue = false;
+      break;
     default: // bug, unknown Apple model
       log_technical_bug("%s : cannot find model %d\n", __PRETTY_FUNCTION__, Model);
-      return false;
+      returnValue = false;
     }
+//DBG("GetMobile returns %d\n", (bool)returnValue);
+    return returnValue;
 }
 
   // PlatformFeature
