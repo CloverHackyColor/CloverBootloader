@@ -5,7 +5,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Boot macOS, Windows, and Linux in UEFI or legacy mode on Mac or PC with UEFI or BIOS firmware
 - Boot using UEFI firmware directly or CloverEFI UEFI firmware emulation
 - Customizable GUI including themes, icons, fonts, background images, animations, and mouse pointers.
-- Theme manager and theme repository at http://sourceforge.net/p/cloverefiboot/themes/
+- Theme manager and theme repository at https://github.com/CloverHackyColor/CloverThemes
 - Native screen resolution in GUI
 - Press Page Up or Page Down to change GUI resolution
 - Press **F1** for multilingual help, depending on language setting in configuration
