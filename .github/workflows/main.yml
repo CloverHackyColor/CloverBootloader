@@ -65,15 +65,3 @@ jobs:
       #     prerelease: false
       #     tag: ${{ env.CUR_TAG }}
       #     token: ${{ secrets.GITHUB_TOKEN }}
-© 2022 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
