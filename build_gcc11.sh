@@ -27,7 +27,7 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.37}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.38}
 export GCC_VERSION=${GCC_VERSION:-11.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
