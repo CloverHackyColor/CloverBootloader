@@ -13,7 +13,7 @@
 
 #include "../../../rEFIt_UEFI/cpp_unit_test/all_tests.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XToolsCommon.h"
-#include "../../../rEFIt_UEFI/Platform/platformdata.h"
+//#include "../../../rEFIt_UEFI/Platform/platformdata.h"
 
 //class Boolean
 //{

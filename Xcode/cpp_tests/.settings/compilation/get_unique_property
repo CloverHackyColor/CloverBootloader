@@ -1,0 +1,44 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+error() {
+   local sourcefile=$1
+   local lineno=$2
+   echo ERROR in $1. Command failed at line $2 : $3
+}
+#trap 'error "${BASH_SOURCE}" "${LINENO}" "$BASH_COMMAND"' ERR
+
+
+if [[ $# != 2 ]]
+  then
+    echo "Usage $0 key file"
+    exit 1
+fi
+
+#>&2 echo "$1"
+
+#sed "s/$(printf '\r')//g" "$2"
+while read -r -a words                 # iterate over lines of input
+do
+  if [[ ${words[0]} == $1 ]]
+  then
+     # found "$1"
+     if [[ ! -z $value ]]
+     then
+       >&2 echo More than one proprty "$1"
+       exit 1
+     fi
+     value="$(eval echo "${words[@]:2}")"
+  fi
+done < <(sed "s/$(printf '\r')//g" "$2")
+
+if [[ ! -z $value ]]
+then
+  echo -n "$value"
+  exit 0
+fi
+
+>&2 echo Cannot find "$1"
+
+exit 1

@@ -44,10 +44,10 @@ edk2prefix="$1" && shift            # path "$edk2prefix" to edk2 directory
 component_path="$(dirname "$component")/$(basename "$component" .inf)"
 #echo component_path=$component_path
 
-edk2project="$("$edk2prefix"/../../../cmd_line_tools/get_unique_property PLATFORM_NAME "$dsc_file")"
+edk2project="$(get_unique_property PLATFORM_NAME "$dsc_file")"
 #echo edk2project=$edk2project
 
-edk2libname="$("$edk2prefix"/../../../cmd_line_tools/get_unique_property BASE_NAME "$edk2prefix"/"$component").lib"
+edk2libname="$(get_unique_property BASE_NAME "$edk2prefix"/"$component").lib"
 #echo edk2libname="$edk2libname"
 
 outputname="${libname%.*}"           # output name
