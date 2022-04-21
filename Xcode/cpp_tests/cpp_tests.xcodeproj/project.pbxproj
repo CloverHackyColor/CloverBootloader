@@ -48,10 +48,6 @@
 		9A27552F2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755302639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755312639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
-		9A2755442639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
-		9A2755452639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
-		9A2755462639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
-		9A2755472639CE540095D456 /* platformdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A2755422639CE530095D456 /* platformdata.cpp */; };
 		9A2A7C7324576CCE00422263 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A3D2C57261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
@@ -338,8 +334,6 @@
 		9A2754F22639A1FA0095D456 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		9A2755042639A1FA0095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
 		9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistAbstract.cpp; sourceTree = "<group>"; };
-		9A2755422639CE530095D456 /* platformdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platformdata.cpp; sourceTree = "<group>"; };
-		9A2755432639CE540095D456 /* platformdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = platformdata.h; sourceTree = "<group>"; };
 		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		9A3D2C4E261855D000F0D7A1 /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
@@ -12871,8 +12865,6 @@
 		9A82FCF026184686006F973B /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9A2755422639CE530095D456 /* platformdata.cpp */,
-				9A2755432639CE540095D456 /* platformdata.h */,
 				9A77BA9C26333138000FFF8A /* guid.cpp */,
 				9A77BA9D26333138000FFF8A /* guid.h */,
 				9A071C2326196C7C0007CC44 /* Utils.cpp */,
@@ -13405,7 +13397,6 @@
 				9A071C392619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877326186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAA26184688006F973B /* plist.cpp in Sources */,
-				9A2755462639CE540095D456 /* platformdata.cpp in Sources */,
 				9A071C1926196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3626184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE7E26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
@@ -13479,7 +13470,6 @@
 				9A071C3A2619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877526186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAC26184688006F973B /* plist.cpp in Sources */,
-				9A2755472639CE540095D456 /* platformdata.cpp in Sources */,
 				9A071C1A26196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3826184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE8026184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
@@ -13553,7 +13543,6 @@
 				9A071C382619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A87877426186302000B9362 /* PrintLib.c in Sources */,
 				9A82FEAB26184688006F973B /* plist.cpp in Sources */,
-				9A2755452639CE540095D456 /* platformdata.cpp in Sources */,
 				9A071C1826196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A82FE3726184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A82FE7F26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
@@ -13627,7 +13616,6 @@
 				9A071C372619FDA70007CC44 /* XmlLiteDictTypes.cpp in Sources */,
 				9A82FE7D26184688006F973B /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A8200A126184688006F973B /* shared_ptr.cpp in Sources */,
-				9A2755442639CE540095D456 /* platformdata.cpp in Sources */,
 				9A071C1726196C4B0007CC44 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A87876626186302000B9362 /* xcode_utf_fixed.cpp in Sources */,
 				9A82FE7926184688006F973B /* strlen_test.cpp in Sources */,

@@ -19,7 +19,6 @@ jobs:
           git fetch --prune --unshallow --tags
           echo "CUR_TAG=$(git tag -l | tail -1)" >> $GITHUB_ENV
           echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
       - name: Update CloverHackyColor/OpenCorePkg fork
         run: git submodule init && git submodule update
 
@@ -33,14 +32,12 @@ jobs:
         run: |
           chmod +x ./buildme
           ./buildme "" ci
-
       - name: Prepare Release Packs
         run: |
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
           (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
           releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/Clover.app*.pkg CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
-
       - name: Generate Release Notes
         run: |
           echo "Recent commit descriptions are:" >> ReleaseNotes.md
@@ -48,7 +45,6 @@ jobs:
           echo '' >> ReleaseNotes.md
           /usr/bin/sed -i "" "s:sym/Clover:Clover:g" CloverPackage/sym/Clover*.md5
           cat CloverPackage/sym/Clover*.md5 >> ReleaseNotes.md
-
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -59,7 +55,6 @@ jobs:
             CloverV2*.zip
             CLOVERX64.efi.zip
             Clover_r*.pkg
-
       # - name: Upload to Release
       #   if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
       #   uses: ncipollo/release-action@v1

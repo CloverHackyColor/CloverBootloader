@@ -320,13 +320,19 @@ XBool XmlData::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   
 #ifdef JIEF_DEBUG
   if ( xmlPath.startWithOrEqualToIC("/KernelAndKextPatches/KernelToPatch[0]/Find") ) {
-    int i=0; (void)i;
+  NOP;
   }
 #endif
 
   XmlParserPosition pos = xmlLiteParser->getPosition();
   RETURN_IF_FALSE( xmlLiteParser->getSimpleTag(&tag, &tagLength, &value, &valueLength, NULL, generateErrors) );
   if ( strnIsEqual(tag, tagLength, "string") ) {
+    for ( size_t i=0 ; i<valueLength ; ++i ) {
+      if ( !IS_HEX(value[i]) && !IS_DIGIT(value[i]) ) {
+        xmlLiteParser->addError(generateErrors, S8Printf("Expecting hex digits following key '%s' at line %d.", xmlPath.c_str(), pos.getLine()));
+        return false;
+      }
+    }
     size_t allocatedSize = valueLength/2; // number of hex digits
     uint8_t *Data = (uint8_t*)malloc(allocatedSize);
     size_t hexLen = hex2bin(value, valueLength, Data, allocatedSize);

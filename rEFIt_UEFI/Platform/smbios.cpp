@@ -673,6 +673,7 @@ XBool getMobileFromSmbios()
     return false;
   }
   mHandle3 = SmbiosTable.Type3->Hdr.Handle;
+//DBG("getMobileFromSmbios (SmbiosTable.Type3->Type=%d) %d\n", SmbiosTable.Type3->Type, ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D));
   return ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D); //iMac is desktop!
 }
 

@@ -836,6 +836,7 @@ public:
             XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
             XBuffer<UINT8>   PatchDsdtTgt = XBuffer<UINT8>();
             INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM(); // Not read from config.plist. Should be moved out.
+            uint64_t         Skip = 0;
 
 #if __cplusplus > 201703L
             XBool operator == (const DSDT_Patch&) const = default;
@@ -848,6 +849,7 @@ public:
               if ( !(PatchDsdtReplace == other.PatchDsdtReplace) ) return false;
               if ( !(PatchDsdtTgt == other.PatchDsdtTgt) ) return false;
               if ( !(PatchDsdtMenuItem == other.PatchDsdtMenuItem) ) return false;
+              if ( !(Skip == other.Skip) ) return false;
               return true;
             }
             void takeValueFrom(const ConfigPlistClass::ACPI_Class::DSDT_Class::ACPI_DSDT_Patch_Class& other)
@@ -858,6 +860,7 @@ public:
               PatchDsdtReplace = other.dgetPatchDsdtReplace();
               PatchDsdtTgt = other.dgetPatchDsdtTgt();
               PatchDsdtMenuItem.BValue = !other.dgetDisabled();
+              Skip = other.dgetSkip();
             }
           };
 
