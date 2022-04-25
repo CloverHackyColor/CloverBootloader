@@ -362,6 +362,7 @@ ScanMemN (
   IN UINTN       Value
   );
 
+#ifndef GUID_PLUSPLUS_DEFINED
 /**
   Copies a source GUID to a destination GUID.
 
@@ -406,6 +407,7 @@ CompareGuid (
   IN CONST GUID  *Guid1,
   IN CONST GUID  *Guid2
   );
+#endif
 
 /**
   Scans a target buffer for a GUID, and returns a pointer to the matching GUID

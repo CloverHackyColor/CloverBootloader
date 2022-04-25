@@ -1042,10 +1042,10 @@ void ApplyInputs(void)
     DevicePath = DevicePathFromHandle(AudioList[TmpIndex].Handle);
 //    DBG("choosen sound devicepath=%ls\n", DevicePathToStr(DevicePath));
     if (DevicePath != NULL) {
-      SetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid,
+      SetNvramVariable(L"Clover.SoundDevice", gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                        GetDevicePathSize(DevicePath), (UINT8 *)DevicePath);
-      SetNvramVariable(L"Clover.SoundIndex", &gEfiAppleBootGuid,
+      SetNvramVariable(L"Clover.SoundIndex", gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                        1, (UINT8 *)&TmpIndex);
 //      DBG(" sound written to nvram variables\n");
@@ -1060,7 +1060,7 @@ void ApplyInputs(void)
         DefaultAudioVolume = 90;
         InputItems[i].SValue.SWPrintf("%04d", DefaultAudioVolume);
     }
-    SetNvramVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid,
+    SetNvramVariable(L"Clover.SoundVolume", gEfiAppleBootGuid,
                      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                      1, &DefaultAudioVolume);
   }

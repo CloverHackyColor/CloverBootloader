@@ -539,7 +539,7 @@ EFI_STATUS
 EFIAPI
 PeiLocatePpi (
   IN CONST EFI_PEI_SERVICES      **PeiServices,
-  IN CONST EFI_GUID              *Guid,
+  CONST_EFI_GUID_PTR_T           Guid,
   IN UINTN                       Instance,
   IN OUT EFI_PEI_PPI_DESCRIPTOR  **PpiDescriptor,
   IN OUT VOID                    **Ppi
@@ -1065,7 +1065,7 @@ PeiReportStatusCode (
   IN EFI_STATUS_CODE_TYPE     CodeType,
   IN EFI_STATUS_CODE_VALUE    Value,
   IN UINT32                   Instance,
-  IN CONST EFI_GUID                 *CallerId,
+  CONST_EFI_GUID_PTR_T              CallerId,
   IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
   );
 
@@ -1158,7 +1158,7 @@ FirmwareVolmeInfoPpiNotifyCallback (
 EFI_STATUS
 EFIAPI
 PeiFfsFindFileByName (
-  IN  CONST EFI_GUID        *FileName,
+  CONST_EFI_GUID_PTR_T      FileName,
   IN  EFI_PEI_FV_HANDLE     VolumeHandle,
   OUT EFI_PEI_FILE_HANDLE   *FileHandle
   );

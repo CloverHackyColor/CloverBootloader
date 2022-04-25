@@ -27,7 +27,7 @@ public:
     using super = XmlString8AllowEmpty;
     virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
       bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
-      if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf(" invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+      if ( !EFI_GUID::IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf(" invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
       return b;
     }
   };
@@ -73,7 +73,12 @@ public:
   XBool dgetNoCaches() const { return NoCaches.isDefined() ? NoCaches.value() : XBool(false); }
   XBool dgetBacklightLevelConfig() const { return BacklightLevel.isDefined(); }
   uint16_t dgetBacklightLevel() const { return BacklightLevel.isDefined() &&  BacklightLevel.xmlInt16.isDefined() ? BacklightLevel.xmlInt16.value() : 0xFFFF; }
-  const XString8& dgetCustomUuid() const { return CustomUUID.isDefined() ? CustomUUID.value() : NullXString8; }
+  EFI_GUID dgetCustomUuid() const {
+    if ( !CustomUUID.isDefined() ) return nullGuid;
+    EFI_GUID g;
+    g.takeValueFrom(CustomUUID.value());
+    return g;
+  }
   UINT8 dget_InjectSystemID() const { return InjectSystemID.isDefined() ? (int)InjectSystemID.value() : 2; }
   XBool dgetNvidiaWeb() const { return NvidiaWeb.isDefined() ? NvidiaWeb.value() : XBool(false); }
 };

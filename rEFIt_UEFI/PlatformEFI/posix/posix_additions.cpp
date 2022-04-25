@@ -43,16 +43,17 @@ const char* efiStrError(EFI_STATUS Status)
   return stdio_static_buf.s();
 }
 
-//this function print guid in LittleEndian format while we need BigEndian as Apple do
-const char* strguid(EFI_GUID* guid)
-{
-  size_t size = stdio_static_buf.allocatedSize();
-  UINTN n = 0;
-  n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", guid);
-  while ( n > size - 2 )
-  {
-    size += 10;
-    n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", guid);
-  }
-  return stdio_static_buf.s();
-}
+//
+////this function print guid in LittleEndian format while we need BigEndian as Apple do
+//const char* strguid(const EFI_GUID& guid)
+//{
+//  size_t size = stdio_static_buf.allocatedSize();
+//  UINTN n = 0;
+//  n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", &guid);
+//  while ( n > size - 2 )
+//  {
+//    size += 10;
+//    n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", &guid);
+//  }
+//  return stdio_static_buf.s();
+//}

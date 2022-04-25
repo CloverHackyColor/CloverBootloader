@@ -108,10 +108,10 @@ EFI_STATUS ClearSecureBootKeys(void);
 
 // secure boot database
 void *GetSignatureDatabase(const wchar_t* DatabaseName,
-                           IN  EFI_GUID * DatabaseGuid,
+                           const EFI_GUID& DatabaseGuid,
                            OUT UINTN    * DatabaseSize);
 EFI_STATUS SetSignatureDatabase(const wchar_t* DatabaseName,
-                                IN EFI_GUID *  DatabaseGuid,
+                                const EFI_GUID&  DatabaseGuid,
                                 IN void     *  Database,
                                 IN UINTN       DatabaseSize);
 
@@ -138,9 +138,9 @@ EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT void  **Database,
                                              IN OUT UINTN  *DatabaseSize,
                                              IN     void   *SignatureDatabase,
                                              IN     UINTN   SignatureDatabaseSize);
-EFI_STATUS AppendSignatureToDatabase(IN OUT void     **Database,
-                                     IN OUT UINTN     *DatabaseSize,
-                                     IN     EFI_GUID  *SignatureType,
-                                     IN     void      *Signature,
+EFI_STATUS AppendSignatureToDatabase(IN OUT void**         Database,
+                                     IN OUT UINTN*         DatabaseSize,
+                                     const EFI_GUID&  SignatureType,
+                                     IN     void*          Signature,
                                      IN     UINTN      SignatureSize);
 #endif //ENABLE_SECURE_BOOT

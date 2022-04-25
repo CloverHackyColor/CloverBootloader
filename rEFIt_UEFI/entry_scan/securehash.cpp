@@ -37,10 +37,9 @@
 
 #ifdef ENABLE_SECURE_BOOT
 
+#include <Platform.h>
 #include "entry_scan.h"
-
 #include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
-
 #include <Guid/ImageAuthentication.h>
 
 #ifndef DEBUG_ALL
@@ -61,16 +60,16 @@
 #define EFIGUID_SIZE (CERT_SIZE + sizeof(EFI_GUID))
 
 // Check database for signature
-STATIC EFI_STATUS CheckSignatureIsInDatabase(IN void     *Database,
-                                             IN UINTN     DatabaseSize,
-                                             IN EFI_GUID *SignatureType,
-                                             IN void     *Signature,
-                                             IN UINTN     SignatureSize)
+STATIC EFI_STATUS CheckSignatureIsInDatabase(IN void             *Database,
+                                             IN UINTN             DatabaseSize,
+                                             const EFI_GUID& SignatureType,
+                                             IN void             *Signature,
+                                             IN UINTN             SignatureSize)
 {
   UINT8 *DatabasePtr;
   UINT8 *DatabaseEnd;
   // Check parameters
-  if ((SignatureType == NULL) || (Signature == NULL) || (SignatureSize == 0)) {
+  if ( SignatureType.isNull()  ||  Signature == NULL  ||  SignatureSize == 0 ) {
     return EFI_INVALID_PARAMETER;
   }
   if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
@@ -88,8 +87,7 @@ STATIC EFI_STATUS CheckSignatureIsInDatabase(IN void     *Database,
       return EFI_INVALID_PARAMETER;
     }
     // Check if this signature list can contain the signature
-    if (((SignatureSize + sizeof(EFI_GUID)) == SignatureList->SignatureSize) &&
-        (CompareMem(SignatureType, &(SignatureList->SignatureType), sizeof(EFI_GUID)))) {
+    if (((SignatureSize + sizeof(EFI_GUID)) == SignatureList->SignatureSize)  &&  SignatureType == SignatureList->SignatureType ) {
       // Get signature list data start
       UINTN Offset = SignatureList->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST);
       Ptr = ((UINT8 *)SignatureList) + Offset;
@@ -112,7 +110,7 @@ STATIC EFI_STATUS CheckSignatureIsInDatabase(IN void     *Database,
 
 // Append a signature to a signature list
 STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureList,
-                                        IN     EFI_GUID            *SignatureType,
+                                        const  EFI_GUID&       SignatureType,
                                         IN     void                *Signature,
                                         IN     UINTN                SignatureSize)
 {
@@ -122,8 +120,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
   UINTN               Offset;
   UINT32              DataSize = (UINT32)(SignatureSize + sizeof(EFI_GUID));
   // Check parameters
-  if ((SignatureList == NULL) || (SignatureType == NULL) ||
-      (Signature == NULL) || (SignatureSize == 0)) {
+  if ( SignatureList == NULL  ||  SignatureType.isNull()  ||  Signature == NULL  ||  SignatureSize == 0 ) {
     return EFI_INVALID_PARAMETER;
   }
   // Check if there is an old signature list
@@ -135,7 +132,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
       return EFI_OUT_OF_RESOURCES;
     }
     // Copy the signature to the list
-    CopyMem(&(NewSignatureList->SignatureType), SignatureType, sizeof(EFI_GUID));
+    NewSignatureList->SignatureType = SignatureType;
     NewSignatureList->SignatureListSize = (UINT32)(DataSize + sizeof(EFI_SIGNATURE_LIST));
     NewSignatureList->SignatureSize = (UINT32)DataSize;
     *SignatureList = NewSignatureList;
@@ -145,7 +142,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
   if ((OldSignatureList->SignatureListSize <= sizeof(EFI_SIGNATURE_LIST)) ||
       (OldSignatureList->SignatureSize <= sizeof(EFI_GUID)) ||
       (DataSize != OldSignatureList->SignatureSize) ||
-      (CompareMem(SignatureType, &(OldSignatureList->SignatureType), sizeof(EFI_GUID)) != 0)) {
+      SignatureType != OldSignatureList->SignatureType ) {
     return EFI_INVALID_PARAMETER;
   }
   // Get the start of signatures data but offset by sizeof(EFI_GUID) so we can skip owner
@@ -220,10 +217,10 @@ STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT void               **Data
   Size = (SignatureList->SignatureSize - sizeof(EFI_GUID));
   while (Ptr < End) {
     // Check signature is already in database
-    EFI_STATUS Status = CheckSignatureIsInDatabase(OldDatabase, OldDatabaseSize, &(SignatureList->SignatureType), Ptr, Size);
+    EFI_STATUS Status = CheckSignatureIsInDatabase(OldDatabase, OldDatabaseSize, SignatureList->SignatureType, Ptr, Size);
     if (Status == EFI_NOT_FOUND) {
       // Add to new signature list if not found in database
-      Status = AppendSignatureToList(&List, &(SignatureList->SignatureType), Ptr, Size);
+      Status = AppendSignatureToList(&List, SignatureList->SignatureType, Ptr, Size);
     }
     if (EFI_ERROR(Status)) {
       if (List != NULL) {
@@ -262,11 +259,11 @@ STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT void               **Data
 }
 
 // Append a signature to a signature database
-EFI_STATUS AppendSignatureToDatabase(IN OUT void     **Database,
-                                     IN OUT UINTN     *DatabaseSize,
-                                     IN     EFI_GUID  *SignatureType,
-                                     IN     void      *Signature,
-                                     IN     UINTN      SignatureSize)
+EFI_STATUS AppendSignatureToDatabase(IN OUT void          **Database,
+                                     IN OUT UINTN          *DatabaseSize,
+                                     const  EFI_GUID&  SignatureType,
+                                     IN     void           *Signature,
+                                     IN     UINTN           SignatureSize)
 {
   // Create a new signature list
   EFI_SIGNATURE_LIST *List = NULL;
@@ -350,11 +347,11 @@ EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN void  *Database,
   return Status;
 }
 
-STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT void     **Database,
-                                              IN OUT UINTN     *DatabaseSize,
-                                              IN     EFI_GUID  *SignatureType,
-                                              IN     void      *Signature,
-                                              IN     UINTN      SignatureSize)
+STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT void           **Database,
+                                              IN OUT UINTN           *DatabaseSize,
+                                              const  EFI_GUID&   SignatureType,
+                                              IN     void            *Signature,
+                                              IN     UINTN            SignatureSize)
 {
   UINT8 *Ptr, *End;
   void  *OldDatabase;
@@ -362,8 +359,7 @@ STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT void     **Database,
   UINTN  OldDatabaseSize;
   UINTN  NewDatabaseSize = 0;
   // Check parameters
-  if ((Database == NULL) || (DatabaseSize == NULL) || (SignatureType == NULL) || 
-      (Signature == NULL) || (SignatureSize <= sizeof(EFI_SIGNATURE_LIST))) {
+  if ( Database == NULL  ||  DatabaseSize == NULL  ||  SignatureType.isNull()  ||  Signature == NULL  ||  SignatureSize <= sizeof(EFI_SIGNATURE_LIST) ) {
     return EFI_INVALID_PARAMETER;
   }
   OldDatabase = (UINT8 *)*Database;
@@ -386,8 +382,7 @@ STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT void     **Database,
       return EFI_INVALID_PARAMETER;
     }
     // Check this signature could be found in this list
-    if (((List->SignatureSize - sizeof(EFI_GUID)) == SignatureSize) &&
-        (CompareMem(SignatureType, &(List->SignatureType), sizeof(EFI_GUID)) == 0)) {
+    if ( List->SignatureSize - sizeof(EFI_GUID) == SignatureSize  &&  SignatureType == List->SignatureType ) {
       // Remove the signature list from the database
       UINT8 *ListPtr = Ptr + List->SignatureHeaderSize + sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID);
       UINT8 *ListEnd = Ptr + List->SignatureListSize;
@@ -460,7 +455,7 @@ STATIC EFI_STATUS RemoveSignatureListFromDatabase(IN OUT void               **Da
   Size = (SignatureList->SignatureSize - sizeof(EFI_GUID));
   while (Ptr < End) {
     // Remove signature from database
-    EFI_STATUS Status = RemoveSignatureFromDatabase(Database, DatabaseSize, &(SignatureList->SignatureType), Ptr, Size);
+    EFI_STATUS Status = RemoveSignatureFromDatabase(Database, DatabaseSize, SignatureList->SignatureType, Ptr, Size);
     if (EFI_ERROR(Status)) {
       return Status;
     }
@@ -535,12 +530,12 @@ EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN void  *Database,
 
 void *GetAuthorizedDatabase(UINTN *DatabaseSize)
 {
-   return GetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, DatabaseSize);
+   return GetSignatureDatabase(AUTHORIZED_DATABASE_NAME, AUTHORIZED_DATABASE_GUID, DatabaseSize);
 }
 EFI_STATUS SetAuthorizedDatabase(IN void  *Database,
                                  IN UINTN  DatabaseSize)
 {
-   return SetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, Database, DatabaseSize);
+   return SetSignatureDatabase(AUTHORIZED_DATABASE_NAME, AUTHORIZED_DATABASE_GUID, Database, DatabaseSize);
 }
 
 // Clear authorized signature database
@@ -819,7 +814,7 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
     UINTN            Alignment = (Length % SECDIR_ALIGNMENT_SIZE);
     UINTN            SigSize = 0;
     void            *Signature = NULL;
-    EFI_GUID        *SigGuid = NULL;
+    EFI_GUID    SigGuid;
     // Get the alignment length
     if (Alignment != 0) {
       Alignment = SECDIR_ALIGNMENT_SIZE - Alignment;
@@ -833,22 +828,22 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
       }
       Signature = Ptr + CERT_SIZE;
       SigSize = Length - CERT_SIZE;
-      SigGuid = &gEfiCertPkcs7Guid;
+      SigGuid = gEfiCertPkcs7Guid;
     } else if (Cert->wCertificateType == WIN_CERT_TYPE_EFI_GUID) {
-      // EFI GUID
+      // EFI EFI_GUID
       if (Length < EFIGUID_SIZE) {
         break;
       }
       Signature = Ptr + EFIGUID_SIZE;
       SigSize = Length - EFIGUID_SIZE;
-      // Get the appropriate signature GUID
+      // Get the appropriate signature EFI_GUID
       GuidCert = (WIN_CERTIFICATE_UEFI_GUID *)Cert;
-      if (CompareMem(&(GuidCert->CertType), &gEfiCertX509Guid, sizeof(EFI_GUID)) == 0) {
-        SigGuid = &gEfiCertX509Guid;
-      } else if (CompareMem(&(GuidCert->CertType), &gEfiCertTypeRsa2048Sha256Guid, sizeof(EFI_GUID)) == 0) {
-        SigGuid = &gEfiCertRsa2048Sha256Guid;
-      } else if (CompareMem(&(GuidCert->CertType), &gEfiCertPkcs7Guid, sizeof(EFI_GUID)) == 0) {
-        SigGuid = &gEfiCertPkcs7Guid;
+      if ( GuidCert->CertType == gEfiCertX509Guid ) {
+        SigGuid = gEfiCertX509Guid;
+      } else if ( GuidCert->CertType == gEfiCertTypeRsa2048Sha256Guid, sizeof(EFI_GUID)) == 0) {
+        SigGuid = gEfiCertRsa2048Sha256Guid;
+      } else if ( GuidCert->CertType == gEfiCertPkcs7Guid, sizeof(EFI_GUID)) == 0) {
+        SigGuid = gEfiCertPkcs7Guid;
       }
     } else if (Cert->wCertificateType == WIN_CERT_TYPE_EFI_PKCS115) {
       // PKCS#1v1.5
@@ -858,11 +853,11 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
       Signature = Ptr + PKCS1_1_5_SIZE;
       SigSize = (Length - PKCS1_1_5_SIZE);
       GuidCert = (WIN_CERTIFICATE_UEFI_GUID *)Cert;
-      SigGuid = &(GuidCert->CertType);
+      SigGuid = GuidCert->CertType;
     }
     // Append the signature if valid
-    if ((SigGuid != NULL) && (Signature != NULL) && (SigSize > 0)) {
-      DBG("Found signature certificate: 0x%llX (0x%llX) %s\n", uintptr_t(Signature), SigSize, strguid(SigGuid));
+    if ( SigGuid.notNull()  &&  Signature != NULL  &&  SigSize > 0 ) {
+      DBG("Found signature certificate: 0x%llX (0x%llX) %s\n", uintptr_t(Signature), SigSize, SigGuid.toXString8().c_str());
       if (EFI_ERROR(AppendSignatureToDatabase(&Database, &Size, SigGuid, Signature, SigSize))) {
         break;
       }

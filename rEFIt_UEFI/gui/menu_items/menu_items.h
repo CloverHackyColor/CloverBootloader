@@ -352,7 +352,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			class LOADER_ENTRY : public REFIT_MENU_ITEM_BOOTNUM
 			{
 			  public:
-				XStringW APFSTargetUUID;
+				EFI_GUID     APFSTargetUUID;
 
 				XStringW          DisplayedVolName;
 				EFI_DEVICE_PATH  *DevicePath;

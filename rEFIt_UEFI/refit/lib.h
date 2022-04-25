@@ -224,7 +224,6 @@ typedef enum {
 //extern XBool         gBootArgsChanged;
 extern XBool           gThemeOptionsChanged;
 //extern POINTERS         gPointer;
-//extern EFI_GUID gEfiAppleBootGuid;
 
 
 EFI_STATUS  InitRefitLib(IN EFI_HANDLE ImageHandle);
@@ -396,7 +395,7 @@ void DebugPause(void);
 // BmLib
 //
 
-extern XBool DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
+extern XBool DumpVariable(CHAR16* Name, const EFI_GUID& Guid, INTN DevicePathAt);
 //void FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 

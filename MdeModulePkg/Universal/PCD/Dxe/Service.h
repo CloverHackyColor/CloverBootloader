@@ -81,7 +81,7 @@ DxeGetPcdInfoGetInfo (
 EFI_STATUS
 EFIAPI
 DxeGetPcdInfoGetInfoEx (
-  IN CONST  EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T      Guid,
   IN        UINTN           TokenNumber,
   OUT       EFI_PCD_INFO    *PcdInfo
   );
@@ -269,7 +269,7 @@ DxePcdGetSize (
 UINT8
 EFIAPI
 DxePcdGet8Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -290,7 +290,7 @@ DxePcdGet8Ex (
 UINT16
 EFIAPI
 DxePcdGet16Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -311,7 +311,7 @@ DxePcdGet16Ex (
 UINT32
 EFIAPI
 DxePcdGet32Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -332,7 +332,7 @@ DxePcdGet32Ex (
 UINT64
 EFIAPI
 DxePcdGet64Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -353,7 +353,7 @@ DxePcdGet64Ex (
 VOID *
 EFIAPI
 DxePcdGetPtrEx (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -374,7 +374,7 @@ DxePcdGetPtrEx (
 BOOLEAN
 EFIAPI
 DxePcdGetBoolEx (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -393,7 +393,7 @@ DxePcdGetBoolEx (
 UINTN
 EFIAPI
 DxePcdGetSizeEx (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber
   );
 
@@ -569,7 +569,7 @@ DxePcdSetBool (
 EFI_STATUS
 EFIAPI
 DxePcdSet8Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber,
   IN UINT8             Value
   );
@@ -595,7 +595,7 @@ DxePcdSet8Ex (
 EFI_STATUS
 EFIAPI
 DxePcdSet16Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber,
   IN UINT16            Value
   );
@@ -621,7 +621,7 @@ DxePcdSet16Ex (
 EFI_STATUS
 EFIAPI
 DxePcdSet32Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber,
   IN UINT32             Value
   );
@@ -647,7 +647,7 @@ DxePcdSet32Ex (
 EFI_STATUS
 EFIAPI
 DxePcdSet64Ex (
-  IN CONST EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber,
   IN UINT64            Value
   );
@@ -677,7 +677,7 @@ DxePcdSet64Ex (
 EFI_STATUS
 EFIAPI
 DxePcdSetPtrEx (
-  IN        CONST EFI_GUID    *Guid,
+  CONST_EFI_GUID_PTR_T        Guid,
   IN        UINTN             TokenNumber,
   IN OUT    UINTN             *SizeOfBuffer,
   IN        VOID              *Buffer
@@ -704,7 +704,7 @@ DxePcdSetPtrEx (
 EFI_STATUS
 EFIAPI
 DxePcdSetBoolEx (
-  IN CONST EFI_GUID    *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN UINTN             TokenNumber,
   IN BOOLEAN           Value
   );
@@ -828,7 +828,7 @@ typedef struct {
 **/
 EFI_STATUS
 DxeGetPcdInfo (
-  IN CONST  EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T      Guid,
   IN        UINTN           TokenNumber,
   OUT       EFI_PCD_INFO    *PcdInfo
   );
@@ -888,7 +888,7 @@ SetWorker (
 EFI_STATUS
 ExSetValueWorker (
   IN          UINTN                ExTokenNumber,
-  IN          CONST EFI_GUID       *Guid,
+  CONST_EFI_GUID_PTR_T             Guid,
   IN          VOID                 *Data,
   IN          UINTN                SetSize
   );
@@ -914,7 +914,7 @@ ExSetValueWorker (
 EFI_STATUS
 ExSetWorker (
   IN      UINTN                ExTokenNumber,
-  IN      CONST EFI_GUID       *Guid,
+  CONST_EFI_GUID_PTR_T         Guid,
   IN      VOID                 *Data,
   IN OUT  UINTN                *Size,
   IN      BOOLEAN              PtrType
@@ -952,7 +952,7 @@ GetWorker (
 **/
 VOID *
 ExGetWorker (
-  IN CONST EFI_GUID         *Guid,
+  CONST_EFI_GUID_PTR_T      Guid,
   IN UINTN                  ExTokenNumber,
   IN UINTN                  GetSize
   );
@@ -1070,7 +1070,7 @@ BuildPcdDxeDataBase (
 **/
 UINTN
 GetExPcdTokenNumber (
-  IN CONST EFI_GUID             *Guid,
+  CONST_EFI_GUID_PTR_T          Guid,
   IN UINT32                     ExTokenNumber
   );
 
@@ -1101,7 +1101,7 @@ GetExPcdTokenNumber (
 **/
 EFI_STATUS
 ExGetNextTokeNumber (
-  IN      CONST EFI_GUID    *Guid,
+  CONST_EFI_GUID_PTR_T       Guid,
   IN OUT  UINTN             *TokenNumber,
   IN      EFI_GUID          *GuidTable,
   IN      UINTN             SizeOfGuidTable,

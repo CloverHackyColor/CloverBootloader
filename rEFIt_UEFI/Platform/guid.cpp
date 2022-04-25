@@ -24,22 +24,22 @@
 //EFI_GUID gEfiAppleVendorGuid                    = {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
 //EFI_GUID gAppleEFINVRAMTRBSecureGuid            = {0xF68DA75E, 0x1B55, 0x4E70, {0xB4, 0x1B, 0xA7, 0xB7, 0xA5, 0xB7, 0x58, 0xEA}};
 //EFI_GUID gDataHubOptionsGuid                    = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xC6, 0xEC, 0xF5, 0xDA, 0x75, 0x47, 0x31}};
-EFI_GUID gNotifyMouseActivity                   = {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
+//EFI_GUID gNotifyMouseActivity                   = {0xF913C2C2, 0x5351, 0x4FDB, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}};
 //EFI_GUID gEfiDataHubProtocolGuid                = {0xAE80D021, 0x618E, 0x11D4, {0xBC, 0xD7, 0x00, 0x80, 0xC7, 0x3C, 0x88, 0x81}};
 //EFI_GUID gEfiMiscSubClassGuid                   = {0x772484B2, 0x7482, 0x4b91, {0x9F, 0x9A, 0xAD, 0x43, 0xF8, 0x1C, 0x58, 0x81}};
 //EFI_GUID gEfiProcessorSubClassGuid              = {0x26FDEB7E, 0xB8AF, 0x4CCF, {0xAA, 0x97, 0x02, 0x63, 0x3C, 0xE4, 0x8C, 0xA7}};
 //EFI_GUID gEfiMemorySubClassGuid                 = {0x4E8F4EBB, 0x64B9, 0x4e05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}};
 //EFI_GUID gMsgLogProtocolGuid                    = {0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03}};
 //EFI_GUID gEfiLegacy8259ProtocolGuid             = {0x38321DBA, 0x4FE0, 0x4E17, {0x8A, 0xEC, 0x41, 0x30, 0x55, 0xEA, 0xED, 0xC1}};
-EFI_GUID gAppleDeviceControlProtocolGuid  = {0x8ECE08D8, 0xA6D4, 0x430B, {0xA7, 0xB0, 0x2D, 0xF3, 0x18, 0xE7, 0x88, 0x4A}};
+//EFI_GUID gAppleDeviceControlProtocolGuid  = {0x8ECE08D8, 0xA6D4, 0x430B, {0xA7, 0xB0, 0x2D, 0xF3, 0x18, 0xE7, 0x88, 0x4A}};
 
 //from reza jelveh
-EFI_GUID gAppleSystemInfoProducerNameGuid = {0x64517CC8, 0x6561, 0x4051, {0xB0, 0x3C, 0x59, 0x64, 0xB6, 0x0F, 0x4C, 0x7A}};
-EFI_GUID gAppleFsbFrequencyPropertyGuid   = {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}};
-EFI_GUID gAppleDevicePathsSupportedGuid   = {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}};
-EFI_GUID gAppleSMCProtocolGuid            = {0x17407e5a, 0xaf6c, 0x4ee8, {0x98, 0xa8, 0x00, 0x21, 0x04, 0x53, 0xcd, 0xd9}};
-
-EFI_GUID gAppleCursorImageGuid            = {0x1A10742F, 0xFA80, 0x4B79, {0x9D, 0xA6, 0x35, 0x70, 0x58, 0xCC, 0x39, 0x7B}};
+//EFI_GUID gAppleSystemInfoProducerNameGuid = {0x64517CC8, 0x6561, 0x4051, {0xB0, 0x3C, 0x59, 0x64, 0xB6, 0x0F, 0x4C, 0x7A}};
+//EFI_GUID gAppleFsbFrequencyPropertyGuid   = {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}};
+//EFI_GUID gAppleDevicePathsSupportedGuid   = {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}};
+//EFI_GUID gAppleSMCProtocolGuid            = {0x17407e5a, 0xaf6c, 0x4ee8, {0x98, 0xa8, 0x00, 0x21, 0x04, 0x53, 0xcd, 0xd9}};
+//
+//EFI_GUID gAppleCursorImageGuid            = {0x1A10742F, 0xFA80, 0x4B79, {0x9D, 0xA6, 0x35, 0x70, 0x58, 0xCC, 0x39, 0x7B}};
              
 //all these codes are still under the question
 /*
@@ -146,60 +146,63 @@ F0 00 00 00                                     | ....
  * @APPLE_LICENSE_HEADER_END@
  */
 
-const XString8 nullGuidAsString = "00000000-0000-0000-0000-000000000000"_XS8;
+//const XString8 nullGuidAsString = "00000000-0000-0000-0000-000000000000"_XS8;
 
-class _GUID_H__asserts
-{
-public:
-  _GUID_H__asserts() {
-    // Jief : I know it's a panic, even in a release version. But it's about constants !
-    if ( !IsValidGuidString(nullGuidAsString) ) panic("!IsValidGuidString(nullGuidAsString)");
-  }
-} _GUID_H__asserts_obj;
+//class _GUID_H__asserts
+//{
+//public:
+//  _GUID_H__asserts() {
+//    // Jief : I know it's a panic, even in a release version. But it's about constants !
+//    if ( !IsValidGuidString(nullGuidAsString) ) panic("!IsValidGuidString(nullGuidAsString)");
+//  }
+//} _GUID_H__asserts_obj;
+
+//constexpr const EFI_GUID nullGuid;
+
+//XStringW GuidBeToXStringW(const EFI_GUID& Guid)
+//{
+//  UINT8 *GuidData = (UINT8 *)&Guid;
+//  XStringW Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+//                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
+//                          GuidData[4], GuidData[5],
+//                          GuidData[6], GuidData[7],
+//                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
+//                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
+//  return Str;
+//}
+//
+//XString8 GuidBeToXString8(const EFI_GUID& Guid)
+//{
+//  UINT8 *GuidData = (UINT8 *)&Guid;
+//  XString8 Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+//                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
+//                          GuidData[4], GuidData[5],
+//                          GuidData[6], GuidData[7],
+//                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
+//                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
+//  return Str;
+//}
+//
+//
+//XStringW GuidLEToXStringW(const EFI_GUID& Guid)
+//{
+//  XStringW returnValue;
+//  returnValue.SWPrintf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+//  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
+//  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
+//  return returnValue;
+//}
+//
+//XString8 GuidLEToXString8(const EFI_GUID& Guid)
+//{
+//  XString8 returnValue;
+//  returnValue.S8Printf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+//  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
+//  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
+//  return returnValue;
+//}
 
 
-EFI_GUID nullGuid = {0,0,0,{0,0,0,0,0,0,0,0}};
 
-XStringW GuidBeToXStringW(const EFI_GUID& Guid)
-{
-  UINT8 *GuidData = (UINT8 *)&Guid;
-  XStringW Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
-                          GuidData[4], GuidData[5],
-                          GuidData[6], GuidData[7],
-                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
-                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
-  return Str;
-}
-
-XString8 GuidBeToXString8(const EFI_GUID& Guid)
-{
-  UINT8 *GuidData = (UINT8 *)&Guid;
-  XString8 Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-                          GuidData[0], GuidData[1], GuidData[2], GuidData[3],
-                          GuidData[4], GuidData[5],
-                          GuidData[6], GuidData[7],
-                          GuidData[8], GuidData[9], GuidData[10], GuidData[11],
-                          GuidData[12], GuidData[13], GuidData[14], GuidData[15]);
-  return Str;
-}
-
-
-XStringW GuidLEToXStringW(const EFI_GUID& Guid)
-{
-  XStringW returnValue;
-  returnValue.SWPrintf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
-  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
-  return returnValue;
-}
-
-XString8 GuidLEToXString8(const EFI_GUID& Guid)
-{
-  XString8 returnValue;
-  returnValue.S8Printf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
-  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
-  return returnValue;
-}
-
+//int EFI_GUID::parse_guid_error() { panic("Incorrect format for guid operator."); } // note, not constexpr
+//EFI_GUID EFI_GUID::parse_guid_error2() { panic("Incorrect format for guid operator."); } // note, not constexpr

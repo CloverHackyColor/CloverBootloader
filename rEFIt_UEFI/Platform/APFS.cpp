@@ -39,7 +39,7 @@
  *   OUT: EFI_GUID
  *   returns null if it is not APFS part
  */
-EFI_GUID *APFSPartitionUUIDExtract(
+EFI_GUID APFSPartitionUUIDExtract(
     const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
@@ -48,37 +48,13 @@ EFI_GUID *APFSPartitionUUIDExtract(
     DevicePath = NextDevicePathNode(DevicePath);
   }
   if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
-    //Check that vendor-assigned GUID defines APFS Container Partition
-    if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).isEqualIC(ApfsSignatureUUID) ) {
-      return (EFI_GUID *)((UINT8 *)DevicePath+0x14);
+    //Check that vendor-assigned EFI_GUID defines APFS Container Partition
+    if ( ApfsSignatureUUID == *(EFI_GUID *)((UINT8 *)DevicePath+0x04) ) {
+      return *(EFI_GUID *)((UINT8 *)DevicePath+0x14);
     }
   }
-  return NULL;
+  return nullGuid;
 }
 
-/*
- * Function for obtaining unique part id from APFS partition
- *   IN: DevicePath
- *   OUT: EFI_GUID
- *   returns empty string if it is not APFS part
- */
-XString8 APFSPartitionUUIDExtractAsXString8(
-    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
-  )
-{
-  EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);
-  if ( uuid ) return GuidLEToXString8(*uuid);
-  return ""_XS8;
-}
-
-
-//XStringW APFSPartitionUUIDExtractAsXStringW(
-//    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
-//  )
-//{
-//  EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);
-//  if ( uuid ) return GuidLEToXStringW(uuid);
-//  return L""_XSW;
-//}
 
 

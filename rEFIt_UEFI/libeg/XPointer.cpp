@@ -57,7 +57,7 @@ EFI_STATUS XPointer::MouseBirth()
   if (EFI_ERROR(Status)) {
     // not found, so use the first found device
     DBG("MouseBirth: No mouse at ConIn, checking if any other device exists\n");
-    Status = gBS->LocateProtocol(&gEfiSimplePointerProtocolGuid, NULL, (void**)&SimplePointerProtocol);
+    Status = gBS->LocateProtocol(gEfiSimplePointerProtocolGuid, NULL, (void**)&SimplePointerProtocol);
   }
 
   if (EFI_ERROR(Status)) {

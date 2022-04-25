@@ -75,7 +75,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HASH2_GET_HASH_SIZE)(
   IN  CONST EFI_HASH2_PROTOCOL     *This,
-  IN  CONST EFI_GUID               *HashAlgorithm,
+  CONST_EFI_GUID_PTR_T             HashAlgorithm,
   OUT UINTN                        *HashSize
   );
 
@@ -103,7 +103,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH)(
   IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN CONST EFI_GUID                *HashAlgorithm,
+  CONST_EFI_GUID_PTR_T             HashAlgorithm,
   IN CONST UINT8                   *Message,
   IN UINTN                         MessageSize,
   IN OUT EFI_HASH2_OUTPUT          *Hash
@@ -129,7 +129,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HASH2_HASH_INIT)(
   IN CONST EFI_HASH2_PROTOCOL      *This,
-  IN CONST EFI_GUID                *HashAlgorithm
+  CONST_EFI_GUID_PTR_T             HashAlgorithm
   );
 
 /**

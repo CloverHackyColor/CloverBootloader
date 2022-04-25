@@ -50,7 +50,7 @@
 
 
 
-EFI_GUID            *gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
+EFI_GUID             gTableGuidArray[] = {gEfiSmbiosTableGuid, gEfiSmbios3TableGuid};
 
 constexpr LString8 unknown = "unknown"_XS8;
 
@@ -193,14 +193,14 @@ void* GetSmbiosTablesFromHob (void)
   EFI_PHYSICAL_ADDRESS       *Table;
   EFI_PEI_HOB_POINTERS       GuidHob;
 
-  GuidHob.Raw = (__typeof_am__(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbiosTableGuid);
+  GuidHob.Raw = (__typeof_am__(GuidHob.Raw))GetFirstGuidHob(gEfiSmbiosTableGuid);
   if (GuidHob.Raw != NULL) {
     Table = (__typeof__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
       return (void *)(UINTN)*Table;
     }
   }
-  GuidHob.Raw = (__typeof_am__(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbios3TableGuid);
+  GuidHob.Raw = (__typeof_am__(GuidHob.Raw))GetFirstGuidHob(gEfiSmbios3TableGuid);
   if (GuidHob.Raw != NULL) {
     Table = (__typeof_am__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
@@ -505,19 +505,20 @@ void GetTableType1(SmbiosDiscoveredSettings* smbiosSettings)
 
   return;
 }
-XString8 getSmUUIDFromSmbios()
+
+EFI_GUID getSmUUIDFromSmbios()
 {
   // System Information
   //
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
   if (SmbiosTable.Raw == NULL) {
     DBG("SmbiosTable: Type 1 (System Information) not found!\n");
-    return nullGuidAsString;
+    return nullGuid;
   }
 
-//  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
-  XString8 g = GuidLEToXString8(SmbiosTable.Type1->Uuid); // 2021-04 : this is a bug, the UUID will be swapped (read as a LE, sent as a BE). I leave for now because it doesn't really matter.
-  return g;
+////  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
+//  XString8 g = GuidLEToXString8(SmbiosTable.Type1->Uuid); // 2021-04 : this is a bug, the UUID will be swapped (read as a LE, sent as a BE). I leave for now because it doesn't really matter.
+  return SmbiosTable.Type1->Uuid;
 }
 
 void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)
@@ -543,11 +544,9 @@ void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)
   newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
   Once = true;
 
-  EFI_GUID SmUUID;
   // macOs take all guid as BE guid, irrespective to the variant.
-  StrToGuidBE(smbiosSettings.SmUUID, &SmUUID);
-  if((SmUUID.Data3 & 0xF000) != 0) {
-    CopyMem((void*)&newSmbiosTable.Type1->Uuid, (void*)&SmUUID, sizeof(SmUUID));
+  if((smbiosSettings.SmUUID.Data3 & 0xF000) != 0) {
+    CopyMem((void*)&newSmbiosTable.Type1->Uuid, (void*)&smbiosSettings.SmUUID, sizeof(smbiosSettings.SmUUID));
   }
 
   if( smbiosSettings.ManufactureName.notEmpty() ){

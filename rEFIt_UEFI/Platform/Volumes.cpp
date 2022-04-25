@@ -16,7 +16,7 @@ VolumesArrayClass Volumes;
 //}
 
 
-REFIT_VOLUME* VolumesArrayClass::getVolumeWithApfsContainerUUIDAndFileSystemUUID(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
+REFIT_VOLUME* VolumesArrayClass::getVolumeWithApfsContainerUUIDAndFileSystemUUID(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID)
 {
   for (size_t VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
     REFIT_VOLUME* Volume = &Volumes[VolumeIndex];
@@ -30,7 +30,7 @@ REFIT_VOLUME* VolumesArrayClass::getVolumeWithApfsContainerUUIDAndFileSystemUUID
   return NULL;
 }
 
-REFIT_VOLUME* VolumesArrayClass::getVolumeWithApfsContainerUUIDAndRole(const XString8& ApfsContainerUUID, APPLE_APFS_VOLUME_ROLE roleMask)
+REFIT_VOLUME* VolumesArrayClass::getVolumeWithApfsContainerUUIDAndRole(const EFI_GUID& ApfsContainerUUID, APPLE_APFS_VOLUME_ROLE roleMask)
 {
   REFIT_VOLUME* targetVolume = NULL;
   for (size_t VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {

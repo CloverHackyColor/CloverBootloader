@@ -666,7 +666,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_GET_VARIABLE)(
   IN     JCONST CHAR16                      *VariableName,
-  IN     EFI_GUID                    *VendorGuid,
+  JCONST_EFI_GUID_PTR_T              VendorGuid,
   OUT    UINT32                      *Attributes,    OPTIONAL
   IN OUT UINTN                       *DataSize,
   OUT    VOID                        *Data           OPTIONAL
@@ -744,7 +744,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_SET_VARIABLE)(
   IN  JCONST CHAR16                       *VariableName,
-  IN  EFI_GUID                     *VendorGuid,
+  JCONST_EFI_GUID_PTR_T            VendorGuid,
   IN  UINT32                       Attributes,
   IN  UINTN                        DataSize,
   IN  JCONST VOID                         *Data
@@ -1328,7 +1328,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_OPEN_PROTOCOL)(
   IN  EFI_HANDLE                Handle,
-  IN  EFI_GUID                  *Protocol,
+  JCONST_EFI_GUID_PTR_T         Protocol,
   OUT VOID                      **Interface, OPTIONAL
   IN  EFI_HANDLE                AgentHandle,
   IN  EFI_HANDLE                ControllerHandle,
@@ -1361,7 +1361,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_CLOSE_PROTOCOL)(
   IN EFI_HANDLE               Handle,
-  IN EFI_GUID                 *Protocol,
+  JCONST_EFI_GUID_PTR_T       Protocol,
   IN EFI_HANDLE               AgentHandle,
   IN EFI_HANDLE               ControllerHandle
   );
@@ -1596,7 +1596,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_LOCATE_PROTOCOL)(
-  IN  EFI_GUID  *Protocol,
+  JCONST_EFI_GUID_PTR_T Protocol,
   IN  VOID      *Registration, OPTIONAL
   OUT VOID      **Interface
   );

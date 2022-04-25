@@ -194,7 +194,7 @@ void DisableSecureBoot(void)
     ErrorString = L"Failed to clear platform database!\nIs Clover platform database owner?";
   } else if (YesNoMessage(L"Disable Secure Boot", L"Do you want to clear all databases (suggested)?")) {
     // Clear all databases if wanted
-    Status = SetSignatureDatabase(EXCHANGE_DATABASE_NAME, &EXCHANGE_DATABASE_GUID, NULL, 0);
+    Status = SetSignatureDatabase(EXCHANGE_DATABASE_NAME, EXCHANGE_DATABASE_GUID, NULL, 0);
     if (EFI_ERROR(Status)) {
       DisableMessage(Status, L"Failed to disable secure boot!", L"Failed to clear exchange database!");
     }
@@ -375,7 +375,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
                             IN CONST EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
                             IN void                              *FileBuffer,
                             IN UINTN                              FileSize,
-                            IN XBool                              BootPolicy)
+                            IN BOOLEAN                            BootPolicy)
 {
   EFI_STATUS Status = EFI_SECURITY_VIOLATION;
   // Check secure boot policy
@@ -431,8 +431,8 @@ EFI_STATUS InstallSecureBoot(void)
     return EFI_SUCCESS;
   }
   // Locate security protocols
-  gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
-  Status = gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
+  gBS->LocateProtocol(gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
+  Status = gBS->LocateProtocol(gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -456,7 +456,7 @@ void UninstallSecureBoot(void)
   if (gSecurityFileAuthentication) {
     EFI_SECURITY_ARCH_PROTOCOL  *Security = NULL;
     // Restore the security protocol function
-    gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
+    gBS->LocateProtocol(gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
     if (Security) {
       Security->FileAuthenticationState = gSecurityFileAuthentication;
     }
@@ -465,7 +465,7 @@ void UninstallSecureBoot(void)
   if (gSecurity2FileAuthentication) {
     EFI_SECURITY2_ARCH_PROTOCOL *Security2 = NULL;
     // Restory the security 2 protocol function
-    gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
+    gBS->LocateProtocol(gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
     if (Security2) {
       Security2->FileAuthentication = gSecurity2FileAuthentication;
     }
@@ -478,9 +478,9 @@ void InitializeSecureBoot(void)
 {
   // Set secure boot variables to firmware values
   UINTN Size = sizeof(GlobalConfig.SecureBootSetupMode);
-  gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBootSetupMode);
+  gRT->GetVariable(L"SetupMode", gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBootSetupMode);
   Size = sizeof(GlobalConfig.SecureBoot);
-  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.SecureBoot);
   // Make sure that secure boot is disabled if in setup mode, this will
   //  allow us to specify later in settings that we want to override
   //  setup mode and pretend like we are in secure boot mode to enforce

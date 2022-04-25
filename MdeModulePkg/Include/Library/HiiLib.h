@@ -52,7 +52,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 EFI_HII_HANDLE
 EFIAPI
 HiiAddPackages (
-  IN CONST EFI_GUID    *PackageListGuid,
+  CONST_EFI_GUID_PTR_T PackageListGuid,
   IN       EFI_HANDLE  DeviceHandle  OPTIONAL,
   ...
   )
@@ -185,7 +185,7 @@ HiiGetString (
 EFI_STRING
 EFIAPI
 HiiGetPackageString (
-  IN CONST EFI_GUID  *PackageListGuid,
+  CONST_EFI_GUID_PTR_T PackageListGuid,
   IN EFI_STRING_ID   StringId,
   IN CONST CHAR8     *Language  OPTIONAL
   )
@@ -607,7 +607,7 @@ UINT8 *
 EFIAPI
 HiiCreateGuidOpCode (
   IN VOID            *OpCodeHandle,
-  IN CONST EFI_GUID  *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   IN CONST VOID      *GuidOpCode,    OPTIONAL
   IN UINTN           OpCodeSize
   );

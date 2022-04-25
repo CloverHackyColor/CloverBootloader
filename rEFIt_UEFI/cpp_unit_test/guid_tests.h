@@ -1,0 +1,1 @@
+int guid_tests();

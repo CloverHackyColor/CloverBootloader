@@ -253,7 +253,7 @@ EFI_STATUS
 EFIAPI
 SmmInstallConfigurationTable (
   IN  CONST EFI_SMM_SYSTEM_TABLE2  *SystemTable,
-  IN  CONST EFI_GUID              *Guid,
+  CONST_EFI_GUID_PTR_T            Guid,
   IN  VOID                        *Table,
   IN  UINTN                       TableSize
   );
@@ -526,7 +526,7 @@ SmmHandleProtocol (
 EFI_STATUS
 EFIAPI
 SmmRegisterProtocolNotify (
-  IN  CONST EFI_GUID              *Protocol,
+  CONST_EFI_GUID_PTR_T            Protocol,
   IN  EFI_SMM_NOTIFY_FN           Function,
   OUT VOID                        **Registration
   );
@@ -632,7 +632,7 @@ SmmLocateHandleBuffer (
 EFI_STATUS
 EFIAPI
 SmiManage (
-  IN     CONST EFI_GUID           *HandlerType,
+  CONST_EFI_GUID_PTR_T            HandlerType,
   IN     CONST VOID               *Context         OPTIONAL,
   IN OUT VOID                     *CommBuffer      OPTIONAL,
   IN OUT UINTN                    *CommBufferSize  OPTIONAL

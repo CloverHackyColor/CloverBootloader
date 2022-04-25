@@ -157,7 +157,7 @@ class SmbiosInjectedSettings
     XString8 ChassisManufacturer     = XString8();
     XString8 ChassisAssetTag         = XString8();
     XString8 FamilyName              = XString8();
-    XString8 SmUUID                  = XString8();
+    EFI_GUID SmUUID             = EFI_GUID();
     XBool    NoRomInfo = false;
     uint8_t  EnabledCores = 0;
     XBool    TrustSMBIOS = false;
@@ -303,7 +303,7 @@ void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings);
 void FinalizeSmbios(const SmbiosInjectedSettings& smbiosSettings);
 
 XBool getMobileFromSmbios();
-XString8 getSmUUIDFromSmbios();
+EFI_GUID getSmUUIDFromSmbios();
 
 
 extern SmbiosDiscoveredSettings g_SmbiosDiscoveredSettings;

@@ -114,13 +114,10 @@ void GetCPUProperties (void)
   
   EFI_STATUS      Status;
   EFI_HANDLE      *HandleBuffer;
-  //  EFI_GUID        **ProtocolGuidArray;
   EFI_PCI_IO_PROTOCOL *PciIo;
   PCI_TYPE00          Pci;
   UINTN         HandleCount;
-  //  UINTN         ArrayCount;
   UINTN         HandleIndex;
-  //  UINTN         ProtocolIndex;
   UINT64        qpibusspeed; //units=kHz
   UINT32        qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz

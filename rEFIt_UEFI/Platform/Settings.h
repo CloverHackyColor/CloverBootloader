@@ -1279,7 +1279,7 @@ public:
       XBool                NoCaches = false;
       uint16_t   BacklightLevel = 0xFFFF;
       XBool BacklightLevelConfig = false;
-      XString8             CustomUuid = XString8();
+      EFI_GUID        CustomUuid = EFI_GUID();
     public: // temporary, must be protected:
       UINT8                _InjectSystemID = 2; // 0=false, 1=true, other value = default.
     public:
@@ -2203,7 +2203,7 @@ printf("%s", "");
           XBool    Disabled = XBool();
           XString8 Comment = XStringW();
           XStringW Name = XStringW();
-          EFI_GUIDClass Guid = EFI_GUIDClass();
+          EFI_GUID Guid = EFI_GUID();
 
 #if __cplusplus > 201703L
           XBool operator == (const RT_VARIABLES&) const = default;
@@ -2405,7 +2405,7 @@ printf("%s", "");
       XString8                ProductName = XString8();
       XString8                SystemVersion = XString8();
       XString8                SerialNr = XString8();
-      XString8                SmUUID = XString8();
+      EFI_GUID           SmUUID = EFI_GUID();
       XString8                FamilyName = XString8();
       // SMBIOS TYPE2
       XString8                BoardManufactureName = XString8();
@@ -2640,16 +2640,16 @@ printf("%s", "");
 
   ~SETTINGS_DATA() {}
 
-  const XString8& getUUID();
-  const XString8& getUUID(EFI_GUIDClass* efiGuid);
+  const EFI_GUID& getUUID();
+//  const XString8& getUUID(EFI_GUID* efiGuid);
   // If CustomUuid is defined, return false by default
   // If SmUUID is defined, return true by default.
   XBool ShouldInjectSystemID() {
-    if ( SystemParameters.CustomUuid.notEmpty() &&  SystemParameters.CustomUuid != nullGuidAsString ) {
+    if ( SystemParameters.CustomUuid.notNull() &&  SystemParameters.CustomUuid.notNull() ) {
       if ( SystemParameters._InjectSystemID == 2 ) return false;
       else return SystemParameters._InjectSystemID != 0;
     }
-    if ( Smbios.SmUUID.isEmpty() || Smbios.SmUUID == nullGuidAsString ) return false;
+    if ( Smbios.SmUUID.isNull() || Smbios.SmUUID.isNull() ) return false;
     if ( SystemParameters._InjectSystemID == 2 ) return true;
     return SystemParameters._InjectSystemID != 0;
   }

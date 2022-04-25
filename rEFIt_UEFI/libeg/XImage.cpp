@@ -484,15 +484,13 @@ void XImage::GetArea(const EG_RECT& Rect)
 void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
 {
   EFI_STATUS Status;
-  EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
   EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
-  EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **)&GraphicsOutput);
+  Status = EfiLibLocateProtocol(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID, (void **)&GraphicsOutput);
   if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **)&UgaDraw);
+    Status = EfiLibLocateProtocol(EFI_UGA_DRAW_PROTOCOL_GUID, (void **)&UgaDraw);
     if (EFI_ERROR(Status))
       UgaDraw = NULL;
   }
@@ -546,15 +544,13 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 //  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
   // prepare protocols
   EFI_STATUS Status;
-  EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
   EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
-  EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **)&GraphicsOutput);
+  Status = EfiLibLocateProtocol(EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID, (void **)&GraphicsOutput);
   if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **)&UgaDraw);
+    Status = EfiLibLocateProtocol(EFI_UGA_DRAW_PROTOCOL_GUID, (void **)&UgaDraw);
     if (EFI_ERROR(Status))
       UgaDraw = NULL;
   }

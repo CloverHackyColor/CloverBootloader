@@ -19,7 +19,7 @@ SetVariablesForOSX (LOADER_ENTRY *Entry);
 EFI_STATUS
 EFIAPI
 LogDataHub (
-  EFI_GUID *TypeGuid,
+  const EFI_GUID& TypeGuid,
   CONST CHAR16   *Name,
   const void     *Data,
   UINT32   DataSize

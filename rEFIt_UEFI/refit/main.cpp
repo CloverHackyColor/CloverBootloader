@@ -1194,16 +1194,16 @@ void LOADER_ENTRY::StartLoader()
       if (Volume->ApfsRole == APPLE_APFS_VOLUME_ROLE_PREBOOT) {
         //search for other partition
         DBG("boot from Preboot, index=%llu\n", Volume->Index);
-        int numbers = Volumes.size();
-        int sysIndex = 0;
+        size_t numbers = Volumes.size();
+        size_t sysIndex = 0;
         for (sysIndex=Volume->Index+1; sysIndex < numbers; sysIndex++) {
           SystemVolume = &Volumes[sysIndex];
           SysRoot = SystemVolume->RootDir;
     //      infoPlistPath = getKextPlist(SysRoot, empty,  forceKext, &NoContents);
-          DBG("test volume %d, name %ls:\n", sysIndex, SystemVolume->VolName.wc_str());
+          DBG("test volume %zd, name %ls:\n", sysIndex, SystemVolume->VolName.wc_str());
 
          if (FileExists(SysRoot, L"\\System\\Library\\CoreServices\\boot.efi")) {
-            DBG("boot.efi found on %d\n", sysIndex);
+            DBG("boot.efi found on %zd\n", sysIndex);
          }
           REFIT_DIR_ITER  DirIter;
           EFI_FILE_INFO  *DirEntry = NULL;
@@ -1217,7 +1217,7 @@ void LOADER_ENTRY::StartLoader()
           }
           DirIterClose(&DirIter);
           if (FileExists(SysRoot, L"\\System\\Library\\Extensions\\AMDSupport.kext\\Contents\\MacOS\\AMDSupport")) {
-             DBG("AMDSupport found on %d\n", sysIndex); //never found
+             DBG("AMDSupport found on %zd\n", sysIndex); //never found
              break;
           }
 
@@ -1247,8 +1247,8 @@ void LOADER_ENTRY::StartLoader()
   //    XString8 execpath = getKextExecPath(SysRoot, empty, forceKext, dictInfo, NoContents);
   //  for kext IOAudioFamily BundlePath = System\Library\Extensions\IOAudioFamily.kext
   //  ExecutablePath = Contents/MacOS/IOAudioFamily
-      int i1 = forceKext.rindexOf("\\") + 1;
-      int i2 = forceKext.rindexOf(".");
+      size_t i1 = forceKext.rindexOf("\\") + 1;
+      size_t i2 = forceKext.rindexOf(".");
       XStringW identifier = forceKext.subString(i1, i2 - i1);
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier, S8Printf("%ls", identifier.wc_str()).c_str());
  //     DBG("index = {%d, %d}", i1, i2);
@@ -1289,7 +1289,7 @@ void LOADER_ENTRY::StartLoader()
         {
           OC_FIRMWARE_RUNTIME_PROTOCOL  *FwRuntime;
           Status = gBS->LocateProtocol (
-            &gOcFirmwareRuntimeProtocolGuid,
+            gOcFirmwareRuntimeProtocolGuid,
             NULL,
             (VOID **) &FwRuntime
             );
@@ -1643,7 +1643,7 @@ void LOADER_ENTRY::StartLoader()
   }
 
   if (gSettings.Boot.LastBootedVolume) {
-    if ( APFSTargetUUID.notEmpty() ) {
+    if ( APFSTargetUUID.notNull() ) {
       // Jief : we need to LoaderPath. If not, GUI can't know which target was selected.
       SetStartupDiskVolume(Volume, LoaderPath);
     }else{
@@ -1713,11 +1713,11 @@ void LOADER_ENTRY::StartLoader()
       SavePreBootLog = false;
     } else {
       // delete boot-switch-vars if exists
-      Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+      Status = gRT->SetVariable(L"boot-switch-vars", gEfiAppleBootGuid,
                                 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 0, NULL);
-      DeleteNvramVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid);
-      DeleteNvramVariable(L"boot-image",              &gEfiAppleBootGuid);
+      DeleteNvramVariable(L"IOHibernateRTCVariables", gEfiAppleBootGuid);
+      DeleteNvramVariable(L"boot-image",              gEfiAppleBootGuid);
 
     }
     SetupBooterLog(!DoHibernateWake);
@@ -2242,7 +2242,7 @@ void DisconnectSomeDevices(void)
       for (Index = 0; Index < HandleCount; Index++) {
         Status = gBS->OpenProtocol(
                                    Handles[Index],
-                                   &gEfiComponentNameProtocolGuid,
+                                   gEfiComponentNameProtocolGuid,
                                    (void**)&CompName,
                                    gImageHandle,
                                    NULL,
@@ -2360,7 +2360,7 @@ static void LoadDrivers(void)
     // check if it is already done in CloverEFI BiosVideo
     Status = gRT->GetVariable (
                                L"CloverVBiosPatchDone",
-                               &gEfiGlobalVariableGuid,
+                               gEfiGlobalVariableGuid,
                                NULL,
                                &VarSize,
                                NULL
@@ -2402,7 +2402,7 @@ static void LoadDrivers(void)
 
     // Boot speedup: remove temporary "BiosVideoBlockSwitchMode" RT var
     // to unlock mode switching in CsmVideo
-    gRT->SetVariable(L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 0, NULL);
+    gRT->SetVariable(L"BiosVideoBlockSwitchMode", gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 0, NULL);
   }else{
     BdsLibConnectAllEfi(); // jief : without any driver loaded, i couldn't see my CD, unless I call BdsLibConnectAllEfi
   }
@@ -2498,7 +2498,7 @@ void SetVariablesFromNvram()
 
 //  DbgHeader("SetVariablesFromNvram");
 
-  tmpString = (__typeof__(tmpString))GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
+  tmpString = (__typeof__(tmpString))GetNvramVariable(L"boot-args", gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
     DBG("found boot-args in NVRAM:%s, size=%llu\n", tmpString, Size);
     // use and forget old one
@@ -2556,7 +2556,7 @@ void SetVariablesFromNvram()
     FreePool(tmpString);
   }
   
-  tmpString = (__typeof__(tmpString))GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
+  tmpString = (__typeof__(tmpString))GetNvramVariable(L"nvda_drv", gEfiAppleBootGuid, NULL, NULL);
   if (tmpString && AsciiStrCmp(tmpString, "1") == 0) {
     gSettings.SystemParameters.NvidiaWeb = true;
   }
@@ -2920,11 +2920,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 #if HIBERNATE_DUMP_DATA
 //------------------------------------------------------
-    DumpVariable(L"Boot0082", &gEfiGlobalVariableGuid, 8);
-    DumpVariable(L"boot-switch-vars", &gEfiAppleBootGuid, -1);
-    DumpVariable(L"boot-signature",   &gEfiAppleBootGuid, -1);
-    DumpVariable(L"boot-image-key",   &gEfiAppleBootGuid, -1);
-    DumpVariable(L"boot-image",       &gEfiAppleBootGuid, 0);
+    DumpVariable(L"Boot0082", gEfiGlobalVariableGuid, 8);
+    DumpVariable(L"boot-switch-vars", gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-signature",   gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-image-key",   gEfiAppleBootGuid, -1);
+    DumpVariable(L"boot-image",       gEfiAppleBootGuid, 0);
 //-----------------------------------------------------------
  
 #endif //
@@ -2976,7 +2976,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     void       *Value = NULL;
     UINTN       Size = 0;
     //read aptiofixflag from nvram for special boot
-    Status = GetVariable2(L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
+    Status = GetVariable2(L"aptiofixflag", gEfiAppleBootGuid, &Value, &Size);
     if (!EFI_ERROR(Status)) {
       GlobalConfig.SpecialBootMode = true;
       FreePool(Value);
@@ -3010,7 +3010,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetSmcKeys(false);  // later we can get here SMC information
   } */
   
-  Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (void**)&gEmuVariableControl);
+  Status = gBS->LocateProtocol(gEmuVariableControlProtocolGuid, NULL, (void**)&gEmuVariableControl);
   if (EFI_ERROR(Status)) {
     gEmuVariableControl = NULL;
   }
@@ -3159,7 +3159,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
         UINTN      Size         = 0;
-        InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size));
+        InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size));
         gThemeNeedInit = false;
       } else if (GlobalConfig.gThemeChanged) {
         DBG("change theme\n");
@@ -3448,7 +3448,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
   #ifdef ENABLE_SECURE_BOOT
-panic("not done yet");
+log_technical_bug("not done yet");
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
 //            EnableSecureBoot();
 //            MainLoopRunning = false;

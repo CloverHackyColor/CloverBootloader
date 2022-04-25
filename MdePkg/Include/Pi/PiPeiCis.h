@@ -206,7 +206,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_PEI_LOCATE_PPI)(
   IN CONST EFI_PEI_SERVICES            **PeiServices,
-  IN CONST EFI_GUID                    *Guid,
+  CONST_EFI_GUID_PTR_T                 Guid,
   IN UINTN                             Instance,
   IN OUT   EFI_PEI_PPI_DESCRIPTOR      **PpiDescriptor OPTIONAL,
   IN OUT   VOID                        **Ppi
@@ -649,7 +649,7 @@ VOID
 typedef
 EFI_STATUS
 (EFIAPI *EFI_PEI_FFS_FIND_BY_NAME)(
-  IN  CONST  EFI_GUID            *FileName,
+  CONST_EFI_GUID_PTR_T           FileName,
   IN  EFI_PEI_FV_HANDLE          VolumeHandle,
   OUT EFI_PEI_FILE_HANDLE        *FileHandle
   );

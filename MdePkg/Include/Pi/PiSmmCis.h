@@ -44,7 +44,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_SMM_INSTALL_CONFIGURATION_TABLE2)(
   IN CONST EFI_SMM_SYSTEM_TABLE2    *SystemTable,
-  IN CONST EFI_GUID                 *Guid,
+  CONST_EFI_GUID_PTR_T              Guid,
   IN VOID                           *Table,
   IN UINTN                          TableSize
   );

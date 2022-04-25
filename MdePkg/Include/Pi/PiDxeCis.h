@@ -638,7 +638,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_SCHEDULE)(
   IN EFI_HANDLE  FirmwareVolumeHandle,
-  IN CONST EFI_GUID    *FileName
+  CONST_EFI_GUID_PTR_T  FileName
   );
 
 /**
@@ -656,7 +656,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_TRUST)(
   IN EFI_HANDLE  FirmwareVolumeHandle,
-  IN CONST EFI_GUID    *FileName
+  CONST_EFI_GUID_PTR_T  FileName
   );
 
 /**

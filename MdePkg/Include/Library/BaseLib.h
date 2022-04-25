@@ -1609,6 +1609,7 @@ StrToIpv4Address (
 
 #define GUID_STRING_LENGTH  36
 
+#ifndef GUID_PLUSPLUS_DEFINED
 /**
   Convert a Null-terminated Unicode GUID string to a value of type
   EFI_GUID.
@@ -1659,6 +1660,7 @@ StrToGuid (
   IN  CONST CHAR16       *String,
   OUT GUID               *Guid
   );
+#endif
 
 /**
   Convert a Null-terminated Unicode hexadecimal string to a byte array.
@@ -2477,6 +2479,7 @@ AsciiStrToIpv4Address (
   OUT UINT8              *PrefixLength OPTIONAL
   );
 
+#ifndef GUID_PLUSPLUS_DEFINED
 /**
   Convert a Null-terminated ASCII GUID string to a value of type
   EFI_GUID.
@@ -2526,6 +2529,7 @@ AsciiStrToGuid (
   IN  CONST CHAR8        *String,
   OUT GUID               *Guid
   );
+#endif
 
 /**
   Convert a Null-terminated ASCII hexadecimal string to a byte array.

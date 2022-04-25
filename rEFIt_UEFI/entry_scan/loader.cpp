@@ -400,7 +400,7 @@ STATIC XBool isFirstRootUUID(REFIT_VOLUME *Volume)
     if (scanedVolume == Volume)
       return true;
 
-    if (CompareGuid(&scanedVolume->RootUUID, &Volume->RootUUID))
+    if ( scanedVolume->RootUUID == Volume->RootUUID )
       return false;
 
   }
@@ -450,7 +450,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 }
 
 
-MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr)
+MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr)
 {
   XString8   OSVersion;
   XString8   BuildVersion;
@@ -468,7 +468,7 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
   if (OSTYPE_IS_OSX(LoaderType))
   {
     XString8 uuidPrefix;
-    if ( APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", APFSTargetUUID.wc_str());
+    if ( APFSTargetUUID.notNull() ) uuidPrefix = S8Printf("\\%s", APFSTargetUUID.toXString8().c_str());
 
     XStringW plist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", uuidPrefix.c_str());
     if ( !FileExists(Volume->RootDir, plist) ) {
@@ -516,8 +516,8 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
 
     XStringW InstallerPlist;
 
-    if ( APFSTargetUUID.notEmpty() ) {
-      InstallerPlist = SWPrintf("%ls\\System\\Library\\CoreServices\\SystemVersion.plist", APFSTargetUUID.wc_str());
+    if ( APFSTargetUUID.notNull() ) {
+      InstallerPlist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", APFSTargetUUID.toXString8().c_str());
       if ( !FileExists(Volume->RootDir, InstallerPlist) ) InstallerPlist.setEmpty();
     }
 
@@ -774,7 +774,7 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
   if (OSTYPE_IS_OSX_RECOVERY (LoaderType)) {
 
     XString8 uuidPrefix;
-    if ( APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", APFSTargetUUID.wc_str());
+    if ( APFSTargetUUID.notNull() ) uuidPrefix = S8Printf("\\%s", APFSTargetUUID.toXString8().c_str());
 
     XStringW plist = SWPrintf("%s\\SystemVersion.plist", uuidPrefix.c_str());
     if ( !FileExists(Volume->RootDir, plist) ) {
@@ -1026,9 +1026,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 
   if ( LoaderPath.length() >= 38 ) {
     if ( isPathSeparator(LoaderPath[0])  &&  isPathSeparator(LoaderPath[37]) ) {
-      if ( IsValidGuidString(LoaderPath.data(1), 36) ) {
-        Entry->APFSTargetUUID = LoaderPath.subString(1, 36);
-      }
+			Entry->APFSTargetUUID.takeValueFrom(LoaderPath.subString(1, 36)); // if guid is not valid, APFSTargetUUID will be set to null
     }
   }
 
@@ -1059,7 +1057,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 if ( Entry->LoaderPath.contains("com.apple.installer") ) {
   DBG("%s", "");
 }
-if ( Entry->APFSTargetUUID.startWith("99999999") ) {
+if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
   DBG("%s", "");
 }
 #endif
@@ -1235,7 +1233,7 @@ void LOADER_ENTRY::AddDefaultMenu()
 //  REFIT_MENU_SCREEN *SubScreen;
 //  REFIT_VOLUME      *Volume;
   UINT64             VolumeSize;
-  EFI_GUID          *Guid = NULL;
+  EFI_GUID      Guid;
   XBool              KernelIs64BitOnly;
 //  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
 
@@ -1263,20 +1261,20 @@ void LOADER_ENTRY::AddDefaultMenu()
   SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
   SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToXStringW(DevicePath).wc_str());
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-  if (Guid) {
-    SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
+  if ( Guid.notNull() ) {
+    SubScreen->AddMenuInfoLine_f("UUID: %s", Guid.toXString8().c_str());
   }
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ||  APFSTargetUUID.notEmpty() ) {
+  if ( Volume->ApfsFileSystemUUID.notNull() ||  APFSTargetUUID.notNull() ) {
     SubScreen->AddMenuInfoLine_f("APFS volume name: %ls", DisplayedVolName.wc_str());
   }
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
-    SubScreen->AddMenuInfoLine_f("APFS file system UUID: %s", Volume->ApfsFileSystemUUID.c_str());
+  if ( Volume->ApfsFileSystemUUID.notNull() ) {
+    SubScreen->AddMenuInfoLine_f("APFS file system UUID: %s", Volume->ApfsFileSystemUUID.toXString8().c_str());
   }
-  if ( Volume->ApfsContainerUUID.notEmpty() ) {
-    SubScreen->AddMenuInfoLine_f("APFS container UUID: %s", Volume->ApfsContainerUUID.c_str());
+  if ( Volume->ApfsContainerUUID.notNull() ) {
+    SubScreen->AddMenuInfoLine_f("APFS container UUID: %s", Volume->ApfsContainerUUID.toXString8().c_str());
   }
-  if ( APFSTargetUUID.notEmpty() ) {
-    SubScreen->AddMenuInfoLine_f("APFS target UUID: %ls", APFSTargetUUID.wc_str());
+  if ( APFSTargetUUID.notNull() ) {
+    SubScreen->AddMenuInfoLine_f("APFS target UUID: %s", APFSTargetUUID.toXString8().c_str());
   }
   SubScreen->AddMenuInfoLine_f("Options: %s", LoadOptions.ConcatAll(" "_XS8).c_str());
   // loader-specific submenu entries
@@ -1508,7 +1506,6 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
   // When used for Custom Entries (detected by CustomPath!=NULL), CustomPath+CustomImage will be set to the first entry found and execution will stop
   // Scanning is adjusted according to Type: OSTYPE_LIN will scan for linux loaders, OSTYPE_LINEFI will scan for linux kernels, unspecified will scan for both
   UINTN        Index;
-  EFI_GUID     *PartGUID;
 
   // check for linux loaders
   if (Type != OSTYPE_LINEFI) { // OSTYPE_LIN or unspecified
@@ -1584,8 +1581,8 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
 
   if (Type != OSTYPE_LIN) { //OSTYPE_LINEFI or unspecified
     // check for linux kernels
-    PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-    if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
+    EFI_GUID PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+    if ( PartGUID.notNull() && Volume->RootDir != NULL ) {
       REFIT_DIR_ITER  Iter;
       EFI_FILE_INFO  *FileInfo = NULL;
       EFI_TIME        PreviousTime;
@@ -1594,7 +1591,7 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
       // Get the partition UUID and make sure it's lower case
       CHAR16          PartUUID[40];
       ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-      snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(PartGUID));
+      snwprintf(PartUUID, sizeof(PartUUID), "%s", PartGUID.toXString8().c_str());
       StrToLower(PartUUID);
       // open the /boot directory (or whatever directory path)
       DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
@@ -1871,8 +1868,8 @@ void ScanLoader(void)
 
     DBG("\n");
 
-    if ( Volume->ApfsContainerUUID.notEmpty() ) DBG("    ApfsContainerUUID=%s\n", Volume->ApfsContainerUUID.c_str());
-    if ( Volume->ApfsFileSystemUUID.notEmpty() ) DBG("    ApfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.c_str());
+    if ( Volume->ApfsContainerUUID.notNull() ) DBG("    ApfsContainerUUID=%s\n", Volume->ApfsContainerUUID.toXString8().c_str());
+    if ( Volume->ApfsFileSystemUUID.notNull() ) DBG("    ApfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.toXString8().c_str());
 
 
     // check for Mac OS X Install Data
@@ -1942,7 +1939,7 @@ void ScanLoader(void)
             AddLoaderEntry(MACOSX_LOADER_PATH, NullXString8Array, L""_XSW, L"OS X"_XSW, Volume, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
           } else {
             MacOsVersion macOSVersion;
-            if ( Volume->ApfsFileSystemUUID.notEmpty() && (Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_SYSTEM) != 0 )
+            if ( Volume->ApfsFileSystemUUID.notNull() && (Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_SYSTEM) != 0 )
             {
               macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir, L"\\System\\Library\\CoreServices"_XSW);
             }
@@ -2027,8 +2024,8 @@ void ScanLoader(void)
 
       for (UINTN i = 0; i < Volume->ApfsTargetUUIDArray.size(); i++)
       {
-        const XString8& ApfsTargetUUID = Volume->ApfsTargetUUIDArray[i];
-        DBG("    APFSTargetUUID=%s\n", ApfsTargetUUID.c_str());
+        const EFI_GUID& ApfsTargetUUID = Volume->ApfsTargetUUIDArray[i];
+        DBG("    APFSTargetUUID=%s\n", ApfsTargetUUID.toXString8().c_str());
         XStringW FullTitle;
         XStringW FullTitleRecovery;
         XStringW FullTitleInstaller;
@@ -2078,7 +2075,7 @@ void ScanLoader(void)
             XStringW targetNameFile;
             CHAR8*  fileBuffer;
             UINTN   fileLen = 0;
-            targetNameFile.SWPrintf("%s\\System\\Library\\CoreServices\\.disk_label.contentDetails", ApfsTargetUUID.c_str());
+            targetNameFile.SWPrintf("%s\\System\\Library\\CoreServices\\.disk_label.contentDetails", ApfsTargetUUID.toXString8().c_str());
             if ( FileExists(bootVolume->RootDir, targetNameFile) ) {
               EFI_STATUS Status = egLoadFile(bootVolume->RootDir, targetNameFile.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
               if(!EFI_ERROR(Status)) {
@@ -2106,20 +2103,20 @@ void ScanLoader(void)
         }
         /*MacOsVersion macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir, SWPrintf("\\%s\\System\\Library\\CoreServices", ApfsTargetUUID.c_str()));
         if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("11"_XS8) )*/ FullTitle.SWCatf(" via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
-        AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, FullTitle, LoaderTitle, Volume, NULL, OSTYPE_OSX, 0);
+        AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.toXString8().c_str()), NullXString8Array, FullTitle, LoaderTitle, Volume, NULL, OSTYPE_OSX, 0);
 
         //Try to add Recovery APFS entry
         /*macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir, SWPrintf("\\%s", ApfsTargetUUID.c_str()));
         if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("11"_XS8) )*/ FullTitleRecovery.SWCatf(" via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
-        if (!AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, NULL, OSTYPE_RECOVERY, 0)) {
+        if (!AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].toXString8().c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, NULL, OSTYPE_RECOVERY, 0)) {
           //Try to add Recovery APFS entry as dmg
-          AddLoaderEntry(SWPrintf("\\%s\\BaseSystem.dmg", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+          AddLoaderEntry(SWPrintf("\\%s\\BaseSystem.dmg", Volume->ApfsTargetUUIDArray[i].toXString8().c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
         }
        //Try to add macOS install entry
         /*macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir, SWPrintf("\\%s\\com.apple.installer", ApfsTargetUUID.c_str()));
         if ( macOSVersion.notEmpty() && macOSVersion < MacOsVersion("11"_XS8) )*/ FullTitleInstaller.SWCatf(" via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
 
-        XString8 installerPath = SWPrintf("\\%s\\com.apple.installer", Volume->ApfsTargetUUIDArray[i].c_str());
+        XString8 installerPath = SWPrintf("\\%s\\com.apple.installer", Volume->ApfsTargetUUIDArray[i].toXString8().c_str());
         if ( FileExists(Volume->RootDir, installerPath) ) {
           XString8 rootDmg = GetAuthRootDmg(*Volume->RootDir, installerPath);
           rootDmg.replaceAll("%20"_XS8, " "_XS8);
@@ -2131,13 +2128,13 @@ void ScanLoader(void)
             EFI_STATUS Status = targetInstallVolume->RootDir->Open(targetInstallVolume->RootDir, &TestFile, L"\\", EFI_FILE_MODE_READ, 0);
             if ( EFI_ERROR(Status) ) TestFile = NULL; // if the root of the volume can't be opened (most likely encrypted), add the installer anyway.
             if ( rootDmg.isEmpty()  ||  EFI_ERROR(Status)  ||  FileExists(*targetInstallVolume->RootDir, rootDmg) ) { // rootDmg empty is accepted, to be compatible with previous code
-              AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleInstaller, LoaderTitleInstaller, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+              AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].toXString8().c_str()), NullXString8Array, FullTitleInstaller, LoaderTitleInstaller, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
             }else{
               DBG("    Dead installer entry found (installer dmg boot file not found : '%s')\n", rootDmg.c_str());
             }
             if ( TestFile != NULL ) TestFile->Close(TestFile);
           }else{
-            DBG("    Dead installer entry found (target volume not found : '%s')\n", Volume->ApfsTargetUUIDArray[i].c_str());
+            DBG("    Dead installer entry found (target volume not found : '%s')\n", Volume->ApfsTargetUUIDArray[i].toXString8().c_str());
           }
         }
       }
@@ -2160,7 +2157,7 @@ void ScanLoader(void)
     if ( !loaderEntry1Ptr ) continue;
     LOADER_ENTRY& loaderEntry1 = *loaderEntry1Ptr;
 
-    if ( ( loaderEntry1.LoaderType == OSTYPE_OSX || loaderEntry1.LoaderType == OSTYPE_OSX_INSTALLER )  &&  loaderEntry1.APFSTargetUUID.notEmpty() )
+    if ( ( loaderEntry1.LoaderType == OSTYPE_OSX || loaderEntry1.LoaderType == OSTYPE_OSX_INSTALLER )  &&  loaderEntry1.APFSTargetUUID.notNull() )
     {
       size_t entryIdx2 = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, loaderEntry1.LoaderType);
       if ( entryIdx2 != SIZE_T_MAX ) {
@@ -2182,7 +2179,7 @@ void ScanLoader(void)
 
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
     if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY() ) {
-      if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY()->APFSTargetUUID.notEmpty() ) {
+      if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY()->APFSTargetUUID.notNull() ) {
 //        DBG("Add in EntriesArrayTmp at index %zd  Entry %zd : %ls\n", EntriesArrayTmp.size(), idx, MainMenu.Entries.ElementAt(idx).Title.wc_str());
         EntriesArrayTmp.AddReference(new EntryIdx(idx, &MainMenu.Entries.ElementAt(idx)), true);
       }
@@ -2383,13 +2380,8 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
   }
 #endif
 
-//  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     LOADER_ENTRY        *Entry = NULL;
 
-//    EFI_GUID            *Guid = NULL;
-//    UINT64               VolumeSize;
-
-//    Volume = &Volumes[VolumeIndex];
     if ((Volume == NULL) || (Volume->RootDir == NULL)) {
       return;
     }
@@ -2426,7 +2418,7 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
 //          SubScreen->AddMenuInfoLine_f("Volume size: %lldMb", VolumeSize);
 //          SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToXStringW(Entry->DevicePath).wc_str());
 //          if (Guid) {
-//            SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
+//            SubScreen->AddMenuInfoLine_f("UUID: %s", Guid.toXString8().c_str());
 //          }
 //          SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
 //          DBG("Create sub entries\n");
@@ -2518,7 +2510,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     XIcon Image = Custom.Image;
     XIcon DriveImage = Custom.DriveImage;
 
-    EFI_GUID            *Guid = NULL;
+    EFI_GUID        Guid;
     UINT64               VolumeSize;
 
     Volume = &Volumes[VolumeIndex];
@@ -2562,8 +2554,8 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
         //..\VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,E97E25EA28F4DF46AAD44CC3F12E28D3)
         EFI_DEVICE_PATH *MediaPath = Clover_FindDevicePathNodeWithType(Volume->DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
         if (MediaPath) {
-          EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
-          XStringW MediaPathGuidStr = GuidLEToXStringW(*MediaPathGuid);
+          EFI_GUID MediaPathGuid = *(EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
+          XStringW MediaPathGuidStr = MediaPathGuid.toXStringW();
           //       DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
           if (StrStr(Custom.settings.Volume.wc_str(), MediaPathGuidStr.wc_str())) {
             DBG("   - found entry for volume '%ls', '%ls'\n", Custom.settings.Volume.wc_str(), MediaPathGuidStr.wc_str());
@@ -2583,11 +2575,11 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
     if (FindCustomPath) {
       // Get the partition UUID and make sure it's lower case
-      if (Guid == NULL) {
+      if ( Guid.isNull() ) {
         DBG("skipped because volume does not have partition uuid\n");
         continue;
       }
-      snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(Guid));
+      snwprintf(PartUUID, sizeof(PartUUID), "%s", Guid.toXString8().c_str());
       StrToLower(PartUUID);
 
       // search for standard/nonstandard linux uefi paths, and all kernel scan options that != KERNEL_SCAN_ALL
@@ -2791,8 +2783,8 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
           VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
           SubScreen->AddMenuInfoLine_f("Volume size: %lldMb", VolumeSize);
           SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToXStringW(Entry->DevicePath).wc_str());
-          if (Guid) {
-            SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
+          if ( Guid.notNull() ) {
+            SubScreen->AddMenuInfoLine_f("UUID: %s", Guid.toXString8().c_str());
           }
           SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
           DBG("Create sub entries\n");

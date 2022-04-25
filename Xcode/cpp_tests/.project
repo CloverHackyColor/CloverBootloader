@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>MdePkg</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/MdePkg</locationURI>
+		</link>
+		<link>
 			<name>MemLogLibDefault</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Library/MemLogLibDefault</locationURI>

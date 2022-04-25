@@ -296,7 +296,7 @@ typedef
 EFI_STATUS
 (EFIAPI * EFI_FV_READ_FILE)(
   IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
-  IN CONST  EFI_GUID                      *NameGuid,
+  CONST_EFI_GUID_PTR_T                    NameGuid,
   IN OUT    VOID                          **Buffer,
   IN OUT    UINTN                         *BufferSize,
   OUT       EFI_FV_FILETYPE               *FoundType,
@@ -404,7 +404,7 @@ typedef
 EFI_STATUS
 (EFIAPI * EFI_FV_READ_SECTION)(
   IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
-  IN CONST  EFI_GUID                      *NameGuid,
+  CONST_EFI_GUID_PTR_T                    NameGuid,
   IN        EFI_SECTION_TYPE              SectionType,
   IN        UINTN                         SectionInstance,
   IN OUT    VOID                          **Buffer,
@@ -658,7 +658,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_FV_GET_INFO)(
   IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
-  IN CONST  EFI_GUID                      *InformationType,
+  CONST_EFI_GUID_PTR_T                    InformationType,
   IN OUT    UINTN                         *BufferSize,
   OUT       VOID                          *Buffer
 );
@@ -708,7 +708,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_FV_SET_INFO)(
   IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
-  IN CONST  EFI_GUID                      *InformationType,
+  CONST_EFI_GUID_PTR_T                    InformationType,
   IN        UINTN                         BufferSize,
   IN CONST  VOID                          *Buffer
 );

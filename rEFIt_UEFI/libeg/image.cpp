@@ -128,7 +128,7 @@ Error:
   return Status;
 }
 //Slice - this is gEfiPartTypeSystemPartGuid
-//static EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
+//constexpr const EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
 //there is assumed only one ESP partition. What if there are two HDD gpt formatted?
 EFI_STATUS egFindESP(OUT EFI_FILE** RootDir)
 {

@@ -734,7 +734,7 @@ void ConfigManager::applySettings() const
     }
     if ( configPlist.RtVariables.dgetBooterCfgStr().isEmpty() )
     {
-      CHAR8* OldCfgStr = (CHAR8*)GetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
+      CHAR8* OldCfgStr = (CHAR8*)GetNvramVariable(L"bootercfg", gEfiAppleBootGuid, NULL, NULL);
       if ( OldCfgStr )
       {
         gSettings.RtVariables.BooterCfgStr.takeValueFrom(OldCfgStr);
@@ -784,7 +784,7 @@ void ConfigManager::applySettings() const
         gSettings.CPU.UseARTFreq = true;
     }
   }
-  if ( gSettings.Smbios.SmUUID == nullGuidAsString )
+  if ( gSettings.Smbios.SmUUID.isNull() )
   {
     gSettings.Smbios.SmUUID = getSmUUIDFromSmbios();
   }

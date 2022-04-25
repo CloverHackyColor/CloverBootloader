@@ -106,7 +106,7 @@ GetFirstHob (
 VOID *
 EFIAPI
 GetNextGuidHob (
-  IN CONST EFI_GUID         *Guid,
+  CONST_EFI_GUID_PTR_T       Guid,
   IN CONST VOID             *HobStart
   );
 
@@ -131,7 +131,7 @@ GetNextGuidHob (
 VOID *
 EFIAPI
 GetFirstGuidHob (
-  IN CONST EFI_GUID         *Guid
+  CONST_EFI_GUID_PTR_T       Guid
   );
 
 /**
@@ -172,7 +172,7 @@ GetBootModeHob (
 VOID
 EFIAPI
 BuildModuleHob (
-  IN CONST EFI_GUID         *ModuleName,
+  CONST_EFI_GUID_PTR_T      ModuleName,
   IN EFI_PHYSICAL_ADDRESS   MemoryAllocationModule,
   IN UINT64                 ModuleLength,
   IN EFI_PHYSICAL_ADDRESS   EntryPoint
@@ -253,7 +253,7 @@ BuildResourceDescriptorHob (
 VOID *
 EFIAPI
 BuildGuidHob (
-  IN CONST EFI_GUID              *Guid,
+  CONST_EFI_GUID_PTR_T           Guid,
   IN UINTN                       DataLength
   );
 
@@ -285,7 +285,7 @@ BuildGuidHob (
 VOID *
 EFIAPI
 BuildGuidDataHob (
-  IN CONST EFI_GUID              *Guid,
+  CONST_EFI_GUID_PTR_T            Guid,
   IN VOID                        *Data,
   IN UINTN                       DataLength
   );
@@ -332,8 +332,8 @@ EFIAPI
 BuildFv2Hob (
   IN          EFI_PHYSICAL_ADDRESS        BaseAddress,
   IN          UINT64                      Length,
-  IN CONST    EFI_GUID                    *FvName,
-  IN CONST    EFI_GUID                    *FileName
+  CONST_EFI_GUID_PTR_T                    FvName,
+  CONST_EFI_GUID_PTR_T                    FileName
   );
 
 /**

@@ -201,7 +201,7 @@ public:
     return SIZE_T_MAX;
   }
 
-  size_t getApfsLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
+  size_t getApfsLoaderIdx(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
       if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
@@ -215,7 +215,7 @@ public:
     return SIZE_T_MAX;
   }
 
-  size_t getApfsLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID, uint8_t osType)
+  size_t getApfsLoaderIdx(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID, uint8_t osType)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
       if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
@@ -231,7 +231,7 @@ public:
     return SIZE_T_MAX;
   }
 
-  size_t getApfsPrebootLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
+  size_t getApfsPrebootLoaderIdx(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
       if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
@@ -247,7 +247,7 @@ public:
     return SIZE_T_MAX;
   }
 
-  size_t getApfsPrebootLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID, uint8_t osType)
+  size_t getApfsPrebootLoaderIdx(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID, uint8_t osType)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
       if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {

@@ -12,7 +12,7 @@
 #include <Efi.h>
 #include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"
-
+#include "../Platform/guid.h"
 
 class LEGACY_OS
 {
@@ -50,13 +50,13 @@ public:
   EFI_HANDLE          WholeDiskDeviceHandle = 0;
   MBR_PARTITION_INFO  *MbrPartitionTable = 0;
   UINT32              DriveCRC32 = 0;
-  EFI_GUID            RootUUID = EFI_GUID({0,0,0,{0,0,0,0,0,0,0,0}}); //for recovery it is UUID of parent partition
+  EFI_GUID       RootUUID = EFI_GUID(); //for recovery it is UUID of parent partition
   UINT64              SleepImageOffset = 0;
   XStringW            osxVolumeName = XStringW(); // comes from \\System\\Library\\CoreServices\\.disk_label.contentDetails, or empty.
-  XString8            ApfsFileSystemUUID = XString8(); // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
-  XString8            ApfsContainerUUID = XString8();
+  EFI_GUID       ApfsFileSystemUUID = EFI_GUID(); // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
+  EFI_GUID       ApfsContainerUUID = EFI_GUID();
   APPLE_APFS_VOLUME_ROLE  ApfsRole = 0;
-  XString8Array        ApfsTargetUUIDArray = XString8Array(); // this is the array of folders that are named as UUID
+  XObjArray<EFI_GUID> ApfsTargetUUIDArray = XObjArray<EFI_GUID>(); // this is the array of folders that are named as UUID
   UINTN              Index = 0;
 
   REFIT_VOLUME() {};

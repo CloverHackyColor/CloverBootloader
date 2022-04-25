@@ -43,13 +43,13 @@
 
 // Console defines and variables
 
-static EFI_GUID ConsoleControlProtocolGuid = EFI_CONSOLE_CONTROL_PROTOCOL_GUID;
+static constexpr const EFI_GUID ConsoleControlProtocolGuid = EFI_CONSOLE_CONTROL_PROTOCOL_GUID;
 static EFI_CONSOLE_CONTROL_PROTOCOL *ConsoleControl = NULL;
 
-static EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
+static constexpr const EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
 static EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
 
-static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+static constexpr const EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 static EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
 static XBool egHasGraphics = false;
@@ -362,15 +362,15 @@ void egInitScreen(IN XBool SetMaxResolution)
 //    CHAR16 *Resolution;
 
     // get protocols
-    Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (void **) &ConsoleControl);
+    Status = EfiLibLocateProtocol(ConsoleControlProtocolGuid, (void **) &ConsoleControl);
     if (EFI_ERROR(Status))
         ConsoleControl = NULL;
     
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **) &UgaDraw);
+    Status = EfiLibLocateProtocol(UgaDrawProtocolGuid, (void **) &UgaDraw);
     if (EFI_ERROR(Status))
         UgaDraw = NULL;
     
-    Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **) &GraphicsOutput);
+    Status = EfiLibLocateProtocol(GraphicsOutputProtocolGuid, (void **) &GraphicsOutput);
     if (EFI_ERROR(Status))
         GraphicsOutput = NULL;
 

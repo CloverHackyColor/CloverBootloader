@@ -136,7 +136,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
           InitScreen(false);
           if (gThemeNeedInit) {
             UINTN      Size         = 0;
-            InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size));
+            InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size));
             ThemeX.ClearScreen();
             gThemeNeedInit = false;
           }

@@ -49,13 +49,7 @@
 
 //#define DUMP_KERNEL_KEXT_PATCHES 1
 
-//#define SHORT_LOCATE 1
 
-//#define kXMLTagArray      "array"
-
-//EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
-
-#define NUM_OF_CONFIGS 3
 #define GEN_PMCON_1                 0xA0
 
 
@@ -72,8 +66,6 @@ INTN LayoutButtonOffset = 0;
 XObjArray<ACPI_PATCHED_AML>     ACPIPatchedAML;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
-
-//TagDict*                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
 SETTINGS_DATA                   gSettings;
 
@@ -255,7 +247,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 
 
   VarName = SWPrintf("Boot%04llX", Entry->BootNum);
-  BootVariable = (UINT8*)GetNvramVariable(VarName.wc_str(), &gEfiGlobalVariableGuid, NULL, &VarSize);
+  BootVariable = (UINT8*)GetNvramVariable(VarName.wc_str(), gEfiGlobalVariableGuid, NULL, &VarSize);
   if ((BootVariable == NULL) || (VarSize == 0)) {
     DBG("Boot option %ls not found\n", VarName.wc_str());
     return;
@@ -295,7 +287,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   FreePool(BootVariable);
   //all check passed, save the number
   Status = SetNvramVariable (L"BootCurrent",
-                             &gEfiGlobalVariableGuid,
+                             gEfiGlobalVariableGuid,
                              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                              sizeof(UINT16),
                              &Entry->BootNum);
@@ -303,7 +295,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
     DBG("Can't save BootCurrent, status=%s\n", efiStrError(Status));
   }
   //Next step is rotate BootOrder to set BootNum to first place
-  BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (BootOrder == NULL) {
     return;
   }
@@ -324,7 +316,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
       *Ptr++ = BootOrder[Index];
     }
     Status = gRT->SetVariable (L"BootOrder",
-                               &gEfiGlobalVariableGuid,
+                               gEfiGlobalVariableGuid,
                                EFI_VARIABLE_NON_VOLATILE
                                | EFI_VARIABLE_BOOTSERVICE_ACCESS
                                | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -509,9 +501,7 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     GlobalConfig.RtROM = settingsData.RtVariables.RtROMAsData;
   }
   if ( GlobalConfig.RtROM.isEmpty() ) {
-    EFI_GUID uuid;
-    StrToGuidBE(settingsData.Smbios.SmUUID, &uuid);
-    GlobalConfig.RtROM.ncpy(&uuid.Data4[2], 6);
+    GlobalConfig.RtROM.ncpy(&settingsData.Smbios.SmUUID.Data4[2], 6);
   }
   GlobalConfig.RtMLB = settingsData.RtVariables.RtMLBSetting;
   if ( GlobalConfig.RtMLB.isEmpty() ) {
@@ -1956,7 +1946,7 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 //  MsgLog ("Beginning FSInjection\n");
 //
 //  // get FSINJECTION_PROTOCOL
-//  Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
+//  Status = gBS->LocateProtocol(gFSInjectProtocolGuid, NULL, (void **)&FSInject);
 //  if (EFI_ERROR(Status)) {
 //    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", efiStrError(Status));
 //    MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
@@ -2076,33 +2066,33 @@ XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 //}
 
 
-const XString8& SETTINGS_DATA::getUUID()
+const EFI_GUID& SETTINGS_DATA::getUUID()
 {
-  if ( SystemParameters.CustomUuid.notEmpty() ) return SystemParameters.CustomUuid;
+  if ( SystemParameters.CustomUuid.notNull() ) return SystemParameters.CustomUuid;
   return Smbios.SmUUID;
 }
 
-const XString8& SETTINGS_DATA::getUUID(EFI_GUIDClass *uuid)
-{
-  if ( SystemParameters.CustomUuid.notEmpty() ) {
-    if ( uuid ) {
-      EFI_STATUS Status = StrToGuidBE(SystemParameters.CustomUuid, uuid);
-      if ( EFI_ERROR(Status) ) {
-        log_technical_bug("CustomUuid(%s) is not valid", SystemParameters.CustomUuid.c_str()); // it's a technical bug. Validity is checked when imported from settings, so that must never happen.
-        *uuid = EFI_GUIDClass();
-        return nullGuidAsString;
-      }
-    }
-    return SystemParameters.CustomUuid;
-  }
-  if ( uuid ) {
-    EFI_STATUS Status = StrToGuidBE(Smbios.SmUUID, uuid);
-    if ( EFI_ERROR(Status) ) {
-      log_technical_bug("SmUUID(%s) is not valid", Smbios.SmUUID.c_str()); // same as before
-      *uuid = EFI_GUIDClass();
-      return nullGuidAsString;
-    }
-  }
-  return Smbios.SmUUID;
-}
-
+//const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
+//{
+//  if ( SystemParameters.CustomUuid.notEmpty() ) {
+//    if ( uuid ) {
+//      EFI_STATUS Status = StrToGuidBE(SystemParameters.CustomUuid, uuid);
+//      if ( EFI_ERROR(Status) ) {
+//        log_technical_bug("CustomUuid(%s) is not valid", SystemParameters.CustomUuid.c_str()); // it's a technical bug. Validity is checked when imported from settings, so that must never happen.
+//        *uuid = EFI_GUID();
+//        return nullGuidAsString;
+//      }
+//    }
+//    return SystemParameters.CustomUuid;
+//  }
+//  if ( uuid ) {
+//    EFI_STATUS Status = StrToGuidBE(Smbios.SmUUID, uuid);
+//    if ( EFI_ERROR(Status) ) {
+//      log_technical_bug("SmUUID(%s) is not valid", Smbios.SmUUID.c_str()); // same as before
+//      *uuid = EFI_GUID();
+//      return nullGuidAsString;
+//    }
+//  }
+//  return Smbios.SmUUID;
+//}
+//

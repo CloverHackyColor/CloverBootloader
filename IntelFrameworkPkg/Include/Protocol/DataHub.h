@@ -87,8 +87,8 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_DATA_HUB_LOG_DATA)(
   IN  EFI_DATA_HUB_PROTOCOL   *This,
-  IN  EFI_GUID                *DataRecordGuid,
-  IN  EFI_GUID                *ProducerName,
+  CONST_EFI_GUID_PTR_T        DataRecordGuid,
+  CONST_EFI_GUID_PTR_T        ProducerName,
   IN  UINT64                  DataRecordClass,
   IN  VOID                    *RawData,
   IN  UINT32                  RawDataSize

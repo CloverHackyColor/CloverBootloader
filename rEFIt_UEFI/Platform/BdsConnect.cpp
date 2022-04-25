@@ -328,31 +328,31 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
     if (!EFI_ERROR(Status)) {      
       for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiLoadedImageProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiLoadedImageProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_IMAGE_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiDriverBindingProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiDriverBindingProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_DRIVER_BINDING_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiDriverConfigurationProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiDriverConfigurationProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_DRIVER_CONFIGURATION_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiDriverDiagnosticsProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiDriverDiagnosticsProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_DRIVER_DIAGNOSTICS_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiComponentName2ProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiComponentName2ProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_COMPONENT_NAME_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiComponentNameProtocolGuid) ) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiComponentNameProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_COMPONENT_NAME_HANDLE;
         }
         
-        if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiDevicePathProtocolGuid)) {
+        if ( *(ProtocolGuidArray[ProtocolIndex]) == gEfiDevicePathProtocolGuid ) {
           (*HandleType)[HandleIndex] |= EFI_HANDLE_TYPE_DEVICE_HANDLE;
         }
         

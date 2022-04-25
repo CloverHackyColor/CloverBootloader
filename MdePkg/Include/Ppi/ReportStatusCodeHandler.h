@@ -21,7 +21,7 @@ EFI_STATUS
   IN        EFI_STATUS_CODE_TYPE    Type,
   IN        EFI_STATUS_CODE_VALUE   Value,
   IN        UINT32                  Instance,
-  IN CONST  EFI_GUID                *CallerId,
+  CONST_EFI_GUID_PTR_T              CallerId,
   IN CONST  EFI_STATUS_CODE_DATA    *Data
 );
 

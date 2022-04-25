@@ -21,12 +21,11 @@ extern "C" {
 class VolumesArrayClass : public XObjArray<REFIT_VOLUME>
 {
   public:
-//    REFIT_VOLUME* getApfsPartitionWithUUID(const XString8& ApfsContainerUUID, const XString8& APFSTargetUUID);
-    REFIT_VOLUME* getVolumeWithApfsContainerUUIDAndFileSystemUUID(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID);
+    REFIT_VOLUME* getVolumeWithApfsContainerUUIDAndFileSystemUUID(const EFI_GUID& ApfsContainerUUID, const EFI_GUID& ApfsFileSystemUUID);
     /*
      * Return : NULL if not found OR more than one partition with this role is found in this container
      */
-    REFIT_VOLUME* getVolumeWithApfsContainerUUIDAndRole(const XString8& ApfsContainerUUID, APPLE_APFS_VOLUME_ROLE roleMask);
+    REFIT_VOLUME* getVolumeWithApfsContainerUUIDAndRole(const EFI_GUID& ApfsContainerUUID, APPLE_APFS_VOLUME_ROLE roleMask);
 
 };
 

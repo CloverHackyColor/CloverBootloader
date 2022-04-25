@@ -31,7 +31,7 @@ extern "C" {
 **/
 EFI_STATUS
 EfiLibLocateProtocol (
-  IN  EFI_GUID    *ProtocolGuid,
+  const  EFI_GUID&  ProtocolGuid,
   OUT void        **Interface
   );
 

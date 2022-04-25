@@ -26,8 +26,8 @@ DATA_HUB_INSTANCE mDataHub;
   Log data record into the data logging hub
 
   @param This                   Protocol instance structure
-  @param DataRecordGuid         GUID that defines record contents
-  @param ProducerName           GUID that defines the name of the producer of the data
+  @param DataRecordGuid         EFI_GUID that defines record contents
+  @param ProducerName           EFI_GUID that defines the name of the producer of the data
   @param DataRecordClass        Class that defines generic record type
   @param RawData                Data Log record as defined by DataRecordGuid
   @param RawDataSize            Size of Data Log data in bytes
@@ -40,8 +40,8 @@ EFI_STATUS
 EFIAPI
 DataHubLogData (
   IN  EFI_DATA_HUB_PROTOCOL   *This,
-  IN  EFI_GUID                *DataRecordGuid,
-  IN  EFI_GUID                *ProducerName,
+  const EFI_GUID&        DataRecordGuid,
+  const EFI_GUID&        ProducerName,
   IN  UINT64                  DataRecordClass,
   IN  VOID                    *RawData,
   IN  UINT32                  RawDataSize
@@ -109,8 +109,8 @@ DataHubLogData (
   Record->Version     = EFI_DATA_RECORD_HEADER_VERSION;
   Record->HeaderSize  = (UINT16) sizeof (EFI_DATA_RECORD_HEADER);
   Record->RecordSize  = RecordSize;
-  CopyMem (&Record->DataRecordGuid, DataRecordGuid, sizeof (EFI_GUID));
-  CopyMem (&Record->ProducerName, ProducerName, sizeof (EFI_GUID));
+  Record->DataRecordGuid = DataRecordGuid;
+  Record->ProducerName = ProducerName;
   Record->DataRecordClass   = DataRecordClass;
 
   //
@@ -139,9 +139,9 @@ DataHubLogData (
   Head = &Private->FilterDriverListHead;
   for (Link = GetFirstNode(Head); Link != Head; Link = GetNextNode(Head, Link)) {
     FilterEntry = FILTER_ENTRY_FROM_LINK (Link);
-    if (((FilterEntry->ClassFilter & DataRecordClass) != 0) &&
-        (IsZeroGuid (&FilterEntry->FilterDataRecordGuid) ||
-         CompareGuid (&FilterEntry->FilterDataRecordGuid, DataRecordGuid))) {
+    if ( (FilterEntry->ClassFilter & DataRecordClass) != 0 &&
+         ( FilterEntry->FilterDataRecordGuid.isNull()  ||   FilterEntry->FilterDataRecordGuid == DataRecordGuid )
+      ) {
       gBS->SignalEvent (FilterEntry->Event);
     }
   }

@@ -23,7 +23,7 @@
 #include "xml_lite-test.h"
 #include "config-test.h"
 #include "XToolsCommon_test.h"
-#include "../Platform/guid.h"
+#include "guid_tests.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -99,6 +99,11 @@ if ( ret != 0 ) {
     all_ok = false;
   }
 #endif
+  ret = guid_tests();
+  if ( ret != 0 ) {
+    printf("guid_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
   ret = strlen_tests();
   if ( ret != 0 ) {
     printf("strlen_tests() failed at test %d\n", ret);

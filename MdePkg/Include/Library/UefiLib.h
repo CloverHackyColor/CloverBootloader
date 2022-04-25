@@ -196,7 +196,7 @@ EfiCreateProtocolNotifyEvent(
 EFI_STATUS
 EFIAPI
 EfiNamedEventListen (
-  IN CONST EFI_GUID    *Name,
+  CONST_EFI_GUID_PTR_T Name,
   IN EFI_TPL           NotifyTpl,
   IN EFI_EVENT_NOTIFY  NotifyFunction,
   IN CONST VOID        *NotifyContext,  OPTIONAL
@@ -219,7 +219,7 @@ EfiNamedEventListen (
 EFI_STATUS
 EFIAPI
 EfiNamedEventSignal (
-  IN CONST EFI_GUID  *Name
+  CONST_EFI_GUID_PTR_T Name
   );
 
 /**
@@ -237,7 +237,7 @@ EfiNamedEventSignal (
 EFI_STATUS
 EFIAPI
 EfiEventGroupSignal (
-  IN CONST EFI_GUID *EventGroup
+  CONST_EFI_GUID_PTR_T EventGroup
   );
 
 /**
@@ -431,7 +431,7 @@ EFIAPI
 EfiTestManagedDevice (
   IN CONST EFI_HANDLE       ControllerHandle,
   IN CONST EFI_HANDLE       DriverBindingHandle,
-  IN CONST EFI_GUID         *ProtocolGuid
+  CONST_EFI_GUID_PTR_T      ProtocolGuid
   );
 
 /**
@@ -458,7 +458,7 @@ EFIAPI
 EfiTestChildHandle (
   IN CONST EFI_HANDLE       ControllerHandle,
   IN CONST EFI_HANDLE       ChildHandle,
-  IN CONST EFI_GUID         *ProtocolGuid
+  CONST_EFI_GUID_PTR_T      ProtocolGuid
   );
 
 /**
@@ -687,7 +687,7 @@ VOID *
 EFIAPI
 GetVariable (
   IN CONST CHAR16    *Name,
-  IN CONST EFI_GUID  *Guid
+  CONST_EFI_GUID_PTR_T Guid
   );
 
 /**
@@ -740,7 +740,7 @@ EFI_STATUS
 EFIAPI
 GetVariable2 (
   IN CONST CHAR16    *Name,
-  IN CONST EFI_GUID  *Guid,
+  CONST_EFI_GUID_PTR_T Guid,
   OUT VOID           **Value,
   OUT UINTN          *Size OPTIONAL
   );
@@ -799,7 +799,7 @@ EFI_STATUS
 EFIAPI
 GetVariable3(
   IN CONST CHAR16       *Name,
-  IN CONST EFI_GUID     *Guid,
+  CONST_EFI_GUID_PTR_T   Guid,
      OUT VOID           **Value,
      OUT UINTN          *Size OPTIONAL,
      OUT UINT32         *Attr OPTIONAL
@@ -1076,7 +1076,7 @@ VOID
 EFIAPI
 EfiInitializeFwVolDevicepathNode (
   IN OUT MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  *FvDevicePathNode,
-  IN CONST EFI_GUID                         *NameGuid
+  CONST_EFI_GUID_PTR_T                       NameGuid
   );
 
 /**

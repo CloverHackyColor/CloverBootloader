@@ -97,7 +97,7 @@ EFIAPI
 PeiGetVariable (
   IN CONST  EFI_PEI_READ_ONLY_VARIABLE2_PPI *This,
   IN CONST  CHAR16                          *VariableName,
-  IN CONST  EFI_GUID                        *VariableGuid,
+  CONST_EFI_GUID_PTR_T                       VariableGuid,
   OUT       UINT32                          *Attributes,
   IN OUT    UINTN                           *DataSize,
   OUT       VOID                            *Data OPTIONAL

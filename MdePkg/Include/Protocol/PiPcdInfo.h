@@ -39,7 +39,7 @@ typedef struct _EFI_GET_PCD_INFO_PROTOCOL  EFI_GET_PCD_INFO_PROTOCOL;
 typedef
 EFI_STATUS
 (EFIAPI *EFI_GET_PCD_INFO_PROTOCOL_GET_INFO) (
-  IN CONST  EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T      Guid,
   IN        UINTN           TokenNumber,
   OUT       EFI_PCD_INFO    *PcdInfo
 );

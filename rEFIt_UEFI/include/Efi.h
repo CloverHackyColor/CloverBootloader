@@ -9,6 +9,9 @@
 #define INCLUDE_EFI_H_
 
 
+#ifdef __cplusplus
+#include <Guid++.h>
+#endif //__cplusplus
 
 #ifdef __cplusplus
 extern "C" {

@@ -297,10 +297,10 @@ EFI_STATUS SetupBooterLog(XBool AllowGrownSize)
   if (MemLogLen > MEM_LOG_INITIAL_SIZE && !AllowGrownSize) {
     CHAR8 PrevChar = MemLogBuffer[MEM_LOG_INITIAL_SIZE-1];
     MemLogBuffer[MEM_LOG_INITIAL_SIZE-1] = '\0';
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, MEM_LOG_INITIAL_SIZE);
+    Status = LogDataHub(gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, MEM_LOG_INITIAL_SIZE);
     MemLogBuffer[MEM_LOG_INITIAL_SIZE-1] = PrevChar;
   } else {
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
+    Status = LogDataHub(gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
   }
   
 	return Status;

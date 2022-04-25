@@ -5208,7 +5208,7 @@ static unsigned addChunk_tRNS(ucvector* out, const LodePNGColorMode* info)
   if(info->colortype == LCT_PALETTE) {
     size_t amount = info->palettesize;
     /*the tail of palette values that all have 255 as alpha, does not have to be encoded*/
-    for(unsigned i = info->palettesize; i != 0; --i) {
+    for(size_t i = info->palettesize; i != 0; --i) {
       if(info->palette[4 * (i - 1) + 3] == 255) --amount;
       else break;
     }

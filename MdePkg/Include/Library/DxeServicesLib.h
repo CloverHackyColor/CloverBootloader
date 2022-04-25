@@ -107,7 +107,7 @@ GetSectionFromAnyFvByFileType  (
 EFI_STATUS
 EFIAPI
 GetSectionFromAnyFv  (
-  IN  CONST EFI_GUID                *NameGuid,
+  CONST_EFI_GUID_PTR_T              NameGuid,
   IN  EFI_SECTION_TYPE              SectionType,
   IN  UINTN                         SectionInstance,
   OUT VOID                          **Buffer,
@@ -162,7 +162,7 @@ GetSectionFromAnyFv  (
 EFI_STATUS
 EFIAPI
 GetSectionFromFv (
-  IN  CONST EFI_GUID                *NameGuid,
+  CONST_EFI_GUID_PTR_T              NameGuid,
   IN  EFI_SECTION_TYPE              SectionType,
   IN  UINTN                         SectionInstance,
   OUT VOID                          **Buffer,
@@ -293,7 +293,7 @@ GetFileBufferByFilePath (
 EFI_STATUS
 EFIAPI
 GetFileDevicePathFromAnyFv (
-  IN CONST  EFI_GUID                  *NameGuid,
+  CONST_EFI_GUID_PTR_T                NameGuid,
   IN        EFI_SECTION_TYPE          SectionType,
   IN        UINTN                     SectionInstance,
   OUT       EFI_DEVICE_PATH_PROTOCOL  **FvFileDevicePath

@@ -90,7 +90,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   PCI_TYPE00				Pci;
   UINT32					res;
 
-  Status = gBS->OpenProtocol(PciDt->DeviceHandle, &gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol(PciDt->DeviceHandle, gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)){
     DBG("pci_config_read cant open protocol\n");
     return 0;

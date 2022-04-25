@@ -95,7 +95,10 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
       if ( !Prop->isString() ) {
         MsgLog("ATTENTION : property not string in Root UUID\n");
       }else{
-        Status = StrToGuidBE(Prop->getString()->stringValue(), &Volume->RootUUID);
+//        Status = StrToGuidBE(Prop->getString()->stringValue(), &Volume->RootUUID);
+        Volume->RootUUID.takeValueFromBE(Prop->getString()->stringValue());
+        if ( Volume->RootUUID.isNull() ) Status = EFI_UNSUPPORTED;
+        else Status = EFI_SUCCESS;
       }
     }
 

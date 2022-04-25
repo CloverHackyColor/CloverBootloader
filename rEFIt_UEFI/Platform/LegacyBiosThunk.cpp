@@ -382,7 +382,7 @@ LegacyBiosFarCall86 (
     #endif
 
   // Save current rate of DXE Timer and disable DXE timer
-  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (void **) &Timer);
+  Status = gBS->LocateProtocol(gEfiTimerArchProtocolGuid, NULL, (void **) &Timer);
   if (!EFI_ERROR(Status)) {
     Timer->GetTimerPeriod (Timer, &TimerPeriod);
     Timer->SetTimerPeriod (Timer, 0);

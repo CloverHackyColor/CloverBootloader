@@ -48,7 +48,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_MM_INSTALL_CONFIGURATION_TABLE)(
   IN CONST EFI_MM_SYSTEM_TABLE    *SystemTable,
-  IN CONST EFI_GUID               *Guid,
+  CONST_EFI_GUID_PTR_T            Guid,
   IN VOID                         *Table,
   IN UINTN                        TableSize
   );
@@ -89,7 +89,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_MM_NOTIFY_FN)(
-  IN CONST EFI_GUID  *Protocol,
+  CONST_EFI_GUID_PTR_T Protocol,
   IN VOID            *Interface,
   IN EFI_HANDLE      Handle
   );
@@ -115,7 +115,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_MM_REGISTER_PROTOCOL_NOTIFY)(
-  IN  CONST EFI_GUID     *Protocol,
+  CONST_EFI_GUID_PTR_T   Protocol,
   IN  EFI_MM_NOTIFY_FN   Function,
   OUT VOID               **Registration
   );
@@ -136,7 +136,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_MM_INTERRUPT_MANAGE)(
-  IN CONST EFI_GUID  *HandlerType,
+  CONST_EFI_GUID_PTR_T HandlerType,
   IN CONST VOID      *Context         OPTIONAL,
   IN OUT VOID        *CommBuffer      OPTIONAL,
   IN OUT UINTN       *CommBufferSize  OPTIONAL

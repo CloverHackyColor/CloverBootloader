@@ -389,7 +389,7 @@ EFI_STATUS
 (EFIAPI * EFI_HII_GET_ALT_CFG)(
   IN  CONST EFI_HII_CONFIG_ROUTING_PROTOCOL    *This,
   IN  CONST EFI_STRING                         ConfigResp,
-  IN  CONST EFI_GUID                           *Guid,
+  CONST_EFI_GUID_PTR_T                         Guid,
   IN  CONST EFI_STRING                         Name,
   IN  CONST EFI_DEVICE_PATH_PROTOCOL           *DevicePath,
   IN  CONST UINT16                             *AltCfgId,

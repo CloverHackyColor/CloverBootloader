@@ -1675,7 +1675,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, void* rom, UINT16 arch)
   UINT32 old_bar0_pramin = 0;
 
   DBG("read_nVidia_ROM\n");
-  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
@@ -1758,7 +1758,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, void* rom)
 
   DBG("PROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle,
-                             &gEfiPciIoProtocolGuid,
+                             gEfiPciIoProtocolGuid,
                              (void**)&PciIo,
                              gImageHandle,
                              NULL,

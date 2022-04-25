@@ -52,9 +52,6 @@ extern UINTN EmbeddedSoundLength;
 #endif
 
 
-//EFI_GUID gBootChimeVendorVariableGuid = {0x89D4F995, 0x67E3, 0x4895, { 0x8F, 0x18, 0x45, 0x4B, 0x65, 0x1D, 0x92, 0x15 }};
-
-extern EFI_GUID gBootChimeVendorVariableGuid;
 
 EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
 
@@ -277,10 +274,10 @@ GetStoredOutput()
   }
 	DBG("found %llu handles with audio\n", AudioIoHandleCount);
   // Get stored device path size. First from AppleBootGuid
-  StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
+  StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(L"Clover.SoundDevice", gEfiAppleBootGuid, NULL, &StoredDevicePathSize);
   if (!StoredDevicePath) {
     // second attempt with BootChimeGuid
-    StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(BOOT_CHIME_VAR_DEVICE, &gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
+    StoredDevicePath = (__typeof__(StoredDevicePath))GetNvramVariable(BOOT_CHIME_VAR_DEVICE, gBootChimeVendorVariableGuid, NULL, &StoredDevicePathSize);
     if (!StoredDevicePath) {
       MsgLog("No AudioIoDevice stored\n");
       Status = EFI_NOT_FOUND;
@@ -327,10 +324,10 @@ GetStoredOutput()
 
   // Get stored device index.
   OutputPortIndex = 0;
-  Status = gRT->GetVariable(L"Clover.SoundIndex", &gEfiAppleBootGuid, NULL,
+  Status = gRT->GetVariable(L"Clover.SoundIndex", gEfiAppleBootGuid, NULL,
                             &OutputPortIndexSize, &OutputPortIndex);
   if (EFI_ERROR(Status)) {
-    Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
+    Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, gBootChimeVendorVariableGuid, NULL,
                               &OutputPortIndexSize, &OutputPortIndex);
     if (EFI_ERROR(Status)) {
       MsgLog("Bad output index, status=%s, set 0\n", efiStrError(Status));
@@ -345,10 +342,10 @@ GetStoredOutput()
   }
   // Get stored volume. If this fails, just use the max.
   OutputVolume = DefaultAudioVolume;
-  Status = gRT->GetVariable(L"Clover.SoundVolume", &gEfiAppleBootGuid, NULL,
+  Status = gRT->GetVariable(L"Clover.SoundVolume", gEfiAppleBootGuid, NULL,
                             &OutputVolumeSize, &OutputVolume);
   if (EFI_ERROR(Status)) {
-    Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, &gBootChimeVendorVariableGuid, NULL,
+    Status = gRT->GetVariable(BOOT_CHIME_VAR_VOLUME, gBootChimeVendorVariableGuid, NULL,
                               &OutputVolumeSize, &OutputVolume);
     if (EFI_ERROR(Status)) {
       OutputVolume = DefaultAudioVolume; //EFI_AUDIO_IO_PROTOCOL_MAX_VOLUME;

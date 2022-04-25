@@ -355,7 +355,7 @@ GetBootOrder (
   //
   // Get gEfiGlobalVariableGuid:BootOrder and it's length
   //
-  *BootOrder = (__typeof_am__(*BootOrder))GetNvramVariable(BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  *BootOrder = (__typeof_am__(*BootOrder))GetNvramVariable(BOOT_ORDER_VAR, gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (*BootOrder == NULL) {
     DBG(" EFI_NOT_FOUND\n");
     return EFI_NOT_FOUND;
@@ -429,7 +429,7 @@ AddToBootOrder (
   // Save it
   //
   Status = gRT->SetVariable (BOOT_ORDER_VAR,
-                             &gEfiGlobalVariableGuid,
+                             gEfiGlobalVariableGuid,
                              EFI_VARIABLE_NON_VOLATILE
                              | EFI_VARIABLE_BOOTSERVICE_ACCESS
                              | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -499,7 +499,7 @@ DeleteFromBootOrder (
     // Save it
     //
     Status = gRT->SetVariable (BOOT_ORDER_VAR,
-                               &gEfiGlobalVariableGuid,
+                               gEfiGlobalVariableGuid,
                                EFI_VARIABLE_NON_VOLATILE
                                | EFI_VARIABLE_BOOTSERVICE_ACCESS
                                | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -697,7 +697,7 @@ GetBootOption (
   BootOption->BootNum = BootNum;
 	snwprintf(VarName, sizeof(VarName), "Boot%04hX", BootNum);
 
-  BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable(VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
+  BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable(VarName, gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
   if (BootOption->Variable == NULL) {
     return EFI_NOT_FOUND;
   }
@@ -724,7 +724,7 @@ FindFreeBootNum (
   for (Index = 0; Index <= 0xFFFF; Index++) {
 	  snwprintf(VarName, sizeof(VarName), "Boot%04llX", Index);
     VarSize = 0;
-    Status = gRT->GetVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize, NULL);
+    Status = gRT->GetVariable (VarName, gEfiGlobalVariableGuid, NULL, &VarSize, NULL);
     if (Status == EFI_NOT_FOUND) {
       *BootNum = (UINT16)Index;
       return EFI_SUCCESS;
@@ -959,7 +959,7 @@ AddBootOption (
   // Save BootXXXX var
   //
   Status = gRT->SetVariable (VarName,
-                             &gEfiGlobalVariableGuid,
+                             gEfiGlobalVariableGuid,
                              EFI_VARIABLE_NON_VOLATILE
                              | EFI_VARIABLE_BOOTSERVICE_ACCESS
                              | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -1076,7 +1076,7 @@ DeleteBootOption (
   // Delete BootXXXX var
   //
   Status = gRT->SetVariable (VarName,
-                             &gEfiGlobalVariableGuid,
+                             gEfiGlobalVariableGuid,
                              0,
                              0,
                              NULL

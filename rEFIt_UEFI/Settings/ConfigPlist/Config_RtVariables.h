@@ -22,7 +22,7 @@ public:
           using super = XmlString8AllowEmpty;
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
-            if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid GUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            if ( !EFI_GUID::IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid GUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
             return b;
           }
         };
@@ -31,12 +31,12 @@ public:
         XmlBool Disabled = XmlBool();
         XmlStringW Name = XmlStringW();
       public:
-        GuidClass Guid = GuidClass();
+        GuidClass GuidString = GuidClass();
 
         XmlDictField m_fields[4] = {
           {"Comment", Comment},
           {"Disabled", Disabled},
-          {"Guid", Guid},
+          {"Guid", GuidString},
           {"Name", Name},
         };
 
@@ -47,11 +47,12 @@ public:
         const decltype(Disabled)::ValueType& dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : Disabled.nullValue; };
         uint8_t dgetBValue() const { return Disabled.isDefined() ? Disabled.value() : Disabled.nullValue; };
         const EFI_GUID dgetGuid() const {
+          if ( GuidString.isDefined() ) {
+//            EFI_STATUS Status = StrToGuidBE(Guid.value(), &efiGuid);
+//            if ( EFI_ERROR(Status) ) panic("StrToGuidBE failed. This could not happen because Guid is checked to be valid. Did you comment out the field validation ?");
           EFI_GUID efiGuid;
-          EFI_STATUS Status;
-          if ( Guid.isDefined() ) {
-            Status = StrToGuidBE(Guid.value(), &efiGuid);
-            if ( EFI_ERROR(Status) ) panic("StrToGuidBE failed. This could not happen because Guid is checked to be valid. Did you comment out the field validation ?");
+            efiGuid.takeValueFromBE(GuidString.value());
+            if ( efiGuid.isNull() ) panic("StrToGuidBE failed. This could not happen because Guid is checked to be valid. Did you comment out the field validation ?");
             return efiGuid;
           }
           return nullGuid;

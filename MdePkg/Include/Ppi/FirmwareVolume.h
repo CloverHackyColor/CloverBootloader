@@ -114,7 +114,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_PEI_FV_FIND_FILE_NAME)(
   IN  CONST  EFI_PEI_FIRMWARE_VOLUME_PPI *This,
-  IN  CONST  EFI_GUID                    *FileName,
+  CONST_EFI_GUID_PTR_T                    FileName,
   IN  EFI_PEI_FV_HANDLE                  *FvHandle,
   OUT EFI_PEI_FILE_HANDLE                *FileHandle
 );

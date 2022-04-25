@@ -49,9 +49,13 @@
 		9A2755302639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755312639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2A7C7324576CCE00422263 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A39C8B02816BB24004B3DCE /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
+		9A39C8B32816BFA9004B3DCE /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */; };
+		9A39C8B42816BFA9004B3DCE /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */; };
+		9A39C8B52816BFA9004B3DCE /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */; };
+		9A39C8B62816BFA9004B3DCE /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */; };
 		9A3D2C57261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
-		9A3D2C59261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C5A261855D000F0D7A1 /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */; };
 		9A3D2C5F261855D000F0D7A1 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4E261855D000F0D7A1 /* abort.cpp */; };
 		9A3D2C60261855D000F0D7A1 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D2C4E261855D000F0D7A1 /* abort.cpp */; };
@@ -335,6 +339,11 @@
 		9A2755042639A1FA0095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
 		9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistAbstract.cpp; sourceTree = "<group>"; };
 		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guid_tests.cpp; sourceTree = "<group>"; };
+		9A39C8B22816BFA9004B3DCE /* guid_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guid_tests.h; sourceTree = "<group>"; };
+		9A39C8B72816C56E004B3DCE /* remove_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = remove_ref.h; sourceTree = "<group>"; };
+		9A39C8B82816C56E004B3DCE /* Net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Net.h; sourceTree = "<group>"; };
+		9A39C8B92816C56E004B3DCE /* Guid++.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Guid++.h"; sourceTree = "<group>"; };
 		9A3D2C4B261855D000F0D7A1 /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		9A3D2C4E261855D000F0D7A1 /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
 		9A3D2C4F261855D000F0D7A1 /* posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
@@ -12790,6 +12799,8 @@
 		9A82FCA726184686006F973B /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */,
+				9A39C8B22816BFA9004B3DCE /* guid_tests.h */,
 				9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */,
 				9A071C2926196CA40007CC44 /* xml_lite-reapeatingdict-test.h */,
 				9A82FCC526184686006F973B /* all_tests.cpp */,
@@ -12841,6 +12852,9 @@
 		9A82FCDC26184686006F973B /* include */ = {
 			isa = PBXGroup;
 			children = (
+				9A39C8B92816C56E004B3DCE /* Guid++.h */,
+				9A39C8B82816C56E004B3DCE /* Net.h */,
+				9A39C8B72816C56E004B3DCE /* remove_ref.h */,
 				9A82FCDD26184686006F973B /* Devices.h */,
 				9A82FCDF26184686006F973B /* syslinux_mbr.h */,
 				9A82FCE126184686006F973B /* rename_helper.h */,
@@ -13406,6 +13420,7 @@
 				9A071C0D26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6626184688006F973B /* XArray_tests.cpp in Sources */,
 				9A3D2C58261855D000F0D7A1 /* BootLog.cpp in Sources */,
+				9A39C8B52816BFA9004B3DCE /* guid_tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13479,6 +13494,7 @@
 				9A071C0E26196C210007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6826184688006F973B /* XArray_tests.cpp in Sources */,
 				9A3D2C5A261855D000F0D7A1 /* BootLog.cpp in Sources */,
+				9A39C8B62816BFA9004B3DCE /* guid_tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13486,6 +13502,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A39C8B02816BB24004B3DCE /* BootLog.cpp in Sources */,
 				9A87876C26186302000B9362 /* BaseMemoryLib.c in Sources */,
 				9A8200AF26184688006F973B /* XString.cpp in Sources */,
 				9A82FEA326184688006F973B /* TagDict.cpp in Sources */,
@@ -13551,7 +13568,7 @@
 				9A82FEB726184688006F973B /* TagBool.cpp in Sources */,
 				9A071C0C26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A82FE6726184688006F973B /* XArray_tests.cpp in Sources */,
-				9A3D2C59261855D000F0D7A1 /* BootLog.cpp in Sources */,
+				9A39C8B42816BFA9004B3DCE /* guid_tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13625,6 +13642,7 @@
 				9A071C0B26196C200007CC44 /* xml_lite-test.cpp in Sources */,
 				9A8200AD26184688006F973B /* XString.cpp in Sources */,
 				9A3D2C63261855D000F0D7A1 /* BasicIO.cpp in Sources */,
+				9A39C8B32816BFA9004B3DCE /* guid_tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

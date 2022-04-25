@@ -20,6 +20,7 @@
 #include "../../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
 #include <IndustryStandard/SmBios.h> // for Smbios memory type
 #include "../../Platform/guid.h"
+#include "../../include/Guid++.h"
 #include "../../Platform/platformdata.h"
 #include "../../Platform/smbios.h"
 #include "../../Platform/VersionString.h" // for AsciiStrVersionToUint64
@@ -363,7 +364,7 @@ public:
         protected:
           virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
             bool b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
-            if ( !IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
+            if ( !EFI_GUID::IsValidGuidString(xstring8) ) b = xmlLiteParser->addWarning(generateErrors, S8Printf("Invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX in dict '%s:%d'", xstring8.c_str(), xmlPath.c_str(), keyPos.getLine()));
             return b;
           }
       };
@@ -667,7 +668,13 @@ public:
       return ApplePlatformDataArray[dgetModel()].serialNumber;
     };
 
-    decltype(SmUUID)::ValueType dgetSmUUID() const { return SmUUID.isDefined() ? SmUUID.value() : nullGuidAsString; };
+    EFI_GUID dgetSmUUID() const {
+      if ( !SmUUID.isDefined() ) return nullGuid;
+      EFI_GUID g;
+      g.takeValueFrom(SmUUID.value());
+      if ( g.isNull() ) panic("SmUUID is not valid. This could not happen because SmUUID is checked to be valid. Did you comment out the validation ?");
+      return g;
+    }
 
     decltype(Family)::ValueType dgetFamilyName() const {
       if ( Family.isDefined() ) return Family.value();

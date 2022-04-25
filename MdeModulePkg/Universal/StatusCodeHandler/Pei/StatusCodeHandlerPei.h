@@ -61,7 +61,7 @@ SerialStatusCodeReportWorker (
   IN EFI_STATUS_CODE_TYPE           CodeType,
   IN EFI_STATUS_CODE_VALUE          Value,
   IN UINT32                         Instance,
-  IN CONST EFI_GUID                 *CallerId,
+  CONST_EFI_GUID_PTR_T              CallerId,
   IN CONST EFI_STATUS_CODE_DATA     *Data OPTIONAL
   );
 
@@ -110,7 +110,7 @@ MemoryStatusCodeReportWorker (
   IN EFI_STATUS_CODE_TYPE       CodeType,
   IN EFI_STATUS_CODE_VALUE      Value,
   IN UINT32                     Instance,
-  IN CONST EFI_GUID             *CallerId,
+  CONST_EFI_GUID_PTR_T          CallerId,
   IN CONST EFI_STATUS_CODE_DATA *Data OPTIONAL
   );
 

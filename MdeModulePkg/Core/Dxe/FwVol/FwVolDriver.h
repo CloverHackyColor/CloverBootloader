@@ -184,7 +184,7 @@ EFI_STATUS
 EFIAPI
 FvReadFile (
   IN CONST EFI_FIRMWARE_VOLUME2_PROTOCOL *This,
-  IN CONST EFI_GUID                      *NameGuid,
+  CONST_EFI_GUID_PTR_T                   NameGuid,
   IN OUT   VOID                          **Buffer,
   IN OUT   UINTN                         *BufferSize,
   OUT      EFI_FV_FILETYPE               *FoundType,
@@ -225,7 +225,7 @@ EFI_STATUS
 EFIAPI
 FvReadFileSection (
   IN CONST  EFI_FIRMWARE_VOLUME2_PROTOCOL  *This,
-  IN CONST  EFI_GUID                       *NameGuid,
+  CONST_EFI_GUID_PTR_T                     NameGuid,
   IN        EFI_SECTION_TYPE               SectionType,
   IN        UINTN                          SectionInstance,
   IN OUT    VOID                           **Buffer,
@@ -282,7 +282,7 @@ EFI_STATUS
 EFIAPI
 FvGetVolumeInfo (
   IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
+  CONST_EFI_GUID_PTR_T                          InformationType,
   IN OUT UINTN                                  *BufferSize,
   OUT VOID                                      *Buffer
   );
@@ -306,7 +306,7 @@ EFI_STATUS
 EFIAPI
 FvSetVolumeInfo (
   IN  CONST EFI_FIRMWARE_VOLUME2_PROTOCOL       *This,
-  IN  CONST EFI_GUID                            *InformationType,
+  CONST_EFI_GUID_PTR_T                          InformationType,
   IN  UINTN                                     BufferSize,
   IN CONST  VOID                                *Buffer
   );

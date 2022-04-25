@@ -65,7 +65,7 @@ PeiServicesReInstallPpi (
 EFI_STATUS
 EFIAPI
 PeiServicesLocatePpi (
-  IN CONST EFI_GUID                   *Guid,
+  CONST_EFI_GUID_PTR_T          Guid,
   IN UINTN                      Instance,
   IN OUT EFI_PEI_PPI_DESCRIPTOR **PpiDescriptor, OPTIONAL
   IN OUT VOID                   **Ppi
@@ -354,7 +354,7 @@ PeiServicesResetSystem (
 EFI_STATUS
 EFIAPI
 PeiServicesFfsFindFileByName (
-  IN CONST  EFI_GUID            *FileName,
+  CONST_EFI_GUID_PTR_T          FileName,
   IN CONST  EFI_PEI_FV_HANDLE   VolumeHandle,
   OUT       EFI_PEI_FILE_HANDLE *FileHandle
   );

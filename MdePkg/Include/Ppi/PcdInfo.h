@@ -61,7 +61,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *GET_PCD_INFO_PPI_GET_INFO_EX) (
-  IN CONST  EFI_GUID        *Guid,
+  CONST_EFI_GUID_PTR_T      Guid,
   IN        UINTN           TokenNumber,
   OUT       EFI_PCD_INFO    *PcdInfo
 );

@@ -215,6 +215,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   #define PACKED
 #endif
 
+#ifndef GUID_PLUSPLUS_DEFINED
 ///
 /// 128 bit buffer containing a unique identifier value.
 /// Unless otherwise specified, aligned on a 64 bit boundary.
@@ -225,6 +226,11 @@ typedef struct {
   UINT16  Data3;
   UINT8   Data4[8];
 } GUID;
+
+#define CONST_EFI_GUID_PTR_T  IN CONST EFI_GUID*
+#define JCONST_EFI_GUID_PTR_T  IN JCONST EFI_GUID*
+
+#endif
 
 ///
 /// 4-byte buffer. An IPv4 internet protocol address.

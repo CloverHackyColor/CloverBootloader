@@ -598,7 +598,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     DBG("\n");
 #endif
   
-  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString8 if it's not an APFS volume
+  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtract(Volume->DevicePath); // NullXString8 if it's not an APFS volume
   Volume->DiskKind = DISK_KIND_INTERNAL;  // default
   
   // get block i/o
@@ -661,7 +661,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
           DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
   //              DBG("        Vendor volume\n");
-        if ( Volume->ApfsFileSystemUUID.isEmpty() ) {
+        if ( Volume->ApfsFileSystemUUID.isNull() ) {
           Volume->DiskKind = DISK_KIND_NODISK; // Jief, don't know why DISK_KIND_NODISK in that case. That prevents Recovery badge to appear. If it's not APFS, let's do it like it was before.
         }
         break;
@@ -694,7 +694,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
      DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
      Volume->IsAppleLegacy = true;             // legacy BIOS device entry
-     // TODO: also check for Boot Camp GUID
+     // TODO: also check for Boot Camp EFI_GUID
      //gEfiPartTypeSystemPartGuid
      Bootable = false;   // this handle's BlockIO is just an alias for the whole device
      DBG("AppleLegacy device\n");
@@ -793,20 +793,20 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     return EFI_SUCCESS;
   }
   
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
+  if ( Volume->ApfsFileSystemUUID.notNull() ) {
     APPLE_APFS_CONTAINER_INFO       *ApfsContainerInfo;
     APPLE_APFS_VOLUME_INFO          *ApfsVolumeInfo;
     Status = InternalGetApfsSpecialFileInfo(Volume->RootDir, &ApfsVolumeInfo, &ApfsContainerInfo);
     if ( !EFI_ERROR(Status) ) {
       //DBG("Status : %s, APFS role : %x\n", efiStrError(Status), ApfsVolumeInfo->Role);
       Volume->ApfsRole = ApfsVolumeInfo->Role;
-      Volume->ApfsContainerUUID = GuidLEToXString8(ApfsContainerInfo->Uuid);
+      Volume->ApfsContainerUUID = ApfsContainerInfo->Uuid;
     }else{
       MsgLog("Status : %s, APFS role : %x\n", efiStrError(Status), ApfsVolumeInfo->Role);
     }
   }
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
-    DBG("          apfsFileSystemUUID=%s, ApfsContainerUUID=%s, ApfsRole=0x%x\n", Volume->ApfsFileSystemUUID.c_str(), Volume->ApfsContainerUUID.c_str(), Volume->ApfsRole);
+  if ( Volume->ApfsFileSystemUUID.notNull() ) {
+    DBG("          apfsFileSystemUUID=%s, ApfsContainerUUID=%s, ApfsRole=0x%x\n", Volume->ApfsFileSystemUUID.toXString8().c_str(), Volume->ApfsContainerUUID.toXString8().c_str(), Volume->ApfsRole);
   }
 
 
@@ -872,7 +872,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
 
   // Browse all folders under root that looks like an UUID
-  if ( Volume->ApfsFileSystemUUID.notEmpty() )
+  if ( Volume->ApfsFileSystemUUID.notNull() )
   {
 
 		REFIT_DIR_ITER  DirIter;
@@ -883,8 +883,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
         continue;
 		  }
-		  if ( IsValidGuidString(LStringW(DirEntry->FileName)) ) {
-			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
+		  if ( EFI_GUID::IsValidGuidString(LStringW(DirEntry->FileName)) ) {
+        EFI_GUID* guid_ptr = new EFI_GUID;
+        guid_ptr->takeValueFrom(DirEntry->FileName, wcslen(DirEntry->FileName));
+        if ( guid_ptr->notNull() ) Volume->ApfsTargetUUIDArray.AddReference(guid_ptr, true);
+        else delete guid_ptr;
 		  }
 		}
 		DirIterClose(&DirIter);
@@ -1013,8 +1016,8 @@ void ScanVolumes(void)
       if (Volume->LegacyOS->IconName.isEmpty()) {
         Volume->LegacyOS->IconName = L"legacy"_XSW;
       }
-//      DBG("  Volume '%ls', LegacyOS '%ls', LegacyIcon(s) '%ls', GUID = %s\n",
-//          Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, strguid(Guid));
+//      DBG("  Volume '%ls', LegacyOS '%ls', LegacyIcon(s) '%ls', EFI_GUID = %s\n",
+//          Volume->VolName, Volume->LegacyOS->Name ? Volume->LegacyOS->Name : L"", Volume->LegacyOS->IconName, Guid.toXString8().c_str());
       if (SelfVolume == Volume) {
         DBG("        This is SelfVolume !!\n");
       }
@@ -1437,13 +1440,13 @@ InitializeUnicodeCollationProtocol (void)
 	// Current implementation just pick the first instance.
 	//
 	Status = gBS->LocateProtocol (
-                                &gEfiUnicodeCollation2ProtocolGuid,
+                                gEfiUnicodeCollation2ProtocolGuid,
                                 NULL,
                                 (void **) &mUnicodeCollation
                                 );
   if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol (
-                                  &gEfiUnicodeCollationProtocolGuid,
+                                  gEfiUnicodeCollationProtocolGuid,
                                   NULL,
                                   (void **) &mUnicodeCollation
                                   );
@@ -1591,7 +1594,7 @@ XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return NullXStringW;
 }
 
-XBool DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
+XBool DumpVariable(CHAR16* Name, const EFI_GUID& Guid, INTN DevicePathAt)
 {
   UINTN                     dataSize            = 0;
   UINT8                     *data               = NULL;

@@ -12,6 +12,6 @@
 // This doesn't compile if compile under posix without all EFI sdk. It's the case for compiling the validator
 // It's 2 EFI "utils" that probably shouldn't be here and 
 const char* efiStrError(EFI_STATUS errnum);
-const char* strguid(EFI_GUID* guid);
+//const char* strguid(EFI_GUID* guid);
 
 #endif /* PLATFORM_POSIX_POSIX_ADDITIONS_H_ */

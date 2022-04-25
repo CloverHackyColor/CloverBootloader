@@ -13,8 +13,10 @@
 //}
 //#endif
 
-bool stop_at_panic = true;
-bool i_have_panicked = false;
+#ifdef PANIC_CAN_RETURN
+  bool stop_at_panic = true;
+  bool i_have_panicked = false;
+#endif
 
 /*
  *
@@ -37,6 +39,9 @@ static void panic_(const char* format, VA_LIST va)
   abort();
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-noreturn"
+
 void panic(const char* format, ...)
 {
 #ifdef PANIC_CAN_RETURN
@@ -54,6 +59,7 @@ void panic(const char* format, ...)
   panic_(format, va); // panic doesn't return
 #endif
 }
+#pragma clang diagnostic pop
 
 /*
  * Future version to warn about problem but offer the possibility to try to continue

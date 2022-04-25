@@ -15,8 +15,7 @@ extern "C" {
 #include <Uefi/UefiBaseType.h>
 
 const char* efiStrError(EFI_STATUS errnum);
-const char* strguid(EFI_GUID* guid);
-
+//const char* strguid(EFI_GUID* guid);
 
 #ifdef __cplusplus
 }

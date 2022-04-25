@@ -57,48 +57,26 @@ public:
   virtual void sprintf(unsigned int ident, XString8* s) const = 0;
   void printf(unsigned int ident) const;
   virtual void printf() const { printf(0); }
-#ifdef JIEF_DEBUG
-  virtual const TagDict* getDict() const { panic("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagKey* getKey() const { panic("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagString* getString() const { panic("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagInt64* getInt64() const { panic("getInt64() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagFloat* getFloat() const { panic("getFloat() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagBool* getBool() const { panic("getBool() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagData* getData() const { panic("getData() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagDate* getDate() const { panic("getDate() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual const TagArray* getArray() const { panic("getArray() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
 
-  virtual TagDict* getDict() { panic("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagKey* getKey() { panic("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagString* getString() { panic("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagInt64* getInt64() { panic("getInt64() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagFloat* getFloat() { panic("getFloat() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagBool* getBool() { panic("getBool() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagData* getData() { panic("getData() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagDate* getDate() { panic("getDate() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-  virtual TagArray* getArray() { panic("getArray() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
-#else
-  virtual const TagDict* getDict() const { return NULL; }
-  virtual const TagKey* getKey() const { return NULL;}
-  virtual const TagString* getString() const { return NULL; }
-  virtual const TagInt64* getInt64() const { return NULL; }
-  virtual const TagFloat* getFloat() const { return NULL; }
-  virtual const TagBool* getBool() const { return NULL; }
-  virtual const TagData* getData() const { return NULL; }
-  virtual const TagDate* getDate() const { return NULL; }
-  virtual const TagArray* getArray() const { return NULL; }
-  
-  virtual TagDict* getDict() { return NULL; }
-  virtual TagKey* getKey() { return NULL; }
-  virtual TagString* getString() { return NULL; }
-  virtual TagInt64* getInt64() { return NULL; }
-  virtual TagFloat* getFloat() { return NULL; }
-  virtual TagBool* getBool() { return NULL; }
-  virtual TagData* getData() { return NULL; }
-  virtual TagDate* getDate() { return NULL; }
-  virtual TagArray* getArray() { return NULL; }
+  virtual const TagDict* getDict() const { panic("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagKey* getKey() const { log_technical_bug("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagString* getString() const { log_technical_bug("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagInt64* getInt64() const { log_technical_bug("getInt64() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagFloat* getFloat() const { log_technical_bug("getFloat() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagBool* getBool() const { log_technical_bug("getBool() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagData* getData() const { log_technical_bug("getData() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagDate* getDate() const { log_technical_bug("getDate() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual const TagArray* getArray() const { log_technical_bug("getArray() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
 
-#endif
+  virtual TagDict* getDict() { log_technical_bug("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagKey* getKey() { log_technical_bug("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagString* getString() { log_technical_bug("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagInt64* getInt64() { log_technical_bug("getInt64() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagFloat* getFloat() { log_technical_bug("getFloat() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagBool* getBool() { log_technical_bug("getBool() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagData* getData() { log_technical_bug("getData() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagDate* getDate() { log_technical_bug("getDate() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
+  virtual TagArray* getArray() { log_technical_bug("getArray() called on a tag of type %s.", this->getTypeAsXString8().c_str()); return NULL; }
 
   virtual XBool isDict() const { return false; }
   virtual XBool isKey() const { return false; }

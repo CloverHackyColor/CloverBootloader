@@ -73,6 +73,8 @@
 #  cpp_unit_test/find_replace_mask_OC_tests.h
 #  cpp_unit_test/global_test.cpp
 #  cpp_unit_test/global_test.h
+#  cpp_unit_test/guid_tests.cpp
+#  cpp_unit_test/guid_tests.h
 #  cpp_unit_test/LoadOptions_test.cpp
 #  cpp_unit_test/LoadOptions_test.h
 #  cpp_unit_test/MacOsVersion_test.cpp
@@ -159,7 +161,6 @@
   include/VolumeTypes.h
   libeg/BmLib.cpp
   libeg/BmLib.h
-  libeg/EfiFileLib.h
   libeg/egemb_font.cpp
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
@@ -264,6 +265,7 @@
   Platform/Nvram.h
   Platform/platformdata.cpp
   Platform/platformdata.h
+  Platform/PlatformdataModels.h
   Platform/PlatformDriverOverride.cpp
   Platform/PlatformDriverOverride.h
   Platform/plist/base64.cpp
@@ -397,12 +399,12 @@
 
 [Packages]
   CloverPkg.dec
-  OpenCorePkg/OpenCorePkg.dec
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
 #  Library/OpensslLib/openssl-1.0.1e/OpensslLib.dec
+  OpenCorePkg/OpenCorePkg.dec # put this at this end of Packages list to avoid conflict with some includes
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -533,7 +535,9 @@
   gEfiAudioIoProtocolGuid # CONSUMES
   gOcQuirksProtocolGuid
   gAptioMemoryFixProtocolGuid
-  
+
+  gAppleSMCProtocolGuid
+
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 

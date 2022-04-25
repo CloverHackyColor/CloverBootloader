@@ -45,6 +45,6 @@ Headers collection for procedures
 
 
 // Jief : temporary rename
-#define AllocateZeroPool AllocateZeroPool
+//#define AllocateZeroPool AllocateZeroPool
 
 #endif

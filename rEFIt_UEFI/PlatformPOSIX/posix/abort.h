@@ -9,8 +9,10 @@
 #define bool unsigned char
 #endif
 
-extern bool stop_at_panic;
-extern bool i_have_panicked;
+#ifdef PANIC_CAN_RETURN
+  extern bool stop_at_panic;
+  extern bool i_have_panicked;
+#endif
 
 #ifdef __cplusplus // C cannot accept 2 functions with same name and different parameters.
 #if !defined(PANIC_CAN_RETURN) && defined(_MSC_VER)
@@ -51,12 +53,14 @@ void log_technical_bug(const char* format, ...) __attribute__((__format__(__prin
 void _assert(bool b, const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
 
 #ifdef __cplusplus
+#ifdef PANIC_CAN_RETURN
 class DontStopAtPanic
 {
   public:
 	DontStopAtPanic() { stop_at_panic = false; i_have_panicked = false; }
 	~DontStopAtPanic() { stop_at_panic = true; i_have_panicked = false; }
 };
+#endif
 #endif
 
 #endif

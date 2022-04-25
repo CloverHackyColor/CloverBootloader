@@ -59,7 +59,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HII_DATABASE_NOTIFY)(
   IN        UINT8                         PackageType,
-  IN CONST  EFI_GUID                      *PackageGuid,
+  CONST_EFI_GUID_PTR_T                    PackageGuid,
   IN CONST  EFI_HII_PACKAGE_HEADER        *Package,
   IN        EFI_HII_HANDLE                 Handle,
   IN        EFI_HII_DATABASE_NOTIFY_TYPE  NotifyType
@@ -232,7 +232,7 @@ EFI_STATUS
 (EFIAPI *EFI_HII_DATABASE_LIST_PACKS)(
   IN CONST  EFI_HII_DATABASE_PROTOCOL *This,
   IN        UINT8                     PackageType,
-  IN CONST  EFI_GUID                  *PackageGuid,
+  CONST_EFI_GUID_PTR_T                PackageGuid,
   IN OUT    UINTN                     *HandleBufferLength,
   OUT       EFI_HII_HANDLE            *Handle
 );
@@ -344,7 +344,7 @@ EFI_STATUS
 (EFIAPI *EFI_HII_DATABASE_REGISTER_NOTIFY)(
   IN CONST  EFI_HII_DATABASE_PROTOCOL     *This,
   IN        UINT8                         PackageType,
-  IN CONST  EFI_GUID                      *PackageGuid,
+  CONST_EFI_GUID_PTR_T                    PackageGuid,
   IN        EFI_HII_DATABASE_NOTIFY       PackageNotifyFn,
   IN        EFI_HII_DATABASE_NOTIFY_TYPE  NotifyType,
   OUT       EFI_HANDLE                    *NotifyHandle
@@ -445,7 +445,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HII_GET_KEYBOARD_LAYOUT)(
   IN CONST  EFI_HII_DATABASE_PROTOCOL *This,
-  IN CONST  EFI_GUID                  *KeyGuid,
+  CONST_EFI_GUID_PTR_T                 KeyGuid,
   IN OUT UINT16                       *KeyboardLayoutLength,
   OUT       EFI_HII_KEYBOARD_LAYOUT   *KeyboardLayout
 );
@@ -474,7 +474,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_HII_SET_KEYBOARD_LAYOUT)(
   IN CONST  EFI_HII_DATABASE_PROTOCOL *This,
-  IN CONST  EFI_GUID                  *KeyGuid
+  CONST_EFI_GUID_PTR_T                 KeyGuid
 );
 
 /**

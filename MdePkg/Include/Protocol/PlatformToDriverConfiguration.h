@@ -262,7 +262,7 @@ EFI_STATUS
   IN CONST  EFI_HANDLE  ControllerHandle,
   IN CONST  EFI_HANDLE  ChildHandle OPTIONAL,
   IN CONST  UINTN       *Instance,
-  IN CONST  EFI_GUID    *ParameterTypeGuid,
+  CONST_EFI_GUID_PTR_T  ParameterTypeGuid,
   IN CONST  VOID        *ParameterBlock,
   IN CONST  UINTN       ParameterBlockSize ,
   IN CONST  EFI_PLATFORM_CONFIGURATION_ACTION ConfigurationAction

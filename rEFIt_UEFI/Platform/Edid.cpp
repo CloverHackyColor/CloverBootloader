@@ -67,7 +67,7 @@ UINT8* getCurrentEdid (void)
   
   DBG("EdidActive:");
   Edid = NULL;
-  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (void**)&EdidProtocol);
+  Status = gBS->LocateProtocol(gEfiEdidActiveProtocolGuid, NULL, (void**)&EdidProtocol);
   if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
@@ -112,7 +112,7 @@ EFI_STATUS GetEdidDiscovered(void)
     N = gSettings.Graphics.EDID.CustomEDID.size();
     DebugDumpEDID("--- Custom EDID Table", N);
   } else {
-    Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (void **)&EdidDiscovered);
+    Status = gBS->LocateProtocol(gEfiEdidDiscoveredProtocolGuid, NULL, (void **)&EdidDiscovered);
     if (!EFI_ERROR(Status)) { //discovered
       N = EdidDiscovered->SizeOfEdid;
       if (!gSettings.Boot.DebugLog) {

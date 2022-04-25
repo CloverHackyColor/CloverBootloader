@@ -36,9 +36,6 @@
 #endif
 
 
-extern EFI_GUID gEfiDevicePathPropertyDatabaseProtocolGuid;
-extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
-
 UINT32 mPropSize = 0;
 UINT8* mProperties = NULL;
 CHAR8* gDeviceProperties = NULL;
@@ -241,7 +238,6 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 // OS_INFO_VENDOR_NAME
 #define OS_INFO_VENDOR_NAME  "Apple Inc."
 
-extern EFI_GUID gAppleOSLoadedNamedEventGuid;
 // OSInfoOSNameImpl
 void
 EFIAPI
@@ -254,7 +250,7 @@ OSInfoOSNameImpl (
   // as it will be set by boot.efi
   BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (void*)OSName);
   DBG("OSInfo:OSName called. OSName=%s\n", OSName);
-  EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
+  EfiNamedEventSignal(gAppleOSLoadedNamedEventGuid);
 }
 
 // OSInfoOSVendorImpl

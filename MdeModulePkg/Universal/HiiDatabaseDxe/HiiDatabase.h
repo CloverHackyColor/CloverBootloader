@@ -1619,7 +1619,7 @@ EFIAPI
 HiiListPackageLists (
   IN  CONST EFI_HII_DATABASE_PROTOCOL   *This,
   IN  UINT8                             PackageType,
-  IN  CONST EFI_GUID                    *PackageGuid,
+  CONST_EFI_GUID_PTR_T                  PackageGuid,
   IN  OUT UINTN                         *HandleBufferLength,
   OUT EFI_HII_HANDLE                    *Handle
   );
@@ -1705,7 +1705,7 @@ EFIAPI
 HiiRegisterPackageNotify (
   IN  CONST EFI_HII_DATABASE_PROTOCOL   *This,
   IN  UINT8                             PackageType,
-  IN  CONST EFI_GUID                    *PackageGuid,
+  CONST_EFI_GUID_PTR_T                  PackageGuid,
   IN  CONST EFI_HII_DATABASE_NOTIFY     PackageNotifyFn,
   IN  EFI_HII_DATABASE_NOTIFY_TYPE      NotifyType,
   OUT EFI_HANDLE                        *NotifyHandle
@@ -1791,7 +1791,7 @@ EFI_STATUS
 EFIAPI
 HiiGetKeyboardLayout (
   IN  CONST EFI_HII_DATABASE_PROTOCOL   *This,
-  IN  CONST EFI_GUID                          *KeyGuid,
+  CONST_EFI_GUID_PTR_T                   KeyGuid,
   IN OUT UINT16                         *KeyboardLayoutLength,
   OUT EFI_HII_KEYBOARD_LAYOUT           *KeyboardLayout
   );
@@ -1818,7 +1818,7 @@ EFI_STATUS
 EFIAPI
 HiiSetKeyboardLayout (
   IN CONST EFI_HII_DATABASE_PROTOCOL          *This,
-  IN CONST EFI_GUID                           *KeyGuid
+  CONST_EFI_GUID_PTR_T                        KeyGuid
   );
 
 
@@ -2120,7 +2120,7 @@ EFIAPI
 HiiGetAltCfg (
   IN  CONST EFI_HII_CONFIG_ROUTING_PROTOCOL    *This,
   IN  CONST EFI_STRING                         Configuration,
-  IN  CONST EFI_GUID                           *Guid,
+  CONST_EFI_GUID_PTR_T                         Guid,
   IN  CONST EFI_STRING                         Name,
   IN  CONST EFI_DEVICE_PATH_PROTOCOL           *DevicePath,
   IN  CONST UINT16                             *AltCfgId,

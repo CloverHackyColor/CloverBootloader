@@ -1765,12 +1765,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
 
   //try to find in SystemTable
   for(Index = 0; Index < gST->NumberOfTableEntries; Index++) {
-    if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi20TableGuid)) {
+    if( gST->ConfigurationTable[Index].VendorGuid == gEfiAcpi20TableGuid ) {
       // Acpi 2.0
       RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gST->ConfigurationTable[Index].VendorTable;
       break;
     }
-    else if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi10TableGuid)) {
+    else if( gST->ConfigurationTable[Index].VendorGuid == gEfiAcpi10TableGuid ) {
       // Acpi 1.0 - RSDT only
       RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gST->ConfigurationTable[Index].VendorTable;
       continue;

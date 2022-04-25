@@ -12,7 +12,8 @@ extern "C" {
 #include <Protocol/DevicePath.h>
 }
 
-constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842"_XS8;
+// The conversion from string litteral to EFI_GUID is made at compile time !!! Thanks constexpr.
+constexpr const EFI_GUID ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842"_guid;
 
 /*
  * Function for obtaining unique part id from APFS partition
@@ -20,18 +21,9 @@ constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842"_XS
  *   OUT: EFI_GUID
  *   returns null if it is not APFS part
  */
-EFI_GUID* APFSPartitionUUIDExtract(
+EFI_GUID APFSPartitionUUIDExtract(
     const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
-
-
-XString8 APFSPartitionUUIDExtractAsXString8(
-    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
-  );
-
-//XStringW APFSPartitionUUIDExtractAsXStringW(
-//    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
-//  );
 
 
 #endif /* PLATFORM_APFS_H_ */
