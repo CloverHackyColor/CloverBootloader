@@ -717,7 +717,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   UINTN            Size            = 0;
   UINT8           *Data           = NULL;
   REFIT_VOLUME    *Volume         = Entry->Volume;
-  EFI_GUID        *BootGUID;
+  EFI_GUID        *BootGUID       = NULL;
   XBool            ret             = false;
   UINT8           *Value          = NULL;
   
