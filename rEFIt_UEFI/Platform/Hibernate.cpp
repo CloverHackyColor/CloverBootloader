@@ -717,7 +717,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   UINTN            Size            = 0;
   UINT8           *Data           = NULL;
   REFIT_VOLUME    *Volume         = Entry->Volume;
-  EFI_GUID    BootGUID;
+  EFI_GUID        *BootGUID;
   XBool            ret             = false;
   UINT8           *Value          = NULL;
   
@@ -849,21 +849,25 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
       VolumeUUID = APFSPartitionUUIDExtract(Volume->DevicePath);
       if ( VolumeUUID.notNull() ) {
         //BootGUID = (EFI_GUID*)(Data + Size - 0x14);
-        BootGUID = *(EFI_GUID*)ScanGuid(Data, Size, &VolumeUUID);
+        BootGUID = (EFI_GUID*)ScanGuid(Data, Size, &VolumeUUID);
         //DBG("    APFS Boot0082 points to UUID:%s\n", BootGUID.toXString8().c_str());
       } else {
         //BootGUID = (EFI_GUID*)(Data + Size - 0x16);
         VolumeUUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
         if ( VolumeUUID.notNull() ) {
-          BootGUID = *(EFI_GUID*)ScanGuid(Data, Size, &VolumeUUID);
+          BootGUID = (EFI_GUID*)ScanGuid(Data, Size, &VolumeUUID);
           //DBG("    Boot0082 points to UUID:%s\n", BootGUID.toXString8().c_str());
         }
       }
       //DBG("    Volume has PartUUID=%s\n", VolumeUUID.toXString8().c_str());
-      if (BootGUID.notNull() && VolumeUUID.notNull() && BootGUID != VolumeUUID ) {
+      if (BootGUID != NULL && VolumeUUID.notNull() && *BootGUID != VolumeUUID ) {
         ret = false;
       } else  {
-        DBG("    Boot0082 points to Volume with UUID:%s\n", BootGUID.toXString8().c_str());
+        if (BootGUID == NULL) {
+          DBG("    Boot0082 points to Volume with null UUID\n");
+        } else {
+          DBG("    Boot0082 points to Volume with UUID:%s\n", BootGUID->toXString8().c_str());
+        }
         
         //3. Checks for boot-image exists
         if (gSettings.Boot.StrictHibernate) {

@@ -58,7 +58,7 @@ public:
 
   constexpr GUID() : Data1(0), Data2(0), Data3(0), Data4{0,0,0,0,0,0,0,0} {}
 
-  constexpr GUID(const GUID& other) : GUID{other.Data1, other.Data2, other.Data3, {other.Data4[0], other.Data4[1], other.Data4[2], other.Data4[3], other.Data4[4], other.Data4[5], other.Data4[6], other.Data4[7]}} { }
+//  constexpr GUID(const GUID& other) : GUID{other.Data1, other.Data2, other.Data3, {other.Data4[0], other.Data4[1], other.Data4[2], other.Data4[3], other.Data4[4], other.Data4[5], other.Data4[6], other.Data4[7]}} { }
   constexpr GUID(UINT32 _data1, UINT16 _data2, UINT16 _data3, const GUID_Data4& _data4) : Data1(_data1), Data2(_data2), Data3(_data3), Data4{_data4.i0, _data4.i1, _data4.i2, _data4.i3, _data4.i4, _data4.i5, _data4.i6, _data4.i7} { }
 
   constexpr bool operator == (const GUID& other) const {
@@ -66,8 +66,8 @@ public:
   }
   constexpr bool operator != (const GUID& other) const { return ! (*this == other); }
 
-//  void setNull() { *this = GUID(); }
-  void setNull() {Data1 = 0; Data2 = 0; Data3 = 0; memset( (void*)&Data4[0], 0, 8);}
+  void setNull() { *this = GUID(); }
+//  void setNull() {Data1 = 0; Data2 = 0; Data3 = 0; memset( (void*)&Data4[0], 0, 8);}
   constexpr bool isNull() const { return Data1 == 0  &&  Data2 == 0  &&  Data3 == 0  &&  Data4[0] == 0  &&  Data4[1] == 0  &&  Data4[2] == 0  &&  Data4[3] == 0  &&  Data4[4] == 0  &&  Data4[5] == 0  &&  Data4[6] == 0  &&  Data4[7] == 0; }
   constexpr bool notNull() const { return !isNull(); }
   
