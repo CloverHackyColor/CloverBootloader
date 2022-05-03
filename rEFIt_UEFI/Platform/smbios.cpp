@@ -499,7 +499,7 @@ void GetTableType1(SmbiosDiscoveredSettings* smbiosSettings)
     return;
   }
 
-  //smbiosSettings.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid); // is this is a bug, this uuid might be BE, not LE, or should we use the "variant" field
+ // smbiosSettings.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid); // is this is a bug, this uuid might be BE, not LE, or should we use the "variant" field
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
   smbiosSettings->OEMProductFromSmbios.strncpy(s, iStrLen(s, 64)); //strncpy take care of ending zero
 
@@ -515,10 +515,14 @@ EFI_GUID getSmUUIDFromSmbios()
     DBG("SmbiosTable: Type 1 (System Information) not found!\n");
     return nullGuid;
   }
+  EFI_GUID TmpGuid;
 
-////  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
-//  XString8 g = GuidLEToXString8(SmbiosTable.Type1->Uuid); // 2021-04 : this is a bug, the UUID will be swapped (read as a LE, sent as a BE). I leave for now because it doesn't really matter.
-  return SmbiosTable.Type1->Uuid;
+//  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
+  XString8 g1 = GuidLEToXString8(SmbiosTable.Type1->Uuid); // This is the difference between PC and Mac. the UUID will be swapped (read as a LE, sent as a BE).
+
+  DBG("got LE smUUID as:%s\n", g1.c_str());
+  TmpGuid.takeValueFromBE(g1);
+  return TmpGuid;
 }
 
 void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)

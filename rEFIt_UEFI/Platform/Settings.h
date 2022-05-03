@@ -2645,11 +2645,11 @@ printf("%s", "");
   // If CustomUuid is defined, return false by default
   // If SmUUID is defined, return true by default.
   XBool ShouldInjectSystemID() {
-    if ( SystemParameters.CustomUuid.notNull() &&  SystemParameters.CustomUuid.notNull() ) {
+    if ( SystemParameters.CustomUuid.notNull() /*&&  SystemParameters.CustomUuid.notNull()*/ ) {
       if ( SystemParameters._InjectSystemID == 2 ) return false;
       else return SystemParameters._InjectSystemID != 0;
     }
-    if ( Smbios.SmUUID.isNull() || Smbios.SmUUID.isNull() ) return false;
+    if ( Smbios.SmUUID.isNull() /* || Smbios.SmUUID.isNull() */) return false;
     if ( SystemParameters._InjectSystemID == 2 ) return true;
     return SystemParameters._InjectSystemID != 0;
   }
