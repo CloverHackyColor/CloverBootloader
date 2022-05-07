@@ -562,7 +562,7 @@ XhcBulkTransfer (
   IN     UINT8                               DeviceSpeed,
   IN     UINTN                               MaximumPacketLength,
   IN     UINT8                               DataBuffersNumber,
-  IN OUT VOID                                *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
+  IN OUT VOID                                **Data, //[EFI_USB_MAX_BULK_BUFFER_NUM],
   IN OUT UINTN                               *DataLength,
   IN OUT UINT8                               *DataToggle,
   IN     UINTN                               Timeout,

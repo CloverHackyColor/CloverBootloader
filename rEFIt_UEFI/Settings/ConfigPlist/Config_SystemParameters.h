@@ -76,7 +76,7 @@ public:
   EFI_GUID dgetCustomUuid() const {
     if ( !CustomUUID.isDefined() ) return nullGuid;
     EFI_GUID g;
-    g.takeValueFrom(CustomUUID.value());
+    g.takeValueFromBE(CustomUUID.value());
     return g;
   }
   UINT8 dget_InjectSystemID() const { return InjectSystemID.isDefined() ? (int)InjectSystemID.value() : 2; }

@@ -671,7 +671,7 @@ public:
     EFI_GUID dgetSmUUID() const {
       if ( !SmUUID.isDefined() ) return nullGuid;
       EFI_GUID g;
-      g.takeValueFrom(SmUUID.value());
+      g.takeValueFromBE(SmUUID.value());
       if ( g.isNull() ) panic("SmUUID is not valid. This could not happen because SmUUID is checked to be valid. Did you comment out the validation ?");
       return g;
     }

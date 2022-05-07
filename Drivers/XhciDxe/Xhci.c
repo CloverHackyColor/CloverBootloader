@@ -800,7 +800,10 @@ XhcTransfer (
   EFI_STATUS              RecoveryStatus;
   URB                     *Urb;
 
-  ASSERT ((Type == XHC_CTRL_TRANSFER) || (Type == XHC_BULK_TRANSFER) || (Type == XHC_INT_TRANSFER_SYNC));
+//  ASSERT ((Type == XHC_CTRL_TRANSFER) || (Type == XHC_BULK_TRANSFER) || (Type == XHC_INT_TRANSFER_SYNC));
+  if ((Type != XHC_CTRL_TRANSFER) && (Type != XHC_BULK_TRANSFER) && (Type != XHC_INT_TRANSFER_SYNC)) {
+    return EFI_INVALID_PARAMETER;
+  }
   Urb = XhcCreateUrb (
           Xhc,
           DeviceAddress,
@@ -832,7 +835,10 @@ XhcTransfer (
       // The URB is finished just before stopping endpoint.
       // Change returning status from EFI_TIMEOUT to EFI_SUCCESS.
       //
-      ASSERT (Urb->Result == EFI_USB_NOERROR);
+ //     ASSERT (Urb->Result == EFI_USB_NOERROR);
+      if (Urb->Result != EFI_USB_NOERROR) {
+        return EFI_DEVICE_ERROR;
+      }
       Status = EFI_SUCCESS;
       DEBUG ((DEBUG_ERROR, "XhcTransfer[Type=%d]: pending URB is finished, Length = %d.\n", Type, Urb->Completed));
     } else if (EFI_ERROR(RecoveryStatus)) {
@@ -844,7 +850,7 @@ XhcTransfer (
   *DataLength     = Urb->Completed;
 
   if ((*TransferResult == EFI_USB_ERR_STALL) || (*TransferResult == EFI_USB_ERR_BABBLE)) {
-    ASSERT (Status == EFI_DEVICE_ERROR);
+//    ASSERT (Status == EFI_DEVICE_ERROR);
     RecoveryStatus = XhcRecoverHaltedEndpoint(Xhc, Urb);
     if (EFI_ERROR(RecoveryStatus)) {
       DEBUG ((DEBUG_ERROR, "XhcTransfer[Type=%d]: XhcRecoverHaltedEndpoint failed!\n", Type));
@@ -1285,7 +1291,7 @@ XhcBulkTransfer (
   IN     UINT8                               DeviceSpeed,
   IN     UINTN                               MaximumPacketLength,
   IN     UINT8                               DataBuffersNumber,
-  IN OUT VOID                                *Data[EFI_USB_MAX_BULK_BUFFER_NUM],
+  IN OUT VOID                                **Data, //[EFI_USB_MAX_BULK_BUFFER_NUM],
   IN OUT UINTN                               *DataLength,
   IN OUT UINT8                               *DataToggle,
   IN     UINTN                               Timeout,
@@ -1302,7 +1308,7 @@ XhcBulkTransfer (
   // Validate the parameters
   //
   if ((DataLength == NULL) || (*DataLength == 0) ||
-      (Data == NULL) || (Data[0] == NULL) || (TransferResult == NULL)) {
+      (Data == NULL) || (*Data == NULL) || (TransferResult == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1350,10 +1356,10 @@ XhcBulkTransfer (
           MaximumPacketLength,
           XHC_BULK_TRANSFER,
           NULL,
-          Data[0],
-             DataLength,
-             Timeout,
-             TransferResult
+          *Data,
+          DataLength,
+          Timeout,
+          TransferResult
           );
 
 ON_EXIT:
