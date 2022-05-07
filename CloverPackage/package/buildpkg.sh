@@ -1118,16 +1118,20 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/File
 
           if [[ $driver == VBoxHfs* ]]; then
             addChoice --group="FileSystem64UEFI"  --title="$driverName"                \
-                      --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                      --start-selected="cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId')"  \
                       --selected="!choices['HFSPlus.UEFI'].selected" \
                       --pkg-refs="$packageRefId"  "${driverName}"
           else
             addChoice --group="FileSystem64UEFI"  --title="$driverName"                \
-                      --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                      --start-selected="cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId')"  \
                       --selected="!choices['VBoxHfs.UEFI'].selected" \
                       --pkg-refs="$packageRefId"  "${driverName}"
           fi
         elif [[ $driver == ApfsDriverLoader* ]]; then
+          addChoice --group="FileSystem64UEFI"  --title="$driverName"                \
+                    --start-selected="cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId')"  \
+                    --pkg-refs="$packageRefId"  "${driverName}"
+        elif [[ $driver == Fat* ]]; then
           addChoice --group="FileSystem64UEFI"  --title="$driverName"                \
                     --start-selected="cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId')"  \
                     --pkg-refs="$packageRefId"  "${driverName}"
@@ -1358,7 +1362,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
         buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
 
         # local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
-        local selectTheme="choicePreviouslySelected('$packageRefId')"
+        local selectTheme="cloverPackageFirstRun() || choicePreviouslySelected('$packageRefId')"
         # Select the default theme
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"

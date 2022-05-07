@@ -799,7 +799,7 @@ MainPostBuildScript() {
 
     # Mandatory drivers
     echo "Copy Mandatory drivers:"
-    binArray=( FSInject XhciDxe SMCHelper AudioDxe )
+    binArray=( XhciDxe SMCHelper EnglishDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_LEGACY/$efi.efi
@@ -811,7 +811,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2/$efi.efi
     done
 
-    binArray=( ApfsDriverLoader )
+    binArray=( ApfsDriverLoader FSInject )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
@@ -823,7 +823,7 @@ MainPostBuildScript() {
 #    fi
 
 
-    binArray=( FSInject SMCHelper AudioDxe )
+    binArray=( SMCHelper EnglishDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi
@@ -844,7 +844,7 @@ MainPostBuildScript() {
     fi
 
     # drivers64UEFI
-    binArray=( CsmVideoDxe EnglishDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe )
+    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe AudioDxe )
 
     for efi in "${binArray[@]}"
     do
