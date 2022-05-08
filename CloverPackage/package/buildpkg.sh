@@ -577,7 +577,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     # Add some documentation
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/EFIROOTDIR/EFI/CLOVER/doc/
+#    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 #    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{fdisk440,boot1-install}
