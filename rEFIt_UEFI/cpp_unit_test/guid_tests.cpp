@@ -179,6 +179,15 @@ int guid_tests()
     if ( guidTest3 == guidTestRef1 ) return breakpoint(10);
   }
   {
+    EFI_GUID guidTest4(guidTestRef1); // copy ctor
+    if ( guidTest4 != guidTestRef1 ) return breakpoint(10);
+  }
+  {
+    EFI_GUID guidTest4;
+    guidTest4 = guidTestRef1; // assignment ctor
+    if ( guidTest4 != guidTestRef1 ) return breakpoint(10);
+  }
+  {
     constexpr EFI_GUID guidTest4(guidTestRef1); // copy ctor
     if ( guidTest4 != guidTestRef1 ) return breakpoint(10);
   }

@@ -229,7 +229,7 @@ extern "C" {
 
 //XString8 GuidBeToXString8(const EFI_GUID& Guid); // not used
 //XStringW GuidBeToXStringW(const EFI_GUID& Guid); // not used
-XString8 GuidLEToXString8(const EFI_GUID& Guid);
+//XString8 GuidLEToXString8(const EFI_GUID& Guid);
 //XStringW GuidLEToXStringW(const EFI_GUID& Guid);
 
 

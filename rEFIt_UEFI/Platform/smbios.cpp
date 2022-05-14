@@ -518,11 +518,10 @@ EFI_GUID getSmUUIDFromSmbios()
   EFI_GUID TmpGuid;
 
 //  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
-  XString8 g1 = GuidLEToXString8(SmbiosTable.Type1->Uuid); // This is the difference between PC and Mac. the UUID will be swapped (read as a LE, sent as a BE).
+  XString8 guidBE = SmbiosTable.Type1->Uuid.toXString8(true); // This is the difference between PC and Mac. the UUID will be swapped (read as a LE, sent as a BE).
 
-  DBG("got LE smUUID as:%s\n", g1.c_str());
-  TmpGuid.takeValueFromBE(g1);
-  return TmpGuid;
+  DBG("got BE smUUID as:%s\n", guidBE.c_str());
+  return GUID().takeValueFrom(guidBE);
 }
 
 void PatchTableType1(const SmbiosInjectedSettings& smbiosSettings)
