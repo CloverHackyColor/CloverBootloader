@@ -29,7 +29,7 @@ lsha1="not a git repo"
 export DIR_OUT=${DIR_OUT:-"$CLOVERROOT"/toolchain/tools/output}
 export DIR_SCT=${DIR_SCT:-${CLOVERROOT}/toolchain/tools/Scripts}
 if [[ ! -d ${DIR_SCT} ]] || [[ ! -d ${DIR_OUT} ]]; then
-	mkdir -p ${DIR_SCT} ${DIR_OUT}
+  mkdir -p ${DIR_SCT} ${DIR_OUT}
 fi
 if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
@@ -104,7 +104,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
     if [[ $MYTOOLCHAIN == GCC53 ]]; then
       cd "${CLOVERROOT}"
-      ./build_gcc12.sh
+      ./build_gcc11.sh
     else
       MYTOOLCHAIN=XCODE8
     fi
@@ -152,35 +152,35 @@ fi
 }
 
 makeRelease() {
-	checkTools
-	
-	# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
-	rm -rf "$CLOVERROOT"/Conf
-	mkdir "$CLOVERROOT"/Conf
-	
-	cd "${CLOVERROOT}"
-	if [[ -z "$WORKSPACE" ]]; then
-		export EDK_TOOLS_PATH="${PWD}"/BaseTools
-		set +u
-		source ./edksetup.sh BaseTools
-		set -u
-		cd "$CLOVERROOT"
-		WORKSPACE="${PWD}"
-	fi
-	
-	echo "[BUILD CLOVER RELEASE]"
-	./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
-	./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
-	# Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
-	if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
-		 echo "Running Clover postbuild script"
-		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
-	fi
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  if [[ -z "$WORKSPACE" ]]; then
+    export EDK_TOOLS_PATH="${PWD}"/BaseTools
+    set +u
+    source ./edksetup.sh BaseTools
+    set -u
+    cd "$CLOVERROOT"
+    WORKSPACE="${PWD}"
+  fi
+
+  echo "[BUILD CLOVER RELEASE]"
+  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
+  # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
+     echo "Running Clover postbuild script"
+    "${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
 }
 
 buildCCPV() {
-	cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-	make
+  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
+  make
 }
 
 BLC() {
@@ -192,67 +192,67 @@ chmod 775 "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
 }
 
 buildClover() {
-	checkTools
-	
-	# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
-	rm -rf "$CLOVERROOT"/Conf
-	mkdir "$CLOVERROOT"/Conf
-	
-	cd "${CLOVERROOT}"
-	if [[ -z "$WORKSPACE" ]]; then
-		export EDK_TOOLS_PATH="${PWD}"/BaseTools
-		set +u
-		source ./edksetup.sh BaseTools
-		set -u
-		cd "$CLOVERROOT"
-		WORKSPACE="${PWD}"
-	fi
-	
-	echo "[BUILD CLOVER]"
-	# Run a custom build script if exist (${DIR_TOOLS}/Scripts/build.sh)
-	# This allow the user to run ebuild.sh with own parameters
-	if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
-		echo "Running custom build script"
-		"${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
-	else
-		local parameter=${1:-none}
-		if [[ "${parameter}" == HFSPlus ]]; then
-			#./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
-			./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
-		else
-			#./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
-			./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
-		fi
-	fi
-	# Run a post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
-	if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
-		echo "Running postbuild script"
-		"${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
-	fi
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  if [[ -z "$WORKSPACE" ]]; then
+    export EDK_TOOLS_PATH="${PWD}"/BaseTools
+    set +u
+    source ./edksetup.sh BaseTools
+    set -u
+    cd "$CLOVERROOT"
+    WORKSPACE="${PWD}"
+  fi
+
+  echo "[BUILD CLOVER]"
+  # Run a custom build script if exist (${DIR_TOOLS}/Scripts/build.sh)
+  # This allow the user to run ebuild.sh with own parameters
+  if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
+    echo "Running custom build script"
+    "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  else
+    local parameter=${1:-none}
+    if [[ "${parameter}" == HFSPlus ]]; then
+      #./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
+      ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t $MYTOOLCHAIN
+    else
+      #./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
+      ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
+    fi
+  fi
+  # Run a post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
+    echo "Running postbuild script"
+    "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
 }
 
 buildtestsix() {
-	checkTools
-	
-	# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
-	rm -rf "$CLOVERROOT"/Conf
-	mkdir "$CLOVERROOT"/Conf
-	
-	cd "${CLOVERROOT}"
-	echo "[BUILD CLOVERDB]"
-	./hebuild.sh
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  echo "[BUILD CLOVERDB]"
+  ./hebuild.sh
 }
 
 buildtestsev() {
-	checkTools
-	
-	# to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
-	rm -rf "$CLOVERROOT"/Conf
-	mkdir "$CLOVERROOT"/Conf
-	
-	cd "${CLOVERROOT}"
-	echo "[BUILD CLOVERDB]"
-	./ebuild.sh -t GCC53 -mc
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  echo "[BUILD CLOVERDB]"
+  ./ebuild.sh -t GCC53 -mc
 }
 
 
@@ -309,35 +309,35 @@ fi
 }
 
 buildIso() {
-	cd "${CLOVERROOT}"/CloverPackage
-	echo "[BUILD ISO]"
-	make iso
+  cd "${CLOVERROOT}"/CloverPackage
+  echo "[BUILD ISO]"
+  make iso
 }
 
 makeV2() {
-	cd "${CLOVERROOT}"/CloverPackage
-	echo "[BUILD CloverV2]"
-	make zip
+  cd "${CLOVERROOT}"/CloverPackage
+  echo "[BUILD CloverV2]"
+  make zip
 }
 
 checkStatus() {
-	if [[ -d .git ]]; then
-		git fetch --recurse-submodules origin
-		git log -n 1 > "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
-		git status >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
-		git submodule foreach --recursive "git log -n 1 && git status" >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/status_${revision}-*.txt
-	else
-		echo "Error: this is not a git repository, can't get info!"
-	fi
+  if [[ -d .git ]]; then
+    git fetch --recurse-submodules origin
+    git log -n 1 > "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
+    git status >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt
+    git submodule foreach --recursive "git log -n 1 && git status" >> "${DIR_OUT}"/status_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/status_${revision}-*.txt
+  else
+    echo "Error: this is not a git repository, can't get info!"
+  fi
 }
 
 showdiff() {
-	if [[ -d .git ]]; then
-		git fetch --recurse-submodules origin
-		git diff > "${DIR_OUT}"/diff_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/diff_${revision}-*.txt
-	else
-		echo "Error: this is not a git repository, can't get info!"
-	fi
+  if [[ -d .git ]]; then
+    git fetch --recurse-submodules origin
+    git diff > "${DIR_OUT}"/diff_${revision}-$(date +%Y%m%d-%H.%M.%S).txt && open "${DIR_OUT}"/diff_${revision}-*.txt
+  else
+    echo "Error: this is not a git repository, can't get info!"
+  fi
 }
 
 cleanBaseTools() {
@@ -466,7 +466,7 @@ mountR/W() {
   fi
   cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/jacklukem/BigSurmountsrw/releases/download/1.0/BigSurmountsrw2.app.zip -o BigSurmountsrw2.app.zip && open $HOME/Desktop/ClovUtils
   unzip -q $HOME/Desktop/ClovUtils/BigSurmountsrw2.app.zip && rm -r $HOME/Desktop/ClovUtils/BigSurmountsrw2.app.zip $HOME/Desktop/ClovUtils/__MACOSX
-} 
+}
 
 
 testing() {
@@ -527,14 +527,14 @@ echo -e "\n\n\n\n\n\n\n\n"
 
 PS3='
 Files will be put on Desktop/ClovUtils: '
-options=( 'Get CloverConfigPlistValidator	   '
-          'Get PlistEDPlus	'
-          'Get Hackintool	'
-          'Get BitmaskDecode	'
-          'Get MaciASL	'
-          'Get dmidecode	'
-          'Get IOReg-Devices	'
-          'Get NativeDisplayBrightness	'
+options=( 'Get CloverConfigPlistValidator    '
+          'Get PlistEDPlus  '
+          'Get Hackintool '
+          'Get BitmaskDecode  '
+          'Get MaciASL  '
+          'Get dmidecode  '
+          'Get IOReg-Devices  '
+          'Get NativeDisplayBrightness  '
           'Get SSDTTime'
           'Get USBMap'
           'Get QtiASL'
@@ -546,35 +546,35 @@ options=( 'Get CloverConfigPlistValidator	   '
 select opt in "${options[@]}"
  do
     case $opt in
-    "Get CloverConfigPlistValidator	   ")
+    "Get CloverConfigPlistValidator    ")
       buildCPV
       break
     ;;
-    "Get PlistEDPlus	")
+    "Get PlistEDPlus  ")
       PlistEDPlus
       break
     ;;
-    "Get Hackintool	")
+    "Get Hackintool ")
       Hackintool
       break
     ;;
-    "Get BitmaskDecode	")
+    "Get BitmaskDecode  ")
       BitmaskDecode
       break
     ;;
-    "Get MaciASL	")
+    "Get MaciASL  ")
       MaciASL
       break
     ;;
-    "Get dmidecode	")
+    "Get dmidecode  ")
       dmidecode
       break
     ;;
-    "Get IOReg-Devices	")
+    "Get IOReg-Devices  ")
       Get-IOReg-Devices
       break
     ;;
-    "Get NativeDisplayBrightness	")
+    "Get NativeDisplayBrightness  ")
       NDBrightness
       break
     ;;
@@ -631,7 +631,7 @@ Please enter your choice: '
 options=( 'build Clover'
           'update Clover'
           'build Clover with HFSPlus'
-          'make pkg'		  
+          'make pkg'
           'make iso'
           'make app'
           'build all'
@@ -679,12 +679,12 @@ do
     #   break
     # ;;
     "build all")
-			buildClover
-			buildCCPV
-			BLC
-			buildPkg
-			buildIso
-			makeV2
+      buildClover
+      buildCCPV
+      BLC
+      buildPkg
+      buildIso
+      makeV2
       break
     ;;
     "make Release")
@@ -693,7 +693,7 @@ do
       BLC
       buildPkg
       buildIso
-			makeV2
+      makeV2
       break
     ;;
     "test Clover")
@@ -705,7 +705,7 @@ do
       break
     ;;
     "show diff")
-		  showdiff
+      showdiff
       break
     ;;
     "open CloverV2/EFI/CLOVER directory")
