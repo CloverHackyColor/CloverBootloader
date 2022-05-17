@@ -515,7 +515,7 @@ EFI_GUID getSmUUIDFromSmbios()
     DBG("SmbiosTable: Type 1 (System Information) not found!\n");
     return nullGuid;
   }
-  EFI_GUID TmpGuid;
+//  EFI_GUID TmpGuid;
 
 //  XString8 g = GuidBeToXString8(SmbiosTable.Type1->Uuid); // should we use the "variant" field to know if it's LE or BE
   XString8 guidBE = SmbiosTable.Type1->Uuid.toXString8(true); // This is the difference between PC and Mac. the UUID will be swapped (read as a LE, sent as a BE).

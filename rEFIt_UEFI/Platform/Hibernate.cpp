@@ -916,7 +916,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               xs8.takeValueFrom(Ptr);
 //              Status = StrToGuidBE(xs8, &TmpGuid);
               TmpGuid.takeValueFromBE(xs8);
-              if (EFI_ERROR(Status)) {
+              if (TmpGuid.isNull()) {
                 DBG("    cant convert Str %ls to EFI_GUID\n", Ptr);
               } else {
                 XStringW TmpStr = TmpGuid.toXStringW();
