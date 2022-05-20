@@ -609,6 +609,9 @@ public:
 
 extern ApplePlatformDataArrayClass ApplePlatformDataArray;
 
+/*
+ * ATTENTION : SetDMISettingsForModel does not assign GlobalConfig.CurrentModel = Model;
+ */
 void SetDMISettingsForModel(MacModel Model, SETTINGS_DATA* settingsData);
 MacModel GetModelFromString (const XString8& ProductName);
 

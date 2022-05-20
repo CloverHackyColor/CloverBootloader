@@ -61,6 +61,13 @@
 		9A0B084A2402FE9300E2B470 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		9A0B084B2402FE9300E2B470 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
+		9A12A1F328378FC80021CA78 /* DsdtFixList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DsdtFixList.h; sourceTree = "<group>"; };
+		9A12A1F428378FC80021CA78 /* TagTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagTypes.h; sourceTree = "<group>"; };
+		9A12A1F528378FC80021CA78 /* QuirksCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuirksCodes.h; sourceTree = "<group>"; };
+		9A12A1F628378FC80021CA78 /* remove_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = remove_ref.h; sourceTree = "<group>"; };
+		9A12A1F728378FC80021CA78 /* Guid++.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Guid++.h"; sourceTree = "<group>"; };
+		9A12A1F82837905E0021CA78 /* Net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Net.h; sourceTree = "<group>"; };
+		9A12A1F9283794760021CA78 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
 		9A27554E2639E04F0095D456 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		9A2755522639E04F0095D456 /* SMBIOSPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMBIOSPlist.h; sourceTree = "<group>"; };
 		9A2755532639E04F0095D456 /* Config_GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_GUI.cpp; sourceTree = "<group>"; };
@@ -324,6 +331,7 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A12A1F9283794760021CA78 /* Settings.h */,
 				9A3E3A4F271F35C40077F37E /* VersionString.cpp */,
 				9A3E3A4E271F35C40077F37E /* VersionString.h */,
 				9A27557D263A02600095D456 /* CloverVersion.cpp */,
@@ -504,6 +512,12 @@
 		9AA3911925CC56E60099DC1F /* include */ = {
 			isa = PBXGroup;
 			children = (
+				9A12A1F82837905E0021CA78 /* Net.h */,
+				9A12A1F328378FC80021CA78 /* DsdtFixList.h */,
+				9A12A1F728378FC80021CA78 /* Guid++.h */,
+				9A12A1F528378FC80021CA78 /* QuirksCodes.h */,
+				9A12A1F628378FC80021CA78 /* remove_ref.h */,
+				9A12A1F428378FC80021CA78 /* TagTypes.h */,
 				9AB6EB9E25CF1FAD0001BDBB /* BootTypes.h */,
 				9AA3911A25CC56E60099DC1F /* Devices.h */,
 				9AA3912325CC56E60099DC1F /* Efi.h */,

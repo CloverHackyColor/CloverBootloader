@@ -809,7 +809,8 @@ XString8 GetReleaseDate(MacModel Model)
 
 void SetDMISettingsForModel(MacModel Model, SETTINGS_DATA* settingsData)
 {
-  GlobalConfig.CurrentModel = Model;
+//  GlobalConfig.CurrentModel = Model; // 2022-05 Not using Goblal config to avoid inter-dependancy. CCPV wouldn't compile anymore.
+                                       //         be sure to to assign GlobalConfig.CurrentModel if you need to.
   settingsData->Smbios.BiosVersion = ApplePlatformDataArray[Model].firmwareVersion;
   settingsData->Smbios.BiosReleaseDate = GetReleaseDate(Model);
   settingsData->Smbios.EfiVersion = ApplePlatformDataArray[Model].efiversion;
