@@ -812,6 +812,7 @@ void ApplyInputs(void)
     // to serve as default
     Model = GetModelFromString(gSettings.Smbios.ProductName);
     if (Model != MaxMacModel) {
+      GlobalConfig.CurrentModel = Model;
       SetDMISettingsForModel(Model, &gSettings);
     }
   }
