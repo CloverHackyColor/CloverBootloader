@@ -528,6 +528,7 @@ ScanSections64 (
   //
   // List all sections.
   //
+//  printf("%d sections\n", mEhdr->e_shnum);
 //  for (i = 0; i < mEhdr->e_shnum; i++) {
 //    Elf_Shdr *shdr = GetShdrByIndex(i);
 //    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
@@ -555,7 +556,7 @@ ScanSections64 (
           // if the section address is aligned we must align PE/COFF
           UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
 //         mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-//printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
+//printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llx\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
           mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
@@ -605,6 +606,7 @@ ScanSections64 (
     Elf_Shdr *shdr = GetShdrByIndex(i);
 //    /*debug*/Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
 //    /*debug*/CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
+//    /*debug*/printf("Section %d %s shdr->sh_flags=%llx IsTextShdr(shdr)=%d\n", i, sectName, shdr->sh_flags, IsDataShdr(shdr));
     if (IsDataShdr(shdr)) {
       if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
         // the alignment field is valid
@@ -612,7 +614,7 @@ ScanSections64 (
           // if the section address is aligned we must align PE/COFF
           UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
 //          mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-//printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
+//printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llx\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
           mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
@@ -820,19 +822,37 @@ WriteSections64 (
   //
   for (Idx = 0; Idx < mEhdr->e_shnum; Idx++) {
     Elf_Shdr *Shdr = GetShdrByIndex(Idx);
+    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + Shdr->sh_name;
+    //printf("filter %s =%d\n", sectName, (*Filter)(Shdr));
     if ((*Filter)(Shdr)) {
       switch (Shdr->sh_type) {
       case SHT_PROGBITS:
         /* Copy.  */
         if (Shdr->sh_offset + Shdr->sh_size > mFileBufferSize) {
+          VerboseMsg("Section %s is too big\n", sectName);
           return FALSE;
         }
+        ///*debug*/printf("copy %s in mCoffFile at %x-%llx from %llx-%llx, size %llx\n", sectName, mCoffSectionsOffset[Idx], mCoffSectionsOffset[Idx]+Shdr->sh_size, Shdr->sh_offset, Shdr->sh_offset+Shdr->sh_size, Shdr->sh_size);
+        memcpy(mCoffFile + mCoffSectionsOffset[Idx],
+              (UINT8*)mEhdr + Shdr->sh_offset,
+              (size_t) Shdr->sh_size);
+        break;
+      case SHT_INIT_ARRAY:
+        /* Copy.  */
+        if (Shdr->sh_offset + Shdr->sh_size > mFileBufferSize) {
+          VerboseMsg("Section %s is too big\n", sectName);
+          return FALSE;
+        }
+        ///*debug*/printf("copy %s in mCoffFile at %x-%llx from %llx-%llx, size %llx\n", sectName, mCoffSectionsOffset[Idx], mCoffSectionsOffset[Idx]+Shdr->sh_size, Shdr->sh_offset, Shdr->sh_offset+Shdr->sh_size, Shdr->sh_size);
         memcpy(mCoffFile + mCoffSectionsOffset[Idx],
               (UINT8*)mEhdr + Shdr->sh_offset,
               (size_t) Shdr->sh_size);
         break;
 
+
       case SHT_NOBITS:
+        ///*debug*/printf("Erase %s in mCoffFile at %x-%llx\n", sectName, mCoffSectionsOffset[Idx], mCoffSectionsOffset[Idx]+Shdr->sh_size);
         memset(mCoffFile + mCoffSectionsOffset[Idx], 0, (size_t) Shdr->sh_size);
         break;
 
@@ -840,7 +860,7 @@ WriteSections64 (
         //
         //  Ignore for unknown section type.
         //
-        VerboseMsg ("%s unknown section type %x. We ignore this unknown section type.", mInImageName, (unsigned)Shdr->sh_type);
+        VerboseMsg ("%s unknown section '%s' type %x. We ignore this unknown section type.", mInImageName, sectName, (unsigned)Shdr->sh_type);
         break;
       }
     }
@@ -920,14 +940,20 @@ WriteSections64 (
           if (SymName == NULL) {
             SymName = (const UINT8 *)"<unknown>";
           }
-/*
+          if ( strcmp((const char *)SymName, "__cxa_pure_virtual") == 0 ) {
+            static int already_printed_once = 0;
+          	if ( !already_printed_once ) {
+          	  printf("FIXME reminder : __cxa_pure_virtual is undefined -> ignored. This is happening since gcc 12.1 for unknown reasons.\n");
+          	  already_printed_once = 1;
+          	}
+          	continue;
+					}
           Error (NULL, 0, 3000, "Invalid",
                  "%s: Bad definition for symbol '%s'@%#llx or unsupported symbol type.  "
                  "For example, absolute and undefined symbols are not supported.",
                  mInImageName, SymName, Sym->st_value);
 
-          exit(EXIT_FAILURE); */
-          continue;
+          exit(EXIT_FAILURE);
         }
         SymShdr = GetShdrByIndex(Sym->st_shndx);
 
