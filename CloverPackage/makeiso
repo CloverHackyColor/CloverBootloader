@@ -112,8 +112,8 @@ echo "[CP] kexts and OEM"
 cp -r -f ${CLOVERROOT}/ThirdParty/* ${IMGROOT}/EFI/CLOVER/
 echo "[CP] tools"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
-echo "[CP] doc"
-cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
+# echo "[CP] doc"
+# cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
 echo "[CP] drivers-off"
 
 # Regroup off drivers
@@ -124,8 +124,8 @@ find ${CLOVERROOT}/EFI/CLOVER/drivers -type f -name '*.efi' -exec cp -R {} "${is
 # Mandatory UEFI
 #cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/DataHubDxe.efi \
 #      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
-cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+# cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
+#      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # File System UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/ApfsDriverLoader.efi \
