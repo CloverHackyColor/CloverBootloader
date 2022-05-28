@@ -83,18 +83,18 @@
             <true/>
             <key>#RenameDevices</key>
             <array>
-            	<dict>
-                	<key>_SB.PCI0.RP05.PXSX</key>
-                	<string>UPSB</string>
-            	</dict>
-             	<dict>
-                	<key>_SB.PCI0.RP05.UPSB.DSB1.NHI0</key>
-                	<string>UPS0</string>
+                <dict>
+                    <key>_SB.PCI0.RP05.PXSX</key>
+                    <string>UPSB</string>
                 </dict>
-           		<dict>
-                	<key>_SB.PCI0.RP03.PXSX</key>
-                	<string>BRG3</string>
-            	</dict>
+                <dict>
+                    <key>_SB.PCI0.RP05.UPSB.DSB1.NHI0</key>
+                    <string>UPS0</string>
+                </dict>
+                <dict>
+                    <key>_SB.PCI0.RP03.PXSX</key>
+                    <string>BRG3</string>
+                </dict>
             </array>
             <key>#ResetAddress</key>
             <string>0x64</string>
@@ -491,6 +491,20 @@
                     <data>D8fyc/uD4g+D+gd38w+3NEE=</data>
                     <key>Replace</key>
                     <data>MdKQkJCD4g+D+gd38w+3NEE=</data>
+                </dict>
+                <dict>
+                    <key>Comment</key>
+                    <string>Monterey RDRAND instruction #3</string>
+                    <key>MatchOS</key>
+                    <string>12.x</string>
+                    <key>Disabled</key>
+                    <false/>
+                    <key>MaskFind</key>
+                    <data>/v//8P//</data>
+                    <key>Find</key>
+                    <data>SA/H8HP6</data>
+                    <key>Replace</key>
+                    <data>kJCQkJCQ</data>
                 </dict>
             </array>
             <key>#ForceKextsToLoad</key>
