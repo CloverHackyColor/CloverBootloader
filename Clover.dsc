@@ -959,7 +959,7 @@ rEFIt_UEFI/refit.inf {
 !ifdef DISABLE_LTO
   DEFINE LTO_FLAG = -fno-lto -UUSING_LTO
 !else
-  DEFINE LTO_FLAG = -flto -DUSING_LTO
+  DEFINE LTO_FLAG = -flto=auto -DUSING_LTO
 !endif
 
 

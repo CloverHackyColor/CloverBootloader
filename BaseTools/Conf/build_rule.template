@@ -123,9 +123,9 @@
         $(AT)"$(CC)" /Fo${dst} $(CXX_FLAGS) $(INC) ${src}
 
     <Command.GCC, Command.RVCT>
-        @"echo" [CPP] ${s_base}
+        @"echo" [CXX] ${s_base}
         # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
-        $(AT)"$(CC)" $(CXX_FLAGS) -c -o ${dst} $(INC) ${src}
+        $(AT)"$(CXX)" $(CXX_FLAGS) -c -o ${dst} $(INC) ${src}
 
     <Command.XCODE>
         @"echo" [CPP] ${s_base}
