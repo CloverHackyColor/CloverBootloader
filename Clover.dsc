@@ -958,8 +958,10 @@ rEFIt_UEFI/refit.inf {
 
 !ifdef DISABLE_LTO
   DEFINE LTO_FLAG = -fno-lto -UUSING_LTO
+  DEFINE XLTO_FLAG = -fno-lto -UUSING_LTO
 !else
   DEFINE LTO_FLAG = -flto=auto -DUSING_LTO
+  DEFINE XLTO_FLAG = -flto -DUSING_LTO
 !endif
 
 
@@ -984,8 +986,8 @@ DEFINE BUILD_OPTIONS=-DIS_UEFI_MODULE -DMDEPKG_NDEBUG -DCLOVER_BUILD -DLESS_DEBU
   MSFT:*_*_*_CC_FLAGS  = $(BUILD_OPTIONS)
   MSFT:*_*_*_CXX_FLAGS  = $(BUILD_OPTIONS)
 
-  XCODE:*_*_*_CC_FLAGS = -std=c11 -fno-unwind-tables $(BUILD_OPTIONS) $(LTO_FLAG)
-  XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fno-unwind-tables $(BUILD_OPTIONS) $(LTO_FLAG)
+  XCODE:*_*_*_CC_FLAGS = -std=c11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
+  XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
   GCC:*_*_*_CC_FLAGS   = -std=c11 $(BUILD_OPTIONS) $(LTO_FLAG)
   GCC:*_*_*_CXX_FLAGS  =  -std=c++11 $(BUILD_OPTIONS) $(LTO_FLAG)
   #-fanalyzer -Wmismatched-tags 
