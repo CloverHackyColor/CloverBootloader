@@ -1033,6 +1033,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
 
     memset(&mOpenCoreConfiguration.Kernel.Quirks, 0, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+    mOpenCoreConfiguration.Kernel.Quirks.SetApfsTrimTimeout = -1; // Jief: Slice modified OcConfigurationLib.h to set -1 by default instead of 999. I prefer the modification here to minimize commts in OC submodule. Makes it easier to upgrade submodule.
     mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs = gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
@@ -2797,10 +2798,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // BE CAREFUL. construct_globals_objects will call ctor on every static struct and classes.
   // For example, if you do "gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond();" before this point, it will be erased by construct_globals_objects()
   construct_globals_objects(gImageHandle);
-#endif
-#ifdef DEBUG_ERALY_CRASH
-  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step41");
-  PauseForKey("press any key\n"_XS8);
 #endif
 
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
