@@ -361,6 +361,7 @@ void DebugPause(void);
 #define ICON_CLOVER                            (52)
 #define ICON_BIGSUR                            (53)
 #define ICON_MONTEREY                          (54)
+#define ICON_VENTURA                           (55)
 #define BUILTIN_ICON_BACKGROUND                (100)
 #define BUILTIN_ICON_SELECTION                 (101)
 #define BUILTIN_ICON_ANIME                     (102)

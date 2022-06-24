@@ -548,7 +548,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     XString8 OSVersionKextsDirName; // declare here to avoid multiple allocation
 
 
-    // Add kext from 10 or 11
+    // Add kexts from 10, 11, 12, 13...
 
     OSVersionKextsDirName = macOSVersion.asString(1);
     AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);

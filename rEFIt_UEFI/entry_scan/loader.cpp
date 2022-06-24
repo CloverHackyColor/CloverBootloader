@@ -583,6 +583,8 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
                 OSVersion = "11"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Monterey") || Prop->getString()->stringValue().contains("Install%20macOS%2012")) {
                 OSVersion = "12"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Ventura") || Prop->getString()->stringValue().contains("Install%20macOS%2013")) {
+                OSVersion = "13"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
@@ -834,6 +836,9 @@ GetOSIconName (const MacOsVersion& OSVersion)
   XStringW OSIconName;
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
+  } else if (OSVersion.elementAt(0) == 13 ){
+    // Ventura
+    OSIconName = L"ventura,mac"_XSW;
   } else if (OSVersion.elementAt(0) == 12 ){
     // Monterey
     OSIconName = L"monterey,mac"_XSW;

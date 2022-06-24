@@ -1873,8 +1873,8 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 		}
 
 		// Add kext from :
-		// 10(or 11).{version}.0 if NO minor version
-		// 10(or 11).{version}.{minor version} if minor version is > 0
+		// 10(or 1*).{version}.0 if NO minor version
+		// 10(or 1*).{version}.{minor version} if minor version is > 0
 		if ( macOSVersion.nbElement() >= 2 )
     {
       OSVersionKextsDirName = macOSVersion.asString(3);
