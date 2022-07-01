@@ -1301,6 +1301,12 @@ typedef enum {
   SlotTypePciExpressMini52pinWithBSKO  = 0x21,      ///< PCI Express Mini 52-pin (CEM spec. 2.0) with bottom-side keep-outs.
   SlotTypePciExpressMini52pinWithoutBSKO = 0x22,    ///< PCI Express Mini 52-pin (CEM spec. 2.0) without bottom-side keep-outs.
   SlotTypePciExpressMini76pin          = 0x23,      ///< PCI Express Mini 76-pin (CEM spec. 2.0) Corresponds to Display-Mini card.
+  SlotTypePCIExpressGen4SFF_8639       = 0x24,    ///< U.2
+  SlotTypePCIExpressGen5SFF_8639       = 0x25,    ///< U.2
+  SlotTypeOCPNIC30SmallFormFactor      = 0x26,    ///< SFF
+  SlotTypeOCPNIC30LargeFormFactor      = 0x27,    ///< LFF
+  SlotTypeOCPNICPriorto30              = 0x28,
+   SlotTypeCXLFlexbus10                = 0x30,
   SlotTypePC98C20                      = 0xA0,
   SlotTypePC98C24                      = 0xA1,
   SlotTypePC98E                        = 0xA2,
@@ -1330,6 +1336,16 @@ typedef enum {
   SlotTypePciExpressGen4X4             = 0xBB,
   SlotTypePciExpressGen4X8             = 0xBC,
   SlotTypePciExpressGen4X16            = 0xBD,
+  SlotTypePCIExpressGen5               = 0xBE,
+  SlotTypePCIExpressGen5X1             = 0xBF,
+  SlotTypePCIExpressGen5X2             = 0xC0,
+  SlotTypePCIExpressGen5X4             = 0xC1,
+  SlotTypePCIExpressGen5X8             = 0xC2,
+  SlotTypePCIExpressGen5X16            = 0xC3,
+  SlotTypePCIExpressGen6andBeyond      = 0xC4,
+  SlotTypeEnterpriseandDatacenter1UE1FormFactorSlot = 0xC5,
+  SlotTypeEnterpriseandDatacenter3E3FormFactorSlot  = 0xC6,
+
   MaxMiscSlotType
 } MISC_SLOT_TYPE;
 #ifdef __cplusplus
@@ -1355,6 +1371,40 @@ typedef enum {
   SlotDataBusWidth16X        = 0x0D, ///< Or X16
   SlotDataBusWidth32X        = 0x0E  ///< Or X32
 } MISC_SLOT_DATA_BUS_WIDTH;
+
+ ///
+ /// System Slots - Slot Physical Width.
+ ///
+ typedef enum {
+   SlotPhysicalWidthOther   = 0x01,
+   SlotPhysicalWidthUnknown = 0x02,
+   SlotPhysicalWidth8Bit    = 0x03,
+   SlotPhysicalWidth16Bit   = 0x04,
+   SlotPhysicalWidth32Bit   = 0x05,
+   SlotPhysicalWidth64Bit   = 0x06,
+   SlotPhysicalWidth128Bit  = 0x07,
+   SlotPhysicalWidth1X      = 0x08,    ///< Or X1
+   SlotPhysicalWidth2X      = 0x09,    ///< Or X2
+   SlotPhysicalWidth4X      = 0x0A,    ///< Or X4
+   SlotPhysicalWidth8X      = 0x0B,    ///< Or X8
+   SlotPhysicalWidth12X     = 0x0C,    ///< Or X12
+   SlotPhysicalWidth16X     = 0x0D,    ///< Or X16
+   SlotPhysicalWidth32X     = 0x0E     ///< Or X32
+ } MISC_SLOT_PHYSICAL_WIDTH;
+
+ ///
+ /// System Slots - Slot Information.
+ ///
+ typedef enum {
+   Others = 0x00,
+   Gen1   = 0x01,
+   Gen2   = 0x01,
+   Gen3   = 0x03,
+   Gen4   = 0x04,
+   Gen5   = 0x05,
+   Gen6   = 0x06
+ } MISC_SLOT_INFORMATION;
+
 
 ///
 /// System Slots - Current Usage.
@@ -1446,8 +1496,8 @@ typedef struct {
   //
   // Add for smbios 3.4
   //
-  UINT8                         SlotInformation;
-  UINT8                         SlotPhysicalWidth;
+  UINT8                         SlotInformation;    // MISC_SLOT_INFORMATION
+  UINT8                         SlotPhysicalWidth;  // MISC_SLOT_PHYSICAL_WIDTH;
   UINT16                        SlotPitch;
 } SMBIOS_TABLE_TYPE9;
 
