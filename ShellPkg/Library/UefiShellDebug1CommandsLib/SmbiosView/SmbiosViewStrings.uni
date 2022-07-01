@@ -1,15 +1,9 @@
 // /**
 //
-// Copyright (c) 2005 - 2017, Intel Corporation. All rights reserved.<BR>
+// Copyright (c) 2005 - 2018, Intel Corporation. All rights reserved.<BR>
 // (C) Copyright 2014-2015 Hewlett-Packard Development Company, L.P.<BR>
-// (C) Copyright 2015-2017 Hewlett Packard Enterprise Development LP<BR>
-// This program and the accompanying materials
-// are licensed and made available under the terms and conditions of the BSD License
-// which accompanies this distribution. The full text of the license may be found at
-// http://opensource.org/licenses/bsd-license.php
-//
-// THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-// WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+// (C) Copyright 2015-2019 Hewlett Packard Enterprise Development LP<BR>
+// SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Module Name:
 //
@@ -99,11 +93,17 @@
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_STATE             #language en-US "Power Supply State "
 #string STR_SMBIOSVIEW_PRINTINFO_THERMAL_STATE                  #language en-US "Thermal state "
 #string STR_SMBIOSVIEW_PRINTINFO_SECURITY_STATUS                #language en-US "Security Status "
+#string STR_SMBIOSVIEW_PRINTINFO_CONTAINED_ELEMENT              #language en-US "Contained Element %d: "
 #string STR_SMBIOSVIEW_PRINTINFO_SUPOPRT                        #language en-US "Support "
 #string STR_SMBIOSVIEW_PRINTINFO_CURRENT                        #language en-US "Current "
 #string STR_SMBIOSVIEW_PRINTINFO_INSTALLED                      #language en-US "Installed "
 #string STR_SMBIOSVIEW_PRINTINFO_ENABLED                        #language en-US "Enabled "
 #string STR_SMBIOSVIEW_PRINTINFO_EXTERNAL                       #language en-US "External "
+#string STR_SMBIOSVIEW_PRINTINFO_SLOT_PEER_GROUPS               #language en-US "Peer Groups %d:\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_SEGMENT_GROUP_NUM              #language en-US "  SegmentGroup Num: 0x%04x\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_BUS_NUM                        #language en-US "  Bus Num:          0x%02x\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_DEV_FUNC_NUM                   #language en-US "  DevFunc Num:      0x%02x\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_DATA_BUS_WIDTH                 #language en-US "  DataBus Width:    %d\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_DESC_STRING                    #language en-US "Description String: "
 #string STR_SMBIOSVIEW_PRINTINFO_SUPOPRTED_EVENT                #language en-US "Supported Event Log Type Descriptors %d:\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_ACCESS_METHOD_NOT_SUPOPRTED    #language en-US "Access Method %d has not supported\r\n"
@@ -129,7 +129,7 @@
 #string STR_SMBIOSVIEW_PRINTINFO_BIOS_SHADOWING                 #language en-US "BIOS shadowing is allowed\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_VESA_SUPPORTED                 #language en-US "VL-VESA is supported\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_ECSD_SUPPORT                   #language en-US "ESCD support is available\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_BOOT_FORM_CD_SUPPORTED         #language en-US "Boot form CD is supported\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_CD_SUPPORTED         #language en-US "Boot from CD is supported\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_SELECTED_BOOT_SUPPORTED        #language en-US "Selectable Boot is supported\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_BIOS_ROM_SOCKETED              #language en-US "BIOS ROM is socketed\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_BOOT_FROM_PC_CARD              #language en-US "Boot From PC Card(PCMCIA)is supported\r\n"
@@ -272,7 +272,7 @@
 #string STR_SMBIOSVIEW_PRINTINFO_BIT15_NOT_ZERO                 #language en-US "Error, reserved BIT 15 must be zero\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_PROC_STATUS                    #language en-US "Processor Status:\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_POPULATED           #language en-US "CPU Socket Populated\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_UNPOPULATED         #language en-US "CPU Socket Unpopulated Bits\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_CPU_SOCKET_UNPOPULATED         #language en-US "CPU Socket Unpopulated\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_CPU_ENABLED                    #language en-US "CPU Enabled\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_CPU_DISABLED_BY_USER           #language en-US "CPU Disabled by User via BIOS Setup\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_CPU_DIABLED_BY_BIOS            #language en-US "CPU Disabled By BIOS (POST Error)\r\n"
@@ -296,7 +296,7 @@
 #string STR_SMBIOSVIEW_PRINTINFO_MEM_SIZE                       #language en-US " Memory Size: %d MB\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_DOUBLE_BANK         #language en-US "The memory module has a Double-bank connection\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_MEM_MODULE_SINGLE_BANK         #language en-US "The memory module has a Single-bank connection\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_SLOT_ID                        #language en-US " Slot Id:"
+#string STR_SMBIOSVIEW_PRINTINFO_SLOT_ID                        #language en-US "Slot Id:"
 #string STR_SMBIOSVIEW_PRINTINFO_LOGICAL_MICRO_CHAN             #language en-US " the logical Micro Channel slot number is:"
 #string STR_SMBIOSVIEW_PRINTINFO_ONE_VAR_D                      #language en-US " %d\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_ERROR_NOT_1_15                 #language en-US " error, not 1-15.\r\n"
@@ -336,9 +336,9 @@
 #string STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION_LIMIT              #language en-US "Boot Option on Limit: "
 #string STR_SMBIOSVIEW_PRINTINFO_OP_SYSTEM_2                    #language en-US "Operating system\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_SYSTEM_UTIL                    #language en-US "System utilities\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT_BITS             #language en-US "Do not reboot Bits\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION                    #language en-US "Boot Option :"
 #string STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT                  #language en-US "Do not reboot\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_BOOT_OPTION                    #language en-US "Boot Option :"
+#string STR_SMBIOSVIEW_PRINTINFO_DO_NOT_REBOOT_BITS             #language en-US "Do not reboot bits\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_HARDWARE_SECURITY_SET          #language en-US "Hardware Security Settings: \r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_ON_PASSWORD              #language en-US "Power-on Password Status: "
 #string STR_SMBIOSVIEW_PRINTINFO_DISABLED                       #language en-US "Disabled\r\n"
@@ -376,7 +376,7 @@
 #string STR_SMBIOSVIEW_PRINTINFO_NOT_APPLICABLE                 #language en-US " Not applicable\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_RESERVED_3                     #language en-US " Reserved  \r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_UNPLUGGED         #language en-US "Power supply is unplugged from the wall\r\n"
-#string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PLUGGED           #language en-US "Power supply is plugged from the wall\r\n"
+#string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PLUGGED           #language en-US "Power supply is plugged into the wall\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_PRESENT           #language en-US "Power supply is present\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_NOT_PRESENT       #language en-US "Power supply is not present\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_POWER_SUPPLY_REPLACE           #language en-US "Power supply is hot replaceable\r\n"
@@ -414,6 +414,9 @@
 #string STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_LENGTH            #language en-US "System Slot Length: "
 #string STR_SMBIOSVIEW_QUERYTABLE_SLOT_CHARACTERISTICS          #language en-US "Slot characteristics 1: "
 #string STR_SMBIOSVIEW_QUERYTABLE_SLOT_CHARACTERISTICS_2        #language en-US "Slot characteristics 2: "
+#string STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_INFORMATION       #language en-US "System Slot Information: "
+#string STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_HEIGHT            #language en-US "System Slot Height: "
+#string STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_SLOT_PHYSICAL_WIDTH    #language en-US "System Slot Physical Width: "
 #string STR_SMBIOSVIEW_QUERYTABLE_ONBOARD_DEVICE_TYPE           #language en-US "Onboard Device Type: "
 #string STR_SMBIOSVIEW_QUERYTABLE_SYSTEM_EVENT_LOG_TYPE         #language en-US "System Event Log Type: "
 #string STR_SMBIOSVIEW_QUERYTABLE_EVENT_LOG_VAR_DATA_FORMAT     #language en-US "Event Log Variable Data Format Types: "
@@ -429,6 +432,8 @@
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_DEVICE_FORM_FACTOR        #language en-US "Memory Device - Form Factor: "
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_DEVICE_TYPE               #language en-US "Memory Device - Type: "
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_DEVICE_TYPE_DETAIL        #language en-US "Memory Device - Type Detail: "
+#string STR_SMBIOSVIEW_QUERYTABLE_MEM_DEVICE_MEMORY_TECHNOLOGY  #language en-US "Memory Device - Memory Technology: "
+#string STR_SMBIOSVIEW_QUERYTABLE_MEM_DEVICE_MEM_OPER_MODE_CAPA #language en-US "Memory Device - Memory Operating Mode Capability: "
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_ERROR_INFO                #language en-US "32-bit Memory Error Information - Type: "
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_ERROR_GRANULARITY         #language en-US "Memory Error - Error granularity: "
 #string STR_SMBIOSVIEW_QUERYTABLE_MEM_ERROR_OP                  #language en-US "Memory Error - Error Operation: "
@@ -448,6 +453,7 @@
 #string STR_SMBIOSVIEW_QUERYTABLE_BMC_INTERFACE_TYPE            #language en-US "BMC Interface Type:"
 #string STR_SMBIOSVIEW_QUERYTABLE_MC_HOST_INTERFACE_TYPE        #language en-US "MC Host Interface Type:"
 #string STR_SMBIOSVIEW_QUERYTABLE_STRUCT_TYPE                   #language en-US "Structure Type:"
+#string STR_SMBIOSVIEW_QUERYTABLE_PROCESSOR_ARCH_TYPE           #language en-US "Processor Architecture Type:"
 #string STR_SMBIOSVIEW_SMBIOSVIEW_ONE_VAR_ARGV                  #language en-US "%s "
 #string STR_SMBIOSVIEW_SMBIOSVIEW_QUERY_STRUCT_COND             #language en-US "Query Structure, conditions are:\r\n"
 #string STR_SMBIOSVIEW_SMBIOSVIEW_QUERYTYPE_RANDOM              #language en-US "QueryType   = Random \r\n"
@@ -498,4 +504,3 @@
 #string STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_PLAT_SW      #language en-US "Family configurable via platform software support\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_TPM_DEVICE_CONFIG_OEM          #language en-US "Family configurable via OEM proprietary mechanism\r\n"
 #string STR_SMBIOSVIEW_PRINTINFO_BITS_06_63                     #language en-US "Bits 6:63 are reserved\r\n"
-

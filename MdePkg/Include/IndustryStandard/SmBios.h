@@ -1455,6 +1455,17 @@ typedef struct {
 } MISC_SLOT_CHARACTERISTICS2;
 
 ///
+/// System Slots - Slot Height
+///
+typedef enum {
+  SlotHeightNone       = 0x00,
+  SlotHeightOther      = 0x01,
+  SlotHeightUnknown    = 0x02,
+  SlotHeightFullHeight = 0x03,
+  SlotHeightLowProfile = 0x04
+} MISC_SLOT_HEIGHT;
+
+///
 /// System Slots - Peer Segment/Bus/Device/Function/Width Groups
 ///
 typedef struct {
@@ -1499,6 +1510,11 @@ typedef struct {
   UINT8                         SlotInformation;    // MISC_SLOT_INFORMATION
   UINT8                         SlotPhysicalWidth;  // MISC_SLOT_PHYSICAL_WIDTH;
   UINT16                        SlotPitch;
+  //
+  // Add for smbios 3.5
+  //
+  UINT8                         SlotHeight;             ///< The enumeration value from MISC_SLOT_HEIGHT.
+
 } SMBIOS_TABLE_TYPE9;
 
 ///
