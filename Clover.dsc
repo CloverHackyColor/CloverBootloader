@@ -773,7 +773,7 @@
   Protocols/SMCHelper/SMCHelper.inf
   Protocols/FirmwareVolume/FirmwareVolume.inf
   Protocols/AppleImageCodec/AppleImageCodec.inf
-  Protocols/AppleUITheme/AppleUITheme.inf
+  #Protocols/AppleUITheme/AppleUITheme.inf
   Protocols/HashServiceFix/HashServiceFix.inf
   Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
   Protocols/AppleKeyFeeder/AppleKeyFeeder.inf
@@ -796,7 +796,7 @@
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers/UEFI dir
   Protocols/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
-  # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
+  # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers/UEFI dir
   Protocols/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
       gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
