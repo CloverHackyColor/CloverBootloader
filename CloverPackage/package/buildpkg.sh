@@ -967,13 +967,13 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/Fi
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
         # Add postinstall script for old FileVault2 drivers to remove it if AppleUiSupport driver exists
-        if [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* ||
-                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
-         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"  \
-                            --subst="DRIVER_NAME=$driver"                     \
-                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "AppleUiSupport"
-        fi
+#        if [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* ||
+#                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
+#         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"  \
+#                            --subst="DRIVER_NAME=$driver"                     \
+#                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+#                            "AppleUiSupport"
+#        fi
 
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
@@ -1197,13 +1197,13 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/File
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
         # Add postinstall script for old FileVault2 drivers to remove it if AppleUiSupport driver exists
-        if [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* ||
-                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
-         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"  \
-                            --subst="DRIVER_NAME=$driver"                     \
-                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "AppleUiSupport"
-        fi
+#        if [[ "$driver" == AppleImageCodec* || "$driver" == AppleKeyAggregator* ||
+#                "$driver" == AppleUITheme* || "$driver" == FirmwareVolume* || "$driver" == HashServiceFix* ]]; then
+#         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"  \
+#                            --subst="DRIVER_NAME=$driver"                     \
+#                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+#                            "AppleUiSupport"
+#        fi
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"

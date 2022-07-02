@@ -228,7 +228,7 @@ SmbiosGenEntrypoint (
                     SmbiosGenDxeStrings,
                     NULL
                     );
-  ASSERT (gStringHandle != NULL);
+//  ASSERT (gStringHandle != NULL);
 
   InstallProcessorSmbios (Smbios);
   InstallCacheSmbios     (Smbios);

@@ -23,6 +23,8 @@
 #include "Injectors.h"
 #include "../Platform/Settings.h"
 
+#include <Protocol/FirmwareVolume.h>
+
 #ifndef DEBUG_ALL
 #define DEBUG_PRO 1
 #else
@@ -366,7 +368,7 @@ STATIC APPLE_USER_INTERFACE_THEME_PROTOCOL mAppleUserInterfaceThemeProtocol = {
 };
 
 
-
+extern EFI_FIRMWARE_VOLUME_PROTOCOL   FirmwareVolume;
 
 EFI_STATUS
 SetPrivateVarProto(void)
@@ -385,8 +387,11 @@ SetPrivateVarProto(void)
                                                        &mKeyboardInfo,
                                                        &gAppleUserInterfaceThemeProtocolGuid,
                                                        &mAppleUserInterfaceThemeProtocol,
+                                                       &gEfiFirmwareVolumeProtocolGuid,
+                                                       &FirmwareVolume,
                                                        NULL
                                                        );
+
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,
                                           &gEfiDevicePathPropertyDatabaseProtocolGuid,

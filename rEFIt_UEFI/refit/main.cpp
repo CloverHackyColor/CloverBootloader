@@ -86,6 +86,7 @@
 #include "../include/OC.h"
 
 
+
 #ifndef DEBUG_ALL
 # ifdef DEBUG_ERALY_CRASH
 #   define DEBUG_MAIN 2
@@ -121,7 +122,7 @@
 XBool                gGuiIsReady     = false;
 XBool                gThemeNeedInit  = true;
 XBool                DoHibernateWake = false;
-UINT32      mCurrentColor;
+UINT32               mCurrentColor;
 
 //EFI_HANDLE ConsoleInHandle;
 //EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
@@ -831,6 +832,15 @@ void LOADER_ENTRY::StartLoader()
 
 
   //debugStartImageWithOC();
+// check exists
+ //   void    *ExistingFirmwareVolume;
+
+ //   Status = gBS->LocateProtocol (gEfiFirmwareVolumeProtocolGuid, NULL, (VOID **)&ExistingFirmwareVolume);
+ //   if (EFI_ERROR(Status)) {
+ //     DBG ("FirmwareVolumeProtocol is not installed\n");
+ //   } else {
+ //     DBG ("FirmwareVolumeProtocol is installed\n");
+ //   }
 
   DBG("Beginning OC\n");
 

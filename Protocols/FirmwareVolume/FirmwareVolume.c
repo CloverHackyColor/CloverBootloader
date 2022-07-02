@@ -15,7 +15,8 @@
 //#include <Framework/FirmwareVolumeImageFormat.h>
 #include <Protocol/FirmwareVolume.h>
 
-EFI_HANDLE              mHandle = NULL;
+
+EFI_HANDLE              mHandle2 = NULL;
 
 typedef struct {
     EFI_GUID Guid;
@@ -406,7 +407,7 @@ FVEntrypoint (IN EFI_HANDLE           ImageHandle,
 
   if (EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
-                                                     &mHandle,
+                                                     &mHandle2,
                                                      &gEfiFirmwareVolumeProtocolGuid,
                                                      &FirmwareVolume,
                                                      NULL

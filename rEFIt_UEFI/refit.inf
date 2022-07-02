@@ -393,6 +393,8 @@
   Settings/Self.h
   Settings/SelfOem.cpp
   Settings/SelfOem.h
+  ../Protocols/FirmwareVolume/FirmwareVolume.c
+
 
 [Sources.IA32]
   PlatformIA32/ftol.asm | MSFT
@@ -528,6 +530,7 @@
   gEfiOSInfoProtocolGuid
   gEfiKeyboardInfoProtocolGuid
   gAppleUserInterfaceThemeProtocolGuid
+  gEfiFirmwareVolumeProtocolGuid
 
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

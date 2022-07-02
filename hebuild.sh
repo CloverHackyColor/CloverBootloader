@@ -781,7 +781,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_LEGACY/$efi.efi
     done
 
-    binArray=( AppleImageCodec AppleKeyAggregator FirmwareVolume )
+    binArray=( AppleImageCodec AppleKeyAggregator )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2/$efi.efi
@@ -804,7 +804,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi
     done
 
-    binArray=( AppleImageCodec AppleKeyAggregator FirmwareVolume )
+    binArray=( AppleImageCodec AppleKeyAggregator )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2/$efi.efi
