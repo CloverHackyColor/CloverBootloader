@@ -1166,11 +1166,6 @@ void AboutRefit(void)
     AboutMenu.GetAnime();
     AboutMenu.AddMenuEntry(&MenuEntryReturn, false);
   } else if (AboutMenu.Entries.size() >= 2) {
-    /*
-      EntryCount instead of InfoLineCount. Lastline == return/back. Is necessary recheck screen res here?
-    */
- //   FreePool(AboutMenu.Entries[AboutMenu.Entries.size()-2].Title); //what is FreePool(XStringW)?
-
     AboutMenu.Entries[AboutMenu.Entries.size()-2].Title.SWPrintf(" Screen Output: %s", egScreenDescription().c_str());
   }
 
@@ -1184,9 +1179,6 @@ void HelpRefit(void)
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
       HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
     }
-    //else {
-    //  HelpMenu.TitleImage.setEmpty();
-    //}
     switch (gSettings.GUI.languageCode)
     {
       case russian:
@@ -2010,7 +2002,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
       //       DropTable->Length, DropTable->Length);
       InputBootArgs = new REFIT_INPUT_DIALOG;
       InputBootArgs->Title.SWPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable->Length);
-//      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
       InputBootArgs->Item = &(DropTable->MenuItem);
       InputBootArgs->AtClick = ActionEnter;
@@ -2028,7 +2019,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
     ACPI_PATCHED_AML& ACPIPatchedAMLTmp = ACPIPatchedAML[idx];
     InputBootArgs = new REFIT_INPUT_DIALOG;
     InputBootArgs->Title.SWPrintf("Drop \"%s\"", ACPIPatchedAMLTmp.FileName.c_str());
-//      InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(ACPIPatchedAMLTmp.MenuItem);
     InputBootArgs->AtClick = ActionEnter;
@@ -2076,10 +2066,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 {
   REFIT_MENU_ITEM_OPTIONS   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
-//  REFIT_INPUT_DIALOG *InputBootArgs;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NullXString8);
-  //  Entry->Title.SPrintf("DSDT fix mask [0x%08hhx]->", gSettings.ACPI.DSDT.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
   SubScreen->AddMenuCheck("Fix Darwin as WinXP",   FIX_WARNING, 67);
@@ -2098,7 +2086,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
   SubScreen->AddMenuCheck("Fix LAN",      FIX_LAN, 67);
   SubScreen->AddMenuCheck("Fix Airport",  FIX_WIFI, 67);
   SubScreen->AddMenuCheck("Fix sound",    FIX_HDA, 67);
-//  SubScreen->AddMenuCheck("Fix new way",  FIX_NEW_WAY, 67);
   SubScreen->AddMenuCheck("Fix RTC",      FIX_RTC, 67);
   SubScreen->AddMenuCheck("Fix TMR",      FIX_TMR, 67);
   SubScreen->AddMenuCheck("Add IMEI",     FIX_IMEI, 67);
@@ -2111,7 +2098,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
   SubScreen->AddMenuCheck("Rename ACST",  FIX_ACST, 67);
   SubScreen->AddMenuCheck("Add HDMI",     FIX_HDMI, 67);
   SubScreen->AddMenuCheck("Fix Regions",  FIX_REGIONS, 67);
-//  SubScreen->AddMenuCheck("Fix Headers",  FIX_HEADERS_DEPRECATED, 67);
   SubScreen->AddMenuCheck("Fix Mutex",    FIX_MUTEX, 67);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -2127,14 +2113,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()
   REFIT_INPUT_DIALOG   *InputBootArgs;
 
   size_t        PatchDsdtNum = gSettings.ACPI.DSDT.DSDTPatchArray.size();
-//  INPUT_ITEM*   DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->"_XS8);
 
   for (size_t Index = 0; Index < PatchDsdtNum; Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
     InputBootArgs->Title.SWPrintf("%90s", gSettings.ACPI.DSDT.DSDTPatchArray[Index].PatchDsdtLabel.c_str());
-//    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &gSettings.ACPI.DSDT.DSDTPatchArray[Index].PatchDsdtMenuItem;
     InputBootArgs->AtClick = ActionEnter;
@@ -2161,7 +2145,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
   for (i = 0; i < DsdtsList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.takeValueFrom(DsdtsList[i]);
-//    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[116];
     InputBootArgs->AtClick = ActionEnter;
@@ -2189,7 +2172,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
 
   SubScreen->AddMenuEntry(SubMenuDsdts(), true);
   SubScreen->AddMenuEntry(SubMenuDropTables(), true);
-//  SubScreen->AddMenuEntry(SubMenuDropDSM(), true);
   SubScreen->AddMenuEntry(SubMenuDsdtFix(), true);
   SubScreen->AddMenuEntry(SubMenuDSDTPatches(), true);
   SubScreen->AddMenuItemInput(49, "Fix MCFG", false);
@@ -2214,7 +2196,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   for (i = 0; i < AudioList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.SWPrintf("%ls_%s", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device]);
-//    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[119];
     InputBootArgs->AtClick = ActionEnter;
@@ -2254,7 +2235,6 @@ void CreateMenuProps(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::
     SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
     break;
 	default: //type data, print first 24 bytes
-			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
 			SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
 		break;
 	}
@@ -2288,43 +2268,10 @@ void CreateMenuAddProp(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass
     SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
     break;
   default: //type data, print first 24 bytes
-       //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
       SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
     break;
   }
 }
-//
-//REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
-//{
-//  REFIT_MENU_ITEM_OPTIONS    *Entry;
-//  REFIT_MENU_SCREEN   *SubScreen;
-//
-//  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Old Custom properties->"_XS8);
-//
-//  for ( size_t idx = 0 ; idx < gSettings.Devices.newProperties.array.size(); ++idx)
-//  {
-//    SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyDict& Prop = gSettings.Devices.newProperties.array[idx];
-//
-//    SubScreen->AddMenuInfo_f("------------");
-//    SubScreen->AddMenuInfo_f("%ls", Prop.DevicePathAsString.wc_str());
-//    for ( size_t idxChild = 0 ; idxChild < Prop.propertiesArray.size(); ++idxChild) {
-//      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.propertiesArray[idxChild];
-//      CreateMenuProps(SubScreen, &Props);
-//    }
-//  }
-//  for ( size_t idx = 0 ; idx < gSettings.Devices.newArbitrary.size()  ; ++idx) {
-//    SETTINGS_DATA::DevicesClass::ArbitraryProperty& Prop = gSettings.Devices.newArbitrary[idx];
-//    SubScreen->AddMenuInfo_f("------------");
-//    for ( size_t idxChild = 0 ; idxChild < Prop.CustomPropertyArray.size(); ++idxChild) {
-//      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.CustomPropertyArray[idxChild];
-//      SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
-//      CreateMenuProps(SubScreen, &Props);
-//    }
-//  }
-//  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-//  Entry->SubScreen = SubScreen;
-//  return Entry;
-//}
 
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
 {
@@ -2379,15 +2326,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAddProperties()
 
   for ( size_t idx = 0 ; idx < gSettings.Devices.AddPropertyArray.size()  ; ++idx) {
     SETTINGS_DATA::DevicesClass::AddPropertyClass& Prop = gSettings.Devices.AddPropertyArray[idx];
-//    SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
     CreateMenuAddProp(SubScreen, &Prop);
   }
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-
-
 
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
 {
@@ -2406,7 +2350,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
   SubScreen->AddMenuItemInput(99,  "FakeID SATA:", true);
   SubScreen->AddMenuItemInput(100, "FakeID XHCI:", true);
   SubScreen->AddMenuItemInput(103, "FakeID IMEI:", true);
-//  SubScreen->AddMenuEntry(SubMenuCustomDevices(), true);
   SubScreen->AddMenuEntry(SubMenuProperties(), true);
   SubScreen->AddMenuEntry(SubMenuArbProperties(), true);
   SubScreen->AddMenuEntry(SubMenuAddProperties(), true);
@@ -2433,7 +2376,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
   for (i = 0; i < ThemeNameArray.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.takeValueFrom(ThemeNameArray[i]);
-//    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[3];
     InputBootArgs->AtClick = ActionEnter;
@@ -2513,7 +2455,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NullXString8);
-//  Entry->Title.SPrintf("boot_args->flags [0x%02hhx]->", gSettings.RtVariables.BooterConfig);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Modify flags for boot.efi");
@@ -2570,7 +2511,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
   for (i = 0; i < ConfigsList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title = ConfigsList[i];
-//    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[90];
     InputBootArgs->AtClick = ActionEnter;
@@ -2605,14 +2545,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   SubScreen->AddMenuCheck("ProtectMemoryRegions",   QUIRK_REGION, 101);
   SubScreen->AddMenuCheck("ProtectSecureBoot",      QUIRK_SECURE, 101);
   SubScreen->AddMenuCheck("ProtectUefiServices",    QUIRK_UEFI, 101);
-//  SubScreen->AddMenuItemInput(123, "ProvideConsoleGopEnable", false);
   SubScreen->AddMenuCheck("ProvideCustomSlide",     QUIRK_CUSTOM, 101);
 //decimal
   SubScreen->AddMenuItemInput(122, "ProvideMaxSlide:", true);
   SubScreen->AddMenuCheck("RebuildAppleMemoryMap",  QUIRK_MAP, 101);
   SubScreen->AddMenuItemInput(127, "ResizeAppleGpuBars:", true);
   SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
-//  SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
   SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);
   
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -2629,10 +2567,6 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   UINTN               MenuExit = 0;
   UINTN               SubMenuExit;
   UINTN               NextMenuExit;
-  //CHAR16*           Flags;
-
-//  MENU_STYLE_FUNC     Style = &REFIT_MENU_SCREEN::TextMenuStyle;
-
   INTN                EntryIndex = 0;
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
   INTN                NextEntryIndex = -1;
@@ -2640,9 +2574,6 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   XBool               OldFontStyle = ThemeX.Proportional;
   ThemeX.Proportional = false; //temporary disable proportional
 
-//  if (AllowGraphicsMode) {
-//    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-//  }
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
@@ -2658,9 +2589,6 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     OptionMenu.GetAnime(); //false;
 
     OptionMenu.AddMenuItemInput(0, "Boot Args:", true);
-
-//    AddMenuItemInput(&OptionMenu, 90, "Config:", true);
-//   InputBootArgs->ShortcutDigit = 0xF1;
     OptionMenu.AddMenuEntry( SubMenuConfigs(), true);
 
     if (AllowGraphicsMode) {

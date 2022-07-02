@@ -121,7 +121,7 @@
 XBool                gGuiIsReady     = false;
 XBool                gThemeNeedInit  = true;
 XBool                DoHibernateWake = false;
-
+UINT32      mCurrentColor;
 
 //EFI_HANDLE ConsoleInHandle;
 //EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
@@ -1007,10 +1007,11 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Booter.Quirks.ProvideCustomSlide = gSettings.Quirks.OcBooterQuirks.ProvideCustomSlide;
     mOpenCoreConfiguration.Booter.Quirks.ProvideMaxSlide = gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide;
     mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap = gSettings.Quirks.OcBooterQuirks.RebuildAppleMemoryMap;
+    mOpenCoreConfiguration.Booter.Quirks.ResizeAppleGpuBars = gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars;
     mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap = gSettings.Quirks.OcBooterQuirks.SetupVirtualMap;
     mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS = gSettings.Quirks.OcBooterQuirks.SignalAppleOS;
     mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = gSettings.Quirks.OcBooterQuirks.SyncRuntimePermissions;
-    mOpenCoreConfiguration.Booter.Quirks.ResizeAppleGpuBars = gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars;
+
 
   #endif
 

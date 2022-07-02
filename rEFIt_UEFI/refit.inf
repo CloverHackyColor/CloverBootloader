@@ -527,6 +527,7 @@
   gAppleEventProtocolGuid
   gEfiOSInfoProtocolGuid
   gEfiKeyboardInfoProtocolGuid
+  gAppleUserInterfaceThemeProtocolGuid
 
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

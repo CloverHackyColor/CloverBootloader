@@ -69,6 +69,7 @@ constexpr const EFI_GUID gDataHubPlatformGuid = {
 };
 
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
+extern UINT32      mCurrentColor;
 
 
 typedef union {
@@ -359,6 +360,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     UINT16 DensityThreshold = 0x96;
     UINT64 ConfigStatus = 0;
     Color = gSettings.BootGraphics.DefaultBackgroundColor;
+    mCurrentColor = Color;
     DBG("set DefaultBackgroundColor=0x%x\n", Color);
     SetNvramVariable(L"DefaultBackgroundColor", gEfiAppleNvramGuid, Attributes, 4, &Color);
     // add some UI variables

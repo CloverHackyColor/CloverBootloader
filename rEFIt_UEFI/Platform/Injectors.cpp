@@ -47,6 +47,9 @@ CHAR8* BootOSName = NULL;
 UINT16 KeyboardVendor = 0x05ac; //Apple inc.
 UINT16 KeyboardProduct = 0x021d; //iMac aluminium
 
+extern UINT32      mCurrentColor;
+extern EFI_GUID gAppleUserInterfaceThemeProtocolGuid;
+
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
 // GET_PROPERTY_VALUE
@@ -331,26 +334,39 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
   UsbKbGetKeyboardDeviceInfo
 };
 
-//#define OCQUIRKS_PROTOCOL_REVISION  23
-//
-//EFI_STATUS
-//EFIAPI
-//GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
-//                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
-//                 OUT XBool           *GopEnable
-//                 )
-//{
-//  DBG("GetQuirksConfig called\n");
-//  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS_4CLOVER));
-//  *GopEnable = gProvideConsoleGopEnable;
-//  return EFI_SUCCESS;
-//}
-//
-//OCQUIRKS_PROTOCOL mQuirksConfig = {
-//  OCQUIRKS_PROTOCOL_REVISION,
-//  0,  //reserved
-//  GetQuirksConfig
-//};
+extern EFI_GUID gAppleUserInterfaceThemeProtocolGuid;
+
+typedef EFI_STATUS (EFIAPI *APPLE_USER_INTERFACE_THEME_GETCOLOR) (
+  IN OUT UINT32 * Color
+);
+
+
+typedef struct {
+  UINT64                                Version;
+  APPLE_USER_INTERFACE_THEME_GETCOLOR   GetColor;
+} APPLE_USER_INTERFACE_THEME_PROTOCOL;
+
+EFI_STATUS
+EFIAPI
+UserInterfaceThemeGetColor (
+  UINT32    *Color
+  )
+{
+  if (Color == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  *Color = mCurrentColor;
+  return EFI_SUCCESS;
+}
+
+STATIC APPLE_USER_INTERFACE_THEME_PROTOCOL mAppleUserInterfaceThemeProtocol = {
+  1,
+  UserInterfaceThemeGetColor
+};
+
+
+
 
 EFI_STATUS
 SetPrivateVarProto(void)
@@ -367,8 +383,8 @@ SetPrivateVarProto(void)
                                                        &mGraphConfig,
                                                        &gEfiKeyboardInfoProtocolGuid,
                                                        &mKeyboardInfo,
-//                                                       &gOcQuirksProtocolGuid,
-//                                                       &mQuirksConfig,
+                                                       &gAppleUserInterfaceThemeProtocolGuid,
+                                                       &mAppleUserInterfaceThemeProtocol,
                                                        NULL
                                                        );
 	//obligatory protocol
