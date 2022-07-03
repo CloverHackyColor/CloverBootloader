@@ -229,7 +229,7 @@
   OcAppleUserInterfaceThemeLib|OpenCorePkg/Library/OcAppleUserInterfaceThemeLib/OcAppleUserInterfaceThemeLib.inf
   OcConfigurationLib|OpenCorePkg/Library/OcConfigurationLib/OcConfigurationLib.inf
   OcDevicePropertyLib|OpenCorePkg/Library/OcDevicePropertyLib/OcDevicePropertyLib.inf
-  OcFirmwareVolumeLib|OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf
+ # OcFirmwareVolumeLib|OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf
   OcHashServicesLib|OpenCorePkg/Library/OcHashServicesLib/OcHashServicesLib.inf
   OcSmbiosLib|OpenCorePkg/Library/OcSmbiosLib/OcSmbiosLib.inf
   OcSmcLib|OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf
@@ -485,10 +485,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+ # OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf {
+ #   <BuildOptions>
+ #     *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+ # }
   OpenCorePkg/Library/OcHashServicesLib/OcHashServicesLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)

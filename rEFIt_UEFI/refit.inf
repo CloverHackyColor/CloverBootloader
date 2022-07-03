@@ -492,7 +492,7 @@
   gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
   gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
   gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
+ # gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
   gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
   gEfiLegacy8259ProtocolGuid          ## PROTOCOL SOMETIMES_CONSUMES
