@@ -136,11 +136,11 @@ class ApplePlatformDataArrayClass
       "MacBook"_XS8, "1.0"_XS8, "C02RCE58GCN3"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x25, 0x0f, 0, 0, 0x87, "j92"_XS8, "j92"_XS8, 0xf0e007 },
     //MacBook9,1 / MacBook (Retina, 12-inch, Early 2016)
-    { MacBook91, "MB91.88Z.F000.B00.2106131743"_XS8, "429.140.8.0.0"_XS8, "Mac-9AE82516C7C6B903"_XS8, // Intel Core m5-6Y54 @ 1.20 GHz
+    { MacBook91, "MB91.88Z.F000.B00.2106131743"_XS8, "451.140.1.0.0"_XS8, "Mac-9AE82516C7C6B903"_XS8, // Intel Core m5-6Y54 @ 1.20 GHz
       "MacBook"_XS8, "1.0"_XS8, "C02RM408HDNK"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x35, 0x0f, 0, 1, 0x06, "j93"_XS8, "j93"_XS8, 0xf0e007 }, // need EPCI
     //MacBook10,1 / MacBook (Retina, 12-inch, 2017)
-    { MacBook101, "MB101.88Z.F000.B00.2106131834"_XS8, "429.140.8.0.0"_XS8, "Mac-EE2EBD4B90B839A8"_XS8, // Intel Core i5-7Y54 @ 1.30 GHz
+    { MacBook101, "MB101.88Z.F000.B00.2106131834"_XS8, "451.140.1.0.0"_XS8, "Mac-EE2EBD4B90B839A8"_XS8, // Intel Core i5-7Y54 @ 1.30 GHz
       "MacBook"_XS8, "1.0"_XS8, "C02TQHACHH27"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x42, 0x0f, 0, 0, 0x12, "j122"_XS8, "j122"_XS8, 0xf08009 }, // need EPCI
     //MacBookPro1,1 / MacBook Pro (15-inch Glossy)
@@ -252,27 +252,27 @@ class ApplePlatformDataArrayClass
       "MacBook Pro"_XS8, "1.0"_XS8, "C02Q51OSH1DP"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x28, 0x0f, 0, 0, 0x07, "j52"_XS8, "j52"_XS8, 0xf01008 },
     //MacBookPro13,1 / MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)
-    { MacBookPro131, "MBP131.88Z.F000.B00.2106131757"_XS8, "429.140.8.0.0"_XS8, "Mac-473D31EABEB93F9B"_XS8, // Intel Core i5-6360U @ 2.00 GHz
+    { MacBookPro131, "MBP131.88Z.F000.B00.2106131757"_XS8, "451.140.1.0.0"_XS8, "Mac-473D31EABEB93F9B"_XS8, // Intel Core i5-6360U @ 2.00 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02SLHACGVC1"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x36, 0x0f, 0, 1, 0x02, "2016mb"_XS8, "j130"_XS8, 0xf02009 }, // need EPCI
     //MacBookPro13,2 / MacBook Pro (13-inch, 2016, Four Thunderbolt 3 Ports)
-    { MacBookPro132, "MBP132.88Z.F000.B00.2106131817"_XS8, "429.140.8.0.0"_XS8, "Mac-66E35819EE2D0D05"_XS8, // Intel Core i5-6287U @ 3.10 GHz
+    { MacBookPro132, "MBP132.88Z.F000.B00.2106131817"_XS8, "451.140.1.0.0"_XS8, "Mac-66E35819EE2D0D05"_XS8, // Intel Core i5-6287U @ 3.10 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02SLHACGYFH"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x37, 0x0f, 0, 0, 0x21, "2016mb"_XS8, "j79"_XS8, 0xf02009 },
     //MacBookPro13,3 / MacBook Pro (15-inch, 2016)
-    { MacBookPro133, "MBP133.88Z.F000.B00.2106131759"_XS8, "429.140.8.0.0"_XS8, "Mac-A5C67F76ED83108C"_XS8, // Intel Core i7-6920HQ @ 2.90 GHz
+    { MacBookPro133, "MBP133.88Z.F000.B00.2106131759"_XS8, "451.140.1.0.0"_XS8, "Mac-A5C67F76ED83108C"_XS8, // Intel Core i7-6920HQ @ 2.90 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02SLHACGTFN"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x38, 0x0f, 0, 0, 0x08, "2016mb"_XS8, "j80g"_XS8, 0xf04009 },
     //MacBookPro14,1 / MacBook Pro (13-inch, 2017, Two Thunderbolt 3 ports)
-    { MacBookPro141, "MBP141.88Z.F000.B00.2106131822"_XS8, "429.140.8.0.0"_XS8, "Mac-B4831CEBD52A0C4C"_XS8, // Intel Core i5-7360U @ 2.30 GHz
+    { MacBookPro141, "MBP141.88Z.F000.B00.2106131822"_XS8, "451.140.1.0.0"_XS8, "Mac-B4831CEBD52A0C4C"_XS8, // Intel Core i5-7360U @ 2.30 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02TNHACHV29"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x43, 0x0f, 0, 0, 0x07, "2017mbp"_XS8, "j130a"_XS8, 0xf0b009 },
     //MacBookPro14,2 / MacBook Pro (13-inch, 2017, Four Thunderbolt 3 Ports)
-    { MacBookPro142, "MBP142.88Z.F000.B00.2106131822"_XS8, "429.140.8.0.0"_XS8, "Mac-CAD6701F7CEA0921"_XS8, // Intel Core i5-7267U @ 3.09 GHz
+    { MacBookPro142, "MBP142.88Z.F000.B00.2106131822"_XS8, "451.140.1.0.0"_XS8, "Mac-CAD6701F7CEA0921"_XS8, // Intel Core i5-7267U @ 3.09 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02TQHACHV2N"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x44, 0x0f, 0, 0, 0x02, "2017mbp"_XS8, "j79a"_XS8, 0xf09009 },
     //MacBookPro14,3 / MacBook Pro (15-inch, 2017)
-    { MacBookPro143, "MBP143.88Z.F000.B00.2106131834"_XS8, "429.140.8.0.0"_XS8, "Mac-551B86E5744E2388"_XS8, // Intel Core i7-7700HQ @ 2.80 GHz
+    { MacBookPro143, "MBP143.88Z.F000.B00.2106131834"_XS8, "451.140.1.0.0"_XS8, "Mac-551B86E5744E2388"_XS8, // Intel Core i7-7700HQ @ 2.80 GHz
       "MacBook Pro"_XS8, "1.0"_XS8, "C02TQHACHTD5"_XS8, "MacBook-Aluminum"_XS8,
       0x02, 0x45, 0x0f, 0, 0, 0x01, "2017mbp"_XS8, "j80ga"_XS8, 0xf0a009 },
     //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
@@ -511,19 +511,19 @@ class ApplePlatformDataArrayClass
       "iMac"_XS8, "1.0"_XS8, "C02PNHACGG78"_XS8, "iMac-Aluminum"_XS8,
       0x02, 0x32, 0x0f, 0, 0, 0x21, "j94"_XS8, "j94"_XS8, 0xf00008 }, // need EPCI
     //iMac17,1 / iMac (Retina 5K, 27-inch, Late 2015)
-    { iMac171, "IM171.88Z.F000.B00.2106131747"_XS8, "429.140.8.0.0"_XS8, "Mac-B809C3757DA9BB8D"_XS8, // Intel Core i7-6700K @ 4.00 GHz
+    { iMac171, "IM171.88Z.F000.B00.2106131747"_XS8, "451.140.1.0.0"_XS8, "Mac-B809C3757DA9BB8D"_XS8, // Intel Core i7-6700K @ 4.00 GHz
       "iMac17,1"_XS8, "1.0"_XS8, "C02QFHACGG7L"_XS8, "iMac-Aluminum"_XS8, // i5: Mac-65CE76090165799A/Mac-DB15BD556843C820, i7: Mac-B809C3757DA9BB8D
-      0x02, 0x34, 0x0f, 0, 0, 0x03, "j95j95am"_XS8, "j95"_XS8, 0xf0c008 }, //Note: why? i5: 2.33f12 but for i7: 2.34f3
+      0x02, 0x41, 0x0f, 0, 0, 0x02, "j95j95am"_XS8, "j95"_XS8, 0xf0c008 }, //Note: why? i5: 2.33f12 but for i7: 2.34f3
     //iMac18,1 / iMac (21.5-inch, 2017)
-    { iMac181, "IM181.88Z.F000.B00.2106131817"_XS8, "429.140.8.0.0"_XS8, "Mac-4B682C642B45593E"_XS8, // Intel Core i5-7360U @ 2.30 GHz
+    { iMac181, "IM181.88Z.F000.B00.2106131817"_XS8, "451.140.1.0.0"_XS8, "Mac-4B682C642B45593E"_XS8, // Intel Core i5-7360U @ 2.30 GHz
       "iMac"_XS8, "1.0"_XS8, "C02TDHACH7JY"_XS8, "iMac-Aluminum"_XS8,
-      0x02, 0x39, 0x0f, 0, 0, 0x40, "j133_4_5"_XS8, "j135"_XS8, 0xf07009 }, // need RPlt EPCI
+      0x02, 0x41, 0x0f, 0, 0, 0x02, "j133_4_5"_XS8, "j135"_XS8, 0xf07009 }, // need RPlt EPCI
     //iMac18,2 / iMac (Retina 4K, 21.5-inch, 2017)
-    { iMac182, "IM183.88Z.F000.B00.2106131835"_XS8, "429.140.8.0.0"_XS8, "Mac-77F17D7DA9285301"_XS8, // Intel Core i5-7500 @ 3.40 GHz/i5-7400 @ 3.00GHz
+    { iMac182, "IM183.88Z.F000.B00.2106131835"_XS8, "451.140.1.0.0"_XS8, "Mac-77F17D7DA9285301"_XS8, // Intel Core i5-7500 @ 3.40 GHz/i5-7400 @ 3.00GHz
       "iMac"_XS8, "1.0"_XS8, "C02TDHACJ1G5"_XS8, "iMac-Aluminum"_XS8,
-      0x02, 0x40, 0x0f, 0, 0, 0x01, "j133_4_5"_XS8, "j134"_XS8, 0xf06009 },
+      0x02, 0x41, 0x0f, 0, 0, 0x02, "j133_4_5"_XS8, "j134"_XS8, 0xf06009 },
     //iMac18,3 / iMac (Retina 5K, 27-inch, 2017)
-    { iMac183, "IM183.88Z.F000.B00.2106131835"_XS8, "429.140.8.0.0"_XS8, "Mac-BE088AF8C5EB4FA2"_XS8, // Intel Core i7-7700K @ 4.20 GHz
+    { iMac183, "IM183.88Z.F000.B00.2106131835"_XS8, "451.140.1.0.0"_XS8, "Mac-BE088AF8C5EB4FA2"_XS8, // Intel Core i7-7700K @ 4.20 GHz
       "iMac"_XS8, "1.0"_XS8, "C02TDHACJ1GJ"_XS8, "iMac-Aluminum"_XS8,
       0x02, 0x41, 0x0f, 0, 0, 0x02, "j133_4_5"_XS8, "j135"_XS8, 0xf07009 },
     //iMac19,1 / iMac (Retina 5K, 27-inch, 2019)
@@ -537,18 +537,18 @@ class ApplePlatformDataArrayClass
       0x02, 0x47, 0x0f, 0, 0, 0x03, "j138_9"_XS8, "j138"_XS8, 0xf0d009 },
     //iMac20,1 / iMac (Retina 5K, 27-inch, 2020) Intel Core i5-10500 @ 3.10 GHz
       //AMD Radeon Pro 5300, Radeon Pro 5500 XT, Radeon Pro 5700, or Radeon Pro 5700 XT
-    { iMac201, "IM201.88Z.F000.B00.2107050239"_XS8, "1715.0.57.0.0"_XS8, "Mac-CFF7D910A743CAAF"_XS8,
+    { iMac201, "IM201.88Z.F000.B00.2107050239"_XS8, "1916.0.3.0.0"_XS8, "Mac-CFF7D910A743CAAF"_XS8,
       "iMac"_XS8, "1.0"_XS8, "C02D3HACPN5T"_XS8, "iMac-Aluminum"_XS8,
       0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
   //    0x02, 0x46, 0x0f, 0, 0, 0x12, "j185"_XS8, "j185"_XS8, 0xf0d009 },
     //iMac20,2 / iMac (Retina 5K, 27-inch, 2020) Intel Core i9-10910 @ 3.60 GHz
       //AMD Radeon Pro 5300, Radeon Pro 5500 XT, Radeon Pro 5700, or Radeon Pro 5700 XT
-    { iMac202, "IM201.88Z.F000.B00.2107050239"_XS8, "1715.0.57.0.0"_XS8, "Mac-AF89B6D9451A490B"_XS8,
+    { iMac202, "IM201.88Z.F000.B00.2107050239"_XS8, "1916.0.3.0.0"_XS8, "Mac-AF89B6D9451A490B"_XS8,
       "iMac"_XS8, "1.0"_XS8, "C02D2HAC046M"_XS8, "iMac-Aluminum"_XS8,
       0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
   //    0x02, 0x47, 0x0f, 0, 0, 0x03, "j185f"_XS8, "j185f"_XS8, 0xf0d009 },
     //iMacPro1,1 /iMac Pro (2017), Radeon Pro Vega 56, devID=0x6867
-    { iMacPro11, "IMP11.88Z.F000.B00.2107050205"_XS8, "1715.0.57.0.0"_XS8, "Mac-7BA5B2D9E42DDD94"_XS8, // Intel Xeon W-2140B CPU @ 3.20 GHz
+    { iMacPro11, "IMP11.88Z.F000.B00.2205210104"_XS8, "1916.0.3.0.0"_XS8, "Mac-7BA5B2D9E42DDD94"_XS8, // Intel Xeon W-2140B CPU @ 3.20 GHz
       "iMac Pro"_XS8, "1.0"_XS8, "C02VVHACHX87"_XS8, "iMacPro-Aluminum"_XS8,
       0, 0, 0, 0, 0, 0, ""_XS8, "j137"_XS8, 0 },
     //MacPro1,1 / Mac Pro
@@ -576,7 +576,7 @@ class ApplePlatformDataArrayClass
       "MacPro"_XS8, "1.0"_XS8, "F5KLA770F9VM"_XS8, "Pro-Enclosure"_XS8,
       0x02, 0x20, 0x0f, 0, 0, 0x18, "j90"_XS8, "j90"_XS8, 0xf0f006 },
     //MacPro7,1 / Mac Pro (2019)
-    { MacPro71, "MP71.88Z.F000.B00.2107050205"_XS8, "1715.0.57.0.0"_XS8, "Mac-27AD2F918AE68F61"_XS8, // Intel Xeon W-3245M CPU @ 3.20 GHz
+    { MacPro71, "MP71.88Z.F000.B00.2205210104"_XS8, "1916.0.3.0.0"_XS8, "Mac-27AD2F918AE68F61"_XS8, // Intel Xeon W-3245M CPU @ 3.20 GHz
       "MacPro"_XS8, "1.0"_XS8, "F5KZNHACP7QM"_XS8, "Pro-Enclosure"_XS8,
       0, 0, 0, 0, 0, 0, ""_XS8, "j16O"_XS8, 0 },
     //Xserve1,1 / Xserve (Late 2006)

@@ -586,6 +586,7 @@ SetupDataForOSX(XBool Hibernate)
     AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&RBr);
     AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&ApplePlatformDataArray[GlobalConfig.CurrentModel].smcConfig);
     AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision);
+    AddSMCkey(SMC_MAKE_KEY('R','V','B','F'), 6, SmcKeyTypeCh8, (SMC_DATA *)&ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision);
   }
   AddSMCkey(SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, (SMC_DATA *)&RPlt);
   AddSMCkey(SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, (SMC_DATA *)&gSettings.Smbios.Mobile);
