@@ -569,6 +569,7 @@ SetupDataForOSX(XBool Hibernate)
       LogDataHub(gEfiMiscSubClassGuid, L"RBr",  &RBr,    8);
       LogDataHub(gEfiMiscSubClassGuid, L"EPCI", &ApplePlatformDataArray[GlobalConfig.CurrentModel].smcConfig,   4);
       LogDataHub(gEfiMiscSubClassGuid, L"REV",  &ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision, 6);
+      LogDataHub(gEfiMiscSubClassGuid, L"RVBF",  &ApplePlatformDataArray[GlobalConfig.CurrentModel].smcRevision, 6);
     }
     LogDataHub(gEfiMiscSubClassGuid, L"RPlt", RPlt,   8);
     LogDataHub(gEfiMiscSubClassGuid, L"BEMB", &gSettings.Smbios.Mobile, 1);
