@@ -114,9 +114,25 @@ else
 fi
 }
 
+# Clone OR Update OpenCorePkg
+function clone_OpenCorePkg() {
+cd "${CLOVERROOT}"
+if [ ! -d OpenCorePkg/AppleModels ]; then
+  echo "Cloning OpenCorePkg...."
+  git clone https://github.com/CloverHackyColor/OpenCorePkg.git > /dev/null
+  cd "${OpenCorePkg}"
+  git submodule update --init
+else
+  echo "Updating OpenCorePkg...."
+  cd "${OpenCorePkg}"
+  git pull > /dev/null
+fi	
+}
+
 updateClover() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
+clone_OpenCorePkg
 if [[ -d .git ]]; then
   git fetch --all --recurse-submodules
   git pull --recurse-submodules origin master
@@ -750,8 +766,10 @@ menu
 }
 
 # Main
+clone_OpenCorePkg
 set -e
 if [[ "$2" == ci ]]; then
+  clone_OpenCorePkg
   buildClover
   buildCCPV
   BLC
@@ -759,5 +777,6 @@ if [[ "$2" == ci ]]; then
   buildIso
   buildApp
 else
+  clone_OpenCorePkg
   menu
 fi
