@@ -342,7 +342,7 @@ void ConfigManager::DiscoverDevices()
           }
 
           //
-          //  Get MAC-address from hardwaredirectly
+          //  Get MAC-address from hardware directly
           //
           if ( Mmio != NULL ) {
             UINTN Offset = 0;
