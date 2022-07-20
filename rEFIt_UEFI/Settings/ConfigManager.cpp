@@ -95,7 +95,7 @@ void ConfigManager::DiscoverDevices()
                                   &Pci
                                   );
 
-      DBG("PCI (%02llX|%02llX:%02llX.%02llX) : %04hX %04hX class=%02hhX%02hhX%02hhX\n",
+        DBG("PCI (%02llX|%02llX:%02llX.%02llX) : %04hX %04hX class=%02hhX%02hhX%02hhX\n",
              Segment,
              Bus,
              Device,
@@ -254,6 +254,8 @@ void ConfigManager::DiscoverDevices()
             }else{
               GfxPropertiesArrayNonConst.AddReference(gfx, true);
             }
+          } else {
+            GfxPropertiesArrayNonConst.AddReference(gfx, true);
           }
         }   //if gfx
 
