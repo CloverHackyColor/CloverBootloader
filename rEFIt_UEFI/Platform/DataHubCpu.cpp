@@ -420,7 +420,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   if (!gDriversFlags.AptioMemFixLoaded) {
     DeleteNvramVariable(L"recovery-boot-mode", gEfiAppleBootGuid);
   }
-  
+/*
   // Check for AptioFix2Drv loaded to store efi-boot-device for special boot
     if (gDriversFlags.AptioFix2Loaded || gDriversFlags.AptioFixLoaded ||
         gDriversFlags.AptioFix3Loaded || gDriversFlags.AptioMemFixLoaded)  {
@@ -435,7 +435,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         DBG("can't set  specialbootdevice!\n");
       }
     }
-
+*/
   // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13+, we should remove this variables.
   if (Entry->LoaderType == OSTYPE_OSX_INSTALLER) {
     if (Entry->macOSVersion.isEmpty() || Entry->macOSVersion > MacOsVersion("10.12"_XS8)) {
