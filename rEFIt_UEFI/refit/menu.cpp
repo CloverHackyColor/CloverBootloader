@@ -2239,7 +2239,7 @@ void CreateMenuProps(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::
 		break;
 	}
 }
-
+/*
 void CreateMenuAddProp(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::AddPropertyClass* Prop)
 {
   REFIT_INPUT_DIALOG  *InputBootArgs;
@@ -2272,7 +2272,7 @@ void CreateMenuAddProp(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass
     break;
   }
 }
-
+*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
 {
   REFIT_MENU_ITEM_OPTIONS    *Entry;
@@ -2295,7 +2295,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-
+/*
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuArbProperties()
 {
   REFIT_MENU_ITEM_OPTIONS    *Entry;
@@ -2332,7 +2332,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAddProperties()
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-
+*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
 {
   REFIT_MENU_ITEM_OPTIONS   *Entry;
@@ -2351,8 +2351,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
   SubScreen->AddMenuItemInput(100, "FakeID XHCI:", true);
   SubScreen->AddMenuItemInput(103, "FakeID IMEI:", true);
   SubScreen->AddMenuEntry(SubMenuProperties(), true);
-  SubScreen->AddMenuEntry(SubMenuArbProperties(), true);
-  SubScreen->AddMenuEntry(SubMenuAddProperties(), true);
+//  SubScreen->AddMenuEntry(SubMenuArbProperties(), true);
+//  SubScreen->AddMenuEntry(SubMenuAddProperties(), true);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
