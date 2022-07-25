@@ -4,7 +4,7 @@
  *  Created by Slice on 03.10.2016.
  *
  */
-
+/*
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -16,6 +16,8 @@
 #include <Library/MemLogLib.h>
 
 #include <Protocol/AppleSMC.h>
+*/
+#include "SmcHelper.h"
 
 // DBG_TO: 0=no debug, 1=serial, 2=console 3=log
 // serial requires
@@ -40,7 +42,7 @@
 #define APPLE_SMC_SIGNATURE     SIGNATURE_64('A','P','P','L','E','S','M','C')
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
-EFI_HANDLE              mHandle = NULL;
+EFI_HANDLE              m7Handle = NULL;
 //EFI_BOOT_SERVICES*			gBS;
 
 extern EFI_GUID gEfiAppleBootGuid;
@@ -497,7 +499,7 @@ APPLE_SMC_STATE_PROTOCOL SMCStateProtocol = {
 
 
 
-
+#if SEPARATE_SMC_DRIVER
 /****************************************************************
  * Entry point
  ***************************************************************/
@@ -517,7 +519,7 @@ SMCHelperEntrypoint (
  // gBS				= SystemTable->BootServices;
   
   Status = gBS->InstallMultipleProtocolInterfaces (
-                &mHandle,
+                &m7Handle,
                 &gAppleSMCProtocolGuid,
                 &SMCHelperProtocol,
                 &gAppleSMCStateProtocolGuid,
@@ -527,3 +529,22 @@ SMCHelperEntrypoint (
   
   return Status;
 }
+#else
+EFI_STATUS SMCHelperInstall(EFI_HANDLE* Handle)
+{
+	  EFI_STATUS					Status; // = EFI_SUCCESS;
+
+	 // gBS				= SystemTable->BootServices;
+
+	  Status = gBS->InstallMultipleProtocolInterfaces (
+	                Handle,
+	                &gAppleSMCProtocolGuid,
+	                &SMCHelperProtocol,
+	                &gAppleSMCStateProtocolGuid,
+	                &SMCStateProtocol,
+	                NULL
+	                );
+
+	  return Status;
+}
+#endif

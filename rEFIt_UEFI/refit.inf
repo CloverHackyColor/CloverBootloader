@@ -156,6 +156,7 @@
   include/QuirksCodes.h
   include/remove_ref.h
   include/rename_helper.h
+  include/SmcHelper.h
   include/syslinux_mbr.h
   include/TagTypes.h
   include/VolumeTypes.h
@@ -394,7 +395,7 @@
   Settings/SelfOem.cpp
   Settings/SelfOem.h
   ../Protocols/FirmwareVolume/FirmwareVolume.c
-
+  ../Protocols/SMCHelper/SMCHelper.c
 
 [Sources.IA32]
   PlatformIA32/ftol.asm | MSFT
@@ -531,6 +532,9 @@
   gEfiKeyboardInfoProtocolGuid
   gAppleUserInterfaceThemeProtocolGuid
   gEfiFirmwareVolumeProtocolGuid
+  gAppleSMCProtocolGuid			  ## PRODUCES and CONSUMES
+  gAppleSMCStateProtocolGuid  ## PRODUCES and CONSUMES
+ 
 
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid
@@ -550,13 +554,13 @@
 [BuildOptions]
 
   # -fno-rtti is only for C++
-  
+
   XCODE:*_*_*_CC_FLAGS  = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
   XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
-  
+
   GCC:*_*_*_CC_FLAGS = -fno-omit-frame-pointer -DJCONST=CONST
   GCC:*_*_*_CXX_FLAGS = -fno-omit-frame-pointer -fno-rtti -DJCONST=CONST
-  
+
   MSFT:*_*_*_CC_FLAGS = /wd4201 /D JCONST=const
   #TODO re-enable warnings
-  MSFT:*_*_*_CXX_FLAGS = /wd4201 /wd4244 /wd4267 /D JCONST=const 
+  MSFT:*_*_*_CXX_FLAGS = /wd4201 /wd4244 /wd4267 /D JCONST=const

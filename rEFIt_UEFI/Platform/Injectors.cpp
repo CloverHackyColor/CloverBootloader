@@ -21,9 +21,12 @@
 #include <Efi.h>
 //#include <Protocol/OcQuirksProtocol4Clover.h>
 #include "Injectors.h"
+//#include "../include/SmcHelper.h"
 #include "../Platform/Settings.h"
 
+
 #include <Protocol/FirmwareVolume.h>
+#include <Protocol/AppleSMC.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_PRO 1
@@ -369,6 +372,8 @@ STATIC APPLE_USER_INTERFACE_THEME_PROTOCOL mAppleUserInterfaceThemeProtocol = {
 
 
 extern EFI_FIRMWARE_VOLUME_PROTOCOL   FirmwareVolume;
+extern APPLE_SMC_IO_PROTOCOL SMCHelperProtocol;
+extern APPLE_SMC_STATE_PROTOCOL SMCStateProtocol;
 
 EFI_STATUS
 SetPrivateVarProto(void)
@@ -389,8 +394,13 @@ SetPrivateVarProto(void)
                                                        &mAppleUserInterfaceThemeProtocol,
                                                        &gEfiFirmwareVolumeProtocolGuid,
                                                        &FirmwareVolume,
-                                                       NULL
+										                &gAppleSMCProtocolGuid,
+										                &SMCHelperProtocol,
+										                &gAppleSMCStateProtocolGuid,
+										                &SMCStateProtocol,
+                                                      NULL
                                                        );
+//  Status = SMCHelperInstall(&gImageHandle);
 
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,

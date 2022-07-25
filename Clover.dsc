@@ -232,7 +232,7 @@
  # OcFirmwareVolumeLib|OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf
   OcHashServicesLib|OpenCorePkg/Library/OcHashServicesLib/OcHashServicesLib.inf
   OcSmbiosLib|OpenCorePkg/Library/OcSmbiosLib/OcSmbiosLib.inf
-  OcSmcLib|OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf
+#  OcSmcLib|OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf
   OcUnicodeCollationEngGenericLib|OpenCorePkg/Library/OcUnicodeCollationEngLib/OcUnicodeCollationEngGenericLib.inf
   OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
   OcPeCoffLib|OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf
@@ -497,10 +497,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+#  OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf {
+#    <BuildOptions>
+#      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+#  }
   OpenCorePkg/Library/OcUnicodeCollationEngLib/OcUnicodeCollationEngGenericLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -770,7 +770,7 @@
   # Misc
   FSInject/FSInject.inf
   Protocols/MsgLog/MsgLog.inf
-  Protocols/SMCHelper/SMCHelper.inf
+  #Protocols/SMCHelper/SMCHelper.inf
   #Protocols/FirmwareVolume/FirmwareVolume.inf
   Protocols/AppleImageCodec/AppleImageCodec.inf
   #Protocols/AppleUITheme/AppleUITheme.inf
