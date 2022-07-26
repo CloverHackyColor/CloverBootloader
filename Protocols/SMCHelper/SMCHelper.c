@@ -481,11 +481,7 @@ APPLE_SMC_IO_PROTOCOL SMCHelperProtocol = {
   0,
   SMC_PORT_BASE,
   FALSE,
-/*  SmcUnknown1Impl,
-  SmcUnknown2Impl,
-  SmcUnknown3Impl,
-  SmcUnknown4Impl,
-  SmcUnknown5Impl */
+
 };
 
 APPLE_SMC_STATE_PROTOCOL SMCStateProtocol = {

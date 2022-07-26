@@ -799,7 +799,7 @@ MainPostBuildScript() {
 
     # Mandatory drivers
     echo "Copy Mandatory drivers:"
-    binArray=( XhciDxe SMCHelper EnglishDxe )
+    binArray=( XhciDxe EnglishDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_LEGACY/$efi.efi
@@ -823,7 +823,7 @@ MainPostBuildScript() {
 #    fi
 
 
-    binArray=( SMCHelper EnglishDxe )
+    binArray=( EnglishDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi

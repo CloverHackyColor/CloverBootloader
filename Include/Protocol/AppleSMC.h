@@ -282,11 +282,7 @@ struct _APPLE_SMC_IO_PROTOCOL {
   SMC_INDEX                     Index;               ///<
   SMC_ADDRESS                   Address;             ///<
   BOOLEAN                       Mmio;                ///<
-/*  SMC_IO_SMC_UNKNOWN_1          SmcUnknown1;         ///<
-  SMC_IO_SMC_UNKNOWN_2          SmcUnknown2;         ///<
-  SMC_IO_SMC_UNKNOWN_3          SmcUnknown3;         ///<
-  SMC_IO_SMC_UNKNOWN_4          SmcUnknown4;         ///<
-  SMC_IO_SMC_UNKNOWN_5          SmcUnknown5;         ///< */
+
 };
 
 

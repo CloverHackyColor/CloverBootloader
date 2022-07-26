@@ -128,6 +128,9 @@ REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
+XBool gResetSMC = false;
+extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
+
 
 void FillInputs(XBool New)
 {
@@ -460,6 +463,9 @@ void FillInputs(XBool New)
 
   InputItems[InputItemsCount].ItemType = BoolValue; //128
   InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo;
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //129
+  InputItems[InputItemsCount++].BValue = gResetSMC;
 
 
 
@@ -929,7 +935,7 @@ void ApplyInputs(void)
     gSettings.Quirks.OcBooterQuirks.DisableSingleUser      = ((gSettings.Quirks.QuirksMask & QUIRK_SU) != 0);     //0
     gSettings.Quirks.OcBooterQuirks.DisableVariableWrite   = ((gSettings.Quirks.QuirksMask & QUIRK_VAR) != 0);    //0
     gSettings.Quirks.OcBooterQuirks.DiscardHibernateMap    = ((gSettings.Quirks.QuirksMask & QUIRK_HIBER) != 0);  //0
-    gSettings.Quirks.OcBooterQuirks.EnableSafeModeSlide    = ((gSettings.Quirks.QuirksMask & QUIRK_SAFE) != 0);   //1
+    gSettings.Quirks.OcBooterQuirks.EnableSafeModeSlide    = ((gSettings.Quirks.QuirksMask & QUIRK_SAFE) != 0);   //0
     gSettings.Quirks.OcBooterQuirks.EnableWriteUnprotector = ((gSettings.Quirks.QuirksMask & QUIRK_UNPROT) != 0); //1
     gSettings.Quirks.OcBooterQuirks.ForceExitBootServices  = ((gSettings.Quirks.QuirksMask & QUIRK_EXIT) != 0);   //0
     gSettings.Quirks.OcBooterQuirks.ProtectMemoryRegions   = ((gSettings.Quirks.QuirksMask & QUIRK_REGION) != 0); //0
@@ -1112,6 +1118,21 @@ void ApplyInputs(void)
     gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo = InputItems[i].BValue != 0;
      DBG("applied ProvideCurrentCpuInfo=%s\n", gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo ? "Y" : "N" );
    }
+  i++; //129
+  if (InputItems[i].Valid) {
+    gResetSMC = InputItems[i].BValue != 0;
+    if (gResetSMC) {
+      // reset controller
+      if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
+        gAppleSmc->SmcReset(gAppleSmc,  1);
+        DBG("SMC store is resetted\n");
+      } else {
+        DBG("SMC protocol not found\n");
+      }
+      gResetSMC = false;
+    }
+  }
+
 
   if (NeedSave) {
     ApplySettings();
@@ -2489,6 +2510,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
   SubScreen->AddMenuItemInput(2,  "Block kext:", true);
   SubScreen->AddMenuItemInput(51, "Set OS version if not detected:", true);
   SubScreen->AddMenuItemInput(118, "Booter Cfg Command:", true);
+  SubScreen->AddMenuItemInput(129, "Reset SMC", false);
 
   SubScreen->AddMenuEntry(SubMenuCSR(), true);
   SubScreen->AddMenuEntry(SubMenuBLC(), true);

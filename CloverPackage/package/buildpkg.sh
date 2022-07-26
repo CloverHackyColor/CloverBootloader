@@ -843,12 +843,12 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_LEGACY" && ${NOEXTRAS}
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
 
         # Add postinstall script for SMCHelper drivers to remove it if VirtualSMC driver exists
-        if [[ "$driver" == SMCHelper* ]]; then
-         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
-                            --subst="DRIVER_NAME=$driver"                     \
-                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VirtualSMC"
-        fi
+ #       if [[ "$driver" == SMCHelper* ]]; then
+ #        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
+ #                           --subst="DRIVER_NAME=$driver"                     \
+ #                           --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+ #                           "VirtualSMC"
+ #       fi
         # mandatory drivers starts all selected only if /Library/Preferences/com.projectosx.clover.installer.plist does not exist
         # (i.e. Clover package never run on that target partition).
         # Otherwise each single choice start selected only for legacy Clover and only if you previously selected it
@@ -1011,12 +1011,12 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_UEFI" ]]; then
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
 
         # Add postinstall script for SMCHelper drivers to remove it if VirtualSMC driver exists
-        if [[ "$driver" == SMCHelper* ]]; then
-         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
-                            --subst="DRIVER_NAME=$driver"                     \
-                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
-                            "VirtualSMC"
-        fi
+#        if [[ "$driver" == SMCHelper* ]]; then
+#         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverChoice}"  \
+#                            --subst="DRIVER_NAME=$driver"                     \
+#                            --subst="DRIVER_DIR=$(basename $driverDestDir)"   \
+#                            "VirtualSMC"
+#        fi
 
         buildpackage "$packageRefId" "${driverChoice}" "${PKG_BUILD_DIR}/${driverChoice}" "${driverDestDir}"
         addChoice --group="Recommended64UEFI" \
