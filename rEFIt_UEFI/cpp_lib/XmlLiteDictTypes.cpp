@@ -118,7 +118,7 @@ size_t* keyValueLengthPtr)
   XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
 
   if ( !keyFound ) {
-    if ( keyValueLength == 0  ||  keyValue[0] != '#' ) {
+    if ( keyValueLength == 0  ||  (keyValue[0] != '#' && keyValue[keyValueLength-1] != '?')) {
       XString8 xmlSubPath2 = xmlPath.lastChar() == '/' ? S8Printf("Unknown key '%s%.*s:%d'. Skipped.", xmlPath.c_str(), (int)keyValueLength, keyValue, keyPos.getLine()) : S8Printf("Unknown key '%s/%.*s:%d'. Skipped.", xmlPath.c_str(), (int)keyValueLength, keyValue, keyPos.getLine());
       xmlLiteParser->addWarning(generateErrors, xmlSubPath2);
     }

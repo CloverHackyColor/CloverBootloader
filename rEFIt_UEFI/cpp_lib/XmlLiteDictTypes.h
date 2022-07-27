@@ -192,13 +192,14 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
     if ( xmlLiteParser->xmlParsingError ) {
       return false;
     }
-    if ( keyTmp.value().length() > 0 )
+    int keyLen = keyTmp.value().length();
+    if ( keyLen > 0 )
     {
-      if ( !( keyTmp.value()[0] == '#' && ignoreCommented ) )
+      if ( !( keyTmp.value()[0] == '#' && ignoreCommented ) && !(keyTmp.value()[keyLen-1] == '?') )
       {
         if ( xmlValueType != NULL )
         {
-          if ( !xmlValueType->isDefined() ) panic("BUG: parseKeyAndValueFromXmlLite must not return an undefined item");
+         // if ( !xmlValueType->isDefined() ) panic("BUG: parseKeyAndValueFromXmlLite must not return an undefined item");
           XBool validated = xmlValueType->validate(xmlLiteParser, S8Printf("%s/%s", xmlPath.c_str(), keyTmp.value().c_str()), keyPos, generateErrors);
           if ( validated ) {
             xmlValueType->setKey(keyTmp);

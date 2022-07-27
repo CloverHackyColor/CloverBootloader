@@ -397,7 +397,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
   if (gSettings.RtVariables.HWTarget.notEmpty() && (Entry->LoaderType != OSTYPE_OSX_INSTALLER) &&
-      (Entry->macOSVersion < MacOsVersion("13"_XS8) /* || gSettings.RtVariables.HWTarget.c_str()[0] != '#' */) ) {
+      (Entry->macOSVersion < MacOsVersion("13"_XS8)) ) {
     SetNvramXString8(L"BridgeOSHardwareModel", gEfiAppleNvramGuid, Attributes, gSettings.RtVariables.HWTarget);
     SetNvramVariable(L"BridgeOSBootSessionUUID", gEfiAppleBootGuid, Attributes, sizeof(uuid), &uuid);
   } else {

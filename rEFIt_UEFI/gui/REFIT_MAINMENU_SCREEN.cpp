@@ -175,7 +175,7 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
         Text = SWPrintf("%ls, booted from %ls %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str(), self.getCloverDirFullPath().wc_str());
       }
       if (Text.isEmpty()) {
-        Text = SWPrintf("%ls %ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str(), self.getCloverDirFullPath().wc_str());
+        Text = SWPrintf("%ls %ls", gFirmwareRevision, /*SelfVolume->VolName.wc_str(),*/ self.getCloverDirFullPath().wc_str());
       }
       break;
     case TEXT_CORNER_HELP:
