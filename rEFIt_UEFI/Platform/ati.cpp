@@ -222,7 +222,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x6667,  CHIP_FAMILY_HAINAN,  "AMD Radeon R5 M230",       kNull       }, // Mobile
   { 0x666F,  CHIP_FAMILY_HAINAN,  "AMD Radeon HD 8550M",      kNull       }, // Mobile R5 M230 in Lenovo
 
-	/* Vega 20 */
+  /* Vega 20 */
   { 0x66AF,  CHIP_FAMILY_VEGA20, "AMD Radeon VII",        kNull },
 
 
@@ -337,7 +337,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x67E9,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EB,  CHIP_FAMILY_BAFFIN, "AMD Radeon Polaris 11",        kNull },
   { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",           kAcre },  //fb=Caroni in 10.13.6
-  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",        	 kNull },
+  { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",          kNull },
 
   // PITCAIRN
   { 0x6800,  CHIP_FAMILY_PITCAIRN, "AMD Radeon HD 7970M",        kBuri }, // Mobile
@@ -513,6 +513,7 @@ const radeon_card_info_t radeon_cards[] = {
   // Navi15
   { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
   // Navi2x
+  { 0x73A5,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6950XT",          kNull },
   { 0x73AF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6900XT",          kNull },
   { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
   { 0x73EF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6650XT",          kNull },
@@ -1020,7 +1021,7 @@ const radeon_card_info_t radeon_cards[] = {
  0x69381002
  0x69391002
  0x73001002
- 
+
  Mojave AMD10000
  0x68601002 0x68611002 0x68621002 0x68631002 0x68641002 0x68671002 0x68681002 0x68691002 0x686A1002 0x686B1002
  0x686C1002 0x686D1002 0x686E1002 0x687F1002 0x69A01002 0x69A11002 0x69A21002 0x69A31002 0x69AF1002 0x66A01002
@@ -1104,7 +1105,7 @@ const radeon_card_info_t radeon_cards[] = {
 Catalina
  Navi
  0x731F1002
- 
+
  */
 //
 /*
@@ -1703,7 +1704,7 @@ XBool validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   option_rom_pci_header_t *rom_pci_header;
 
   if (rom_header->signature != 0xaa55) {
-	  DBG("invalid ROM signature %hX\n", rom_header->signature);
+    DBG("invalid ROM signature %hX\n", rom_header->signature);
     return false;
   }
 
@@ -1715,7 +1716,7 @@ XBool validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   }
 
   if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id){
-	  DBG("invalid ROM vendor=%04hX deviceID=%04hX\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
+    DBG("invalid ROM vendor=%04hX deviceID=%04hX\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
     return false;
   }
 
@@ -1728,8 +1729,8 @@ XBool load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   UINTN bufferLen = 0;
   UINT8*  buffer = 0;
 
-	XStringW FileName = SWPrintf("ROM\\%04hX_%04hX.rom", vendor_id, device_id);
-	if ( selfOem.oemDirExists() ) {
+  XStringW FileName = SWPrintf("ROM\\%04hX_%04hX.rom", vendor_id, device_id);
+  if ( selfOem.oemDirExists() ) {
     if (FileExists(&selfOem.getOemDir(), FileName)) {
       DBG("Found oem generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
       Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
@@ -1737,7 +1738,7 @@ XBool load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   }
   if ( Status == EFI_NOT_FOUND ) {
     if (FileExists(&self.getCloverDir(), FileName)){
-		DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
+    DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
       Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);
     }
   }
@@ -1748,7 +1749,7 @@ XBool load_vbios_file(UINT16 vendor_id, UINT16 device_id)
     card->rom = 0;
     return false;
   }
-	DBG("Loaded ROM len=%llu\n", bufferLen);
+  DBG("Loaded ROM len=%llu\n", bufferLen);
   card->rom_size = (UINT32)bufferLen;
   card->rom = (__typeof__(card->rom))AllocateZeroPool(bufferLen);
   if (!card->rom) {
@@ -1782,7 +1783,7 @@ void get_vram_size(void)
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.Graphics.VRAM != 0) {
     card->vram_size = gSettings.Graphics.VRAM << 20;
-	  DBG("Set VRAM from config=%lluMb\n", gSettings.Graphics.VRAM);
+    DBG("Set VRAM from config=%lluMb\n", gSettings.Graphics.VRAM);
     //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
@@ -1801,11 +1802,11 @@ void get_vram_size(void)
         WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, (UINT32)card->vram_size);
       }
     }
-	  DBG("Set VRAM for %s =%lluMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
+    DBG("Set VRAM for %s =%lluMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
 
   }
   gSettings.Graphics.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
-	DBG("ATI: get_vram_size returned 0x%llX\n", card->vram_size);
+  DBG("ATI: get_vram_size returned 0x%llX\n", card->vram_size);
 }
 
 XBool read_vbios(XBool from_pci)
@@ -1814,13 +1815,13 @@ XBool read_vbios(XBool from_pci)
 
   if (from_pci) {
     rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
-	  DBG(" @0x%llX\n", (uintptr_t)rom_addr);
+    DBG(" @0x%llX\n", (uintptr_t)rom_addr);
   } else {
     rom_addr = (option_rom_header_t *)(UINTN)0xc0000;
   }
 
   if (!validate_rom(rom_addr, card->pci_dev)) {
-	  DBG("There is no ROM @0x%llX\n", (uintptr_t)rom_addr);
+    DBG("There is no ROM @0x%llX\n", (uintptr_t)rom_addr);
     //   gBS->Stall(3000000);
     return false;
   }
@@ -1960,19 +1961,19 @@ XBool radeon_card_posted(void)
 #if 0
   //dump radeon registers after BIOS POST
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_0_SCRATCH);
-//	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
+//  DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_1_SCRATCH);
-//	DBG("1=0x%08llX, ", reg);
+//  DBG("1=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_2_SCRATCH);
-//	DBG("2=0x%08llX, ", reg);
+//  DBG("2=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_3_SCRATCH);
-//	DBG("3=0x%08llX, ", reg);
+//  DBG("3=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_4_SCRATCH);
-	DBG("RADEON_BIOS_4_SCRATCH=0x%08llX, ", reg);
+  DBG("RADEON_BIOS_4_SCRATCH=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_5_SCRATCH);
-//	DBG("5=0x%08llX, ", reg);
+//  DBG("5=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_6_SCRATCH);
-//	DBG("6=0x%08llX\n", reg);
+//  DBG("6=0x%08llX\n", reg);
 #endif
 
   // first check CRTCs
@@ -1983,13 +1984,13 @@ XBool radeon_card_posted(void)
     return false;
   }
   if (reg & RADEON_CRTC_EN) {
-	  DBG(" card posted because CRTC_EN, GEN_CNTL=%llX\n", reg);
+    DBG(" card posted because CRTC_EN, GEN_CNTL=%llX\n", reg);
     return true;
   }
   // then check MEM_SIZE, in case something turned the crtcs off
   reg = (UINTN)REG32(card->mmio, R600_CONFIG_MEMSIZE);
   if (reg) {
-	  DBG(" card posted because CONFIG_MEMSIZE=0x%llX\n", reg);
+    DBG(" card posted because CONFIG_MEMSIZE=0x%llX\n", reg);
     return true;
   }
   return false;
@@ -2054,7 +2055,7 @@ static XBool init_card(pci_dt_t *pci_dev)
   }
 
   if (!card->info || !card->info->device_id || !card->info->cfg_name) {
-	  DBG("Unsupported ATI card! Device ID: [%04hX:%04hX] Subsystem ID: [%08X] \n",
+    DBG("Unsupported ATI card! Device ID: [%04hX:%04hX] Subsystem ID: [%08X] \n",
         pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id_union.subsys_id);
     DBG("search for brothers family\n");
     for (i = 0; radeon_cards[i].device_id ; i++) {
@@ -2077,9 +2078,9 @@ static XBool init_card(pci_dt_t *pci_dev)
   card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   Reg5 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_5) & ~0x0f);
   ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
-	DBG("Framebuffer @0x%8llx  MMIO @0x%8llx I/O Port @0x%8llx ROM Addr @0x%08llX\n",
+  DBG("Framebuffer @0x%8llx  MMIO @0x%8llx I/O Port @0x%8llx ROM Addr @0x%08llX\n",
       (UINTN)card->fb, (UINTN)card->mmio, (UINTN)card->io, ExpansionRom);
-	DBG("PCI region 1 = 0x%8llX, region3 = 0x%8llX, region5 = 0x%8llX\n", Reg1, Reg3, Reg5);
+  DBG("PCI region 1 = 0x%8llX, region3 = 0x%8llX, region5 = 0x%8llX\n", Reg1, Reg3, Reg5);
   if (card->info->chip_family >= CHIP_FAMILY_HAINAN && Reg5 != 0) {
     card->mmio = (UINT8 *)Reg5;
     DBG("Use region5 as MMIO space\n");
@@ -2129,12 +2130,12 @@ static XBool init_card(pci_dt_t *pci_dev)
     n_ports = card_configs[card->info->cfg_name].ports;
     // which means one of the fb's or kNull
     DBG("Framebuffer set to device's default: %s\n", card->cfg_name);
-	  DBG(" N ports defaults to %lld\n", n_ports);
+    DBG(" N ports defaults to %lld\n", n_ports);
   }
 
   if (gSettings.Graphics.VideoPorts != 0) {
     n_ports = gSettings.Graphics.VideoPorts;
-	  DBG(" use N ports setting from config.plist: %lld\n", n_ports);
+    DBG(" use N ports setting from config.plist: %lld\n", n_ports);
   }
 
   if (n_ports > 0) {
@@ -2246,7 +2247,7 @@ XBool setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     }
   }
 
-	DBG("ATI %s %s %dMB (%s) [%04hX:%04hX] (subsys [%04hX:%04hX]):: %s\n",
+  DBG("ATI %s %s %dMB (%s) [%04hX:%04hX] (subsys [%04hX:%04hX]):: %s\n",
       chip_family_name[card->info->chip_family], card->info->model_name,
       (UINT32)RShiftU64(card->vram_size, 20), card->cfg_name,
       ati_dev->vendor_id, ati_dev->device_id,
