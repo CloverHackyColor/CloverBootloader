@@ -68,7 +68,7 @@
 #endif
 
 #ifndef DEBUG_ALL
-#define DEBUG_SCAN_TOOL 0
+#define DEBUG_SCAN_TOOL 1
 #else
 #define DEBUG_SCAN_TOOL DEBUG_ALL
 #endif
@@ -163,7 +163,8 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Add Clover boot options for all entries");
     SubEntry->LoadOptions.setEmpty();
-    SubEntry->LoadOptions.Add("BO-ADD");
+    SubEntry->LoadOptions.Add(L"BO-ADD");
+    SubEntry->AtDoubleClick = ActionEnter;
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
@@ -171,7 +172,7 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Remove all Clover boot options");
     SubEntry->LoadOptions.setEmpty();
-    SubEntry->LoadOptions.Add("BO-REMOVE");
+    SubEntry->LoadOptions.Add(L"BO-REMOVE");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
@@ -179,7 +180,7 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Print all UEFI boot options to log");
     SubEntry->LoadOptions.setEmpty();
-    SubEntry->LoadOptions.Add("BO-PRINT");
+    SubEntry->LoadOptions.Add(L"BO-PRINT");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 

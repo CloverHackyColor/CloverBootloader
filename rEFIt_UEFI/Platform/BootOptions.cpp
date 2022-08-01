@@ -939,7 +939,7 @@ AddBootOption (
   //
   // Find free BootXXXX var slot.
   //
-  Status = FindFreeBootNum (&BootOption->BootNum);
+  Status = FindFreeBootNum(&BootOption->BootNum);
   if (EFI_ERROR(Status)) {
     DBG("FindFreeBootNum: %s\n", efiStrError(Status));
     return Status;
@@ -950,7 +950,7 @@ AddBootOption (
   //
   // Prepare BootOption variable
   //
-  Status = CompileBootOption (BootOption);
+  Status = CompileBootOption(BootOption);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -958,7 +958,7 @@ AddBootOption (
   //
   // Save BootXXXX var
   //
-  Status = gRT->SetVariable (VarName,
+  Status = gRT->SetVariable(VarName,
                              gEfiGlobalVariableGuid,
                              EFI_VARIABLE_NON_VOLATILE
                              | EFI_VARIABLE_BOOTSERVICE_ACCESS
@@ -980,7 +980,7 @@ AddBootOption (
   //
   // Update BootOrder - add our new boot option as BootIndex in the list
   //
-  Status = AddToBootOrder (BootOption->BootNum, BootIndex);
+  Status = AddToBootOrder(BootOption->BootNum, BootIndex);
 
   return Status;
 }
@@ -1033,7 +1033,7 @@ AddBootOptionForFile (
   BootOption.OptionalData = OptionalData;
   BootOption.OptionalDataSize = OptionalDataSize;
 
-  Status = AddBootOption (&BootOption, BootIndex);
+  Status = AddBootOption(&BootOption, BootIndex);
   if (EFI_ERROR(Status)) {
     FreePool(BootOption.FilePathList);
     DBG("AddBootOptionForFile: Error: %s\n", efiStrError(Status));

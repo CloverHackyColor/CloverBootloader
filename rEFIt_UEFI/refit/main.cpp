@@ -3317,7 +3317,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
-//    DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+    DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       gSettings.Boot.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
@@ -3426,6 +3426,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       HelpRefit();
       break;
   */
+      DBG("1\n");
       if ( ChosenEntry->getLOADER_ENTRY() ) {   // Boot OS via .EFI loader
         SetBootCurrent(ChosenEntry->getLOADER_ENTRY());
         ChosenEntry->StartLoader();
@@ -3435,6 +3436,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ReinitDesktop = false;
         AfterTool = true;
       }
+      DBG("2\n");
       if ( ChosenEntry->getLEGACY_ENTRY() ) {   // Boot legacy OS
         if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
             gST->Hdr.Revision >> 16 == 2 && (gST->Hdr.Revision & ((1 << 16) - 1)) == 0){
@@ -3450,7 +3452,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           ChosenEntry->StartLegacy();
         }
       }
-
+      DBG("3\n");
       if ( ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL() ) {     // Start a EFI tool
         ChosenEntry->StartTool();
         TerminateScreen(); //does not happen
@@ -3460,7 +3462,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainLoopRunning = false;
         AfterTool = true;
       }
-
+      DBG("4\n");
   #ifdef ENABLE_SECURE_BOOT
 log_technical_bug("not done yet");
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
@@ -3474,8 +3476,9 @@ log_technical_bug("not done yet");
 //            AfterTool = true;
 //      }
   #endif // ENABLE_SECURE_BOOT
-
+      DBG("come to Clover entry\n");
       if ( ChosenEntry->getREFIT_MENU_ENTRY_CLOVER() ) {     // Clover options
+        DBG("enter Clover entry\n");
         REFIT_MENU_ENTRY_CLOVER* LoaderEntry = ChosenEntry->getREFIT_MENU_ENTRY_CLOVER();
         if (LoaderEntry->LoadOptions.notEmpty()) {
           // we are uninstalling in case user selected Clover Options and EmuVar is installed
@@ -3485,7 +3488,9 @@ log_technical_bug("not done yet");
             gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
           }
       */
-          if (  LoaderEntry->LoadOptions.contains("BO-ADD")  ) {
+          DBG(" Clover entry not empty\n");
+          if (  LoaderEntry->LoadOptions.contains(L"BO-ADD")  ) {
+            DBG("   BO-ADD");
             XStringW Description;
             CONST CHAR16 *LoaderName;
             INTN EntryIndex, NameSize, Name2Size;
@@ -3506,6 +3511,7 @@ log_technical_bug("not done yet");
 
               Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex].getLOADER_ENTRY();
               XStringW& VolName = Entry->Volume->VolName;
+              DBG("add entry for volume %ls\n", VolName.wc_str());
               if (VolName.isEmpty()) {
                 VolName = NullXStringW;
               }
@@ -3520,7 +3526,7 @@ log_technical_bug("not done yet");
                 Name2Size = StrSize(LoaderName);
               }
 
-              Description = SWPrintf("Clover start %ls at %ls", (LoaderName != NULL)?LoaderName:L"legacy", VolName.wc_str());
+              Description = SWPrintf("Clover UEFI");
               OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
               OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
               if (OptionalData == NULL) {
@@ -3552,13 +3558,13 @@ log_technical_bug("not done yet");
 
 
             PrintBootOptions(false);
-          } else if ( LoaderEntry->LoadOptions.contains("BO-REMOVE") ) {
+          } else if ( LoaderEntry->LoadOptions.contains(L"BO-REMOVE") ) {
             PrintBootOptions(false);
             Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
                                               LoaderEntry->LoaderPath
                                               );
             PrintBootOptions(false);
-          } else if ( LoaderEntry->LoadOptions.contains("BO-PRINT") ) {
+          } else if ( LoaderEntry->LoadOptions.contains(L"BO-PRINT") ) {
             PrintBootOptions(true);
           }
 

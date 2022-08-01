@@ -2314,13 +2314,13 @@ void ScanLoader(void)
   } while ( hasMovedSomething );
 
 
-  DBG("Entries after before ordering\n");
+  DBG("Entries list after ordering\n");
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
-    if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY() ) {
+ //   if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY() ) {
+ //     DBG("  Entry %zd : %ls%s\n", idx, MainMenu.Entries.ElementAt(idx).Title.wc_str(), MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
+ //   }else{
       DBG("  Entry %zd : %ls%s\n", idx, MainMenu.Entries.ElementAt(idx).Title.wc_str(), MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
-    }else{
-      DBG("  Entry %zd : %ls%s\n", idx, MainMenu.Entries.ElementAt(idx).Title.wc_str(), MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
-    }
+ //   }
   }
 
 }

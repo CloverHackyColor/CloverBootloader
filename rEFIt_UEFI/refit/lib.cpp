@@ -165,7 +165,7 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
   self.initialize(ImageHandle);
-//  DBG("SelfDirPath = %ls\n", self.getCloverDirFullPath().wc_str());
+  DBG("SelfDirPath = %ls\n", self.getCloverDirFullPath().wc_str());
   return EFI_SUCCESS;
 }
 
@@ -1435,7 +1435,7 @@ InitializeUnicodeCollationProtocol (void)
 	}
 	
 	//
-	// BUGBUG: Proper impelmentation is to locate all Unicode Collation Protocol
+	// BUGBUG: Proper implementation is to locate all Unicode Collation Protocol
 	// instances first and then select one which support English language.
 	// Current implementation just pick the first instance.
 	//

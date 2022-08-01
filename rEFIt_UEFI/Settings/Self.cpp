@@ -76,10 +76,10 @@ EFI_STATUS Self::__initialize(XBool debugMsg, EFI_HANDLE SelfImageHandle, EFI_LO
 #endif
 
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
-  if ( CloverDirFullPath.isEqualIC("\\EFI\\Boot\\BootX64.efi") ) { // keep getCloverDir() in sync !
-    CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi"); // keep getCloverDir() in sync !
+  if ( CloverDirFullPath.isEqualIC("\\EFI\\Boot\\BootX64.efi") ||
+       CloverDirFullPath.isEqualIC("\\EFI\\Microsoft\\Boot\\bootmgfw.efi")) {
+    CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CLOVERX64.efi"); // keep getCloverDir() in sync !
   }
-
   if ( CloverDirFullPath.lastChar() == U'\\' ) { // keep getCloverDir() in sync !
     log_technical_bug("CloverDirFullPath.lastChar() == U'\\'"); // Just to see if that happens.
     CloverDirFullPath.deleteCharsAtPos(CloverDirFullPath.length()-1, 1);
