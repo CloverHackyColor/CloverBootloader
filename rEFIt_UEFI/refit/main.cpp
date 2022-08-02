@@ -3317,7 +3317,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
-    DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+ //   DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       gSettings.Boot.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
@@ -3426,8 +3426,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       HelpRefit();
       break;
   */
-      DBG("1\n");
-      if ( ChosenEntry->getLOADER_ENTRY() ) {   // Boot OS via .EFI loader
+       if ( ChosenEntry->getLOADER_ENTRY() ) {   // Boot OS via .EFI loader
         SetBootCurrent(ChosenEntry->getLOADER_ENTRY());
         ChosenEntry->StartLoader();
         //if boot.efi failed we should somehow exit from the loop
@@ -3436,7 +3435,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ReinitDesktop = false;
         AfterTool = true;
       }
-      DBG("2\n");
       if ( ChosenEntry->getLEGACY_ENTRY() ) {   // Boot legacy OS
         if (StrCmp(gST->FirmwareVendor, L"Phoenix Technologies Ltd.") == 0 &&
             gST->Hdr.Revision >> 16 == 2 && (gST->Hdr.Revision & ((1 << 16) - 1)) == 0){
@@ -3452,7 +3450,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           ChosenEntry->StartLegacy();
         }
       }
-      DBG("3\n");
       if ( ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL() ) {     // Start a EFI tool
         ChosenEntry->StartTool();
         TerminateScreen(); //does not happen
@@ -3462,7 +3459,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainLoopRunning = false;
         AfterTool = true;
       }
-      DBG("4\n");
   #ifdef ENABLE_SECURE_BOOT
 log_technical_bug("not done yet");
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
@@ -3476,11 +3472,13 @@ log_technical_bug("not done yet");
 //            AfterTool = true;
 //      }
   #endif // ENABLE_SECURE_BOOT
-      DBG("come to Clover entry\n");
-      if ( ChosenEntry->getREFIT_MENU_ENTRY_CLOVER() ) {     // Clover options
-        DBG("enter Clover entry\n");
-        REFIT_MENU_ENTRY_CLOVER* LoaderEntry = ChosenEntry->getREFIT_MENU_ENTRY_CLOVER();
+//      DBG("come to Clover entry with letter %c\n", ChosenEntry->ShortcutLetter);
+      REFIT_MENU_ENTRY_CLOVER* LoaderEntry = ChosenEntry->getREFIT_MENU_ENTRY_CLOVER();
+      if ((ChosenEntry->ShortcutLetter == 'C') || LoaderEntry != NULL ) {     // Clover options
+//        DBG("enter Clover entry\n");
+
         if (LoaderEntry->LoadOptions.notEmpty()) {
+
           // we are uninstalling in case user selected Clover Options and EmuVar is installed
           // because adding bios boot option requires access to real nvram
           //Slice: sure?
@@ -3488,9 +3486,9 @@ log_technical_bug("not done yet");
             gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
           }
       */
-          DBG(" Clover entry not empty\n");
+ //         DBG(" Clover entry not empty\n");
           if (  LoaderEntry->LoadOptions.contains(L"BO-ADD")  ) {
-            DBG("   BO-ADD");
+ //           DBG("   BO-ADD");
             XStringW Description;
             CONST CHAR16 *LoaderName;
             INTN EntryIndex, NameSize, Name2Size;
@@ -3498,6 +3496,7 @@ log_technical_bug("not done yet");
             UINT8 *OptionalData;
             UINTN OptionalDataSize;
             UINTN BootNum;
+ //           EFI_HANDLE UsedHandle = 0;
 
             PrintBootOptions(false);
 
@@ -3538,7 +3537,7 @@ log_technical_bug("not done yet");
               if (Name2Size != 0) {
                 CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
               }
-
+//              UsedHandle = LoaderEntry->Volume->DeviceHandle;
               Status = AddBootOptionForFile (
                                     LoaderEntry->Volume->DeviceHandle,
                                     LoaderEntry->LoaderPath,
@@ -3554,6 +3553,7 @@ log_technical_bug("not done yet");
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);
+              break;
             } //for (EntryIndex
 
 

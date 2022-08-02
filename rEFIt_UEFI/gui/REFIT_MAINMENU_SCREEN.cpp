@@ -749,7 +749,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
 
   while (!MenuExit) {
     GetAnime();
-    DBG("AnimeRun=%d\n", (FilmC && FilmC->AnimeRun)?1:0);
+//    DBG("AnimeRun=%d\n", (FilmC && FilmC->AnimeRun)?1:0);
     MenuExit = RunGenericMenu(&DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 
@@ -762,23 +762,23 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
         SubMenuIndex = -1;
 
         GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
-  //      DBG("main OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
+ //       DBG("main OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
 
         if (MainChosenEntry->getLOADER_ENTRY()) {
           GlobalConfig.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-  //        DBG("add OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
+//          DBG("add OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
         }
 
         if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()) {
           DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
         }
-  //      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+ //       DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 
         if (MainChosenEntry->getLOADER_ENTRY()) {
           // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
           GlobalConfig.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
         }
-  //      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", GlobalConfig.FlagsBits);
+//        DBG(" MainChosenEntry with FlagsBits = 0x%X\n", GlobalConfig.FlagsBits);
 
         SubMenuExit = 0;
         while (!SubMenuExit) {
@@ -794,19 +794,21 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
           }
 
           if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
+            DBG("menu entry Clover\n");
             MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = (((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
+            break;
           }
 
           if (SubMenuExit == MENU_EXIT_DETAILS) {
             SubMenuExit = 0;
             continue;
           }
-   //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+  //        DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
 
           if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
             // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags/Options
             MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
-            DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
+  //          DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
             if (OSFLAG_ISUNSET(TempChosenEntry->getLOADER_ENTRY()->Flags, OSFLAG_NODEFAULTARGS)) {
               DecodeOptions(TempChosenEntry->getLOADER_ENTRY());
   //            DBG("get OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
@@ -822,7 +824,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
             } else {
               gSettings.Boot.BootArgs.setEmpty();
             }
-            DBG(" boot with args: %s\n", gSettings.Boot.BootArgs.c_str());
+ //           DBG(" boot with args: %s\n", gSettings.Boot.BootArgs.c_str());
           }
 
           //---- Details submenu (kexts disabling etc)
@@ -840,7 +842,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
                   NextMenuExit = MENU_EXIT_ENTER;
                   break;
                 }
-                DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
+   //             DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
                 //---- Details submenu (kexts disabling etc) second level
                 if (NextMenuExit == MENU_EXIT_ENTER /*|| MenuExit == MENU_EXIT_DETAILS*/) {
                   if (NextChosenEntry->SubScreen != NULL) {
@@ -857,7 +859,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
                         NextMenuExit = 0;
                         break;
                       }
-                      DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
+  //                    DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
                     } //while(!DeepMenuExit)
                   }
                 }
