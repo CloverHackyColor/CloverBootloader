@@ -10,6 +10,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Press Page Up or Page Down to change GUI resolution
 - Press **F1** for multilingual help, depending on language setting in configuration
 - Press **F2** to save `preboot.log` from GUI
+- Press **F3** to show hidden entries
 - Press **F4** to save original (OEM) ACPI tables into `/EFI/CLOVER/ACPI/origin`
 - Press **F5** to test DSDT patching
 - Press **F6** to save graphics firmware into `/EFI/CLOVER/misc`
