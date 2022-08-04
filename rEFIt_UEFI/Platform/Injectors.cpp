@@ -27,6 +27,7 @@
 
 #include <Protocol/FirmwareVolume.h>
 #include <Protocol/AppleSMC.h>
+#include <Protocol/AppleSystemInfo.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_PRO 1
@@ -54,6 +55,7 @@ UINT16 KeyboardProduct = 0x021d; //iMac aluminium
 
 extern UINT32      mCurrentColor;
 extern EFI_GUID gAppleUserInterfaceThemeProtocolGuid;
+extern EFI_GUID gAppleSystemInfoProtocolGuid;
 
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
@@ -369,6 +371,20 @@ STATIC APPLE_USER_INTERFACE_THEME_PROTOCOL mAppleUserInterfaceThemeProtocol = {
   1,
   UserInterfaceThemeGetColor
 };
+
+BOOLEAN
+EFIAPI
+IsGibraltar ()
+{
+	return FALSE;
+}
+
+APPLE_SYSTEM_INFO_PROTOCOL mSystemInfo =
+{
+	1,
+	IsGibraltar
+};
+
 
 
 extern EFI_FIRMWARE_VOLUME_PROTOCOL   FirmwareVolume;

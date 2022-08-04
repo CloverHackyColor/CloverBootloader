@@ -534,7 +534,7 @@
   gEfiFirmwareVolumeProtocolGuid
   gAppleSMCProtocolGuid			  ## PRODUCES and CONSUMES
   gAppleSMCStateProtocolGuid  ## PRODUCES and CONSUMES
- 
+  gAppleSystemInfoProtocolGuid
 
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

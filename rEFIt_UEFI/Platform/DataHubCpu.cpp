@@ -47,6 +47,7 @@
 #include "../Platform/CloverVersion.h"
 
 #include <Guid/DataHubRecords.h>
+#include <Protocol/AppleSystemInfo.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 
@@ -395,6 +396,16 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   if (gSettings.RtVariables.HWTarget.isEmpty()) {
     gSettings.RtVariables.HWTarget = GetHWTarget(GlobalConfig.CurrentModel);
   }
+
+  extern APPLE_SYSTEM_INFO_PROTOCOL mSystemInfo;
+  if (gSettings.RtVariables.HWTarget.notEmpty()) {
+	//install gibraltar
+	/*Status=*/gBS->InstallProtocolInterface (&gImageHandle,
+			  	                                          &gAppleSystemInfoProtocolGuid,
+				EFI_NATIVE_INTERFACE,
+				&mSystemInfo);
+  }
+
 
   if (gSettings.RtVariables.HWTarget.notEmpty() && (Entry->LoaderType != OSTYPE_OSX_INSTALLER) &&
       (Entry->macOSVersion < MacOsVersion("13"_XS8)) ) {
