@@ -79,6 +79,7 @@ Macmini8,1 (J174AP)
 iMac20,1 (J185AP) & 20,2 (J185fAP)
 iMacPro1,1 (J137AP)
 MacPro7,1 (J160AP)
+others  X86LEGACYAP
 */
 //--------------------------
 XString8 GetHWTarget(MacModel Model)
@@ -118,7 +119,8 @@ XString8 GetHWTarget(MacModel Model)
     case MacBookAir91:
       return "J230kAP"_XS8;
     default:
-      return ""_XS8; // disabled
+      return "X86LEGACYAP"_XS8;
+//      return ""_XS8; // disabled
   }
 
 }
