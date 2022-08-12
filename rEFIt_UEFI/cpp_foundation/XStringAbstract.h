@@ -33,7 +33,7 @@
 template<typename S, typename O>
 int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
 {
-	size_t nb = 0;
+//	size_t nb = 0;
 	const S* src2 = src;
 	const O* other2 = other;
 
@@ -50,7 +50,7 @@ int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
 		if ( src_char32 != other_char32 ) return false;
 		src2 = get_char32_from_string(src2, &src_char32);
 		other2 = get_char32_from_string(other2, &other_char32);
-		nb += 1;
+//		nb += 1;
 	};
 	return src_char32 != 0;
 }
@@ -89,7 +89,7 @@ int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
   if ( other == NULL || *other == 0 ) return 1;
 //	size_t len_s = length_of_utf_string(src);
 //	size_t len_other = length_of_utf_string(other);
-	size_t nb = 0;
+//	size_t nb = 0;
 	const S* src2 = src;
 	const O* other2 = other;
 
@@ -105,7 +105,7 @@ int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
 		if ( src_char32 != other_char32 ) break;
 		src2 = get_char32_from_string(src2, &src_char32);
 		other2 = get_char32_from_string(other2, &other_char32);
-		nb += 1;
+//		nb += 1;
 	};
 	if ( src_char32 == other_char32 ) return 0;
 	return src_char32 > other_char32 ? 1 : -1;

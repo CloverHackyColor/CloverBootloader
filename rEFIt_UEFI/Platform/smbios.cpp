@@ -104,7 +104,11 @@ MEM_STRUCTURE    gRAM;
 #define SMBIOS_PTR        SIGNATURE_32('_','S','M','_')
 #define MAX_TABLE_SIZE    512
 
-#define smbios_offsetof(s,m) ( (SMBIOS_TABLE_STRING) ((UINT8*)&((s*)0)->m - (UINT8*)0))
+//#define smbios_offsetof(s,m) ( (SMBIOS_TABLE_STRING) ((UINT8*)&((s*)0)->m - (UINT8*)0))
+#ifndef smbios_offsetof
+#  define smbios_offsetof(TYPE, MEMBER) ((SMBIOS_TABLE_STRING)((size_t) &((TYPE *)0)->MEMBER))
+#endif
+
 
 SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE0_STR_IDX[] = {
   smbios_offsetof(SMBIOS_TABLE_TYPE0, Vendor),
