@@ -62,7 +62,7 @@ rem   git rev-list --tags --max-count=1 > revs.txt
 rem   set /p c=< revs.txt
 rem  del revs.txt
 rem  git describe --tags %c% > vers.txt
-  git describe --tags --abbrev=0 > vers.txt
+  git describe --always --abbrev=0 > vers.txt
   set /P s=< vers.txt
   del vers.txt
   

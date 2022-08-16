@@ -1183,6 +1183,11 @@ Navi21
 Navi23
 0x73E31002 0x73FF1002
 
+Radeon Pro WX
+The low to mid-range, single slot, Polaris-based WX 4100 (PCIe x8 electrical), WX 5100, WX 7100 are supported from OS X Sierra;
+the high-end WX 8200 (Vega 56) and WX 9100 (Vega 64), from High Sierra. 
+Lexa-based WX 2100, WX 3100 and WX 3200 do NOT work.
+
 */
 
 const CHAR8 *chip_family_name[] = {
