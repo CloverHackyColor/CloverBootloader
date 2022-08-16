@@ -160,6 +160,7 @@
   include/syslinux_mbr.h
   include/TagTypes.h
   include/VolumeTypes.h
+  libeg/AppleImageCodec.cpp
   libeg/BmLib.cpp
   libeg/BmLib.h
   libeg/egemb_font.cpp

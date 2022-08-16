@@ -16,7 +16,10 @@
 #include <Protocol/UgaDraw.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 
+//#include "XImage.h"
+
 #include "picopng.h"
+//#include "lodepng.h"
 
 //#define DBG(...) AsciiPrint(__VA_ARGS__);
 #define DBG(...)

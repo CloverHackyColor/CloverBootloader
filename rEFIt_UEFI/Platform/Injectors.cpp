@@ -28,6 +28,7 @@
 #include <Protocol/FirmwareVolume.h>
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleSystemInfo.h>
+#include <Protocol/AppleImageCodecProtocol.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_PRO 1
@@ -56,6 +57,7 @@ UINT16 KeyboardProduct = 0x021d; //iMac aluminium
 extern UINT32      mCurrentColor;
 extern EFI_GUID gAppleUserInterfaceThemeProtocolGuid;
 extern EFI_GUID gAppleSystemInfoProtocolGuid;
+extern APPLE_IMAGE_CODEC_PROTOCOL gAppleImageCodec;
 
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
@@ -410,13 +412,27 @@ SetPrivateVarProto(void)
                                                        &mAppleUserInterfaceThemeProtocol,
                                                        &gEfiFirmwareVolumeProtocolGuid,
                                                        &FirmwareVolume,
-										                &gAppleSMCProtocolGuid,
-										                &SMCHelperProtocol,
-										                &gAppleSMCStateProtocolGuid,
-										                &SMCStateProtocol,
-                                                      NULL
-                                                       );
-//  Status = SMCHelperInstall(&gImageHandle);
+										               &gAppleSMCProtocolGuid,
+										               &SMCHelperProtocol,
+										               &gAppleSMCStateProtocolGuid,
+										               &SMCStateProtocol,
+                                                       NULL
+                                                     );
+  if (EFI_ERROR(Status)) {
+    DBG("Error installing multiple protocol, Status = %s\n", efiStrError(Status));
+  }
+
+
+  Status      = gBS->InstallProtocolInterface (
+                                               &gImageHandle,
+                                               &gAppleImageCodecProtocolGuid,
+                                               EFI_NATIVE_INTERFACE,
+                                               (VOID *)&gAppleImageCodec
+                                               );
+
+  if (EFI_ERROR(Status)) {
+    DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
+  }
 
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,
@@ -424,6 +440,10 @@ SetPrivateVarProto(void)
                                           EFI_NATIVE_INTERFACE,
                                           &mDeviceProperties
                                           );
+  if (EFI_ERROR(Status)) {
+    DBG("DevicePathPropertyDatabase: error installing protocol, Status = %s\n", efiStrError(Status));
+  }
+
 	
   return Status;
 }

@@ -48,6 +48,7 @@
 
 #include <Guid/DataHubRecords.h>
 #include <Protocol/AppleSystemInfo.h>
+#include <Protocol/AppleImageCodecProtocol.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 
@@ -71,6 +72,7 @@ constexpr const EFI_GUID gDataHubPlatformGuid = {
 
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
 extern UINT32      mCurrentColor;
+extern APPLE_IMAGE_CODEC_PROTOCOL gAppleImageCodec;
 
 
 typedef union {

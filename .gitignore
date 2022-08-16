@@ -1,6 +1,9 @@
 # OS X temporary files that should never be committed
 .vs
 .DS_Store
+.project
+.cproject
+.settings
 *.swp
 *.lock
 *.bak

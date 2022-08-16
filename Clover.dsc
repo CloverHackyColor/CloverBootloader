@@ -772,7 +772,7 @@
   Protocols/MsgLog/MsgLog.inf
   #Protocols/SMCHelper/SMCHelper.inf
   #Protocols/FirmwareVolume/FirmwareVolume.inf
-  Protocols/AppleImageCodec/AppleImageCodec.inf
+  #Protocols/AppleImageCodec/AppleImageCodec.inf
   #Protocols/AppleUITheme/AppleUITheme.inf
   Protocols/HashServiceFix/HashServiceFix.inf
   Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
