@@ -121,9 +121,9 @@ public:
 
       const ACPI_DSDT_Fix& getFixHeaders() const {
         // FixHeaders is bit 29, but that's a coincidence with the index of the array. ACPI_DSDT_Fixe_Array[FIX_HEADERS_DEPRECATED] would be wrong.
-        if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
-          log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
-        }
+ //       if ( LString8(ACPI_DSDT_Fixe_Array[29].getNewName()) != "FixHeaders_20000000"_XS8 ) {
+ //         log_technical_bug("ACPI_DSDT_Fixe_Array[29].getNewName() != \"FixHeaders_20000000\"");
+ //       }
         return ACPI_DSDT_Fixe_Array[29];
       }
 
@@ -164,14 +164,16 @@ if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
         XmlData Replace = XmlData();
         TgtBridgeClass TgtBridge = TgtBridgeClass();
         XmlUInt64 Skip = XmlUInt64();
+        XmlInt32 Count = XmlInt32();
 
-        XmlDictField m_fields[6] = {
+        XmlDictField m_fields[7] = {
           {"Comment", Comment},
           {"Disabled", Disabled},
           {"Find", Find},
           {"Replace", Replace},
           {"TgtBridge", TgtBridge},
           {"Skip", Skip},
+          {"Count", Count},
         };
 
         virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
@@ -183,6 +185,7 @@ if ( xmlPath.contains("ACPI/DSDT/Patches[15]"_XS8) ) {
         const XBuffer<UINT8>& dgetPatchDsdtReplace() const { return Replace.isDefined() ? Replace.value() : XBuffer<UINT8>::NullXBuffer; };
         const XBuffer<UINT8>& dgetPatchDsdtTgt() const { return TgtBridge.isDefined() ? TgtBridge.value() : XBuffer<UINT8>::NullXBuffer; };
         const decltype(Skip)::ValueType& dgetSkip() const { return Skip.isDefined() ? Skip.value() : Skip.nullValue; };
+        const decltype(Count)::ValueType& dgetCount() const { return Count.isDefined() ? Count.value() : Count.nullValue; };
     };
 
 protected:

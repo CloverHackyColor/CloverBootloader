@@ -503,14 +503,18 @@ void PatchAllTables()
             Len = FixAny((UINT8*)NewTable, Len,
                          gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
                          gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
-                         gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip,
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].Count
+            );
             //DBG(" OK\n");
           }else{
             //DBG("Patching: renaming in bridge\n");
             Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt,
                                                             gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
                                                             gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
-                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
+                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip,
+                                                            gSettings.ACPI.DSDT.DSDTPatchArray[i].Count
+            );
           }
         }
       }

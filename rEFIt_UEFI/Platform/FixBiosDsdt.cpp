@@ -1773,11 +1773,11 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip)
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip, int count)
 {
   INT32 sizeoffset = 0; // Initialization just to silence warning.
   INT32 adr;
-  UINT32 i;
+//  UINT32 i;
   XBool found = false;
   if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
     DBG(" invalid patches!\n");
@@ -1803,7 +1803,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
     sizeoffset = (INT32)(ToFind.size() - ToReplace.size()); // Safe cast because of earlier check
     sizeoffset = -sizeoffset;
   }
-  for (i = 20; i < len; ) {
+  for (UINT32 i = 20; i < len; ) {
     adr = FindBin(dsdt + i, len - i, ToFind);
     if (adr < 0) {
       if (found) {
@@ -1828,6 +1828,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
       len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
       len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
       i += (UINT32)(adr + ToReplace.size()); // if there is no bug before, it should be safe cast.
+      if (--count == 0) break;
     }else{
       MsgLog("Skip i=%d ",i);
       i += (UINT32)(adr + ToFind.size()); // if there is no bug before, it should be safe cast.
@@ -1839,7 +1840,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
 }
 
 //new method. by goodwin_c
-UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip)
+UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip, int count)
 {
   INT32 adr;
   XBool found = false;
@@ -1898,7 +1899,8 @@ UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgN
         found = true;
         if ( ToReplace.notEmpty() ) {
           if ( Skip == 0 ) {
-          CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
+            CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
+            if (--count == 0) break;
           } else {
             MsgLog("Skip adr=%d ",adr);
             Skip--;
@@ -5415,7 +5417,9 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
               DsdtLen = FixAny(temp, DsdtLen,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
-                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Count
+                        );
 
         }else{
     //      DBG("Patching: renaming in bridge\n");
@@ -5423,7 +5427,9 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
                            gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace,
-                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Skip,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].Count
+                    );
 
         }
       } else {

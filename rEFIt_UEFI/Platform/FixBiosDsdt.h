@@ -50,8 +50,8 @@ FindBin (
 INT32 FindBin (UINT8 *dsdt, size_t len, const XBuffer<UINT8>& bin);
 
 
-UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip);
-UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip);
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip, int count);
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip, int count);
 
 
 #endif /* PLATFORM_FIXBIOSDSDT_H_ */
