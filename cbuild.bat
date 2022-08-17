@@ -29,7 +29,8 @@ set MSG=
 set DEVSTAGE=
 set IASL_PREFIX=c:\ASL\
 
-set DEFAULT_CYGWIN_HOME=c:\cygwin
+set DEFAULT_CYGWIN_HOME=c:\cygwin 
+rem %WORKSPACE_TOOLS_PATH%\Bin\CYGWIN_NT-5.1-i686\
 rem set DEFAULT_PYTHONHOME=d:\Program File\Python38
 rem set DEFAULT_PYTHONPATH=d:\Program File\Python38\Lib
 rem set DEFAULT_PYTHON_FREEZER_PATH=%PYTHON_HOME%\Scripts
@@ -44,6 +45,8 @@ set DEFAULT_TARGETARCH=X64
 set DEFAULT_THREADNUMBER=%NUMBER_OF_PROCESSORS%
 set WIN_IASL_BIN=c:\ASL
 set WIN_ASL_BIN=c:\ASL
+
+rem set CYGWIN_HOME=%WORKSPACE_TOOLS_PATH%\Bin\CYGWIN_NT-5.1-i686\
 
 call:parseArguments %*
 if errorlevel 1 (
@@ -110,6 +113,7 @@ rem # initialize
   if ["%SHOW_USAGE%"] == ["1"] goto usage
 
   if not defined CYGWIN_HOME (
+    echo No cygwin_home....
     set CYGWIN_HOME=%DEFAULT_CYGWIN_HOME%
   )
  rem  if not defined PYTHONHOME (
@@ -155,6 +159,7 @@ rem # setup build
 
   rem # fix any parameters not set
   set "BASETOOLS_DIR=%WORKSPACE_TOOLS_PATH%\Bin\Win32"
+  set "CYGWIN_HOME=%WORKSPACE_TOOLS_PATH%\Bin\CYGWIN_NT-5.1-i686"
   if defined EDK_TOOLS_BIN (
     set "BASETOOLS_DIR=%EDK_TOOLS_BIN%"
   )

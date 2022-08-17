@@ -130,7 +130,19 @@ For example, to store the build number 18A391:
  */
 typedef uint16_t cp_key_revision_t;
 typedef uint32_t crypto_flags_t;
+#if !defined(_MSC_VER)
+struct wrapped_meta_crypto_state {
+  uint16_t         major_version;
+  uint16_t          minor_version;
+  crypto_flags_t    cpflags;
+  cp_key_class_t    persistent_class;
+  cp_key_os_version_t key_os_version;
+  cp_key_revision_t   key_revision;
+  uint16_t            unused;
+} __attribute__((aligned(2), packed));
+#else
 
+# pragma pack(push,2)
 struct wrapped_meta_crypto_state {
     uint16_t         major_version;
     uint16_t          minor_version;
@@ -139,7 +151,9 @@ struct wrapped_meta_crypto_state {
     cp_key_os_version_t key_os_version;
     cp_key_revision_t   key_revision;
     uint16_t            unused;
-} __attribute__((aligned(2), packed));
+};
+#pragma pack(pop)
+#endif // !msc_ver
 typedef struct wrapped_meta_crypto_state wrapped_meta_crypto_state_t;
 
 #define APFS_MODIFIED_NAMELEN 32
