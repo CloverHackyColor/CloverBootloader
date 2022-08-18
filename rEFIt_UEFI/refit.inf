@@ -397,6 +397,8 @@
   Settings/SelfOem.h
   ../Protocols/FirmwareVolume/FirmwareVolume.c
   ../Protocols/SMCHelper/SMCHelper.c
+  ../Protocols/AppleKeyAggregator/AppleKeyAggregator.h
+  ../Protocols/AppleKeyAggregator/AppleKeyAggregator.c
 
 [Sources.IA32]
   PlatformIA32/ftol.asm | MSFT
@@ -536,6 +538,8 @@
   gAppleSMCProtocolGuid			  ## PRODUCES and CONSUMES
   gAppleSMCStateProtocolGuid  ## PRODUCES and CONSUMES
   gAppleSystemInfoProtocolGuid
+  gAppleKeyStateProtocolGuid
+  gAppleKeyMapDatabaseProtocolGuid
 
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid

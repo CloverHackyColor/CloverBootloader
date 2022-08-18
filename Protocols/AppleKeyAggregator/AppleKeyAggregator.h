@@ -9,6 +9,11 @@
 #ifndef _AppleKeyMapAggregator_h
 #define _AppleKeyMapAggregator_h
 
+#include <Protocol/AppleKeyState.h>
+#include <Protocol/AppleKeyMapDatabase.h>
+#include <Protocol/AppleEvent.h>
+
+
 #define APPLE_KEY_MAP_PROTOCOLS_REVISION  0x010000
 #define APPLE_KEY_MAP_AGGREGATOR_SIGNATURE SIGNATURE_32 ('K', 'e', 'y', 'A')
 
@@ -76,6 +81,6 @@ typedef struct {
   APPLE_KEY_STATE_PROTOCOL          AggregatorProtocol;  ///<0x50 size=8*3
 } APPLE_KEY_MAP_AGGREGATOR;  //size=0x68
 
-
+EFI_STATUS InstallAggregator();
 
 #endif

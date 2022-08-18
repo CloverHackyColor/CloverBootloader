@@ -17,9 +17,6 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 
-#include <Protocol/AppleKeyState.h>
-#include <Protocol/AppleKeyMapDatabase.h>
-#include <Protocol/AppleEvent.h>
 #include "AppleKeyAggregator.h"
 
 extern EFI_GUID gAppleEventProtocolGuid;
@@ -380,12 +377,16 @@ SearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
   @retval EFI_SUCCESS          The entry point is executed successfully.
   @retval EFI_ALREADY_STARTED  The protocol has already been installed.
 **/
+#if SEP_AGGREG
 EFI_STATUS
 EFIAPI
 AggregatorEntryPoint (
   IN EFI_HANDLE        ImageHandle,
   IN EFI_SYSTEM_TABLE  *SystemTable
   ) // start
+#else
+EFI_STATUS InstallAggregator()
+#endif
 {
   EFI_STATUS               Status;
 
@@ -432,11 +433,7 @@ AggregatorEntryPoint (
                     &mAppleEventProtocol,
                     NULL
                     );
-/*
-    if (!EFI_ERROR(Status)) {
-      Status = gBS->InstallProtocolInterface(ImageHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
-    }
- */
+
   }
 
   return Status;

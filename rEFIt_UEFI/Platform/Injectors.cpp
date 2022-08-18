@@ -29,6 +29,9 @@
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleSystemInfo.h>
 #include <Protocol/AppleImageCodecProtocol.h>
+extern "C" {
+#include "../../Protocols/AppleKeyAggregator/AppleKeyAggregator.h"
+}
 
 #ifndef DEBUG_ALL
 #define DEBUG_PRO 1
@@ -433,6 +436,12 @@ SetPrivateVarProto(void)
   if (EFI_ERROR(Status)) {
     DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
   }
+
+  Status = InstallAggregator();
+  if (EFI_ERROR(Status)) {
+    DBG("AppleKeyAggregator: error installing protocol, Status = %s\n", efiStrError(Status));
+  }
+
 
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,

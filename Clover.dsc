@@ -775,7 +775,7 @@
   #Protocols/AppleImageCodec/AppleImageCodec.inf
   #Protocols/AppleUITheme/AppleUITheme.inf
   Protocols/HashServiceFix/HashServiceFix.inf
-  Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
+  #Protocols/AppleKeyAggregator/AppleKeyAggregator.inf
   Protocols/AppleKeyFeeder/AppleKeyFeeder.inf
   Protocols/AptioInputFix/AptioInputFix.inf
   
