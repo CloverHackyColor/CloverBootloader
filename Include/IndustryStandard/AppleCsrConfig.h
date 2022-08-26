@@ -14,7 +14,7 @@
 #define APPLE_CSR_CONFIG_H
 
 ///
-/// System Integrity Proteciton codes.
+/// System Integrity Protection codes.
 /// Keep in sync with XNU bsd/sys/csr.h.
 /// Last sync time: 4903.221.2.
 ///
@@ -27,11 +27,12 @@
 #define CSR_ALLOW_UNRESTRICTED_FS             (1U << 1U)
 #define CSR_ALLOW_TASK_FOR_PID                (1U << 2U)
 #define CSR_ALLOW_KERNEL_DEBUGGER             (1U << 3U)
+
 #define CSR_ALLOW_APPLE_INTERNAL              (1U << 4U)
-#define CSR_ALLOW_DESTRUCTIVE_DTRACE          (1U << 5U) /// < Name deprecated
 #define CSR_ALLOW_UNRESTRICTED_DTRACE         (1U << 5U)
 #define CSR_ALLOW_UNRESTRICTED_NVRAM          (1U << 6U)
 #define CSR_ALLOW_DEVICE_CONFIGURATION        (1U << 7U)
+
 #define CSR_ALLOW_ANY_RECOVERY_OS             (1U << 8U)
 #define CSR_ALLOW_UNAPPROVED_KEXTS            (1U << 9U)
 #define CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE  (1U << 10U)
