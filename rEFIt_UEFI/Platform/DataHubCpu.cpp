@@ -51,7 +51,7 @@
 #include <Protocol/AppleImageCodecProtocol.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
-const char CDM[16] = "sha2-384";
+//const char CDM[16] = "sha2-384";
 const char HW[16] = "x86legacyap";
 
 // gDataHub
