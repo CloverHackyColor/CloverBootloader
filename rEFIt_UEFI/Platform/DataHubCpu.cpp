@@ -464,8 +464,18 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   LangLen = 0;
   AddNvramVariable(L"wake-failure", gEfiAppleBootGuid, Attributes, 5, &LangLen);
 
-  //clear OC present
+  //clear OC garbage
   DeleteNvramVariable(L"opencore-version", gEfiAppleBootGuid);
+  DeleteNvramVariable(L"ApBoardID", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"ApSecurityDomain", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"ApProductionStatus", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"ApSecurityMode", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"EffectiveProductionStatus", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"EffectiveSecurityMode", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"CertificateEpoch", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"MixNMatchPreventionStatus", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"CryptoDigestMethod", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"InternalUseOnlyUnit", gAppleSecureBootVariableGuid);
 
   //Now we want manually install some SecureBoot Variables while boot.efi do this automatically.
   //set same values
