@@ -52,7 +52,7 @@
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 //const char CDM[16] = "sha2-384";
-const char HW[16] = "x86legacyap";
+//const char HW[16] = "x86legacyap";
 
 // gDataHub
 /// A pointer to the DataHubProtocol
@@ -476,13 +476,16 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   DeleteNvramVariable(L"MixNMatchPreventionStatus", gAppleSecureBootVariableGuid);
   DeleteNvramVariable(L"CryptoDigestMethod", gAppleSecureBootVariableGuid);
   DeleteNvramVariable(L"InternalUseOnlyUnit", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"ApECID", gAppleSecureBootVariableGuid);
+  DeleteNvramVariable(L"HardwareModel", gAppleSecureBootVariableGuid);
+
 
   //Now we want manually install some SecureBoot Variables while boot.efi do this automatically.
   //set same values
-  UINT64 ecid = 0;
-  CopyMem(&ecid, &uuid, 8);
-  SetNvramVariable(L"ApECID", gAppleSecureBootVariableGuid, Attributes, 8, &ecid);
-  SetNvramVariable(L"HardwareModel", gAppleSecureBootVariableGuid, Attributes, 16, HW);
+//  UINT64 ecid = 0;
+//  CopyMem(&ecid, &uuid, 8);
+//  SetNvramVariable(L"ApECID", gAppleSecureBootVariableGuid, Attributes, 8, &ecid);
+//  SetNvramVariable(L"HardwareModel", gAppleSecureBootVariableGuid, Attributes, 16, HW);
 
   return EFI_SUCCESS;
 }
