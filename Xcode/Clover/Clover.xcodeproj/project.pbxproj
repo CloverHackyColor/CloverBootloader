@@ -6580,7 +6580,6 @@
 		A591CD4326FF78AE00F9DBF0 /* Settings.h.orig */ = {isa = PBXFileReference; lastKnownFileType = text; path = Settings.h.orig; sourceTree = "<group>"; };
 		A591CD4426FF78AE00F9DBF0 /* ati.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
 		A591CD4526FF78AE00F9DBF0 /* platformdata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = platformdata.h; sourceTree = "<group>"; };
-		A591CD4626FF78AE00F9DBF0 /* ati2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati2.h; sourceTree = "<group>"; };
 		A591CD4726FF78AE00F9DBF0 /* kext_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
 		A591CD4826FF78AE00F9DBF0 /* APFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APFS.h; sourceTree = "<group>"; };
 		A591CD4926FF78AE00F9DBF0 /* cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
@@ -22426,7 +22425,6 @@
 				A591CD5126FF78AE00F9DBF0 /* ati_reg.h */,
 				A591CD4026FF78AE00F9DBF0 /* ati.cpp */,
 				A591CD4426FF78AE00F9DBF0 /* ati.h */,
-				A591CD4626FF78AE00F9DBF0 /* ati2.h */,
 				A591CD2526FF78AE00F9DBF0 /* b64cdecode.cpp */,
 				A591CD4D26FF78AE00F9DBF0 /* b64cdecode.h */,
 				A591CD0E26FF78AE00F9DBF0 /* BasicIO.h */,
