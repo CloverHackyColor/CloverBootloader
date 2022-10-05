@@ -77,6 +77,8 @@ DBG("FixOwnership() -> begin\n");
                     &HandleArrayCount,
                     &HandleArray
                     );
+  DBG("PCI Io found %lld\n", HandleArrayCount);
+  if (HandleArrayCount > 50) HandleArrayCount = 50;
   if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleArrayCount; Index++) {
       Status = gBS->HandleProtocol (
@@ -118,7 +120,7 @@ DBG("FixOwnership() -> begin\n");
                   IoWrite16 (PortBase, 0);
                 }
                 
-					MsgLog("USB UHCI reset for device %04hX\n", Pci.Hdr.DeviceId); 
+					      DBG("USB UHCI reset for device %04hX\n", Pci.Hdr.DeviceId);
                 break;
   /*            case PCI_IF_OHCI:
                 
@@ -136,16 +138,17 @@ DBG("FixOwnership() -> begin\n");
                 //
                 // Found the EHCI, then disable the legacy support
                 //
+                DBG("EHCI found devID= %04hX\n", Pci.Hdr.DeviceId);
                 Value = 0x0002;
                 PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0x04, 1, &Value);
-                
+                DBG("EHCI cmd 2 written\n");
                 Base = 0;
                 Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0x10, 1, &Base);
                 if (*((UINT8*)(UINTN)Base) < 0x0C) {
                   DBG("Config space too small: no legacy implementation\n");
                   break;
                 }
-                
+                DBG("EHCI Base=%08hX\n", Base);
                 // opaddr = Operational Registers = capaddr + offset (8bit CAPLENGTH in Capability Registers + offset 0)
                 opaddr = Base + *((UINT8*)(UINTN)(Base));
                 // eecp = EHCI Extended Capabilities offset = capaddr HCCPARAMS bits 15:8
@@ -290,12 +293,20 @@ DBG("FixOwnership() -> begin\n");
                 //
                 // Found the XHCI, then disable the legacy support, if present
                 //
+               DBG("USB XHCI reset for device %04hX\n", Pci.Hdr.DeviceId);
+               if (Pci.Hdr.VendorId == 0x1106) {
+                 //ну ее нах эту ВИА
+                 DBG("skip XHCI controller from VIA\n");
+                 break;
+               }
                 Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
                 ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14) & 0x3FFFC);
+                MsgLog("ExtendCap=%08hX\n", ExtendCap);
                 while (ExtendCap) {
                   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                   if (EFI_ERROR(Status))
                     break;
+                  MsgLog("  Value=%08hX\n", Value);
                   if ((Value & 0xFF) == 1) {
                     //
                     // Do nothing if Bios Ownership clear
@@ -341,6 +352,7 @@ DBG("FixOwnership() -> begin\n");
           } 
         }
       }
+      else break;
     }
   } else {
     return Status;

@@ -1605,7 +1605,6 @@ MacModel GetDefaultModel()
         DefaultType = MacPro51;
         break;
       case CPU_MODEL_IVY_BRIDGE:
-      case CPU_MODEL_IVY_BRIDGE_E5:
         DefaultType = iMac132;
         if ( gConf.GfxPropertiesArray.isCardAtPosIntel(0) ) {
           DefaultType = MacMini62;
@@ -1646,6 +1645,7 @@ MacModel GetDefaultModel()
           break;
         }
         break;
+      case CPU_MODEL_IVY_BRIDGE_E5:
       case CPU_MODEL_BROADWELL_E5:
         DefaultType = MacPro61;
         break;

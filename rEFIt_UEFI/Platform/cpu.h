@@ -41,7 +41,7 @@
 #define CPU_MODEL_IVY_BRIDGE    0x3A
 #define CPU_MODEL_HASWELL       0x3C  /* Haswell DT */
 #define CPU_MODEL_HASWELL_U5    0x3D  /* Haswell U5  5th generation Broadwell*/
-#define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon UN */
+#define CPU_MODEL_IVY_BRIDGE_E5 0x3E  /* Ivy Bridge Xeon E5-2650v2 */
 #define CPU_MODEL_HASWELL_E     0x3F  /* Haswell Extreme */
 //#define CPU_MODEL_HASWELL_H    0x??  // Haswell H
 #define CPU_MODEL_HASWELL_ULT   0x45  /* Haswell ULT */

@@ -638,6 +638,7 @@ void debugStartImageWithOC()
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Boot.PickerMode, "Builtin");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.DmgLoading, "Any");
   mOpenCoreConfiguration.Uefi.Quirks.IgnoreInvalidFlexRatio = 0;
+
   mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
 
   OcMain(&mOpenCoreStorage, NULL);
@@ -1019,13 +1020,17 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap = gSettings.Quirks.OcBooterQuirks.RebuildAppleMemoryMap;
     mOpenCoreConfiguration.Booter.Quirks.ResizeAppleGpuBars = gSettings.Quirks.OcBooterQuirks.ResizeAppleGpuBars;
     mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap = gSettings.Quirks.OcBooterQuirks.SetupVirtualMap;
-    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS = gSettings.Quirks.OcBooterQuirks.SignalAppleOS;
+    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS = false; //gSettings.Quirks.OcBooterQuirks.SignalAppleOS;
     mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = gSettings.Quirks.OcBooterQuirks.SyncRuntimePermissions;
 
 
   #endif
 
+
     FillOCCpuInfo(&mOpenCoreCpuInfo);
+    //test
+    if (gSettings.Quirks.OcBooterQuirks.SignalAppleOS) mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 750000;
+    else     mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
 
   // if OC is NOT initialized with OcMain, we need the following
   //  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);

@@ -886,20 +886,6 @@
                 </dict>
                 <dict>
                     <key>Comment</key>
-                    <string>Patch_to_not_load_this_driver</string>
-                    <key>Disabled</key>
-                    <true/>
-                    <key>Find</key>
-                    <string>0x04020000</string>
-                    <key>InfoPlistPatch</key>
-                    <true/>
-                    <key>Name</key>
-                    <string>AppleHDAController</string>
-                    <key>Replace</key>
-                    <string>0x44220000</string>
-                </dict>
-                <dict>
-                    <key>Comment</key>
                     <string>Make all drives to be internal</string>
                     <key>Disabled</key>
                     <true/>
