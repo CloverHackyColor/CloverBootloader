@@ -143,7 +143,7 @@ void FillInputs(XBool New)
   UINTN InputItemsCount = 0;
   if (New) {
 //    InputItems = (__typeof__(InputItems))A_llocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
-    InputItems = new INPUT_ITEM[130];
+    InputItems = new INPUT_ITEM[132];
   }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0
@@ -466,6 +466,9 @@ void FillInputs(XBool New)
 
   InputItems[InputItemsCount].ItemType = BoolValue; //129
   InputItems[InputItemsCount++].BValue = gResetSMC;
+
+  InputItems[InputItemsCount].ItemType = Decimal;  //130
+  InputItems[InputItemsCount++].SValue.SWPrintf("%08d", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
 
 
 
@@ -1132,7 +1135,12 @@ void ApplyInputs(void)
       gResetSMC = false;
     }
   }
-
+  i++; //130
+  if (InputItems[i].Valid) {
+	  INTN Minus = 0;
+	  gSettings.Quirks.OcBooterQuirks.TscSyncTimeout = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
+	  DBG("set TscSyncTimeout=%d\n", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
+  }
 
   if (NeedSave) {
     ApplySettings();
@@ -2574,6 +2582,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   SubScreen->AddMenuItemInput(127, "ResizeAppleGpuBars:", true);
   SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
   SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);
+
+  SubScreen->AddMenuItemInput(130, "TscSyncTimeout:", true);
   
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);

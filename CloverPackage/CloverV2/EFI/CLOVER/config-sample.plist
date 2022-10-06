@@ -1043,6 +1043,8 @@
             <true/>
             <key>ThirdPartyDrives</key>
             <false/>
+ 			<key>TscSyncTimeout</key>
+			<integer>0</integer>
             <key>XhciPortLimit</key>
             <false/>
         </dict>

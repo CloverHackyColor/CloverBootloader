@@ -2114,6 +2114,7 @@ printf("%s", "");
         XBool SyncRuntimePermissions = false;
         int8_t ResizeAppleGpuBars = 0; // 0 is NOT the default value if not set in config.plist. Default value if not set is returned by dgetResizeAppleGpuBars()
         XBool ForceOcWriteFlash = false;
+        uint32_t TscSyncTimeout = 0;
         
 #if __cplusplus > 201703L
         XBool operator == (const OcBooterQuirksClass&) const = default;
@@ -2139,6 +2140,7 @@ printf("%s", "");
           if ( !(SignalAppleOS == other.SignalAppleOS) ) return false;
           if ( !(SyncRuntimePermissions == other.SyncRuntimePermissions) ) return false;
           if ( !(ForceOcWriteFlash == other.ForceOcWriteFlash) ) return false;
+          if ( !(TscSyncTimeout == other.TscSyncTimeout) ) return false;
           return true;
         }
         void takeValueFrom(const ConfigPlistClass::Quirks_Class::OcBooterQuirks_Class& other)
@@ -2162,6 +2164,7 @@ printf("%s", "");
           SignalAppleOS = other.dgetSignalAppleOS();
           SyncRuntimePermissions = other.dgetSyncRuntimePermissions();
           ForceOcWriteFlash = other.dgetForceOcWriteFlash();
+          TscSyncTimeout = other.dgetTscSyncTimeout();
         }
 
       };

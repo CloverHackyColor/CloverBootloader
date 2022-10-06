@@ -1029,8 +1029,9 @@ void LOADER_ENTRY::StartLoader()
 
     FillOCCpuInfo(&mOpenCoreCpuInfo);
     //test
-    if (gSettings.Quirks.OcBooterQuirks.SignalAppleOS) mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 750000;
-    else     mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
+//    if (gSettings.Quirks.OcBooterQuirks.TscSyncTimeout) mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = gSettings.Quirks.OcBooterQuirks.TscSyncTimeout;
+//    else     mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = 0;
+    mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout = gSettings.Quirks.OcBooterQuirks.TscSyncTimeout;
 
   // if OC is NOT initialized with OcMain, we need the following
   //  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
