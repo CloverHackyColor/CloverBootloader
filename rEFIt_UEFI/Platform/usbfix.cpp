@@ -148,7 +148,7 @@ DBG("FixOwnership() -> begin\n");
                   DBG("Config space too small: no legacy implementation\n");
                   break;
                 }
-                DBG("EHCI Base=%08hX\n", Base);
+                DBG("EHCI Base=%08X\n", Base);
                 // opaddr = Operational Registers = capaddr + offset (8bit CAPLENGTH in Capability Registers + offset 0)
                 opaddr = Base + *((UINT8*)(UINTN)(Base));
                 // eecp = EHCI Extended Capabilities offset = capaddr HCCPARAMS bits 15:8
@@ -301,12 +301,12 @@ DBG("FixOwnership() -> begin\n");
                }
                 Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
                 ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14) & 0x3FFFC);
-                MsgLog("ExtendCap=%08hX\n", ExtendCap);
+                MsgLog("ExtendCap=%08X\n", ExtendCap);
                 while (ExtendCap) {
                   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                   if (EFI_ERROR(Status))
                     break;
-                  MsgLog("  Value=%08hX\n", Value);
+                  MsgLog("  Value=%08X\n", Value);
                   if ((Value & 0xFF) == 1) {
                     //
                     // Do nothing if Bios Ownership clear
