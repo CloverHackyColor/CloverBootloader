@@ -27,8 +27,8 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.38}
-export GCC_VERSION=${GCC_VERSION:-12.1.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.39}
+export GCC_VERSION=${GCC_VERSION:-12.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.2.1}
@@ -360,7 +360,7 @@ CompileBinutils () {
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
-    local cmd="LDFLAGS=\"-dead_strip\" ${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check --disable-nls --enable-deterministic-archives --with-mmap --with-system-zlib"
+    local cmd="LDFLAGS=\"-dead_strip\" ${BINUTILS_DIR}/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --enable-plugins --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix=$PREFIX/cross --with-included-gettext --disable-werror --with-gmp=$PREFIX --with-mpfr=$PREFIX --with-mpc=$PREFIX --with-isl=$PREFIX --disable-isl-version-check --disable-nls --enable-deterministic-archives --with-mmap --with-system-zlib --enable-gprofng=NO"
     local logfile="$DIR_LOGS/binutils.$ARCH.configure.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
