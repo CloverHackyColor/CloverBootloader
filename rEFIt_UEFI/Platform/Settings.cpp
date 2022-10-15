@@ -975,7 +975,7 @@ SetDevices (LOADER_ENTRY *Entry)
           devprop_add_value(device, Prop2.Key.c_str(), gSettings.Graphics.EDID.CustomEDID.data(), 128);
           DBG("   Add key=%s from custom EDID\n", Prop2.Key.c_str());
         } else {
-          devprop_add_value(device, Prop2.Key, Prop2.Value);
+          devprop_add_value(device, Prop2.Key.c_str(), Prop2.Value.data(), Prop2.Value.size());
           DBG("   Add key=%s valuelen=%zu\n", Prop2.Key.c_str(), Prop2.Value.size());
         }
       }else{
