@@ -26,6 +26,8 @@ declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC53}
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 lsha1="not a git repo"
+pyversion=$(echo $COL_CYAN"Installed Python version: "$COL_WHITE$(/usr/local/bin/python3 --version))
+pynone=$(echo -e "$COL_RED    Python3 seems missing on this machine, it is required to build Clover ")
 export DIR_OUT=${DIR_OUT:-"$CLOVERROOT"/toolchain/tools/output}
 export DIR_SCT=${DIR_SCT:-${CLOVERROOT}/toolchain/tools/Scripts}
 if [[ ! -d ${DIR_SCT} ]] || [[ ! -d ${DIR_OUT} ]]; then
@@ -240,7 +242,12 @@ buildClover() {
       ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
     fi
   fi
-  # Run a post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
+  # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
+     echo "Running Clover postbuild script"
+    "${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
+  # Run a custom post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
     echo "Running postbuild script"
     "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
@@ -452,13 +459,13 @@ USBMap() {
   open $HOME/Desktop/ClovUtils
 }
 
-QtiASL() {
+Xiasl() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils
   fi
-  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/QtiASL/releases/download/1.1.63/Xiasl_Mac.dmg > Xiasl_Mac.dmg
+  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/Xiasl/releases/download/1.1.66/Xiasl_Mac.dmg > Xiasl_Mac.dmg
   hdiutil attach -quiet -noverify -nobrowse Xiasl_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xiasl/Xiasl.app $HOME/Desktop/ClovUtils
-  hdiutil detach -force /Volumes/bin\:release\:QtiASL
+  hdiutil detach -force /Volumes/bin\:release\:Xiasl
   rm -r $HOME/Desktop/ClovUtils/Xiasl_Mac.dmg && open $HOME/Desktop/ClovUtils
 }
 
@@ -553,7 +560,7 @@ options=( 'Get CloverConfigPlistValidator    '
           'Get NativeDisplayBrightness  '
           'Get SSDTTime'
           'Get USBMap'
-          'Get QtiASL'
+          'Get Xiasl'
           'Get CsrDecode'
           'Get gibMacOS'
           'Get mountR/W'
@@ -602,8 +609,8 @@ select opt in "${options[@]}"
       USBMap
       break
     ;;
-    "Get QtiASL")
-      QtiASL
+    "Get Xiasl")
+      Xiasl
       break
     ;;
     "Get CsrDecode")
@@ -638,10 +645,18 @@ Utilities
 menu() {
 echo
 echo -e $COL_GREEN" ------------------------------------------------------------------------------"
-echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+if [[ ! -x "/usr/local/bin/pip3" ]]; then
+	echo -e " ${pynone}"
+fi
+echo -e "$COL_GREEN                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e "$COL_CYAN              TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"$COL_RESET
+if [[ -x "/usr/local/bin/pip3" ]]; then
+	echo -e $COL_GREEN" ------------------- ${pyversion}$COL_GREEN ------------------ "$COL_RESET
 echo -e "\n\n\n\n\n\n\n\n"
+else
+echo -e $COL_GREEN" ------------------------------------------------------------------------------"$COL_RESET
+echo -e "\n\n\n\n\n\n\n"
+fi
 PS3='
 Please enter your choice: '
 options=( 'build Clover'

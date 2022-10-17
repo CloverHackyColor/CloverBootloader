@@ -10,7 +10,7 @@ set -u
 # Gettext source version
 # here we can change source versions of tools
 #
-export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.20.1}
+export GETTEXT_VERSION=${GETTEXT_VERSION:-gettext-0.21.1}
 
 # Change PREFIX if you want gettext installed on different place
 #
@@ -95,7 +95,7 @@ fnDownloadGettext ()
     local tarball="${GETTEXT_VERSION}.tar.xz"
     if [[ ! -f "$tarball" ]]; then
         echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name https://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
+        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/pub/gnu/gettext/$tarball || exit 1
         mv download.tmp $tarball
     fi
 }
