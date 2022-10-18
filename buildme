@@ -645,12 +645,12 @@ Utilities
 menu() {
 echo
 echo -e $COL_GREEN" ------------------------------------------------------------------------------"
-if [[ ! -x "/usr/local/bin/pip3" ]]; then
+if [[ ! -x "/usr/local/bin/python3" ]]; then
 	echo -e " ${pynone}"
 fi
 echo -e "$COL_GREEN                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e "$COL_CYAN              TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
-if [[ -x "/usr/local/bin/pip3" ]]; then
+if [[ -x "/usr/local/bin/python3" ]]; then
 	echo -e $COL_GREEN" ------------------- ${pyversion}$COL_GREEN ------------------ "$COL_RESET
 echo -e "\n\n\n\n\n\n\n\n"
 else
