@@ -59,6 +59,8 @@ typedef struct {
   CONST CHAR8   *description;   /* Cache description */
 } cpuid_cache_desc_t;  
 
+typedef cache_type_t APPLE_INTEL_CPU_CACHE_TYPE;
+
 /* Monitor/mwait Leaf: */
 typedef struct {
   UINT32  linesize_min;
