@@ -191,8 +191,9 @@ makeRelease() {
   ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
-     echo "Running Clover postbuild script"
-    "${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+		chmod +x "${DIR_TOOLS}"/CloverScripts/postbuild.sh
+		echo "Running Clover postbuild script"
+		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
   fi
 }
 
@@ -244,8 +245,9 @@ buildClover() {
   fi
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
-     echo "Running Clover postbuild script"
-    "${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+		chmod +x "${DIR_TOOLS}"/CloverScripts/postbuild.sh
+		echo "Running Clover postbuild script"
+		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
   fi
   # Run a custom post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
