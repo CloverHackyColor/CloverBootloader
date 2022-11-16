@@ -786,14 +786,12 @@ menu
 clone_OpenCorePkg
 set -e
 if [[ "$2" == ci ]]; then
-  clone_OpenCorePkg
   buildClover
   buildCCPV
   BLC
   buildPkg
   buildIso
-  buildApp
+  # buildApp
 else
-  clone_OpenCorePkg
   menu
 fi
