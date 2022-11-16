@@ -30,10 +30,6 @@ jobs:
         run: |
           chmod +x ./buildme
           ./buildme "" ci
-      - name: Test file directory
-        run: |
-          cd CloverPackage && ls -l
-          cd sym && ls -l
       - name: Prepare Release Packs
         run: |
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
