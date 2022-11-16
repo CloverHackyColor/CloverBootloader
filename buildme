@@ -786,12 +786,11 @@ menu
 clone_OpenCorePkg
 set -e
 if [[ "$2" == ci ]]; then
-  makeRelease
+  buildClover
   buildCCPV
   BLC
   buildPkg
   buildIso
-  makeV2
 else
   menu
 fi
