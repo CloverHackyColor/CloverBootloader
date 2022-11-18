@@ -26,7 +26,7 @@ declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC53}
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 lsha1="not a git repo"
-pyversion=$(echo $COL_CYAN"Installed Python version: "$COL_WHITE$(/usr/local/bin/python3 --version))
+pyversion=$(echo $COL_CYAN"Installed Python version: "$COL_WHITE$($(which python3) --version))
 pynone=$(echo -e "$COL_RED    Python3 seems missing on this machine, it is required to build Clover ")
 export DIR_OUT=${DIR_OUT:-"$CLOVERROOT"/toolchain/tools/output}
 export DIR_SCT=${DIR_SCT:-${CLOVERROOT}/toolchain/tools/Scripts}
@@ -647,12 +647,12 @@ Utilities
 menu() {
 echo
 echo -e $COL_GREEN" ------------------------------------------------------------------------------"
-if [[ ! -x "/usr/local/bin/python3" ]]; then
+if [[ ! -x "$(which python3)" ]]; then
 	echo -e " ${pynone}"
 fi
 echo -e "$COL_GREEN                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e "$COL_CYAN              TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
-if [[ -x "/usr/local/bin/python3" ]]; then
+if [[ -x "$(which python3)" ]]; then
 	echo -e $COL_GREEN" ------------------- ${pyversion}$COL_GREEN ------------------ "$COL_RESET
 	echo -e "\n\n\n\n\n\n\n\n"
 else
