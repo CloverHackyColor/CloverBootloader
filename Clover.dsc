@@ -622,7 +622,6 @@
   CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
   CloverEFI/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>

@@ -365,7 +365,7 @@ CompileBinutils () {
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
     echo "- ${BINUTILS_VERSION} make..."
-    cmd="make"
+    cmd="make MAKEINFO=true"
     logfile="$DIR_LOGS/binutils.$ARCH.make.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >/dev/null 2>> "$logfile"
@@ -373,7 +373,7 @@ CompileBinutils () {
         echo "Error compiling ${BINUTILS_VERSION} ! Check the log $logfile"
         exit 1
     fi
-    cmd="make install-strip"
+    cmd="make MAKEINFO=true install-strip"
     logfile="$DIR_LOGS/binutils.$ARCH.install.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
