@@ -136,10 +136,11 @@
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
-  MtrrLib|CloverEFI/UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+  MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
   IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
-  LocalApicLib|CloverEFI/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
+  LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
   #LocalApicLib|CloverEFI/UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
+  MpInitLib|UefiCpuPkg/Library/MpInitLib/DxeMpInitLib.inf
 
   #
   # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
@@ -621,7 +622,7 @@
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
   CloverEFI/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf {
       <PcdsFixedAtBuild>

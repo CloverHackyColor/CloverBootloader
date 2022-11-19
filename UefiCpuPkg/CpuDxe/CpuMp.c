@@ -810,7 +810,7 @@ InitializeMpExceptionHandlers (
   Initialize Multi-processor support.
 
 **/
-VOID
+EFI_STATUS
 InitializeMpSupport (
   VOID
   )
@@ -823,7 +823,7 @@ InitializeMpSupport (
   // Wakeup APs to do initialization
   //
   Status = MpInitLibInitialize ();
-  ASSERT_EFI_ERROR (Status);
+  return Status;
 
   MpInitLibGetNumberOfProcessors (&NumberOfProcessors, &NumberOfEnabledProcessors);
   mNumberOfProcessors = NumberOfProcessors;
@@ -844,6 +844,6 @@ InitializeMpSupport (
                   &gEfiMpServiceProtocolGuid,  &mMpServicesTemplate,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  return Status;
 }
 

@@ -1211,7 +1211,7 @@ InitializeCpu (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  InitializeMpSupport ();
+  Status = InitializeMpSupport ();
 
   return Status;
 }

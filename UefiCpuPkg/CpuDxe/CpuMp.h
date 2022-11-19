@@ -13,7 +13,7 @@
   Initialize Multi-processor support.
 
 **/
-VOID
+EFI_STATUS
 InitializeMpSupport (
   VOID
   );

@@ -1930,7 +1930,7 @@ MpInitLibGetProcessorInfo (
     &ProcessorInfoBuffer->Location.Thread
     );
 
-  if ((OriginalProcessorNumber & CPU_V2_EXTENDED_TOPOLOGY) != 0) {
+  if ((OriginalProcessorNumber & CPUID_V2_EXTENDED_TOPOLOGY) != 0) {
     GetProcessorLocation2ByApicId (
       CpuInfoInHob[ProcessorNumber].ApicId,
       &ProcessorInfoBuffer->ExtendedInformation.Location2.Package,
