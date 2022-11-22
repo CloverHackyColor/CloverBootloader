@@ -1157,60 +1157,62 @@ InitializeCpu (
   )
 {
   EFI_STATUS  Status;
-  EFI_EVENT   IdleLoopEvent;
+  BOOLEAN Called = FALSE;
+  if (Called) {
+    EFI_EVENT   IdleLoopEvent;
 
-  InitializePageTableLib();
+    InitializePageTableLib();
 
-  InitializeFloatingPointUnits ();
+    InitializeFloatingPointUnits ();
 
-  //
-  // Make sure interrupts are disabled
-  //
-  DisableInterrupts ();
+    //
+    // Make sure interrupts are disabled
+    //
+    DisableInterrupts ();
+    //
+    // Init GDT for DXE
+    //
+    InitGlobalDescriptorTable ();
 
-  //
-  // Init GDT for DXE
-  //
-  InitGlobalDescriptorTable ();
+    //
+    // Setup IDT pointer, IDT and interrupt entry points
+    //
+    InitInterruptDescriptorTable ();
 
-  //
-  // Setup IDT pointer, IDT and interrupt entry points
-  //
-  InitInterruptDescriptorTable ();
+    //
+    // Install CPU Architectural Protocol
+    //
+    Status = gBS->InstallMultipleProtocolInterfaces (
+        &mCpuHandle,
+        &gEfiCpuArchProtocolGuid, &gCpu,
+        NULL
+    );
+    ASSERT_EFI_ERROR (Status);
 
-  //
-  // Install CPU Architectural Protocol
-  //
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &mCpuHandle,
-                  &gEfiCpuArchProtocolGuid, &gCpu,
-                  NULL
-                  );
-  ASSERT_EFI_ERROR (Status);
+    //
+    // Refresh GCD memory space map according to MTRR value.
+    //
+    RefreshGcdMemoryAttributes ();
 
-  //
-  // Refresh GCD memory space map according to MTRR value.
-  //
-  RefreshGcdMemoryAttributes ();
+    //
+    // Add and allocate local APIC memory mapped space
+    //
+    AddLocalApicMemorySpace (ImageHandle);
 
-  //
-  // Add and allocate local APIC memory mapped space
-  //
-  AddLocalApicMemorySpace (ImageHandle);
+    //
+    // Setup a callback for idle events
+    //
+    Status = gBS->CreateEventEx (
+        EVT_NOTIFY_SIGNAL,
+        TPL_NOTIFY,
+        IdleLoopEventCallback,
+        NULL,
+        &gIdleLoopEventGuid,
+        &IdleLoopEvent
+    );
+    ASSERT_EFI_ERROR (Status);
 
-  //
-  // Setup a callback for idle events
-  //
-  Status = gBS->CreateEventEx (
-                  EVT_NOTIFY_SIGNAL,
-                  TPL_NOTIFY,
-                  IdleLoopEventCallback,
-                  NULL,
-                  &gIdleLoopEventGuid,
-                  &IdleLoopEvent
-                  );
-  ASSERT_EFI_ERROR (Status);
-
+  }
   Status = InitializeMpSupport ();
 
   return Status;

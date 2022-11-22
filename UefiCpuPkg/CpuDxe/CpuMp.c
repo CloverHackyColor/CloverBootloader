@@ -6,6 +6,11 @@
 
 **/
 
+/*
+ * Modified by Slice 2022
+ * to use this driver after external UEFI made initialization
+ */
+
 #include "CpuDxe.h"
 #include "CpuMp.h"
 
@@ -816,28 +821,32 @@ InitializeMpSupport (
   )
 {
   EFI_STATUS     Status;
+  BOOLEAN      Called = FALSE;
   UINTN          NumberOfProcessors;
   UINTN          NumberOfEnabledProcessors;
 
   //
   // Wakeup APs to do initialization
   //
-  Status = MpInitLibInitialize ();
-  return Status;
+  if (Called)  Status = MpInitLibInitialize ();
+//  return Status;
 
-  MpInitLibGetNumberOfProcessors (&NumberOfProcessors, &NumberOfEnabledProcessors);
-  mNumberOfProcessors = NumberOfProcessors;
+  if (Called)  MpInitLibGetNumberOfProcessors (&NumberOfProcessors, &NumberOfEnabledProcessors);
+//  mNumberOfProcessors = NumberOfProcessors;
+
+  UINT64 msr = AsmReadMsr64 (MSR_CORE_THREAD_COUNT);
+  mNumberOfProcessors =  msr && 0xFF;
   DEBUG ((DEBUG_INFO, "Detect CPU count: %d\n", mNumberOfProcessors));
 
   //
   // Initialize special exception handlers for each logic processor.
   //
-  InitializeMpExceptionHandlers ();
+  if (Called)  InitializeMpExceptionHandlers ();
 
   //
   // Update CPU healthy information from Guided HOB
   //
-  CollectBistDataFromHob ();
+  if (Called)  CollectBistDataFromHob ();
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mMpServiceHandle,

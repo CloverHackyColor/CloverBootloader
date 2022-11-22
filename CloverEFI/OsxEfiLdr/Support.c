@@ -167,8 +167,11 @@ GenMemoryMap (
   UINT64                EBDAsize = 2;
 
   // EBDA memory protection
-  
-  EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
+  volatile UINT16 * volatile ebda;
+  ebda = (volatile UINT16 *)(UINTN)(0x40E);
+  EBDAaddr = LShiftU64((UINT64)(*ebda), 4);
+
+//  EBDAaddr = LShiftU64((UINT64)(*(volatile UINT16 *)(UINTN)(0x40E)), 4);
   //fool proof
   if (EBDAaddr < 0x90000 || EBDAaddr > 0x9F800) {
     EBDAaddr = 0x9A000;

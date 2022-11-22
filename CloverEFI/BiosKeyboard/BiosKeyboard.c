@@ -2147,8 +2147,11 @@ BiosKeyboardTimerHandler (
   //
   // Clear the CTRL and ALT BDA flag
   //
-  KbFlag1 = *((UINT8 *) (UINTN) 0x417);  // read the STATUS FLAGS 1
-  KbFlag2 = *((UINT8 *) (UINTN) 0x418); // read STATUS FLAGS 2
+  volatile UINT8 * volatile kbf;
+  kbf = (volatile UINT8 *) (UINTN) 0x417;
+  KbFlag1 = *kbf;  // read the STATUS FLAGS 1
+  kbf = (volatile UINT8 *) (UINTN) 0x418;
+  KbFlag2 = *kbf; // read STATUS FLAGS 2
 /*
   DEBUG_CODE (
     {
@@ -2217,9 +2220,12 @@ BiosKeyboardTimerHandler (
   // Clear left alt and left ctrl BDA flag
   //
   KbFlag2 &= ~(KB_LEFT_ALT_PRESSED | KB_LEFT_CTRL_PRESSED);
-  *((UINT8 *) (UINTN) 0x418) = KbFlag2;
+
+  kbf = (volatile UINT8 *) (UINTN) 0x418;
+  *kbf = KbFlag2;
   KbFlag1 &= ~0x0C;
-  *((UINT8 *) (UINTN) 0x417) = KbFlag1;
+  kbf = (volatile UINT8 *) (UINTN) 0x417;
+  *kbf = KbFlag1;
 
 
   //

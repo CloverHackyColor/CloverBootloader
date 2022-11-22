@@ -10,7 +10,7 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = CpuDxe
+  BASE_NAME                      = CpuMpDxe
   MODULE_UNI_FILE                = CpuDxe.uni
   FILE_GUID                      = 1A1E4886-9517-440e-9FDE-3BE44CEE2136
   MODULE_TYPE                    = DXE_DRIVER
@@ -86,3 +86,8 @@
 
 [UserExtensions.TianoCore."ExtraFiles"]
   CpuDxeExtra.uni
+  
+[BuildOptions]
+#  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -fno-lto
+  

@@ -125,7 +125,11 @@ void* FindAcpiRsdPtr()
   //
   // Search EBDA
   //
-  Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
+  volatile UINT16 * volatile ebda;
+  ebda = (volatile UINT16 *)(UINTN)(EBDA_BASE_ADDRESS);
+  Address = LShiftU64((UINT64)(*ebda), 4);
+
+//  Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
   if ( Address == 0 ) return 0; // Jief : if Address==0, the first access at *(UINT64 *)(Address + Index) is at address 0. It's supposed to crash.
   for (Index = 0; Index < 0x400 ; Index += 16) {
     if (*(UINT64 *)(Address + Index) == EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {

@@ -9,6 +9,8 @@
 #ifndef _CPU_MP_H_
 #define _CPU_MP_H_
 
+#define MSR_CORE_THREAD_COUNT 0x35
+
 /**
   Initialize Multi-processor support.
 

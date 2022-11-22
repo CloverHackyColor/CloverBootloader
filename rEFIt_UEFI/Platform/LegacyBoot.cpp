@@ -604,7 +604,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
 	UINT8*                      pBootSector	= (UINT8*)(UINTN)0x7C00;
   UINT8*                      mBootSector;
-  MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)(UINTN)0x7BE;
+  volatile MBR_PARTITION_INFO*		volatile	pMBR; //      = (MBR_PARTITION_INFO*)(UINTN)0x7BE;
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
@@ -613,11 +613,13 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 //  UINT16                      OldMask;
 //  UINT16                      NewMask;
   UINTN                       i, j;  //for debug dump
-  UINT8                       *ptr;
+  UINT8*             ptr;
  // UINT32                      MBRCRC32;
   //UINTN         LogSize;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
   EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
+
+  pMBR     = (volatile MBR_PARTITION_INFO*)(UINTN)0x7BE;
 	
 	IA32_REGISTER_SET   Regs;
 	SetMem(&Regs, sizeof (Regs), 0);
@@ -699,7 +701,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   ptr = (UINT8*)(UINTN)0x7F00;
   CopyMem(ptr, &VideoTest[0], 30);
     
-	CopyMem(pMBR, &tMBR, 16);
+	CopyMem((void*)pMBR, &tMBR, 16);
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
   

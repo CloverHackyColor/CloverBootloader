@@ -47,10 +47,11 @@ FindAcpiRsdPtr (
   //
   // Search EBDA
   //
-
-  Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
+  volatile UINT16 * volatile ebda;
+  ebda = (volatile UINT16 *)(UINTN)(EBDA_BASE_ADDRESS);
+  Address = (UINTN)(*ebda) << 4;
   for (Index = 0; Index < 0x400 ; Index += 16) {
-    if (*(UINT64 *)(Address + Index) == EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+    if (*(volatile UINT64 *)(Address + Index) == EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
       return (VOID *)Address;
     }
   }
@@ -95,10 +96,13 @@ FindMPSPtr (
   //
   // Search EBDA
   //
+  volatile UINT16 * volatile ebda;
+  ebda = (volatile UINT16 *)(UINTN)(EBDA_BASE_ADDRESS);
+  Address = (UINTN)(*ebda) << 4;
 
-  Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
+//  Address = (*(UINT16 *)(UINTN)(EBDA_BASE_ADDRESS)) << 4;
   for (Index = 0; Index < 0x400 ; Index += 16) {
-    if (*(UINT32 *)(Address + Index) == MPS_PTR) {
+    if (*(volatile UINT32 *)(Address + Index) == MPS_PTR) {
       return (VOID *)Address;
     }
   }
