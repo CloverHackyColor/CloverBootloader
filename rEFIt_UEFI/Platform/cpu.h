@@ -78,7 +78,7 @@
 #define CPU_MODEL_COMETLAKE_Y   0xA5  /* 10h Comet Lake */
 #define CPU_MODEL_COMETLAKE_U   0xA6  /* 10h Comet Lake */
 #define CPU_MODEL_ROCKETLAKE    0xA7  /* 11h Rocket Lake */
-#define CPU_MODEL_RAPTORLAKE    0xB7  /* 11h Raptor Lake */
+#define CPU_MODEL_RAPTORLAKE    0xB7  /* 13h Raptor Lake */
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
