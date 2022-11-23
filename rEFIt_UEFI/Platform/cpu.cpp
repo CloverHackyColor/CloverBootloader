@@ -328,6 +328,7 @@ void GetCPUProperties (void)
       case CPU_MODEL_TIGERLAKE_D:
       case CPU_MODEL_ALDERLAKE:
       case CPU_MODEL_ROCKETLAKE:
+      case CPU_MODEL_RAPTORLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
@@ -523,6 +524,7 @@ void GetCPUProperties (void)
            case CPU_MODEL_TIGERLAKE_D:
            case CPU_MODEL_ALDERLAKE:
            case CPU_MODEL_ROCKETLAKE:
+           case CPU_MODEL_RAPTORLAKE:
 
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -1402,6 +1404,7 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_TIGERLAKE_D:
           case CPU_MODEL_ALDERLAKE:
           case CPU_MODEL_ROCKETLAKE:
+          case CPU_MODEL_RAPTORLAKE:
             if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
             if ( gCPUStructure.BrandString.contains("Core(TM) i5-1") )
@@ -1651,6 +1654,7 @@ MacModel GetDefaultModel()
         break;
       case CPU_MODEL_ALDERLAKE:
       case CPU_MODEL_COMETLAKE_S:
+      case CPU_MODEL_RAPTORLAKE:
         DefaultType = MacPro71;
         break;
       default:
