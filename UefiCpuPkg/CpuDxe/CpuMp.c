@@ -835,7 +835,7 @@ InitializeMpSupport (
 //  mNumberOfProcessors = NumberOfProcessors;
 
   UINT64 msr = AsmReadMsr64 (MSR_CORE_THREAD_COUNT);
-  mNumberOfProcessors =  msr && 0xFF;
+  mNumberOfProcessors =  msr & 0xFF;
   DEBUG ((DEBUG_INFO, "Detect CPU count: %d\n", mNumberOfProcessors));
 
   //
