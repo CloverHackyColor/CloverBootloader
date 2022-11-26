@@ -1,8 +1,8 @@
 /** @file
   ACPI 6.3 definitions from the ACPI Specification Revision 6.3 Jan, 2019.
 
-  Copyright (c) 2017, Intel Corporation. All rights reserved.<BR>
-  Copyright (c) 2019, ARM Ltd. All rights reserved.<BR>
+  Copyright (c) 2017 - 2022, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2019 - 2020, ARM Ltd. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
@@ -1040,9 +1040,9 @@ typedef struct {
 ///
 /// Memory Aggregator Device Type
 ///
-#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_SOCKET            0x1
-#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_MEMORY_CONTROLLER 0x2
-#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_DIMM              0x3
+#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_SOCKET             0x0
+#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_MEMORY_CONTROLLER  0x1
+#define EFI_ACPI_6_3_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_DIMM               0x2
 
 ///
 /// Socket Memory Aggregator Device Structure.
@@ -1490,12 +1490,12 @@ typedef struct {
 // Definition for Memory Device to System Physical Address Range Mapping Structure
 //
 typedef struct {
-  UINT32                                      DIMMNumber:4;
-  UINT32                                      MemoryChannelNumber:4;
-  UINT32                                      MemoryControllerID:4;
-  UINT32                                      SocketID:4;
-  UINT32                                      NodeControllerID:12;
-  UINT32                                      Reserved_28:4;
+  UINT32    DIMMNumber          : 4;
+  UINT32    MemoryChannelNumber : 4;
+  UINT32    MemoryControllerID  : 4;
+  UINT32    SocketID            : 4;
+  UINT32    NodeControllerID    : 12;
+  UINT32    Reserved_28         : 4;
 } EFI_ACPI_6_3_NFIT_DEVICE_HANDLE;
 
 #define EFI_ACPI_6_3_NFIT_MEMORY_DEVICE_STATE_FLAGS_PREVIOUS_SAVE_FAIL                                      BIT0
@@ -1615,6 +1615,10 @@ typedef struct {
   UINT8     Reserved_12[4];
 } EFI_ACPI_6_3_NFIT_PLATFORM_CAPABILITIES_STRUCTURE;
 
+#define EFI_ACPI_6_3_NFIT_PLATFORM_CAPABILITY_CPU_CACHE_FLUSH_TO_NVDIMM_DURABILITY_ON_POWER_LOSS          BIT0
+#define EFI_ACPI_6_3_NFIT_PLATFORM_CAPABILITY_MEMORY_CONTROLLER_FLUSH_TO_NVDIMM_DURABILITY_ON_POWER_LOSS  BIT1
+#define EFI_ACPI_6_3_NFIT_PLATFORM_CAPABILITY_BYTE_ADDRESSABLE_PERSISTENT_MEMORY_HARDWARE_MIRRORING       BIT2
+
 ///
 /// Secure DEVices Table (SDEV)
 ///
@@ -1693,12 +1697,12 @@ typedef struct {
 /// Boot Error Region Block Status Definition
 ///
 typedef struct {
-  UINT32       UncorrectableErrorValid:1;
-  UINT32       CorrectableErrorValid:1;
-  UINT32       MultipleUncorrectableErrors:1;
-  UINT32       MultipleCorrectableErrors:1;
-  UINT32       ErrorDataEntryCount:10;
-  UINT32       Reserved:18;
+  UINT32    UncorrectableErrorValid     : 1;
+  UINT32    CorrectableErrorValid       : 1;
+  UINT32    MultipleUncorrectableErrors : 1;
+  UINT32    MultipleCorrectableErrors   : 1;
+  UINT32    ErrorDataEntryCount         : 10;
+  UINT32    Reserved                    : 18;
 } EFI_ACPI_6_3_ERROR_BLOCK_STATUS;
 
 ///
@@ -1715,10 +1719,16 @@ typedef struct {
 //
 // Boot Error Severity types
 //
-#define EFI_ACPI_6_3_ERROR_SEVERITY_CORRECTABLE  0x00
+#define EFI_ACPI_6_3_ERROR_SEVERITY_RECOVERABLE  0x00
 #define EFI_ACPI_6_3_ERROR_SEVERITY_FATAL        0x01
 #define EFI_ACPI_6_3_ERROR_SEVERITY_CORRECTED    0x02
 #define EFI_ACPI_6_3_ERROR_SEVERITY_NONE         0x03
+//
+// The term 'Correctable' is no longer being used as an error severity of the
+// reported error since ACPI Specification Version 5.1 Errata B.
+// The below macro is considered as deprecated and should no longer be used.
+//
+#define EFI_ACPI_6_3_ERROR_SEVERITY_CORRECTABLE  0x00
 
 ///
 /// Generic Error Data Entry Definition
@@ -1832,13 +1842,13 @@ typedef struct {
 /// Hardware Error Notification Configuration Write Enable Structure Definition
 ///
 typedef struct {
-  UINT16    Type:1;
-  UINT16    PollInterval:1;
-  UINT16    SwitchToPollingThresholdValue:1;
-  UINT16    SwitchToPollingThresholdWindow:1;
-  UINT16    ErrorThresholdValue:1;
-  UINT16    ErrorThresholdWindow:1;
-  UINT16    Reserved:10;
+  UINT16    Type                           : 1;
+  UINT16    PollInterval                   : 1;
+  UINT16    SwitchToPollingThresholdValue  : 1;
+  UINT16    SwitchToPollingThresholdWindow : 1;
+  UINT16    ErrorThresholdValue            : 1;
+  UINT16    ErrorThresholdWindow           : 1;
+  UINT16    Reserved                       : 10;
 } EFI_ACPI_6_3_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE;
 
 ///
@@ -2051,8 +2061,8 @@ typedef struct {
 /// Memory Proximity Domain Attributes Structure flags
 ///
 typedef struct {
-  UINT16                        InitiatorProximityDomainValid:1;
-  UINT16                        Reserved:15;
+  UINT16    InitiatorProximityDomainValid : 1;
+  UINT16    Reserved                      : 15;
 } EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_PROXIMITY_DOMAIN_ATTRIBUTES_FLAGS;
 
 ///
@@ -2073,8 +2083,8 @@ typedef struct {
 /// System Locality Latency and Bandwidth Information Structure flags
 ///
 typedef struct {
-  UINT8                         MemoryHierarchy:4;
-  UINT8                         Reserved:4;
+  UINT8    MemoryHierarchy : 4;
+  UINT8    Reserved        : 4;
 } EFI_ACPI_6_3_HMAT_STRUCTURE_SYSTEM_LOCALITY_LATENCY_AND_BANDWIDTH_INFO_FLAGS;
 
 ///
@@ -2097,11 +2107,11 @@ typedef struct {
 /// Memory Side Cache Information Structure cache attributes
 ///
 typedef struct {
-  UINT32                        TotalCacheLevels:4;
-  UINT32                        CacheLevel:4;
-  UINT32                        CacheAssociativity:4;
-  UINT32                        WritePolicy:4;
-  UINT32                        CacheLineSize:16;
+  UINT32    TotalCacheLevels   : 4;
+  UINT32    CacheLevel         : 4;
+  UINT32    CacheAssociativity : 4;
+  UINT32    WritePolicy        : 4;
+  UINT32    CacheLineSize      : 16;
 } EFI_ACPI_6_3_HMAT_STRUCTURE_MEMORY_SIDE_CACHE_INFO_CACHE_ATTRIBUTES;
 
 ///
@@ -2353,16 +2363,16 @@ typedef struct {
 
 typedef struct {
   UINT8                                    Command;
-  UINT8                                    Reserved:7;
-  UINT8                                    NotifyOnCompletion:1;
+  UINT8    Reserved           : 7;
+  UINT8    NotifyOnCompletion : 1;
 } EFI_ACPI_6_3_PCCT_GENERIC_SHARED_MEMORY_REGION_COMMAND;
 
 typedef struct {
-  UINT8                                    CommandComplete:1;
-  UINT8                                    PlatformInterrupt:1;
-  UINT8                                    Error:1;
-  UINT8                                    PlatformNotification:1;
-  UINT8                                    Reserved:4;
+  UINT8    CommandComplete      : 1;
+  UINT8    PlatformInterrupt    : 1;
+  UINT8    Error                : 1;
+  UINT8    PlatformNotification : 1;
+  UINT8    Reserved             : 4;
   UINT8                                    Reserved1;
 } EFI_ACPI_6_3_PCCT_GENERIC_SHARED_MEMORY_REGION_STATUS;
 
@@ -2479,11 +2489,11 @@ typedef struct {
 /// PDTT Platform Communication Channel Identifier Structure
 ///
 typedef struct {
-  UINT16                        SubChannelIdentifer:8;
-  UINT16                        Runtime:1;
-  UINT16                        WaitForCompletion:1;
-  UINT16                        TriggerOrder:1;
-  UINT16                        Reserved:5;
+  UINT16    SubChannelIdentifer : 8;
+  UINT16    Runtime             : 1;
+  UINT16    WaitForCompletion   : 1;
+  UINT16    TriggerOrder        : 1;
+  UINT16    Reserved            : 5;
 } EFI_ACPI_6_3_PDTT_PCC_IDENTIFIER;
 
 ///
@@ -2543,12 +2553,12 @@ typedef struct {
 /// Processor hierarchy node structure flags
 ///
 typedef struct {
-  UINT32                        PhysicalPackage:1;
-  UINT32                        AcpiProcessorIdValid:1;
-  UINT32                        ProcessorIsAThread:1;
-  UINT32                        NodeIsALeaf:1;
-  UINT32                        IdenticalImplementation:1;
-  UINT32                        Reserved:27;
+  UINT32    PhysicalPackage         : 1;
+  UINT32    AcpiProcessorIdValid    : 1;
+  UINT32    ProcessorIsAThread      : 1;
+  UINT32    NodeIsALeaf             : 1;
+  UINT32    IdenticalImplementation : 1;
+  UINT32    Reserved                : 27;
 } EFI_ACPI_6_3_PPTT_STRUCTURE_PROCESSOR_FLAGS;
 
 ///
@@ -2586,14 +2596,14 @@ typedef struct {
 /// Cache Type Structure flags
 ///
 typedef struct {
-  UINT32                        SizePropertyValid:1;
-  UINT32                        NumberOfSetsValid:1;
-  UINT32                        AssociativityValid:1;
-  UINT32                        AllocationTypeValid:1;
-  UINT32                        CacheTypeValid:1;
-  UINT32                        WritePolicyValid:1;
-  UINT32                        LineSizeValid:1;
-  UINT32                        Reserved:25;
+  UINT32    SizePropertyValid   : 1;
+  UINT32    NumberOfSetsValid   : 1;
+  UINT32    AssociativityValid  : 1;
+  UINT32    AllocationTypeValid : 1;
+  UINT32    CacheTypeValid      : 1;
+  UINT32    WritePolicyValid    : 1;
+  UINT32    LineSizeValid       : 1;
+  UINT32    Reserved            : 25;
 } EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE_FLAGS;
 
 ///
@@ -2612,10 +2622,10 @@ typedef struct {
 /// Cache Type Structure cache attributes
 ///
 typedef struct {
-  UINT8                         AllocationType:2;
-  UINT8                         CacheType:2;
-  UINT8                         WritePolicy:1;
-  UINT8                         Reserved:3;
+  UINT8    AllocationType : 2;
+  UINT8    CacheType      : 2;
+  UINT8    WritePolicy    : 1;
+  UINT8    Reserved       : 3;
 } EFI_ACPI_6_3_PPTT_STRUCTURE_CACHE_ATTRIBUTES;
 
 ///
@@ -2892,6 +2902,11 @@ typedef struct {
 /// "MSDM" MS Data Management Table
 ///
 #define EFI_ACPI_6_3_DATA_MANAGEMENT_TABLE_SIGNATURE  SIGNATURE_32('M', 'S', 'D', 'M')
+
+///
+/// "PCCT" Platform Communications Channel Table
+///
+#define EFI_ACPI_6_3_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE  SIGNATURE_32('P', 'C', 'C', 'T')
 
 ///
 /// "SDEI" Software Delegated Exceptions Interface Table

@@ -1,7 +1,7 @@
 /** @file
   ACPI 4.0 definitions from the ACPI Specification Revision 4.0a April 5, 2010
 
-  Copyright (c) 2010 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2022, Intel Corporation. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
@@ -667,12 +667,12 @@ typedef struct {
 /// Boot Error Region Block Status Definition
 ///
 typedef struct {
-  UINT32       UncorrectableErrorValid:1;
-  UINT32       CorrectableErrorValid:1;
-  UINT32       MultipleUncorrectableErrors:1;
-  UINT32       MultipleCorrectableErrors:1;
-  UINT32       ErrorDataEntryCount:10;
-  UINT32       Reserved:18;
+  UINT32    UncorrectableErrorValid     : 1;
+  UINT32    CorrectableErrorValid       : 1;
+  UINT32    MultipleUncorrectableErrors : 1;
+  UINT32    MultipleCorrectableErrors   : 1;
+  UINT32    ErrorDataEntryCount         : 10;
+  UINT32    Reserved                    : 18;
 } EFI_ACPI_4_0_ERROR_BLOCK_STATUS;
 
 ///
@@ -690,6 +690,7 @@ typedef struct {
 // Boot Error Severity types
 //
 #define EFI_ACPI_4_0_ERROR_SEVERITY_CORRECTABLE  0x00
+#define EFI_ACPI_4_0_ERROR_SEVERITY_RECOVERABLE  0x00
 #define EFI_ACPI_4_0_ERROR_SEVERITY_FATAL        0x01
 #define EFI_ACPI_4_0_ERROR_SEVERITY_CORRECTED    0x02
 #define EFI_ACPI_4_0_ERROR_SEVERITY_NONE         0x03
@@ -795,13 +796,13 @@ typedef struct {
 /// Hardware Error Notification Configuration Write Enable Structure Definition
 ///
 typedef struct {
-  UINT16    Type:1;
-  UINT16    PollInterval:1;
-  UINT16    SwitchToPollingThresholdValue:1;
-  UINT16    SwitchToPollingThresholdWindow:1;
-  UINT16    ErrorThresholdValue:1;
-  UINT16    ErrorThresholdWindow:1;
-  UINT16    Reserved:10;
+  UINT16    Type                           : 1;
+  UINT16    PollInterval                   : 1;
+  UINT16    SwitchToPollingThresholdValue  : 1;
+  UINT16    SwitchToPollingThresholdWindow : 1;
+  UINT16    ErrorThresholdValue            : 1;
+  UINT16    ErrorThresholdWindow           : 1;
+  UINT16    Reserved                       : 10;
 } EFI_ACPI_4_0_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE;
 
 ///
@@ -1264,7 +1265,7 @@ typedef struct {
 #define EFI_ACPI_4_0_MANAGEMENT_CONTROLLER_HOST_INTERFACE_TABLE_SIGNATURE  SIGNATURE_32('M', 'C', 'H', 'I')
 
 ///
-/// "SPCR" Serial Port Concole Redirection Table
+/// "SPCR" Serial Port Console Redirection Table
 ///
 #define EFI_ACPI_4_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'C', 'R')
 

@@ -2,7 +2,8 @@
   ACPI 5.0 definitions from the ACPI Specification Revision 5.0a November 13, 2013.
 
   Copyright (c) 2014 Hewlett-Packard Development Company, L.P.<BR>
-  Copyright (c) 2011 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2011 - 2022, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2020, ARM Ltd. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
@@ -12,7 +13,7 @@
 #include <IndustryStandard/Acpi40.h>
 
 //
-// Define for Desriptor
+// Define for Descriptor
 //
 #define ACPI_SMALL_FIXED_DMA_DESCRIPTOR_NAME                         0x0A
 #define ACPI_LARGE_GPIO_CONNECTION_DESCRIPTOR_NAME                   0x0C
@@ -1201,7 +1202,7 @@ typedef struct {
   ///
   UINT64                                          ExitBootServicesEntry;
   ///
-  /// Timer value logged at the point just prior towhen the OS loader gaining
+  /// Timer value logged at the point just prior to when the OS loader gaining
   /// control back from calls the ExitBootServices function for UEFI compatible firmware.
   /// For non-UEFI compatible boots, this field must be zero.
   ///
@@ -1337,12 +1338,12 @@ typedef struct {
 /// Boot Error Region Block Status Definition
 ///
 typedef struct {
-  UINT32       UncorrectableErrorValid:1;
-  UINT32       CorrectableErrorValid:1;
-  UINT32       MultipleUncorrectableErrors:1;
-  UINT32       MultipleCorrectableErrors:1;
-  UINT32       ErrorDataEntryCount:10;
-  UINT32       Reserved:18;
+  UINT32    UncorrectableErrorValid     : 1;
+  UINT32    CorrectableErrorValid       : 1;
+  UINT32    MultipleUncorrectableErrors : 1;
+  UINT32    MultipleCorrectableErrors   : 1;
+  UINT32    ErrorDataEntryCount         : 10;
+  UINT32    Reserved                    : 18;
 } EFI_ACPI_5_0_ERROR_BLOCK_STATUS;
 
 ///
@@ -1360,6 +1361,7 @@ typedef struct {
 // Boot Error Severity types
 //
 #define EFI_ACPI_5_0_ERROR_SEVERITY_CORRECTABLE  0x00
+#define EFI_ACPI_5_0_ERROR_SEVERITY_RECOVERABLE  0x00
 #define EFI_ACPI_5_0_ERROR_SEVERITY_FATAL        0x01
 #define EFI_ACPI_5_0_ERROR_SEVERITY_CORRECTED    0x02
 #define EFI_ACPI_5_0_ERROR_SEVERITY_NONE         0x03
@@ -1465,13 +1467,13 @@ typedef struct {
 /// Hardware Error Notification Configuration Write Enable Structure Definition
 ///
 typedef struct {
-  UINT16    Type:1;
-  UINT16    PollInterval:1;
-  UINT16    SwitchToPollingThresholdValue:1;
-  UINT16    SwitchToPollingThresholdWindow:1;
-  UINT16    ErrorThresholdValue:1;
-  UINT16    ErrorThresholdWindow:1;
-  UINT16    Reserved:10;
+  UINT16    Type                           : 1;
+  UINT16    PollInterval                   : 1;
+  UINT16    SwitchToPollingThresholdValue  : 1;
+  UINT16    SwitchToPollingThresholdWindow : 1;
+  UINT16    ErrorThresholdValue            : 1;
+  UINT16    ErrorThresholdWindow           : 1;
+  UINT16    Reserved                       : 10;
 } EFI_ACPI_5_0_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE;
 
 ///
@@ -1844,8 +1846,8 @@ typedef struct {
 
 typedef struct {
   UINT8                                    Command;
-  UINT8                                    Reserved:7;
-  UINT8                                    GenerateSci:1;
+  UINT8    Reserved    : 7;
+  UINT8    GenerateSci : 1;
 } EFI_ACPI_5_0_PCCT_GENERIC_SHARED_MEMORY_REGION_COMMAND;
 
 typedef struct {
@@ -2058,12 +2060,17 @@ typedef struct {
 #define EFI_ACPI_5_0_DATA_MANAGEMENT_TABLE_SIGNATURE  SIGNATURE_32('M', 'S', 'D', 'M')
 
 ///
+/// "PCCT" Platform Communications Channel Table
+///
+#define EFI_ACPI_5_0_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE  SIGNATURE_32('P', 'C', 'C', 'T')
+
+///
 /// "SLIC" MS Software Licensing Table Specification
 ///
 #define EFI_ACPI_5_0_SOFTWARE_LICENSING_TABLE_SIGNATURE  SIGNATURE_32('S', 'L', 'I', 'C')
 
 ///
-/// "SPCR" Serial Port Concole Redirection Table
+/// "SPCR" Serial Port Console Redirection Table
 ///
 #define EFI_ACPI_5_0_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'C', 'R')
 

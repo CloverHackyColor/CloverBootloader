@@ -2,8 +2,9 @@
   ACPI 5.1 definitions from the ACPI Specification Revision 5.1 Errata B January, 2016.
 
   Copyright (c) 2014 Hewlett-Packard Development Company, L.P.<BR>
-  Copyright (c) 2014 - 2018, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2014 - 2022, Intel Corporation. All rights reserved.<BR>
   (C) Copyright 2015 Hewlett Packard Enterprise Development LP<BR>
+  Copyright (c) 2020, ARM Ltd. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 **/
 
@@ -950,9 +951,9 @@ typedef struct {
 ///
 /// Memory Aggregator Device Type
 ///
-#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_SOCKET            0x1
-#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_MEMORY_CONTROLLER 0x2
-#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_DIMM              0x3
+#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_SOCKET             0x0
+#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_MEMORY_CONTROLLER  0x1
+#define EFI_ACPI_5_1_PMMT_MEMORY_AGGREGATOR_DEVICE_TYPE_DIMM               0x2
 
 ///
 /// Socket Memory Aggregator Device Structure.
@@ -1154,7 +1155,7 @@ typedef struct {
   ///
   UINT64                                          ExitBootServicesEntry;
   ///
-  /// Timer value logged at the point just prior towhen the OS loader gaining
+  /// Timer value logged at the point just prior to when the OS loader gaining
   /// control back from calls the ExitBootServices function for UEFI compatible firmware.
   /// For non-UEFI compatible boots, this field must be zero.
   ///
@@ -1353,12 +1354,12 @@ typedef struct {
 /// Boot Error Region Block Status Definition
 ///
 typedef struct {
-  UINT32       UncorrectableErrorValid:1;
-  UINT32       CorrectableErrorValid:1;
-  UINT32       MultipleUncorrectableErrors:1;
-  UINT32       MultipleCorrectableErrors:1;
-  UINT32       ErrorDataEntryCount:10;
-  UINT32       Reserved:18;
+  UINT32    UncorrectableErrorValid     : 1;
+  UINT32    CorrectableErrorValid       : 1;
+  UINT32    MultipleUncorrectableErrors : 1;
+  UINT32    MultipleCorrectableErrors   : 1;
+  UINT32    ErrorDataEntryCount         : 10;
+  UINT32    Reserved                    : 18;
 } EFI_ACPI_5_1_ERROR_BLOCK_STATUS;
 
 ///
@@ -1375,10 +1376,16 @@ typedef struct {
 //
 // Boot Error Severity types
 //
-#define EFI_ACPI_5_1_ERROR_SEVERITY_CORRECTABLE  0x00
+#define EFI_ACPI_5_1_ERROR_SEVERITY_RECOVERABLE  0x00
 #define EFI_ACPI_5_1_ERROR_SEVERITY_FATAL        0x01
 #define EFI_ACPI_5_1_ERROR_SEVERITY_CORRECTED    0x02
 #define EFI_ACPI_5_1_ERROR_SEVERITY_NONE         0x03
+//
+// The term 'Correctable' is no longer being used as an error severity of the
+// reported error since ACPI Specification Version 5.1 Errata B.
+// The below macro is considered as deprecated and should no longer be used.
+//
+#define EFI_ACPI_5_1_ERROR_SEVERITY_CORRECTABLE  0x00
 
 ///
 /// Generic Error Data Entry Definition
@@ -1481,13 +1488,13 @@ typedef struct {
 /// Hardware Error Notification Configuration Write Enable Structure Definition
 ///
 typedef struct {
-  UINT16    Type:1;
-  UINT16    PollInterval:1;
-  UINT16    SwitchToPollingThresholdValue:1;
-  UINT16    SwitchToPollingThresholdWindow:1;
-  UINT16    ErrorThresholdValue:1;
-  UINT16    ErrorThresholdWindow:1;
-  UINT16    Reserved:10;
+  UINT16    Type                           : 1;
+  UINT16    PollInterval                   : 1;
+  UINT16    SwitchToPollingThresholdValue  : 1;
+  UINT16    SwitchToPollingThresholdWindow : 1;
+  UINT16    ErrorThresholdValue            : 1;
+  UINT16    ErrorThresholdWindow           : 1;
+  UINT16    Reserved                       : 10;
 } EFI_ACPI_5_1_HARDWARE_ERROR_NOTIFICATION_CONFIGURATION_WRITE_ENABLE_STRUCTURE;
 
 ///
@@ -1865,11 +1872,11 @@ typedef struct {
 } EFI_ACPI_5_1_PCCT_GENERIC_SHARED_MEMORY_REGION_COMMAND;
 
 typedef struct {
-  UINT8                                    CommandComplete:1;
-  UINT8                                    SciDoorbell:1;
-  UINT8                                    Error:1;
-  UINT8                                    PlatformNotification:1;
-  UINT8                                    Reserved:4;
+  UINT8    CommandComplete      : 1;
+  UINT8    SciDoorbell          : 1;
+  UINT8    Error                : 1;
+  UINT8    PlatformNotification : 1;
+  UINT8    Reserved             : 4;
   UINT8                                    Reserved1;
 } EFI_ACPI_5_1_PCCT_GENERIC_SHARED_MEMORY_REGION_STATUS;
 
@@ -2079,12 +2086,17 @@ typedef struct {
 #define EFI_ACPI_5_1_DATA_MANAGEMENT_TABLE_SIGNATURE  SIGNATURE_32('M', 'S', 'D', 'M')
 
 ///
+/// "PCCT" Platform Communications Channel Table
+///
+#define EFI_ACPI_5_1_PLATFORM_COMMUNICATIONS_CHANNEL_TABLE_SIGNATURE  SIGNATURE_32('P', 'C', 'C', 'T')
+
+///
 /// "SLIC" MS Software Licensing Table Specification
 ///
 #define EFI_ACPI_5_1_SOFTWARE_LICENSING_TABLE_SIGNATURE  SIGNATURE_32('S', 'L', 'I', 'C')
 
 ///
-/// "SPCR" Serial Port Concole Redirection Table
+/// "SPCR" Serial Port Console Redirection Table
 ///
 #define EFI_ACPI_5_1_SERIAL_PORT_CONSOLE_REDIRECTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'P', 'C', 'R')
 
