@@ -294,9 +294,9 @@ DBG("FixOwnership() -> begin\n");
                 // Found the XHCI, then disable the legacy support, if present
                 //
                DBG("USB XHCI reset for device %04hX\n", Pci.Hdr.DeviceId);
-               if (Pci.Hdr.VendorId == 0x1106) {
-                 //ну ее нах эту ВИА
-                 DBG("skip XHCI controller from VIA\n");
+               if (Pci.Hdr.VendorId != 0x8086) {
+                 //ну ее нах эту ВИА, да и прочих, кроме Интел
+                 DBG("skip XHCI controller Vendor=%04X\n", Pci.Hdr.VendorId);
                  break;
                }
                 Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
