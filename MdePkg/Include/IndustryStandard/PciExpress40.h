@@ -78,6 +78,34 @@ typedef struct {
 } PCI_EXPRESS_EXTENDED_CAPABILITIES_PHYSICAL_LAYER_16_0;
 ///@}
 
+ /// The Designated Vendor Specific Capability definitions
+ /// Based on section 7.9.6 of PCI Express Base Specification 4.0.
+ ///@{
+ typedef union {
+   struct {
+     UINT32 DvsecVendorId                                        : 16; //bit 0..15
+     UINT32 DvsecRevision                                        : 4;  //bit 16..19
+     UINT32 DvsecLength                                          : 12; //bit 20..31
+   }Bits;
+   UINT32                                                        Uint32;
+ }PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1;
+
+ typedef union {
+   struct {
+     UINT16 DvsecId                                              : 16; //bit 0..15
+   }Bits;
+   UINT16                                                        Uint16;
+ }PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2;
+
+ typedef struct {
+   PCI_EXPRESS_EXTENDED_CAPABILITIES_HEADER                      Header;
+   PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_1               DesignatedVendorSpecificHeader1;
+   PCI_EXPRESS_DESIGNATED_VENDOR_SPECIFIC_HEADER_2               DesignatedVendorSpecificHeader2;
+   UINT8                                                         DesignatedVendorSpecific[1];
+ }PCI_EXPRESS_EXTENDED_CAPABILITIES_DESIGNATED_VENDOR_SPECIFIC;
+ ///@}
+
+
 #pragma pack()
 
 #endif

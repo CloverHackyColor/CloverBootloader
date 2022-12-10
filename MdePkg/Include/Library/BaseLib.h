@@ -5442,10 +5442,19 @@ typedef union {
     UINT32  OSXMMEXCPT:1;   ///< Operating System Support for
                             ///< Unmasked SIMD Floating Point
                             ///< Exceptions.
-    UINT32  Reserved_2:1;   ///< Reserved.
+    UINT32  UMIP:1;         ///< User-Mode Instruction Prevention.
     UINT32  LA57:1;         ///< Linear Address 57bit.
-    UINT32  VMXE:1;         ///< VMX Enable
-    UINT32  Reserved_1:18;  ///< Reserved.
+    UINT32  VMXE:1;         ///< VMX Enable.
+    UINT32  SMXE:1;         ///< SMX Enable.
+    UINT32  Reserved_3:1;   ///< Reserved.
+    UINT32  FSGSBASE:1;     ///< FSGSBASE Enable.
+    UINT32  PCIDE:1;        ///< PCID Enable.
+    UINT32  OSXSAVE:1;      ///< XSAVE and Processor Extended States Enable.
+    UINT32  Reserved_4:1;   ///< Reserved.
+    UINT32  SMEP:1;         ///< SMEP Enable.
+    UINT32  SMAP:1;         ///< SMAP Enable.
+    UINT32  PKE:1;          ///< Protection-Key Enable.
+    UINT32  Reserved_5:9;   ///< Reserved.
   } Bits;
   UINTN     UintN;
 } IA32_CR4;
@@ -7934,6 +7943,37 @@ EFIAPI
 AsmLfence (
   VOID
   );
+
+/**
+   Executes a XGETBV instruction
+
+   Executes a XGETBV instruction. This function is only available on IA-32 and
+   x64.
+
+   @param[in] Index        Extended control register index
+
+   @return                 The current value of the extended control register
+ **/
+ UINT64
+ EFIAPI
+ AsmXGetBv (
+   IN UINT32  Index
+   );
+
+
+ /**
+   Executes a VMGEXIT instruction (VMMCALL with a REP prefix)
+
+   Executes a VMGEXIT instruction. This function is only available on IA-32 and
+   x64.
+
+ **/
+ VOID
+ EFIAPI
+ AsmVmgExit (
+   VOID
+   );
+
 
 /**
   Patch the immediate operand of an IA32 or X64 instruction such that the byte,

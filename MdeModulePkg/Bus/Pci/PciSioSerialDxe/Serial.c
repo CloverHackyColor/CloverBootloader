@@ -73,9 +73,9 @@ SERIAL_DEV  gSerialDevTemplate = {
   1,                                       // RegisterStride
   0,                                       // ClockRate
   16,                                      // ReceiveFifoDepth
-  { 0, 0 },                                // Receive;
+  { 0, 0, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} }, // Receive;
   16,                                      // TransmitFifoDepth
-  { 0, 0 },                                // Transmit;
+  { 0, 0, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} }, // Transmit;
   FALSE,                                   // SoftwareLoopbackEnable;
   FALSE,                                   // HardwareFlowControl;
   NULL,                                    // *ControllerNameTable;
