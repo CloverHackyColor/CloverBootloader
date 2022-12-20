@@ -35,4 +35,8 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 `cd CloverBootloader && git submodule update --init --recursive`
 
 `cd OpenCorePkg && git checkout master && git pull`
+
+`cd ..`
+
+`./buildme'
 #
