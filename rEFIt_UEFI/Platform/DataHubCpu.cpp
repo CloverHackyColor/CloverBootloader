@@ -398,6 +398,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
   if (gSettings.RtVariables.HWTarget.isEmpty()) {
+//    if (Entry->macOSVersion >= MacOsVersion("13"_XS8)) {
+      //test legacy model
+//      GlobalConfig.CurrentModel = iMac183;
+//    }
     gSettings.RtVariables.HWTarget = GetHWTarget(GlobalConfig.CurrentModel);
   }
 
@@ -412,7 +416,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
 
   if (gSettings.RtVariables.HWTarget.notEmpty() && (Entry->LoaderType != OSTYPE_OSX_INSTALLER) &&
-      (Entry->macOSVersion < MacOsVersion("13"_XS8)) ) {
+      (Entry->macOSVersion < MacOsVersion("13"_XS8)) ) { //test legacy model
     SetNvramXString8(L"BridgeOSHardwareModel", gEfiAppleNvramGuid, Attributes, gSettings.RtVariables.HWTarget);
 //    SetNvramVariable(L"BridgeOSBootSessionUUID", gEfiAppleBootGuid, Attributes, sizeof(uuid), &uuid);
   } else {
@@ -482,6 +486,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   //Now we want manually install some SecureBoot Variables while boot.efi do this automatically.
   //set same values
+  //test legacy model
 //  UINT64 ecid = 0;
 //  CopyMem(&ecid, &uuid, 8);
 //  SetNvramVariable(L"ApECID", gAppleSecureBootVariableGuid, Attributes, 8, &ecid);
