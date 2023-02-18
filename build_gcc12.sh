@@ -27,15 +27,21 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.39}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.40}
 export GCC_VERSION=${GCC_VERSION:-12.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.2.1}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.1.0}
-export MPC_VERSION=${MPC_VERSION:-mpc-1.2.1}
-export ISL_VERSION=${ISL_VERSION:-isl-0.24}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.2.0}
+export MPC_VERSION=${MPC_VERSION:-mpc-1.3.1}
 
+# isl-0.25 compatibility requirement is set to 10.14
+OSXVER="`/usr/bin/sw_vers -productVersion | cut -d '.' -f1,2`"
+if [[ ${OSXVER} < 10.14 ]]; then
+	export ISL_VERSION=${ISL_VERSION:-isl-0.24}
+else
+	export ISL_VERSION=${ISL_VERSION:-isl-0.25}
+fi
 #https://github.com/Meinersbur/isl/archive/refs/tags/isl-0.24.tar.gz
 #https://netbsd.pkgs.org/9/netbsd-amd64/isl-0.24.tgz.html
 #https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/9.1/All/isl-0.24.tgz
@@ -141,10 +147,10 @@ function mountRamDisk() {
 
 # Download #
 DownloadSource () {
-    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
-       echo "Status: ${ISL_VERSION} not found."
-       cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
-    fi
+    # if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+    #    echo "Status: ${ISL_VERSION} not found."
+    #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
+    # fi
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
@@ -164,14 +170,15 @@ DownloadSource () {
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
- #   if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
- #       echo "Status: ${ISL_VERSION} not found."
+   if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+       echo "Status: ${ISL_VERSION} not found."
+        curl -k -f -o download.tmp --remote-name https://libisl.sourceforge.io/${ISL_VERSION}.tar.xz || exit 1
  #       curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
  #       curl -o download.tmp --remote-name https://github.com/Meinersbur/isl/archive/refs/tags/${ISL_VERSION}.tar.gz || exit 1
  #       curl -o download.tmp --remote-name https://codeload.github.com/Meinersbur/isl/tar.gz/refs/tags/isl-0.24
  #       curl -o download.tmp --remote-name https://github.com/CloverHackyColor/CloverBootloader/releases/download/5140/${ISL_VERSION}.tar.xz || exit 1
- #       mv download.tmp ${ISL_VERSION}.tar.xz
- #   fi
+       mv download.tmp ${ISL_VERSION}.tar.xz
+   fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
@@ -282,7 +289,7 @@ CompileLibs () {
 
         rm -rf "${DIR_BUILD}/$ARCH-mpfr"
         mkdir -p "${DIR_BUILD}/$ARCH-mpfr" && cd "${DIR_BUILD}/$ARCH-mpfr"
-        curl -L https://www.mpfr.org/${MPFR_VERSION}/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
+        # curl -L https://www.mpfr.org/${MPFR_VERSION}/allpatches | patch -N -Z -p1 --directory="${MPFR_DIR}"
         echo "- ${MPFR_VERSION} configure..."
         "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2>&1
         echo "- ${MPFR_VERSION} make..."
@@ -356,7 +363,7 @@ CompileBinutils () {
     # Extract the tarball
     local BINUTILS_DIR=$(ExtractTarball "${BINUTILS_VERSION}.tar.xz")
 
-    # Binutils build
+    # Binutils build --host=${BUILDARCH}-apple-darwin${BUILDREV}
     rm -rf "$BUILD_BINUTILS_DIR"
     mkdir -p "$BUILD_BINUTILS_DIR" && cd "$BUILD_BINUTILS_DIR"
     echo "- ${BINUTILS_VERSION} configure..."
