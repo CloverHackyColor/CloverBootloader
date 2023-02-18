@@ -199,7 +199,7 @@ isNASMGood() {
   local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
 
   case "$nasmver" in
-  2.12.0[2-9]* | 2.12.[1-9]* | 2.1[3-9]* | 2.[2-9]* | [3-9]* | [1-9][1-9]*)
+  2.16.0[2-9]* | 2.16.[1-9]* | 2.1[3-9]* | 2.[2-9]* | [3-9]* | [1-9][1-9]*)
 	result=0;;
   *)
 	printf "\n\e[1;33mUnknown or unsupported NASM version found at:\n${1}\n\n\e[0m";;
