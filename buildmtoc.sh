@@ -6,7 +6,7 @@
 if [ -z "$WORKSPACE" ]
 then
   echo WORKSPACE must be defined to Clover root path
-  exit 1
+  export WORKSPACE=`pwd`
 fi
 
 # Ctools source version
@@ -94,11 +94,11 @@ fnDownloadCctools ()
     local tarball="cctools-${CCTOOLS_VERSION}.tar.gz"
     if [[ ! -f "$tarball" ]]; then
         echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name https://opensource.apple.com/tarballs/cctools/$tarball || exit 1
+        curl -f -o download.tmp --remote-name https://github.com/apple-oss-distributions/cctools/archive/refs/tags/$tarball || exit 1
         mv download.tmp $tarball
     fi
 }
-
+#https://github.com/apple-oss-distributions/cctools/archive/refs/tags/cctools-973.0.1.tar.gz
 
 ### Extract ###
 
@@ -142,7 +142,8 @@ fnExtract ()
         tar -C "$DIR_BUILD" -x "$tar_filter_option" -f "${tarball}" && touch "${DIR_BUILD}/$package.extracted"
         
         #jief copy the modified version that keeps __mod_init_func section
-        cp "$WORKSPACE"/BaseTools/Source/C/mtoc/mtoc-v921_jief.c "$DIR_BUILD/$top_level_dir"/efitools/mtoc.c
+        #cp "$WORKSPACE"/BaseTools/Source/C/mtoc/mtoc-v921_jief.c "$DIR_BUILD/$top_level_dir"/efitools/mtoc.c
+        cp "$WORKSPACE"/Patches/Mtoc/mtoc-v973_jief.c "$DIR_BUILD/$top_level_dir"/efitools/mtoc.c
     fi
 
     # Restore stdout for the result and close file desciptor 3
