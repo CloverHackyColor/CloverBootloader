@@ -12,7 +12,7 @@ fi
 # Ctools source version
 # here we can change source versions of tools
 #
-export CCTOOLS_VERSION=${CCTOOLS_VERSION:-949.0.1}
+export CCTOOLS_VERSION=${CCTOOLS_VERSION:-cctools-949.0.1}
 
 # Change PREFIX if you want mtoc installed on different place
 #
@@ -91,10 +91,10 @@ fnDownloadCctools ()
 # Function: Download cctools source
 {
     cd "$DIR_DOWNLOADS"
-    local tarball="cctools-${CCTOOLS_VERSION}.tar.gz"
-    if [[ ! -f "$tarball" ]]; then
-        echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name https://github.com/apple-oss-distributions/cctools/archive/refs/tags/$tarball || exit 1
+    local tarball="${CCTOOLS_VERSION}.tar.gz"
+    if [[ ! -f ${DIR_DOWNLOADS}/${CCTOOLS_VERSION}.tar.gz ]]; then
+        echo "Status: ${CCTOOLS_VERSION} not found."
+        curl -k -f -o download.tmp --remote-name https://codeload.github.com/apple-oss-distributions/cctools/tar.gz/refs/tags/${CCTOOLS_VERSION} || exit 1
         mv download.tmp $tarball
     fi
 }
@@ -160,7 +160,7 @@ fnCompileMtoc ()
     mountRamDisk
 
     # Extract the tarball
-    local CCTOOLS_DIR=$(fnExtract "cctools-${CCTOOLS_VERSION}.tar.gz")
+    local CCTOOLS_DIR=$(fnExtract "${CCTOOLS_VERSION}.tar.gz")
 
     # Set SDKROOT for Makefiles
     export SDKROOT="$(xcrun -n --show-sdk-path)"
