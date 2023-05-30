@@ -48,6 +48,7 @@ extern const UINT8 default_dcfg_1[];
 #include "ConfigPlistAbstract.h"
 #include "SMBIOSPlist.h"
 
+
 class ConfigPlistClass : public ConfigPlistAbstractClass
 {
   using super = ConfigPlistAbstractClass;

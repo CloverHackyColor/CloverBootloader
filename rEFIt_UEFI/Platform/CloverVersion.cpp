@@ -6,7 +6,8 @@
  */
 
 #include "CloverVersion.h"
-#include "../../Version.h"
+#include "../../../Version.h"
+
 
 
 #ifdef FIRMWARE_REVISION

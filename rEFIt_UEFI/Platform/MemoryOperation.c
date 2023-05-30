@@ -27,7 +27,7 @@
 
 //
 // Searches Source for Search pattern of size SearchSize
-// and returns the number of occurences.
+// and returns the number of occurrences.
 //
 UINTN SearchAndCount(const UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize)
 {

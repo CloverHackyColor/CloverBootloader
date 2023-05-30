@@ -1933,7 +1933,7 @@ printf("%s", "");
 //          }
 //        }
         const XObjArray<DEV_PROPERTY> compatibleArbProperties = getCompatibleArbProperty();
-        size_t oldArbIdx = 0;
+  //      size_t oldArbIdx = 0;
         for ( size_t idx = 0 ; idx < compatibleArbProperties.size() ; ++idx )
         {
           if ( ArbProperties == NULL ) {
@@ -1943,7 +1943,7 @@ printf("%s", "");
           if ( !compareDevProperty(S8Printf("ArbProperties[%zu]", idx), *ArbProperties, compatibleArbProperties[idx]) ) {
             return false;
           }
-          ++oldArbIdx;
+ //         ++oldArbIdx;
           ArbProperties = ArbProperties->Next;
         }
         if ( ArbProperties != NULL ) {

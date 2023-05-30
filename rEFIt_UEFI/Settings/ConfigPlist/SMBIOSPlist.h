@@ -533,11 +533,16 @@ public:
           }
         }
         if ( EfiVersion.isDefined() ) {
-          if ( AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) > AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
+  //        DebugLog(1, "have EfiVersion=%s\n", EfiVersion.value().c_str());
+          long long int result = AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 3);
+          long long int result2 = AsciiStrVersionToUint64(EfiVersion.value(), 4, 3);
+ //         DebugLog(1, "make uint64=%lld vs %lld\n", result, result2);
+ //         DebugLog(1, "compare 1715 %c 1968\n", (result > result2)? '>':'<');
+          if ( result > result2) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             EfiVersion.reset();
-          } else if (AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 5) == AsciiStrVersionToUint64(EfiVersion.value(), 4, 5)) {
+          } else if (result == result2) {
             xmlLiteParser->addInfo(generateErrors, S8Printf("EfiVersion '%s' is the same as default. Dict '%s:%d'.", EfiVersion.value().c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             xmlLiteParser->productNameNeeded = !getProductName().isDefined();
             EfiVersion.reset();

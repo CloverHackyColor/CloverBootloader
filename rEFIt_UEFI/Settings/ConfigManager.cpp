@@ -655,7 +655,7 @@ void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlist
 
 
 
-////  gSettings.Smbios.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
+//  gSettings.Smbios.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
 //  if ( smbiosDictClass.getEfiVersion().isDefined() ) {
 //    if (AsciiStrVersionToUint64(gSettings.Smbios.EfiVersion, 4, 5) > AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
 //      DBG("Using latest EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());

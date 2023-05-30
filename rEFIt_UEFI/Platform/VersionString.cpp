@@ -5,13 +5,15 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
+#define DBG(...) DebugLog(1, __VA_ARGS__)
+
 XString8 NonDetected = "10.10.10"_XS8;  //longer string
 
 /**
   Convert a Null-terminated ASCII string representing version number (separate by dots)
   to a UINT64 value.
 
-  If Version is NULL, then result is 0. (Slice - no)
+  If Version is NULL, then result is 0.
 
   @param  Version         The pointer to a Null-terminated ASCII version string. Like 10.9.4
   @param  MaxDigitByPart  Is the maximum number of digits between the dot separators
@@ -22,6 +24,13 @@ XString8 NonDetected = "10.10.10"_XS8;  //longer string
   @return Result
 
 **/
+
+UINT64 AsciiStrVersionToUint64(const LString8& Version_, UINT8 MaxDigitByPart, UINT8 MaxParts)
+{
+  const XString8 Version = Version_;
+//  DebugLog(1, "call Version %s\n", Version.c_str());
+  return AsciiStrVersionToUint64(Version, MaxDigitByPart, MaxParts);
+}
 
 UINT64 AsciiStrVersionToUint64(const XString8& Version_, UINT8 MaxDigitByPart, UINT8 MaxParts)
 {
@@ -41,14 +50,16 @@ UINT64 AsciiStrVersionToUint64(const XString8& Version_, UINT8 MaxDigitByPart, U
   }
   max_part_value = part_mult - 1;
   size_t idx = 0;
-  while (idx < Version.length() && MaxParts > 0) {  //Slice - NULL pointer dereferencing
+  while (idx < Version.length() && MaxParts > 0) {
     if (Version[idx] >= '0' && Version[idx] <= '9') {
       part_value = part_value * 10 + (UINT16)(Version[idx] - '0');
+ //     DebugLog(1, "part_value=%d\n", (int)part_value);
       if (part_value > max_part_value)
         part_value = max_part_value;
     }
     else if (Version[idx] == '.') {
       result = (result *  part_mult) + part_value;
+//      DebugLog(1, "result=%lld\n", result);
       part_value = 0;
       MaxParts--;
     }
