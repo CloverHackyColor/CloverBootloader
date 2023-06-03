@@ -255,7 +255,7 @@ INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&
 INTN XTheme::RenderText(IN const XString8& Text, OUT XImage* CompImage_ptr,
                         IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale)
 {
-  const XStringW& UTF16Text = XStringW().takeValueFrom(Text.c_str());
+  const XStringW UTF16Text = XStringW().takeValueFrom(Text.c_str());
   return RenderText(UTF16Text, CompImage_ptr, PosX, PosY, Cursor, textType, textScale);
 }
 

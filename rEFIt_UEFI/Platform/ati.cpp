@@ -512,6 +512,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",            kNull },
   // Navi15
   { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
+  { 0x7360,  CHIP_FAMILY_NAVI10, "AMD Radeon Pro RX5600M",       kNull }, // found in MacBookPro16,4
   // Navi2x
   { 0x73A5,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6950XT",          kNull },
   { 0x73AF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6900XT",          kNull },
