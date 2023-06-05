@@ -1470,7 +1470,8 @@ void LOADER_ENTRY::StartLoader()
               strncmp(InstallerVersion, "10.16", 5) &&
               strncmp(InstallerVersion, "11.", 3) &&
               strncmp(InstallerVersion, "12.", 3) &&
-              strncmp(InstallerVersion, "13.", 3)
+              strncmp(InstallerVersion, "13.", 3) &&
+              strncmp(InstallerVersion, "14.", 3)
               ) {
             InstallerVersion = NULL; // flag known version was not found
           }
@@ -1491,7 +1492,7 @@ void LOADER_ENTRY::StartLoader()
 
     if ( macOSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB6F;
+        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xBEF;
         gSettings.RtVariables.BooterConfig = 0x28;
       }
 //      ReadSIPCfg();

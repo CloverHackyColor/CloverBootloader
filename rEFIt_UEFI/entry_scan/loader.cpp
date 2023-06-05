@@ -585,6 +585,8 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
                 OSVersion = "12"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Ventura") || Prop->getString()->stringValue().contains("Install%20macOS%2013")) {
                 OSVersion = "13"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sonoma") || Prop->getString()->stringValue().contains("Install%20macOS%2014")) {
+                OSVersion = "14"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
