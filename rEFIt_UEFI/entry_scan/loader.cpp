@@ -838,6 +838,9 @@ GetOSIconName (const MacOsVersion& OSVersion)
   XStringW OSIconName;
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
+  } else if (OSVersion.elementAt(0) == 14 ){
+    // Ventura
+    OSIconName = L"sonoma,mac"_XSW;
   } else if (OSVersion.elementAt(0) == 13 ){
     // Ventura
     OSIconName = L"ventura,mac"_XSW;
