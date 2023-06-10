@@ -85,6 +85,7 @@ CONST CHAR8* IconsNames[] = {
    "os_bigsur",  //53 == ICON_BIGSUR
    "os_monterey",  //54 == ICON_MONTEREY
    "os_ventura",  //55 == ICON_VENTURA
+   "os_sonoma",  //56 == ICON_SONOMA
   ""
 };
 const INTN IconsNamesSize = sizeof(IconsNames) / sizeof(IconsNames[0]);
