@@ -1551,7 +1551,7 @@ void HelpRefit(void)
         HelpMenu.AddMenuInfo_f("F6  - Save VideoBios into %ls/misc/ (FAT32)", self.getCloverDirFullPath4Display().wc_str());
         HelpMenu.AddMenuInfo_f("F7  - Check sound on selected output");
         HelpMenu.AddMenuInfo_f("F8  - Make audio outputs dump into %ls/misc/", self.getCloverDirFullPath4Display().wc_str());
-        HelpMenu.AddMenuInfo_f("F9  - Switch screen resoluton to next possible mode");
+        HelpMenu.AddMenuInfo_f("F9  - Switch screen resolution to next possible mode");
         HelpMenu.AddMenuInfo_f("F10 - Save screenshot into %ls/misc/ (FAT32)", self.getCloverDirFullPath4Display().wc_str());
         HelpMenu.AddMenuInfo_f("F11 - Reset NVRAM");
         HelpMenu.AddMenuInfo_f("F12 - Eject selected volume (DVD)");
