@@ -37,10 +37,8 @@
 #include "menu.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../libeg/libegint.h"
-//#include "../include/scroll_images.h"
 
 #include "../Platform/Settings.h"
-//#include "colors.h"
 
 #include "../libeg/nanosvg.h"
 #include "../libeg/FloatLib.h"
@@ -83,40 +81,11 @@
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
-//
-//#define SCROLL_LINE_UP        (0)
-//#define SCROLL_LINE_DOWN      (1)
-//#define SCROLL_PAGE_UP        (2)
-//#define SCROLL_PAGE_DOWN      (3)
-//#define SCROLL_FIRST          (4)
-//#define SCROLL_LAST           (5)
-//#define SCROLL_NONE           (6)
-//#define SCROLL_SCROLL_DOWN    (7)
-//#define SCROLL_SCROLL_UP      (8)
-//#define SCROLL_SCROLLBAR_MOVE (9)
-//
-//
+
 #define TEXT_CORNER_REVISION  (1)
 #define TEXT_CORNER_HELP      (2)
 #define TEXT_CORNER_OPTIMUS   (3)
-//
-//#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
-//
-//// other menu definitions
-//
-//#define MENU_FUNCTION_INIT            (0)
-//#define MENU_FUNCTION_CLEANUP         (1)
-//#define MENU_FUNCTION_PAINT_ALL       (2)
-//#define MENU_FUNCTION_PAINT_SELECTION (3)
-//#define MENU_FUNCTION_PAINT_TIMEOUT   (4)
-//
-//
-//
-//static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
-//static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
-//
-//XBool MainAnime = false;
-//
+
 REFIT_MENU_ITEM_OPTIONS  MenuEntryOptions (L"Options"_XSW,          1, 0, 'O', ActionEnter);
 REFIT_MENU_ITEM_ABOUT    MenuEntryAbout   (L"About Clover"_XSW,     1, 0, 'A', ActionEnter);
 REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer"_XSW, 1, 0, 'R', ActionSelect);
@@ -136,14 +105,12 @@ void FillInputs(XBool New)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];
-//  XBool bit;
 
   tmp[40] = 0;  //make it null-terminated
 
   UINTN InputItemsCount = 0;
   if (New) {
-//    InputItems = (__typeof__(InputItems))A_llocateZeroPool(130 * sizeof(INPUT_ITEM)); //XXX
-    InputItems = new INPUT_ITEM[132];
+    InputItems = new INPUT_ITEM[135];
   }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0
@@ -216,15 +183,11 @@ void FillInputs(XBool New)
         snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.Graphics.Dcfg[j]);
       }
 		  InputItems[InputItemsCount++].SValue.SWPrintf("%s", tmp);
-
-      //InputItems[InputItemsCount++].SValue = P__oolPrint(L"%08x",*(UINT64*)&gSettings.Graphics.Dcfg[0]);
     } else /*if (gGraphics[i].Vendor == Intel) */ {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount++].BValue = gSettings.Graphics.InjectAsDict.InjectIntel;
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
 		  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", GlobalConfig.IgPlatform);
- //     InputItemsCount += 3;
- //     continue;
     }
 
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
@@ -469,7 +432,6 @@ void FillInputs(XBool New)
 
   InputItems[InputItemsCount].ItemType = Decimal;  //130
   InputItems[InputItemsCount++].SValue.SWPrintf("%08d", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
-
 
 
   //menu for drop table
@@ -729,8 +691,6 @@ void ApplyInputs(void)
   i++; //61
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue != 0;
-//    // yes, we do need to change gRemapSmBiosIsRequire here as well
-//    gRemapSmBiosIsRequire = InputItems[i].BValue;
     GlobalConfig.gBootChanged = true;
   }
   i++; //62
@@ -874,16 +834,10 @@ void ApplyInputs(void)
 
   i++; //90
   if (InputItems[i].Valid) {
-//    TagDict* dict;
-    /*Status = */gConf.ReLoadConfig(XStringW(ConfigsList[OldChosenConfig])/*, &dict*/); // TODO: make a ReloadConfig, because in case of a reload, there are probably slightly different things to do.
-//    if (!EFI_ERROR(Status)) {
-      GlobalConfig.gBootChanged = true;
-      GlobalConfig.gThemeChanged = true;
-//      Status = GetUserSettings(dict, gSettings);
-//      if (gConfigDict[2]) gConfigDict[2]->FreeTag();
-//      gConfigDict[2] = dict;
-//      GlobalConfig.ConfigName.takeValueFrom(ConfigsList[OldChosenConfig]);
-//    }
+    gConf.ReLoadConfig(XStringW(ConfigsList[OldChosenConfig]));
+    // TODO: make a ReloadConfig, because in case of a reload, there are probably slightly different things to do.
+    GlobalConfig.gBootChanged = true;
+    GlobalConfig.gThemeChanged = true;
     FillInputs(false);
     NeedSave = false;
   }
@@ -1155,10 +1109,7 @@ void AboutRefit(void)
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
       AboutMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_ABOUT);
     }
-//    else {
-//      AboutMenu.TitleImage.setEmpty(); //done in the constructor
-//    }
-//    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
+
     if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
     if ( "unknown"_XS8 != LString8(gFirmwareBuildDate) ) AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     if ( "unknown"_XS8 != gBuildId ) AboutMenu.AddMenuInfo_f(" Build id: %s", gBuildId.c_str());
@@ -1845,7 +1796,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(const XString8& UniSysVer)
         SIDELOAD_KEXT& plugInKext = Kext.PlugInList[idxPlugin];
         InputBootArgs = new REFIT_INPUT_DIALOG;
         InputBootArgs->Title.SWPrintf("  |-- %ls, v.%ls", plugInKext.FileName.wc_str(), plugInKext.Version.wc_str());
-//        InputBootArgs->Tag = TAG_INPUT;
         InputBootArgs->Row = 0xFFFF; //cursor
         InputBootArgs->Item = &(plugInKext.MenuItem);
         InputBootArgs->AtClick = ActionEnter;
@@ -1938,7 +1888,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKernelPatches()
   for (size_t Index = 0; Index < gSettings.KernelAndKextPatches.KernelPatches.size(); Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
     InputBootArgs->Title.SWPrintf("%90s", gSettings.KernelAndKextPatches.KernelPatches[Index].Label.c_str());
-//    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(gSettings.KernelAndKextPatches.KernelPatches[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
@@ -1961,7 +1910,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBootPatches()
   for (size_t Index = 0; Index < gSettings.KernelAndKextPatches.BootPatches.size(); Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
     InputBootArgs->Title.SWPrintf("%90s", gSettings.KernelAndKextPatches.BootPatches[Index].Label.c_str());
-//    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
     InputBootArgs->Item = &(gSettings.KernelAndKextPatches.BootPatches[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
@@ -1995,7 +1943,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", false);
   SubScreen->AddMenuItemInput(47,  "AppleRTC Patch", false);
-  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
+//  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", false);
 //  SubScreen->AddMenuItemInput(115, "No Caches", false);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", false);
@@ -2025,10 +1973,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
     while (DropTable) {
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
-      //MsgLog("adding to menu %s (%X) %s (%lx) L=%d(0x%X)\n",
-      //       sign, DropTable->Signature,
-      //       OTID, DropTable->TableId,
-      //       DropTable->Length, DropTable->Length);
+
       InputBootArgs = new REFIT_INPUT_DIALOG;
       InputBootArgs->Title.SWPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable->Length);
       InputBootArgs->Row = 0xFFFF; //cursor

@@ -1495,7 +1495,6 @@ void LOADER_ENTRY::StartLoader()
         gSettings.RtVariables.CsrActiveConfig = (UINT32)0xBEF;
         gSettings.RtVariables.BooterConfig = 0x28;
       }
-//      ReadSIPCfg();
     }
 
     FilterKextPatches();
@@ -1519,11 +1518,6 @@ void LOADER_ENTRY::StartLoader()
       }
       LoadOptions.AddID(KernelLocation);
     }
-
-//  //we are booting OSX - restore emulation if it's not installed before g boot.efi
-//  if (gEmuVariableControl != NULL) {
-//      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-//  }
 
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch

@@ -1744,14 +1744,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   SSDT_TABLE              *Ssdt = NULL;
   UINT8                   *buffer = NULL;
   UINTN                   bufferLen = 0;
-//  constexpr LStringW      PathPatched   = L"\\EFI\\CL OVER\\ACPI\\patched";
-//  XStringW                PathDsdt;    //  = L"\\DSDT.aml";
-//  CHAR16*                 PatchedAPIC = L"\\EFI\\CL OVER\\ACPI\\origin\\APIC-p.aml";
+
   UINT32*                 rf = NULL;
   UINT64*                 xf = NULL;
   UINT64                  XDsdt; //save values if present
   UINT64                  XFirmwareCtrl;
-//  EFI_FILE                *RootDir;
   UINT32                  eCntR; //, eCntX;
   UINT32                  *pEntryR;
   CHAR8                   *pEntry;
@@ -1767,7 +1764,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   XBool              DsdtLoaded = false;
   XBool              NeedUpdate = false;
   OPER_REGION       *tmpRegion;
-//  XStringW           AcpiOemPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
   DbgHeader("PatchACPI");
 
@@ -1836,9 +1832,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
         NeedUpdate = true;
-        //        gBS->InstallConfigurationTable(&gEfiAcpiTableGuid, RsdPointer);
-        //        DBG("first install success\n");
-        //        gBS->InstallConfigurationTable(&gEfiAcpi10TableGuid, RsdPointer);
         DBG("RsdPointer Acpi 2.0 installed\n");
       }
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;

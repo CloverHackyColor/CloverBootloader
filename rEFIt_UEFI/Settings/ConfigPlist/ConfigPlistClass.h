@@ -25,7 +25,7 @@ extern "C" {
   #include <Protocol/GraphicsOutput.h>
 }
 #include "../../Platform/cpu.h"
-//#include "../../Platform/nvidia.h"
+
 extern UINT8 default_NVCAP[]; // dependecy problem. TODO
 extern const UINT8 default_dcfg_0[];
 extern const UINT8 default_dcfg_1[];

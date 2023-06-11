@@ -23,18 +23,8 @@
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
-//// SysVariables
-//typedef struct SYSVARIABLES SYSVARIABLES;
-//struct SYSVARIABLES
-//{
-//  SYSVARIABLES      *Next;
-//  CHAR16            *Key;
-//  INPUT_ITEM        MenuItem;
-//};
-
 extern CONST CHAR8      *AudioOutputNames[];
 extern XBool             gFirmwareClover;
-
 
 class HDA_OUTPUTS
 {
@@ -100,10 +90,6 @@ public:
     if ( !(Name == other.Name) ) return false;
     return true;
   }
-//  void takeValueFrom(const ACPI_NAME& other)
-//  {
-//    Name = other.Name;
-//  }
 
   XString8Array getSplittedName() const {
     XString8Array splittedName = Split<XString8Array>(Name, ".");
@@ -668,18 +654,7 @@ public:
   XBool isEqual(const PatchVBiosBytesNewClass& other) const
   {
     return XObjArray<VBIOS_PATCH>::isEqual(other);
-//    getVBIOS_PATCH_BYTES();
-//    if ( VBIOS_PATCH_BYTES_array.size() != other.VBIOS_PATCH_BYTES_array.size() ) return false;
-//    for ( size_t idx = 0 ; idx < VBIOS_PATCH_BYTES_array.size() ; ++idx ) {
-//      if ( VBIOS_PATCH_BYTES_array[idx].NumberOfBytes != other[idx].Find.size() ) return false;
-//      if ( memcmp(VBIOS_PATCH_BYTES_array[idx].Find, other.VBIOS_PATCH_BYTES_array[idx].Find, VBIOS_PATCH_BYTES_array[idx].NumberOfBytes) != 0 ) return false;
-//      if ( memcmp(VBIOS_PATCH_BYTES_array[idx].Replace, other.VBIOS_PATCH_BYTES_array[idx].Replace, VBIOS_PATCH_BYTES_array[idx].NumberOfBytes) != 0 ) return false;
-//    }
-//    return true;
   }
-//  void takeValueFrom(const PatchVBiosBytesNewClass& other)
-//  {
-//  }
 
 };
 

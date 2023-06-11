@@ -64,21 +64,12 @@ INTN LayoutTextOffset = 0;
 INTN LayoutButtonOffset = 0;
 
 XObjArray<ACPI_PATCHED_AML>     ACPIPatchedAML;
-//SYSVARIABLES                    *SysVariables;
+
 CHAR16                          *IconFormat = NULL;
 
 SETTINGS_DATA                   gSettings;
 
-//GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
-//HDA_PROPERTIES                  gAudios[4]; //no more then 4 Audio Controllers
-//SLOT_DEVICE                     Arpt;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
-//UINT8                           *gEDID = NULL;
-//EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
-//UINT16                          gCPUtype;
-//UINTN                           NGFX                        = 0; // number of GFX
-//UINTN                           NHDA                        = 0; // number of HDA Devices
-
 
 XStringWArray                   ThemeNameArray;
 XStringWArray                   ConfigsList;
@@ -89,14 +80,7 @@ XObjArray<HDA_OUTPUTS>          AudioList;
 XBool                           gFirmwareClover             = false;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
-//XBool                         defDSM;
-//UINT16                        dropDSM;
-
 XBool                           ResumeFromCoreStorage = false;
-//XBool                         gRemapSmBiosIsRequire;
-
-// QPI
-//XBool                         SetTable132                 = false;
 
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
@@ -108,8 +92,6 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig;
-
-
 
 CONST CHAR8* AudioOutputNames[] = {
   "LineOut",
@@ -554,370 +536,6 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 }
 
 
-//void
-//GetDevices ()
-//{
-//  EFI_STATUS          Status;
-//  UINTN               HandleCount  = 0;
-//  EFI_HANDLE          *HandleArray = NULL;
-//  EFI_PCI_IO_PROTOCOL *PciIo;
-//  PCI_TYPE00          Pci;
-//  UINTN               Index;
-//  UINTN               Segment      = 0;
-//  UINTN               Bus          = 0;
-//  UINTN               Device       = 0;
-//  UINTN               Function     = 0;
-//  UINTN               i;
-//  UINT32              Bar0;
-//  //  UINT8               *Mmio        = NULL;
-//  radeon_card_info_t  *info;
-//  SLOT_DEVICE         *SlotDevice;
-//
-//  NGFX = 0;
-//  NHDA = 0;
-//  AudioList.setEmpty();
-//  //Arpt.Valid = false; //global variables initialized by 0 - c-language
-//  XStringW GopDevicePathStr;
-//  XStringW DevicePathStr;
-//
-//  DbgHeader("GetDevices");
-//
-//  // Get GOP handle, in order to check to which GPU the monitor is currently connected
-//  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &HandleCount, &HandleArray);
-//  if (!EFI_ERROR(Status)) {
-//    GopDevicePathStr = DevicePathToXStringW(DevicePathFromHandle(HandleArray[0]));
-//    DBG("GOP found at: %ls\n", GopDevicePathStr.wc_str());
-//  }
-//
-//  // Scan PCI handles
-//  Status = gBS->LocateHandleBuffer (
-//                                    ByProtocol,
-//                                    &gEfiPciIoProtocolGuid,
-//                                    NULL,
-//                                    &HandleCount,
-//                                    &HandleArray
-//                                    );
-//
-//  if (!EFI_ERROR(Status)) {
-//    for (Index = 0; Index < HandleCount; ++Index) {
-//      Status = gBS->HandleProtocol(HandleArray[Index], &gEfiPciIoProtocolGuid, (void **)&PciIo);
-//      if (!EFI_ERROR(Status)) {
-//        // Read PCI BUS
-//        PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-//        Status = PciIo->Pci.Read (
-//                                  PciIo,
-//                                  EfiPciIoWidthUint32,
-//                                  0,
-//                                  sizeof (Pci) / sizeof (UINT32),
-//                                  &Pci
-//                                  );
-//
-//      DBG("PCI (%02llX|%02llX:%02llX.%02llX) : %04hX %04hX class=%02hhX%02hhX%02hhX\n",
-//             Segment,
-//             Bus,
-//             Device,
-//             Function,
-//             Pci.Hdr.VendorId,
-//             Pci.Hdr.DeviceId,
-//             Pci.Hdr.ClassCode[2],
-//             Pci.Hdr.ClassCode[1],
-//             Pci.Hdr.ClassCode[0]
-//             );
-//
-//        // GFX
-//        //if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-//        //    (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
-//        //    (NGFX < 4)) {
-//
-//        if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-//            ((Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_VGA)) ||
-//             (Pci.Hdr.ClassCode[1] == (PCI_CLASS_DISPLAY_OTHER))) &&
-//            (NGFX < 4)) {
-//          CONST CHAR8 *CardFamily = "";
-//          UINT16 UFamily;
-//          GFX_PROPERTIES *gfx = &gGraphics[NGFX];
-//
-//          // GOP device path should contain the device path of the GPU to which the monitor is connected
-//          DevicePathStr = DevicePathToXStringW(DevicePathFromHandle(HandleArray[Index]));
-//          if (StrStr(GopDevicePathStr.wc_str(), DevicePathStr.wc_str())) {
-//            DBG(" - GOP: Provided by device\n");
-//            if (NGFX != 0) {
-//               // we found GOP on a GPU scanned later, make space for this GPU at first position
-//               for (i=NGFX; i>0; i--) {
-//                 CopyMem(&gGraphics[i], &gGraphics[i-1], sizeof(GFX_PROPERTIES));
-//               }
-//               ZeroMem(&gGraphics[0], sizeof(GFX_PROPERTIES));
-//               gfx = &gGraphics[0]; // GPU with active GOP will be added at the first position
-//            }
-//          }
-//
-//          gfx->DeviceID       = Pci.Hdr.DeviceId;
-//          gfx->Segment        = Segment;
-//          gfx->Bus            = Bus;
-//          gfx->Device         = Device;
-//          gfx->Function       = Function;
-//          gfx->Handle         = HandleArray[Index];
-//
-//          switch (Pci.Hdr.VendorId) {
-//            case 0x1002:
-//              info        = NULL;
-//              gfx->Vendor = Ati;
-//
-//              i = 0;
-//              do {
-//                info      = &radeon_cards[i];
-//                if (info->device_id == Pci.Hdr.DeviceId) {
-//                  break;
-//                }
-//              } while (radeon_cards[i++].device_id != 0);
-//
-//          snprintf (gfx->Model,  64, "%s", info->model_name);
-//          snprintf (gfx->Config, 64, "%s", card_configs[info->cfg_name].name);
-//              gfx->Ports                  = card_configs[info->cfg_name].ports;
-//              DBG(" - GFX: Model=%s (ATI/AMD)\n", gfx->Model);
-//
-//              //get mmio
-//              if (info->chip_family < CHIP_FAMILY_HAINAN) {
-//                gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[2] & ~0x0f);
-//              } else {
-//                gfx->Mmio = (UINT8 *)(UINTN)(Pci.Device.Bar[5] & ~0x0f);
-//              }
-//              gfx->Connectors = *(UINT32*)(gfx->Mmio + RADEON_BIOS_0_SCRATCH);
-//              //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08X\n", gfx->Connectors);
-//              gfx->ConnChanged = false;
-//
-//              SlotDevice                  = &gSettings.Smbios.SlotDevices[0];
-//              SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//              SlotDevice->BusNum          = (UINT8)Bus;
-//              SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//              SlotDevice->Valid           = true;
-//              SlotDevice->SlotName        = "PCI Slot 0"_XS8;
-//              SlotDevice->SlotID          = 1;
-//              SlotDevice->SlotType        = SlotTypePciExpressX16;
-//              break;
-//
-//            case 0x8086:
-//              gfx->Vendor                 = Intel;
-//          snprintf (gfx->Model, 64, "%s", get_gma_model (Pci.Hdr.DeviceId));
-//              DBG(" - GFX: Model=%s (Intel)\n", gfx->Model);
-//              gfx->Ports = 1;
-//              gfx->Connectors = (1 << NGFX);
-//              gfx->ConnChanged = false;
-//              break;
-//
-//            case 0x10de:
-//              gfx->Vendor = Nvidia;
-//              Bar0        = Pci.Device.Bar[0];
-//              gfx->Mmio   = (UINT8*)(UINTN)(Bar0 & ~0x0f);
-//              //DBG("BAR: 0x%p\n", Mmio);
-//              // get card type
-//              gfx->Family = (REG32(gfx->Mmio, 0) >> 20) & 0x1ff;
-//              UFamily = gfx->Family & 0x1F0;
-//              if ((UFamily == NV_ARCH_KEPLER1) ||
-//                  (UFamily == NV_ARCH_KEPLER2) ||
-//                  (UFamily == NV_ARCH_KEPLER3)) {
-//                CardFamily = "Kepler";
-//              }
-//              else if ((UFamily == NV_ARCH_FERMI1) ||
-//                       (UFamily == NV_ARCH_FERMI2)) {
-//                CardFamily = "Fermi";
-//              }
-//              else if ((UFamily == NV_ARCH_MAXWELL1) ||
-//                       (UFamily == NV_ARCH_MAXWELL2)) {
-//                CardFamily = "Maxwell";
-//              }
-//              else if (UFamily == NV_ARCH_PASCAL) {
-//                CardFamily = "Pascal";
-//              }
-//              else if (UFamily == NV_ARCH_VOLTA) {
-//                CardFamily = "Volta";
-//              }
-//              else if (UFamily == NV_ARCH_TURING) {
-//                CardFamily = "Turing";
-//              }
-//              else if ((UFamily >= NV_ARCH_TESLA) && (UFamily < 0xB0)) { //not sure if 0xB0 is Tesla or Fermi
-//                CardFamily = "Tesla";
-//              } else {
-//                CardFamily = "NVidia unknown";
-//              }
-//
-//              snprintf (
-//                          gfx->Model,
-//                          64,
-//                          "%s",
-//                          get_nvidia_model (((Pci.Hdr.VendorId << 16) | Pci.Hdr.DeviceId),
-//                                            ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID),
-//                                             NULL) //NULL: get from generic lists
-//                          );
-//
-//            DBG(" - GFX: Model=%s family %hX (%s)\n", gfx->Model, gfx->Family, CardFamily);
-//              gfx->Ports                  = 0;
-//
-//              SlotDevice                  = &gSettings.Smbios.SlotDevices[1];
-//              SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//              SlotDevice->BusNum          = (UINT8)Bus;
-//              SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//              SlotDevice->Valid           = true;
-//              SlotDevice->SlotName = "PCI Slot 0"_XS8;
-//              SlotDevice->SlotID          = 1;
-//              SlotDevice->SlotType        = SlotTypePciExpressX16;
-//              break;
-//
-//            default:
-//              gfx->Vendor = Unknown;
-//          snprintf (gfx->Model, 64, "pci%hx,%hx", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-//              gfx->Ports  = 1;
-//              gfx->Connectors = (1 << NGFX);
-//              gfx->ConnChanged = false;
-//
-//              break;
-//          }
-//
-//          NGFX++;
-//        }   //if gfx
-//
-//        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-//                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
-//          SlotDevice                  = &gSettings.Smbios.SlotDevices[6];
-//          SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//          SlotDevice->BusNum          = (UINT8)Bus;
-//          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = true;
-//          SlotDevice->SlotName = "AirPort"_XS8;
-//          SlotDevice->SlotID          = 0;
-//          SlotDevice->SlotType        = SlotTypePciExpressX1;
-//          DBG(" - WIFI: Vendor= ");
-//          switch (Pci.Hdr.VendorId) {
-//            case 0x11ab:
-//              DBG("Marvell\n");
-//              break;
-//            case 0x10ec:
-//              DBG("Realtek\n");
-//              break;
-//            case 0x14e4:
-//              DBG("Broadcom\n");
-//              break;
-//            case 0x1969:
-//            case 0x168C:
-//              DBG("Atheros\n");
-//              break;
-//            case 0x1814:
-//              DBG("Ralink\n");
-//              break;
-//            case 0x8086:
-//              DBG("Intel\n");
-//              break;
-//
-//            default:
-//              DBG(" 0x%04X\n", Pci.Hdr.VendorId);
-//              break;
-//          }
-//        }
-//
-//        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-//                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-//          SlotDevice                  = &gSettings.Smbios.SlotDevices[5];
-//          SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//          SlotDevice->BusNum          = (UINT8)Bus;
-//          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = true;
-//          SlotDevice->SlotName = "Ethernet"_XS8;
-//          SlotDevice->SlotID          = 2;
-//          SlotDevice->SlotType        = SlotTypePciExpressX1;
-//          gLanVendor[nLanCards]       = Pci.Hdr.VendorId;
-//          Bar0                        = Pci.Device.Bar[0];
-//          gLanMmio[nLanCards++]       = (UINT8*)(UINTN)(Bar0 & ~0x0f);
-//          if (nLanCards >= 4) {
-//            DBG(" - [!] too many LAN card in the system (upto 4 limit exceeded), overriding the last one\n");
-//            nLanCards = 3; // last one will be rewritten
-//          }
-//          DBG(" - LAN: %llu Vendor=", nLanCards-1);
-//          switch (Pci.Hdr.VendorId) {
-//            case 0x11ab:
-//              DBG("Marvell\n");
-//              break;
-//            case 0x10ec:
-//              DBG("Realtek\n");
-//              break;
-//            case 0x14e4:
-//              DBG("Broadcom\n");
-//              break;
-//            case 0x1969:
-//            case 0x168C:
-//              DBG("Atheros\n");
-//              break;
-//            case 0x8086:
-//              DBG("Intel\n");
-//              break;
-//            case 0x10de:
-//              DBG("Nforce\n");
-//              break;
-//
-//            default:
-//              DBG("Unknown\n");
-//              break;
-//          }
-//        }
-//
-//        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-//                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
-//          SlotDevice = &gSettings.Smbios.SlotDevices[12];
-//          SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//          SlotDevice->BusNum          = (UINT8)Bus;
-//          SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//          SlotDevice->Valid           = true;
-//          SlotDevice->SlotName = "FireWire"_XS8;
-//          SlotDevice->SlotID          = 3;
-//          SlotDevice->SlotType        = SlotTypePciExpressX4;
-//        }
-//
-//        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-//                 ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
-//                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO)) &&
-//                 (NHDA < 4)) {
-//          HDA_PROPERTIES *hda = &gAudios[NHDA];
-//
-//          // Populate Controllers IDs
-//          hda->controller_vendor_id       = Pci.Hdr.VendorId;
-//          hda->controller_device_id       = Pci.Hdr.DeviceId;
-//
-//          // HDA Controller Info
-//          HdaControllerGetName(((hda->controller_device_id << 16) | hda->controller_vendor_id), &hda->controller_name);
-//
-//
-//          if (IsHDMIAudio(HandleArray[Index])) {
-//            DBG(" - HDMI Audio: \n");
-//
-//            SlotDevice = &gSettings.Smbios.SlotDevices[4];
-//            SlotDevice->SegmentGroupNum = (UINT16)Segment;
-//            SlotDevice->BusNum          = (UINT8)Bus;
-//            SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
-//            SlotDevice->Valid           = true;
-//            SlotDevice->SlotName = "HDMI port"_XS8;
-//            SlotDevice->SlotID          = 5;
-//            SlotDevice->SlotType        = SlotTypePciExpressX4;
-//          }
-//          if (gSettings.Devices.Audio.ResetHDA) {
-//            //Slice method from VoodooHDA
-//            //PCI_HDA_TCSEL_OFFSET = 0x44
-//            UINT8 Value = 0;
-//            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
-//
-//            if (EFI_ERROR(Status)) {
-//              continue;
-//            }
-//
-//            Value &= 0xf8;
-//            PciIo->Pci.Write (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
-//            //ResetControllerHDA();
-//          }
-//          NHDA++;
-//        } // if Audio device
-//      }
-//    }
-//  }
-//}
-
 void
 SetDevices (LOADER_ENTRY *Entry)
 {
@@ -1017,12 +635,9 @@ SetDevices (LOADER_ENTRY *Entry)
         PCIdevice.subsys_id_union.subsys.device_id = Pci.Device.SubsystemID;
         PCIdevice.used                       = false;
 
-        //if (gSettings.Devices.AddPropertyArray.size() == 0xFFFE) {  //yyyy it means Arbitrary  // Looks like NrAddProperties == 0xFFFE is not used anymore
         //------------------
         device = NULL;
-        /*       if (!string) {
-         string = devprop_create_string();
-         } */
+
         for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size() ; ++idx ) {
           const SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& Prop = gSettings.Devices.ArbitraryArray[idx];
           if (Prop.Device != PCIdevice.dev.addr) {
@@ -1048,16 +663,14 @@ SetDevices (LOADER_ENTRY *Entry)
         //------------------
         if (PCIdevice.used) {
           DBG("custom properties for device %02llX:%02llX.%02llX injected\n", Bus, Device, Function);
-          //continue;
         }
         //}
 
         // GFX
-        if (/* gSettings.GraphicsInjector && */
+        if (
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
             ((Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) ||
              (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_OTHER))) {
-          //gGraphics.DeviceID = Pci.Hdr.DeviceId;
 
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
@@ -1888,211 +1501,15 @@ XStringW GetOtherKextsDir (XBool On)
 // Jief 2020-10: this is only called by SetFSInjection(). SetFSInjection() doesn't check for return value emptiness.
 XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 {
-//  XString8 FixedVersion;
-//  CHAR8  *DotPtr;
-
   if ( !selfOem.isKextsDirFound() ) return NullXStringW;
 
-//  if (OSVersion.notEmpty()) {
-//    FixedVersion.strncpy(OSVersion.c_str(), 5);
-//    //    DBG("%s\n", FixedVersion);
-//    // OSVersion may contain minor version too (can be 10.x or 10.x.y)
-//    if ((DotPtr = AsciiStrStr (FixedVersion.c_str(), ".")) != NULL) {
-//      DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot
-//    }
-//
-//    if (DotPtr != NULL) {
-//      *DotPtr = 0;
-//    }
-//  }
-
-  //MsgLog ("OS=%ls\n", OSTypeStr);
-
-  // find source injection folder with kexts
-  // note: we are just checking for existance of particular folder, not checking if it is empty or not
-  // check OEM subfolders: version specific or default to Other
-  // Jief : NOTE selfOem.getKextsFullPath() return a path under OEM if exists, or in Clover if not.
   XStringW SrcDir = SWPrintf("%ls\\%s", selfOem.getKextsFullPath().wc_str(), OSVersion.asString(2).c_str());
   if (FileExists (&self.getSelfVolumeRootDir(), SrcDir)) return SrcDir;
   return NullXStringW;
 }
-//
-//EFI_STATUS
-//InjectKextsFromDir (
-//                    EFI_STATUS Status,
-//                    CONST CHAR16 *SrcDir
-//                    )
-//{
-//
-//  if (EFI_ERROR(Status)) {
-//    MsgLog (" - ERROR: Kext injection failed!\n");
-//    return EFI_NOT_STARTED;
-//  }
-//
-//  return Status;
-//}
-//
-// Do we need that with OC ? For old version ?
-//EFI_STATUS LOADER_ENTRY::SetFSInjection()
-//{
-//  EFI_STATUS            Status;
-//  FSINJECTION_PROTOCOL *FSInject;
-//  XStringW              SrcDir;
-//  //XBool               InjectionNeeded = false;
-//  //XBool               BlockCaches     = false;
-//  FSI_STRING_LIST      *Blacklist      = 0;
-//  FSI_STRING_LIST      *ForceLoadKexts = NULL;
-//
-//  MsgLog ("Beginning FSInjection\n");
-//
-//  // get FSINJECTION_PROTOCOL
-//  Status = gBS->LocateProtocol(gFSInjectProtocolGuid, NULL, (void **)&FSInject);
-//  if (EFI_ERROR(Status)) {
-//    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", efiStrError(Status));
-//    MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
-//    return EFI_NOT_STARTED;
-//  }
-//
-//  // check if blocking of caches is needed
-//  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES) || LoadOptions.contains("-f")  ) {
-//    MsgLog ("Blocking kext caches\n");
-//    //  BlockCaches = true;
-//    // add caches to blacklist
-//    Blacklist = FSInject->CreateStringList();
-//    if (Blacklist == NULL) {
-//      MsgLog (" - ERROR: Not enough memory!\n");
-//      return EFI_NOT_STARTED;
-//    }
-//
-//    /*
-//     From 10.7 to 10.9, status of directly restoring ESD files or update from Appstore cannot block kernel cache. because there are boot.efi and kernelcache file without kernel file.
-//     After macOS installed, boot.efi can call kernel file from S/L/Kernels.
-//     For this reason, long time ago, chameleon's user restored Base System.dmg to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
-//     From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
-//     The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
-//     Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
-//     by Sherlocks, 2017.11
-//     */
-//
-//    // Installed/createinstallmedia
-//    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4+
-//
-//    // Recovery
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
-//
-//    // BaseSytem/InstallESD
-//    //FSInject->AddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9/(10.7/10.8)
-//
-//    // 1st stage - createinstallmedia
-//    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10
-//    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel"); // 10.11 - 10.13.3
-//
-//    // 2nd stage - InstallESD/AppStore/startosinstall
-//    //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache"); // 10.7
-//    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache"); // 10.8 - 10.10
-//    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel"); // 10.11
-//    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel"); // 10.12 - 10.12.3
-//    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");// 10.12.4+
-//
-//    // 2nd stage - Fusion Drive
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel"); // 10.12+
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
-//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
-//
-//    // NetInstall
-//    //FSInject->AddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
-//
-//
-//    // Block Caches list
-//    // InstallDVD/Installed
-//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext"); // 10.6
-//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext"); // 10.6
-//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
-//
-//    if (gSettings.BlockKexts.notEmpty()) {
-//      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts.wc_str()).wc_str());
-//    }
-//  }
-//
-//  // check if kext injection is needed
-//  // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
-//  //SrcDir = NULL;
-//  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
-//    SrcDir = GetOtherKextsDir(true);
-//    Status = FSInject->Install(
-//                                Volume->DeviceHandle,
-//                                L"\\System\\Library\\Extensions",
-//                                SelfVolume->DeviceHandle,
-//                                //GetOtherKextsDir (),
-//                                SrcDir.wc_str(),
-//                                Blacklist,
-//                                ForceLoadKexts
-//                                );
-//    //InjectKextsFromDir(Status, GetOtherKextsDir());
-//    InjectKextsFromDir(Status, SrcDir.wc_str());
-//
-//    SrcDir = GetOSVersionKextsDir(macOSVersion);
-//    Status = FSInject->Install(
-//                                Volume->DeviceHandle,
-//                                L"\\System\\Library\\Extensions",
-//                                SelfVolume->DeviceHandle,
-//                                //GetOSVersionKextsDir(OSVersion),
-//                                SrcDir.wc_str(),
-//                                Blacklist,
-//                                ForceLoadKexts
-//                                );
-//    //InjectKextsFromDir(Status, GetOSVersionKextsDir(OSVersion));
-//    InjectKextsFromDir(Status, SrcDir.wc_str());
-//  } else {
-//    MsgLog("skipping kext injection (not requested)\n");
-//  }
-//
-//  // prepare list of kext that will be forced to load
-//  ForceLoadKexts = FSInject->CreateStringList();
-//  if (ForceLoadKexts == NULL) {
-//    MsgLog(" - Error: not enough memory!\n");
-//    return EFI_NOT_STARTED;
-//  }
-//
-//  KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
-//
-//  // reinit Volume->RootDir? it seems it's not needed.
-//
-//  return Status;
-//}
-
 
 const EFI_GUID& SETTINGS_DATA::getUUID()
 {
   if ( SystemParameters.CustomUuid.notNull() ) return SystemParameters.CustomUuid;
   return Smbios.SmUUID;
 }
-
-//const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
-//{
-//  if ( SystemParameters.CustomUuid.notEmpty() ) {
-//    if ( uuid ) {
-//      EFI_STATUS Status = StrToGuidBE(SystemParameters.CustomUuid, uuid);
-//      if ( EFI_ERROR(Status) ) {
-//        log_technical_bug("CustomUuid(%s) is not valid", SystemParameters.CustomUuid.c_str()); // it's a technical bug. Validity is checked when imported from settings, so that must never happen.
-//        *uuid = EFI_GUID();
-//        return nullGuidAsString;
-//      }
-//    }
-//    return SystemParameters.CustomUuid;
-//  }
-//  if ( uuid ) {
-//    EFI_STATUS Status = StrToGuidBE(Smbios.SmUUID, uuid);
-//    if ( EFI_ERROR(Status) ) {
-//      log_technical_bug("SmUUID(%s) is not valid", Smbios.SmUUID.c_str()); // same as before
-//      *uuid = EFI_GUID();
-//      return nullGuidAsString;
-//    }
-//  }
-//  return Smbios.SmUUID;
-//}
-//
