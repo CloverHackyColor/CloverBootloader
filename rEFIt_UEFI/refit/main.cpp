@@ -3085,41 +3085,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     BootScreen.EraseTextXY();
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
   }
-
-//  //Second step. Load config.plist into gSettings
-//  for (i=0; i<2; i++) {
-//    if (gConfigDict[i]) {
-//      Status = GetUserSettings(gConfigDict[i], gSettings);
-//      afterGetUserSettings(gSettings);
-//      if (EFI_ERROR(Status)) {
-//        DBG("Error in Second part of settings %llu: %s\n", i, efiStrError(Status));
-//      }
-//    }
-//  }
   
-    afterGetUserSettings(gSettings);
+  afterGetUserSettings(gSettings);
 
-//  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
-//  if (defDSM) {
-//    dropDSM = gSettings.DropOEM_DSM;   //if set by user
-//  }
-  // Load any extra SMBIOS information
-//  if (!EFI_ERROR(LoadUserSettings(L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
-//    const TagDict* dictPointer = smbiosTags->dictPropertyForKey("SMBIOS");
-//    if (dictPointer) {
-//      ParseSMBIOSSettings(gSettings, dictPointer);
-//    } else {
-//      DBG("Invalid smbios.plist, not overriding config.plist!\n");
-//    }
-//  }
-/*
-  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-    if (gSettings.Boot.StrictHibernate) {
-      DBG(" Don't use StrictHibernate with emulated NVRAM!\n");
-    }
-    gSettings.Boot.StrictHibernate = false;    
-  }
-*/
   HaveDefaultVolume = gSettings.Boot.DefaultVolume.notEmpty();
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
@@ -3165,13 +3133,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetOutputs();
     for (i = 0; i < AudioList.size(); i++) {
       if (AudioList[i].Name.notEmpty()) {
-        // Never change this log, otherwise clients will stop interprete the output.
+        // Never change this log, otherwise clients will stop interpret the output.
         MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device], i);
       }
     }
     
     if (!GlobalConfig.isFastBoot()) {
-//      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
         UINTN      Size         = 0;
         InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size));
@@ -3179,7 +3146,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (GlobalConfig.gThemeChanged) {
         DBG("change theme\n");
         InitTheme(NULL);
-        //OptionMenu.FreeMenu(); // it is already freed at loop beginning
         AboutMenu.Entries.setEmpty();
         HelpMenu.Entries.setEmpty();
       }
@@ -3240,14 +3206,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
 //      DBG("Options: IconID=%lld name=%s empty=%s\n", MenuEntryOptions.Image.Id, MenuEntryOptions.Image.Name.c_str(),
-//          MenuEntryOptions.Image.isEmpty()?"пусто":"нет");
       if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
       
       MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
 //      DBG("About: IconID=%lld name=%s empty=%s\n", MenuEntryAbout.Image.Id, MenuEntryAbout.Image.Name.c_str(),
-//          MenuEntryAbout.Image.isEmpty()?"пусто":"нет");
+
       if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
@@ -3263,12 +3228,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
 
-// font already changed and this message very quirky, clear line here
-//     if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot() && gSettings.Boot.Timeout>0) {
-//        XStringW Message = L"                          "_XSW;
-//        BootScreen.EraseTextXY();
-//        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-//      }
     }
     // wait for user ACK when there were errors
     FinishTextScreen(false);
@@ -3285,15 +3244,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     MainLoopRunning = true;
-    //    MainMenu.TimeoutSeconds = gSettings.Boot.Timeout >= 0 ? gSettings.Boot.Timeout : 0;
     if (DefaultEntry && (GlobalConfig.isFastBoot() ||
                          (gSettings.Boot.SkipHibernateTimeout &&
                            DefaultEntry->getLOADER_ENTRY()
-                           && OSFLAG_ISSET(DefaultEntry->getLOADER_ENTRY()->Flags, OSFLAG_HIBERNATED)
-                         )
-                        )
-        )
-    {
+                           && OSFLAG_ISSET(DefaultEntry->getLOADER_ENTRY()->Flags, OSFLAG_HIBERNATED)))) {
       if (DefaultEntry->getLOADER_ENTRY()) {
         DefaultEntry->StartLoader();
       } else if (DefaultEntry->getLEGACY_ENTRY()){
@@ -3301,12 +3255,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       gSettings.Boot.FastBoot = false; //Hmm... will never be here
     }
-//    XBool MainAnime = MainMenu.GetAnime();
-//    DBG("MainAnime=%d\n", MainAnime);
+
     AfterTool = false;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
- //     CHAR8 *LastChosenOS = NULL;
       if (gSettings.Boot.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
         // go strait to DefaultVolume loading
         MenuExit = MENU_EXIT_TIMEOUT;
@@ -3376,10 +3328,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       if ( ChosenEntry->getREFIT_MENU_ITEM_RESET() ) {    // Restart
         if (MenuExit == MENU_EXIT_DETAILS) {
-//            EFI_KEY_DATA KeyData;
-//            ZeroMem(&KeyData, sizeof KeyData);
-//            SimpleTextEx->ReadKeyStrokeEx (SimpleTextEx, &KeyData);
-//            if ((KeyData.KeyState.KeyShiftState & (EFI_LEFT_CONTROL_PRESSED | EFI_RIGHT_CONTROL_PRESSED)) != 0) {
+
           //do clear cmos as for AMI BIOS
           // not sure for more robust method
           IoWrite8 (PCAT_RTC_ADDRESS_REGISTER, 0x10);

@@ -591,83 +591,12 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
 {
-// Checks are now done in SmbiosDictClass
 
-//  //gSettings.Smbios.BiosVersion = ApplePlatformData[Model].firmwareVersion;
-//  // Check for BiosVersion and BiosReleaseDate by Sherlocks
-//  if ( smbiosDictClass.getBiosVersion().isDefined() ) {
-//    int c = compareBiosVersion(gSettings.Smbios.BiosVersion, smbiosDictClass.dgetBiosVersion());
-//    if ( c == 0 ) {
-//      DBG("Found same BiosVersion in clover and config\n");
-//    }else
-//    if ( c < 0 ) {
-//      DBG("Using latest BiosVersion from config\n");
-//      gSettings.Smbios.BiosVersion = smbiosDictClass.dgetBiosVersion();
-//    }else{
-//      DBG("Using latest BiosVersion from clover\n");
-//    }
-//  }else{
-//    DBG("BiosVersion: not set, Using BiosVersion from clover\n");
-//  }
-//  DBG("BiosVersion: %s\n", gSettings.Smbios.BiosVersion.c_str());
   if ( smbiosDictClass.getBiosVersion().isDefined() ) gSettings.Smbios.BiosVersion = smbiosDictClass.getBiosVersion().value();
 
 
-//  //gSettings.Smbios.BiosReleaseDate = GetReleaseDate(Model); // AppleReleaseDate
-//  int compareReleaseDateResult = 0;
-//  if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) {
-//    compareReleaseDateResult = compareReleaseDate(GetReleaseDate(Model), smbiosDictClass.dgetBiosReleaseDate());
-//    if ( compareReleaseDateResult == 0 ) {
-//      DBG("Found same BiosReleaseDate in clover and config\n");
-//    }else
-//    if ( compareReleaseDateResult == -1 ) {
-//      DBG("Using latest BiosReleaseDate from config\n");
-//      gSettings.Smbios.BiosReleaseDate = smbiosDictClass.dgetBiosReleaseDate();
-//    }else
-//    if ( compareReleaseDateResult == 1 ) {
-//      DBG("Using latest BiosReleaseDate from clover\n");
-//    }
-//  }else{
-//    DBG("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
-//  }
-//  if ( !smbiosDictClass.getBiosReleaseDate().isDefined() || compareReleaseDateResult == -2 )
-//  {
-//    //DBG("Found unknown date format from config\n");
-//    size_t len = gSettings.Smbios.BiosReleaseDate.length();
-//    const char* j = gSettings.Smbios.BiosVersion.c_str();
-//
-//    j += AsciiStrLen(j);
-//    while (*j != '.') {
-//      j--;
-//    }
-//
-//    if ( len == 8 ) {
-//      gSettings.Smbios.BiosReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-//      //DBG("Using the date of used BiosVersion\n");
-//    } else if ( len == 10 ) {
-//      gSettings.Smbios.BiosReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
-//      //DBG("Using the date of used BiosVersion\n");
-//    }
-//  }
-//  DBG("BiosReleaseDate: %s\n", gSettings.Smbios.BiosReleaseDate.c_str());
-
   if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) gSettings.Smbios.BiosReleaseDate = smbiosDictClass.getBiosReleaseDate().value();
 
-
-
-//  gSettings.Smbios.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
-//  if ( smbiosDictClass.getEfiVersion().isDefined() ) {
-//    if (AsciiStrVersionToUint64(gSettings.Smbios.EfiVersion, 4, 5) > AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
-//      DBG("Using latest EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
-//    } else if (AsciiStrVersionToUint64(gSettings.Smbios.EfiVersion, 4, 5) < AsciiStrVersionToUint64(smbiosDictClass.dgetEfiVersion(), 4, 5)) {
-//      gSettings.Smbios.EfiVersion = smbiosDictClass.dgetEfiVersion();
-//      DBG("Using latest EfiVersion from config: %s\n", gSettings.Smbios.EfiVersion.c_str());
-//    } else {
-//      DBG("Using EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
-//    }
-//  } else if ( gSettings.Smbios.EfiVersion.notEmpty() ) {
-//    DBG("Using EfiVersion from clover: %s\n", gSettings.Smbios.EfiVersion.c_str());
-//  }
 
   if ( smbiosDictClass.getEfiVersion().isDefined() ) gSettings.Smbios.EfiVersion = smbiosDictClass.getEfiVersion().value();
 
@@ -925,10 +854,9 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   EFI_STATUS Status = LoadConfigPlist(ConfName);
   if ( EFI_ERROR(Status) ) {
     DBG("LoadConfigPlist return %s. Config not loaded\n", efiStrError(Status));
-    //return Status; // Let's try to continue with default values.
   }
   
-  /*Status = */ LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
+  LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
   if ( smbiosPlist.getSMBIOS().isDefined() && smbiosPlist.getSMBIOS().getProductName().isDefined() ) {
     GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.dgetModel();
