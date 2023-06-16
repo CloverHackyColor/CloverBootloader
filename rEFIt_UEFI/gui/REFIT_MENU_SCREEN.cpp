@@ -497,14 +497,6 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
 #endif
 
 
-//  if ((Item->ItemType != BoolValue) &&
-//      (Item->ItemType != RadioSwitch) &&
-//      (Item->ItemType != CheckBit)) {
-//    // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
-//    Item->SValue.dataSized(SVALUE_MAX_SIZE);
-//  }
-
-//  Buffer = Item->SValue;
   BackupShift = Item->LineShift;
   BackupPos = Pos;
 
@@ -516,6 +508,8 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
     } else if (Item->ItemType == RadioSwitch) {
       if (Item->IValue == 3) {
         OldChosenTheme = Pos? Pos - 1: 0xFFFF;
+      } else if (Item->IValue == 65) {
+        OldChosenSmbios = Pos;
       } else if (Item->IValue == 90) {
         OldChosenConfig = Pos;
       } else if (Item->IValue == 116) {
@@ -1084,10 +1078,10 @@ void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       for (i = 0; i <= ScrollState.MaxIndex; i++) {
         ItemWidth = Entries[i].Title.length();
 
-		if (TextMenuWidth < ItemWidth) {
+		  if (TextMenuWidth < ItemWidth) {
           TextMenuWidth = ItemWidth;
-        }
       }
+    }
 
 	  if (TextMenuWidth > ConWidth - 6) {
         TextMenuWidth = ConWidth - 6;
@@ -1095,6 +1089,8 @@ void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
     if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 90) {
       j = OldChosenConfig;
+    } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+      j = OldChosenSmbios;
     } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 116) {
       j = OldChosenDsdt;
     } else if (Entries[0].getREFIT_MENU_SWITCH() && Entries[0].getREFIT_MENU_SWITCH()->Item->IValue == 119) {
@@ -1158,6 +1154,8 @@ void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
             // update chosen config
             if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
               OldChosenItem = OldChosenConfig;
+            } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+              OldChosenItem = OldChosenSmbios;
             } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
               OldChosenItem = OldChosenDsdt;
             } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
@@ -1218,6 +1216,8 @@ void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
           if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
             OldChosenItem = OldChosenConfig;
+          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+            OldChosenItem = OldChosenSmbios;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
             OldChosenItem = OldChosenDsdt;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
@@ -1254,6 +1254,8 @@ void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
           if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
             OldChosenItem = OldChosenConfig;
+          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+            OldChosenItem = OldChosenSmbios;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
             OldChosenItem = OldChosenDsdt;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
@@ -1562,6 +1564,8 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         if (entry.getREFIT_MENU_SWITCH()) {
           if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 3) {
             Chosen = (OldChosenTheme == 0xFFFF) ? 0: (OldChosenTheme + 1);
+          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+            Chosen = OldChosenSmbios;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
             Chosen = OldChosenConfig;
           } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
@@ -1696,6 +1700,8 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           if (Entry->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
             //OldChosenItem = OldChosenTheme;
             OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: (OldChosenTheme + 1);
+          } else if (Entry->getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+            OldChosenItem = OldChosenSmbios;
           } else if (Entry->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
             OldChosenItem = OldChosenConfig;
           } else if (Entry->getREFIT_MENU_SWITCH()->Item->IValue == 116) {
@@ -1760,6 +1766,8 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       } else if (EntryL->getREFIT_MENU_SWITCH()) { //radio buttons 0,1
         if (EntryL->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
           OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;
+        } else if (EntryL->getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+          OldChosenItem = OldChosenSmbios;
         } else if (EntryL->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
           OldChosenItem = OldChosenConfig;
         } else if (EntryL->getREFIT_MENU_SWITCH()->Item->IValue == 116) {
@@ -1791,6 +1799,8 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
         if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
           OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;
+        } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 65) {
+          OldChosenItem = OldChosenSmbios;
         } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
           OldChosenItem = OldChosenConfig;
         } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 116) {

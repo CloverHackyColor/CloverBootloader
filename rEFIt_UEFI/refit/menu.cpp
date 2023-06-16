@@ -99,7 +99,7 @@ REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
 XBool gResetSMC = false;
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
-
+extern ConfigManager gConf;
 
 void FillInputs(XBool New)
 {
@@ -272,9 +272,11 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPDebug;
 
 
+  // SMBIOS chooser
+  InputItems[InputItemsCount].ItemType = RadioSwitch;  //CheckBit; //65
+  InputItems[InputItemsCount++].IValue = 65;           //gSettings.RtVariables.BooterConfig;
+
   // CSR - aka System Integrity Protection configuration
-  InputItems[InputItemsCount].ItemType = CheckBit; //65
-  InputItems[InputItemsCount++].IValue = gSettings.RtVariables.BooterConfig;
   InputItems[InputItemsCount].ItemType = CheckBit; //66
   InputItems[InputItemsCount++].IValue = gSettings.RtVariables.CsrActiveConfig;
 
@@ -709,11 +711,18 @@ void ApplyInputs(void)
  //   GlobalConfig.gBootChanged = true;
   }
 
-  // CSR
-  i = 65;
+  i++; //65
   if (InputItems[i].Valid) {
-    gSettings.RtVariables.BooterConfig = InputItems[i].IValue & 0x7F;
+    XStringW& tmpStr = SmbiosList[OldChosenSmbios];
+    gConf.ReloadSmbios(tmpStr);
+//   gConf.FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+
+    DBG("chosen SMBIOS of %ls\n", tmpStr.wc_str());
+    GlobalConfig.gBootChanged = true;
+    FillInputs(false);
+    NeedSave = false;
   }
+  // CSR
   i++; //66
   if (InputItems[i].Valid) {
     gSettings.RtVariables.CsrActiveConfig = InputItems[i].IValue;
@@ -1577,8 +1586,8 @@ void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     if (gSettings.RtVariables.CsrActiveConfig != 0 && gSettings.RtVariables.BooterConfig == 0) {
       gSettings.RtVariables.BooterConfig = 0x28;
     }
-  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.RtVariables.BooterConfig);
+//  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
+//	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.RtVariables.BooterConfig);
   }
 }
 
@@ -1667,10 +1676,6 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 // ErmaC: Audio submenu
 REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
 {
-
-  UINTN  i;
-
-  // init
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
@@ -1680,7 +1685,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to tune the HDA devices");
 	SubScreen->AddMenuInfoLine_f("Number of Audio Controller%s=%zu", ((gConf.HdaPropertiesArray.size()!=1)?"s":""), gConf.HdaPropertiesArray.size());
-  for (i = 0 ; i < gConf.HdaPropertiesArray.size() ; i++) {
+  for (UINTN i = 0 ; i < gConf.HdaPropertiesArray.size() ; i++) {
 	  SubScreen->AddMenuInfoLine_f("%llu) %ls [%04hX][%04hX]",
                                            (i+1),
                                            gConf.HdaPropertiesArray[i].controller_name,
@@ -2009,7 +2014,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->"_XS8);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS settings->"_XS8);
 
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString.c_str());
 	SubScreen->AddMenuInfoLine_f("%s", GlobalConfig.OEMProductFromSmbios.c_str());
@@ -2035,6 +2040,32 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
+
+
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuChooseSmbios()
+{
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_MENU_SWITCH *InputBootArgs;
+
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CHOOSE_SMBIOS, "SMBIOS->"_XS8);
+
+  SubScreen->AddMenuInfoLine_f("Select SMBIOS:");
+
+  for (UINTN i = 0; i < SmbiosList.size(); i++) {
+    InputBootArgs = new REFIT_MENU_SWITCH;
+    InputBootArgs->Title = SmbiosList[i];
+    InputBootArgs->Row = i;
+    InputBootArgs->Item = &InputItems[65];
+    InputBootArgs->AtClick = ActionEnter;
+    InputBootArgs->AtRightClick = ActionDetails;
+    SubScreen->AddMenuEntry(InputBootArgs, true);
+  }
+  SubScreen->AddMenuEntry(SubMenuSmbios(), true);
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+  return Entry;
+}
+
 
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 {
@@ -2213,40 +2244,7 @@ void CreateMenuProps(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::
 		break;
 	}
 }
-/*
-void CreateMenuAddProp(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::AddPropertyClass* Prop)
-{
-  REFIT_INPUT_DIALOG  *InputBootArgs;
 
-  InputBootArgs = new REFIT_INPUT_DIALOG;
-  InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key.c_str());
-  InputBootArgs->Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &Prop->MenuItem;
-  InputBootArgs->AtClick = ActionEnter;
-  InputBootArgs->AtRightClick = ActionDetails;
-  SubScreen->AddMenuEntry(InputBootArgs, true);
-  switch (Prop->ValueType) {
-  case kTagTypeInteger:
-      SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value.data());
-    break;
-  case kTagTypeString:
-      SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value.data());
-    break;
-  case   kTagTypeFalse:
-    SubScreen->AddMenuInfo_f(("     value: false"));
-    break;
-  case   kTagTypeTrue:
-    SubScreen->AddMenuInfo_f(("     value: true"));
-    break;
-  case   kTagTypeFloat:
-    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
-    break;
-  default: //type data, print first 24 bytes
-      SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
-    break;
-  }
-}
-*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
 {
   REFIT_MENU_ITEM_OPTIONS    *Entry;
@@ -2269,44 +2267,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
   Entry->SubScreen = SubScreen;
   return Entry;
 }
-/*
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuArbProperties()
-{
-  REFIT_MENU_ITEM_OPTIONS    *Entry;
-  REFIT_MENU_SCREEN   *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Arbitrary properties->"_XS8);
-
-  for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size()  ; ++idx) {
-    SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& Prop = gSettings.Devices.ArbitraryArray[idx];
-    if ( idx > 0 ) SubScreen->AddMenuInfo_f("------------");
-    for ( size_t idxChild = 0 ; idxChild < Prop.CustomPropertyArray.size(); ++idxChild) {
-      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.CustomPropertyArray[idxChild];
-      SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
-      CreateMenuProps(SubScreen, &Props);
-    }
-  }
-  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-  Entry->SubScreen = SubScreen;
-  return Entry;
-}
-
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuAddProperties()
-{
-  REFIT_MENU_ITEM_OPTIONS    *Entry;
-  REFIT_MENU_SCREEN   *SubScreen;
-
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Add properties->"_XS8);
-
-  for ( size_t idx = 0 ; idx < gSettings.Devices.AddPropertyArray.size()  ; ++idx) {
-    SETTINGS_DATA::DevicesClass::AddPropertyClass& Prop = gSettings.Devices.AddPropertyArray[idx];
-    CreateMenuAddProp(SubScreen, &Prop);
-  }
-  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-  Entry->SubScreen = SubScreen;
-  return Entry;
-}
-*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
 {
   REFIT_MENU_ITEM_OPTIONS   *Entry;
@@ -2325,8 +2286,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
   SubScreen->AddMenuItemInput(100, "FakeID XHCI:", true);
   SubScreen->AddMenuItemInput(103, "FakeID IMEI:", true);
   SubScreen->AddMenuEntry(SubMenuProperties(), true);
-//  SubScreen->AddMenuEntry(SubMenuArbProperties(), true);
-//  SubScreen->AddMenuEntry(SubMenuAddProperties(), true);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
@@ -2374,7 +2333,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuGUI()
 
   SubScreen->AddMenuItemInput(70, "Pointer Speed:", true);
   SubScreen->AddMenuItemInput(72, "Mirror Move", false);
-
   SubScreen->AddMenuEntry(SubMenuThemes(), true);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -2420,7 +2378,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCSR()
   ModifyTitles(Entry);
   return Entry;
 }
-
+/*
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 {
   // init
@@ -2447,7 +2405,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
   ModifyTitles(Entry);
   return Entry;
 }
-
+*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
 {
   // init
@@ -2466,7 +2424,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
   SubScreen->AddMenuItemInput(129, "Reset SMC", false);
 
   SubScreen->AddMenuEntry(SubMenuCSR(), true);
-  SubScreen->AddMenuEntry(SubMenuBLC(), true);
+//  SubScreen->AddMenuEntry(SubMenuBLC(), true);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
@@ -2572,7 +2530,8 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
       OptionMenu.AddMenuEntry( SubMenuGUI(), true);
     }
     OptionMenu.AddMenuEntry( SubMenuACPI(), true);
-    OptionMenu.AddMenuEntry( SubMenuSmbios(), true);
+    OptionMenu.AddMenuEntry( SubMenuChooseSmbios(), true);
+ //   OptionMenu.AddMenuEntry( SubMenuSmbios(), true);
     OptionMenu.AddMenuEntry( SubMenuBinaries(), true);
     OptionMenu.AddMenuEntry( SubMenuQuirks(), true);
     OptionMenu.AddMenuEntry( SubMenuGraphics(), true);

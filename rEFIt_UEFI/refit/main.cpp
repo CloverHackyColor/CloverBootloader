@@ -794,6 +794,8 @@ void LOADER_ENTRY::StartLoader()
   //Free memory
   ConfigsList.setEmpty();
   DsdtsList.setEmpty();
+//  SmbiosList.setEmpty();
+
   OptionMenu.FreeMenu();
   //there is a place to free memory
   // GuiAnime
@@ -812,10 +814,6 @@ void LOADER_ENTRY::StartLoader()
     fontChain = nextChain;
   }
   fontsDB = NULL;
-//  nsvg__deleteParser(mainParser); //temporary disabled
-  //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
-  
-  //DumpKernelAndKextPatches(KernelAndKextPatches);
 
   if ( OSTYPE_IS_OSX(LoaderType) || OSTYPE_IS_OSX_RECOVERY(LoaderType) || OSTYPE_IS_OSX_INSTALLER(LoaderType) ) {
 
@@ -845,8 +843,6 @@ void LOADER_ENTRY::StartLoader()
 
   DBG("Beginning OC\n");
 
-//    UINT64 CPUFrequencyFromART;
-//    InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
@@ -1522,6 +1518,7 @@ void LOADER_ENTRY::StartLoader()
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
     CheckEmptyFB();
+    gConf.ReloadSmbios(OSName);
     SmbiosFillPatchingValues(GlobalConfig.SetTable132, GlobalConfig.EnabledCores, g_SmbiosDiscoveredSettings.RamSlotCount, gConf.SlotDeviceArray, gSettings, gCPUStructure, &g_SmbiosInjectedSettings);
     PatchSmbios(g_SmbiosInjectedSettings);
 //    DBG("PatchACPI\n");
@@ -2596,17 +2593,17 @@ GetListOfConfigs()
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-      if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
-        OldChosenConfig = ConfigsList.size(); // DirEntry->FileName is not yet inserted into ConfigsList. So its index will be ConfigsList.size()
-      }
-      size_t NameLen = wcslen(DirEntry->FileName) - 6; //without ".plist"
-      if ( NameLen <= MAX_INTN ) {
-        ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
-        DBG("- %ls\n", DirEntry->FileName);
-      }else{
-        DBG("- bug!, NameLen > MAX_INTN");
-      }
+    if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
+      OldChosenConfig = ConfigsList.size(); // DirEntry->FileName is not yet inserted into ConfigsList. So its index will be ConfigsList.size()
     }
+    size_t NameLen = wcslen(DirEntry->FileName) - 6; //without ".plist"
+    if ( NameLen <= MAX_INTN ) {
+      ConfigsList.AddReference(SWPrintf("%.*ls", (int)NameLen, DirEntry->FileName).forgetDataWithoutFreeing(), true); // this avoid to reallocate and copy memory
+      DBG("- %ls\n", DirEntry->FileName);
+    }else{
+      DBG("- bug!, NameLen > MAX_INTN");
+    }
+  }
   DirIterClose(&DirIter);
 }
 
@@ -2985,6 +2982,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!GlobalConfig.isFastBoot()) {
     GetListOfThemes();
     GetListOfConfigs();
+//    SmbiosList.setEmpty();
+//    SmbiosList.AddReference(new XStringW(L"auto"_XSW), true);
   }
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
@@ -3242,6 +3241,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DefaultEntry = NULL;
     }
+
+//    DBG("found entries SMBIOS:\n");
+//    for (size_t i=0; i<SmbiosList.size(); i++) {
+//      DBG("%ls\n", SmbiosList[i].wc_str());
+//    }
 
     MainLoopRunning = true;
     if (DefaultEntry && (GlobalConfig.isFastBoot() ||

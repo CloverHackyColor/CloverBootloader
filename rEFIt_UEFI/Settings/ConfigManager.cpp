@@ -487,7 +487,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
 //  XStringW   ConfigPlistPath;
 //  XStringW   ConfigOemPath;
 
-  //  DbgHeader("LoadUserSettings");
+  DbgHeader("LoadUserSettings");
 
   // load config
   if ( ConfName.isEmpty() /*|| Dict == NULL*/ ) {
@@ -542,7 +542,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
     DebugLog(1, "Use CloverConfigPlistValidator");
     if ( plist->getSMBIOS().dgetModel() < MaxMacModel ) {
       if ( xmlLiteParser.productNameNeeded ) DebugLog(1, " (with --productname=%s)", MachineModelName[plist->getSMBIOS().dgetModel()].c_str());
-    }else{
+    } else {
       // This is NOT supposed to happen, since CLover set a default mac model
       // If a default mac model is not set, a crash would probably happen earlier, but who knows
       if ( xmlLiteParser.productNameNeeded ) DebugLog(1, "(with --productname=?)");
@@ -552,6 +552,8 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   if ( !parsingOk ) {
     DebugLog(1, "Parsing error while parsing '%ls'.\n", configPlistPath.wc_str());
     Status = EFI_LOAD_ERROR;
+  } else {
+
   }
 
   if ( !parsingOk || xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 0 ) gBS->Stall(3000000); // 3 seconds delay
@@ -588,19 +590,27 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
   return Status;
 }
 
+void ConfigManager::ReloadSmbios(XStringW& str)
+{
+  size_t N = SmbiosList.size();
+  if (OldChosenSmbios == 0) {
+    for (size_t i=1; i<N; i++) {
+      if (SmbiosList[i].contains(str)) {
+        OldChosenSmbios = i;
+        break;
+      }
+    }
+  }
+  FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+  DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+}
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
 {
 
   if ( smbiosDictClass.getBiosVersion().isDefined() ) gSettings.Smbios.BiosVersion = smbiosDictClass.getBiosVersion().value();
-
-
   if ( smbiosDictClass.getBiosReleaseDate().isDefined() ) gSettings.Smbios.BiosReleaseDate = smbiosDictClass.getBiosReleaseDate().value();
-
-
   if ( smbiosDictClass.getEfiVersion().isDefined() ) gSettings.Smbios.EfiVersion = smbiosDictClass.getEfiVersion().value();
-
-
   if ( smbiosDictClass.getBiosVendor().isDefined() ) gSettings.Smbios.BiosVendor = smbiosDictClass.getBiosVendor().value();
   if ( smbiosDictClass.getManufacturer().isDefined() ) gSettings.Smbios.ManufactureName = smbiosDictClass.getManufacturer().value();
   if ( smbiosDictClass.getProductName().isDefined() ) gSettings.Smbios.ProductName = smbiosDictClass.getProductName().value();
@@ -858,12 +868,38 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
   
   LoadSMBIOSPlist(L"smbios"_XSW); // we don't need Status. If not loaded correctly, smbiosPlist is !defined and will be ignored by AssignOldNewSettings()
 
+  // get list of smbioses
+  XStringW h = L"auto"_XSW;
+
+  SmbiosList.AddReference(h.forgetDataWithoutFreeing(), true);
+  size_t N = sizeof(configPlist.m_fields)/sizeof(configPlist.m_fields[0]);
+  DBG("create SMBIOS list, found %lu dicts\n", N);
+  for (size_t i=0; i<N; i++) {
+    if (configPlist.m_fields[i].xmlAbstractType.isDefined()) {
+      XStringW h1;
+      h1.takeValueFrom(configPlist.m_fields[i].m_name);
+      DBG("... %ls\n", h1.wc_str());
+      if (h1.contains("SMBIOS")) {
+        SmbiosList.AddReference(h1.forgetDataWithoutFreeing(), true);
+      }
+    }
+  }
+
+//  DBG("made entries SMBIOS:\n");
+//  for (size_t i=0; i<SmbiosList.size(); i++) {
+//    DBG("--- %ls\n", SmbiosList[i].wc_str());
+//  }
+
+
   if ( smbiosPlist.getSMBIOS().isDefined() && smbiosPlist.getSMBIOS().getProductName().isDefined() ) {
     GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.dgetModel();
+    DBG("get model from smbios.plist\n");
   } else if ( configPlist.getSMBIOS().isDefined() && configPlist.getSMBIOS().getProductName().isDefined() ) {
     GlobalConfig.CurrentModel = configPlist.getSMBIOS().dgetModel();
+    DBG("get model from config.plist\n");
   } else {
     GlobalConfig.CurrentModel = GetDefaultModel();
+    DBG("get default model\n");
   }
 
   if ( !EFI_ERROR(Status) ) {
@@ -954,6 +990,13 @@ void ConfigManager::GetUEFIMacAddress()
     FreePool(HandleBuffer);
   }
 }
+
+//EFI_STATUS ConfigManager::ReLoadSmbios(XStringW& tmpStr)  //TODO
+//{
+//  DBG("SMBIOS reloaded from %ls\n", tmpStr.wc_str());
+//  return EFI_SUCCESS;
+//}
+
 
 EFI_STATUS ConfigManager::ReLoadConfig(const XStringW& ConfName)
 {

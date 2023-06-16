@@ -35,9 +35,9 @@ XmlAbstractType& XmlDict::parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, co
   size_t nb;
   *keyFound = false;
   getFields(&fields, &nb);
-  if ( nb == 0 ) {
-    panic("Dict '%s' has no field defined", xmlPath.c_str());
-  }
+//  if ( nb == 0 ) {
+//    panic("Dict '%s' has no field defined", xmlPath.c_str());
+//  }
   for ( size_t idx = 0 ; !*keyFound && idx < nb ; idx++ )
   {
     XmlDictField& xmlDictField = fields[idx];
@@ -54,21 +54,7 @@ if ( strcmp(fieldName, "AutoMerge") == 0 ) {
 }
 #endif
       *keyFound = true;
-//#ifdef JIEF_DEBUG
-//  XmlParserPosition pos = xmlLiteParser->getPosition();
-//#endif
 
-//      if ( xmlAbstractType.isDefined() ) {
-//        xmlLiteParser->addWarning(generateErrors, S8Printf("Tag '%s:%d' is previously defined. Previous value ignored.", xmlPath.c_str(), keyPos.getLine()));
-//        xmlAbstractType.reset();
-//      }
-//      if ( !xmlAbstractType.parseFromXmlLite(xmlLiteParser, xmlPath, generateErrors) ) {
-////#ifdef JIEF_DEBUG
-////        xmlAbstractType.reset();
-////        xmlLiteParser->restorePosition(pos);
-////        xmlAbstractType.parseFromXmlLite(xmlLiteParser, xmlPath, false);
-////#endif
-//      }
       if ( xmlAbstractType.isDefined() ) {
         xmlLiteParser->addWarning(generateErrors, S8Printf("Tag '%s:%d' is previously defined. New value ignored.", xmlPath.c_str(), keyPos.getLine()));
         xmlLiteParser->skipNextTag(false);
@@ -110,9 +96,6 @@ size_t* keyValueLengthPtr)
   if ( xmlPath.lastChar() == '/' ) xmlSubPath.S8Catf("%.*s", (int)keyValueLength, keyValue);
   else xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
 
-//#ifdef JIEF_DEBUG
-//XmlParserPosition valuePos = xmlLiteParser->getPosition();
-//#endif
 
   XBool keyFound;
   XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
@@ -125,15 +108,6 @@ size_t* keyValueLengthPtr)
     xmlLiteParser->skipNextTag(generateErrors); // return value doesn't need to be tested, because skipNextTag() set xmlLiteParser::xmlParsingError to true.
   }
 
-//#ifdef JIEF_DEBUG
-//  if ( xmlLiteParser->xmlParsingError ) {
-//    xmlLiteParser->restorePosition(valuePos);
-//    reset();
-//    XmlAbstractType& xmlAbstractType2 = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, false, keyPos, keyValue, keyValueLength, &keyFound);
-//    (void)xmlAbstractType2;
-//  }
-//#endif
-
   return xmlAbstractType;
 }
 
@@ -144,22 +118,13 @@ XBool XmlDict::parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xm
   RETURN_IF_FALSE ( xmlLiteParser->consumeOpeningTag("dict", generateErrors) );
   setDefined();
 
-//  const char* keyValue;
-//  size_t keyValueLength;
-//  XString8 xmlSubPath;
-
   while ( !xmlLiteParser->isEof() && !xmlLiteParser->nextTagIsClosingTag("dict") )
   {
-//    RETURN_IF_FALSE( xmlLiteParser->getKeyTagValue(&keyValue, &keyValueLength, &keyPos, true) );
-//    xmlSubPath = xmlPath;
-//    xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
 //
 #ifdef JIEF_DEBUG
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif
-//    XBool keyFound;
-//    XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
 
     XmlParserPosition keyPos = xmlLiteParser->getPosition();
 
@@ -169,11 +134,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
     
     XmlAbstractType& xmlAbstractType = parseKeyAndValueFromXmlLite(xmlLiteParser, xmlPath, generateErrors, &keyValue, &keyValueLength);
 
-//    if ( xmlLiteParser->xmlParsingError ) {
-//      //return false;
-//    }
-//    else
-//    {
+
       if ( xmlAbstractType.isDefined() )
       {
         XString8 xmlSubPath = xmlPath.lastChar() == '/' ? S8Printf("%s%.*s", xmlPath.c_str(), (int)keyValueLength, keyValue) : S8Printf("%s/%.*s", xmlPath.c_str(), (int)keyValueLength, keyValue);
@@ -189,10 +150,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
             return false;
           }
         }
-        // if !xmlAbstractType.isDefined(), it's because a unknown key, or a comment.
-        // Just try to continue.
       }
-//    }
   }
   RETURN_IF_FALSE ( xmlLiteParser->consumeClosingTag("dict", generateErrors) );
   return true;
@@ -200,30 +158,10 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
 
 XBool XmlDict::validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& pos, XBool generateErrors)
 {
-  (void)xmlLiteParser;
-  (void)xmlPath;
-  (void)pos;
-  (void)generateErrors;
-//  XmlDictField* fields;
-//  size_t nb;
-//  getFields(&fields, &nb);
-//  for ( size_t idx = 0 ; idx < nb ; idx++ ) {
-//    XmlDictField& xmlDictField = fields[idx];
-//    XmlAbstractType& xmlAbstractType = xmlDictField.xmlAbstractType;
-//    XString8 subXmlPath = S8Printf("%s/%s", xmlPath.c_str(), xmlDictField.m_name);
-//#ifdef JIEF_DEBUG
-////if ( subXmlPath == "/ACPI/DSDT/Name"_XS8 ) {
-//if ( subXmlPath == "/Boot/Policy"_XS8 ) {
-//  printf("");
-//}
-//#endif
-//    if ( !xmlAbstractType.validate(xmlLiteParser, subXmlPath, pos, generateErrors) ) {
-//      #ifdef JIEF_DEBUG
-////        xmlAbstractType.validate(xmlLiteParser, subXmlPath, pos, false);
-//      #endif
-//      return false;
-//    }
-//  }
+//  (void)xmlLiteParser;
+//  (void)xmlPath;
+//  (void)pos;
+//  (void)generateErrors;
   return true;
 }
 

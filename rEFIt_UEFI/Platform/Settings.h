@@ -2695,63 +2695,35 @@ public:
 };
 
 
-
-//extern XObjArray<RT_VARIABLES> gSettings.RtVariables.BlockRtVariableArray;
 extern XObjArray<HDA_OUTPUTS> AudioList;
 
 extern XStringWArray ThemeNameArray;
 extern XStringWArray ConfigsList;
 extern XStringWArray DsdtsList;
-//extern INTN    ScrollButtonsHeight;
-//extern INTN    ScrollBarDecorationsHeight;
-//extern INTN    ScrollScrollDecorationsHeight;
-//extern INTN LayoutBannerOffset;
-//extern INTN LayoutButtonOffset;
-//extern INTN LayoutTextOffset;
-// this should go in a globals, not in settings
+extern XStringWArray SmbiosList;
 
-extern INTN                            OldChosenTheme;
-extern INTN                            OldChosenConfig;
-extern INTN                            OldChosenDsdt;
-extern UINTN                            OldChosenAudio;
-extern XBool                       SavePreBootLog;
-extern UINT8                            DefaultAudioVolume;
+extern INTN           OldChosenTheme;
+extern INTN           OldChosenConfig;
+extern INTN           OldChosenSmbios;
+extern INTN           OldChosenDsdt;
+extern UINTN          OldChosenAudio;
+extern XBool          SavePreBootLog;
+extern UINT8          DefaultAudioVolume;
 
-
-//extern GFX_PROPERTIES                 gGraphics[];
-//extern HDA_PROPERTIES                 gAudios[];
-//extern UINTN                          NGFX;
-//extern UINTN                          NHDA;
-//extern UINT16                         gCPUtype;
 extern SETTINGS_DATA                  gSettings;
-extern XBool                       gFirmwareClover;
+extern XBool                          gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern EFI_EDID_DISCOVERED_PROTOCOL   *EdidDiscovered;
-//extern UINT8                          *gEDID;
+extern UINTN                          gEvent;
+extern UINT16                         gBacklightLevel;
 
-extern UINTN                           gEvent;
-
-extern UINT16                          gBacklightLevel;
-
-//extern XBool                        defDSM;
-//extern UINT16                          dropDSM;
-
-//extern TagDict*                          gConfigDict[];
 
 // ACPI/PATCHED/AML
-extern XObjArray<ACPI_PATCHED_AML>       ACPIPatchedAML;
-
-
-// SysVariables
-//extern SYSVARIABLES                   *SysVariables;
+extern XObjArray<ACPI_PATCHED_AML>    ACPIPatchedAML;
 
 // Hold theme fixed IconFormat / extension
 extern CHAR16                         *IconFormat;
-
-
-extern XBool                       ResumeFromCoreStorage;
-//extern XBool                       gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
-
+extern XBool                          ResumeFromCoreStorage;
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
 

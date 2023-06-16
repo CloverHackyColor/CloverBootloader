@@ -72,15 +72,26 @@ public:
   DevicesClass Devices = DevicesClass();
   XmlStringWArray DisableDrivers = XmlStringWArray();
   GUI_Class GUI = GUI_Class();
-  Graphics_Class Graphics; // Cannot do this :  = Graphics_Class(*this); because of a MSVC bug. Compilation failed at ssignment of m_fields because all member become const.
+  Graphics_Class Graphics; // Cannot do this :  = Graphics_Class(*this); because of a MSVC bug. Compilation failed at assignment of m_fields because all member become const.
   KernelAndKextPatches_Class KernelAndKextPatches = KernelAndKextPatches_Class();
   SmbiosPlistClass::SmbiosDictClass SMBIOS = SmbiosPlistClass::SmbiosDictClass();  // use the same dict as for standalone smbios plist
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_lion = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_mav = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_cap = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_hsierra = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_moja = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_cata = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_bigsur = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_monterey = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_ventura = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_sonoma = SmbiosPlistClass::SmbiosDictClass();
+//  SmbiosPlistClass::SmbiosDictClass SMBIOS_lion = SmbiosPlistClass::SmbiosDictClass();
 public:
   SystemParameters_Class SystemParameters = SystemParameters_Class();
   RtVariables_Class RtVariables = RtVariables_Class();
   Quirks_Class Quirks = Quirks_Class();
 
-  XmlDictField m_fields[13] = {
+  XmlDictField m_fields[23] = {
     {"ACPI", ACPI},
     {"Boot", Boot},
     {"BootGraphics", BootGraphics},
@@ -91,6 +102,16 @@ public:
     {"Graphics", Graphics},
     {"KernelAndKextPatches", KernelAndKextPatches},
     {"SMBIOS", SMBIOS},
+    {"SMBIOS_lion", SMBIOS_lion},
+    {"SMBIOS_mav", SMBIOS_mav},
+    {"SMBIOS_cap", SMBIOS_cap},
+    {"SMBIOS_hsierra", SMBIOS_hsierra},
+    {"SMBIOS_moja", SMBIOS_moja},
+    {"SMBIOS_cata", SMBIOS_cata},
+    {"SMBIOS_bigsur", SMBIOS_bigsur},
+    {"SMBIOS_monterey", SMBIOS_monterey},
+    {"SMBIOS_ventura", SMBIOS_ventura},
+    {"SMBIOS_sonoma", SMBIOS_sonoma},
     {"SystemParameters", SystemParameters},
     {"RtVariables", RtVariables},
     {"Quirks", Quirks},
@@ -123,8 +144,16 @@ public:
   }
 
   const decltype(DisableDrivers)::ValueType& dgetDisabledDriverArray() const { return DisableDrivers.isDefined() ? DisableDrivers.value() : DisableDrivers.nullValue; };
-  const decltype(SMBIOS)& getSMBIOS() const { return SMBIOS; };
-
+  const decltype(SMBIOS)& getSMBIOS() const {
+    for (size_t i=0; i<sizeof(m_fields)/sizeof(m_fields[0]); i++) {
+      XStringW h;
+      h.takeValueFrom(m_fields[i].m_name);
+      if (SmbiosList.size() > 0 && SmbiosList[OldChosenSmbios] == h) {
+        return static_cast<SmbiosPlistClass::SmbiosDictClass&>(m_fields[i].xmlAbstractType);
+      }
+    }
+    return SMBIOS;
+  };
 };
 
 #endif /* _CONFIGPLISTCLASS_H_ */

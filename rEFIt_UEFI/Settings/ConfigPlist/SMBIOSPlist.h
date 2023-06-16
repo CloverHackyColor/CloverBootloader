@@ -42,6 +42,17 @@
 
 #include "ConfigPlistAbstract.h"
 
+extern XStringWArray ThemeNameArray;
+extern XStringWArray ConfigsList;
+extern XStringWArray DsdtsList;
+extern XStringWArray SmbiosList;
+
+
+extern INTN           OldChosenTheme;
+extern INTN           OldChosenConfig;
+extern INTN           OldChosenSmbios;
+
+
 
 class SmbiosPlistClass : public ConfigPlistAbstractClass
 {
@@ -190,9 +201,7 @@ public:
               }
 
           };
-      
-      
-      
+
         XmlUInt8 SlotCount = XmlUInt8();
         XmlUInt8 Channels = XmlUInt8();
         ModuleArrayClass Modules = ModuleArrayClass();
@@ -234,23 +243,6 @@ public:
         decltype(SlotCount)::ValueType dgetSlotCount() const { return SlotCount.isDefined() ? SlotCount.value() : 0; };
         const decltype(Channels)::ValueType& dgetUserChannels() const { return Channels.isDefined() ? Channels.value() : Channels.nullValue; };
         
-//        decltype(SlotCount)::ValueType dgetSlotMax() const {
-//          if ( !isDefined() || !Modules.isDefined() || Modules.size() == 0 ) return 0;
-//          uint8_t max = 0;
-//          for ( size_t idx = 0 ; idx < Modules.size() ; ++idx ) {
-//            if ( Modules[idx].dgetModuleSize() > 0 ) {
-//              if ( Modules[idx].dgetSlotIndex() > UINT8_MAX ) {
-//                log_technical_bug("Modules[idx].dgetSlotNo() > UINT8_MAX");
-//              }else{
-//                if ( Modules[idx].dgetSlotIndex() > max ) max = (uint8_t)Modules[idx].dgetSlotIndex(); // safe cast Modules[idx].dgetSlotNo() is <= UINT8_MAX
-//              }
-//            }
-//          }
-//          return max+1;
-//        };
-//
-//        decltype(SlotCount)::ValueType dgetSlotCounts() const { return dgetSlotCountSetting() > dgetSlotMax() ? dgetSlotCountSetting() : dgetSlotMax(); };
-
       };
 
       class SlotDeviceDictClass : public XmlDict
@@ -770,9 +762,29 @@ public:
   };
 
   SmbiosDictClass SMBIOS = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_lion = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_mav = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_cap = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_hsierra = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_moja = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_cata = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_bigsur = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_monterey = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_ventura = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_sonoma = SmbiosDictClass();
   
-  XmlDictField m_fields[1] = {
+  XmlDictField m_fields[11] = {
     {"SMBIOS", SMBIOS},
+    {"SMBIOS_lion", SMBIOS_lion},
+    {"SMBIOS_mav", SMBIOS_mav},
+    {"SMBIOS_cap", SMBIOS_cap},
+    {"SMBIOS_hsierra", SMBIOS_hsierra},
+    {"SMBIOS_moja", SMBIOS_moja},
+    {"SMBIOS_cata", SMBIOS_cata},
+    {"SMBIOS_bigsur", SMBIOS_bigsur},
+    {"SMBIOS_monterey", SMBIOS_monterey},
+    {"SMBIOS_ventura", SMBIOS_ventura},
+    {"SMBIOS_sonoma", SMBIOS_sonoma},
   };
 
 public:
@@ -781,13 +793,19 @@ public:
 public:
   SmbiosPlistClass() {};
 
-  const decltype(SMBIOS)& getSMBIOS() const { return SMBIOS; };
+  const decltype(SMBIOS)& getSMBIOS() const {
+    for (size_t i=0; i<sizeof(m_fields)/sizeof(m_fields[0]); i++) {
+      XStringW h;
+      h.takeValueFrom(m_fields[i].m_name);
+      if (SmbiosList.size() > 0 && SmbiosList[OldChosenSmbios] == h) {
+        return static_cast<SmbiosDictClass&>(m_fields[i].xmlAbstractType);
+      }
+    }
+    return SMBIOS;
+  };
 
 
 };
 
-
-//extern const ConfigPlist& configPlist;
-//extern const ConfigPlist& getConfigPlist();
 
 #endif /* _SMBIOSPLISTCLASS_H_ */

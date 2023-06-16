@@ -941,12 +941,12 @@ WriteSections64 (
             SymName = (const UINT8 *)"<unknown>";
           }
           if ( strcmp((const char *)SymName, "__cxa_pure_virtual") == 0 ) {
-            static int already_printed_once = 0;
-          	if ( !already_printed_once ) {
-          	  printf("FIXME reminder : __cxa_pure_virtual is undefined -> ignored. This is happening since gcc 12.1 for unknown reasons.\n");
-          	  already_printed_once = 1;
-          	}
-          	continue;
+//            static int already_printed_once = 0;
+//          	if ( !already_printed_once ) {
+//          	  printf("FIXME reminder : __cxa_pure_virtual is undefined -> ignored. This is happening since gcc 12.1 for unknown reasons.\n");
+//          	  already_printed_once = 1;
+//          	}
+          	  continue;
 					}
           Error (NULL, 0, 3000, "Invalid",
                  "%s: Bad definition for symbol '%s'@%#llx or unsupported symbol type.  "

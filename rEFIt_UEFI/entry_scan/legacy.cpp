@@ -215,7 +215,6 @@ void ScanLegacy(void)
   
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
     Volume = &Volumes[VolumeIndex];
-//    DBG("test VI=%d\n", VolumeIndex);
     if ((Volume->BootType != BOOTING_BY_PBR) &&
         (Volume->BootType != BOOTING_BY_MBR) &&
         (Volume->BootType != BOOTING_BY_CD)) {
@@ -223,21 +222,6 @@ void ScanLegacy(void)
       continue;
     }
 
-//    DBG("%2d: '%ls' (%ls)", VolumeIndex, Volume->VolName, Volume->LegacyOS->IconName);
-    
-#if 0 // REFIT_DEBUG > 0
-    DBG(" %d %ls\n  %d %d %ls %d %ls\n",
-        VolumeIndex, FileDevicePathToStr(Volume->DevicePath),
-        Volume->DiskKind, Volume->MbrPartitionIndex,
-        Volume->IsAppleLegacy ? L"AL" : L"--", Volume->HasBootCode,
-        Volume->VolName ? Volume->VolName : L"(no name)");
-#endif
-    
-    // skip volume if its kind is configured as disabled
-/*    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
-        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) */
     if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
     {
 //      DBG(" hidden\n");
@@ -251,11 +235,8 @@ void ScanLegacy(void)
       HideIfOthersFound = true;
     } else if (Volume->HasBootCode) {
       ShowVolume = true;
-//      DBG("Volume %d will be shown BlockIo=%X WholeIo=%X\n",
-//        VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
       if ((Volume->WholeDiskBlockIO == 0) &&
-          Volume->BlockIOOffset == 0 /* &&
-                                      Volume->OSName == NULL */)
+          Volume->BlockIOOffset == 0 )
         // this is a whole disk (MBR) entry; hide if we have entries for partitions
         HideIfOthersFound = true;
 //      DBG("Hide it!\n");

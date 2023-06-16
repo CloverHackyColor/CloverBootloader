@@ -54,6 +54,7 @@
 
 
 INTN OldChosenTheme;
+INTN OldChosenSmbios;
 INTN OldChosenConfig;
 INTN OldChosenDsdt;
 UINTN OldChosenAudio;
@@ -75,6 +76,7 @@ XStringWArray                   ThemeNameArray;
 XStringWArray                   ConfigsList;
 XStringWArray                   DsdtsList;
 XObjArray<HDA_OUTPUTS>          AudioList;
+XStringWArray                   SmbiosList;
 
 // firmware
 XBool                           gFirmwareClover             = false;

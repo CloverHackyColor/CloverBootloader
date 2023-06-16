@@ -839,7 +839,7 @@ GetOSIconName (const MacOsVersion& OSVersion)
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
   } else if (OSVersion.elementAt(0) == 14 ){
-    // Ventura
+    // Sonoma
     OSIconName = L"sonoma,mac"_XSW;
   } else if (OSVersion.elementAt(0) == 13 ){
     // Ventura
@@ -918,7 +918,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   EFI_DEVICE_PATH       *LoaderDevicePath;
   XStringW               LoaderDevicePathString;
   XStringW               FilePathAsString;
-//  CONST CHAR16          *OSIconName = NULL;
   CHAR16                ShortcutLetter;
   LOADER_ENTRY          *Entry;
   CONST CHAR8           *indent = "      ";
@@ -944,8 +943,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     DBG("%sskipped because path `%ls` is self path!\n", indent, LoaderDevicePathString.wc_str());
     return NULL;
   }
-// DBG("OSType =%d\n", OSType);
-  // DBG("prepare the menu entry\n");
+
   // prepare the menu entry
   Entry = new LOADER_ENTRY;
 
@@ -1081,22 +1079,10 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
     case OSTYPE_OSX:
     case OSTYPE_RECOVERY:
     case OSTYPE_OSX_INSTALLER:
-      OSIconName = GetOSIconName(Entry->macOSVersion);// Sothor - Get OSIcon name using OSVersion
-      // apianti - force custom logo even when verbose
-/* this is not needed, as this flag is also being unset when booting if -v is present (LoadOptions may change until then)
-      if ( Entry->LoadOptions.containsIC("-v")  ) {
-        // OSX is not booting verbose, so we can set console to graphics mode
-        Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-      }
-*/
+      OSIconName = GetOSIconName(Entry->macOSVersion);
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Entry)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
         DBG("%s  =>set entry as hibernated\n", indent);
-      }
-      //always unset checkFakeSmc for installer
-      if (OSType == OSTYPE_OSX_INSTALLER){
-//        Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       ShortcutLetter = 'M';
       if ( Entry->DisplayedVolName.isEmpty() ) {
@@ -1136,6 +1122,8 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
       break;
   }
 //DBG("OSIconName=%ls \n", OSIconName);
+  Entry->OSName = OSIconName.subString(0, OSIconName.indexOf(',')); //TODO
+//  SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty()  &&  Volume->VolLabel.notEmpty()) {
     if (Volume->VolLabel[0] == L'#') {
@@ -1222,9 +1210,6 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
     }
   }
   Entry->BootBgColor = BootBgColor;
-
-//  Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
-//  CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, Patches == NULL ? &gSettings.KernelAndKextPatches : Patches);
   Entry->KernelAndKextPatches = Patches == NULL ? gSettings.KernelAndKextPatches : *Patches;
   
 #ifdef DUMP_KERNEL_KEXT_PATCHES
@@ -1236,16 +1221,11 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
 
 void LOADER_ENTRY::AddDefaultMenu()
 {
-  XStringW     FileName;
-//  CHAR16* TempOptions;
-//  CHAR16            DiagsFileName[256];
-  LOADER_ENTRY      *SubEntry;
-//  REFIT_MENU_SCREEN *SubScreen;
-//  REFIT_VOLUME      *Volume;
-  UINT64             VolumeSize;
+  XStringW      FileName;
+  LOADER_ENTRY  *SubEntry;
+  UINT64        VolumeSize;
   EFI_GUID      Guid;
-  XBool              KernelIs64BitOnly;
-//  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
+  XBool         KernelIs64BitOnly;
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
   constexpr LString8 splashLitteral = "splash"_XS8;
@@ -1303,19 +1283,6 @@ void LOADER_ENTRY::AddDefaultMenu()
     SubEntry = getPartiallyDuplicatedEntry();
     SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
     SubScreen->AddMenuEntry(SubEntry, true);
-#if 0
-    SubEntry = getPartiallyDuplicatedEntry();
-    SubEntry->Title.SWPrintf("Boot %s with injected kexts", macOS);
-    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-    SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-    SubScreen->AddMenuEntry(SubEntry, true);
-
-    SubEntry = getPartiallyDuplicatedEntry();
-    SubEntry->Title.SWPrintf("Boot %s without injected kexts", macOS);
-    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-    SubScreen->AddMenuEntry(SubEntry, true);
-#endif
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(), true);
     SubScreen->AddMenuInfo_f("=== boot-args ===");
     if (!KernelIs64BitOnly) {
@@ -1337,15 +1304,9 @@ void LOADER_ENTRY::AddDefaultMenu()
     SubScreen->AddMenuCheck("Use Nvidia WEB drivers (nvda_drv=1)",        OPT_NVWEBON, 68);
     SubScreen->AddMenuCheck("Disable PowerNap (darkwake=0)",              OPT_POWERNAPOFF, 68);
     SubScreen->AddMenuCheck("Use XNU CPUPM (-xcpm)",                      OPT_XCPM, 68);
-//    SubScreen->AddMenuCheck("Disable Intel Idle Mode (-gux_no_idle)",     OPT_GNOIDLE, 68);
-//    SubScreen->AddMenuCheck("Sleep Uses Shutdown (-gux_nosleep)",         OPT_GNOSLEEP, 68);
-//    SubScreen->AddMenuCheck("Force No Msi Int (-gux_nomsi)",              OPT_GNOMSI, 68);
-//    SubScreen->AddMenuCheck("EHC manage USB2 ports (-gux_defer_usb2)",    OPT_EHCUSB, 68);
     SubScreen->AddMenuCheck("Keep symbols on panic (keepsyms=1)",         OPT_KEEPSYMS, 68);
     SubScreen->AddMenuCheck("Don't reboot on panic (debug=0x100)",        OPT_DEBUG, 68);
     SubScreen->AddMenuCheck("Debug kexts (kextlog=0xffff)",               OPT_KEXTLOG, 68);
-//    SubScreen->AddMenuCheck("Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
-//    SubScreen->AddMenuCheck("Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
 
     if (gSettings.RtVariables.CsrActiveConfig == 0) {
       SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
@@ -1438,9 +1399,6 @@ void LOADER_ENTRY::AddDefaultMenu()
     SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
     SubScreen->AddMenuEntry(SubEntry, true);
   }
-
-//  SubScreen->AddMenuEntry(&MenuEntryReturn, false); //one-way ticket to avoid confusion
-  // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n",Title,LoaderType,OSVersion);
 }
 
 LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Array& LoaderOptions,
@@ -1459,32 +1417,13 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
     DBG("     skipped because entry is disabled\n");
     return NULL;
   }
-//  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Flags, OSFLAG_HIDDEN)) {
-//    DBG("        skipped because entry is hidden\n");
-//    return NULL;
-//  }
-  //don't add hided entries
-//  if (!gSettings.ShowHiddenEntries) {
-//    for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-//      if ( LoaderPath.containsIC(gSettings.GUI.HVHideStrings[HVi]) ) {
-//        DBG("        hiding entry: %ls\n", LoaderPath.s());
-//        return NULL;
-//      }
-//    }
-//  }
 
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NullXImage, NULL, false);
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
         (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||
         (Entry->LoaderType == OSTYPE_RECOVERY)) {
-//      if (gSettings.WithKexts) {
-//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-//      }
-//      if (gSettings.WithKextsIfNoFakeSMC) {
-//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-//      }
+
       if (gSettings.SystemParameters.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       }
@@ -1501,7 +1440,6 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
       }
     }
     //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
-//    InputItems[69].IValue = Entry->Flags;
     Entry->AddDefaultMenu();
     DBG("      Menu entry added at index %zd\n", MainMenu.Entries.sizeIncludingHidden());
     MainMenu.AddMenuEntry(Entry, true);
@@ -1745,9 +1683,6 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
 void AddPRSEntry(REFIT_VOLUME *Volume)
 {
   INTN WhatBoot = 0;
-  //CONST INTN Paper = 1;
-  //CONST INTN Rock = 2;
-  //CONST INTN Scissor = 4;
 
   WhatBoot |= FileExists(Volume->RootDir, RockBoot)?Rock:0;
   WhatBoot |= FileExists(Volume->RootDir, PaperBoot)?Paper:0;
@@ -1782,10 +1717,10 @@ XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path)
   XStringW plist = SWPrintf("%ls\\com.apple.Boot.plist", path.wc_str());
   if ( !FileExists(dir, plist) ) return NullXString8;
 
-  CHAR8*     PlistBuffer = NULL;
-  UINTN      PlistLen;
-  TagDict*     Dict        = NULL;
-  const TagStruct*     Prop        = NULL;
+  CHAR8*            PlistBuffer = NULL;
+  UINTN             PlistLen;
+  TagDict*          Dict        = NULL;
+  const TagStruct*  Prop        = NULL;
 
   EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
   if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS)
@@ -1878,8 +1813,8 @@ void ScanLoader(void)
 
     DBG("\n");
 
-    if ( Volume->ApfsContainerUUID.notNull() ) DBG("    ApfsContainerUUID=%s\n", Volume->ApfsContainerUUID.toXString8().c_str());
-    if ( Volume->ApfsFileSystemUUID.notNull() ) DBG("    ApfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.toXString8().c_str());
+    if ( Volume->ApfsContainerUUID.notNull() )  {DBG("    ApfsContainerUUID=%s\n",  Volume->ApfsContainerUUID.toXString8().c_str());}
+    if ( Volume->ApfsFileSystemUUID.notNull() ) {DBG("    ApfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.toXString8().c_str());}
 
 
     // check for Mac OS X Install Data
@@ -2176,8 +2111,6 @@ void ScanLoader(void)
       }
     }
   }
-
-
 
   typedef struct EntryIdx {
     size_t idx;

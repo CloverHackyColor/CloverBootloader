@@ -165,6 +165,7 @@ public:
   ConfigManager& operator= (ConfigManager &&other) = delete;
 
   void FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass);
+  void ReloadSmbios(XStringW& str);
 
   /*
    * Look for {ConfName}.plist and smbios.plist and load them, "transfer" the settings into gSettings and call afterGetUserSettings()
@@ -173,6 +174,7 @@ public:
    * 2021-04 : not really tested yet.
    */
   EFI_STATUS ReLoadConfig(const XStringW& ConfName);
+//  EFI_STATUS ReLoadSmbios(XStringW& tmpStr);
 
   /*
    * Populate SlotDeviceArray, GfxPropertiesArray, HdaPropertiesArray, LanCardArray
