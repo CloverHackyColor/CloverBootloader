@@ -1043,8 +1043,8 @@
             <true/>
             <key>ThirdPartyDrives</key>
             <false/>
- 			<key>TscSyncTimeout</key>
-			<integer>0</integer>
+            <key>TscSyncTimeout</key>
+            <integer>0</integer>
             <key>XhciPortLimit</key>
             <false/>
         </dict>
@@ -1198,6 +1198,112 @@
             <key>Trust?</key>
             <true/>
             <key>Version?</key>
+            <string>1.0</string>
+        </dict>
+        <key>SMBIOS_capitan</key>
+        <dict>
+            <key>BiosReleaseDate</key>
+            <string>12/18/2019</string>
+            <key>BiosVendor</key>
+            <string>Apple Inc.</string>
+            <key>BiosVersion</key>
+            <string>IM131.88Z.F000.B00.1912181754</string>
+            <key>Board-ID?</key>
+            <string>Mac-FC02E91DDD3FA6A4</string>
+            <key>BoardManufacturer</key>
+            <string>Apple Inc.</string>
+            <key>BoardSerialNumber</key>
+            <string>C022295014NF2FRJC</string>
+            <key>BoardType</key>
+            <integer>10</integer>
+            <key>BoardVersion</key>
+            <string>1.0</string>
+            <key>ChassisAssetTag</key>
+            <string>iMac-Aluminum</string>
+            <key>ChassisManufacturer</key>
+            <string>Apple Inc.</string>
+            <key>ChassisType</key>
+            <string>0x0D</string>
+            <key>EfiVersion</key>
+            <string>1968.100.17.0.0</string>
+            <key>Family</key>
+            <string>iMac</string>
+            <key>FirmwareFeatures</key>
+            <string>0xE00DE137</string>
+            <key>FirmwareFeaturesMask</key>
+            <string>0xFF1FFF3F</string>
+            <key>LocationInChassis</key>
+            <string>Part Component</string>
+            <key>Manufacturer</key>
+            <string>Apple Inc.</string>
+            <key>Mobile</key>
+            <false/>
+            <key>NoRomInfo</key>
+            <false/>
+            <key>PlatformFeature</key>
+            <string>0x01</string>
+            <key>ProductName</key>
+            <string>MacBookPro10,1</string>
+            <key>SerialNumber?</key>
+            <string></string>
+            <key>SmUUID</key>
+            <string>4F5991DC-A9CA-42E0-B4A4-C66CEE83A4FB</string>
+            <key>Trust</key>
+            <true/>
+            <key>Version</key>
+            <string>1.0</string>
+        </dict>
+        <key>SMBIOS_ventura</key>
+        <dict>
+            <key>BiosReleaseDate</key>
+            <string>12/18/2019</string>
+            <key>BiosVendor</key>
+            <string>Apple Inc.</string>
+            <key>BiosVersion</key>
+            <string>IM131.88Z.F000.B00.1912181754</string>
+            <key>Board-ID</key>
+            <string>Mac-FC02E91DDD3FA6A4</string>
+            <key>BoardManufacturer</key>
+            <string>Apple Inc.</string>
+            <key>BoardSerialNumber</key>
+            <string>C022295014NF2FRJC</string>
+            <key>BoardType</key>
+            <integer>10</integer>
+            <key>BoardVersion</key>
+            <string>1.0</string>
+            <key>ChassisAssetTag</key>
+            <string>iMac-Aluminum</string>
+            <key>ChassisManufacturer</key>
+            <string>Apple Inc.</string>
+            <key>ChassisType</key>
+            <string>0x0D</string>
+            <key>EfiVersion</key>
+            <string>1968.100.17.0.0</string>
+            <key>Family</key>
+            <string>iMac</string>
+            <key>FirmwareFeatures</key>
+            <string>0xE00DE137</string>
+            <key>FirmwareFeaturesMask</key>
+            <string>0xFF1FFF3F</string>
+            <key>LocationInChassis</key>
+            <string>Part Component</string>
+            <key>Manufacturer</key>
+            <string>Apple Inc.</string>
+            <key>Mobile</key>
+            <false/>
+            <key>NoRomInfo</key>
+            <false/>
+            <key>PlatformFeature</key>
+            <string>0x01</string>
+            <key>ProductName</key>
+            <string>MacBookPro15,4</string>
+            <key>SerialNumber?</key>
+            <string></string>
+            <key>SmUUID</key>
+            <string>4F5991DC-A9CA-42E0-B4A4-C66CEE83A4FB</string>
+            <key>Trust</key>
+            <true/>
+            <key>Version</key>
             <string>1.0</string>
         </dict>
         <key>SystemParameters</key>
