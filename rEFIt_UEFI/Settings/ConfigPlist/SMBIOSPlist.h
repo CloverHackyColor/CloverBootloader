@@ -763,8 +763,11 @@ public:
 
   SmbiosDictClass SMBIOS = SmbiosDictClass();
   SmbiosDictClass SMBIOS_lion = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_cougar = SmbiosDictClass();
   SmbiosDictClass SMBIOS_mav = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_yos = SmbiosDictClass();
   SmbiosDictClass SMBIOS_cap = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_sierra = SmbiosDictClass();
   SmbiosDictClass SMBIOS_hsierra = SmbiosDictClass();
   SmbiosDictClass SMBIOS_moja = SmbiosDictClass();
   SmbiosDictClass SMBIOS_cata = SmbiosDictClass();
@@ -773,11 +776,14 @@ public:
   SmbiosDictClass SMBIOS_ventura = SmbiosDictClass();
   SmbiosDictClass SMBIOS_sonoma = SmbiosDictClass();
   
-  XmlDictField m_fields[11] = {
+  XmlDictField m_fields[14] = {
     {"SMBIOS", SMBIOS},
     {"SMBIOS_lion", SMBIOS_lion},
+    {"SMBIOS_cougar", SMBIOS_cougar},
     {"SMBIOS_mav", SMBIOS_mav},
+    {"SMBIOS_yos", SMBIOS_yos},
     {"SMBIOS_cap", SMBIOS_cap},
+    {"SMBIOS_sierra", SMBIOS_sierra},
     {"SMBIOS_hsierra", SMBIOS_hsierra},
     {"SMBIOS_moja", SMBIOS_moja},
     {"SMBIOS_cata", SMBIOS_cata},

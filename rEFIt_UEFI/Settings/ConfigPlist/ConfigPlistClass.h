@@ -76,8 +76,11 @@ public:
   KernelAndKextPatches_Class KernelAndKextPatches = KernelAndKextPatches_Class();
   SmbiosPlistClass::SmbiosDictClass SMBIOS = SmbiosPlistClass::SmbiosDictClass();  // use the same dict as for standalone smbios plist
   SmbiosPlistClass::SmbiosDictClass SMBIOS_lion = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_cougar = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_mav = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_yos = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_cap = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_sierra = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_hsierra = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_moja = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_cata = SmbiosPlistClass::SmbiosDictClass();
@@ -91,7 +94,7 @@ public:
   RtVariables_Class RtVariables = RtVariables_Class();
   Quirks_Class Quirks = Quirks_Class();
 
-  XmlDictField m_fields[23] = {
+  XmlDictField m_fields[26] = {
     {"ACPI", ACPI},
     {"Boot", Boot},
     {"BootGraphics", BootGraphics},
@@ -103,8 +106,11 @@ public:
     {"KernelAndKextPatches", KernelAndKextPatches},
     {"SMBIOS", SMBIOS},
     {"SMBIOS_lion", SMBIOS_lion},
+    {"SMBIOS_cougar", SMBIOS_cougar},
     {"SMBIOS_mav", SMBIOS_mav},
+    {"SMBIOS_yos", SMBIOS_yos},
     {"SMBIOS_cap", SMBIOS_cap},
+    {"SMBIOS_sierra", SMBIOS_sierra},
     {"SMBIOS_hsierra", SMBIOS_hsierra},
     {"SMBIOS_moja", SMBIOS_moja},
     {"SMBIOS_cata", SMBIOS_cata},
