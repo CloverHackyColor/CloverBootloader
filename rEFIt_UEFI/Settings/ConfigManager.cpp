@@ -885,12 +885,6 @@ EFI_STATUS ConfigManager::LoadConfig(const XStringW& ConfName)
     }
   }
 
-//  DBG("made entries SMBIOS:\n");
-//  for (size_t i=0; i<SmbiosList.size(); i++) {
-//    DBG("--- %ls\n", SmbiosList[i].wc_str());
-//  }
-
-
   if ( smbiosPlist.getSMBIOS().isDefined() && smbiosPlist.getSMBIOS().getProductName().isDefined() ) {
     GlobalConfig.CurrentModel = smbiosPlist.SMBIOS.dgetModel();
     DBG("get model from smbios.plist\n");

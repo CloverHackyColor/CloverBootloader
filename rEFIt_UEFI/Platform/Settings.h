@@ -2248,10 +2248,9 @@ printf("%s", "");
 
   };
 
-  class SmbiosClass {
+  class SmbiosClass
+  {
     public:
-
-
 
         class SlotDeviceClass
         {
@@ -2386,7 +2385,7 @@ printf("%s", "");
       XString8                ProductName = XString8();
       XString8                SystemVersion = XString8();
       XString8                SerialNr = XString8();
-      EFI_GUID           SmUUID = EFI_GUID();
+      EFI_GUID                SmUUID = EFI_GUID();
       XString8                FamilyName = XString8();
       // SMBIOS TYPE2
       XString8                BoardManufactureName = XString8();
@@ -2401,6 +2400,7 @@ printf("%s", "");
       XString8                ChassisManufacturer = XString8();
       XString8                ChassisAssetTag = XString8();
       // SMBIOS TYPE4
+      UINT32                  SFakeCPU = UINT32();
       // SMBIOS TYPE17
       UINT16                  SmbiosVersion = UINT16();
       INT8                    Attribute = INT8();
@@ -2456,6 +2456,8 @@ printf("%s", "");
       if ( !(ChassisType == other.ChassisType) ) return false;
       if ( !(ChassisManufacturer == other.ChassisManufacturer) ) return false;
       if ( !(ChassisAssetTag == other.ChassisAssetTag) ) return false;
+      // SMBIOS TYPE4
+      if ( !(SFakeCPU == other.SFakeCPU) ) return false;
       // SMBIOS TYPE17
       if ( !(SmbiosVersion == other.SmbiosVersion) ) return false;
       if ( !(Attribute == other.Attribute) ) return false;
@@ -2506,6 +2508,8 @@ printf("%s", "");
       ChassisType = other.dgetChassisType();
       ChassisManufacturer = other.dgetChassisManufacturer();
       ChassisAssetTag = other.dgetChassisAssetTag();
+      // SMBIOS TYPE4
+      SFakeCPU = other.dgetFakeCPUID();
       // SMBIOS TYPE17
       SmbiosVersion = other.dgetSmbiosVersion();
       Attribute = other.dgetAttribute();
@@ -2523,6 +2527,7 @@ printf("%s", "");
       ExtendedFirmwareFeaturesMask = other.dgetExtendedFirmwareFeaturesMask();
       RamSlotInfoArray.takeValueFrom(other.Memory);
       SlotDevices.takeValueFrom(other.Slots);
+
     }
 
   };
@@ -2572,10 +2577,6 @@ printf("%s", "");
   SmbiosClass Smbios = SmbiosClass();
   BootGraphicsClass BootGraphics = BootGraphicsClass();
 
-
-//other
-//  UINT16                  DropOEM_DSM; // not used anymore.
-//  XBool                LpcTune; // never set to true.
 
   SETTINGS_DATA() {}
 //  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
@@ -2822,12 +2823,6 @@ SetDevices (
 //
 void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
-
-
-
-
-//void
-//GetDevices(void);
 
 
 

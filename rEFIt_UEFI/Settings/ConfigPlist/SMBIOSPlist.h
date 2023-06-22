@@ -24,6 +24,7 @@
 #include "../../Platform/platformdata.h"
 #include "../../Platform/smbios.h"
 #include "../../Platform/VersionString.h" // for AsciiStrVersionToUint64
+//#include "../../Platform/Settings.h"
 //#include "../cpu.h"
 
 #include "../../cpp_lib/undefinable.h"
@@ -51,7 +52,7 @@ extern XStringWArray SmbiosList;
 extern INTN           OldChosenTheme;
 extern INTN           OldChosenConfig;
 extern INTN           OldChosenSmbios;
-
+extern UINT32         gFakeCPUID;
 
 
 class SmbiosPlistClass : public ConfigPlistAbstractClass
@@ -149,7 +150,7 @@ public:
                return MemoryTypeDdr;
               }
               // Cannot happen if validate has been done properly.
-              panic("invalid value");
+              panic("invalid DDRx value");
             }
 //            XBool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
 
@@ -441,6 +442,7 @@ public:
     XmlBool Trust = XmlBool();
     XmlUInt64 PlatformFeature = XmlUInt64();
     XmlBool NoRomInfo = XmlBool();
+    XmlUInt32 FakeCPUID = XmlUInt32();
 
     XmlUInt32 FirmwareFeatures = XmlUInt32(); // gFwFeatures
     XmlUInt32 FirmwareFeaturesMask = XmlUInt32();
@@ -452,7 +454,7 @@ public:
     MemoryDictClass Memory = MemoryDictClass();
     SlotDeviceArrayClass Slots = SlotDeviceArrayClass();
 
-    XmlDictField m_fields[31] = {  //31
+    XmlDictField m_fields[32] = {  //32 up to FakeCPUID
       {"Trust", Trust},
       {"MemoryRank", MemoryRank},
       {"Memory", Memory},
@@ -484,6 +486,7 @@ public:
       {"ChassisAssetTag", ChassisAssetTag},
       {"ChassisType", ChassisType},
       {"NoRomInfo", NoRomInfo},
+      {"FakeCPUID", FakeCPUID},
     };
 
     virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
@@ -580,22 +583,8 @@ public:
     const decltype(ChassisAssetTag)& getChassisAssetTag() const { return ChassisAssetTag; }
     const decltype(ChassisType)& getChassisType() const { return ChassisType; }
     const decltype(NoRomInfo)& getNoRomInfo() const { return NoRomInfo; }
+//    const decltype(FakeCPUID)& getFakeCPUID() const { return FakeCPUID.isDefined() ? FakeCPUID.value() : gSettings.KernelAndKextPatches.FakeCPUID; };
 
-
-//    /*
-//     * DO NOT call this if !ProductName.isDefined()
-//     */
-//    MacModel getModel() const
-//    {
-//      if ( !ProductName.isDefined() ) {
-//        // This must not happen in Clover because Clover set a defaultMacModel
-//        // This must not happen in ccpv because ccpv doesn't call dget... methods
-//        log_technical_bug("%s : !ProductName.isDefined()", __PRETTY_FUNCTION__);
-//        return iMac132; // cannot return GetDefaultModel() because we don't want to link runtime configuration to the xml reading layer.
-//      }
-//      return GetModelFromString(ProductName.value()); // ProductName has been validated, so Model CANNOT be MaxMacModel
-//    }
-//    XBool hasModel() const { return ProductName.isDefined(); }
 
     MacModel dgetModel() const
     {
@@ -742,6 +731,7 @@ public:
       return GetPlatformFeature(dgetModel());
     };
     const decltype(NoRomInfo)::ValueType& dgetNoRomInfo() const { return NoRomInfo.isDefined() ? NoRomInfo.value() : NoRomInfo.nullValue; };
+    const decltype(FakeCPUID)::ValueType& dgetFakeCPUID() const { return FakeCPUID.isDefined() ? FakeCPUID.value() : gFakeCPUID; };
     decltype(FirmwareFeatures)::ValueType dgetFirmwareFeatures() const {
       if ( FirmwareFeatures.isDefined() ) return FirmwareFeatures.value();
       return GetFwFeatures(dgetModel());
@@ -757,7 +747,12 @@ public:
     decltype(ExtendedFirmwareFeaturesMask)::ValueType dgetExtendedFirmwareFeaturesMask() const {
       if ( ExtendedFirmwareFeaturesMask.isDefined() ) return ExtendedFirmwareFeaturesMask.value();
       return GetExtFwFeaturesMask(dgetModel());
-    }
+    };
+//    decltype(FirmwareFeatures)::ValueType dgetFirmwareFeatures() const {
+//      if ( FirmwareFeatures.isDefined() ) return FirmwareFeatures.value();
+//      return GetFwFeatures(dgetModel());
+//    };
+
 
   };
 

@@ -34,22 +34,6 @@ public:
         XmlString8AllowEmpty MatchOS = XmlString8AllowEmpty(); // validation ?
         XmlString8AllowEmpty MatchBuild = XmlString8AllowEmpty(); // validation ?
 
-      //  XmlDictField m_fields[13] = {
-      //    {"Comment", Comment},
-      //    {"Disabled", Disabled},
-      //    {"RangeFind", RangeFind},
-      //    {"Skip", Skip},
-      //    {"StartPattern", StartPattern},
-      //    {"MaskStart", MaskStart},
-      //    {"Find", Find},
-      //    {"Replace", Replace},
-      //    {"MaskFind", MaskFind},
-      //    {"MaskReplace", MaskReplace},
-      //    {"Count", Count},
-      //    {"MatchOS", MatchOS},
-      //    {"MatchBuild", MatchBuild},
-      //  };
-
       public:
       //  virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
         virtual void getFields(XmlDictField** fields, size_t* nb) override { panic("BUG: This cannot be called"); };

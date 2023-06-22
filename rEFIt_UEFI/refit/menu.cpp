@@ -434,6 +434,8 @@ void FillInputs(XBool New)
 
   InputItems[InputItemsCount].ItemType = Decimal;  //130
   InputItems[InputItemsCount++].SValue.SWPrintf("%08d", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
+  InputItems[InputItemsCount].ItemType = Hex;  //131
+  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Smbios.SFakeCPU);
 
 
   //menu for drop table
@@ -1103,6 +1105,12 @@ void ApplyInputs(void)
 	  INTN Minus = 0;
 	  gSettings.Quirks.OcBooterQuirks.TscSyncTimeout = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
 	  DBG("set TscSyncTimeout=%d\n", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
+  }
+  //gSettings.Smbios.SFakeCPU
+  i++; //131
+  if (InputItems[i].Valid) {
+    gSettings.Smbios.SFakeCPU = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("set FakeCPUID=%X\n", gSettings.Smbios.SFakeCPU);
   }
 
   if (NeedSave) {
@@ -2023,6 +2031,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   SubScreen->AddMenuItemInput(78,  "Product Name:", true);
   SubScreen->AddMenuItemInput(79,  "Product Version:", true);
   SubScreen->AddMenuItemInput(80,  "Product SN:", true);
+  SubScreen->AddMenuItemInput(131, "Fake CPUID:", true);
   SubScreen->AddMenuItemInput(81,  "Board ID:", true);
   SubScreen->AddMenuItemInput(82,  "Board SN:", true);
   SubScreen->AddMenuItemInput(83,  "Board Type:", true);
@@ -2048,7 +2057,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuChooseSmbios()
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_MENU_SWITCH *InputBootArgs;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CHOOSE_SMBIOS, "SMBIOS->"_XS8);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CHOOSE_SMBIOS, NullXString8);
+  Entry->Title.SWPrintf("SMBIOS->");
 
   SubScreen->AddMenuInfoLine_f("Select SMBIOS:");
 

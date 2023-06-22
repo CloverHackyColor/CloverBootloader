@@ -69,6 +69,7 @@ XObjArray<ACPI_PATCHED_AML>     ACPIPatchedAML;
 CHAR16                          *IconFormat = NULL;
 
 SETTINGS_DATA                   gSettings;
+UINT32                          gFakeCPUID;
 
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 

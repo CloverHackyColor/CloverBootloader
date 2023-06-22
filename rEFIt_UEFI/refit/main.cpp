@@ -124,27 +124,17 @@ XBool                gThemeNeedInit  = true;
 XBool                DoHibernateWake = false;
 UINT32               mCurrentColor;
 
-//EFI_HANDLE ConsoleInHandle;
-//EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
-//EFI_KEY_DATA KeyData;
+extern UINT32         gFakeCPUID;
+
 
 EFI_HANDLE AudioDriverHandle;
 XStringW OpenRuntimeEfiName;
 
 extern void HelpRefit(void);
 extern void AboutRefit(void);
-//extern XBool BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
-
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
-
 extern EFI_DXE_SERVICES  *gDS;
 
-//#ifdef _cplusplus
-//void FreePool(const wchar_t * A)
-//{
-//  FreePool((void*)A);
-//}
-//#endif
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CONST XStringW& ImageTitle,
@@ -154,7 +144,6 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   EFI_STATUS              Status, ReturnStatus;
   EFI_HANDLE              ChildImageHandle = 0;
   UINTN                   DevicePathIndex;
-//  CHAR16                  ErrorInfo[256];
 
   DBG("Loading %ls", ImageTitle.wc_str());
   if (ErrorInStep != NULL) {
@@ -340,47 +329,7 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
   return Status;
 }
 
-/*
-static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
-                                IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
-                                IN CHAR16 *ImageTitle,
-                                OUT UINTN *ErrorInStep,
-                                OUT EFI_HANDLE *NewImageHandle)
-{
-  EFI_STATUS Status;
-  EFI_HANDLE ChildImageHandle = NULL;
 
-  Status = LoadEFIImageList(DevicePaths, ImageTitle, ErrorInStep, &ChildImageHandle);
-  if (!EFI_ERROR(Status)) {
-    Status = StartEFILoadedImage(ChildImageHandle, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
-  }
-
-  if (NewImageHandle != NULL) {
-      *NewImageHandle = ChildImageHandle;
-  }
-  return Status;
-}
-*/
-/*
-static CONST CHAR8 *SearchString(
-  IN  CONST CHAR8       *Source,
-  IN  UINT64      SourceSize,
-  IN  CONST CHAR8       *Search,
-  IN  UINTN       SearchSize
-  )
-{
-  CONST CHAR8 *End = Source + SourceSize;
-
-  while (Source < End) {
-    if (CompareMem(Source, Search, SearchSize) == 0) {
-      return Source;
-    } else {
-      Source++;
-    }
-  }
-  return NULL;
-}
- */
 #ifdef DUMP_KERNEL_KEXT_PATCHES
 void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 {
@@ -512,40 +461,7 @@ void LOADER_ENTRY::FilterBootPatches()
     }
   }
 }
-/*
-void ReadSIPCfg()
-{
-  UINT32 csrCfg = gSettings.RtVariables.CsrActiveConfig & CSR_VALID_FLAGS;
-  CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
 
-  if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
-  if (csrCfg & CSR_ALLOW_UNRESTRICTED_FS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
-  if (csrCfg & CSR_ALLOW_TASK_FOR_PID)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
-  if (csrCfg & CSR_ALLOW_KERNEL_DEBUGGER)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
-  if (csrCfg & CSR_ALLOW_APPLE_INTERNAL)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
-  if (csrCfg & CSR_ALLOW_UNRESTRICTED_DTRACE)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
-  if (csrCfg & CSR_ALLOW_UNRESTRICTED_NVRAM)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
-  if (csrCfg & CSR_ALLOW_DEVICE_CONFIGURATION)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
-  if (csrCfg & CSR_ALLOW_ANY_RECOVERY_OS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_ANY_RECOVERY_OS"));
-  if (csrCfg & CSR_ALLOW_UNAPPROVED_KEXTS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNAPPROVED_KEXTS"));
-    
-  if (StrLen(csrLog)) {
-    DBG("CSR_CFG: %ls\n", csrLog);
-  }
-
-  FreePool(csrLog);
-}
-*/
 //
 // Null ConOut OutputString() implementation - for blocking
 // text output from boot.efi when booting in graphics mode
@@ -717,7 +633,9 @@ void LOADER_ENTRY::DelegateKernelPatches()
   mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
   memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
   
-  UINT32 FakeCPU = gSettings.KernelAndKextPatches.FakeCPUID;
+  UINT32 FakeCPUID = gSettings.Smbios.SFakeCPU;
+  if (FakeCPUID != 0) gFakeCPUID = FakeCPUID;
+  DBG("Set FakeCPUID: 0x%X\n", gFakeCPUID);
 //  for (size_t Idx = 0; Idx < 4; Idx++) {
 //    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[Idx] = FakeCPU & 0xFF;
 //    mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[Idx] = 0xFF;
@@ -725,7 +643,7 @@ void LOADER_ENTRY::DelegateKernelPatches()
 //  }
   memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data));
   memset(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask, 0, sizeof(mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask));
-  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[0] = FakeCPU;
+  mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Data[0] = gFakeCPUID;
   mOpenCoreConfiguration.Kernel.Emulate.Cpuid1Mask[0] = 0xFFFFFFFF;
 
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
@@ -1499,7 +1417,7 @@ void LOADER_ENTRY::StartLoader()
     if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
-    
+    gConf.ReloadSmbios(OSName);
     DelegateKernelPatches();
 
     // Set boot argument for kernel if no caches, this should force kernel loading
@@ -1518,7 +1436,8 @@ void LOADER_ENTRY::StartLoader()
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
     CheckEmptyFB();
-    gConf.ReloadSmbios(OSName);
+
+
     SmbiosFillPatchingValues(GlobalConfig.SetTable132, GlobalConfig.EnabledCores, g_SmbiosDiscoveredSettings.RamSlotCount, gConf.SlotDeviceArray, gSettings, gCPUStructure, &g_SmbiosInjectedSettings);
     PatchSmbios(g_SmbiosInjectedSettings);
 //    DBG("PatchACPI\n");
@@ -1532,25 +1451,12 @@ void LOADER_ENTRY::StartLoader()
     //SaveOemTables();
 #endif
 //
-//  // If KPDebug is true boot in verbose mode to see the debug messages
-//  if (KernelAndKextPatches.KPDebug) {
-//    LoadOptions.AddID("-v"_XS8);
-//  }
-//
+
     DbgHeader("RestSetup macOS");
-//
-//    DBG("SetDevices\n");
     SetDevices(this);
-//    DBG("SetFSInjection\n");
-  // Jief : do we need that ?
-  //SetFSInjection();
-    //PauseForKey(L"SetFSInjection");
-//    DBG("SetVariablesForOSX\n");
     SetVariablesForOSX(this);
-//    DBG("SetVariablesForOSX\n");
 // Jief : if we want to use our FixUSBOwnership, we need our OnExitBootServices
     EventsInitialize(this);
-//    DBG("FinalizeSmbios\n");
     FinalizeSmbios(g_SmbiosInjectedSettings);
 
     SetCPUProperties(); //very special procedure
@@ -3015,14 +2921,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   MainMenu.TimeoutSeconds = gSettings.Boot.Timeout >= 0 ? gSettings.Boot.Timeout : 0;
   //DBG("LoadDrivers() start\n");
   LoadDrivers();
-  //DBG("LoadDrivers() end\n");
-
-//debugStartImageWithOC(); // ok
-
-/*  if (!gFirmwareClover &&
-      !gDriversFlags.EmuVariableLoaded) {
-    GetSmcKeys(false);  // later we can get here SMC information
-  } */
   
   Status = gBS->LocateProtocol(gEmuVariableControlProtocolGuid, NULL, (void**)&gEmuVariableControl);
   if (EFI_ERROR(Status)) {
@@ -3086,6 +2984,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
   afterGetUserSettings(gSettings);
+  gFakeCPUID = gSettings.KernelAndKextPatches.FakeCPUID;
+  DBG("Set FakeCPUID: 0x%X\n", gFakeCPUID);
 
   HaveDefaultVolume = gSettings.Boot.DefaultVolume.notEmpty();
   if (!gFirmwareClover &&
@@ -3155,7 +3055,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         DBG("Chosen theme %ls\n", ThemeX.Theme.wc_str());
       }
 
-//      DBG("initial boot-args=%s\n", gSettings.Boot.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
@@ -3241,11 +3140,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DefaultEntry = NULL;
     }
-
-//    DBG("found entries SMBIOS:\n");
-//    for (size_t i=0; i<SmbiosList.size(); i++) {
-//      DBG("%ls\n", SmbiosList[i].wc_str());
-//    }
 
     MainLoopRunning = true;
     if (DefaultEntry && (GlobalConfig.isFastBoot() ||

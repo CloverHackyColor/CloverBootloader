@@ -26,7 +26,7 @@ extern "C" {
 }
 #include "../../Platform/cpu.h"
 
-extern UINT8 default_NVCAP[]; // dependecy problem. TODO
+extern UINT8 default_NVCAP[]; // dependency problem. TODO
 extern const UINT8 default_dcfg_0[];
 extern const UINT8 default_dcfg_1[];
 
@@ -48,6 +48,7 @@ extern const UINT8 default_dcfg_1[];
 #include "ConfigPlistAbstract.h"
 #include "SMBIOSPlist.h"
 
+extern SETTINGS_DATA                  gSettings;
 
 class ConfigPlistClass : public ConfigPlistAbstractClass
 {
