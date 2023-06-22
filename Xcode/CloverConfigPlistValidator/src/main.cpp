@@ -44,7 +44,7 @@ ssize_t read_all(int fd, void* buf, size_t size)
   return size;
 }
 
-#include "../../../rEFIt_UEFI/Settings/ConfigPlist/ConfigPlistClass.h"
+#include "../../../rEFIt_UEFI/Settings/ConfigPlist/CCPVConfigPlistClass.h"
 
 void usage()
 {
