@@ -69,6 +69,10 @@ then
   cd "$SCRIPT_DIR"
 
   bios_file=("$(dirname "$qemu_path")"/bios*)
+  
+diskutil umount /dev/disk4s1
+diskutil umount /dev/disk4s2
+diskutil eject disk4
 
   "$qemu_path" \
     -L "$(dirname "$qemu_path")" \
@@ -78,16 +82,20 @@ then
     -machine q35 \
     -device ahci,id=ahi \
     -drive format=raw,id=hda,file=./disk_image_gpt.img \
+    -drive format=raw,id=hdb,file=./freedos.img \
     -usb \
     -device usb-mouse,bus=usb-bus.0,port=2 \
     -device usb-kbd,bus=usb-bus.0,port=1 \
     -serial file:./serial0_qemu_out.log \
-    -gdb tcp::9000
+    -gdb tcp::9000 
+
 
 #      -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 #      -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
 #      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
+hdiutil attach ./disk_image_gpt.img
+diskutil mount disk4s1
 
 fi
 

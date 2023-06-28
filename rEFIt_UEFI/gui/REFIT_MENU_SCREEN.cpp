@@ -961,6 +961,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         if (OldChosenAudio >= AudioList.size()) {
               OldChosenAudio = 0; //security correction
         }
+        SaveHdaDumpBin();
+        SaveHdaDumpTxt();
+
 //       DBG("OldChosenAudio=%llu\n", OldChosenAudio);
           Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
           DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
@@ -971,8 +974,8 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         break;
       case SCAN_F8:
         testSVG();
-        SaveHdaDumpBin();
-        SaveHdaDumpTxt();
+//        SaveHdaDumpBin();
+//        SaveHdaDumpTxt();
         break;
 
       case SCAN_F9:

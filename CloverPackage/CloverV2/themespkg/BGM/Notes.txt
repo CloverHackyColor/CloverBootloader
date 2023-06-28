@@ -1,5 +1,0 @@
-A theme by blackosx.
-
-- The device icons in the /icons folder with .icns extensions are all .png files.
-- All image files, except the background, have been converted to 8-bit images using pngquant (http://pngquant.org).
-

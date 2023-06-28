@@ -602,6 +602,7 @@ void testSVG()
     }
 #endif
 #if TEST_SVG_IMAGE
+
     NSVGrasterizer* rast = nsvgCreateRasterizer();
 //    EG_IMAGE        *NewImage;
     NSVGimage       *SVGimage;
