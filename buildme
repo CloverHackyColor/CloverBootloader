@@ -694,7 +694,7 @@ do
       break
     ;;
     "make pkg")
-      buildCCPV
+ #     buildCCPV
       BLC
       buildPkg
       break
@@ -713,7 +713,7 @@ do
     # ;;
     "build all")
       buildClover
-      buildCCPV
+ #     buildCCPV
       BLC
       buildPkg
       buildIso
@@ -722,7 +722,7 @@ do
     ;;
     "make Release")
       makeRelease
-      buildCCPV
+ #     buildCCPV
       BLC
       buildPkg
       buildIso
@@ -787,7 +787,7 @@ clone_OpenCorePkg
 set -e
 if [[ "$2" == ci ]]; then
   makeRelease
-  buildCCPV
+#  buildCCPV
   BLC
   buildPkg
   buildIso

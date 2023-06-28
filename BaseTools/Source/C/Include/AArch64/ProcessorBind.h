@@ -54,8 +54,9 @@
   typedef unsigned char       UINT8;
   typedef char                CHAR8;
   typedef signed char         INT8;
-
+#ifndef UINT8_MAX
   #define UINT8_MAX 0xff
+#endif
 #endif
 
 ///
