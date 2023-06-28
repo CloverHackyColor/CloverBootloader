@@ -596,14 +596,15 @@ fi
     packagesidentity="$clover_package_identity"
     choiceId="Utils"
     # Utils
-#    ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
-	ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-   # ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
-    fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
+    # ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+     ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    # ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+    # ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     #chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,clover-genconfig,partutil,espfinder}
-#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil}
-	chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{partutil}
+    # chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/partutil
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/bdmesg
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageUtilsRefId=$packageRefId
@@ -621,8 +622,6 @@ fi
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
     # Add the partutil binary as a helper to mount ESP
     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil  ${PKG_BUILD_DIR}/${choiceId}/Scripts/
-    # Add the espfinder binary as a helper to mount ESP when target is apfs, corestorage, Fusion or RAID
-    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder  ${PKG_BUILD_DIR}/${choiceId}/Scripts/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"                     \
                        --subst="CLOVER_PACKAGE_IDENTITY=$clover_package_identity"       \
                        --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
