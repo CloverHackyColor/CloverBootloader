@@ -600,11 +600,10 @@ fi
 	ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
    # ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
     ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     #chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,clover-genconfig,partutil,espfinder}
-#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil,espfinder}
-	chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{partutil,espfinder}
+#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil}
+	chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{partutil}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/bdmesg
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageUtilsRefId=$packageRefId
