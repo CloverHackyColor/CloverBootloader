@@ -131,6 +131,7 @@ DEFINE GCC49_X64_PREFIX        =  ENV(TOOLCHAIN_DIR)/cross/bin/x86_64-clover-lin
 
 DEFINE GCC53_IA32_PREFIX       = ENV(GCC53_BIN)
 DEFINE GCC53_X64_PREFIX        = ENV(GCC53_BIN)
+DEFINE GCC131_X64_PREFIX		= ENV(GCC131_BIN)
 
 DEFINE UNIX_IASL_BIN           = ENV(IASL_PREFIX)iasl
 DEFINE WIN_IASL_BIN            = ENV(IASL_PREFIX)iasl.exe
@@ -2063,7 +2064,7 @@ DEFINE GCC49_ASLCC_FLAGS             = DEF(GCC48_ASLCC_FLAGS)
 
 DEFINE GCC5_IA32_CC_FLAGS            = DEF(GCC49_IA32_CC_FLAGS) -fno-pic -fno-pie
 DEFINE GCC5_X64_CC_FLAGS             = DEF(GCC49_X64_CC_FLAGS)
-DEFINE GCC5_IA32_X64_DLINK_COMMON    = DEF(GCC49_IA32_X64_DLINK_COMMON) -Wl,--no-warn-rwx-segments
+DEFINE GCC5_IA32_X64_DLINK_COMMON    = DEF(GCC49_IA32_X64_DLINK_COMMON)
 DEFINE GCC5_IA32_X64_ASLDLINK_FLAGS  = DEF(GCC49_IA32_X64_ASLDLINK_FLAGS)
 DEFINE GCC5_IA32_X64_DLINK_FLAGS     = DEF(GCC49_IA32_X64_DLINK_FLAGS)
 DEFINE GCC5_IA32_DLINK2_FLAGS        = DEF(GCC49_IA32_DLINK2_FLAGS) -Wno-error
@@ -2086,15 +2087,34 @@ DEFINE GCC5_ASLCC_FLAGS              = DEF(GCC49_ASLCC_FLAGS) -fno-lto
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
 DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
-DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
+DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
 
 DEFINE GCC53_IA32_X64_DLINK_FLAGS    = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
-DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86_64,-znoexecstack,--oformat=elf64-x86-64,-pie
+DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86_64,--oformat=elf64-x86-64,-pie
 
 DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
+
+DEFINE GCC131_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC131_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
+DEFINE GCC131_IA32_X64_ASLDLINK_FLAGS = DEF(GCC131_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
+DEFINE GCC131_IA32_X64_DLINK_FLAGS    = DEF(GCC131_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+DEFINE GCC131_X64_DLINK_FLAGS         = DEF(GCC131_IA32_X64_DLINK_FLAGS),-melf_x86_64,-znoexecstack,--oformat=elf64-x86-64,-pie
+DEFINE GCC131_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
+DEFINE GCC131_ARM_ASM_FLAGS            = DEF(GCC49_ARM_ASM_FLAGS)
+DEFINE GCC131_AARCH64_ASM_FLAGS        = DEF(GCC49_AARCH64_ASM_FLAGS)
+DEFINE GCC131_ARM_CC_FLAGS             = DEF(GCC49_ARM_CC_FLAGS)
+DEFINE GCC131_ARM_CC_XIPFLAGS          = DEF(GCC49_ARM_CC_XIPFLAGS)
+DEFINE GCC131_AARCH64_CC_FLAGS         = DEF(GCC49_AARCH64_CC_FLAGS)
+DEFINE GCC131_AARCH64_CC_XIPFLAGS      = DEF(GCC49_AARCH64_CC_XIPFLAGS)
+DEFINE GCC131_ARM_DLINK_FLAGS          = DEF(GCC49_ARM_DLINK_FLAGS)
+DEFINE GCC131_ARM_DLINK2_FLAGS         = DEF(GCC49_ARM_DLINK2_FLAGS) -Wno-error
+DEFINE GCC131_AARCH64_DLINK_FLAGS      = DEF(GCC49_AARCH64_DLINK_FLAGS)
+DEFINE GCC131_AARCH64_DLINK2_FLAGS     = DEF(GCC49_AARCH64_DLINK2_FLAGS) -Wno-error
+DEFINE GCC131_ARM_ASLDLINK_FLAGS       = DEF(GCC49_ARM_ASLDLINK_FLAGS)
+DEFINE GCC131_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
 
 
 ####################################################################################
@@ -2426,6 +2446,63 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 RELEASE_GCC53_X64_CC_FLAGS       = DEF(GCC53_X64_CC_FLAGS) -g3 -Os -Werror
   DEBUG_GCC53_X64_CXX_FLAGS      = DEF(GCC53_X64_CC_FLAGS) -g3 -O0
 RELEASE_GCC53_X64_CXX_FLAGS      = DEF(GCC53_X64_CC_FLAGS) -g3 -Os -Werror
+
+####################################################################################
+#
+# GCC 13.1 - This configuration is used to compile under Linux/MacOSX to produce
+#           PE/COFF binaries using GCC 13.1.
+#
+####################################################################################
+*_GCC131_*_*_FAMILY               = GCC
+*_GCC131_*_*_BUILDRULEORDER       = nasm S s
+
+*_GCC131_*_MAKE_PATH                    = make
+
+*_GCC131_*_*_DLL                        = ENV(GCC131_DLL)
+
+*_GCC131_X64_GCCLINK_PREFIX             = -Wl,
+
+*_GCC131_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
+
+*_GCC131_*_NASM_PATH   		         = ENV(NASM_PREFIX)nasm
+
+*_GCC131_*_PP_FLAGS                     = DEF(GCC_PP_FLAGS)
+*_GCC131_*_ASLPP_FLAGS                  = DEF(GCC_ASLPP_FLAGS)
+*_GCC131_*_ASLCC_FLAGS                  = DEF(GCC_ASLCC_FLAGS)
+*_GCC131_*_VFRPP_FLAGS                  = DEF(GCC_VFRPP_FLAGS)
+*_GCC131_*_APP_FLAGS                    =
+*_GCC131_*_ASL_FLAGS                    = DEF(IASL_FLAGS)
+*_GCC131_*_ASL_OUTFLAGS                 = DEF(IASL_OUTFLAGS)
+
+##################
+# GCC131 X64 definitions
+##################
+*_GCC131_X64_OBJCOPY_PATH         = DEF(GCC131_X64_PREFIX)objcopy
+*_GCC131_X64_CC_PATH              = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_CXX_PATH              = DEF(GCC131_X64_PREFIX)g++
+*_GCC131_X64_SLINK_PATH           = DEF(GCC131_X64_PREFIX)gcc-ar
+*_GCC131_X64_DLINK_PATH           = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_ASLDLINK_PATH        = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_ASM_PATH             = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_PP_PATH              = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_VFRPP_PATH           = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_ASLCC_PATH           = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_ASLPP_PATH           = DEF(GCC131_X64_PREFIX)gcc
+*_GCC131_X64_RC_PATH              = DEF(GCC131_X64_PREFIX)objcopy
+
+*_GCC131_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
+*_GCC131_X64_ASLDLINK_FLAGS       = DEF(GCC48_IA32_X64_ASLDLINK_FLAGS),-m,elf_x86_64
+*_GCC131_X64_ASM_FLAGS            = DEF(GCC131_ASM_FLAGS) -m64
+*_GCC131_X64_DLINK_FLAGS          = DEF(GCC131_X64_DLINK_FLAGS) DEF(GCC131_X64_CC_FLAGS) ENV(GCC131_X64_EXTRA_CC_FLAGS)
+*_GCC131_X64_RC_FLAGS             = DEF(GCC_X64_RC_FLAGS)
+*_GCC131_X64_OBJCOPY_FLAGS        =
+*_GCC131_X64_NASM_FLAGS           = -f elf64
+
+  DEBUG_GCC131_X64_CC_FLAGS       = DEF(GCC131_X64_CC_FLAGS) -g3 -O0
+RELEASE_GCC131_X64_CC_FLAGS       = DEF(GCC131_X64_CC_FLAGS) -g3 -Os -Werror
+  DEBUG_GCC131_X64_CXX_FLAGS      = DEF(GCC131_X64_CC_FLAGS) -g3 -O0
+RELEASE_GCC131_X64_CXX_FLAGS      = DEF(GCC131_X64_CC_FLAGS) -g3 -Os -Werror
+
 
 #
 #

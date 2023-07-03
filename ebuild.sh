@@ -307,6 +307,7 @@ checkCmdlineArguments() {
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
             -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
+            -gcc131  | --gcc131)   TOOLCHAIN=GCC131   ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -x64 | --x64)
                 printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
@@ -320,12 +321,12 @@ checkCmdlineArguments() {
 #            -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
 #            -r | -release | --release) BUILDTARGET=RELEASE ;;
             -a) TARGETARCH=$(argument $option "$@")
-                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
-                sleep 4
+#                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+#                sleep 4
                 ;;
             --arch=*)
-                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
-                sleep 4
+#                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+#                sleep 4
                 ;;
             -p) PLATFORMFILE=$(argument $option "$@"); shift
                 ;;
@@ -425,8 +426,8 @@ checkToolchain() {
         exit 1
     fi
   else
-    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
-    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
+    export GCC131_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC131_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
       echo "Build it with the build_gcc9.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1

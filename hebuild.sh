@@ -40,7 +40,7 @@ M_NOGRUB=0
 M_APPLEHFS=0
 
 # Default values
-export TOOLCHAIN=GCC53
+export TOOLCHAIN=GCC131
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
@@ -307,9 +307,10 @@ checkCmdlineArguments() {
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
             -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
+            -gcc131  | --gcc131)   TOOLCHAIN=GCC131   ;;
             -x64 | --x64)
-                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
-                sleep 4
+#                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+#                sleep 4
                 ;;
             -mc | --x64-mcp)   USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
@@ -424,10 +425,10 @@ checkToolchain() {
         exit 1
     fi
   else
-    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
-    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
+    export GCC131_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC131_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
-      echo "Build it with the build_gcc9.sh script or define the TOOLCHAIN_DIR variable." >&2
+      echo "Build it with the build_gcc13.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1
     fi
   fi

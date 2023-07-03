@@ -228,10 +228,10 @@ More infos https://github.com/jief666/BootloaderChooser. ";
 // ============================================================================
 // CloverConfigPlistValidator
 // ----------------------------------------------------------------------------
-"CloverConfigPlistValidator_title" = "CloverConfigPlistValidator";
-"CloverConfigPlistValidator_description" = "CloverConfigPlistValidator by jief,
-Verify sanity of your config.plist keeps it clean and up to date.
-Installs to /usr/local/bin and will be available as 'ccpv' ";
+//"CloverConfigPlistValidator_title" = "CloverConfigPlistValidator";
+//"CloverConfigPlistValidator_description" = "CloverConfigPlistValidator by jief,
+//Verify sanity of your config.plist keeps it clean and up to date.
+//Installs to /usr/local/bin and will be available as 'ccpv' ";
 
 // ============================================================================
 // RC Scripts
