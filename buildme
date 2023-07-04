@@ -265,7 +265,7 @@ buildtestsix() {
 
   cd "${CLOVERROOT}"
   echo "[BUILD CLOVERDB]"
-  ./hebuild.sh
+  ./hebuild.sh  -t $MYTOOLCHAIN
 }
 
 buildtestsev() {
@@ -277,7 +277,7 @@ buildtestsev() {
 
   cd "${CLOVERROOT}"
   echo "[BUILD CLOVERDB]"
-  ./ebuild.sh -t GCC131 -mc
+  ./ebuild.sh -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED  -t $MYTOOLCHAIN
 }
 
 
