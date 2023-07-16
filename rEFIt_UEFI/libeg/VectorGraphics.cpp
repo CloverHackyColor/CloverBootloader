@@ -76,6 +76,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
     shapeNext = shape->next;
     while (group) {
       if (strcmp(group->id, IconNameX.c_str()) == 0) {
+        strncpy(IconImage->id, group->id, 63);
         break;
       }
       group = group->next;
