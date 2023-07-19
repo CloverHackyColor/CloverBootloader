@@ -54,6 +54,11 @@ extern "C" {
 #define kMaxIDLength 64
 #define kMaxTextLength 256
 
+
+#define NSVG_MAX_ATTR 2048
+#define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
+
+
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
   NSVG_PAINT_COLOR = 1,
@@ -135,7 +140,7 @@ typedef unsigned short NSVGclipPathIndex;
 
 typedef struct NSVGclip
 {
-  NSVGclipPathIndex* index;  // Array of clip path indices (of related NSVGimage).
+  NSVGclipPathIndex index[NSVG_MAX_CLIP_PATHS]; // Array of clip path indices (of related NSVGimage).
   NSVGclipPathIndex count;  // Number of clip paths in this set.
   char pad[6];
 } NSVGclip;
@@ -212,10 +217,8 @@ typedef struct NSVGimage
   NSVGpath* paths;        // Linked list of paths in the image.
   XBool isFont;
   NSVGclipPath* clipPaths;
+  NSVGclip clip;
 } NSVGimage;
-
-#define NSVG_MAX_ATTR 2048
-#define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
 
 enum NSVGgradientUnits {
   NSVG_USER_SPACE = 0,

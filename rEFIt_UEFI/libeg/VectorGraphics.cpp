@@ -61,16 +61,18 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   NSVGimage       *SVGimage;
   NSVGparser *p = (NSVGparser *)SVGParser;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
-  SVGimage = p->image;
+  SVGimage = p->image;  // полное изображение темы
   NSVGshape   *shape;
   NSVGgroup   *group;
-  NSVGimage   *IconImage;
+  NSVGimage   *IconImage;  // отдельная иконка, которую нужно выделить из общей кучи
   NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
+  IconImage->clip.count = 0;
   shape = SVGimage->shapes;
   shapePrev = NULL;
+//  int ClipCount = 0;
   while (shape) {
     group = shape->group;
     shapeNext = shape->next;
@@ -90,13 +92,16 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
           (Id == BUILTIN_ICON_BANNER)) {
         shape->debug = true;
       } */
-//      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
-//        shape->opacity = 0.f;
-//      }
+      int prevCount = IconImage->clip.count;
+       for (int i=0; i<shape->clip.count; i++) {
+         IconImage->clip.index[prevCount+i] = shape->clip.index[i];
+         IconImage->clip.count++;
+       }
+
+
       if (BootCampStyle && IconNameX.contains("selection_big")) {
         shape->opacity = 0.f;
       }
-//      if (strstr(shape->id, "BoundingRect") != NULL) {
       if (XString8().takeValueFrom(shape->id).contains("BoundingRect")) {
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
@@ -129,7 +134,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
       }
       shape->flags = NSVG_VIS_VISIBLE;
       // Add to tail
-//      ClipCount += shape->clip.count;
+
       if (IconImage->shapes == NULL)
         IconImage->shapes = shape;
       else
@@ -146,39 +151,37 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
     else {
       shapePrev = shape;
     }
-    shape = shapeNext;
+//    ClipCount += shape->clip.count;
+     shape = shapeNext;
   } //while shape
   shapesTail->next = NULL;
   //add clipPaths  //xxx
-  NSVGclipPath* clipPaths = SVGimage->clipPaths;
-  NSVGclipPath* clipNext = NULL;
-  while (clipPaths) {
+//  NSVGclipPath* clipPaths = SVGimage->clipPaths;
+//  NSVGclipPath* clipNext = NULL;
+//  while (clipPaths) {
     //   ClipCount += clipPaths->shapes->clip.count;
-    if (!clipPaths->shapes) {
-      break;
-    }
-    group = clipPaths->shapes->group;
-    clipNext = clipPaths->next;
-    while (group) {
- //     if (strcmp(group->id, IconNameX.c_str()) == 0) {
- //       break;
- //     }
-      if (IconNameX == XString8().takeValueFrom(group->id)) {
-        break;
-      }
-      group = group->parent;
-    }
-    if (group) {
-      DBG("found clipPaths for %s\n", IconNameX.c_str());
+//    if (!clipPaths->shapes) {
+//      break;
+//    }
+//    group = clipPaths->shapes->group;
+//    clipNext = clipPaths->next;
+//    while (group) {
+//      if (IconNameX == XString8().takeValueFrom(group->id)) {
+//        break;
+//      }
+//      group = group->parent;
+//    }
+//    if (group) {
+//      DBG("found clipPath for %s\n", IconNameX.c_str());
+//      IconImage->clipPaths = (NSVGclipPath*)AllocateCopyPool(sizeof(NSVGclipPath), SVGimage->clipPaths);
+//      break;
+//    }
+//    clipPaths = clipNext;
+//  }
+//    DBG("found %d clips for %s\n", IconImage->clip.count, IconNameX.c_str());
+//    if (IconImage->clip.count) { //Id == BUILTIN_ICON_BANNER) {
       IconImage->clipPaths = SVGimage->clipPaths;
-      break;
-    }
-    clipPaths = clipNext;
-  }
-  //  DBG("found %d clips for %s\n", ClipCount, IconName);
-  //  if (ClipCount) { //Id == BUILTIN_ICON_BANNER) {
-  //    IconImage->clipPaths = SVGimage->clipPaths;
-  //  }
+//    }
 
   float bounds[4];
   nsvg__imageBounds(IconImage, bounds);
@@ -189,23 +192,28 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
       BannerPosX = 1; //one pixel
     }
     BannerPosY = (int)(bounds[1] * Scale);
-    DBG("Banner position at parse [%lld,%lld]\n", BannerPosX, BannerPosY);
+//    DBG("Banner position at parse [%lld,%lld]\n", BannerPosX, BannerPosY);
   }
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-//    DBG("icon %s width=%f height=%f\n", IconNameX.c_str(), Width, Height);
-  int iWidth = (int)(Width + 0.5f);
-  int iHeight = (int)(Height + 0.5f);
-//  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, true, &MenuBackgroundPixel);
+  if (Height < 0 || Width < 0) {
+    nsvgDeleteRasterizer(rast);
+    return EFI_NOT_FOUND;
+  }
+ //   DBG("icon %s width=%f height=%f\n", IconNameX.c_str(), Width, Height);
+  int iWidth = ((int)(Width+0.5f) + 7) & ~0x07u;
+  int iHeight = ((int)(Height+0.5f) + 7) & ~0x07u;
+
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
     *Image = NewImage;
- //   DBG("return empty with status=%s\n", efiStrError(Status));
+//    DBG("return empty with status=%s\n", efiStrError(Status));
+    nsvgDeleteRasterizer(rast);
     return Status;
   }
   IconImage->scale = Scale;
-//    DBG("begin rasterize %s\n", IconNameX.c_str());
+//  DBG("begin rasterize %s\n", IconNameX.c_str());
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
@@ -548,7 +556,7 @@ void testSVG()
     UINT8           *FileData = NULL;
     UINTN           FileDataLength = 0;
 
-    INTN Width = 400, Height = 400;
+    INTN Width = 192, Height = 192;
 
 #if TEST_MATH
     //Test mathematique

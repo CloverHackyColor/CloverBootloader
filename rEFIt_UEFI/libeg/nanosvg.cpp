@@ -1009,13 +1009,16 @@ static void nsvg__addShape(NSVGparser* p)
   p->plist = NULL;
 
   shape->clip.count = attr->clipPathCount;
-  if (shape->clip.count > 0) {
-    shape->clip.index = (NSVGclipPathIndex*)AllocateCopyPool(attr->clipPathCount * sizeof(NSVGclipPathIndex),
-                                                             p->clipPathStack);
-    if (shape->clip.index == NULL) {
-      FreePool(shape);
-      return;
-    }
+//  if (shape->clip.count > 0) {
+//    shape->clip.index = (NSVGclipPathIndex*)AllocateCopyPool(attr->clipPathCount * sizeof(NSVGclipPathIndex),
+//                                                             p->clipPathStack);
+//    if (shape->clip.index == NULL) {
+//      FreePool(shape);
+//      return;
+//    }
+//  }
+  for (int i=0; i<shape->clip.count; i++) {
+    shape->clip.index[i] = p->clipPathStack[i];
   }
 
   nsvg__getLocalBounds(shape->bounds, shape);  //(dest, src)
@@ -1030,9 +1033,9 @@ static void nsvg__addShape(NSVGparser* p)
     shape->fill.paint.gradientLink = nsvg__createGradientLink(attr->fillGradient);
     if (shape->fill.paint.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
-      if (shape->clip.index) {
-        FreePool(shape->clip.index);
-      }
+//      if (shape->clip.index) {
+//        FreePool(shape->clip.index);
+//      }
       FreePool(shape);
       return;
     }
@@ -1059,9 +1062,9 @@ static void nsvg__addShape(NSVGparser* p)
     shape->stroke.paint.gradientLink = nsvg__createGradientLink(attr->strokeGradient);
     if (shape->stroke.paint.gradientLink == NULL) {
       shape->fill.type = NSVG_PAINT_NONE;
-      if (shape->clip.index) {
-        FreePool(shape->clip.index);
-      }
+//      if (shape->clip.index) {
+//        FreePool(shape->clip.index);
+//      }
       FreePool(shape);
       return;
     }
@@ -4416,9 +4419,11 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds)
   int count = 0;
   clipPath = image->clipPaths;
   while (clipPath != NULL) {
-    if (clipPath->index == 0) { // this is bottom image
-      //check max bound only for this image
-      count = nsvg__shapesBound(clipPath->shapes, bounds);
+    for (int i = 0; i < image->clip.count; i++) {
+      if (clipPath->index == image->clip.index[i]) {
+        count += nsvg__shapesBound(clipPath->shapes, bounds);
+        break;
+      }
     }
     clipPath = clipPath->next;
   }
@@ -4429,6 +4434,7 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds)
     bounds[2] = bounds[3] = 1.0f;
   }
 }
+
 // units like "px" is not used so just exclude it
 NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opacity)
 {
@@ -4465,11 +4471,11 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
 #if 1
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
-  DumpFloat2("image real bounds", bounds, 4);
+//  DumpFloat2("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 #endif
-   DBG("scaled width=%f height=%f\n", p->image->width, p->image->height);
+//   DBG("scaled width=%f height=%f\n", p->image->width, p->image->height);
   return p;
 }
 
@@ -4483,9 +4489,6 @@ void nsvg__deleteShapes(NSVGshape* shape)
       shape->fontFace = NULL;
       nsvg__deletePaint(&shape->fill);
       nsvg__deletePaint(&shape->stroke);
-    }
-    if (shape->clip.index) {
-      FreePool(shape->clip.index);
     }
     FreePool(shape);
     shape = snext;
@@ -4517,31 +4520,6 @@ void nsvgDelete(NSVGimage* image)
   }
   FreePool(image);
 }
-/*
- NSVGpath* nsvgDuplicatePath(NSVGpath* p)
- {
- NSVGpath* res = NULL;
 
- if (p == NULL)
- return NULL;
-
- res = (NSVGpath*)AllocateZeroPool(sizeof(NSVGpath));
- if (res == NULL) return NULL;
-
- res->pts = (float*)AllocatePool(p->npts*2*sizeof(float));
- if (res->pts == NULL) {
- FreePool(res);
- return NULL;
- }
- memcpy(res->pts, p->pts, p->npts * sizeof(float) * 2);
- res->npts = p->npts;
-
- memcpy(res->bounds, p->bounds, sizeof(p->bounds));
-
- res->closed = p->closed;
-
- return res;
- }
- */
 
 
