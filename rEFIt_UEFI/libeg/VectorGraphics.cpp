@@ -61,10 +61,10 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   NSVGimage       *SVGimage;
   NSVGparser *p = (NSVGparser *)SVGParser;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
-  SVGimage = p->image;  // полное изображение темы
+  SVGimage = p->image;  // full theme SVG image
   NSVGshape   *shape;
   NSVGgroup   *group;
-  NSVGimage   *IconImage;  // отдельная иконка, которую нужно выделить из общей кучи
+  NSVGimage   *IconImage;  // separate SVG image
   NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
 
   NSVGparser* p2 = nsvg__createParser();
@@ -72,7 +72,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   IconImage->clip.count = 0;
   shape = SVGimage->shapes;
   shapePrev = NULL;
-//  int ClipCount = 0;
+
   while (shape) {
     group = shape->group;
     shapeNext = shape->next;
@@ -97,7 +97,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
          IconImage->clip.index[prevCount+i] = shape->clip.index[i];
          IconImage->clip.count++;
        }
-
 
       if (BootCampStyle && IconNameX.contains("selection_big")) {
         shape->opacity = 0.f;
@@ -129,8 +128,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
         }
         shape = shapeNext;
         continue; //while(shape) it is BoundingRect shape
-
-//        shape->opacity = 0.3f;
       }
       shape->flags = NSVG_VIS_VISIBLE;
       // Add to tail
@@ -146,42 +143,16 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
       else {
         SVGimage->shapes = shapeNext;
       }
-//      shapePrev->next = shapeNext; //already done or null pointer
     } //the shape in the group
     else {
       shapePrev = shape;
     }
-//    ClipCount += shape->clip.count;
      shape = shapeNext;
   } //while shape
   shapesTail->next = NULL;
-  //add clipPaths  //xxx
-//  NSVGclipPath* clipPaths = SVGimage->clipPaths;
-//  NSVGclipPath* clipNext = NULL;
-//  while (clipPaths) {
-    //   ClipCount += clipPaths->shapes->clip.count;
-//    if (!clipPaths->shapes) {
-//      break;
-//    }
-//    group = clipPaths->shapes->group;
-//    clipNext = clipPaths->next;
-//    while (group) {
-//      if (IconNameX == XString8().takeValueFrom(group->id)) {
-//        break;
-//      }
-//      group = group->parent;
-//    }
-//    if (group) {
-//      DBG("found clipPath for %s\n", IconNameX.c_str());
-//      IconImage->clipPaths = (NSVGclipPath*)AllocateCopyPool(sizeof(NSVGclipPath), SVGimage->clipPaths);
-//      break;
-//    }
-//    clipPaths = clipNext;
-//  }
-//    DBG("found %d clips for %s\n", IconImage->clip.count, IconNameX.c_str());
-//    if (IconImage->clip.count) { //Id == BUILTIN_ICON_BANNER) {
-      IconImage->clipPaths = SVGimage->clipPaths;
-//    }
+
+  IconImage->clipPaths = SVGimage->clipPaths;
+
 
   float bounds[4];
   nsvg__imageBounds(IconImage, bounds);
@@ -466,8 +437,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
 {
   XImage& TextBufferXY = *TextBufferXY_ptr;
   INTN Width;
-//  UINTN i;
-//  UINTN len;
+
   NSVGparser* p;
   NSVGrasterizer* rast;
   if (!textFace[textType].valid) {
@@ -625,16 +595,7 @@ void testSVG()
       p = nsvgParse((CHAR8*)FileData, 72, 1.f);
       SVGimage = p->image;
       DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
-//      FreePool(FileData);
-/*
-      if (p->patterns && p->patterns->image) {
-        BltImageAlpha((EG_IMAGE*)(p->patterns->image),
-                      40,
-                      40,
-                      &MenuBackgroundPixel,
-                      16);
-      }
-*/
+
       // Rasterize
       XImage NewImage(Width, Height);
       if (SVGimage->width <= 0) SVGimage->width = (float)Width;
@@ -672,7 +633,7 @@ void testSVG()
         DBG("font not parsed\n");
         break;
       }
-//     NSVGfont* fontSVG = p->font;
+
       textFace[3].font = p->font;
       textFace[3].color = NSVG_RGBA(0x80, 0xFF, 0, 255);
       textFace[3].size = Height;
