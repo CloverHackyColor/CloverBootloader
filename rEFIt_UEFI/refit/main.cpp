@@ -1152,9 +1152,9 @@ void LOADER_ENTRY::StartLoader()
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "");
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel, "");
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "23");
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier, "com.apple.iokit.IOSkywalkFamily");
-
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Strategy, "Exclude");
   #endif
 
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;

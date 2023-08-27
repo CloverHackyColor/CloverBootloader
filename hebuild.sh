@@ -21,6 +21,8 @@ declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/makeiso
 declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/makeiso
 declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/makeiso
 
+startBuildEpoch=$(date -u "+%s")
+
 if [[ "$SYSNAME" == Linux ]]; then
   declare -r NUMBER_OF_CPUS=$(nproc)
 else
@@ -882,16 +884,6 @@ MainPostBuildScript() {
   echo "Generating BootSectors"
   local BOOTHFS="$CLOVERROOT"/BootHFS
   DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
-  echo "Done!"
-  stopBuildEpoch=$(date -u "+%s")
-buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
-if [[ $buildTime -gt 59 ]]; then
-    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
-else
-    timeToBuild=$(printf "%ds" $((buildTime)))
-fi
-
-printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
 
 }
 
@@ -925,3 +917,17 @@ fi
 # End:                  #
 #
 # vi: set expandtab ts=4 sw=4 sts=4: #
+
+echo "Done!"
+stopBuildEpoch=$(date -u "+%s")
+buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
+if [[ $buildTime -ge 3600 ]]; then
+	timeToBuild=$(printf "%dh%dm%ds" $((buildTime/3600)) $((buildTime/60%60)) $((buildTime%60)))
+elif [[ $buildTime -gt 59 ]]; then
+    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
+else
+    timeToBuild=$(printf "%ds" $((buildTime)))
+fi
+
+printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
+
