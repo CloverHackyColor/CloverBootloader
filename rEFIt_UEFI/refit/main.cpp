@@ -1138,6 +1138,23 @@ void LOADER_ENTRY::StartLoader()
 
     }
 
+	mOpenCoreConfiguration.Kernel.Block.Count = 1;
+	mOpenCoreConfiguration.Kernel.Block.AllocCount = 1;
+    mOpenCoreConfiguration.Kernel.Block.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Block.Values));
+    valuesSize = mOpenCoreConfiguration.Kernel.Block.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Block.Values);
+    mOpenCoreConfiguration.Kernel.Block.Values = (OC_KERNEL_BLOCK_ENTRY**)malloc(valuesSize);
+
+    memset(mOpenCoreConfiguration.Kernel.Block.Values, 0, valuesSize);
+
+    mOpenCoreConfiguration.Kernel.Block.Values[0] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(mOpenCoreConfiguration.Kernel.Block.ValueSize);
+      memset(mOpenCoreConfiguration.Kernel.Block.Values[0], 0, mOpenCoreConfiguration.Kernel.Block.ValueSize);
+      mOpenCoreConfiguration.Kernel.Block.Values[0]->Enabled = 1;
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "");
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier, "com.apple.iokit.IOSkywalkFamily");
+
   #endif
 
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
