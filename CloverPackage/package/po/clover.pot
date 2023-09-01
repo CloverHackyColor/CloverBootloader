@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover r5150\n"
-"POT-Creation-Date: 2022-12-17 13:55+0300\n"
+"Project-Id-Version: Clover r5153\n"
+"POT-Creation-Date: 2023-07-03 19:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -966,8 +966,8 @@ msgstr ""
 #, no-wrap
 msgid ""
 "CloverConfigPlistValidator by jief,\n"
-"Verify sanity of your config.plist keeps it clean and up to date.\n"
-"Installs to /usr/local/bin and will be available as 'ccpv' "
+"//Verify sanity of your config.plist keeps it clean and up to date.\n"
+"//Installs to /usr/local/bin and will be available as 'ccpv' "
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"

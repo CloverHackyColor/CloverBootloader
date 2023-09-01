@@ -13,7 +13,7 @@
 
 cd "$(dirname $0)"
 declare -r CLOVERROOT="$PWD"
-declare -r MYTOOLCHAIN=${1:-GCC53}
+declare -r MYTOOLCHAIN=${1:-GCC131}
 
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-$(dirname $CLOVERROOT)/opt/local}
 
@@ -196,7 +196,7 @@ if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
 fi
 
-echo "buildme, Clover v2.5k r$(cat vers.txt) (SHA: $lsha1)"
+echo "buildme, Clover v5 r$(cat vers.txt) (SHA: $lsha1)"
 echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
 echo
 PS3='Please enter your choice: '

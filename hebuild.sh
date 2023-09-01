@@ -21,6 +21,8 @@ declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/makeiso
 declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/makeiso
 declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/makeiso
 
+startBuildEpoch=$(date -u "+%s")
+
 if [[ "$SYSNAME" == Linux ]]; then
   declare -r NUMBER_OF_CPUS=$(nproc)
 else
@@ -308,9 +310,10 @@ checkCmdlineArguments() {
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
             -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
+            -gcc131  | --gcc131)   TOOLCHAIN=GCC131   ;;
             -x64 | --x64)
-                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
-                sleep 4
+#                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+#                sleep 4
                 ;;
             -mc | --x64-mcp)   USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
@@ -425,10 +428,10 @@ checkToolchain() {
         exit 1
     fi
   else
-    export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
-    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
+    export GCC131_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC131_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
-      echo "Build it with the build_gcc9.sh script or define the TOOLCHAIN_DIR variable." >&2
+      echo "Build it with the build_gcc13.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1
     fi
   fi
@@ -882,16 +885,6 @@ MainPostBuildScript() {
   echo "Generating BootSectors"
   local BOOTHFS="$CLOVERROOT"/BootHFS
   DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
-  echo "Done!"
-  stopBuildEpoch=$(date -u "+%s")
-buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
-if [[ $buildTime -gt 59 ]]; then
-    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
-else
-    timeToBuild=$(printf "%ds" $((buildTime)))
-fi
-
-printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
 
 }
 
@@ -925,3 +918,17 @@ fi
 # End:                  #
 #
 # vi: set expandtab ts=4 sw=4 sts=4: #
+
+echo "Done!"
+stopBuildEpoch=$(date -u "+%s")
+buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
+if [[ $buildTime -ge 3600 ]]; then
+	timeToBuild=$(printf "%dh%dm%ds" $((buildTime/3600)) $((buildTime/60%60)) $((buildTime%60)))
+elif [[ $buildTime -gt 59 ]]; then
+    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
+else
+    timeToBuild=$(printf "%ds" $((buildTime)))
+fi
+
+printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
+
