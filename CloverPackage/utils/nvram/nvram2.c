@@ -120,7 +120,12 @@ int main(int argc, char **argv)
   mach_port_t         mainPort;
   int                 argcount = 0;
 
-  result = IOMainPort(bootstrap_port, &mainPort);
+
+#if defined(MAC_OS_VERSION_12_0)
+    result = IOMainPort(bootstrap_port, &mainPort);
+#else
+	result = IOMasterPort(bootstrap_port, &mainPort);
+#endif
   if (result != KERN_SUCCESS) {
     errx(1, "Error getting the IOMainPort: %s",
         mach_error_string(result));
