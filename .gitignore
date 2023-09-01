@@ -33,6 +33,7 @@ build/
 !default.mode2v3
 !default.perspectivev3
 xcuserdata/
+project.xcworkspace/
 
 # Translation files
 CloverUpdater.strings

@@ -40,7 +40,7 @@ M_NOGRUB=0
 M_APPLEHFS=0
 
 # Default values
-export TOOLCHAIN=GCC53
+export TOOLCHAIN=GCC131
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
@@ -246,6 +246,7 @@ usage() {
     print_option_help "-llvm"      "use LLVM toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-11"
+    print_option_help "-gcc131"    "use GCC 13.1 toolchain"
     print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5 toolchain, "

@@ -82,14 +82,13 @@ diskutil eject disk4
     -machine q35 \
     -device ahci,id=ahi \
     -drive format=raw,id=hda,file=./disk_image_gpt.img \
-    -drive format=raw,id=hdb,file=./freedos.img \
     -usb \
     -device usb-mouse,bus=usb-bus.0,port=2 \
     -device usb-kbd,bus=usb-bus.0,port=1 \
     -serial file:./serial0_qemu_out.log \
     -gdb tcp::9000 
 
-
+#     -drive format=raw,id=hdb,file=./freedos.img \
 #      -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 #      -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
 #      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
