@@ -28,15 +28,11 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 
 # Building from Source
 
-`mkdir -p $HOME/src && cd $HOME/src`
-
-`git clone -q https://github.com/CloverHackyColor/CloverBootloader`
-
-`cd CloverBootloader && git submodule update --init --recursive`
-
-`cd OpenCorePkg && git checkout master && git pull`
-
-`cd ..`
-
-`./buildme`
-#
+```bash
+mkdir -p $HOME/src && cd $HOME/src
+git clone -q https://github.com/CloverHackyColor/CloverBootloader
+cd CloverBootloader && git submodule update --init --recursive
+cd OpenCorePkg && git checkout master && git pull
+cd ..
+./buildme
+```

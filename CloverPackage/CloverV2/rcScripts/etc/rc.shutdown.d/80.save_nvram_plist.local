@@ -4,7 +4,7 @@
 # dump NVRAM for UEFI Clover with EmuVariable or Legacy Clover
 #
 # Script version info
-gScriptVersion=1.16.6
+gScriptVersion=1.16.7
 #================================= GLOBAL VARS ==================================
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -44,7 +44,7 @@ fi
 # Variables
 #
 gNVRAMf=nvram.plist
-gNVRAMbuf=$(nvram -x -p)
+gNVRAMbuf=$(nvram2 -x -p)
 gNVRAMLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""

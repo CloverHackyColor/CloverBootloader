@@ -194,6 +194,7 @@ public:
   XBool KPPanicNoKextDump = XBool();
   XBool _KPAppleIntelCPUPM = XBool();
   XBool KPAppleRTC = XBool();
+  XBool BlockSkywalk = XBool();
   XBool EightApple = XBool();
   XBool KPDELLSMBIOS = XBool();  // Dell SMBIOS patch
   UINT32  FakeCPUID = UINT32();
@@ -220,6 +221,7 @@ public:
     if ( !(_KPAppleIntelCPUPM == other._KPAppleIntelCPUPM ) ) return false;
     if ( !(KPAppleRTC == other.KPAppleRTC ) ) return false;
     if ( !(EightApple == other.EightApple ) ) return false;
+    if ( !(BlockSkywalk == other.BlockSkywalk ) ) return false;
     if ( !(KPDELLSMBIOS == other.KPDELLSMBIOS ) ) return false;
     if ( !(FakeCPUID == other.FakeCPUID ) ) return false;
     if ( !(KPATIConnectorsController == other.KPATIConnectorsController ) ) return false;
@@ -240,6 +242,7 @@ public:
     KPPanicNoKextDump = other.dgetKPPanicNoKextDump();
     _KPAppleIntelCPUPM = other.dget_KPAppleIntelCPUPM();
     KPAppleRTC = other.dgetKPAppleRTC();
+    BlockSkywalk = other.dgetBlockSkywalk();
     EightApple = other.dgetEightApple();
     KPDELLSMBIOS = other.dgetKPDELLSMBIOS();
     FakeCPUID = other.dgetFakeCPUID();
