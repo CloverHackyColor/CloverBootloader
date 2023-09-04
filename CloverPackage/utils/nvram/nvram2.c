@@ -949,6 +949,7 @@ CFDictionaryRef CreateMyDictionary(void) {
     key[n++] = "gfx-saved-config-restore-status";
     key[n++] = "SkipLogo";
     key[n++] = "IASCurrentInstallPhase";
+    key[n++] = "IASInstallPhaseList";
     for ( i = 0; i < n; i++ ) {
         snprintf(name, sizeof(name), "%s:%s", gAppleNvramGuid, key[i]);
         var = CFStringCreateWithCString(NULL, key[i], kCFStringEncodingUTF8);
