@@ -120,7 +120,12 @@ int main(int argc, char **argv)
   mach_port_t         mainPort;
   int                 argcount = 0;
 
-  result = IOMainPort(bootstrap_port, &mainPort);
+
+#if defined(MAC_OS_VERSION_12_0)
+    result = IOMainPort(bootstrap_port, &mainPort);
+#else
+	result = IOMasterPort(bootstrap_port, &mainPort);
+#endif
   if (result != KERN_SUCCESS) {
     errx(1, "Error getting the IOMainPort: %s",
         mach_error_string(result));
@@ -944,6 +949,7 @@ CFDictionaryRef CreateMyDictionary(void) {
     key[n++] = "gfx-saved-config-restore-status";
     key[n++] = "SkipLogo";
     key[n++] = "IASCurrentInstallPhase";
+    key[n++] = "IASInstallPhaseList";
     for ( i = 0; i < n; i++ ) {
         snprintf(name, sizeof(name), "%s:%s", gAppleNvramGuid, key[i]);
         var = CFStringCreateWithCString(NULL, key[i], kCFStringEncodingUTF8);
