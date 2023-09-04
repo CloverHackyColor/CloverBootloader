@@ -426,15 +426,6 @@ XBool XmlLiteParser::getSimpleTagValue(const char* expectedTag, size_t expectedT
     addXmlError(generateErrors, S8Printf("Expecting a <%s> at line %d col %d", expectedTag, (*xmlParserPosition).line, (*xmlParserPosition).col));
     return false;
   }
-//  if ( *valueLength == 0 ) {
-//    return false;
-//    // todo Msg
-//  }
-//  if ( **value == '#' ) {
-//    b = skipNextTag();
-//    if ( !b ) return false;
-//    return getSimpleTagValue(expectedTag, expectedTagLength, value, valueLength, xmlParserPosition, generateErrors);
-//  }
   return true;
 }
 
@@ -463,17 +454,6 @@ printf("\n");
     currentPos = *xmlParserPosition;
     return false;
   }
-//  if ( *valueLength == 0 ) {
-//    if ( generateErrors ) addWarning(S8Printf("Expecting text for key tag at line %d col %d. SKipped\n", (*xmlParserPosition).line, (*xmlParserPosition).col));
-//    b = skipNextTag();
-//    if ( !b ) return false;
-//    return getKeyTagValue(value, valueLength, xmlParserPosition, generateErrors);
-//  }
-//  if ( **value == '#' ) {
-//    b = skipNextTag();
-//    if ( !b ) return false;
-//    return getKeyTagValue(value, valueLength, xmlParserPosition, generateErrors);
-//  }
   return true;
 }
 

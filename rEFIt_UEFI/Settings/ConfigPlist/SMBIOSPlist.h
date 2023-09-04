@@ -152,7 +152,6 @@ public:
               // Cannot happen if validate has been done properly.
               panic("invalid DDRx value");
             }
-//            XBool dgetInUse() const { return Size.isDefined() ? Size.value() > 0 : false; };
 
           };
           
@@ -193,7 +192,7 @@ public:
                 return max+1;
               };
 
-              const ModuleDictClass& dgetSoltAtIndex(size_t slotIndex) const {
+              const ModuleDictClass& dgetSlotAtIndex(size_t slotIndex) const {
                 for ( size_t idx = 0; idx < size(); ++idx ) {
                   if ( ElementAt(idx).dgetSlotIndex() == slotIndex )
                    return ElementAt(idx);
@@ -288,7 +287,6 @@ public:
         }
         const decltype(Device)::ValueType& dgetDevice() const { return Device.isDefined() ? Device.value() : Device.nullValue; };
         uint8_t dgetDeviceN() const {
-  //        if ( !Device.isDefined() ) panic("%s: invalid value. Check validate method.", __PRETTY_FUNCTION__);
           if ( !Device.isDefined() ) return 0;
           if (Device.value().isEqualIC("ATI")) {
             return 0;
@@ -528,11 +526,8 @@ public:
           }
         }
         if ( EfiVersion.isDefined() ) {
-  //        DebugLog(1, "have EfiVersion=%s\n", EfiVersion.value().c_str());
           long long int result = AsciiStrVersionToUint64(ApplePlatformDataArray[dgetModel()].efiversion, 4, 3);
           long long int result2 = AsciiStrVersionToUint64(EfiVersion.value(), 4, 3);
- //         DebugLog(1, "make uint64=%lld vs %lld\n", result, result2);
- //         DebugLog(1, "compare 1715 %c 1968\n", (result > result2)? '>':'<');
           if ( result > result2) {
             xmlLiteParser->addWarning(generateErrors, S8Printf("EfiVersion '%s' is older than default ('%s') -> ignored. Dict '%s:%d'.", EfiVersion.value().c_str(), ApplePlatformDataArray[dgetModel()].efiversion.c_str(), xmlPath.c_str(), keyPos.getLine())); // Do not set b to false : we don't want to invalidate the whole dict
             xmlLiteParser->productNameNeeded = !getProductName().isDefined();
@@ -748,12 +743,6 @@ public:
       if ( ExtendedFirmwareFeaturesMask.isDefined() ) return ExtendedFirmwareFeaturesMask.value();
       return GetExtFwFeaturesMask(dgetModel());
     };
-//    decltype(FirmwareFeatures)::ValueType dgetFirmwareFeatures() const {
-//      if ( FirmwareFeatures.isDefined() ) return FirmwareFeatures.value();
-//      return GetFwFeatures(dgetModel());
-//    };
-
-
   };
 
   SmbiosDictClass SMBIOS = SmbiosDictClass();
@@ -804,8 +793,6 @@ public:
     }
     return SMBIOS;
   };
-
-
 };
 
 

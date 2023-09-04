@@ -930,7 +930,7 @@ LoadNvramPlist(
   return Status;
 }
 
-#define SEARCH_ONLY_EFI 1
+#define SEARCH_ONLY_EFI 0
 /** Searches all volumes for the most recent nvram.plist and loads it into gNvramDict. */
 EFI_STATUS
 LoadLatestNvramPlist()
@@ -1098,17 +1098,15 @@ LoadLatestNvramPlist()
   return Status;
 }
 
-
+void PutDictToNvram(TagDict* NvramDict, size_t count, EFI_GUID& VendorGuid);
 /** Puts all vars from nvram.plist to RT vars. Should be used in CloverEFI only
  *  or if some UEFI boot uses EmuRuntimeDxe driver.
  */
-void
-PutNvramPlistToRtVars ()
+void PutNvramPlistToRtVars()
 {
 //  EFI_STATUS Status;
 //  const TagStruct*     ValTag;
-  INTN       Size;
-  const VOID       *Value;
+
   
   if (gNvramDict == NULL) {
     /*Status = */LoadLatestNvramPlist();
@@ -1120,18 +1118,50 @@ PutNvramPlistToRtVars ()
   
   DbgHeader("PutNvramPlistToRtVars");
 
+  const TagKey* keyTag;
+  const TagDict* keyDict;
+  const TagStruct* valueTag;
+  EFI_GUID VendorGuid = gEfiAppleBootGuid;
   // iterate over dict elements
   size_t count = gNvramDict->dictKeyCount(); // ok
+  DBG("dict count = %ld\n", count);
+  gNvramDict->getKeyAndValueAtIndex(0, &keyTag, &valueTag);
+  if (valueTag->isDict()) {
+
+    // this is nvram.plist version 2
+    for (size_t tagIdx = 0 ; tagIdx < count ; tagIdx++ ) {
+      if ( EFI_ERROR(gNvramDict->getKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
+        MsgLog("MALFORMED PLIST nvram.plist. A key is expected at pos : %zu\n", tagIdx);
+        continue;
+      }
+      keyDict = static_cast<const TagDict*>(valueTag);
+      // Key -> VendorGuid
+      VendorGuid.takeValueFrom(keyTag->keyStringValue());
+      size_t dictCount= keyDict->dictKeyCount();
+      DBG("got GUID: %08X-%04X-%04X...\n", VendorGuid.Data1, VendorGuid.Data2, VendorGuid.Data3);
+      PutDictToNvram(const_cast<TagDict*>(keyDict), dictCount, VendorGuid);
+      //
+    }
+  } else {
+    // there is version 1
+    PutDictToNvram(gNvramDict, count, gEfiAppleBootGuid);
+  }
+}
+
+void PutDictToNvram(TagDict* NvramDict, size_t count, EFI_GUID& VendorGuid)
+{
+  INTN        Size = 0;
+  const VOID  *Value = nullptr;
+
   for (size_t tagIdx = 0 ; tagIdx < count ; tagIdx++ )
   {
     const TagKey* keyTag;
     const TagStruct* valueTag;
-    if ( EFI_ERROR(gNvramDict->getKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
+    if ( EFI_ERROR(NvramDict->getKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
       MsgLog("MALFORMED PLIST nvram.plist. A key is expected at pos : %zu\n", tagIdx);
       continue;
     }
 
-    EFI_GUID VendorGuid = gEfiAppleBootGuid;
     // process only valid <key> tags
     if ( valueTag == NULL ) {
 //      DBG(" ERROR: ValTag is not NULL\n");
@@ -1153,41 +1183,34 @@ PutNvramPlistToRtVars ()
       continue;
     }
         
-    if (keyTag->keyStringValue() == "Boot0082"_XS8 ||
-        keyTag->keyStringValue() == "BootNext"_XS8 ) {
-      VendorGuid = gEfiGlobalVariableGuid;
-      // it may happen only in this case
-      gSettings.Boot.HibernationFixup = true;
-    }
+//    if (keyTag->keyStringValue() == "Boot0082"_XS8 ||
+//        keyTag->keyStringValue() == "BootNext"_XS8 ) {
+//      VendorGuid = gEfiGlobalVariableGuid;
+//      // it may happen only in this case
+//      gSettings.Boot.HibernationFixup = true;
+//    }
 
-  //    AsciiStrToUnicodeStrS(Tag.stringValue(), KeyBuf, 128);
-      XStringW KeyBuf = keyTag->keyStringValue();
-//      if (!gSettings.Boot.DebugLog) {
-        DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
-//      }
+
+    XStringW KeyBuf = keyTag->keyStringValue();
+    DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
+
       // process value tag
       
       if (valueTag->isString()) {
         // <string> element
         Value = (void*)valueTag->getString()->stringValue().c_str();
         Size  = valueTag->getString()->stringValue().length();
-//        if (!gSettings.Boot.DebugLog) {
-          DBG("String: Size = %llu, Val = '%s'\n", Size, valueTag->getString()->stringValue().c_str());
-//        }
+        DBG("String: Size = %llu, Val = '%s'\n", Size, valueTag->getString()->stringValue().c_str());
       } else if (valueTag->isData()) {
         
         // <data> element
         Size  = valueTag->getData()->dataLenValue();
         Value = valueTag->getData()->dataValue();
- //      if (gSettings.Boot.DebugLog) {
         DBG("Size = %llu, Data: ", Size);
         for (INTN i = 0; i < Size; i++) {
          DBG("%02hhX ", *(((UINT8*)Value) + i));
         }
- //      }
- //      if (!gSettings.Boot.DebugLog) {
         DBG("\n");
- //
       } else {
         DBG("ERROR: Unsupported tag type: %s\n", valueTag->getTypeAsXString8().c_str());
         continue;
