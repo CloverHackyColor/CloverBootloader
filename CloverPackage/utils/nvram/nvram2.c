@@ -944,7 +944,7 @@ CFDictionaryRef CreateMyDictionary(void) {
     
     CFMutableDictionaryRef dict5 = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks,
                                                              &kCFTypeDictionaryValueCallBacks);                                                            
-    CFDictionarySetValue(dict0, CFSTR(gAppleSecureBootGuid), dict5);
+    CFDictionarySetValue(dict0, CFSTR(gAppleNvramGuid), dict5);
     n=0;
     key[n++] = "gfx-saved-config-restore-status";
     key[n++] = "SkipLogo";
