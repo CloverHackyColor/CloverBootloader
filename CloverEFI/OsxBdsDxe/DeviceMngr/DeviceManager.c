@@ -2470,7 +2470,7 @@ GetDriverNameWorker (
                             BestLanguage,
                             DriverName
                             );
-  FreePool(BestLanguage);
+//  FreePool(BestLanguage); // it was not allocated
  
   return Status;
 }

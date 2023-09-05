@@ -93,6 +93,8 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define SMBIOS_TYPE_MANAGEMENT_CONTROLLER_HOST_INTERFACE 42
 #define SMBIOS_TYPE_TPM_DEVICE                           43
 #define SMBIOS_TYPE_PROCESSOR_ADDITIONAL_INFORMATION     44
+#define SMBIOS_TYPE_FIRMWARE_INVENTORY_INFORMATION       45
+#define SMBIOS_TYPE_STRING_PROPERTY_INFORMATION          46
 
 ///
 /// Inactive type is added from SMBIOS 2.2. Reference SMBIOS 2.6, chapter 3.3.43.
@@ -812,7 +814,24 @@ typedef enum {
   ProcessorUpgradeSocketBGA1528   = 0x3C,
   ProcessorUpgradeSocketLGA4189   = 0x3D,
   ProcessorUpgradeSocketLGA1200   = 0x3E,
-  ProcessorUpgradeSocketLGA4677   = 0x3F
+  ProcessorUpgradeSocketLGA4677   = 0x3F,
+  ProcessorUpgradeSocketLGA1700   = 0x40,
+  ProcessorUpgradeSocketBGA1744   = 0x41,
+  ProcessorUpgradeSocketBGA1781   = 0x42,
+  ProcessorUpgradeSocketBGA1211   = 0x43,
+  ProcessorUpgradeSocketBGA2422   = 0x44,
+  ProcessorUpgradeSocketLGA1211   = 0x45,
+  ProcessorUpgradeSocketLGA2422   = 0x46,
+  ProcessorUpgradeSocketLGA5773   = 0x47,
+  ProcessorUpgradeSocketBGA5773   = 0x48,
+  ProcessorUpgradeSocketAM5       = 0x49,
+  ProcessorUpgradeSocketSP5       = 0x4A,
+  ProcessorUpgradeSocketSP6       = 0x4B,
+  ProcessorUpgradeSocketBGA883    = 0x4C,
+  ProcessorUpgradeSocketBGA1190   = 0x4D,
+  ProcessorUpgradeSocketBGA4129   = 0x4E,
+  ProcessorUpgradeSocketLGA4710   = 0x4F,
+  ProcessorUpgradeSocketLGA7529   = 0x50
 } PROCESSOR_UPGRADE;
 
 ///

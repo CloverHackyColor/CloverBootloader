@@ -699,6 +699,10 @@ CoreLocateHandleBuffer (
   *NumberHandles = BufferSize / sizeof(EFI_HANDLE);
   if (EFI_ERROR(Status)) {
     *NumberHandles = 0;
+    if (*Buffer != NULL) {
+       CoreFreePool (*Buffer);
+       *Buffer = NULL;
+     }
   }
 
   return Status;
