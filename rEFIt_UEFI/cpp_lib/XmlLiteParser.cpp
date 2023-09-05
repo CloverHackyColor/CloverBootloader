@@ -83,11 +83,7 @@ char XmlLiteParser::getchar()
 
 char XmlLiteParser::moveForward()
 {
-//  if ( getchar() == 0 ) {
   if ( currentPos.p >= p_end ) {
-    if ( currentPos.p > p_end ) {
-      panic("BUG in xmlLiteParser. Went past the end.");
-    }
     return 0;
   }
   if ( getchar() == '\n' ) {
@@ -231,7 +227,6 @@ XBool XmlLiteParser::getNextTag(const char** tag, size_t* length, XBool* isOpeni
     }
     *length = size_t(currentPos.p - *tag);
     moveForward();
-//    moveForwardUntilSignificant();
     return true;
   }else
   if ( getchar() == '/' ) {
@@ -252,7 +247,6 @@ XBool XmlLiteParser::getNextTag(const char** tag, size_t* length, XBool* isOpeni
       return false;
     }
     moveForward();
-//    moveForwardUntilSignificant();
     *isOpeningTag = false;
     *isClosingTag = true;
     return true;

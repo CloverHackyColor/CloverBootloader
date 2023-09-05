@@ -930,7 +930,7 @@ LoadNvramPlist(
   return Status;
 }
 
-#define SEARCH_ONLY_EFI 0
+#define SEARCH_ONLY_EFI 1
 /** Searches all volumes for the most recent nvram.plist and loads it into gNvramDict. */
 EFI_STATUS
 LoadLatestNvramPlist()

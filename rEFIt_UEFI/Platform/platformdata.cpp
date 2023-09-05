@@ -155,15 +155,6 @@ const PLATFORMDATA& ApplePlatformDataArrayClass::operator [] (MacModel m)
 ApplePlatformDataArrayClass ApplePlatformDataArray;
 
 
-//const PLATFORMDATA& ApplePlatformDataArrayClass::operator [] (size_t idx)
-//{
-//  if ( idx >= sizeof(m_ApplePlatformDataArrayClass)/sizeof(m_ApplePlatformDataArrayClass[0]) ) {
-//    panic("(int)m >= sizeof(m_ApplePlatformDataArrayClass)/sizeof(m_ApplePlatformDataArrayClass[0])");
-//  }
-//  return m_ApplePlatformDataArrayClass[idx];
-//}
-
-
 // Firmware info for 10.13+
 // by Sherlocks
 uint32_t GetFwFeatures(MacModel Model)

@@ -315,7 +315,7 @@ public:
     XBool dgetKPPanicNoKextDump() const { return PanicNoKextDump.isDefined() ? PanicNoKextDump.value() : XBool(false); };
     XBool dget_KPAppleIntelCPUPM() const { return AppleIntelCPUPM.isDefined() ? AppleIntelCPUPM.value() : XBool(false); };
     XBool dgetKPAppleRTC() const { return AppleRTC.isDefined() ? AppleRTC.value() : XBool(true); };
-    XBool dgetBlockSkywalk() const { return BlockSkywalk.isDefined() ? BlockSkywalk.value() : XBool(true); };
+    XBool dgetBlockSkywalk() const { return BlockSkywalk.isDefined() ? BlockSkywalk.value() : XBool(false); };
     XBool dgetEightApple() const { return EightApple.isDefined() ? EightApple.value() : XBool(false); };
     XBool dgetKPDELLSMBIOS() const { return DellSMBIOSPatch.isDefined() ? DellSMBIOSPatch.value() : XBool(false); };
     uint32_t dgetFakeCPUID() const { return FakeCPUID.isDefined() ? FakeCPUID.value() : 0; };

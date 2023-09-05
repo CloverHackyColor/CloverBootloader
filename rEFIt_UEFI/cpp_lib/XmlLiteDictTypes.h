@@ -111,11 +111,9 @@ public:
 
   virtual XBool isTheNextTag(XmlLiteParser* xmlLiteParser) override { return xmlLiteParser->nextTagIsOpeningTag("dict"); }
 
-//  virtual XmlAbstractType& parseValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors, const XmlParserPosition &keyPos, const char *keyValue, size_t keyValueLength, XBool* keyFound);
   virtual XmlValueType* parseKeyAndValueFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors);
   virtual XBool parseFromXmlLite(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, XBool generateErrors) override;
 
-//  virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override;
 };
 
 
@@ -163,25 +161,15 @@ if ( xmlPath.startWithOrEqualToIC("/Devices/Properties"_XS8) ) {
 }
 #endif
 
-//  const char* keyValue;
-//  size_t keyValueLength;
-//  XString8 xmlSubPath;
-
   size_t n = 0;
 
   while ( !xmlLiteParser->nextTagIsClosingTag("dict") )
   {
-//    RETURN_IF_FALSE( xmlLiteParser->getKeyTagValue(&keyValue, &keyValueLength, &keyPos, true) );
-//    xmlSubPath = xmlPath;
-//    xmlSubPath.S8Catf("/%.*s", (int)keyValueLength, keyValue);
-//
+
 #ifdef JIEF_DEBUG
 XmlParserPosition valuePos = xmlLiteParser->getPosition();
 (void)valuePos;
 #endif
-//    XBool keyFound;
-//    XmlAbstractType& xmlAbstractType = parseValueFromXmlLite(xmlLiteParser, xmlSubPath, generateErrors, keyPos, keyValue, keyValueLength, &keyFound);
-
     XmlParserPosition keyPos = xmlLiteParser->getPosition();
 
     XString8 xmlSubPath = xmlPath;
@@ -223,42 +211,6 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
 }
 
 
-
-//
-//template <class _Tp> struct _XmlRepeatingDict_has_ValueType  { typedef void Typp; };
-//
-//template<class XmlValueType, typename T = void>
-//class XmlRepeatingDict : public _XmlRepeatingDict<XmlValueType, XmlValueType>
-//{
-//  using super = _XmlRepeatingDict<XmlValueType, XmlValueType>;
-//
-//  virtual void addValue(XmlValueType* xmlValueType) {
-//    super::arrayValue().AddReference(xmlValueType, true);
-//  }
-//};
-//
-//template<class XmlValueType>
-//class XmlRepeatingDict<XmlValueType, typename _XmlRepeatingDict_has_ValueType<typename XmlValueType::ValueType>::Typp> : public _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>
-//{
-//  using super = _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>;
-//
-//  virtual void addValue(XmlValueType* xmlValueType) {
-//    super::arrayValue().AddCopy(xmlValueType->value());
-//    delete xmlValueType; // TODO improve to avoid memory allocation. At least use stealValueFrom
-//  }
-//};
-//
-//
-//
-//
-
-
-
-
-
-
-
-
 template <class _Tp> _Tp&& __declval(int);
 template <class _Tp> _Tp   __declval(long);
 
@@ -290,17 +242,6 @@ class XmlRepeatingDict : public _XmlRepeatingDict<typename XmlAddKeyType::keyTyp
 };
 
 
-//
-//template<class XmkKeyType, class XmlValueType, typename T = void, typename U = void>
-//class XmlRepeatingDict : public _XmlRepeatingDict<XmkKeyType, XmlValueType, XmlValueType>
-//{
-////  using super = _XmlRepeatingDict<XmlValueType, XmlValueType>;
-////public:
-////  virtual void addValue(XmlValueType* xmlValueType, const char* keyValue, size_t keyLength) {
-////    super::valueArray.AddReference(xmlValueType, true);
-////  }
-//};
-
 template<class XmkKeyType, class XmlValueType>
 class XmlRepeatingDict<XmlAddKey<XmkKeyType, XmlValueType>> : public _XmlRepeatingDict<XmkKeyType, XmlAddKey<XmkKeyType, XmlValueType>, XmlAddKey<XmkKeyType, XmlValueType>>
 {
@@ -310,127 +251,6 @@ class XmlRepeatingDict<XmlAddKey<XmkKeyType, XmlValueType>> : public _XmlRepeati
     super::m_valueArray.AddReference(xmlValueType, true);
   }
 };
-
-
-
-//
-//template<class XmlValueType>
-//class XmlRepeatingDict<XmlValueType,
-//                       typename __xmldict__declare_void<typename XmlValueType::ValueType>::Typp
-//                      >
-//      : public _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>
-//{
-//  using super = _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>;
-////  decltype(declval<XmlValueType>().setKey()) a;
-//
-//  virtual void addValue(XmlValueType* xmlValueType, const char* keyValue, size_t keyLength) {
-//        super::valueArray.AddCopy(xmlValueType->value(), true);
-//        delete xmlValueType;
-//  }
-//};
-//
-
-
-
-
-//
-//template<class XmlClass>
-//class XmlAddKey<XmlClass, typename __xmldict__declare_void<typename XmlClass::ValueType>::Typp> : public XmlClass
-//{
-//    using super = XmlClass;
-//  private:
-//    XString8 m_key;
-////    using ValueType = MyXmlAddKey<XmlClass>;
-//
-//  public:
-//    virtual void setKey(const char* keyValue, size_t keyValueLength) {
-//      m_key.strncpy(keyValue, keyValueLength);
-//    }
-//    const XString8& key() const { return m_key; }
-//    const typename XmlClass::ValueType& value() const { return super::value(); }
-//
-////    template<class OtherXStringArrayClass>
-////    XBool operator ==(const OtherXStringArrayClass &aXStrings) const { return super::operator ==(aXStrings); }
-////  template<class OtherXStringArrayClass>
-////  XBool operator !=(const OtherXStringArrayClass &aXStrings) const { return super::operator !=(aXStrings); }
-//
-//};
-//
-//
-//
-//
-//
-//template<class XmlValueType, typename T = void, typename U = void>
-//class XmlRepeatingDict : public _XmlRepeatingDict<XmlValueType, XmlValueType>
-//{
-//  using super = _XmlRepeatingDict<XmlValueType, XmlValueType>;
-//public:
-//  virtual void addValue(XmlValueType* xmlValueType, const char* keyValue, size_t keyLength) {
-//    super::arrayValue().AddReference(xmlValueType, true);
-//  }
-//};
-//
-//template<class XmlValueType>
-//class XmlRepeatingDict<XmlValueType,
-//                       typename __xmldict__declare_void<typename XmlValueType::ValueType>::Typp
-//                      >
-//      : public _XmlRepeatingDict<XmlAddKey<XmlValueType>, XmlAddKey<XmlValueType>>
-//{
-//  using super = _XmlRepeatingDict<XmlAddKey<XmlValueType>, XmlAddKey<XmlValueType>>;
-////  decltype(declval<XmlValueType>().setKey()) a;
-//
-//  virtual void addValue(XmlAddKey<XmlValueType>* xmlValueType, const char* keyValue, size_t keyLength) {
-////    super::arrayValue().AddCopy(xmlValueType->value());
-////    delete xmlValueType; // TODO improve to avoid memory allocation. At least use stealValueFrom
-//        xmlValueType->setKey(keyValue, keyLength);
-//        super::valueArray.AddReference(xmlValueType, true);
-//  }
-//};
-//
-////
-////template<class XmlValueType>
-////class XmlRepeatingDict<XmlAddKey<XmlValueType>>
-////      : public _XmlRepeatingDict<XmlAddKey<XmlValueType>, XmlAddKey<XmlValueType>>
-////{
-////  using super = _XmlRepeatingDict<XmlAddKey<XmlValueType>, XmlAddKey<XmlValueType>>;
-////public:
-////
-//////  decltype(declval<XmlValueType>().setKey()) a;
-////  XString8Array keyArray = XString8Array();
-////
-////  virtual void addValue(XmlAddKey<XmlValueType>* xmlValueType, const char* keyValue, size_t keyLength) {
-////    xmlValueType->setKey(keyValue, keyLength);
-////    super::valueArray.AddReference(xmlValueType, true);
-////  }
-////};
-////
-////
-//
-//
-//
-////
-////
-////template<class XmlValueType>
-////class XmlRepeatingDict<XmlValueType,
-////                       typename __xmldict__declare_void<typename XmlValueType::ValueType>::Typp,
-////                       typename __xmldict__declare_void<decltype(XmlValueType().setKey(declval<const char*>(), declval<size_t>()))>::Typp
-////                      >
-////      : public _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>
-////{
-////  using super = _XmlRepeatingDict<XmlValueType, typename XmlValueType::ValueType>;
-////public:
-////
-//////  decltype(declval<XmlValueType>().setKey()) a;
-////  XString8Array keyArray = XString8Array();
-////
-////  virtual void addValue(XmlValueType* xmlValueType, const char* keyValue, size_t keyLength) {
-//////    super::arrayValue().AddCopy(xmlValueType->value());
-//////    keyArray.Add();
-////    delete xmlValueType; // TODO improve to avoid memory allocation. At least use stealValueFrom
-////  }
-////};
-////
-//
 
 
 #endif /* XmlLiteCompositeTypes_h */

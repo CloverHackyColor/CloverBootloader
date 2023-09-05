@@ -2271,35 +2271,14 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
                            IN const XStringW&             DefaultEntrySettings,
                            IN REFIT_MENU_SCREEN          *SubMenu)
 {
-//  UINTN           VolumeIndex;
-//  REFIT_VOLUME   *Volume;
-//  REFIT_DIR_ITER  SIter;
-//  REFIT_DIR_ITER *Iter = &SIter;
-//  CHAR16          PartUUID[40];
-//  XStringW        CustomPath = _CustomPath;
-
-  if ( CustomPath.isEmpty() ) panic("BUG : CustomPath is empty");
-  if ( SubMenu == NULL ) panic("BUG : this must be a sub entry");
-
-//  if (FindCustomPath && (Custom.settings.Type != OSTYPE_LINEFI) && (Custom.settings.Type != OSTYPE_LIN)) {
-////    DBG("Custom %lsentry %llu skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
-////    if (Custom.Type == 0) {
-////      DBG("Type.\n");
-////    } else {
-////      DBG("Path.\n");
-////    }
-//    return;
-//  }
+  if ( CustomPath.isEmpty() ) return;
+  if ( SubMenu == NULL ) return;
 
   if ( Custom.settings.Disabled ) {
 //    DBG("Custom %lsentry %llu skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
 
-//  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom.settings.Flags, OSFLAG_HIDDEN)) {
-//    DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-//    return;
-//  }
 
 #if 0  //if someone want to debug this
   DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
@@ -2343,51 +2322,11 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
                                 parentType, newCustomFlags, 0, {0,0,0,0}, 0, NullXImage,
                                 /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, true);
       if (Entry != NULL) {
-//        if ( Custom.settings.Settings.notEmpty() ) DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");
-//        if (!Custom.settings.CommonSettings) {
-//          Entry->Settings = DefaultEntrySettings;
-//        }
         if (OSFLAG_ISUNSET(newCustomFlags, OSFLAG_NODEFAULTMENU)) {
           Entry->AddDefaultMenu();
-//        } else if (Custom.SubEntries.notEmpty()) {
-//          UINTN CustomSubIndex = 0;
-//          // Add subscreen
-//          REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
-//          SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom.settings.Title.notEmpty()) ? Custom.settings.Title.wc_str() : CustomPath.wc_str(), Entry->DisplayedVolName.wc_str());
-//          SubScreen->TitleImage = Entry->Image;
-//          SubScreen->ID = Custom.settings.Type + 20;
-//          SubScreen->GetAnime();
-//          VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
-//          SubScreen->AddMenuInfoLine_f("Volume size: %lldMb", VolumeSize);
-//          SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToXStringW(Entry->DevicePath).wc_str());
-//          if (Guid) {
-//            SubScreen->AddMenuInfoLine_f("UUID: %s", Guid.toXString8().c_str());
-//          }
-//          SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
-//          DBG("Create sub entries\n");
-//          for (size_t CustomSubEntryIndex = 0 ; CustomSubEntryIndex < Custom.SubEntries.size() ; ++CustomSubEntryIndex ) {
-//            const CUSTOM_LOADER_SUBENTRY& CustomSubEntry = Custom.SubEntries[CustomSubEntryIndex];
-//            if ( CustomSubEntry.settings.Settings.isEmpty() ) {
-//              AddCustomSubEntry(Volume, CustomSubIndex++, CustomSubEntry.settings.Path.notEmpty() ? CustomSubEntry.settings.Path : CustomPath, CustomSubEntry, Custom.settings.Settings, SubScreen);
-//            }else{
-//              AddCustomSubEntry(Volume, CustomSubIndex++, CustomSubEntry.settings.Path.notEmpty() ? CustomSubEntry.settings.Path : CustomPath, CustomSubEntry, CustomSubEntry.settings.Settings, SubScreen);
-//            }
-//          }
-//          SubScreen->AddMenuEntry(&MenuEntryReturn, true);
-//          Entry->SubScreen = SubScreen;
         }
         SubMenu->AddMenuEntry(Entry, true);
-//        Entry->Hidden = Custom.settings.Hidden;
-//        if ( Custom.settings.Hidden ) DBG("     hiding entry because Custom.settings.Hidden\n");
       }
-//    } while (FindCustomPath && Custom.settings.Type == OSTYPE_LINEFI && Custom.settings.KernelScan == KERNEL_SCAN_ALL); // repeat loop only for kernel scanning
-
-//    // Close the kernel boot directory
-//    if (FindCustomPath && Custom.settings.Type == OSTYPE_LINEFI) {
-//      DirIterClose(Iter);
-//    }
-//  }
-
 }
 
 STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
@@ -2421,10 +2360,6 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     return;
   }
 
-//  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom.settings.Flags, OSFLAG_HIDDEN)) {
-//    DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-//    return;
-//  }
 
 #if 0  //if someone want to debug this
   DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
@@ -2733,19 +2668,12 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
           DBG("Create sub entries\n");
           for (size_t CustomSubEntryIndex = 0 ; CustomSubEntryIndex < Custom.SubEntries.size() ; ++CustomSubEntryIndex ) {
             const CUSTOM_LOADER_SUBENTRY& CustomSubEntry = Custom.SubEntries[CustomSubEntryIndex];
-//            if ( CustomSubEntry.settings.Settings.isEmpty() ) {
-              AddCustomSubEntry(Volume, CustomSubIndex++, Custom.settings.Path.notEmpty() ? Custom.settings.Path : CustomPath, Custom.settings.Type, CustomSubEntry, Custom.settings.Settings, SubScreen);
-//            }else{
-//              AddCustomSubEntry(Volume, CustomSubIndex++, CustomSubEntry.settings.Path.notEmpty() ? CustomSubEntry.settings.Path : CustomPath, CustomSubEntry, CustomSubEntry.settings.Settings, SubScreen);
-//            }
+            AddCustomSubEntry(Volume, CustomSubIndex++, Custom.settings.Path.notEmpty() ? Custom.settings.Path : CustomPath, Custom.settings.Type, CustomSubEntry, Custom.settings.Settings, SubScreen);
           }
           SubScreen->AddMenuEntry(&MenuEntryReturn, true);
           Entry->SubScreen = SubScreen;
         }
-//        if (IsSubEntry)
-//          SubMenu->AddMenuEntry(Entry, true);
-//        else
-          MainMenu.AddMenuEntry(Entry, true);
+        MainMenu.AddMenuEntry(Entry, true);
 
         Entry->Hidden = Custom.settings.Hidden;
         if ( Custom.settings.Hidden ) DBG("     hiding entry because Custom.settings.Hidden\n");
