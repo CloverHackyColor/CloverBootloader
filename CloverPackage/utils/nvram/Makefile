@@ -15,7 +15,7 @@ all: $(PROG)
 
 $(PROG): $(SRC)
 	@echo "\t[CXX] $(PROGRAM)"
-	@cc -o $(PROGRAM) $(PROGRAM).c -framework CoreFoundation -framework IOKit -Wall >/dev/null
+	#@cc -o $(PROGRAM) $(PROGRAM).c -framework CoreFoundation -framework IOKit -Wall >/dev/null
 	@mv $(PROGRAM) $(UTILSDIR)
 
 install-local: $(PROG)

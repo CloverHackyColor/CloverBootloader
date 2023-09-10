@@ -242,14 +242,16 @@ usage() {
     print_option_help "-v, --version" "print the version information and exit"
     echo
     echo "Toolchain:"
-    print_option_help "-clang"     "use XCode Clang toolchain"
-    print_option_help "-llvm"      "use LLVM toolchain"
-    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
+#    print_option_help "-clang"     "use XCode Clang toolchain"
+#    print_option_help "-llvm"      "use LLVM toolchain"
+#    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain"
-    print_option_help "-unixgcc"   "use UNIXGCC toolchain"
+#    print_option_help "-unixgcc"   "use UNIXGCC toolchain"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5-7 toolchain "
     print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
+    print_option_help "-xcode14"    "use XCode 14 toolchain"
+    print_option_help "-xcode15"    "use XCode 15 toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -266,16 +268,17 @@ usage() {
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
     print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
-    print_option_help "--genpage" "dynamically generate page table under ebda"
+ #   print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
-    print_option_help "--ext-pre" "deprecated option"
-    print_option_help "--ext-co" "deprecated option"
-    print_option_help "--ext-build" "deprecated option"
-    print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
+ #   print_option_help "--ext-pre" "deprecated option"
+ #   print_option_help "--ext-co" "deprecated option"
+ #   print_option_help "--ext-build" "deprecated option"
+ #   print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
     print_option_help "-fr, --force-rebuild" "force rebuild all targets"
+    print_option_help "-mc, --x64-mcp" " generate boot7 file with drivers using legacy BIOS functions"
     print_option_help "-nb, --no-bootfiles" "don't generate boot files"
     echo
     echo "Report bugs to     https://github.com/CloverHackyColor/CloverBootloader/issues"
@@ -303,6 +306,8 @@ checkCmdlineArguments() {
             -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
             -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
+            -xcode14  | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
+            -xcode15  | --xcode15 )  TOOLCHAIN=XCODE15 ; CLANG=1 ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;

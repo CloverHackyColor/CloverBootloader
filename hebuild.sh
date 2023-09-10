@@ -244,15 +244,17 @@ usage() {
     print_option_help "-v, --version" "print the version information and exit"
     echo
     echo "Toolchain:"
-    print_option_help "-clang"     "use XCode Clang toolchain"
-    print_option_help "-llvm"      "use LLVM toolchain"
-    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
+#    print_option_help "-clang"     "use XCode Clang toolchain"
+#    print_option_help "-llvm"      "use LLVM toolchain"
+#    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-11"
     print_option_help "-gcc131"    "use GCC 13.1 toolchain"
-    print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
-    print_option_help "-xcode"     "use XCode 3.2 toolchain"
+#    print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
+#    print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5 toolchain, "
     print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
+    print_option_help "-xcode14"     "use XCode 14 toolchain"
+    print_option_help "-xcode15"     "use XCode 15 toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -306,6 +308,8 @@ checkCmdlineArguments() {
             -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
             -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
+            -xcode14 | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
+            -xcode15 | --xcode15 )  TOOLCHAIN=XCODE15 ; CLANG=1 ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
