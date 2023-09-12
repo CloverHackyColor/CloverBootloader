@@ -965,13 +965,14 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "FakeSMC.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "IOSkywalkFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "SMCAMDProcessor.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
+//    pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
     pos = setKextAtPos(&kextArray, "SMCProcessor.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "USBPorts.kext"_XS8, pos);
