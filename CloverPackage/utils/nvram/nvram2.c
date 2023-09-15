@@ -20,7 +20,7 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 /*
-cc -o nvram nvram.c -framework CoreFoundation -framework IOKit -Wall
+clang nvram2.c -o nvram3 -framework CoreFoundation -framework IOKit -mmacosx-version-min=10.13
 */
 // https://github.com/apple-oss-distributions/system_cmds/blob/13d383ddb305dc1672243e5384ba18b58949cc2c/nvram.tproj/nvram.c
 
@@ -121,11 +121,11 @@ int main(int argc, char **argv)
   int                 argcount = 0;
 
 
-#if defined(MAC_OS_VERSION_12_0)
-    result = IOMainPort(bootstrap_port, &mainPort);
-#else
+//#if defined(MAC_OS_VERSION_12_0)
+//    result = IOMainPort(bootstrap_port, &mainPort);
+//#else
 	result = IOMasterPort(bootstrap_port, &mainPort);
-#endif
+//#endif
   if (result != KERN_SUCCESS) {
     errx(1, "Error getting the IOMainPort: %s",
         mach_error_string(result));
