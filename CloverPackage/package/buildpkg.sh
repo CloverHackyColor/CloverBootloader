@@ -607,7 +607,7 @@ fi
     # chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/partutil
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/bdmesg
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/nvram2
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/nvram2
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageUtilsRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
