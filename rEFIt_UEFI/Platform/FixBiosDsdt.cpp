@@ -1520,7 +1520,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   return len;
 }
 
-//ReplaceName(dsdt, len, "AZAL", "HDEF");
+//ReplaceName(dsdt, len, "AZAL", "HDAS");
 INTN ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
 {
   UINTN i;
@@ -2869,7 +2869,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[11], dsdt+k, 4);
             DBG("found HDMI device [0x%08X:%X] at %X and Name is %s\n",
                 HDMIADR1, HDMIADR2, devadr1, device_name[11]);
-            ReplaceName(dsdt + devadr, BridgeSize, device_name[11], "HDAU");
+            ReplaceName(dsdt + devadr, BridgeSize, device_name[11], "HDMI");
             HdauFound = true;
             break;
           }
@@ -2895,7 +2895,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
           sizeoffset = - 1 - Size;
           len = move_data(k - 1, dsdt, len, sizeoffset);
           len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
-          DBG("_DSM in HDAU already exists, dropped\n");
+          DBG("_DSM in HDMI already exists, dropped\n");
       }
     }
     root = aml_create_node(NULL);
@@ -2911,7 +2911,7 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
   DBG("HDMIADR1=%X HDMIADR2=%X\n", HDMIADR1, HDMIADR2);
   if (!HdauFound && (HDMIADR2 != 0xFFFE)) //there is no HDMI device at dsdt, creating new one
   {
-    AML_CHUNK* dev = aml_add_device(root, "HDAU");
+    AML_CHUNK* dev = aml_add_device(root, "HDMI");
     aml_add_name(dev, "_ADR");
     if (HDMIADR2) {
       if (HDMIADR2 > 0x3F)
@@ -3815,7 +3815,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const MacOsVersion& OSVersion)
       CopyMem(device_name[4], dsdt+i, 4);
       DBG("found HDA device NAME(_ADR,0x%08X) And Name is %s\n",
           HDAADR1, device_name[4]);
-      ReplaceName(dsdt, len, device_name[4], "HDEF");
+      ReplaceName(dsdt, len, device_name[4], "HDAS");
       HDAFIX = false;
       break;
     } // End HDA
@@ -3837,8 +3837,8 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const MacOsVersion& OSVersion)
 
   root = aml_create_node(NULL);
   if (HDAFIX) {
-      MsgLog("Start Add Device HDEF\n");
-      device = aml_add_device(root, "HDEF");
+      MsgLog("Start Add Device HDAS\n");
+      device = aml_add_device(root, "HDAS");
       aml_add_name(device, "_ADR");
       aml_add_dword(device, HDAADR1);
 
@@ -5550,7 +5550,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
 
   // HDA HDEF
   if (HDAFIX  && (gSettings.ACPI.DSDT.FixDsdt & FIX_HDA)) {
-    DBG("patch HDEF in DSDT \n");
+    DBG("patch HDAS in DSDT \n");
     DsdtLen = AddHDEF(temp, DsdtLen, OSVersion);
   }
 
