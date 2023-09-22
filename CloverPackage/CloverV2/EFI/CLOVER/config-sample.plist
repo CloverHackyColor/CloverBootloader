@@ -101,13 +101,13 @@
 				</dict>
 				<dict>
 					<key>Comment</key>
-					<string>Rename HDEF to AZAL</string>
+					<string>Rename AZAL  to HDAS</string>
 					<key>Disabled</key>
 					<true/>
 					<key>Find</key>
-					<data>SERFRg==</data>
-					<key>Replace</key>
 					<data>QVpBTA==</data>
+					<key>Replace</key>
+					<data>SERBUw==</data>
 				</dict>
 				<dict>
 					<key>Comment</key>
