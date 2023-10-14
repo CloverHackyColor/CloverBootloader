@@ -517,6 +517,7 @@ const radeon_card_info_t radeon_cards[] = {
   { 0x73A5,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6950XT",          kNull },
   { 0x73AF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6900XT",          kNull },
   { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
+  { 0x73DF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6700XT",          kNull },
   { 0x73EF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6650XT",          kNull },
   { 0x73FF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6600XT",          kNull },
   /*
