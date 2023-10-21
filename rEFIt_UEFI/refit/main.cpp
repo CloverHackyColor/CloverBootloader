@@ -985,6 +985,7 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "BrcmFirmwareData.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM2.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM3.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "IO80211FamilyLegacy.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "HS80211Family.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AirPortAtheros40.kext"_XS8, pos);
 
