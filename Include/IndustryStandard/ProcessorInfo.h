@@ -201,6 +201,7 @@ enum {
 #define CPU_MODEL_ALDERLAKE     0x97  /* 12h generation Alder Lake */
 #define CPU_MODEL_ROCKETLAKE    0xA7  /* 11h Rocket Lake */
 #define CPU_MODEL_RAPTORLAKE    0xB7  /* 13h Raptor Lake */
+#define CPU_MODEL_METEORLAKE    0xAA  /* 14h Meteor Lake */
 
 #define CPU_SOCKET_UNKNOWN  0x02
 #define CPU_SOCKET_PGA478   0x0F
