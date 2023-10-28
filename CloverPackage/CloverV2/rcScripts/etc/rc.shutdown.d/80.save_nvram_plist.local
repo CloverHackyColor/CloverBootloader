@@ -44,7 +44,7 @@ fi
 # Variables
 #
 gNVRAMf=nvram.plist
-gNVRAMbuf=$(nvram2 -x -p)
+gNVRAMbuf=$(/usr/local/bin/nvram2 -x -p)
 gNVRAMLogPath="${CLOVER_LOG_LOCATION}/rc.shutdown.log"
 gDisk=($(ls /dev/disk? |grep -i -o "disk[0-9]"))
 gESPList=""
