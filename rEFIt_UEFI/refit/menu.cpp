@@ -396,7 +396,7 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount].ItemType = BoolValue; //114
   InputItems[InputItemsCount++].BValue = gSettings.Graphics.RadeonDeInit;
   InputItems[InputItemsCount].ItemType = BoolValue; //115
-  InputItems[InputItemsCount++].BValue = gSettings.SystemParameters.NoCaches;
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.BlockSkywalk;
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //116 - DSDT chooser
   InputItems[InputItemsCount++].IValue = 116;
 
@@ -984,7 +984,7 @@ void ApplyInputs(void)
   }
   i++; //115
   if (InputItems[i].Valid) {
-    gSettings.SystemParameters.NoCaches = InputItems[i].BValue != 0;
+    gSettings.KernelAndKextPatches.BlockSkywalk = InputItems[i].BValue != 0;
   }
   i++; //116
   if (InputItems[i].Valid) {
@@ -1958,6 +1958,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuItemInput(47,  "AppleRTC Patch", false);
 //  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", false);
+  SubScreen->AddMenuItemInput(115,  "Block SkywalkFamily", false);
 //  SubScreen->AddMenuItemInput(115, "No Caches", false);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", false);
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
