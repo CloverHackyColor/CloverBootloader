@@ -45,19 +45,12 @@ class XArray
 	void  setSize(size_t l);
 
   //low case functions like in std::vector
-#ifdef JIEF_DEBUG
+
   const TYPE& begin() const { if ( m_len == 0 ) panic("m_len == 0"); return ElementAt(0); }
         TYPE& begin()       { if ( m_len == 0 ) panic("m_len == 0"); return ElementAt(0); }
 
   const TYPE& end() const { if ( m_len == 0 ) panic("m_len == 0"); return ElementAt(m_len - 1); }
         TYPE& end()       { if ( m_len == 0 ) panic("m_len == 0"); return ElementAt(m_len - 1); }
-#else
-        const TYPE& begin() const { if ( m_len == 0 ) return 0; return ElementAt(0); }
-              TYPE& begin()       { if ( m_len == 0 ) return 0; return ElementAt(0); }
-
-        const TYPE& end() const { if ( m_len == 0 ) return 0; return ElementAt(m_len - 1); }
-              TYPE& end()       { if ( m_len == 0 ) return 0; return ElementAt(m_len - 1); }
-#endif
 
   size_t insert(const TYPE newElement, size_t pos, size_t count = 1) { return Insert(newElement, pos, count); }
  

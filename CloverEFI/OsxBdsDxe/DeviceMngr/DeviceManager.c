@@ -2470,7 +2470,7 @@ GetDriverNameWorker (
                             BestLanguage,
                             DriverName
                             );
-//  FreePool(BestLanguage); // it was not allocated
+  FreePool(BestLanguage); // it was not allocated // Jief : it is allocated by GetBestLanguage from DriverHealthSelectBestLanguage from GetComponentNameWorker
  
   return Status;
 }

@@ -44,7 +44,7 @@
 	#define DBG(...)
 #endif
 
-#include "../Version.h"
+#include "../../Version.h"
 CONST CHAR8* CloverRevision = REVISION_STR;
 STATIC UINTN Counter = 0;
 

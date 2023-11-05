@@ -57,18 +57,10 @@ protected:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   void stealValueFrom(T* p, IntegralType count, IntegralType allocatedSize) {
     if ( count < 0 ) {
-#ifdef JIEF_DEBUG
       panic("XBuffer::stealValueFrom : count < 0. System halted\n");
-#else
-      return;
-#endif
     }
     if ( allocatedSize < count ) {
-#ifdef JIEF_DEBUG
       panic("XBuffer::stealValueFrom : allocatedSize < count. System halted\n");
-#else
-      return;
-#endif
     }
     if( _WData ) free(_WData);
     m_allocatedSize = allocatedSize;

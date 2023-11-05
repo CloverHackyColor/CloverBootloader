@@ -22,7 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Hotkey.h"
 #include "HwErrRecSupport.h"
 //#include "CpuDxe.h"
-#include "../Version.h"
+#include "../../Version.h"
 
 #define PERF_DATA_MAX_LENGTH    0x4000
 

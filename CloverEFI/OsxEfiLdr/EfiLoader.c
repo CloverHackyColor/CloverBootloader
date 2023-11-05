@@ -24,7 +24,7 @@ Revision History:
 #include "PeLoader.h"
 #include "LzmaDecompress.h"
 //#include "TianoDecompress.h"
-#include "../Version.h"
+#include "../../Version.h"
 
 EFILDR_LOADED_IMAGE    DxeCoreImage;
 EFILDR_LOADED_IMAGE    DxeIplImage;
