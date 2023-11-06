@@ -336,7 +336,7 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
   TagDict*     ThemeDict = NULL;
-  CHAR8      *ThemePtr = NULL;
+  UINT8      *ThemePtr = NULL;
   UINTN      Size      = 0;
 
   if (TestTheme.isEmpty()) {
@@ -358,9 +358,9 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
   }
 
   if (!EFI_ERROR(Status)) {
-    Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+    Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, &ThemePtr, &Size);
     if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-      Status = ParseSVGXTheme(ThemePtr);
+      Status = ParseSVGXTheme(ThemePtr, Size);
       if (EFI_ERROR(Status)) {
         ThemeDict = NULL;
       } else {
@@ -374,7 +374,7 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
     } else {
       Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
       if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-        Status = ParseXML(ThemePtr, &ThemeDict, 0);
+        Status = ParseXML((CHAR8*)ThemePtr, &ThemeDict, 0);
         if (EFI_ERROR(Status)) {
           ThemeDict = NULL;
         }

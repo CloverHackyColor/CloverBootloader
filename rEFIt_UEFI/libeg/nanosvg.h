@@ -58,6 +58,10 @@ extern "C" {
 #define NSVG_MAX_ATTR 2048
 #define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
 
+#define NANOSVG_MEMORY_ALLOCATION_TRACE
+#ifdef JIEF_DEBUG
+#define NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
+#endif
 
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
@@ -162,7 +166,7 @@ typedef struct NSVGgroup
   char id[kMaxIDLength];
   struct NSVGgroup* parent;      // Pointer to parent group or NULL
   struct NSVGgroup* next;      // Pointer to next group or NULL
-  struct NSVGshape* shapeList; // list of shapes inside the group
+//  struct NSVGshape* xshapeList; // list of shapes inside the group
   int visibility;
 } NSVGgroup;
 
@@ -440,6 +444,24 @@ typedef struct NSVGparser
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
 } NSVGparser;
 
+#include "../cpp_foundation/XArray.h"
+#include "../cpp_foundation/XObjArray.h"
+extern XArray<uintptr_t> allocatedPtr;
+extern XObjArray<XString8> allocatedPtrMsg;
+
+#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE
+extern int nvsg__memoryallocation_verbose;
+void* nsvg__alloc(UINTN size, const XString8& msg);
+void* nsvg__alloczero(UINTN size, const XString8& msg);
+void* nsvg__alloccopy(UINTN size, const void* ref, const XString8& msg);
+void* nsvg__realloc(UINTN oldsize, UINTN newsize, void* ref, const XString8& msg);
+void nsvg__delete(void* buffer, const XString8& msg);
+size_t nsvg__nbDanglingPtr();
+void nsvg__outputDanglingPtr();
+
+#endif
+
+bool isShapeInGroup(NSVGshape* shape, const char* groupName);
 
 //---
 

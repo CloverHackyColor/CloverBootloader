@@ -211,15 +211,35 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   return EFI_SUCCESS;
 }
 
-EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
+EFI_STATUS XTheme::ParseSVGXTheme(UINT8* buffer, UINTN Size)
 {
   EFI_STATUS      Status;
 
   Icons.setEmpty();
 
+#if 1 && defined(NANOSVG_MEMORY_ALLOCATION_TRACE)
+if ( nsvg__nbDanglingPtr() > 0 ) {
+  DBG("There is already dangling ptr. nano svg memory leak test not done\n");
+}else{
+  char* buffer2 = (char*)malloc(Size);
+  memcpy(buffer2, buffer, Size);
+  nvsg__memoryallocation_verbose = false;
+  SVGParser = nsvgParse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works // Jief : NEVER cast const to not const. Just change the parameter to not const !!! Nothing better to deceive.
+//  nsvg__deleteParser(SVGParser);
+  if ( nsvg__nbDanglingPtr() > 0 ) {
+    nsvg__outputDanglingPtr();
+    nvsg__memoryallocation_verbose = true; // there leaks. Activate verbose
+  }else{
+    nvsg__memoryallocation_verbose = false; // be sure that nvsg__memoryallocation_verbose is false, as it seems there is no memory leaks
+  }
+}
+#else
+  (void)Size;
+#endif
+
   // --- Parse theme.svg --- low case
   NSVGparser   *mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works
-  SVGParser = (void *)mainParser; //store the pointer for future use
+  SVGParser = mainParser; //store the pointer for future use
   NSVGimage    *SVGimage = mainParser->image;
   if (!SVGimage) {
  //   DBG("Theme not parsed!\n");
@@ -465,7 +485,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   if (!p) {
     return 0;
   }
-  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  NSVGtext* text = (NSVGtext*)nsvg__alloczero(sizeof(NSVGtext), "renderSVGtext"_XS8); // use nsvg__alloczero method so it won't panic when it's freed.
   if (!text) {
     return 0;
   }

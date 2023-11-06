@@ -1,6 +1,7 @@
 #if !defined(__XTHEME_H__)
 #define __XTHEME_H__
 
+#include "nanosvg.h"
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
 #include "../Settings/Self.h"
@@ -145,7 +146,7 @@ public:
 
   XCinema Cinema;
 
-  void *SVGParser;
+  NSVGparser* SVGParser;
   
   void Init();
   XTheme(); //default constructor
@@ -184,7 +185,7 @@ public:
   void FillByDir();
   EFI_STATUS GetThemeTagSettings(const TagDict* DictPointer);
   void parseTheme(void* p, char** dict); //in nano project
-  EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
+  EFI_STATUS ParseSVGXTheme(UINT8* buffer, UINTN Size); // in VectorTheme
   EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image, void **SVGIcon);
   TagDict* LoadTheme(const XStringW& TestTheme); //return TagStruct* why?
   EFI_STATUS LoadSvgFrame(INTN i, OUT XImage* XFrame); // for animation
