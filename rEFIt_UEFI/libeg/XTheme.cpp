@@ -513,7 +513,7 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
     BadgeOffsetY = GetPropertyAsInteger(Prop, BadgeOffsetY);
 
     Prop = Dict->propertyForKey("Scale");
-    ThemeX->BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
+    BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
   }
 
   Dict = DictPointer->dictPropertyForKey("Origination");

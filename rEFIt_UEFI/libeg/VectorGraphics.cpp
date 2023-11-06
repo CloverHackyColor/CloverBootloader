@@ -81,7 +81,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
         strncpy(IconImage->id, group->id, 63);
         break;
       }
-      group = group->next;
+      group = group->parent;
     }
     if (group) { //the shape is in the group
       // keep this sample for debug purpose
@@ -105,7 +105,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
-  //      DBG("parsed bounds: %f, %f\n", IconImage->width, IconImage->height);
+        DBG("parsed bounds: %f, %f\n", IconImage->width, IconImage->height);
         if ( IconImage->height < 1.f ) {
           IconImage->height = 200.f;
         }
@@ -227,8 +227,8 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
   SVGParser = nsvgParse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works // Jief : NEVER cast const to not const. Just change the parameter to not const !!! Nothing better to deceive.
 //  nsvg__deleteParser(SVGParser);
   if ( nsvg__nbDanglingPtr() > 0 ) {
-    nsvg__outputDanglingPtr();
-    nvsg__memoryallocation_verbose = true; // there leaks. Activate verbose
+//    nsvg__outputDanglingPtr();
+//    nvsg__memoryallocation_verbose = true; // there leaks. Activate verbose
   }else{
     nvsg__memoryallocation_verbose = false; // be sure that nvsg__memoryallocation_verbose is false, as it seems there is no memory leaks
   }

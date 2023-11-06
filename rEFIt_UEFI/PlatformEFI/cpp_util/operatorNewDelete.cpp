@@ -17,6 +17,7 @@ void* operator new(unsigned long count)
 		DebugLog(2, "AllocatePool(%lu) returned NULL. Cpu halted\n", count);
 		CpuDeadLoop();
 	}
+//  MemLogf(false, 0, "operator new(%lu) %llx\n", count, uintptr_t(ptr));
 	return ptr;
 }
 
@@ -31,14 +32,22 @@ void* operator new[](unsigned long count)
     DebugLog(2, "AllocatePool(%lu) returned NULL. Cpu halted\n", count);
     CpuDeadLoop();
   }
+//  MemLogf(false, 0, "operator new[](%lu) %llx\n", count, uintptr_t(ptr));
   return ptr;
 }
+
+uint64_t operator_delete_count1 = 0;
+uint64_t operator_delete_count2 = 0;
+uint64_t operator_delete_count3 = 0;
+
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4577)
 #endif
 void operator delete  ( void* ptr ) noexcept
 {
+//  ++operator_delete_count1;
+//  MemLogf(false, 0, "operator delete(%llx) %lld\n", uintptr_t(ptr), operator_delete_count1);
 	return FreePool(ptr);
 }
 
@@ -48,6 +57,8 @@ void _cdecl operator delete (void * ptr, unsigned __int64 count)
 void operator delete (void * ptr, UINTN count)
 #endif
 {
+//  ++operator_delete_count2;
+//  MemLogf(false, 0, "operator delete(%llx, %lld) %lld\n", uintptr_t(ptr), count, operator_delete_count2);
   return FreePool(ptr);
 }
 
@@ -58,6 +69,8 @@ void _cdecl operator delete[](void * ptr, unsigned __int64 count)
 void operator delete[](void * ptr, UINTN count)
 #endif
 {
+//  ++operator_delete_count3;
+//  MemLogf(false, 0, "operator delete[](%llx, %lld) %lld\n", uintptr_t(ptr), count, operator_delete_count3);
   return FreePool(ptr);
 }
 

@@ -50,6 +50,7 @@
 #define DBG(...)
 #else
 #define DBG(...) DebugLog(DEBUG_SVG, __VA_ARGS__)
+//#define DEBUG_TRACE
 #endif
 
 
@@ -253,6 +254,9 @@ static void nsvg__addPathPoint(NSVGrasterizer* r, NSVGpoint* pt, float* t, int f
 
 static void nsvg__appendPathPoint(NSVGrasterizer* r, NSVGpoint* pt)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__appendPathPoint\n");
+#endif
   if (r->npoints+1 > r->cpoints) {
     int OldSize = r->cpoints * sizeof(NSVGpoint);
     r->cpoints = r->cpoints > 0 ? r->cpoints * 2 : 64;
@@ -268,6 +272,9 @@ static void nsvg__appendPathPoint(NSVGrasterizer* r, NSVGpoint* pt)
 
 static void nsvg__duplicatePoints(NSVGrasterizer* r)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__duplicatePoints\n");
+#endif
   if (r->npoints > r->cpoints2) {
     int OldSize = r->cpoints2 * sizeof(NSVGpoint);
     r->cpoints2 = r->npoints;
@@ -287,6 +294,9 @@ static void nsvg__duplicatePoints(NSVGrasterizer* r)
 
 static void nsvg__addEdge(NSVGrasterizer* r, float x0, float y0, float x1, float y1)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__addEdge\n");
+#endif
   NSVGedge* e;
 
   // Skip horizontal edges
@@ -352,6 +362,9 @@ static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, flo
 
 static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int type)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__flattenCubicBez2\n");
+#endif
   float ax, ay, bx, by, cx, cy, dx, dy;
   float x1, y1, x2, y2, x3, y3, x4, y4;
   //  float pointX, pointY;
@@ -435,6 +448,9 @@ static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int ty
 
 static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__flattenShape\n");
+#endif
   int i, j;
   NSVGpath* path;
   NSVGpoint pt;
@@ -500,6 +516,9 @@ static void nsvg__buttCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, 
 
 static void nsvg__squareCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p, float dx, float dy, float lineWidth, int connect)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__squareCap\n");
+#endif
   float w = lineWidth * 0.5f;
   float px = p->x - dx*w, py = p->y - dy*w;
   float dlx = dy, dly = -dx;
@@ -522,6 +541,9 @@ static void nsvg__squareCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 
 static void nsvg__roundCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p, float dx, float dy, float lineWidth, int ncap, int connect)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__roundCap\n");
+#endif
 
   float w = lineWidth * 0.5f;
   float px = p->x, py = p->y;
@@ -558,6 +580,9 @@ static void nsvg__roundCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right,
 
 static void nsvg__bevelJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0, NSVGpoint* p1, float lineWidth)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__bevelJoin\n");
+#endif
   float w = lineWidth * 0.5f;
   float dlx0 = p0->dy, dly0 = -p0->dx;
   float dlx1 = p1->dy, dly1 = -p1->dx;
@@ -578,6 +603,9 @@ static void nsvg__bevelJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 
 static void nsvg__miterJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0, NSVGpoint* p1, float lineWidth)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__miterJoin\n");
+#endif
   float w = lineWidth * 0.5f;
   float dlx0 = p0->dy, dly0 = -p0->dx;
   float dlx1 = p1->dy, dly1 = -p1->dx;
@@ -614,6 +642,9 @@ static void nsvg__miterJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 
 static void nsvg__roundJoin(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p0, NSVGpoint* p1, float lineWidth, int ncap)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__roundJoin\n");
+#endif
   int n;
   float w = lineWidth * 0.5f;
   float dlx0 = p0->dy, dly0 = -p0->dx;
@@ -676,6 +707,9 @@ static int nsvg__curveDivs(float r, float arc, float tol)
 
 static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints, int closed, int lineJoin, int lineCap, float lineWidth)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__expandStroke\n");
+#endif
   int ncap = nsvg__curveDivs(lineWidth*0.5f, NSVG_PI, r->tessTol);  // Calculate divisions per half circle.
   NSVGpoint left = {0,0,0,0,0,0,0,0,{0,0,0}}, right = {0,0,0,0,0,0,0,0,{0,0,0}}, firstLeft = {0,0,0,0,0,0,0,0,{0,0,0}}, firstRight = {0,0,0,0,0,0,0,0,{0,0,0}};
   NSVGpoint* p0, *p1;
@@ -747,6 +781,9 @@ static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints
 
 static void nsvg__prepareStroke(NSVGrasterizer* r, float miterLimit, int lineJoin)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__prepareStroke\n");
+#endif
 
   NSVGpoint *p0, *p1;
 
@@ -804,6 +841,9 @@ static void nsvg__prepareStroke(NSVGrasterizer* r, float miterLimit, int lineJoi
 
 static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float* xform)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__flattenShapeStroke\n");
+#endif
   int closed;
   NSVGpath* path;
   NSVGpoint* p0, *p1;
@@ -1007,6 +1047,9 @@ static void nsvg__fillScanline(UINT8* scanline, int len, int x0, int x1, int max
 // are wrong, or if the user supplies a too-small bitmap
 static void nsvg__fillActiveEdges(UINT8* scanline, int len, NSVGactiveEdge* e, int maxWeight, int* xmin, int* xmax, char fillRule)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__fillActiveEdges\n");
+#endif
   // non-zero winding fill
   int x0 = 0, w = 0;
 
@@ -1080,6 +1123,9 @@ static void nsvg__scanlineBit(
                               UINT8* row, int count, UINT8* cover, int x, int y,
                               /*   float tx, float ty, float scalex, float scaley, */ NSVGcachedPaint* cache)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__scanlineBit\n");
+#endif
     //xxx where is security check that x/8 and (x+count)/8 is inside row[] index?
     // called by       r->fscanline(&r->bitmap[y * r->stride], xmax-xmin+1, &r->scanline[xmin], xmin, y,/* tx,ty, scalex, scaley, */ cache);
   int x1 = x + count;
@@ -1091,6 +1137,9 @@ static void nsvg__scanlineBit(
 static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int y,
                                 /*  float tx, float ty, float scalex, float scaley, */ NSVGcachedPaint* cache)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__scanlineSolid\n");
+#endif
   //  static int once = 0;
   UINT8* dst = row + x*4;
   if (cache->type == NSVG_PAINT_COLOR) {
@@ -1345,6 +1394,9 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
                                        /* float tx, float ty, float scalex, float scaley, */
                                        NSVGcachedPaint* cache, char fillRule, NSVGclip* clip)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__rasterizeSortedEdges\n");
+#endif
   NSVGactiveEdge *active = NULL;
 
   int e = 0;
@@ -1444,6 +1496,9 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
 
 static void nsvg__unpremultiplyAlpha(UINT8* image, int w, int h, int stride)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__unpremultiplyAlpha\n");
+#endif
 
   // Unpremultiply
   for (int y = 0; y < h; y++) {
@@ -1503,6 +1558,9 @@ static void nsvg__unpremultiplyAlpha(UINT8* image, int w, int h, int stride)
 
 static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape* shape, float *xformShape)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__initPaint\n");
+#endif
 
   NSVGgradient* grad = paint->paint.gradient;
 
@@ -1591,6 +1649,9 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
                                   UINT8* dst, int w, int h, int stride,
                                   NSVGscanlineFunction fscanline)
 {
+#ifdef DEBUG_TRACE
+ DBG("nsvg__rasterizeShapes %s %f %f %f %f\n", groupName ? groupName : "", tx, ty, scalex, scaley);
+#endif
   NSVGshape *shape = NULL, *shapeLink = NULL;
   float xform[6], xform2[6];
   float min_scale = fabsf(scalex) < fabsf(scaley) ? fabsf(scalex) : fabsf(scaley);
@@ -1653,6 +1714,9 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
 static void renderShape(NSVGrasterizer* r,
                         NSVGshape* shape, float *xform, float min_scale)
 {
+#ifdef DEBUG_TRACE
+ DBG("render shape %s %f %f %f %f %f %f\n", shape->id, xform[0], xform[1], xform[2], xform[3], xform[4], xform[5]);
+#endif
   NSVGedge *e = NULL;
   NSVGcachedPaint cache;
 

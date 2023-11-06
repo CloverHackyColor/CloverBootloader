@@ -164,9 +164,7 @@ typedef struct NSVGpattern {
 typedef struct NSVGgroup
 {
   char id[kMaxIDLength];
-  struct NSVGgroup* parent;      // Pointer to parent group or NULL
-  struct NSVGgroup* next;      // Pointer to next group or NULL
-//  struct NSVGshape* xshapeList; // list of shapes inside the group
+  struct NSVGgroup* parent;      // Pointer to next group or NULL
   int visibility;
 } NSVGgroup;
 
@@ -413,7 +411,7 @@ typedef struct NSVGparser
   float* pts;
   int npts;
   int cpts;
-  NSVGpath* plist;
+  NSVGpath* pathList;
   NSVGimage* image;
   NSVGstyles* styles;
   NSVGgradientData* gradients;
@@ -458,7 +456,6 @@ void* nsvg__realloc(UINTN oldsize, UINTN newsize, void* ref, const XString8& msg
 void nsvg__delete(void* buffer, const XString8& msg);
 size_t nsvg__nbDanglingPtr();
 void nsvg__outputDanglingPtr();
-
 #endif
 
 bool isShapeInGroup(NSVGshape* shape, const char* groupName);

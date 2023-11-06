@@ -34,8 +34,8 @@ const char* efiStrError(EFI_STATUS Status)
 {
   size_t size = stdio_static_buf.allocatedSize();
   UINTN n = 0;
-  n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%r", Status);
-  while ( n > size - 2 )
+  n = AsciiSPrint(stdio_static_buf.dataSized(size-1), size-1, "%r", Status); // dataSized(size)-1 is important to avoid stdio_static_buf grow by 1 at each call.
+  while ( n > size - 3 )
   {
     size += 10;
     n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%r", Status);

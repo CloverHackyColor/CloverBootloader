@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <Library/MemoryAllocationLib.h>
+#include <Library/MemLogLib.h>
 
 #ifdef __cplusplus
 }
@@ -21,16 +22,21 @@ void abort(void);
 
 inline void* malloc(size_t size)
 {
-  return AllocatePool(size);
+  void* ptr = AllocatePool(size);
+//  MemLogf(false, 0, "malloc(%zd) %llx\n", size, uintptr_t(ptr));
+  return ptr;
 }
 
 inline void* reallocWithOldSize(void *ptr, size_t newsize, size_t oldsize) // not the posix realloc. For EFI we need oldsize
 {
-  return ReallocatePool(oldsize, newsize, ptr);
+  void* newptr = ReallocatePool(oldsize, newsize, ptr);
+//  MemLogf(false, 0, "reallocWithOldSize(%llx %zd %zd) %llx\n", uintptr_t(ptr), newsize, oldsize, uintptr_t(newptr));
+  return newptr;
 }
 
 inline void free(void *ptr)
 {
+//  MemLogf(false, 0, "free(%llx)\n", uintptr_t(ptr));
   FreePool(ptr);
 }
 

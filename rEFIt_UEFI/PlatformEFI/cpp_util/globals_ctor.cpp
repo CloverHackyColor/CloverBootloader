@@ -64,7 +64,7 @@ void construct_globals_objects(EFI_HANDLE ImageHandle)
       ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
       ctor_ptr* ctorEnd = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
       DBG("currentBegin %llX, ctorEnd %llX, %lld ctors to call\n", (UINTN)(currentCtor), (UINTN)(ctorEnd), (UINTN)(ctorEnd-currentCtor));
-      size_t i = 0;
+      size_t i = 0; (void)i; // avoid warning if DBG is an empty macro
       while (currentCtor < ctorEnd)
       {
         DBG("[%03zu] &ctor %08llX, will call %08llX\n", i, (UINTN)(currentCtor), (UINTN)(*currentCtor));

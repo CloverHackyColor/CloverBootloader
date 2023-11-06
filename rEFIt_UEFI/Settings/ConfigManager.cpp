@@ -555,9 +555,9 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   } else {
 
   }
-
+#ifndef JIEF_DEBUG
   if ( !parsingOk || xmlLiteParser.getXmlParserMessageArray().size() - xmlLiteParser.getXmlParserInfoMessageCount() > 0 ) gBS->Stall(3000000); // 3 seconds delay
-
+#endif
 return Status;
 }
 

@@ -125,10 +125,14 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size);
 
 
 
-
 extern XBool haveError;
 
 
 #endif // __cplusplus
+
+
+extern "C" {
+void displayFreeMemory(const XString8& prefix);
+}
 
 #endif // _UTILS_H_

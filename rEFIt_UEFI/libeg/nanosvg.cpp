@@ -735,7 +735,7 @@ void nsvg__deleteParser(NSVGparser* p)
   if (p != NULL) {
     nsvg__deleteStyles(p->styles);
     nsvg__deleteSymbols(p->symbols);
-    nsvg__deletePaths(p->plist);
+    nsvg__deletePaths(p->pathList);
     nsvg__deleteGradientData(p->gradients);
     // do not delete font here, as we free all fonts later by following fontsdb
 
@@ -750,12 +750,12 @@ void nsvg__deleteParser(NSVGparser* p)
         attr->fontFace = NULL;
       }
       while (attr->group) {
-        NSVGgroup* group = attr->group->next;
+        NSVGgroup* group = attr->group->parent;
         nsvg__delete(attr->group, "nsvg__deleteParser3"_XS8);
         attr->group = group;       
       }
     }
-    FreePool(p);
+    nsvg__delete(p, "nsvg__deleteParser4"_XS8);
   }
 }
 
@@ -1098,7 +1098,7 @@ static void nsvg__addShape(NSVGparser* p)
   NSVGshape* shape;
 //  int i;
 
-  if (p->plist == NULL /*&& !p->isText*/ )
+  if (p->pathList == NULL /*&& !p->isText*/ )
     return;
 
   shape = (NSVGshape*)nsvg__alloczero(sizeof(NSVGshape), S8Printf("nsvg__addShape %s", attr->id));
@@ -1121,8 +1121,8 @@ static void nsvg__addShape(NSVGparser* p)
   shape->opacity = attr->opacity;
   memcpy(shape->xform, attr->xform, sizeof(float)*6);
 
-  shape->paths = p->plist;
-  p->plist = NULL;
+  shape->paths = p->pathList;
+  p->pathList = NULL;
 
   shape->clip.count = attr->clipPathCount;
 //  if (shape->clip.count > 0) {
@@ -1273,8 +1273,8 @@ static void nsvg__addPath(NSVGparser* p, char closed, const char* fromWhere)
       path->bounds[3] = nsvg__maxf(path->bounds[3], bounds[3]);
     }
   }
-  path->next = p->plist;
-  p->plist = path;
+  path->next = p->pathList;
+  p->pathList = path;
   return;
 }
 
@@ -3191,7 +3191,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
  //         DBG("set help_night->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       }
-      group = group->next;
+      group = group->parent;
     }
   }
 
@@ -3663,7 +3663,6 @@ static void nsvg__parseSymbol(NSVGparser* p, char** dict)
 
 static void nsvg__parseGroup(NSVGparser* p, char** dict)
 {
-  NSVGgroup* group;
   NSVGattrib* oldAttr = nsvg__getAttr(p);
   nsvg__pushAttr(p);
   NSVGattrib* curAttr = nsvg__getAttr(p);
@@ -3673,7 +3672,7 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
     return;
   }
   //  DBG("parse group\n");
-  group = (NSVGgroup*)nsvg__alloczero(sizeof(NSVGgroup), "nsvg__parseGroup"_XS8);
+  NSVGgroup* group = (NSVGgroup*)nsvg__alloczero(sizeof(NSVGgroup), "nsvg__parseGroup"_XS8);
 
   //  if (curAttr->id[0] == '\0') //skip anonymous groups
   //    return;
@@ -3691,13 +3690,13 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   //  DBG("parsed groupID=%s\n", group->id);
 
   if (oldAttr != NULL) {
-    group->next = oldAttr->group;
+    group->parent = oldAttr->group;
   }
   curAttr->group = group;
 
   if (!visSet) {
-    if (group->next != NULL) {
-      group->visibility = group->next->visibility;
+    if (group->parent != NULL) {
+      group->visibility = group->parent->visibility;
     } else {
       group->visibility = NSVG_VIS_VISIBLE;
     }
@@ -3968,7 +3967,7 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
     return;
   }
 
-  p->plist = NULL;
+  p->pathList = NULL;
 
   glyph = (NSVGglyph*)nsvg__alloczero(sizeof(NSVGglyph), "nsvg__parseGlyph"_XS8);
   if (!glyph) {
@@ -3993,8 +3992,8 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
   }
   nsvg__parsePath(p, dict);
 
-  glyph->path = p->plist; // plist means PathList ;)
-  p->plist = 0; //lastPath;
+  glyph->path = p->pathList;
+  p->pathList = 0; //lastPath;
 
   if (p->font) {
     if (missing) {
@@ -4617,7 +4616,7 @@ void nsvg__deleteClipPaths(NSVGclipPath* path)
   while (path != NULL) {
     pnext = path->next;
     nsvg__deleteShapes(path->shapes);
-    FreePool(path);
+    nsvg__delete(path, "nsvg__deleteClipPaths"_XS8);
     path = pnext;
   }
 }
@@ -4630,7 +4629,7 @@ void nsvgDelete(NSVGimage* image)
   nsvg__deleteClipPaths(image->clipPaths);
   group = image->groups;
   while (group != NULL) {
-    gnext = group->next;
+    gnext = group->parent;
     nsvg__delete(group, "nsvgDelete group"_XS8);
     group = gnext;
   }

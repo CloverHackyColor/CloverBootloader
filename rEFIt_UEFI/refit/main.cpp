@@ -672,8 +672,11 @@ void LOADER_ENTRY::StartLoader()
   NSVGfont                *font; // , *nextFont;
 
   DbgHeader("StartLoader");
-  
+
   DBG("Starting %ls\n", FileDevicePathToXStringW(DevicePath).wc_str());
+  displayFreeMemory("LOADER_ENTRY::StartLoader()"_XS8);
+//  while ( OcCountFreePages(NULL) > 300000  &&  AllocatePages(100) ) /*DBG("Free memory : %lld\n", OcCountFreePages(NULL))*/;
+//  displayFreeMemory();
 
   if (Settings.notEmpty()) {
     DBG("  Settings: %ls\n", Settings.wc_str());
@@ -2693,6 +2696,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   MsgLog("Build id: %s\n", gBuildId.c_str());
   if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
+  displayFreeMemory(""_XS8);
 
 
   //dumping SETTING structure
@@ -3087,7 +3091,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       gSettings.Boot.FastBoot = false; //Hmm... will never be here
     }
-
+#ifdef JIEF_DEBUG
+MainMenu.TimeoutSeconds=60;
+#endif
     AfterTool = false;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
@@ -3100,6 +3106,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           GlobalConfig.gThemeChanged = false;
           ThemeX->ClearScreen();
         }
+displayFreeMemory("Before RunMainMenu"_XS8);
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
  //   DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3

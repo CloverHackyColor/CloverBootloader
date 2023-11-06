@@ -121,7 +121,7 @@ void XTheme::LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols)
 
   if (EFI_ERROR(Status)) {
     //then take from common font folder
-//    fontFilePath = SWPrintf(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : ThemeX->FontFileName.data());
+//    fontFilePath = SWPrintf(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : FontFileName.data());
     fontFilePath = commonFontDir + FontFileName;
     Status = NewImage.LoadXImage(&self.getCloverDir(), fontFilePath);
     //else use embedded even if it is not embedded
@@ -162,8 +162,8 @@ void XTheme::LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols)
             (PixelPtr->Red == FirstPixel.Red)
             ) {
           PixelPtr->Reserved = 0; //if a pixel has same color as first pixel then it will be transparent
-        //} else if (ThemeX->DarkEmbedded) {
-        } else if (ThemeX->embedded && !ThemeX->Daylight) {
+        //} else if (DarkEmbedded) {
+        } else if (embedded && !Daylight) {
           *PixelPtr = SemiWhitePixel;  //special case to change a text to semi white, not blue pixels
         }
         FontPtr[Ypos + x] = *PixelPtr++; //not (x, YPos) !!!
