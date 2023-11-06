@@ -129,7 +129,7 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
   Entry->ShortcutLetter = 'C';
-  Entry->Image          = ThemeX.GetIcon(BUILTIN_ICON_FUNC_CLOVER);
+  Entry->Image          = ThemeX->GetIcon(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
   Entry->LoaderPath      = LoaderPath;
   Entry->VolName         = Volume->VolName;
@@ -195,13 +195,13 @@ void ScanTool(void)
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
   void                    *Interface;
-  if (ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)
+  if (ThemeX->HideUIFlags & HIDEUI_FLAG_TOOLS)
     return;
 
   //    DBG("Scanning for tools...\n");
-  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(SWPrintf("%ls\\tools\\Shell64U.efi", self.getCloverDirFullPath().wc_str()), NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
-      AddToolEntry(SWPrintf("%ls\\tools\\Shell64.efi", self.getCloverDirFullPath().wc_str()), NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
+  if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_SHELL)) {
+    if (!AddToolEntry(SWPrintf("%ls\\tools\\Shell64U.efi", self.getCloverDirFullPath().wc_str()), NULL, L"UEFI Shell 64", SelfVolume, ThemeX->GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
+      AddToolEntry(SWPrintf("%ls\\tools\\Shell64.efi", self.getCloverDirFullPath().wc_str()), NULL, L"EFI Shell 64", SelfVolume, ThemeX->GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
     }
   }
 
@@ -304,11 +304,11 @@ void AddCustomTool(void)
       // Change to custom image if needed
       Image = Custom.Image;
       if (Image.isEmpty() && Custom.settings.ImagePath.notEmpty()) {
-        Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.ImagePath);
+        Image.LoadXImage(&ThemeX->getThemeDir(), Custom.settings.ImagePath);
       }
       DBG("match!\n");
       if (Image.isEmpty()) {
-        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.settings.Hotkey, Custom.getLoadOptions());
+        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, ThemeX->GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.settings.Hotkey, Custom.getLoadOptions());
       } else {
       // Create a legacy entry for this volume
         AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, Image, Custom.settings.Hotkey, Custom.getLoadOptions());

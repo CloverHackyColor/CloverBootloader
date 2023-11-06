@@ -113,10 +113,10 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const 
       break;
   }
 //  DBG("asked IconNum = %llu Volume->DiskKind=%d OSType=%d\n", IconNum, Volume->DiskKind, OSType);
-  IconX = &ThemeX.GetIcon(IconNum); //asked IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS, got day icon
+  IconX = &ThemeX->GetIcon(IconNum); //asked IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS, got day icon
   if (IconX->Image.isEmpty()) {
     DBG("asked Icon %s not found, took internal\n", IconsNames[IconNum]);
-    IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
+    IconX = &ThemeX->GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
   }
 
   return *IconX;

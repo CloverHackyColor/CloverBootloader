@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9AB309452694BEE700428609"
-               BuildableName = "libCloverX64 SecureBoot.a"
-               BlueprintName = "CloverX64 SecureBoot"
+               BlueprintIdentifier = "9AC77EC324176BF2005CDD5C"
+               BuildableName = "libCloverX64.a"
+               BlueprintName = "CloverX64"
                ReferencedContainer = "container:CloverX64.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9AB309452694BEE700428609"
-            BuildableName = "libCloverX64 SecureBoot.a"
-            BlueprintName = "CloverX64 SecureBoot"
+            BlueprintIdentifier = "9AC77EC324176BF2005CDD5C"
+            BuildableName = "libCloverX64.a"
+            BlueprintName = "CloverX64"
             ReferencedContainer = "container:CloverX64.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -1122,9 +1122,9 @@ void ApplyInputs(void)
 void AboutRefit(void)
 {
   if (AboutMenu.Entries.size() == 0) {
-    AboutMenu.Daylight = ThemeX.Daylight;
-    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      AboutMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_ABOUT);
+    AboutMenu.Daylight = ThemeX->Daylight;
+    if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      AboutMenu.TitleImage = ThemeX->GetIcon(BUILTIN_ICON_FUNC_ABOUT);
     }
 
     if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
@@ -1172,9 +1172,9 @@ void AboutRefit(void)
 void HelpRefit(void)
 {
   if (HelpMenu.Entries.size() == 0) {
-    HelpMenu.Daylight = ThemeX.Daylight;
-    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
+    HelpMenu.Daylight = ThemeX->Daylight;
+    if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      HelpMenu.TitleImage = ThemeX->GetIcon(BUILTIN_ICON_FUNC_HELP);
     }
     switch (gSettings.GUI.languageCode)
     {
@@ -2517,8 +2517,8 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
   INTN                NextEntryIndex = -1;
 
-  XBool               OldFontStyle = ThemeX.Proportional;
-  ThemeX.Proportional = false; //temporary disable proportional
+  XBool               OldFontStyle = ThemeX->Proportional;
+  ThemeX->Proportional = false; //temporary disable proportional
 
 
   // remember, if you extended this menu then change procedures
@@ -2526,9 +2526,9 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   gThemeOptionsChanged = false;
 
   if (OptionMenu.Entries.size() == 0) {
-    OptionMenu.Daylight = ThemeX.Daylight;
-    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    OptionMenu.Daylight = ThemeX->Daylight;
+    if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      OptionMenu.TitleImage = ThemeX->GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
     }
     gThemeOptionsChanged = true;
     OptionMenu.ID = SCREEN_OPTIONS;
@@ -2599,7 +2599,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     } // if MENU_EXIT_ENTER
   }
 //exit:
-  ThemeX.Proportional = OldFontStyle;
+  ThemeX->Proportional = OldFontStyle;
 
   ApplyInputs();
 }

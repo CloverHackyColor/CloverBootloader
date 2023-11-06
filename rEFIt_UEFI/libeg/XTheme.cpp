@@ -31,7 +31,7 @@ extern "C" {
 #define DBG(...) DebugLog(DEBUG_XTHEME, __VA_ARGS__)
 #endif
 
-XTheme ThemeX;
+XTheme* ThemeX = NULL;
 
 
 EFI_STATUS
@@ -46,7 +46,7 @@ InitTheme(const CHAR8* ChosenTheme)
 
   gRT->GetTime(&Now, NULL);
   DbgHeader("InitXTheme");
-  ThemeX.Init();
+  ThemeX->Init();
 
   //initialize Daylight when we know timezone
   if (gSettings.GUI.Timezone != 0xFF) { // 0xFF:default=timezone not set
@@ -54,11 +54,11 @@ InitTheme(const CHAR8* ChosenTheme)
  //   DBG("now is %d, zone is %d\n", Now.Hour, gSettings.GUI.Timezone);
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
-    ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+    ThemeX->Daylight = (NowHour > 8) && (NowHour < 20);
   } else {
-    ThemeX.Daylight = true; // when timezone is not set
+    ThemeX->Daylight = true; // when timezone is not set
   }
-  if (ThemeX.Daylight) {
+  if (ThemeX->Daylight) {
     DBG("use Daylight theme\n");
   } else {
     DBG("use night theme\n");
@@ -91,12 +91,12 @@ InitTheme(const CHAR8* ChosenTheme)
      mainParser = NULL;
    }
    */
-  ThemeX.FontImage.setEmpty();
+  ThemeX->FontImage.setEmpty();
 
   Rnd = (ThemeNameArray.size() != 0) ? Now.Second % ThemeNameArray.size() : 0;
 
   //  DBG("...done\n");
-  ThemeX.GetThemeTagSettings(NULL);
+  ThemeX->GetThemeTagSettings(NULL);
 
   if (ThemeNameArray.size() > 0  &&
       (gSettings.GUI.Theme.isEmpty() || StriCmp(gSettings.GUI.Theme.wc_str(), L"embedded") != 0)) {
@@ -110,10 +110,10 @@ InitTheme(const CHAR8* ChosenTheme)
       }
 
       if (TestTheme.notEmpty()) {
-        ThemeDict = ThemeX.LoadTheme(TestTheme);
+        ThemeDict = ThemeX->LoadTheme(TestTheme);
         if (ThemeDict != NULL) {
           DBG("special theme %ls found and %ls parsed\n", TestTheme.wc_str(), CONFIG_THEME_FILENAME);
-//          ThemeX.Theme.takeValueFrom(TestTheme);
+//          ThemeX->Theme.takeValueFrom(TestTheme);
           gSettings.GUI.Theme = TestTheme;
 
         } else { // special theme not loaded
@@ -128,16 +128,16 @@ InitTheme(const CHAR8* ChosenTheme)
         goto finish;
       }
       if (AsciiStrCmp(ChosenTheme, "random") == 0) {
-        ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+        ThemeDict = ThemeX->LoadTheme(XStringW(ThemeNameArray[Rnd]));
         goto finish;
       }
 
       TestTheme.takeValueFrom(ChosenTheme);
       if (TestTheme.notEmpty()) {
-        ThemeDict = ThemeX.LoadTheme (TestTheme);
+        ThemeDict = ThemeX->LoadTheme (TestTheme);
         if (ThemeDict != NULL) {
           DBG("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
-//            ThemeX.Theme.takeValueFrom(TestTheme);
+//            ThemeX->Theme.takeValueFrom(TestTheme);
           gSettings.GUI.Theme = TestTheme;
         } else { // theme from nvram not loaded
           if (gSettings.GUI.Theme.notEmpty()) {
@@ -155,12 +155,12 @@ InitTheme(const CHAR8* ChosenTheme)
     if (ThemeDict == NULL) {
       if (gSettings.GUI.Theme.isEmpty()) {
         DBG("no default theme, get random theme %ls\n", ThemeNameArray[Rnd].wc_str());
-        ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+        ThemeDict = ThemeX->LoadTheme(XStringW(ThemeNameArray[Rnd]));
       } else {
         if (StriCmp(gSettings.GUI.Theme.wc_str(), L"random") == 0) {
-          ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+          ThemeDict = ThemeX->LoadTheme(XStringW(ThemeNameArray[Rnd]));
         } else {
-          ThemeDict = ThemeX.LoadTheme(gSettings.GUI.Theme);
+          ThemeDict = ThemeX->LoadTheme(gSettings.GUI.Theme);
           if (ThemeDict == NULL) {
             DBG("GlobalConfig: %ls not found, get embedded theme\n", gSettings.GUI.Theme.wc_str());
           } else {
@@ -174,55 +174,55 @@ InitTheme(const CHAR8* ChosenTheme)
 finish:
   if (!ThemeDict) {  // No theme could be loaded, use embedded
     DBG(" using embedded theme\n");
-    if (ThemeX.DarkEmbedded) { // when using embedded, set Daylight according to darkembedded
-      ThemeX.Daylight = false;
+    if (ThemeX->DarkEmbedded) { // when using embedded, set Daylight according to darkembedded
+      ThemeX->Daylight = false;
     } else {
-      ThemeX.Daylight = true;
+      ThemeX->Daylight = true;
     }
 
-    ThemeX.FillByEmbedded();
+    ThemeX->FillByEmbedded();
     OldChosenTheme = 0xFFFF;
 
-    ThemeX.closeThemeDir();
-//    if (ThemeX.ThemeDir != NULL) {
-//      ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
-//      ThemeX.ThemeDir = NULL;
+    ThemeX->closeThemeDir();
+//    if (ThemeX->ThemeDir != NULL) {
+//      ThemeX->ThemeDir->Close(ThemeX->ThemeDir);
+//      ThemeX->ThemeDir = NULL;
 //    }
 
- //   ThemeX.GetThemeTagSettings(NULL); already done
+ //   ThemeX->GetThemeTagSettings(NULL); already done
     //fill some fields
-    //ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
-    ThemeX.embedded = true;
-    Status = StartupSoundPlay(&ThemeX.getThemeDir(), NULL);
+    //ThemeX->Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
+    ThemeX->embedded = true;
+    Status = StartupSoundPlay(&ThemeX->getThemeDir(), NULL);
   } else { // theme loaded successfully
-    ThemeX.embedded = false;
-    ThemeX.Theme.takeValueFrom(gSettings.GUI.Theme); //XStringW from CHAR16*)
+    ThemeX->embedded = false;
+    ThemeX->Theme.takeValueFrom(gSettings.GUI.Theme); //XStringW from CHAR16*)
     // read theme settings
-    if (!ThemeX.TypeSVG) {
+    if (!ThemeX->TypeSVG) {
       const TagDict* DictPointer = ThemeDict->dictPropertyForKey("Theme");
       if (DictPointer != NULL) {
-        Status = ThemeX.GetThemeTagSettings(DictPointer);
+        Status = ThemeX->GetThemeTagSettings(DictPointer);
         if (EFI_ERROR(Status)) {
           DBG("Config theme error: %s\n", efiStrError(Status));
         } else {
-          ThemeX.FillByDir();
+          ThemeX->FillByDir();
         }
       }
     }
     ThemeDict->FreeTag();
 
-    if (!ThemeX.Daylight) {
-      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound_night.wav");
+    if (!ThemeX->Daylight) {
+      Status = StartupSoundPlay(&ThemeX->getThemeDir(), L"sound_night.wav");
       if (EFI_ERROR(Status)) {
-        Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
+        Status = StartupSoundPlay(&ThemeX->getThemeDir(), L"sound.wav");
       }
     } else {
-      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
+      Status = StartupSoundPlay(&ThemeX->getThemeDir(), L"sound.wav");
     }
 
   }
   for (i = 0; i < ThemeNameArray.size(); i++) {
-    if ( ThemeX.Theme.isEqualIC(ThemeNameArray[i]) ) {
+    if ( ThemeX->Theme.isEqualIC(ThemeNameArray[i]) ) {
       OldChosenTheme = i;
       break;
     }
@@ -230,11 +230,11 @@ finish:
   if (ChosenTheme != NULL) {
     FreePool(ChosenTheme);
   }
-  if (!ThemeX.TypeSVG) {
-    ThemeX.PrepareFont();
+  if (!ThemeX->TypeSVG) {
+    ThemeX->PrepareFont();
   }
 
-  //ThemeX.ClearScreen();
+  //ThemeX->ClearScreen();
   return Status;
 }
 
@@ -513,7 +513,7 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
     BadgeOffsetY = GetPropertyAsInteger(Prop, BadgeOffsetY);
 
     Prop = Dict->propertyForKey("Scale");
-    ThemeX.BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
+    ThemeX->BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
   }
 
   Dict = DictPointer->dictPropertyForKey("Origination");
@@ -734,8 +734,8 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
       Prop = Dict3->propertyForKey("Once");
       NewFilm->RunOnce = IsPropertyNotNullAndTrue(Prop);
 
-      NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
-      ThemeX.Cinema.AddFilm(NewFilm);
+      NewFilm->GetFrames(*ThemeX); //used properties: ID, Path, NumFrames
+      ThemeX->Cinema.AddFilm(NewFilm);
  //     delete NewFilm; //looks like already deleted
     }
   }

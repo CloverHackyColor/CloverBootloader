@@ -94,32 +94,32 @@ REFIT_MAINMENU_SCREEN::REFIT_MAINMENU_SCREEN(UINTN ID, XStringW TTitle, XStringW
 void REFIT_MAINMENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos)
 {
   INTN TextWidth = 0;
-  INTN BadgeDim = (INTN)(BADGE_DIMENSION * ThemeX.Scale);
+  INTN BadgeDim = (INTN)(BADGE_DIMENSION * ThemeX->Scale);
 
-  ThemeX.MeasureText(Text, &TextWidth, NULL);
+  ThemeX->MeasureText(Text, &TextWidth, NULL);
 
   //Clear old text
-  ThemeX.FillRectAreaOfScreen(OldX, OldY, OldTextWidth, OldTextHeight);
+  ThemeX->FillRectAreaOfScreen(OldX, OldY, OldTextWidth, OldTextHeight);
 
-  if (!(ThemeX.BootCampStyle)
-      && (ThemeX.HideBadges & HDBADGES_INLINE) && (!OldRow)
+  if (!(ThemeX->BootCampStyle)
+      && (ThemeX->HideBadges & HDBADGES_INLINE) && (!OldRow)
       && (OldTextWidth) && (OldTextWidth != TextWidth)
       ) {
     //Clear badge
-    ThemeX.FillRectAreaOfScreen((OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
-                                (OldY - ((BadgeDim - ThemeX.TextHeight) >> 1)), 128, 128);
+    ThemeX->FillRectAreaOfScreen((OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
+                                (OldY - ((BadgeDim - ThemeX->TextHeight) >> 1)), 128, 128);
   }
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
-  if (!(ThemeX.BootCampStyle) &&
-      (ThemeX.HideBadges & HDBADGES_INLINE) &&
+  if (!(ThemeX->BootCampStyle) &&
+      (ThemeX->HideBadges & HDBADGES_INLINE) &&
       (Entries[ScrollState.CurrentSelection].Row == 0)) {
     // Display Inline Badge: small icon before the text
     XImage Back(BadgeDim, BadgeDim);
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
-    INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
-    Back.CopyRect(ThemeX.Background, X, Y);
+    INTN Y = YPos - ((BadgeDim - ThemeX->TextHeight) >> 1);
+    Back.CopyRect(ThemeX->Background, X, Y);
     XBool free = false;
     XImage *CurrSel = Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight, &free);
     Back.Compose(0, 0, *CurrSel, false, BadgeDim/128.f);
@@ -161,8 +161,8 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
 
   if (
       // HIDEUI_ALL - included
-      ((TextC == TEXT_CORNER_REVISION) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
-      ((TextC == TEXT_CORNER_HELP) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
+      ((TextC == TEXT_CORNER_REVISION) && ((ThemeX->HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
+      ((TextC == TEXT_CORNER_HELP) && ((ThemeX->HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
       ((TextC == TEXT_CORNER_OPTIMUS) && (gSettings.GUI.ShowOptimus == false))
       ) {
     return;
@@ -195,10 +195,10 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
 
   switch (Align) {
     case X_IS_LEFT:
-      Xpos = (INTN)(ThemeX.TextHeight * 0.75f);
+      Xpos = (INTN)(ThemeX->TextHeight * 0.75f);
       break;
     case X_IS_RIGHT:
-      Xpos = UGAWidth - (INTN)(ThemeX.TextHeight * 0.75f);//2
+      Xpos = UGAWidth - (INTN)(ThemeX->TextHeight * 0.75f);//2
       break;
     case X_IS_CENTER:
       Xpos = UGAWidth >> 1;
@@ -209,18 +209,18 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
   }
   //  DBG("draw text %ls at (%d, %d)\n", Text, Xpos, UGAHeight - 5 - TextHeight),
   // clovy  DrawTextXY(Text, Xpos, UGAHeight - 5 - TextHeight, Align);
-  DrawTextXY(Text, Xpos, UGAHeight - (INTN)(ThemeX.TextHeight * 1.5f), Align);
+  DrawTextXY(Text, Xpos, UGAHeight - (INTN)(ThemeX->TextHeight * 1.5f), Align);
 }
 
 void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, XBool selected, INTN XPos, INTN YPos)
 {
-  INTN MainSize = ThemeX.MainEntriesSize;
+  INTN MainSize = ThemeX->MainEntriesSize;
 //  XImage MainImage(MainSize, MainSize);
 //  XImage* BadgeImage;
   XIcon MainIcon;  //it can be changed here
   XIcon* BadgeIcon = NULL;
 
-  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
+  if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX->HideBadges & HDBADGES_SWAP)) {
     MainIcon = *Entry->getDriveImage();
   } else {
     MainIcon = Entry->Image; // XIcon*
@@ -228,8 +228,8 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
   //this should be inited by the Theme
   if (MainIcon.isEmpty()) {
  //   DBG(" why MainImage is empty? Report to devs\n");
-    if (!ThemeX.IsEmbeddedTheme()) {
-      MainIcon = ThemeX.GetIcon("os_mac"_XS8);
+    if (!ThemeX->IsEmbeddedTheme()) {
+      MainIcon = ThemeX->GetIcon("os_mac"_XS8);
     }
     if (MainIcon.Image.isEmpty()) {
       MainIcon.Image.DummyImage(MainSize);
@@ -237,32 +237,32 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
     }
   }
 
-//  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
+//  const XImage& MainImage = (!ThemeX->Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
   XBool free = false;
   XImage *MainImage = MainIcon.GetBest(!Daylight, &free);
 
-  INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
+  INTN CompWidth = (Entry->Row == 0) ? ThemeX->row0TileSize : ThemeX->row1TileSize;
   INTN CompHeight = CompWidth;
 
 //  float fScale;
-//  if (ThemeX.TypeSVG) {
+//  if (ThemeX->TypeSVG) {
 //    fScale = (selected ? 1.f : -1.f);
 //  } else {
-//    fScale = ((Entry->Row == 0) ? (ThemeX.MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
+//    fScale = ((Entry->Row == 0) ? (ThemeX->MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
 //  }
 
   if (Entry->Row == 0) {
     BadgeIcon = Entry->getBadgeImage();
   }
 
-  const XImage& TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
+  const XImage& TopImage = ThemeX->SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
 //    DBG("   SelectionWidth=%lld\n", TopImage.GetWidth());
   if (TopImage.GetWidth() > CompWidth) {
     CompWidth = TopImage.GetWidth();
     CompHeight = CompWidth;
   }
   XImage Back(CompWidth, CompHeight);
-  Back.CopyRect(ThemeX.Background, XPos, YPos);
+  Back.CopyRect(ThemeX->Background, XPos, YPos);
 
   INTN OffsetX = (CompWidth - MainImage->GetWidth()) / 2;
   OffsetX = (OffsetX > 0) ? OffsetX: 0;
@@ -276,8 +276,8 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
 
 //  DBG("  Comp=[%lld,%lld], offset=[%lld,%lld]\n", CompWidth, CompHeight, OffsetX, OffsetY);
 
-  float composeScale = (ThemeX.NonSelectedGrey && !selected)? -1.f: 1.f;
-  if(ThemeX.SelectionOnTop) {
+  float composeScale = (ThemeX->NonSelectedGrey && !selected)? -1.f: 1.f;
+  if(ThemeX->SelectionOnTop) {
     //place main image in centre. It may be OS or Drive
     Back.Compose(OffsetX, OffsetY, *MainImage, false, composeScale);
   } else {
@@ -294,9 +294,9 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
     delete MainImage;
   }
   // place the badge image
-  float fBadgeScale = ThemeX.BadgeScale/16.f;
+  float fBadgeScale = ThemeX->BadgeScale/16.f;
   if ((Entry->Row == 0) && BadgeIcon && !BadgeIcon->isEmpty()) {
-//    const XImage& BadgeImage = (!ThemeX.Daylight && !BadgeIcon->ImageNight.isEmpty()) ? &BadgeIcon->ImageNight : BadgeImage = &BadgeIcon->Image;
+//    const XImage& BadgeImage = (!ThemeX->Daylight && !BadgeIcon->ImageNight.isEmpty()) ? &BadgeIcon->ImageNight : BadgeImage = &BadgeIcon->Image;
     free = false;
     XImage* BadgeImage = BadgeIcon->GetBest(!Daylight, &free);
     INTN BadgeWidth = (INTN)(BadgeImage->GetWidth() * fBadgeScale);
@@ -305,15 +305,15 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
     if ((BadgeWidth + 8) < CompWidth && (BadgeHeight + 8) < CompHeight) {
       
       // Check for user badge x offset from theme.plist
-      if (ThemeX.BadgeOffsetX != 0xFFFF) {
-        OffsetX += ThemeX.BadgeOffsetX;
+      if (ThemeX->BadgeOffsetX != 0xFFFF) {
+        OffsetX += ThemeX->BadgeOffsetX;
       } else {
         // Set default position
         OffsetX += CompWidth  - 8 - BadgeWidth;
       }
       // Check for user badge y offset from theme.plist
-      if (ThemeX.BadgeOffsetY != 0xFFFF) {
-        OffsetY += ThemeX.BadgeOffsetY;
+      if (ThemeX->BadgeOffsetY != 0xFFFF) {
+        OffsetY += ThemeX->BadgeOffsetY;
       } else {
         // Set default position
         OffsetY += CompHeight - 8 - BadgeHeight;
@@ -324,7 +324,7 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
     }
   }
 
-  if(ThemeX.SelectionOnTop) {
+  if(ThemeX->SelectionOnTop) {
     Back.Compose(OffsetTX, OffsetTY, TopImage, false); //selection at the top
   }
   Back.DrawWithoutCompose(XPos, YPos);
@@ -332,16 +332,16 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
 
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
-  if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+  if (ThemeX->BootCampStyle && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
     // indicator is for row 0, main entries, only
     if (Entry->Row == 0) {
-      const XImage& SelImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
-      XPos = XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale);
-      YPos = row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale);
-      CompWidth = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
-      CompHeight = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
+      const XImage& SelImage = ThemeX->SelectionImages[4 + (selected ? 0 : 1)];
+      XPos = XPos + (ThemeX->row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX->Scale);
+      YPos = row0PosY + ThemeX->row0TileSize + ThemeX->TextHeight + (INTN)((BCSMargin * 2) * ThemeX->Scale);
+      CompWidth = (INTN)(INDICATOR_SIZE * ThemeX->Scale);
+      CompHeight = (INTN)(INDICATOR_SIZE * ThemeX->Scale);
       Back = XImage(CompWidth, CompHeight);
-      Back.CopyRect(ThemeX.Background, XPos, YPos);
+      Back.CopyRect(ThemeX->Background, XPos, YPos);
       Back.Compose(0, 0, SelImage, false);
       Back.DrawWithoutCompose(XPos, YPos);
     }
@@ -359,10 +359,10 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 //  INTN i = 0;
   INTN MessageHeight = 0;
 // clovy
-  if (ThemeX.TypeSVG && textFace[1].valid) {
-    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX.Scale);
+  if (ThemeX->TypeSVG && textFace[1].valid) {
+    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
   } else {
-    MessageHeight = (INTN)(ThemeX.TextHeight * RowHeightFromTextHeight * ThemeX.Scale);
+    MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
   }
 
   switch (Function) {
@@ -373,11 +373,11 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       SwitchToGraphicsAndClear();
       //BltClearScreen(false);
 
-      EntriesGap = (int)(ThemeX.TileXSpace * ThemeX.Scale);
-      EntriesWidth = ThemeX.row0TileSize;
-      EntriesHeight = ThemeX.MainEntriesSize + (int)(16.f * ThemeX.Scale);
+      EntriesGap = (int)(ThemeX->TileXSpace * ThemeX->Scale);
+      EntriesWidth = ThemeX->row0TileSize;
+      EntriesHeight = ThemeX->MainEntriesSize + (int)(16.f * ThemeX->Scale);
 
-      MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* ThemeX.Scale)) / (EntriesWidth + EntriesGap); //8
+      MaxItemOnScreen = (UGAWidth - (int)((ROW0_SCROLLSIZE * 2)* ThemeX->Scale)) / (EntriesWidth + EntriesGap); //8
       CountItems();
       InitScroll(row0Count, Entries.size(), MaxItemOnScreen, 0);
 
@@ -387,31 +387,31 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       row0PosX = UGAWidth - row0PosX;
       row0PosX = row0PosX >> 1;
 
-      row0PosY = (int)(((float)UGAHeight - ThemeX.LayoutHeight * ThemeX.Scale) * 0.5f +
-                  ThemeX.LayoutBannerOffset * ThemeX.Scale);
+      row0PosY = (int)(((float)UGAHeight - ThemeX->LayoutHeight * ThemeX->Scale) * 0.5f +
+                  ThemeX->LayoutBannerOffset * ThemeX->Scale);
 
-      row1PosX = (UGAWidth + 8 - (ThemeX.row1TileSize + (INTN)(8.0f * ThemeX.Scale)) * row1Count) >> 1;
+      row1PosX = (UGAWidth + 8 - (ThemeX->row1TileSize + (INTN)(8.0f * ThemeX->Scale)) * row1Count) >> 1;
 
-      if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        row1PosY = row0PosY + ThemeX.row0TileSize + (INTN)((BCSMargin * 2) * ThemeX.Scale) + ThemeX.TextHeight +
-            (INTN)(INDICATOR_SIZE * ThemeX.Scale) +
-            (INTN)((ThemeX.LayoutButtonOffset + ThemeX.TileYSpace) * ThemeX.Scale);
+      if (ThemeX->BootCampStyle && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        row1PosY = row0PosY + ThemeX->row0TileSize + (INTN)((BCSMargin * 2) * ThemeX->Scale) + ThemeX->TextHeight +
+            (INTN)(INDICATOR_SIZE * ThemeX->Scale) +
+            (INTN)((ThemeX->LayoutButtonOffset + ThemeX->TileYSpace) * ThemeX->Scale);
       } else {
         row1PosY = row0PosY + EntriesHeight +
-            (INTN)((ThemeX.TileYSpace + ThemeX.LayoutButtonOffset) * ThemeX.Scale);
+            (INTN)((ThemeX->TileYSpace + ThemeX->LayoutButtonOffset) * ThemeX->Scale);
       }
 
       if (row1Count > 0) {
-          textPosY = row1PosY + MAX(ThemeX.row1TileSize, MessageHeight) + (INTN)((ThemeX.TileYSpace + ThemeX.LayoutTextOffset) * ThemeX.Scale);
+          textPosY = row1PosY + MAX(ThemeX->row1TileSize, MessageHeight) + (INTN)((ThemeX->TileYSpace + ThemeX->LayoutTextOffset) * ThemeX->Scale);
         } else {
           textPosY = row1PosY;
         }
 
-      if (ThemeX.BootCampStyle) {
-        textPosY = row0PosY + ThemeX.row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * ThemeX.Scale);
+      if (ThemeX->BootCampStyle) {
+        textPosY = row0PosY + ThemeX->row0TileSize + (INTN)((TEXT_YMARGIN + BCSMargin) * ThemeX->Scale);
       }
 
-      FunctextPosY = row1PosY + ThemeX.row1TileSize + (INTN)((ThemeX.TileYSpace + ThemeX.LayoutTextOffset) * ThemeX.Scale);
+      FunctextPosY = row1PosY + ThemeX->row1TileSize + (INTN)((ThemeX->TileYSpace + ThemeX->LayoutTextOffset) * ThemeX->Scale);
 
       if (!itemPosX) {
         itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
@@ -426,17 +426,17 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           row0PosXRunning += EntriesWidth + EntriesGap;
         } else {
           itemPosX[i] = row1PosXRunning;
-          row1PosXRunning += ThemeX.row1TileSize + (INTN)(TILE1_XSPACING * ThemeX.Scale);
+          row1PosXRunning += ThemeX->row1TileSize + (INTN)(TILE1_XSPACING * ThemeX->Scale);
           //DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
       // initial painting
- //     ThemeX.InitSelection(); //not needed to do here
+ //     ThemeX->InitSelection(); //not needed to do here
 
       // Update FilmPlace only if not set by InitAnime
       if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
 //        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
-        FilmC->FilmPlace = ThemeX.BannerPlace;
+        FilmC->FilmPlace = ThemeX->BannerPlace;
       }
 
       //DBG("main menu inited\n");
@@ -457,11 +457,11 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                               itemPosX[i - ScrollState.FirstVisible], row0PosY);
             // draw static text for the boot options, BootCampStyle
 
-            if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (ThemeX.row0TileSize / 2);
+            if (ThemeX->BootCampStyle && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
+              INTN textPosX = itemPosX[i - ScrollState.FirstVisible] + (ThemeX->row0TileSize / 2);
               // clear the screen
 
-              ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + ThemeX.TileXSpace,
+              ThemeX->FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + ThemeX->TileXSpace,
                                    MessageHeight);
               DrawBCSText(Entries[i].Title.wc_str(), textPosX, textPosY, X_IS_CENTER);
             }
@@ -473,18 +473,18 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       }
 
       // clear the text from the second row, required by the BootCampStyle
-      if ((ThemeX.BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
-          && (Entries[ScrollState.CurrentSelection].Row == 0) && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
+      if ((ThemeX->BootCampStyle) && (Entries[ScrollState.LastSelection].Row == 1)
+          && (Entries[ScrollState.CurrentSelection].Row == 0) && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        ThemeX->FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY,
                              OldTextWidth, MessageHeight);
       }
 
       if ((Entries[ScrollState.LastSelection].Row == 0) && (Entries[ScrollState.CurrentSelection].Row == 1)
-          && ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+          && ThemeX->BootCampStyle && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), FunctextPosY);
       }
-      if (!(ThemeX.BootCampStyle) && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+      if (!(ThemeX->BootCampStyle) && !(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), textPosY);
       }
@@ -519,12 +519,12 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                           itemPosX[ScrollState.CurrentSelection], row1PosY);
       }
 
-      if ((ThemeX.BootCampStyle) && (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL))
+      if ((ThemeX->BootCampStyle) && (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL))
           && Entries[ScrollState.CurrentSelection].Row == 1) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), FunctextPosY);
       }
-      if ((!(ThemeX.BootCampStyle)) && (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL))) {
+      if ((!(ThemeX->BootCampStyle)) && (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL))) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), textPosY);
       }
@@ -539,10 +539,10 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       break;
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      INTN hi = MessageHeight * ((ThemeX.HideBadges & HDBADGES_INLINE)?3:1);
+      INTN hi = MessageHeight * ((ThemeX->HideBadges & HDBADGES_INLINE)?3:1);
       HidePointer();
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + hi,
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)){
+        ThemeX->FillRectAreaOfScreen((UGAWidth >> 1), FunctextPosY + hi,
                              OldTimeoutTextWidth, MessageHeight);
         XStringW TextX;
         TextX.takeValueFrom(ParamText);
@@ -576,28 +576,28 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
       SwitchToGraphicsAndClear();
       //BltClearScreen(false);
       //adjustable by theme.plist?
-      EntriesPosY = (int)(LAYOUT_Y_EDGE * ThemeX.Scale);
-      EntriesGap = (int)(ThemeX.TileYSpace * ThemeX.Scale);
-      EntriesWidth = ThemeX.MainEntriesSize + (int)(16 * ThemeX.Scale);
-      EntriesHeight = ThemeX.MainEntriesSize + (int)(16 * ThemeX.Scale);
+      EntriesPosY = (int)(LAYOUT_Y_EDGE * ThemeX->Scale);
+      EntriesGap = (int)(ThemeX->TileYSpace * ThemeX->Scale);
+      EntriesWidth = ThemeX->MainEntriesSize + (int)(16 * ThemeX->Scale);
+      EntriesHeight = ThemeX->MainEntriesSize + (int)(16 * ThemeX->Scale);
       //
-      INTN VisibleHeight = (UGAHeight - EntriesPosY - (int)(LAYOUT_Y_EDGE * ThemeX.Scale) + EntriesGap) / (EntriesHeight + EntriesGap);
-      EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * ThemeX.Scale);
+      INTN VisibleHeight = (UGAHeight - EntriesPosY - (int)(LAYOUT_Y_EDGE * ThemeX->Scale) + EntriesGap) / (EntriesHeight + EntriesGap);
+      EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * ThemeX->Scale);
       INTN MessageHeight = 20;
-      if (ThemeX.TypeSVG && textFace[1].valid) {
-        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX.Scale);
+      if (ThemeX->TypeSVG && textFace[1].valid) {
+        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
       } else {
-        MessageHeight = (INTN)(ThemeX.TextHeight * RowHeightFromTextHeight * ThemeX.Scale);
+        MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
       }
-      TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * ThemeX.Scale) - MessageHeight * 2; //optimus + timeout texts
+      TimeoutPosY = UGAHeight - (int)(LAYOUT_Y_EDGE * ThemeX->Scale) - MessageHeight * 2; //optimus + timeout texts
 
       CountItems();
       InitScroll(row0Count, Entries.size(), VisibleHeight, 0);
       row0PosX = EntriesPosX;
       row0PosY = EntriesPosY;
-      row1PosX = (UGAWidth + EntriesGap - (ThemeX.row1TileSize + (int)(TILE1_XSPACING * ThemeX.Scale)) * row1Count) >> 1;
-      textPosY = TimeoutPosY - (int)(ThemeX.TileYSpace * ThemeX.Scale) - MessageHeight; //message text
-      row1PosY = textPosY - ThemeX.row1TileSize - (int)(ThemeX.TileYSpace * ThemeX.Scale) - ThemeX.LayoutTextOffset;
+      row1PosX = (UGAWidth + EntriesGap - (ThemeX->row1TileSize + (int)(TILE1_XSPACING * ThemeX->Scale)) * row1Count) >> 1;
+      textPosY = TimeoutPosY - (int)(ThemeX->TileYSpace * ThemeX->Scale) - MessageHeight; //message text
+      row1PosY = textPosY - ThemeX->row1TileSize - (int)(ThemeX->TileYSpace * ThemeX->Scale) - ThemeX->LayoutTextOffset;
       if (!itemPosX) {
         itemPosX = (__typeof__(itemPosX))AllocatePool(sizeof(UINT64) * Entries.size());
         itemPosY = (__typeof__(itemPosY))AllocatePool(sizeof(UINT64) * Entries.size());
@@ -614,17 +614,17 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
         } else {
           itemPosX[i] = row1PosXRunning;
           itemPosY[i] = row1PosY;
-          row1PosXRunning += ThemeX.row1TileSize + (int)(ThemeX.TileXSpace * ThemeX.Scale);
+          row1PosXRunning += ThemeX->row1TileSize + (int)(ThemeX->TileXSpace * ThemeX->Scale);
           //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
 
       // Update FilmPlace only if not set by InitAnime
       if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
-        FilmC->FilmPlace = ThemeX.BannerPlace;
+        FilmC->FilmPlace = ThemeX->BannerPlace;
       }
 
-      ThemeX.InitBar(); //not sure
+      ThemeX->InitBar(); //not sure
       break;
     }
     case MENU_FUNCTION_CLEANUP:
@@ -636,8 +636,8 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
       break;
 
     case MENU_FUNCTION_PAINT_ALL:
-      SetBar(EntriesPosX + EntriesWidth + (int)(10 * ThemeX.Scale),
-             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * ThemeX.Scale), &ScrollState);
+      SetBar(EntriesPosX + EntriesWidth + (int)(10 * ThemeX->Scale),
+             EntriesPosY, UGAHeight - (int)(LAYOUT_Y_EDGE * ThemeX->Scale), &ScrollState);
       for (INTN i = 0; i <= ScrollState.MaxIndex; i++) {
         if (Entries[i].Row == 0) {
           if ((i >= ScrollState.FirstVisible) && (i <= ScrollState.LastVisible)) {
@@ -649,7 +649,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
                             itemPosX[i], itemPosY[i]);
         }
       }
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)){
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)){
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), textPosY);
       }
@@ -681,7 +681,7 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
                           itemPosX[ScrollState.CurrentSelection],
                           itemPosY[ScrollState.CurrentSelection]);
       }
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuLabel(Entries[ScrollState.CurrentSelection].Title,
                           (UGAWidth >> 1), textPosY);
       }
@@ -694,16 +694,16 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       INTN MessageHeight = 20;
-      if (ThemeX.TypeSVG && textFace[1].valid) {
-        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX.Scale);
+      if (ThemeX->TypeSVG && textFace[1].valid) {
+        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
       } else {
-        MessageHeight = (INTN)(ThemeX.TextHeight * RowHeightFromTextHeight * ThemeX.Scale);
+        MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
       }
-      INTN hi = MessageHeight * ((ThemeX.HideBadges & HDBADGES_INLINE)?3:1);
+      INTN hi = MessageHeight * ((ThemeX->HideBadges & HDBADGES_INLINE)?3:1);
       HidePointer();
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        ThemeX.FillRectAreaOfScreen((UGAWidth >> 1), textPosY + hi,
-                             OldTimeoutTextWidth, ThemeX.TextHeight);
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        ThemeX->FillRectAreaOfScreen((UGAWidth >> 1), textPosY + hi,
+                             OldTimeoutTextWidth, ThemeX->TextHeight);
         XStringW TextX;
         TextX.takeValueFrom(ParamText);
         OldTimeoutTextWidth = DrawTextXY(TextX, (UGAWidth >> 1), textPosY + hi, X_IS_CENTER);
@@ -738,7 +738,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
 
 //  if (AllowGraphicsMode) {
 ////    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-//    if (ThemeX.VerticalLayout) {
+//    if (ThemeX->VerticalLayout) {
 //      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle;
 //    } else {
 //      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuStyle;

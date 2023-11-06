@@ -114,7 +114,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   if ( FullTitle.notEmpty() ) {
     Entry->Title = FullTitle;
   } else {
-    if (ThemeX.BootCampStyle) {
+    if (ThemeX->BootCampStyle) {
       Entry->Title = LTitle;
     } else {
         Entry->Title.SWPrintf("Boot %ls from %ls", LoaderTitle.wc_str(), VolDesc.wc_str());
@@ -128,9 +128,9 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   if ( Image && !Image->isEmpty() ) {
     Entry->Image = *Image;
   } else {
-    Entry->Image = ThemeX.LoadOSIcon(Volume->LegacyOS->IconName);
+    Entry->Image = ThemeX->LoadOSIcon(Volume->LegacyOS->IconName);
     if (Entry->Image.Image.isEmpty()) {
-      Entry->Image = ThemeX.GetIcon("os_win"_XS8); //we have no legacy.png
+      Entry->Image = ThemeX->GetIcon("os_win"_XS8); //we have no legacy.png
     }
   }
 
@@ -144,11 +144,11 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionDetails;
-  if (ThemeX.HideBadges & HDBADGES_SHOW) {
-    if (ThemeX.HideBadges & HDBADGES_SWAP) { //will be scaled later
-      Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0); //ThemeX.BadgeScale/16.f); //0 accepted
+  if (ThemeX->HideBadges & HDBADGES_SHOW) {
+    if (ThemeX->HideBadges & HDBADGES_SWAP) { //will be scaled later
+      Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0); //ThemeX->BadgeScale/16.f); //0 accepted
     } else {
-      Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0); //ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0); //ThemeX->BadgeScale/16.f);
     }
   }
   Entry->Volume           = Volume;
@@ -374,13 +374,13 @@ void AddCustomLegacy(void)
       // Change to custom image if needed
       MainIcon = Custom.Image;
       if (MainIcon.Image.isEmpty()) {
-        MainIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.ImagePath);
+        MainIcon.Image.LoadXImage(&ThemeX->getThemeDir(), Custom.settings.ImagePath);
       }
 
       // Change to custom drive image if needed
       DriveIcon = Custom.DriveImage;
       if (DriveIcon.Image.isEmpty()) {
-        DriveIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.DriveImagePath);
+        DriveIcon.Image.LoadXImage(&ThemeX->getThemeDir(), Custom.settings.DriveImagePath);
       }
       // Create a legacy entry for this volume
       DBG("\n");

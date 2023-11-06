@@ -71,7 +71,7 @@ public:
   virtual void MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText); // cannot remove from here because the use of pointer to member function
   virtual void MenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText) {
     if (AllowGraphicsMode) {
-      if (ThemeX.VerticalLayout) {
+      if (ThemeX->VerticalLayout) {
         MainMenuVerticalStyle(Function, ParamText);
       } else {
         MainMenuStyle(Function, ParamText);

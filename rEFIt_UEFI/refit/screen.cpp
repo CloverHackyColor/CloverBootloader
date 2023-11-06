@@ -291,7 +291,7 @@ StatusToString (
 void SwitchToGraphicsAndClear(void) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
-  ThemeX.Background.DrawWithoutCompose(0,0,0,0);
+  ThemeX->Background.DrawWithoutCompose(0,0,0,0);
 }
 
 /*
@@ -377,7 +377,7 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
 
 void REFIT_MENU_SCREEN::GetAnime()
 {
-  FilmC = ThemeX.Cinema.GetFilm(ID);
+  FilmC = ThemeX->Cinema.GetFilm(ID);
 //  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
   if (FilmC != nullptr) {
     FilmC->AnimeRun = true;
@@ -411,8 +411,8 @@ void REFIT_MENU_SCREEN::InitAnime()
     // Check if screen size being used is different from theme origination size.
     // If yes, then recalculate the animation placement % value.
     // This is necessary because screen can be a different size, but anim is not scaled.
-    FilmC->FilmPlace.XPos = HybridRepositioning(FilmC->ScreenEdgeHorizontal, FilmC->FilmX, CWidth,  UGAWidth,  ThemeX.ThemeDesignWidth );
-    FilmC->FilmPlace.YPos = HybridRepositioning(FilmC->ScreenEdgeVertical,   FilmC->FilmY, CHeight, UGAHeight, ThemeX.ThemeDesignHeight);
+    FilmC->FilmPlace.XPos = HybridRepositioning(FilmC->ScreenEdgeHorizontal, FilmC->FilmX, CWidth,  UGAWidth,  ThemeX->ThemeDesignWidth );
+    FilmC->FilmPlace.YPos = HybridRepositioning(FilmC->ScreenEdgeVertical,   FilmC->FilmY, CHeight, UGAHeight, ThemeX->ThemeDesignHeight);
 
     // Does the user want to fine tune the placement?
     FilmC->FilmPlace.XPos = CalculateNudgePosition(FilmC->FilmPlace.XPos, FilmC->NudgeX, CWidth, UGAWidth);
@@ -424,7 +424,7 @@ void REFIT_MENU_SCREEN::InitAnime()
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known
-    FilmC->FilmPlace = ThemeX.BannerPlace;
+    FilmC->FilmPlace = ThemeX->BannerPlace;
     if (CWidth > 0 && CHeight > 0) {
       // Retained for legacy themes without new anim placement options.
       FilmC->FilmPlace.XPos = ((INTN)FilmC->FilmPlace.XPos * 2 > CWidth  - (INTN)FilmC->FilmPlace.Width ) ? (UINTN)((INTN)FilmC->FilmPlace.XPos + ((INTN)FilmC->FilmPlace.Width  - CWidth ) / 2) : 0;

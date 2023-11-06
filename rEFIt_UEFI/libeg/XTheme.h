@@ -200,7 +200,7 @@ protected:
 
 };
 
-extern XTheme ThemeX;
+extern XTheme* ThemeX;
 
 
 #endif

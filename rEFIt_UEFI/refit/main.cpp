@@ -1684,7 +1684,7 @@ void LEGACY_ENTRY::StartLegacy()
   egClearScreen(&MenuBackgroundPixel);
   BeginExternalScreen(true/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
-  BootLogoX.LoadXImage(&ThemeX.getThemeDir(), Volume->LegacyOS->IconName);
+  BootLogoX.LoadXImage(&ThemeX->getThemeDir(), Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 
@@ -2823,7 +2823,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    SmbiosList.setEmpty();
 //    SmbiosList.AddReference(new XStringW(L"auto"_XSW), true);
   }
-//  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
+//  ThemeX->FillByEmbedded(); //init XTheme before EarlyUserSettings
   {
     void       *Value = NULL;
     UINTN       Size = 0;
@@ -2888,6 +2888,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
     return Status;
   }
+
+  ThemeX = new XTheme();
 
   //  DBG("DBG: messages\n");
   if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot()  && gSettings.Boot.Timeout>0) {
@@ -2981,10 +2983,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         HelpMenu.Entries.setEmpty();
       }
       DBG("theme inited\n");
-      if (ThemeX.embedded) {
+      if (ThemeX->embedded) {
         DBG("Chosen embedded theme\n");
       } else {
-        DBG("Chosen theme %ls\n", ThemeX.Theme.wc_str());
+        DBG("Chosen theme %ls\n", ThemeX->Theme.wc_str());
       }
 
       //now it is a time to set RtVariables
@@ -3023,7 +3025,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       // fixed other menu entries
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
         if (!gSettings.GUI.Scan.DisableToolScan) {
           ScanTool();
@@ -3034,27 +3036,27 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
       }
 
-      MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
+      MenuEntryOptions.Image = ThemeX->GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
 //      DBG("Options: IconID=%lld name=%s empty=%s\n", MenuEntryOptions.Image.Id, MenuEntryOptions.Image.Name.c_str(),
       if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
       
-      MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
+      MenuEntryAbout.Image = ThemeX->GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
 //      DBG("About: IconID=%lld name=%s empty=%s\n", MenuEntryAbout.Image.Id, MenuEntryAbout.Image.Name.c_str(),
 
       if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
-      if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
+      if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
         if (gSettings.Boot.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
-        MenuEntryReset.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_RESET);
+        MenuEntryReset.Image = ThemeX->GetIcon(BUILTIN_ICON_FUNC_RESET);
         MainMenu.AddMenuEntry(&MenuEntryReset, false);
         if (gSettings.Boot.DisableCloverHotkeys)
           MenuEntryShutdown.ShortcutLetter = 0x00;
-        MenuEntryShutdown.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_EXIT);
+        MenuEntryShutdown.Image = ThemeX->GetIcon(BUILTIN_ICON_FUNC_EXIT);
         MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
 
@@ -3096,7 +3098,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainMenu.GetAnime();
         if (GlobalConfig.gThemeChanged) {
           GlobalConfig.gThemeChanged = false;
-          ThemeX.ClearScreen();
+          ThemeX->ClearScreen();
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }

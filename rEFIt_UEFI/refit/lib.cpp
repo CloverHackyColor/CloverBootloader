@@ -173,7 +173,7 @@ void UninitRefitLib(void)
 {
   // called before running external programs to close open file handles
   
-  ThemeX.closeThemeDir();
+  ThemeX->closeThemeDir();
 
   selfOem.closeHandle();
   self.closeHandle();
@@ -190,7 +190,7 @@ EFI_STATUS ReinitRefitLib(void)
   selfOem.reInitialize();
 
   ReinitVolumes();
-  ThemeX.openThemeDir();
+  ThemeX->openThemeDir();
 
   return EFI_SUCCESS;
 }
@@ -1144,7 +1144,7 @@ void ReinitVolumes(void)
   EFI_STATUS              Status;
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
-  UINTN                   VolumesFound = 0;
+  //UINTN                   VolumesFound = 0; // Jief not sure what this is, see my comment at the end of this function
   const EFI_DEVICE_PATH  *RemainingDevicePath;
   EFI_HANDLE              DeviceHandle, WholeDiskHandle;
   
@@ -1155,7 +1155,7 @@ void ReinitVolumes(void)
     }
 	  DBG("Volume %llu at reinit found:\n", VolumeIndex);
     DBG("Volume->DevicePath=%ls\n", FileDevicePathToXStringW(Volume->DevicePath).wc_str());
-    VolumesFound++;
+    //olumesFound++;
     if (Volume->DevicePath != NULL) {
       // get the handle for that path
       RemainingDevicePath = Volume->DevicePath;

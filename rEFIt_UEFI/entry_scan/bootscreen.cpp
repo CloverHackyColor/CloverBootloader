@@ -761,7 +761,7 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   case CUSTOM_BOOT_THEME:
      // TODO: Custom boot theme
       DBG("Custom boot is using theme logo\n");
-      ThemeX.ClearScreen();
+      ThemeX->ClearScreen();
       return EFI_SUCCESS;
 
   case CUSTOM_BOOT_USER:

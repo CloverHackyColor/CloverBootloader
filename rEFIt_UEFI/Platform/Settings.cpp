@@ -411,19 +411,19 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 
   for ( size_t idx = 0 ; idx < settingsData.GUI.CustomLegacySettings.size() ; ++idx ) {
     const CUSTOM_LEGACY_ENTRY_SETTINGS& CustomLegacySettings = settingsData.GUI.CustomLegacySettings[idx];
-    CUSTOM_LEGACY_ENTRY* entry = new CUSTOM_LEGACY_ENTRY(CustomLegacySettings, ThemeX.getThemeDir());
+    CUSTOM_LEGACY_ENTRY* entry = new CUSTOM_LEGACY_ENTRY(CustomLegacySettings, ThemeX->getThemeDir());
     GlobalConfig.CustomLegacyEntries.AddReference(entry, true);
   }
 
   for ( size_t idx = 0 ; idx < settingsData.GUI.CustomToolSettings.size() ; ++idx ) {
     const CUSTOM_TOOL_ENTRY_SETTINGS& CustomToolSettings = settingsData.GUI.CustomToolSettings[idx];
-    CUSTOM_TOOL_ENTRY* entry = new CUSTOM_TOOL_ENTRY(CustomToolSettings, ThemeX.getThemeDir());
+    CUSTOM_TOOL_ENTRY* entry = new CUSTOM_TOOL_ENTRY(CustomToolSettings, ThemeX->getThemeDir());
     GlobalConfig.CustomToolsEntries.AddReference(entry, true);
   }
 
   if ( settingsData.GUI.Theme.notEmpty() )
   {
-    ThemeX.Theme.takeValueFrom(settingsData.GUI.Theme);
+    ThemeX->Theme.takeValueFrom(settingsData.GUI.Theme);
     DBG("Default theme: %ls\n", settingsData.GUI.Theme.wc_str());
 
     OldChosenTheme = 0xFFFF; //default for embedded
@@ -442,12 +442,12 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     INT32 NowHour = Now.Hour + settingsData.GUI.Timezone;
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
-    ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+    ThemeX->Daylight = (NowHour > 8) && (NowHour < 20);
   } else {
-    ThemeX.Daylight = true;
+    ThemeX->Daylight = true;
   }
 
-  ThemeX.DarkEmbedded = settingsData.GUI.getDarkEmbedded(ThemeX.Daylight);
+  ThemeX->DarkEmbedded = settingsData.GUI.getDarkEmbedded(ThemeX->Daylight);
 
   if ( settingsData.GUI.languageCode == english ) {
     GlobalConfig.Codepage = 0xC0;

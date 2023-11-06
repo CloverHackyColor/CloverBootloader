@@ -77,7 +77,7 @@ EFI_STATUS XPointer::MouseBirth()
     PointerImage = nullptr;
   }
 //  Now update image because of other theme has other image
-  PointerImage = new XImage(*ThemeX.GetIconP(BUILTIN_ICON_POINTER)->GetBest(night));
+  PointerImage = new XImage(*ThemeX->GetIconP(BUILTIN_ICON_POINTER)->GetBest(night));
 
   oldImage.setSizeInPixels(PointerImage->GetWidth(), PointerImage->GetHeight());
   LastClickTime = 0;

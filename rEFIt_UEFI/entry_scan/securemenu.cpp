@@ -82,13 +82,13 @@ void AddSecureBootTool(void)
 //    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT;
 //    Entry->Title.SWPrintf("Clover Secure Boot Configuration");
 ////    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
-//    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
+//    Entry->Image = ThemeX->GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
 //
 //  } else {
 //    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG;
 //    Entry->Title.SWPrintf("Enable Clover Secure Boot");
 ////    Entry->Tag = TAG_SECURE_BOOT;
-//    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
+//    Entry->Image = ThemeX->GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
 //  }
   
   //----- not done yet ----------
@@ -137,7 +137,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
           if (gThemeNeedInit) {
             UINTN      Size         = 0;
             InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size));
-            ThemeX.ClearScreen();
+            ThemeX->ClearScreen();
             gThemeNeedInit = false;
           }
           gGuiIsReady = true;

@@ -355,7 +355,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				EFI_GUID     APFSTargetUUID;
 
 				XStringW          DisplayedVolName;
-				XStringW          OSName;
+				XStringW          OSName = XStringW();
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;

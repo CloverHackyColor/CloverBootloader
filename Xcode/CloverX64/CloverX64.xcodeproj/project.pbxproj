@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -963,9 +963,6 @@
 		9A878C7526186898000B9362 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788C826186897000B9362 /* main.cpp */; };
 		9A878C7626186898000B9362 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788C826186897000B9362 /* main.cpp */; };
 		9A878C7726186898000B9362 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788C826186897000B9362 /* main.cpp */; };
-		9A878C7B26186898000B9362 /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788CC26186897000B9362 /* unicode_conversions.h */; };
-		9A878C7C26186898000B9362 /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788CC26186897000B9362 /* unicode_conversions.h */; };
-		9A878C7D26186898000B9362 /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788CC26186897000B9362 /* unicode_conversions.h */; };
 		9A878C7E26186898000B9362 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788CD26186897000B9362 /* XStringArray.cpp */; };
 		9A878C7F26186898000B9362 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788CD26186897000B9362 /* XStringArray.cpp */; };
 		9A878C8026186898000B9362 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788CD26186897000B9362 /* XStringArray.cpp */; };
@@ -990,9 +987,6 @@
 		9A878C9326186898000B9362 /* XStringAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788D426186897000B9362 /* XStringAbstract.h */; };
 		9A878C9426186898000B9362 /* XStringAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788D426186897000B9362 /* XStringAbstract.h */; };
 		9A878C9526186898000B9362 /* XStringAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788D426186897000B9362 /* XStringAbstract.h */; };
-		9A878C9626186898000B9362 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D526186897000B9362 /* unicode_conversions.cpp */; };
-		9A878C9726186898000B9362 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D526186897000B9362 /* unicode_conversions.cpp */; };
-		9A878C9826186898000B9362 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D526186897000B9362 /* unicode_conversions.cpp */; };
 		9A878C9926186898000B9362 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D626186897000B9362 /* XRBuffer.cpp */; };
 		9A878C9A26186898000B9362 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D626186897000B9362 /* XRBuffer.cpp */; };
 		9A878C9B26186898000B9362 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8788D626186897000B9362 /* XRBuffer.cpp */; };
@@ -1013,9 +1007,48 @@
 		9A878CAA26186898000B9362 /* XObjArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A8788DB26186897000B9362 /* XObjArray.h */; };
 		9A87920326188002000B9362 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87920126188002000B9362 /* Platform.h */; };
 		9A87920426188002000B9362 /* XToolsConf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A87920226188002000B9362 /* XToolsConf.h */; };
+		9AA992C02996B53C0022C200 /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA992BF2996B53C0022C200 /* guid_tests.cpp */; };
+		9AA992C12996B53C0022C200 /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA992BF2996B53C0022C200 /* guid_tests.cpp */; };
+		9AA992C22996B53C0022C200 /* guid_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA992BF2996B53C0022C200 /* guid_tests.cpp */; };
+		9AA992C42996B55C0022C200 /* guid_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AA992C32996B55C0022C200 /* guid_tests.h */; };
+		9AA992C52996B55C0022C200 /* guid_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AA992C32996B55C0022C200 /* guid_tests.h */; };
+		9AA992C62996B55C0022C200 /* guid_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AA992C32996B55C0022C200 /* guid_tests.h */; };
 		9ACBC043264484A5001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
 		9ACBC044264484A6001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
 		9ACBC045264484A6001EB94B /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A8787C926186896000B9362 /* config-test.cpp */; };
+		9ACD7A2B299302870095F00A /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A24299302860095F00A /* unicode_conversions.cpp */; };
+		9ACD7A2C299302870095F00A /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A24299302860095F00A /* unicode_conversions.cpp */; };
+		9ACD7A2D299302870095F00A /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A24299302860095F00A /* unicode_conversions.cpp */; };
+		9ACD7A31299302870095F00A /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A26299302860095F00A /* unicode_conversions.h */; };
+		9ACD7A32299302870095F00A /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A26299302860095F00A /* unicode_conversions.h */; };
+		9ACD7A33299302870095F00A /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A26299302860095F00A /* unicode_conversions.h */; };
+		9ACD7AAF299303A70095F00A /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A56299303710095F00A /* FirmwareVolume.c */; };
+		9ACD7AB0299303A80095F00A /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A56299303710095F00A /* FirmwareVolume.c */; };
+		9ACD7AB1299303A80095F00A /* FirmwareVolume.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A56299303710095F00A /* FirmwareVolume.c */; };
+		9ACD7AB2299303AB0095F00A /* AppleKeyAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A99299303710095F00A /* AppleKeyAggregator.h */; };
+		9ACD7AB3299303AC0095F00A /* AppleKeyAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A99299303710095F00A /* AppleKeyAggregator.h */; };
+		9ACD7AB4299303AC0095F00A /* AppleKeyAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7A99299303710095F00A /* AppleKeyAggregator.h */; };
+		9ACD7AB5299303AF0095F00A /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AAE299303710095F00A /* SMCHelper.c */; };
+		9ACD7AB6299303B00095F00A /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AAE299303710095F00A /* SMCHelper.c */; };
+		9ACD7AB7299303B00095F00A /* SMCHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AAE299303710095F00A /* SMCHelper.c */; };
+		9ACD7AB8299304070095F00A /* AppleKeyAggregator.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A9B299303710095F00A /* AppleKeyAggregator.c */; };
+		9ACD7AB9299304070095F00A /* AppleKeyAggregator.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A9B299303710095F00A /* AppleKeyAggregator.c */; };
+		9ACD7ABA299304080095F00A /* AppleKeyAggregator.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7A9B299303710095F00A /* AppleKeyAggregator.c */; };
+		9ACD7AC2299304690095F00A /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABC299304680095F00A /* load_bmp.c */; };
+		9ACD7AC3299304690095F00A /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABC299304680095F00A /* load_bmp.c */; };
+		9ACD7AC4299304690095F00A /* load_bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABC299304680095F00A /* load_bmp.c */; };
+		9ACD7AC5299304690095F00A /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABD299304680095F00A /* AppleImageCodec.c */; };
+		9ACD7AC6299304690095F00A /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABD299304680095F00A /* AppleImageCodec.c */; };
+		9ACD7AC7299304690095F00A /* AppleImageCodec.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABD299304680095F00A /* AppleImageCodec.c */; };
+		9ACD7AC8299304690095F00A /* picopng.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7ABE299304680095F00A /* picopng.h */; };
+		9ACD7AC9299304690095F00A /* picopng.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7ABE299304680095F00A /* picopng.h */; };
+		9ACD7ACA299304690095F00A /* picopng.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACD7ABE299304680095F00A /* picopng.h */; };
+		9ACD7ACB299304690095F00A /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABF299304680095F00A /* load_icns.c */; };
+		9ACD7ACC299304690095F00A /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABF299304680095F00A /* load_icns.c */; };
+		9ACD7ACD299304690095F00A /* load_icns.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7ABF299304680095F00A /* load_icns.c */; };
+		9ACD7ACE299304690095F00A /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AC1299304680095F00A /* picopng.c */; };
+		9ACD7ACF299304690095F00A /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AC1299304680095F00A /* picopng.c */; };
+		9ACD7AD0299304690095F00A /* picopng.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD7AC1299304680095F00A /* picopng.c */; };
 		9AF1EFEB2634217800F7C2C0 /* SettingsUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF1EFE92634217800F7C2C0 /* SettingsUtils.h */; };
 		9AF1EFEC2634217800F7C2C0 /* SettingsUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF1EFEA2634217800F7C2C0 /* SettingsUtils.cpp */; };
 		9AF4D937263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF4D92B263004E100487D15 /* XmlLiteCompositeTypes.cpp */; };
@@ -1389,7 +1422,6 @@
 		9A8788C626186897000B9362 /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = menu.h; sourceTree = "<group>"; };
 		9A8788C726186897000B9362 /* screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
 		9A8788C826186897000B9362 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		9A8788CC26186897000B9362 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		9A8788CD26186897000B9362 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A8788CE26186897000B9362 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
 		9A8788CF26186897000B9362 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
@@ -1398,7 +1430,6 @@
 		9A8788D226186897000B9362 /* XBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer.h; sourceTree = "<group>"; };
 		9A8788D326186897000B9362 /* shared_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_ptr.h; sourceTree = "<group>"; };
 		9A8788D426186897000B9362 /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
-		9A8788D526186897000B9362 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
 		9A8788D626186897000B9362 /* XRBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRBuffer.cpp; sourceTree = "<group>"; };
 		9A8788D726186897000B9362 /* XString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString.cpp; sourceTree = "<group>"; };
 		9A8788D826186897000B9362 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
@@ -1407,7 +1438,20 @@
 		9A8788DB26186897000B9362 /* XObjArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
 		9A87920126188002000B9362 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9A87920226188002000B9362 /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
+		9AA992BF2996B53C0022C200 /* guid_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = guid_tests.cpp; sourceTree = "<group>"; };
+		9AA992C32996B55C0022C200 /* guid_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guid_tests.h; sourceTree = "<group>"; };
 		9AC77EC424176BF2005CDD5C /* libCloverX64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCloverX64.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9ACD7A24299302860095F00A /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
+		9ACD7A26299302860095F00A /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
+		9ACD7A56299303710095F00A /* FirmwareVolume.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FirmwareVolume.c; sourceTree = "<group>"; };
+		9ACD7A99299303710095F00A /* AppleKeyAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyAggregator.h; sourceTree = "<group>"; };
+		9ACD7A9B299303710095F00A /* AppleKeyAggregator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleKeyAggregator.c; sourceTree = "<group>"; };
+		9ACD7AAE299303710095F00A /* SMCHelper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SMCHelper.c; sourceTree = "<group>"; };
+		9ACD7ABC299304680095F00A /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
+		9ACD7ABD299304680095F00A /* AppleImageCodec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppleImageCodec.c; sourceTree = "<group>"; };
+		9ACD7ABE299304680095F00A /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
+		9ACD7ABF299304680095F00A /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
+		9ACD7AC1299304680095F00A /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
 		9AF1EFE92634217800F7C2C0 /* SettingsUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsUtils.h; sourceTree = "<group>"; };
 		9AF1EFEA2634217800F7C2C0 /* SettingsUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SettingsUtils.cpp; sourceTree = "<group>"; };
 		9AF4165E242CD75C00D2644C /* libCloverX64 DEBUG_ALL=1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCloverX64 DEBUG_ALL=1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1599,6 +1643,8 @@
 				9A8787B126186896000B9362 /* find_replace_mask_OC_tests.h */,
 				9A8787AA26186896000B9362 /* global_test.cpp */,
 				9A8787B426186896000B9362 /* global_test.h */,
+				9AA992BF2996B53C0022C200 /* guid_tests.cpp */,
+				9AA992C32996B55C0022C200 /* guid_tests.h */,
 				9A8787AF26186896000B9362 /* LoadOptions_test.cpp */,
 				9A8787CB26186896000B9362 /* LoadOptions_test.h */,
 				9A8787BB26186896000B9362 /* MacOsVersion_test.cpp */,
@@ -1935,10 +1981,10 @@
 		9A8788CB26186897000B9362 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9ACD7A24299302860095F00A /* unicode_conversions.cpp */,
+				9ACD7A26299302860095F00A /* unicode_conversions.h */,
 				9A8788D126186897000B9362 /* shared_ptr.cpp */,
 				9A8788D326186897000B9362 /* shared_ptr.h */,
-				9A8788D526186897000B9362 /* unicode_conversions.cpp */,
-				9A8788CC26186897000B9362 /* unicode_conversions.h */,
 				9A8788DA26186897000B9362 /* XArray.h */,
 				9A8788D826186897000B9362 /* XBuffer.cpp */,
 				9A8788D226186897000B9362 /* XBuffer.h */,
@@ -1960,6 +2006,7 @@
 			isa = PBXGroup;
 			children = (
 				9A63C6CA24EBEF78000EB836 /* Version.h */,
+				9ACD7A40299303700095F00A /* Protocols */,
 				9AC77EBF24176B1B005CDD5C /* Clover */,
 				9AC77EC524176BF2005CDD5C /* Products */,
 			);
@@ -1982,6 +2029,55 @@
 				9AF4173B242CDA5800D2644C /* libCloverX64 DEBUG_ALL=2.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9ACD7A40299303700095F00A /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				9ACD7A55299303710095F00A /* FirmwareVolume */,
+				9ACD7A98299303710095F00A /* AppleKeyAggregator */,
+				9ACD7AAC299303710095F00A /* SMCHelper */,
+				9ACD7ABB299304680095F00A /* AppleImageCodec */,
+			);
+			name = Protocols;
+			path = ../../Protocols;
+			sourceTree = "<group>";
+		};
+		9ACD7A55299303710095F00A /* FirmwareVolume */ = {
+			isa = PBXGroup;
+			children = (
+				9ACD7A56299303710095F00A /* FirmwareVolume.c */,
+			);
+			path = FirmwareVolume;
+			sourceTree = "<group>";
+		};
+		9ACD7A98299303710095F00A /* AppleKeyAggregator */ = {
+			isa = PBXGroup;
+			children = (
+				9ACD7A99299303710095F00A /* AppleKeyAggregator.h */,
+				9ACD7A9B299303710095F00A /* AppleKeyAggregator.c */,
+			);
+			path = AppleKeyAggregator;
+			sourceTree = "<group>";
+		};
+		9ACD7AAC299303710095F00A /* SMCHelper */ = {
+			isa = PBXGroup;
+			children = (
+				9ACD7AAE299303710095F00A /* SMCHelper.c */,
+			);
+			path = SMCHelper;
+			sourceTree = "<group>";
+		};
+		9ACD7ABB299304680095F00A /* AppleImageCodec */ = {
+			isa = PBXGroup;
+			children = (
+				9ACD7ABC299304680095F00A /* load_bmp.c */,
+				9ACD7ABD299304680095F00A /* AppleImageCodec.c */,
+				9ACD7ABE299304680095F00A /* picopng.h */,
+				9ACD7ABF299304680095F00A /* load_icns.c */,
+				9ACD7AC1299304680095F00A /* picopng.c */,
+			);
+			path = AppleImageCodec;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2014,11 +2110,13 @@
 				9A2754D3263802230095D456 /* Config_RtVariables.h in Headers */,
 				9A878A4D26186897000B9362 /* MacOsVersion.h in Headers */,
 				9A87890F26186897000B9362 /* posix_additions.h in Headers */,
+				9ACD7AB2299303AB0095F00A /* AppleKeyAggregator.h in Headers */,
 				9A87892426186897000B9362 /* globals_dtor.h in Headers */,
 				9A878BB826186898000B9362 /* XImage.h in Headers */,
 				9A8789CF26186897000B9362 /* Handle.h in Headers */,
 				9A8788FA26186897000B9362 /* wchar.h in Headers */,
 				9A87896626186897000B9362 /* global_test.h in Headers */,
+				9AA992C42996B55C0022C200 /* guid_tests.h in Headers */,
 				9AF4D94F263004E200487D15 /* XmlLiteDictTypes.h in Headers */,
 				9A878A7A26186897000B9362 /* kernel_patcher.h in Headers */,
 				9A8788FD26186897000B9362 /* posix.h in Headers */,
@@ -2078,6 +2176,7 @@
 				9A878B5826186897000B9362 /* spd.h in Headers */,
 				9A878ABF26186897000B9362 /* nvidia.h in Headers */,
 				9AF4D958263004E200487D15 /* XmlLiteCompositeTypes.h in Headers */,
+				9ACD7A31299302870095F00A /* unicode_conversions.h in Headers */,
 				9A878BAC26186898000B9362 /* XCinema.h in Headers */,
 				9A878ADA26186897000B9362 /* DataHubCpu.h in Headers */,
 				9A2754AF263802230095D456 /* Config_Devices_Arbitrary.h in Headers */,
@@ -2093,7 +2192,6 @@
 				9A87896926186897000B9362 /* find_replace_mask_Clover_tests.h in Headers */,
 				9A8789E426186897000B9362 /* Languages.h in Headers */,
 				9A878B3126186897000B9362 /* ati_reg.h in Headers */,
-				9A878C7B26186898000B9362 /* unicode_conversions.h in Headers */,
 				9A8789BD26186897000B9362 /* undefinable.h in Headers */,
 				9A87895D26186897000B9362 /* find_replace_mask_OC_tests.h in Headers */,
 				9A878BA026186898000B9362 /* EfiFileLib.h in Headers */,
@@ -2183,6 +2281,7 @@
 				9A878B3726186897000B9362 /* smbios.h in Headers */,
 				9A878A4426186897000B9362 /* Console.h in Headers */,
 				9A878B1F26186897000B9362 /* LegacyBiosThunk.h in Headers */,
+				9ACD7AC8299304690095F00A /* picopng.h in Headers */,
 				9A8789C026186897000B9362 /* Devices.h in Headers */,
 				9A8789C926186897000B9362 /* BootTypes.h in Headers */,
 				9A7D2E922636B4F300187064 /* CloverVersion.h in Headers */,
@@ -2238,6 +2337,7 @@
 				9A8789BE26186897000B9362 /* undefinable.h in Headers */,
 				9AF4D950263004E200487D15 /* XmlLiteDictTypes.h in Headers */,
 				9A2754C5263802230095D456 /* Config_BootGraphics.h in Headers */,
+				9AA992C52996B55C0022C200 /* guid_tests.h in Headers */,
 				9A8789F426186897000B9362 /* gma.h in Headers */,
 				9A878A8126186897000B9362 /* card_vlist.h in Headers */,
 				9AF4D959263004E200487D15 /* XmlLiteCompositeTypes.h in Headers */,
@@ -2266,6 +2366,7 @@
 				9A8789CD26186897000B9362 /* OSFlags.h in Headers */,
 				9A878A9626186897000B9362 /* Injectors.h in Headers */,
 				9A878A0026186897000B9362 /* base64.h in Headers */,
+				9ACD7AB3299303AC0095F00A /* AppleKeyAggregator.h in Headers */,
 				9A87894F26186897000B9362 /* XBuffer_tests.h in Headers */,
 				9A878BA126186898000B9362 /* EfiFileLib.h in Headers */,
 				9A275468263801930095D456 /* ConfigManager.h in Headers */,
@@ -2282,6 +2383,7 @@
 				9A878A7B26186897000B9362 /* kernel_patcher.h in Headers */,
 				9A878A9026186897000B9362 /* KextList.h in Headers */,
 				9A878BCB26186898000B9362 /* image.h in Headers */,
+				9ACD7AC9299304690095F00A /* picopng.h in Headers */,
 				9A87897926186897000B9362 /* strcasecmp_test.h in Headers */,
 				9A87890726186897000B9362 /* stdio.h in Headers */,
 				9A27545F263801930095D456 /* SelfOem.h in Headers */,
@@ -2298,11 +2400,11 @@
 				9A2754A7263802230095D456 /* Config_ACPI.h in Headers */,
 				9A878A6326186897000B9362 /* memvendors.h in Headers */,
 				9A87894026186897000B9362 /* XToolsCommon_test.h in Headers */,
+				9ACD7A32299302870095F00A /* unicode_conversions.h in Headers */,
 				9A878ACC26186897000B9362 /* BootOptions.h in Headers */,
 				9AF4D93E263004E200487D15 /* XmlLiteSimpleTypes.h in Headers */,
 				9A87890A26186897000B9362 /* stdarg.h in Headers */,
 				9A878A9326186897000B9362 /* Nvram.h in Headers */,
-				9A878C7C26186898000B9362 /* unicode_conversions.h in Headers */,
 				9A8789D026186897000B9362 /* Handle.h in Headers */,
 				9A878B7726186898000B9362 /* libegint.h in Headers */,
 				9A878C5826186898000B9362 /* REFIT_MAINMENU_SCREEN.h in Headers */,
@@ -2442,6 +2544,7 @@
 				9A8789BF26186897000B9362 /* undefinable.h in Headers */,
 				9AF4D951263004E200487D15 /* XmlLiteDictTypes.h in Headers */,
 				9A2754C6263802230095D456 /* Config_BootGraphics.h in Headers */,
+				9AA992C62996B55C0022C200 /* guid_tests.h in Headers */,
 				9A8789F526186897000B9362 /* gma.h in Headers */,
 				9A878A8226186897000B9362 /* card_vlist.h in Headers */,
 				9AF4D95A263004E200487D15 /* XmlLiteCompositeTypes.h in Headers */,
@@ -2470,6 +2573,7 @@
 				9A8789CE26186897000B9362 /* OSFlags.h in Headers */,
 				9A878A9726186897000B9362 /* Injectors.h in Headers */,
 				9A878A0126186897000B9362 /* base64.h in Headers */,
+				9ACD7AB4299303AC0095F00A /* AppleKeyAggregator.h in Headers */,
 				9A87895026186897000B9362 /* XBuffer_tests.h in Headers */,
 				9A878BA226186898000B9362 /* EfiFileLib.h in Headers */,
 				9A275469263801930095D456 /* ConfigManager.h in Headers */,
@@ -2486,6 +2590,7 @@
 				9A878A7C26186897000B9362 /* kernel_patcher.h in Headers */,
 				9A878A9126186897000B9362 /* KextList.h in Headers */,
 				9A878BCC26186898000B9362 /* image.h in Headers */,
+				9ACD7ACA299304690095F00A /* picopng.h in Headers */,
 				9A87897A26186897000B9362 /* strcasecmp_test.h in Headers */,
 				9A87890826186897000B9362 /* stdio.h in Headers */,
 				9A275460263801930095D456 /* SelfOem.h in Headers */,
@@ -2502,11 +2607,11 @@
 				9A2754A8263802230095D456 /* Config_ACPI.h in Headers */,
 				9A878A6426186897000B9362 /* memvendors.h in Headers */,
 				9A87894126186897000B9362 /* XToolsCommon_test.h in Headers */,
+				9ACD7A33299302870095F00A /* unicode_conversions.h in Headers */,
 				9A878ACD26186897000B9362 /* BootOptions.h in Headers */,
 				9AF4D93F263004E200487D15 /* XmlLiteSimpleTypes.h in Headers */,
 				9A87890B26186897000B9362 /* stdarg.h in Headers */,
 				9A878A9426186897000B9362 /* Nvram.h in Headers */,
-				9A878C7D26186898000B9362 /* unicode_conversions.h in Headers */,
 				9A8789D126186897000B9362 /* Handle.h in Headers */,
 				9A878B7826186898000B9362 /* libegint.h in Headers */,
 				9A878C5926186898000B9362 /* REFIT_MAINMENU_SCREEN.h in Headers */,
@@ -2669,7 +2774,7 @@
 		9AC77EB924176B08005CDD5C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					9AC77EC324176BF2005CDD5C = {
 						CreatedOnToolsVersion = 10.1;
@@ -2699,6 +2804,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		9AC7809B2417D58C005CDD5C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -2761,6 +2867,7 @@
 				9A2754E826396F2B0095D456 /* SmbiosFillPatchingValues.cpp in Sources */,
 				9A878A5C26186897000B9362 /* kext_patcher.cpp in Sources */,
 				9A87895726186897000B9362 /* LoadOptions_test.cpp in Sources */,
+				9ACD7AC2299304690095F00A /* load_bmp.c in Sources */,
 				9A878A1A26186897000B9362 /* plist.cpp in Sources */,
 				9A8789F926186897000B9362 /* TagFloat.cpp in Sources */,
 				9A87893326186897000B9362 /* globals_ctor.cpp in Sources */,
@@ -2788,6 +2895,7 @@
 				9A878A5626186897000B9362 /* HdaCodecDump.cpp in Sources */,
 				9A878C9F26186898000B9362 /* XBuffer.cpp in Sources */,
 				9A878AFB26186897000B9362 /* platformdata.cpp in Sources */,
+				9AA992C02996B53C0022C200 /* guid_tests.cpp in Sources */,
 				9AF4D94C263004E200487D15 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A878B2B26186897000B9362 /* Events.cpp in Sources */,
 				9A878A8326186897000B9362 /* AmlGenerator.cpp in Sources */,
@@ -2809,6 +2917,7 @@
 				9A878B7026186897000B9362 /* BmLib.cpp in Sources */,
 				9A878C4226186898000B9362 /* securehash.cpp in Sources */,
 				9A878B6A26186897000B9362 /* Settings.cpp in Sources */,
+				9ACD7ACB299304690095F00A /* load_icns.c in Sources */,
 				9A878B6D26186897000B9362 /* egemb_icons_dark.cpp in Sources */,
 				9A878B2226186897000B9362 /* VersionString.cpp in Sources */,
 				9A878B0426186897000B9362 /* MemoryOperation.c in Sources */,
@@ -2831,7 +2940,6 @@
 				9A878B5526186897000B9362 /* FixBiosDsdt.cpp in Sources */,
 				9A878A0526186897000B9362 /* base64.cpp in Sources */,
 				9A8789B426186897000B9362 /* strlen_test.cpp in Sources */,
-				9A878C9626186898000B9362 /* unicode_conversions.cpp in Sources */,
 				9A878A8926186897000B9362 /* BdsConnect.cpp in Sources */,
 				9A87899926186897000B9362 /* XObjArray_tests.cpp in Sources */,
 				9A87898A26186897000B9362 /* find_replace_mask_Clover_tests.cpp in Sources */,
@@ -2849,9 +2957,11 @@
 				9A878BCD26186898000B9362 /* XImage.cpp in Sources */,
 				9A87895426186897000B9362 /* XBuffer_tests.cpp in Sources */,
 				9A878BA926186898000B9362 /* nanosvgrast.cpp in Sources */,
+				9ACD7A2B299302870095F00A /* unicode_conversions.cpp in Sources */,
 				9AF4D955263004E200487D15 /* XmlLiteDictTypes.cpp in Sources */,
 				9AF4D937263004E200487D15 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A878AE026186897000B9362 /* BootOptions.cpp in Sources */,
+				9ACD7AB8299304070095F00A /* AppleKeyAggregator.c in Sources */,
 				9A878AE926186897000B9362 /* gma.cpp in Sources */,
 				9A878C7E26186898000B9362 /* XStringArray.cpp in Sources */,
 				9A87899F26186897000B9362 /* strncmp_test.cpp in Sources */,
@@ -2862,11 +2972,13 @@
 				9A878B9426186898000B9362 /* XTheme.cpp in Sources */,
 				9A87899326186897000B9362 /* all_tests.cpp in Sources */,
 				9A27549A263802230095D456 /* Config_Quirks.cpp in Sources */,
+				9ACD7AC5299304690095F00A /* AppleImageCodec.c in Sources */,
 				9A878A6E26186897000B9362 /* Utils.cpp in Sources */,
 				9A878C1526186898000B9362 /* securemenu.cpp in Sources */,
 				9A878C9926186898000B9362 /* XRBuffer.cpp in Sources */,
 				9A2755482639DF1B0095D456 /* xml_lite-test.cpp in Sources */,
 				9AF1EFEC2634217800F7C2C0 /* SettingsUtils.cpp in Sources */,
+				9ACD7AB5299303AF0095F00A /* SMCHelper.c in Sources */,
 				9A2754C7263802230095D456 /* ConfigPlistAbstract.cpp in Sources */,
 				9A8789AE26186897000B9362 /* XToolsCommon_test.cpp in Sources */,
 				9A878A0B26186897000B9362 /* TagData.cpp in Sources */,
@@ -2885,6 +2997,7 @@
 				9A878C2A26186898000B9362 /* lockedgraphics.cpp in Sources */,
 				9A878C0926186898000B9362 /* secureboot.cpp in Sources */,
 				9A878B1C26186897000B9362 /* sound.cpp in Sources */,
+				9ACD7ACE299304690095F00A /* picopng.c in Sources */,
 				9A878B6126186897000B9362 /* usbfix.cpp in Sources */,
 				9A878B4C26186897000B9362 /* guid.cpp in Sources */,
 				9A7D2E932636B4F300187064 /* CloverVersion.cpp in Sources */,
@@ -2894,6 +3007,7 @@
 				9A878AF226186897000B9362 /* hda.cpp in Sources */,
 				9A878AE626186897000B9362 /* kernel_patcher.cpp in Sources */,
 				9A87897E26186897000B9362 /* strcmp_test.cpp in Sources */,
+				9ACD7AAF299303A70095F00A /* FirmwareVolume.c in Sources */,
 				9A878A0E26186897000B9362 /* TagDict.cpp in Sources */,
 				9A878B9D26186898000B9362 /* egemb_font.cpp in Sources */,
 				9A878B9726186898000B9362 /* scroll_images.cpp in Sources */,
@@ -2917,6 +3031,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A878C7626186898000B9362 /* main.cpp in Sources */,
+				9ACD7AC3299304690095F00A /* load_bmp.c in Sources */,
 				9A878A2126186897000B9362 /* TagInt64.cpp in Sources */,
 				9A878B4A26186897000B9362 /* KERNEL_AND_KEXT_PATCHES.cpp in Sources */,
 				9A878A5D26186897000B9362 /* kext_patcher.cpp in Sources */,
@@ -2931,6 +3046,7 @@
 				9A87897626186897000B9362 /* plist_tests.cpp in Sources */,
 				9A27546B263801930095D456 /* Self.cpp in Sources */,
 				9AF4D971263014C600487D15 /* Volume.cpp in Sources */,
+				9ACD7A2C299302870095F00A /* unicode_conversions.cpp in Sources */,
 				9A878A5126186897000B9362 /* LegacyBoot.cpp in Sources */,
 				9A878C6A26186898000B9362 /* lib.cpp in Sources */,
 				9A878AF626186897000B9362 /* spd.cpp in Sources */,
@@ -2949,18 +3065,22 @@
 				9A878AFC26186897000B9362 /* platformdata.cpp in Sources */,
 				9AF4D94D263004E200487D15 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A878B2C26186897000B9362 /* Events.cpp in Sources */,
+				9ACD7AB0299303A80095F00A /* FirmwareVolume.c in Sources */,
 				9A878A8426186897000B9362 /* AmlGenerator.cpp in Sources */,
 				9A878ADE26186897000B9362 /* MacOsVersion.cpp in Sources */,
 				9A878C6126186898000B9362 /* icns.cpp in Sources */,
 				9A878C4F26186898000B9362 /* menu_items.cpp in Sources */,
 				9A878BB326186898000B9362 /* load_icns.cpp in Sources */,
 				9A2754C8263802230095D456 /* ConfigPlistAbstract.cpp in Sources */,
+				9ACD7ACF299304690095F00A /* picopng.c in Sources */,
 				9A8789BB26186897000B9362 /* find_replace_mask_OC_tests.cpp in Sources */,
+				9AA992C12996B53C0022C200 /* guid_tests.cpp in Sources */,
 				9A8788EC26186897000B9362 /* stdio.cpp in Sources */,
 				9A878C6426186898000B9362 /* screen.cpp in Sources */,
 				9A87899D26186897000B9362 /* XArray_tests.cpp in Sources */,
 				9A275465263801930095D456 /* ConfigManager.cpp in Sources */,
 				9A878A1526186897000B9362 /* TagDate.cpp in Sources */,
+				9ACD7ACC299304690095F00A /* load_icns.c in Sources */,
 				9A87891F26186897000B9362 /* BootLog.cpp in Sources */,
 				9AF4D944263004E200487D15 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878B8926186898000B9362 /* text.cpp in Sources */,
@@ -2972,6 +3092,7 @@
 				9A878B2326186897000B9362 /* VersionString.cpp in Sources */,
 				9A878B0526186897000B9362 /* MemoryOperation.c in Sources */,
 				9A878A2426186897000B9362 /* xml.cpp in Sources */,
+				9ACD7AB9299304070095F00A /* AppleKeyAggregator.c in Sources */,
 				9A878ABA26186897000B9362 /* kext_inject.cpp in Sources */,
 				9A8788EF26186897000B9362 /* abort.cpp in Sources */,
 				9A878BA426186898000B9362 /* nanosvg.cpp in Sources */,
@@ -2986,10 +3107,10 @@
 				9A878C3426186898000B9362 /* bootscreen.cpp in Sources */,
 				9A2755492639DF1B0095D456 /* xml_lite-test.cpp in Sources */,
 				9A878C0726186898000B9362 /* legacy.cpp in Sources */,
+				9ACD7AC6299304690095F00A /* AppleImageCodec.c in Sources */,
 				9A878B5626186897000B9362 /* FixBiosDsdt.cpp in Sources */,
 				9A878A0626186897000B9362 /* base64.cpp in Sources */,
 				9A8789B526186897000B9362 /* strlen_test.cpp in Sources */,
-				9A878C9726186898000B9362 /* unicode_conversions.cpp in Sources */,
 				9A878A8A26186897000B9362 /* BdsConnect.cpp in Sources */,
 				9A87899A26186897000B9362 /* XObjArray_tests.cpp in Sources */,
 				9A87898B26186897000B9362 /* find_replace_mask_Clover_tests.cpp in Sources */,
@@ -3015,6 +3136,7 @@
 				9ACBC044264484A6001EB94B /* config-test.cpp in Sources */,
 				9A2754E926396F2B0095D456 /* SmbiosFillPatchingValues.cpp in Sources */,
 				9A878C7F26186898000B9362 /* XStringArray.cpp in Sources */,
+				9ACD7AB6299303B00095F00A /* SMCHelper.c in Sources */,
 				9A8789A026186897000B9362 /* strncmp_test.cpp in Sources */,
 				9A878BBC26186898000B9362 /* XIcon.cpp in Sources */,
 				9A8788E926186897000B9362 /* posix_additions.cpp in Sources */,
@@ -3075,6 +3197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A878C7726186898000B9362 /* main.cpp in Sources */,
+				9ACD7AC4299304690095F00A /* load_bmp.c in Sources */,
 				9A878A2226186897000B9362 /* TagInt64.cpp in Sources */,
 				9A878B4B26186897000B9362 /* KERNEL_AND_KEXT_PATCHES.cpp in Sources */,
 				9A878A5E26186897000B9362 /* kext_patcher.cpp in Sources */,
@@ -3089,6 +3212,7 @@
 				9A87897726186897000B9362 /* plist_tests.cpp in Sources */,
 				9A27546C263801930095D456 /* Self.cpp in Sources */,
 				9AF4D972263014C600487D15 /* Volume.cpp in Sources */,
+				9ACD7A2D299302870095F00A /* unicode_conversions.cpp in Sources */,
 				9A878A5226186897000B9362 /* LegacyBoot.cpp in Sources */,
 				9A878C6B26186898000B9362 /* lib.cpp in Sources */,
 				9A878AF726186897000B9362 /* spd.cpp in Sources */,
@@ -3107,18 +3231,22 @@
 				9A878AFD26186897000B9362 /* platformdata.cpp in Sources */,
 				9AF4D94E263004E200487D15 /* XmlLiteArrayTypes.cpp in Sources */,
 				9A878B2D26186897000B9362 /* Events.cpp in Sources */,
+				9ACD7AB1299303A80095F00A /* FirmwareVolume.c in Sources */,
 				9A878A8526186897000B9362 /* AmlGenerator.cpp in Sources */,
 				9A878ADF26186897000B9362 /* MacOsVersion.cpp in Sources */,
 				9A878C6226186898000B9362 /* icns.cpp in Sources */,
 				9A878C5026186898000B9362 /* menu_items.cpp in Sources */,
 				9A878BB426186898000B9362 /* load_icns.cpp in Sources */,
 				9A2754C9263802230095D456 /* ConfigPlistAbstract.cpp in Sources */,
+				9ACD7AD0299304690095F00A /* picopng.c in Sources */,
 				9A8789BC26186897000B9362 /* find_replace_mask_OC_tests.cpp in Sources */,
+				9AA992C22996B53C0022C200 /* guid_tests.cpp in Sources */,
 				9A8788ED26186897000B9362 /* stdio.cpp in Sources */,
 				9A878C6526186898000B9362 /* screen.cpp in Sources */,
 				9A87899E26186897000B9362 /* XArray_tests.cpp in Sources */,
 				9A275466263801930095D456 /* ConfigManager.cpp in Sources */,
 				9A878A1626186897000B9362 /* TagDate.cpp in Sources */,
+				9ACD7ACD299304690095F00A /* load_icns.c in Sources */,
 				9A87892026186897000B9362 /* BootLog.cpp in Sources */,
 				9AF4D945263004E200487D15 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9A878B8A26186898000B9362 /* text.cpp in Sources */,
@@ -3130,6 +3258,7 @@
 				9A878B2426186897000B9362 /* VersionString.cpp in Sources */,
 				9A878B0626186897000B9362 /* MemoryOperation.c in Sources */,
 				9A878A2526186897000B9362 /* xml.cpp in Sources */,
+				9ACD7ABA299304080095F00A /* AppleKeyAggregator.c in Sources */,
 				9A878ABB26186897000B9362 /* kext_inject.cpp in Sources */,
 				9A8788F026186897000B9362 /* abort.cpp in Sources */,
 				9A878BA526186898000B9362 /* nanosvg.cpp in Sources */,
@@ -3144,10 +3273,10 @@
 				9A878C3526186898000B9362 /* bootscreen.cpp in Sources */,
 				9A27554A2639DF1C0095D456 /* xml_lite-test.cpp in Sources */,
 				9A878C0826186898000B9362 /* legacy.cpp in Sources */,
+				9ACD7AC7299304690095F00A /* AppleImageCodec.c in Sources */,
 				9A878B5726186897000B9362 /* FixBiosDsdt.cpp in Sources */,
 				9A878A0726186897000B9362 /* base64.cpp in Sources */,
 				9A8789B626186897000B9362 /* strlen_test.cpp in Sources */,
-				9A878C9826186898000B9362 /* unicode_conversions.cpp in Sources */,
 				9A878A8B26186897000B9362 /* BdsConnect.cpp in Sources */,
 				9A87899B26186897000B9362 /* XObjArray_tests.cpp in Sources */,
 				9A87898C26186897000B9362 /* find_replace_mask_Clover_tests.cpp in Sources */,
@@ -3173,6 +3302,7 @@
 				9ACBC045264484A6001EB94B /* config-test.cpp in Sources */,
 				9A2754EA26396F2B0095D456 /* SmbiosFillPatchingValues.cpp in Sources */,
 				9A878C8026186898000B9362 /* XStringArray.cpp in Sources */,
+				9ACD7AB7299303B00095F00A /* SMCHelper.c in Sources */,
 				9A8789A126186897000B9362 /* strncmp_test.cpp in Sources */,
 				9A878BBD26186898000B9362 /* XIcon.cpp in Sources */,
 				9A8788EA26186897000B9362 /* posix_additions.cpp in Sources */,
@@ -3248,11 +3378,13 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -3364,11 +3496,13 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -3481,6 +3615,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				ENABLE_TESTABILITY = YES;
@@ -3542,6 +3677,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3596,6 +3732,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				ENABLE_TESTABILITY = YES;
@@ -3657,6 +3794,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3709,6 +3847,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				ENABLE_TESTABILITY = YES;
@@ -3769,6 +3908,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;

@@ -247,7 +247,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     BigBack.setEmpty();
   }
   Status = EFI_NOT_FOUND;
-  if (!ThemeX.Daylight) {
+  if (!ThemeX->Daylight) {
     Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS8, &BigBack, NULL); //we should have a place for SVG background
   }
   if (EFI_ERROR(Status)) {
@@ -257,7 +257,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
-  if (!ThemeX.Daylight) {
+  if (!ThemeX->Daylight) {
     Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS8, &Banner, NULL);
   }
   if (EFI_ERROR(Status)) {
@@ -393,7 +393,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->RunOnce = IsPropertyTrue(Dict2);
 
       NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
-      ThemeX.Cinema.AddFilm(NewFilm);
+      ThemeX->Cinema.AddFilm(NewFilm);
       //     delete NewFilm; //looks like already deleted
     }
   }
@@ -454,7 +454,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   }
   NSVGfont* fontSVG = textFace[textType].font;
   UINT32 color = textFace[textType].color;
-  INTN Height = (INTN)(textFace[textType].size * ThemeX.Scale);
+  INTN Height = (INTN)(textFace[textType].size * ThemeX->Scale);
   float Scale, sy;
   float x, y;
   if (!fontSVG) {

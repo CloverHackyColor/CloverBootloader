@@ -1133,7 +1133,7 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
     }
   }
 
-  XBool BootCampStyle = ThemeX.BootCampStyle;
+  XBool BootCampStyle = ThemeX->BootCampStyle;
 
   if ( Entry->Title.isEmpty()  &&  Entry->DisplayedVolName.isEmpty() ) {
     XStringW BasenameXW = XStringW(Basename(Volume->DevicePathString.wc_str()));
@@ -1186,7 +1186,7 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
   } else if (Image) {
     Entry->Image = *Image; //copy image from temporary storage
   } else {
-    Entry->Image = ThemeX.LoadOSIcon(OSIconName);
+    Entry->Image = ThemeX->LoadOSIcon(OSIconName);
   }
 //  DBG("Load DriveImage\n");
   // Load DriveImage
@@ -1196,9 +1196,9 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
   } else {
     Entry->DriveImage = ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
   }
-//   DBG("HideBadges=%llu Volume=%ls ", ThemeX.HideBadges, Volume->VolName);
-  if (ThemeX.HideBadges & HDBADGES_SHOW) {
-    if (ThemeX.HideBadges & HDBADGES_SWAP) {
+//   DBG("HideBadges=%llu Volume=%ls ", ThemeX->HideBadges, Volume->VolName);
+  if (ThemeX->HideBadges & HDBADGES_SHOW) {
+    if (ThemeX->HideBadges & HDBADGES_SWAP) {
       Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0);
        DBG("%sShow badge as Drive.\n", indent);
     } else {
@@ -1485,10 +1485,10 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         LoaderTitle.upperAscii();
         LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
         // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
-        XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
+        XIcon ImageX = ThemeX->GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
         if (ImageX.isEmpty()) {
           // no preloaded icon, try to load from dir
-          ImageX.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + OSName);
+          ImageX.LoadXImage(&ThemeX->getThemeDir(), L"os_"_XSW + OSName);
         }
         if (CustomPath) { 
           *CustomPath = File;
@@ -1509,9 +1509,9 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
       if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
         XStringW OSIconName = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
         OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
-        XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
+        XIcon ImageX = ThemeX->GetIcon(L"os_"_XSW + OSIconName);
         if (ImageX.isEmpty()) {
-          ImageX.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + OSIconName);
+          ImageX.LoadXImage(&ThemeX->getThemeDir(), L"os_"_XSW + OSIconName);
         }
         if (CustomPath) {
           *CustomPath = LinuxEntryData[Index].Path;
@@ -1930,7 +1930,7 @@ void ScanLoader(void)
           if (aFound && (aFound == aIndex)) {
             XIcon ImageX;
             XStringW IconXSW = XStringW().takeValueFrom(AndroidEntryData[Index].Icon);
-            ImageX.LoadXImage(&ThemeX.getThemeDir(), (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
+            ImageX.LoadXImage(&ThemeX->getThemeDir(), (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
             AddLoaderEntry(AndroidEntryData[Index].Path, NullXString8Array, L""_XSW, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
                            (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
           }
@@ -2475,9 +2475,9 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
     // Change to custom image if needed
     if (Image.isEmpty() && Custom.settings.dgetImagePath().notEmpty()) {
-      Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.dgetImagePath());
+      Image.LoadXImage(&ThemeX->getThemeDir(), Custom.settings.dgetImagePath());
       if (Image.isEmpty()) {
-        Image.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + Custom.settings.dgetImagePath());
+        Image.LoadXImage(&ThemeX->getThemeDir(), L"os_"_XSW + Custom.settings.dgetImagePath());
         if (Image.isEmpty()) {
           Image.LoadXImage(&self.getCloverDir(), Custom.settings.dgetImagePath());
           if (Image.isEmpty()) {
@@ -2492,7 +2492,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
     // Change to custom drive image if needed
     if (DriveImage.isEmpty() && Custom.settings.dgetDriveImagePath().notEmpty()) {
-      DriveImage.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.dgetDriveImagePath());
+      DriveImage.LoadXImage(&ThemeX->getThemeDir(), Custom.settings.dgetDriveImagePath());
       if (DriveImage.isEmpty()) {
         DriveImage.LoadXImage(&self.getCloverDir(), Custom.settings.dgetImagePath());
         if (DriveImage.isEmpty()) {
