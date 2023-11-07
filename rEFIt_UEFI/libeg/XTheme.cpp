@@ -795,18 +795,6 @@ const XIcon& XTheme::GetIcon(const XString8& Name)
   return NullIcon; //if name is not found
 }
 
-XIcon* XTheme::GetIconP(const XString8& Name)
-{
-  for (size_t i = 0; i < Icons.size(); i++)
-  {
-    if (Icons[i].Name == Name) //night icon has same name as daylight icon
-    {
-      return GetIconP(Icons[i].Id);
-    }
-  }
-  return &NullIcon; //if name is not found
-}
-
 XBool XTheme::CheckNative(INTN Id)
 {
   for (size_t i = 0; i < Icons.size(); i++)
@@ -822,11 +810,6 @@ XBool XTheme::CheckNative(INTN Id)
 const XIcon& XTheme::GetIcon(INTN Id)
 {
   return GetIconAlt(Id, -1);
-}
-
-XIcon* XTheme::GetIconP(INTN Id)
-{
-  return &GetIconAlt(Id, -1);
 }
 
 /*
@@ -1160,17 +1143,17 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
 //TODO - make them XIcon
-  SelectionImages[2] = *GetIconP(BUILTIN_SELECTION_SMALL)->GetBest(!Daylight);
-  SelectionImages[0] = *GetIconP(BUILTIN_SELECTION_BIG)->GetBest(!Daylight);
+  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL).GetBest(!Daylight);
+  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG).GetBest(!Daylight);
   if (BootCampStyle) {
-    SelectionImages[4] = *GetIconP(BUILTIN_ICON_SELECTION)->GetBest(!Daylight);
+    SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION).GetBest(!Daylight);
   }
 
   //and buttons
-  Buttons[0] = *GetIconP(BUILTIN_RADIO_BUTTON)->GetBest(!Daylight);
-  Buttons[1] = *GetIconP(BUILTIN_RADIO_BUTTON_SELECTED)->GetBest(!Daylight);
-  Buttons[2] = *GetIconP(BUILTIN_CHECKBOX)->GetBest(!Daylight);
-  Buttons[3] = *GetIconP(BUILTIN_CHECKBOX_CHECKED)->GetBest(!Daylight);
+  Buttons[0] = GetIcon(BUILTIN_RADIO_BUTTON).GetBest(!Daylight);
+  Buttons[1] = GetIcon(BUILTIN_RADIO_BUTTON_SELECTED).GetBest(!Daylight);
+  Buttons[2] = GetIcon(BUILTIN_CHECKBOX).GetBest(!Daylight);
+  Buttons[3] = GetIcon(BUILTIN_CHECKBOX_CHECKED).GetBest(!Daylight);
 
   //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 
@@ -1196,14 +1179,14 @@ void XTheme::InitBar()
     UpButtonImage.LoadXImage(ThemeDir, "scrollbar\\up_button");
     DownButtonImage.LoadXImage(ThemeDir, "scrollbar\\down_button");
   } else {
-    ScrollbarBackgroundImage = *GetIconP("scrollbar_background"_XS8)->GetBest(!Daylight);
+    ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS8).GetBest(!Daylight);
     BarStartImage.setEmpty();
     BarEndImage.setEmpty();
-    ScrollbarImage = *GetIconP("scrollbar_holder"_XS8)->GetBest(!Daylight); //"_night" is already accounting
-    ScrollStartImage = *GetIconP("scrollbar_start"_XS8)->GetBest(!Daylight);
-    ScrollEndImage = *GetIconP("scrollbar_end"_XS8)->GetBest(!Daylight);
-    UpButtonImage = *GetIconP("scrollbar_up_button"_XS8)->GetBest(!Daylight);
-    DownButtonImage = *GetIconP("scrollbar_down_button"_XS8)->GetBest(!Daylight);
+    ScrollbarImage = GetIcon("scrollbar_holder"_XS8).GetBest(!Daylight); //"_night" is already accounting
+    ScrollStartImage = GetIcon("scrollbar_start"_XS8).GetBest(!Daylight);
+    ScrollEndImage = GetIcon("scrollbar_end"_XS8).GetBest(!Daylight);
+    UpButtonImage = GetIcon("scrollbar_up_button"_XS8).GetBest(!Daylight);
+    DownButtonImage = GetIcon("scrollbar_down_button"_XS8).GetBest(!Daylight);
   }
 
   //some help with embedded scroll

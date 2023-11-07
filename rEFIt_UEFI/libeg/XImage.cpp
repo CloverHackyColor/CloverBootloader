@@ -530,7 +530,7 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   }
 }
 
-void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
+void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height) const
 {
   if (isEmpty()) {
     return;
@@ -556,27 +556,27 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
   }
   //output combined image
   if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, (*this).GetPixelPtr(0, 0),
+    GraphicsOutput->Blt(GraphicsOutput, PixelData.data(),
       EfiBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
-    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)(*this).GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }
 
-void XImage::Draw(INTN x, INTN y)
+void XImage::Draw(INTN x, INTN y) const
 {
   Draw(x, y, 0, true);
 }
 
-void XImage::Draw(INTN x, INTN y, float scale)
+void XImage::Draw(INTN x, INTN y, float scale) const
 {
   Draw(x, y, scale, true);
 }
 
-void XImage::Draw(INTN x, INTN y, float scale, XBool Opaque)
+void XImage::Draw(INTN x, INTN y, float scale, XBool Opaque) const
 {
   //prepare images
   if (isEmpty()) {
@@ -601,7 +601,7 @@ void XImage::Draw(INTN x, INTN y, float scale, XBool Opaque)
 
 }
 
-void XImage::DrawOnBack(INTN XPos, INTN YPos, const XImage& Plate)
+void XImage::DrawOnBack(INTN XPos, INTN YPos, const XImage& Plate) const
 {
   XImage BackLayer(Width, Height);
   BackLayer.CopyRect(Plate, XPos, YPos); //assume Plate is big enough [XPos+Width, YPos+Height]

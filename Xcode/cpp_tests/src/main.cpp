@@ -12,7 +12,8 @@
 #include "../../../PosixCompilation/xcode_utf_fixed.h"
 
 #include "../../../rEFIt_UEFI/cpp_unit_test/all_tests.h"
-#include "../../../rEFIt_UEFI/cpp_foundation/XToolsCommon.h"
+//#include "../../../rEFIt_UEFI/cpp_foundation/XToolsCommon.h"
+#include "../../../rEFIt_UEFI/libeg/XImage.h"
 //#include "../../../rEFIt_UEFI/Platform/platformdata.h"
 
 //class Boolean
@@ -34,12 +35,127 @@
 //    void setValue(bool a) {flag = a;}
 //};
 
+// The following is by no means a FULL solution!
+#include <functional>
+#include <iostream>
+#include <cassert>
+
+template<typename T>
+class Property {
+public:
+    Property(){}
+    operator const T& () const {
+        // Call override getter if we have it
+        if (getter) return getter();
+        return get();
+    }
+    const T& operator = (const T& other) {
+        // Call override setter if we have it
+        if (setter) return setter(other);
+        return set(other);
+    }
+    bool operator == (const T& other) const {
+        // Static cast makes sure our getter operator is called, so we could use overrides if those are in place
+        return static_cast<const T&>(*this) == other;
+    }
+    // Use this to always get without overrides, useful for use with overriding implementations
+    const T& get() const {
+        return t;
+    }
+    // Use this to always set without overrides, useful for use with overriding implementations
+    const T& set(const T& other) {
+        return t = other;
+    }
+    // Assign getter and setter to these properties
+    std::function<const T&()> getter;
+    std::function<const T&(const T&)> setter;
+private:
+    T t;
+};
+
+// Basic usage, no override
+struct Test {
+    Property<int> prop;
+};
+
+// Override getter and setter
+struct TestWithOverride {
+    TestWithOverride(){
+        prop.setter = [&](const int& other){
+            std::cout << "Custom setter called" << std::endl;
+            return prop.set(other);
+        };
+        prop.setter = std::bind(&TestWithOverride::setProp,this,std::placeholders::_1);
+        prop.getter = std::bind(&TestWithOverride::getProp,this);
+    }
+    Property<int> prop;
+private:
+    const int& getProp() const {
+        std::cout << "Custom getter called" << std::endl;
+        return prop.get();
+    }
+    const int& setProp(const int& other){
+        std::cout << "Custom setter called" << std::endl;
+        return prop.set(other);
+    }
+};
+
+class MyFloat {
+public:
+  float f;
+  MyFloat() { f = 0.0f; }
+  MyFloat(float _f) : f(_f) {}
+  float get() { return 1; }
+};
+template<typename T>
+class MutableRef : public T {
+public:
+  T* t;
+  const T& operator = (const T* other) {
+    t = other;
+    return *t;
+  }
+  operator T& () {
+    return *t;
+  }
+};
+
 
 extern "C" int main(int argc, const char * argv[])
 {
 	(void)argc;
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
+
+  MyFloat test = 5.0f;
+  
+  MutableRef<MyFloat> Background;
+  
+  Background = &test;
+  test = 6;
+  float test2 = Background.get();
+
+    Test t;
+    TestWithOverride t1;
+    t.prop = 1;
+    assert(t.prop == 1);
+    t1.prop = 1;
+    assert(t1.prop == 1);
+    /*
+    Expected output:
+    1. No aborts on assertions
+    2. Text:
+    Custom setter called
+    Custom getter called
+    */
+
+
+
+
+
+
+
+
 
 //  xcode_utf_fixed_tests();
   const int i = 2;

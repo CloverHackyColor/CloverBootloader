@@ -142,6 +142,8 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
   return x;
 }
 
+#ifndef UNIT_TESTS_MACOS
+
 extern "C" {
 #include <Library/OcMemoryLib.h>
 }
@@ -154,6 +156,8 @@ void displayFreeMemory(const XString8& prefix)
   TotalMemory = OcCountFreePages (&LowMemory);
   DebugLog(1, "--> %s: Firmware has %llu free pages (%llu in lower 4 GB)\n", prefix.c_str(), TotalMemory, LowMemory);
 }
+
+#endif
 
 
 XBool haveError = false;

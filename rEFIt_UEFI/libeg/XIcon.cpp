@@ -250,43 +250,9 @@ EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
   return Status;
 }
 
-XImage* XIcon::GetBest(XBool night, XBool *free)
+const XImage& XIcon::GetBest(XBool night) const
 {
-#if 1
-  if (ImageSVG) {
-    NSVGimage* sImage = (NSVGimage*)ImageSVGnight;
-    if (!night || !ImageSVGnight) sImage = (NSVGimage*)ImageSVG;
-    float Scale = sImage->scale;
-    NSVGrasterizer* rast = nsvgCreateRasterizer();
-    float Height = sImage->height * Scale;
-    float Width = sImage->width * Scale;
-    int iWidth = (int)(Width + 0.5f);
-    int iHeight = (int)(Height + 0.5f);
-    XImage* NewImage = new XImage(iWidth, iHeight); //TODO creating new XImage we have to delete it after use
-    if (sImage->shapes == NULL) {
-      if (free) *free = true;
-      return NewImage;
-    }
-    float bounds[4];
-    nsvg__imageBounds(sImage, bounds);
-
-    float tx = 0.f, ty = 0.f;
-    float realWidth = (bounds[2] - bounds[0]) * Scale;
-    float realHeight = (bounds[3] - bounds[1]) * Scale;
-    tx = (Width - realWidth) * 0.5f;
-    ty = (Height - realHeight) * 0.5f;
-    
-    nsvgRasterize(rast, sImage, tx, ty, Scale, Scale, (UINT8*)NewImage->GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
-    nsvgDeleteRasterizer(rast);
-//    if (night) ImageNight = *NewImage;
-//    else Image = *NewImage;
-//    delete NewImage;
-    if (free) *free = true;
-    return NewImage;
-  }
-#endif
-  XImage* RetImage = (night && !ImageNight.isEmpty())? &ImageNight : &Image;
-  if (free) *free = false;
+  const XImage& RetImage = (night && !ImageNight.isEmpty())? ImageNight : Image;
   return RetImage;
 }
 

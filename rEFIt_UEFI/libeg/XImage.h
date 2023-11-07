@@ -90,11 +90,11 @@ public:
 
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
-  void Draw(INTN x, INTN y, float scale, XBool Opaque);
-  void Draw(INTN x, INTN y, float scale); //can accept 0 scale as 1.f
-  void Draw(INTN x, INTN y); 
-  void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0);
-  void DrawOnBack(INTN x, INTN y, const XImage& Plate);
+  void Draw(INTN x, INTN y, float scale, XBool Opaque) const;
+  void Draw(INTN x, INTN y, float scale) const; //can accept 0 scale as 1.f
+  void Draw(INTN x, INTN y) const;
+  void DrawWithoutCompose(INTN x, INTN y, UINTN width = 0, UINTN height = 0) const;
+  void DrawOnBack(INTN x, INTN y, const XImage& Plate) const;
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage
   EFI_STATUS LoadXImage(const EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);

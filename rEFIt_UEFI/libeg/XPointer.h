@@ -32,7 +32,9 @@ public:
   XPointer(const XPointer&) = delete;
   XPointer& operator=(const XPointer&) = delete;
 
-  ~XPointer() {};
+  ~XPointer() {
+    delete PointerImage;
+  };
 
 
 public:

@@ -41,7 +41,7 @@ public:
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
 //  Icon(const Icon&) = delete;
   XIcon& operator=(const XIcon&); // = delete;
-  XImage* GetBest(XBool night, XBool *free = nullptr);
+  const XImage& GetBest(XBool night) const;
 };
 
 

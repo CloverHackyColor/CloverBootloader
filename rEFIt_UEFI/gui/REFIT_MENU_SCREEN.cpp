@@ -1608,20 +1608,18 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       if (!TitleImage.isEmpty()) {
         INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage.Image.GetWidth() + (int)(TITLEICON_SPACING * ThemeX->Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
-        XBool free;
-        XImage *tImage = TitleImage.GetBest(!Daylight, &free);
+        const XImage& tImage = TitleImage.GetBest(!Daylight);
    //     TitleImage.Image.Draw(FilmXPos, FilmYPos); //TODO - account night and svg
 
         // update FilmPlace only if not set by InitAnime
         if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
           FilmC->FilmPlace.XPos = FilmXPos;
           FilmC->FilmPlace.YPos = FilmYPos;
-          FilmC->FilmPlace.Width = tImage->GetWidth();
-          FilmC->FilmPlace.Height = tImage->GetHeight();
+          FilmC->FilmPlace.Width = tImage.GetWidth();
+          FilmC->FilmPlace.Height = tImage.GetHeight();
         }
         
-        tImage->Draw(FilmXPos, FilmYPos);
-        if (free) delete tImage;
+        tImage.Draw(FilmXPos, FilmYPos);
       }
 
       if (InfoLines.size() > 0) {

@@ -130,9 +130,10 @@ extern XBool haveError;
 
 #endif // __cplusplus
 
-
+#ifndef UNIT_TESTS_MACOS
 extern "C" {
 void displayFreeMemory(const XString8& prefix);
 }
+#endif
 
 #endif // _UTILS_H_
