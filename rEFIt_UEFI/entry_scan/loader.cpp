@@ -455,7 +455,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
   XString8   OSVersion;
   XString8   BuildVersion;
   EFI_STATUS Status      = EFI_NOT_FOUND;
-  CHAR8*     PlistBuffer = NULL;
+  UINT8*     PlistBuffer = NULL;
   UINTN      PlistLen;
   TagDict*     Dict        = NULL;
   const TagDict*     DictPointer = NULL;
@@ -479,7 +479,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
     }
 
     if ( plist.notEmpty() ) { // found macOS System
-      Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      Status = egLoadFile(Volume->RootDir, plist.wc_str(), &PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
@@ -533,7 +533,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
       }
     }
     if (FileExists (Volume->RootDir, InstallerPlist)) {
-      Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), &PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
@@ -572,7 +572,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
     if (OSVersion.isEmpty()) {
       InstallerPlist = SWPrintf("\\.IABootFiles\\com.apple.Boot.plist"); // 10.9 - ...
       if (FileExists (Volume->RootDir, InstallerPlist)) {
-        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), &PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = Dict->propertyForKey("Kernel Flags");
           if ( Prop != NULL ) {
@@ -637,7 +637,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
         }
       }
       if (FileExists (Volume->RootDir, InstallerPlist)) {
-        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        Status = egLoadFile(Volume->RootDir, InstallerPlist.wc_str(), &PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = Dict->propertyForKey("ProductVersion");
           if ( Prop != NULL ) {
@@ -751,7 +751,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
 
       if ( plist.notEmpty() ) { // found macOS System
 
-        Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+        Status = egLoadFile(Volume->RootDir, plist.wc_str(), &PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = Dict->propertyForKey("ProductVersion");
           if ( Prop != NULL ) {
@@ -796,7 +796,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
 
     // Detect exact version for OS X Recovery
     if ( plist.notEmpty() ) { // found macOS System
-      Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+      Status = egLoadFile(Volume->RootDir, plist.wc_str(), &PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
@@ -1717,12 +1717,12 @@ XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path)
   XStringW plist = SWPrintf("%ls\\com.apple.Boot.plist", path.wc_str());
   if ( !FileExists(dir, plist) ) return NullXString8;
 
-  CHAR8*            PlistBuffer = NULL;
+  UINT8*            PlistBuffer = NULL;
   UINTN             PlistLen;
   TagDict*          Dict        = NULL;
   const TagStruct*  Prop        = NULL;
 
-  EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+  EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), &PlistBuffer, &PlistLen);
   if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS)
   {
     Prop = Dict->propertyForKey("Kernel Flags");
@@ -1764,12 +1764,12 @@ MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE& dir, const XStringW& path
   }
 
   if ( plist.notEmpty() ) { // found macOS System
-    CHAR8*     PlistBuffer = NULL;
+    UINT8*     PlistBuffer = NULL;
     UINTN      PlistLen;
     TagDict*     Dict        = NULL;
     const TagStruct*     Prop        = NULL;
 
-    EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+    EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), &PlistBuffer, &PlistLen);
     if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
       Prop = Dict->propertyForKey("ProductVersion");
       if ( Prop != NULL ) {

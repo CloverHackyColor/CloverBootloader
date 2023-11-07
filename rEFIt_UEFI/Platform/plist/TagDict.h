@@ -63,7 +63,7 @@ public:
 
 EFI_STATUS
 ParseXML(
-  CONST CHAR8  *buffer,
+  CONST UINT8  *buffer,
         TagDict** dict,
         size_t bufSize
   );

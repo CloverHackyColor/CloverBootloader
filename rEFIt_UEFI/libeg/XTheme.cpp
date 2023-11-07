@@ -372,9 +372,9 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
         DBG("Using vector theme '%ls' (%ls)\n", TestTheme.wc_str(), m_ThemePath.wc_str());
       }
     } else {
-      Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, &ThemePtr, &Size);
       if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-        Status = ParseXML((CHAR8*)ThemePtr, &ThemeDict, 0);
+        Status = ParseXML(ThemePtr, &ThemeDict, 0);
         if (EFI_ERROR(Status)) {
           ThemeDict = NULL;
         }

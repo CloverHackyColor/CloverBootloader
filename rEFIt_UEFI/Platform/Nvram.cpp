@@ -893,7 +893,7 @@ LoadNvramPlist(
   )
 {
   EFI_STATUS Status;
-  CHAR8      *NvramPtr = NULL;
+  UINT8      *NvramPtr = NULL;
   UINTN      Size = 0;
   
   DBG("  begin load gNvramDict=0x%llX\n", (uintptr_t)gNvramDict);
@@ -918,7 +918,7 @@ LoadNvramPlist(
   //
   // parse it into gNvramDict
   //
-  Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, Size);
+  Status = ParseXML(NvramPtr, &gNvramDict, Size);
   if(Status != EFI_SUCCESS) {
     DBG(" parsing error\n");
   }

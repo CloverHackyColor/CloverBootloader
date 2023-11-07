@@ -16,7 +16,7 @@ EFI_STATUS
 GetRootUUID (IN  REFIT_VOLUME *Volume)
 {
   EFI_STATUS Status;
-  CHAR8      *PlistBuffer;
+  UINT8      *PlistBuffer;
   UINTN      PlistLen;
   TagDict*     Dict;
   const TagStruct*     Prop;
@@ -62,25 +62,25 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   // Playing Rock, Paper, Scissors to chose which settings to load.
   if (HasRock && HasPaper && HasScissors) {
     // Rock wins when all three are around
-    Status = egLoadFile(Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistR, &PlistBuffer, &PlistLen);
   } else if (HasRock && HasPaper) {
     // Paper beats rock
-    Status = egLoadFile(Volume->RootDir, SystemPlistP, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistP, &PlistBuffer, &PlistLen);
   } else if (HasRock && HasScissors) {
     // Rock beats scissors
-    Status = egLoadFile(Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistR, &PlistBuffer, &PlistLen);
   } else if (HasPaper && HasScissors) {
     // Scissors beat paper
-    Status = egLoadFile(Volume->RootDir, SystemPlistS, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistS, &PlistBuffer, &PlistLen);
   } else if (HasPaper) {
     // No match
-    Status = egLoadFile(Volume->RootDir, SystemPlistP, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistP, &PlistBuffer, &PlistLen);
   } else if (HasScissors) {
     // No match
-    Status = egLoadFile(Volume->RootDir, SystemPlistS, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistS, &PlistBuffer, &PlistLen);
   } else {
     // Rock wins by default
-    Status = egLoadFile(Volume->RootDir, SystemPlistR, (UINT8 **)&PlistBuffer, &PlistLen);
+    Status = egLoadFile(Volume->RootDir, SystemPlistR, &PlistBuffer, &PlistLen);
   }
 
   if (!EFI_ERROR(Status)) {

@@ -36,15 +36,15 @@ XStringW GetBundleVersion(const XStringW& pathUnderSelf)
   EFI_STATUS      Status;
   XStringW        CFBundleVersion;
   XStringW        InfoPlistPath;
-  CHAR8*          InfoPlistPtr = NULL;
+  UINT8*          InfoPlistPtr = NULL;
   TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
   InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Contents\\Info.plist");
-  Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
+  Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), &InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
     InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Info.plist");
-    Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
+    Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), &InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
     //DBG("about to parse xml file %ls\n", InfoPlistPath.wc_str());

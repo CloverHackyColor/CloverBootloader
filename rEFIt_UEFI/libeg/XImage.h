@@ -54,11 +54,7 @@ public:
 
   XImage& operator= (const XImage& other);
 
-protected:
   UINTN GetSizeInBytes() const;  //in bytes
-
-public:
-
   void setSizeInPixels(UINTN W, UINTN H);
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& GetData() const;

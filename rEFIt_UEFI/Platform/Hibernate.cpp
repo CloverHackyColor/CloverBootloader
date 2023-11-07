@@ -411,7 +411,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   
   if (!EFI_ERROR(Status)) {
     TagDict* PrefDict;
-    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, PrefBufferLen);
+    Status = ParseXML(PrefBuffer, &PrefDict, PrefBufferLen);
     if (!EFI_ERROR(Status)) {
       const TagDict* dict = PrefDict->dictPropertyForKey("Custom Profile");
       if (dict) {

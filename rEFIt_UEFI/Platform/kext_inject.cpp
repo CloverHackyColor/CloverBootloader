@@ -174,7 +174,7 @@ TagDict* LOADER_ENTRY::getInfoPlist(const EFI_FILE* Root, const XStringW& infoPl
 
   Status = egLoadFile(Root, infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
   if (!EFI_ERROR(Status)) {  //double check
-    if( ParseXML((CHAR8*)infoDictBuffer, &dict, infoDictBufferLength)!=0 ) {
+    if( ParseXML(infoDictBuffer, &dict, infoDictBufferLength)!=0 ) {
       MsgLog("Failed to parse Info.plist: %ls\n", infoPlistPath.wc_str());
       dict =  NULL;
     }

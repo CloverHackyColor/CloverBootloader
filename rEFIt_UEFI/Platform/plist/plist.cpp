@@ -134,7 +134,7 @@ XBool TagStruct::isFalseOrNn() const
 // tag pointer and returns the end of the dic, or returns ?? if not found.
 //
 
-EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
+EFI_STATUS ParseXML(const UINT8* buffer, TagDict** dict, size_t bufSize)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
@@ -147,7 +147,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
   if (bufSize) {
     bufferSize = bufSize;
   } else {
-    bufferSize = (UINT32)strlen(buffer);
+    bufferSize = (UINT32)strlen((CHAR8*)buffer);
   }
   DBG("buffer size=%ld\n", bufferSize);
   if(dict == NULL) {

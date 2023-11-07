@@ -911,12 +911,12 @@ kk</string> \
 int ParseXML_tests()
 {
   TagDict* dict = NULL;
-  EFI_STATUS Status = ParseXML(config_all, &dict, (UINT32)strlen(config_all));
+  EFI_STATUS Status = ParseXML((UINT8*)config_all, &dict, (UINT32)strlen(config_all));
   if ( !EFI_ERROR(Status) ) {
     XString8 s;
     dict->sprintf(0, &s);
     TagDict* dict2 = NULL;
-    Status = ParseXML(s.c_str(), &dict2, s.length());
+    Status = ParseXML((UINT8*)s.c_str(), &dict2, s.length());
     if ( !EFI_ERROR(Status) ) {
       if ( !(*dict).debugIsEqual(*dict2, "plist"_XS8) ) {
 //        printf("%s", s.c_str());
