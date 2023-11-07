@@ -907,7 +907,7 @@ LoadNvramPlist(
   //
   // load nvram.plist
   //
-  Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
+  Status = egLoadFile(RootDir, NVRAMPlistPath, &NvramPtr, &Size);
   if(EFI_ERROR(Status)) {
     DBG(" not present\n");
     return Status;

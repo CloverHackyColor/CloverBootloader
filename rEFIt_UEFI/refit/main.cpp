@@ -2522,7 +2522,7 @@ GetListOfThemes ()
   EFI_FILE_INFO  *DirEntry;
   XStringW        ThemeTestPath;
   EFI_FILE       *ThemeTestDir   = NULL;
-  CHAR8          *ThemePtr       = NULL;
+  UINT8          *ThemePtr       = NULL;
   UINTN          Size = 0;
 
   DbgHeader("GetListOfThemes");
@@ -2542,9 +2542,9 @@ GetListOfThemes ()
     DBG("- [%02zu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
     Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeTestDir, DirEntry->FileName, EFI_FILE_MODE_READ, 0);
     if (!EFI_ERROR(Status)) {
-      Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, &ThemePtr, &Size);
       if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_SVG, &ThemePtr, &Size);
         if (EFI_ERROR(Status)) {
           Status = EFI_NOT_FOUND;
           DBG(" - bad theme because %ls nor %ls can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);

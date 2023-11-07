@@ -483,7 +483,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
-  CHAR8*     ConfigPtr = NULL;
+  UINT8*     ConfigPtr = NULL;
 //  XStringW   ConfigPlistPath;
 //  XStringW   ConfigOemPath;
 
@@ -501,7 +501,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   if ( selfOem.oemDirExists() ) {
     configPlistPath = SWPrintf("%ls\\%ls.plist", selfOem.getOemFullPath().wc_str(), ConfName.wc_str());
     if (FileExists (&selfOem.getOemDir(), configFilename)) {
-      Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
+      Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), &ConfigPtr, &Size);
       if (EFI_ERROR(Status)) {
         DBG("Cannot find %ls at path (%s): '%ls', trying '%ls'\n", configFilename.wc_str(), efiStrError(Status), selfOem.getOemFullPath().wc_str(), self.getCloverDirFullPath().wc_str());
       }else{
@@ -512,7 +512,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
   if ( !selfOem.oemDirExists()  ||  EFI_ERROR(Status)) {
     configPlistPath = SWPrintf("%ls\\%ls.plist", self.getCloverDirFullPath().wc_str(), ConfName.wc_str());
     if ( FileExists(&self.getCloverDir(), configFilename.wc_str())) {
-      Status = egLoadFile(&self.getCloverDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
+      Status = egLoadFile(&self.getCloverDir(), configFilename.wc_str(), &ConfigPtr, &Size);
     }
     if (EFI_ERROR(Status)) {
       DBG("Cannot find %ls at path '%ls' : %s\n", configFilename.wc_str(), self.getCloverDirFullPath().wc_str(), efiStrError(Status));
