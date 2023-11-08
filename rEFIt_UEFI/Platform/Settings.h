@@ -473,16 +473,12 @@ public:
     if ( settings.ImagePath.notEmpty() ) {
       Image.LoadXImage(&ThemeDir, settings.ImagePath);
     }else if ( settings.ImageData.notEmpty() ) {
-      if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
-        Image.setFilled();
-      }
+      Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size());
     }
     if ( settings.DriveImagePath.notEmpty() ) {
       DriveImage.LoadXImage(&ThemeDir, settings.DriveImagePath);
     }else if ( settings.DriveImageData.notEmpty() ) {
-      if ( !EFI_ERROR(DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size())) ) {
-        DriveImage.setFilled();
-      }
+      DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size());
     }
   }
   
@@ -560,9 +556,7 @@ public:
     if ( settings.ImagePath.notEmpty() ) {
       Image.LoadXImage(&ThemeDir, settings.ImagePath);
     } else if ( settings.ImageData.notEmpty() ) {
-      if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
-        Image.setFilled();
-      }
+      Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size());
     }
   }
   UINT8 getFlags() const {

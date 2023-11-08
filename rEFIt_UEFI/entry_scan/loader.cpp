@@ -1180,7 +1180,6 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
   if (gSettings.GUI.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
     Entry->Image.Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     if (!Entry->Image.Image.isEmpty()) {
-      Entry->Image.setFilled();
       DBG("%susing VolumeIcon.icns image from Volume\n", indent);
     }    
   } else if (Image) {
@@ -1204,9 +1203,6 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
     } else {
       Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0);
        DBG("%sShow badge as OSImage.\n", indent);
-    }
-    if (!Entry->BadgeImage.Image.isEmpty()) {
-      Entry->BadgeImage.setFilled();
     }
   }
   Entry->BootBgColor = BootBgColor;

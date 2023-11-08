@@ -431,41 +431,41 @@ EFI_STATUS XImage::ToPNG(UINT8** Data, UINTN& OutSize)
   return EFI_SUCCESS;
 }
 
-/*
- * fill XImage object by raster data described in SVG file
- * caller should create the object with Width and Height and calculate scale
- * scale = 1 correspond to fill the rect with the image
- * scale = 0.5 will reduce image
- * but this procedure is mostly for testing purpose. Real SVG theme can't be divided to separate SVG files
- */
-EFI_STATUS XImage::FromSVG(const CHAR8 *SVGData, float scale)
-{
-  NSVGimage       *SVGimage;
-  NSVGparser* p;
-
-  NSVGrasterizer* rast = nsvgCreateRasterizer();
-  if (!rast) return EFI_UNSUPPORTED;
-  //we have to copy input data because nanosvg wants to change it
-  char *input = (__typeof__(input))AllocateCopyPool(AsciiStrSize(SVGData), SVGData);
-  if (!input) return EFI_DEVICE_ERROR;
-
-  p = nsvgParse(input, 72, 1.f); //the parse will change input contents
-  SVGimage = p->image;
-  if (SVGimage) {
-    float ScaleX = Width / SVGimage->width;
-    float ScaleY = Height / SVGimage->height;
-    float Scale = (ScaleX > ScaleY) ? ScaleY : ScaleX;
-    Scale *= scale;
-
-    DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
-    nsvgRasterize(rast, SVGimage, 0.f, 0.f, Scale, Scale, (UINT8*)&PixelData[0], (int)Width, (int)Height, (int)Width * sizeof(PixelData[0]));
-    FreePool(SVGimage);
-  }
-//  nsvg__deleteParser(p); //can't delete raster until we make imageChain
-  nsvgDeleteRasterizer(rast);
-  FreePool(input);
-  return EFI_SUCCESS;
-}
+///*
+// * fill XImage object by raster data described in SVG file
+// * caller should create the object with Width and Height and calculate scale
+// * scale = 1 correspond to fill the rect with the image
+// * scale = 0.5 will reduce image
+// * but this procedure is mostly for testing purpose. Real SVG theme can't be divided to separate SVG files
+// */
+//EFI_STATUS XImage::FromSVG(const CHAR8 *SVGData, float scale)
+//{
+//  NSVGimage       *SVGimage;
+//  NSVGparser* p;
+//
+//  NSVGrasterizer* rast = nsvgCreateRasterizer();
+//  if (!rast) return EFI_UNSUPPORTED;
+//  //we have to copy input data because nanosvg wants to change it
+//  char *input = (__typeof__(input))AllocateCopyPool(AsciiStrSize(SVGData), SVGData);
+//  if (!input) return EFI_DEVICE_ERROR;
+//
+//  p = nsvgParse(input, 72, 1.f); //the parse will change input contents
+//  SVGimage = p->image;
+//  if (SVGimage) {
+//    float ScaleX = Width / SVGimage->width;
+//    float ScaleY = Height / SVGimage->height;
+//    float Scale = (ScaleX > ScaleY) ? ScaleY : ScaleX;
+//    Scale *= scale;
+//
+//    DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
+//    nsvgRasterize(rast, SVGimage, 0.f, 0.f, Scale, Scale, (UINT8*)&PixelData[0], (int)Width, (int)Height, (int)Width * sizeof(PixelData[0]));
+//    FreePool(SVGimage);
+//  }
+////  nsvg__deleteParser(p); //can't delete raster until we make imageChain // not sure why, but this is npt used so far. FIX if back in use.
+//  nsvgDeleteRasterizer(rast);
+//  FreePool(input);
+//  return EFI_SUCCESS;
+//}
 
 // Screen operations
 /*
@@ -556,12 +556,12 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height) const
   }
   //output combined image
   if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, PixelData.data(),
+    GraphicsOutput->Blt(GraphicsOutput, (*this).GetPixelPtr(0, 0),
       EfiBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
   else if (UgaDraw != NULL) {
-    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)(*this).GetPixelPtr(0, 0), EfiUgaBltBufferToVideo,
       0, 0, x, y, AreaWidth, AreaHeight, GetWidth()*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   }
 }

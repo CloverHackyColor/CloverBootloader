@@ -102,39 +102,14 @@ ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
 
-XIcon::~XIcon()
+XIcon::XIcon(INTN Index, XBool TakeEmbedded) : Id(Index), Empty(false)
 {
-  // memory leak : we can't free (yet?) ImageSVG and ImageSVGnight because operator might have copied it
-}
-
-XIcon::XIcon(INTN Index, XBool TakeEmbedded) : Id(Index), Name(), Image(), ImageNight(), Native(false),
-  ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(false)
-{
-//  Id = Index;
-//  Name.setEmpty();
-//  Native = false;
-//  ImageSVG = nullptr;
-//  ImageSVGnight = nullptr;
   if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index < IconsNamesSize) { //full table
     Name.takeValueFrom(IconsNames[Index]);
   }
   if (TakeEmbedded) {
     GetEmbedded();
   }
-}
-
-XIcon& XIcon::operator=(const XIcon& src)
-{
-  Id = src.Id;
-  Name = src.Name;
-  Image = src.Image;
-  ImageNight = src.ImageNight;
-  Native = src.Native;
-  Empty = src.Empty;
-  //this moment we copy pointers. Later it will be class variables
-  ImageSVG = src.ImageSVG;
-  ImageSVGnight = src.ImageSVGnight;
-  return *this;
 }
 
 void XIcon::GetEmbedded()
@@ -246,7 +221,6 @@ EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
 {
   EFI_STATUS Status = Image.LoadXImage(BaseDir, IconName);
   ImageNight.LoadXImage(BaseDir, IconName + L"_night"_XSW);
-  if (!EFI_ERROR(Status)) setFilled();
   return Status;
 }
 

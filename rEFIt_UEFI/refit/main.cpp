@@ -669,7 +669,6 @@ void LOADER_ENTRY::StartLoader()
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
   CONST CHAR8             *InstallerVersion;
-  NSVGfont                *font; // , *nextFont;
 
   DbgHeader("StartLoader");
 
@@ -710,18 +709,21 @@ void LOADER_ENTRY::StartLoader()
   // mainParser
   // BuiltinIcons
   // OSIcons
-  NSVGfontChain *fontChain = fontsDB;
-  while (fontChain) {
-    font = fontChain->font;
-    NSVGfontChain *nextChain = fontChain->next;
-    if (font) {
-      nsvg__deleteFont(font);
-      fontChain->font = NULL;
+
+    delete ThemeX;
+    ThemeX = NULL;
+
+
+#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE
+    if ( nsvg__nbDanglingPtr() > 0 ) {
+      DBG("There is %zu dangling ptr from SVG subsytem\n", nsvg__nbDanglingPtr());
+      nsvg__outputDanglingPtr();
     }
-    FreePool(fontChain);
-    fontChain = nextChain;
-  }
-  fontsDB = NULL;
+#endif
+#ifdef JIEF_DEBUG
+    displayFreeMemory("LOADER_ENTRY::StartLoader() atfer ThemeX deleted"_XS8);
+#endif
+
 
   if ( OSTYPE_IS_OSX(LoaderType) || OSTYPE_IS_OSX_RECOVERY(LoaderType) || OSTYPE_IS_OSX_INSTALLER(LoaderType) ) {
 
@@ -1615,12 +1617,9 @@ void LOADER_ENTRY::StartLoader()
     Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
   }
 
-#ifdef JIEF_DEBUG
-    //Status = EFI_NOT_FOUND;
+    displayFreeMemory("Just before lauching image"_XS8);
+
     Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
-#else
-    Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
-#endif
 
     if ( EFI_ERROR(Status) ) {
       // Ideally, we would return to the menu, displaying an error message

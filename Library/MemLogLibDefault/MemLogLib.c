@@ -457,6 +457,7 @@ static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context
     // but not too big (if something gets out of controll)
     if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
     // Out of resources!
+    // Jief : Silent fail. TODO : At least put "Out of resource" at the end of the log
       return;
     }
     Offset = mMemLog->Cursor - mMemLog->Buffer;

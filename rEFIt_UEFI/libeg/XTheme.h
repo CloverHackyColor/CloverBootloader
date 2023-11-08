@@ -22,43 +22,15 @@ class TagStruct;
 
 EFI_STATUS InitTheme (const CHAR8* ChosenTheme);
 
+extern textFaces nullTextFaces;
 
 class XTheme
 {
 public:
   XObjArray<XIcon> Icons;
-protected:
   XStringW     m_ThemePath = NullXStringW;
-  EFI_FILE    *ThemeDir;
+  EFI_FILE    *ThemeDir = 0;
 
-public:
-  void openThemeDir() {
-    if ( ThemeDir != NULL ) ThemeDir->Close(ThemeDir);
-    /*Status = */self.getCloverDir().Open(&self.getCloverDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
-  }
-  void closeThemeDir() {
-    if ( ThemeDir != NULL ) ThemeDir->Close(ThemeDir);
-    ThemeDir = NULL;
-  }
-//  const XStringW& getThemePath() { return m_ThemePath; }
-//  void setThemePath(const XStringW& aThemePath) {
-//    m_ThemePath = aThemePath;
-//    closeThemeDir();
-//    openThemeDir();
-//  }
-  const EFI_FILE& getThemeDir() {
-    return *ThemeDir;
-  }
-  XBool IsEmbeddedTheme(void)
-  {
-    if (embedded) {
-      ThemeDir = NULL;
-    }
-    return ThemeDir == NULL;
-  }
-
-
-public:
 //  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
@@ -146,20 +118,36 @@ public:
 
   XCinema Cinema;
 
-  NSVGparser* SVGParser;
+public:
+  NSVGfontChain* fontsDB = 0;
+  textFaces textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id // in VectorGraphics, I use sizeof(textFace)/sizeof(textFace[0]. So if you change that to a pointer, it'll break.
+
   
   void Init();
   XTheme(); //default constructor
   XTheme(const XTheme&) = delete;
   XTheme& operator=(const XTheme&) = delete;
 
-  ~XTheme();
+  ~XTheme() {
+    if ( ThemeDir != NULL ) ThemeDir->Close(ThemeDir);
+    if ( fontsDB ) {
+      nsvg__deleteFontChain(fontsDB);
+    }
+    for (size_t i=0 ; i < Icons.length() ; ++i ) {
+      Icons[i].setEmpty();
+    }
+  }
 
   
+  const EFI_FILE& getThemeDir() const { return *ThemeDir; }
+  XBool IsEmbeddedTheme(void) const { return embedded; }
+
+
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
   const XIcon& GetIcon(const XString8& Name);  //get by name
+        XIcon* GetIconP(const XString8& Name);
   const XIcon& GetIcon(INTN Id); //get by id
         XIcon& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XIcon& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
@@ -184,9 +172,14 @@ public:
   EFI_STATUS GetThemeTagSettings(const TagDict* DictPointer);
   void parseTheme(void* p, char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(UINT8* buffer, UINTN Size); // in VectorTheme
-  EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image, void **SVGIcon);
+  EFI_STATUS ParseSVGXIcon(NSVGparser* SVGParser, INTN Id, const XString8& IconNameX, XImage* Image);
   TagDict* LoadTheme(const XStringW& TestTheme); //return TagStruct* why?
-  EFI_STATUS LoadSvgFrame(INTN i, OUT XImage* XFrame); // for animation
+  EFI_STATUS LoadSvgFrame(NSVGparser* SVGParser, INTN i, OUT XImage* XFrame); // for animation
+
+  const textFaces& getTextFace(size_t idx) {
+    if (!TypeSVG ) return nullTextFaces;
+    return textFace[idx];
+  }
 
   //screen operations
   void ClearScreen();

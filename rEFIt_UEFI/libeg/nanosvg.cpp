@@ -667,27 +667,36 @@ static void nsvg__deletePaths(NSVGpath* path)
   }
 }
 
+static void nsvg__deleteGlyphs(NSVGglyph* glyphs)
+{
+  while (glyphs) {
+    NSVGglyph *next = glyphs->next;
+    nsvg__deletePaths(glyphs->path);
+    nsvg__delete(glyphs, "nsvg__deleteGlyphs"_XS8);
+    glyphs = next;
+  }
+}
+
 void nsvg__deleteFont(NSVGfont* font)
 {
-  NSVGglyph *glyphs, *next;
   if (!font) {
     return;
   }
-  if (font->missingGlyph) {
-//    DBG("missing glyph=%s\n", font->missingGlyph->name);
-    nsvg__deletePaths(font->missingGlyph->path);
-    nsvg__delete(font->missingGlyph, "nsvg__deleteFont"_XS8);
-    font->missingGlyph = NULL;
-  }
-  glyphs = font->glyphs;
-  while (glyphs) {
-//    DBG(" glyph=%s\n", glyphs->name);
-    next = glyphs->next;
-    nsvg__deletePaths(glyphs->path);
-    nsvg__delete(glyphs, "nsvg__deleteFont"_XS8);
-    glyphs = next;
-  }
+  //DBG("nsvg__deleteFont %s %llx\n", font->id, uintptr_t(font));
+  nsvg__deleteGlyphs(font->glyphs);
+  nsvg__deleteGlyphs(font->missingGlyph);
   nsvg__delete(font, "nsvg__deleteFont"_XS8);
+}
+
+void nsvg__deleteFontChain(NSVGfontChain *fontChain)
+{
+  while (fontChain) {
+    NSVGfont* font = fontChain->font;
+    NSVGfontChain *nextChain = fontChain->next;
+    nsvg__deleteFont(font);
+    nsvg__delete(fontChain, "nsvg__deleteParser1"_XS8);
+    fontChain = nextChain;
+  }
 }
 
 static void nsvg__deletePaint(NSVGpaint* paint)
@@ -729,33 +738,41 @@ static void nsvg__deleteSymbols(NSVGsymbol* symbol)
   }
 }
 
+static void nsvg__popAttr(NSVGparser* p);
+static NSVGattrib* nsvg__getAttr(NSVGparser* p);
+
 void nsvg__deleteParser(NSVGparser* p)
 {
-  int i;
   if (p != NULL) {
     nsvg__deleteStyles(p->styles);
     nsvg__deleteSymbols(p->symbols);
     nsvg__deletePaths(p->pathList);
     nsvg__deleteGradientData(p->gradients);
-    // do not delete font here, as we free all fonts later by following fontsdb
-
+    nsvg__deleteFontChain(p->fontsDB);
     nsvgDelete(p->image);
     if (p->cpts > 0 && p->pts) {
-      nsvg__delete(p->pts, "nsvg__deleteParser"_XS8);
+      nsvg__delete(p->pts, "nsvg__deleteParser2"_XS8);
     }
-    for (i=0; i<NSVG_MAX_ATTR; i++) {
-      NSVGattrib* attr = &(p->attr[i]);
+
+    auto text = p->text;
+    while ( text ) {
+      nsvg__delete(text, "nsvg__deleteParser3"_XS8);
+      text = text->next;
+    }
+
+    while ( p->attrHead > 0 ) {
+       NSVGattrib* attr = nsvg__getAttr(p);
       if (attr && attr->fontFace) {
-        nsvg__delete(attr->fontFace, "nsvg__deleteParser2"_XS8);
+        nsvg__delete(attr->fontFace, "nsvg__deleteParser3"_XS8);
         attr->fontFace = NULL;
       }
-      while (attr->group) {
-        NSVGgroup* group = attr->group->parent;
-        nsvg__delete(attr->group, "nsvg__deleteParser3"_XS8);
-        attr->group = group;       
+      if ( attr->group ) {
+        nsvg__delete(attr->group, "nsvg__deleteParser4"_XS8);
       }
+      nsvg__popAttr(p);
     }
-    nsvg__delete(p, "nsvg__deleteParser4"_XS8);
+
+    nsvg__delete(p, "nsvg__deleteParser5"_XS8);
   }
 }
 
@@ -843,8 +860,13 @@ static void nsvg__pushAttr(NSVGparser* p)
 
 static void nsvg__popAttr(NSVGparser* p)
 {
-  if (p->attrHead > 0)
+  if (p->attrHead > 0) {
+    auto attr = nsvg__getAttr(p);
+    if ( attr->fontFace ) {
+      nsvg__delete(attr->fontFace, "nsvg__popAttr"_XS8);
+    }
     p->attrHead--;
+  }
 }
 
 static float nsvg__actualOrigX(NSVGparser* p)
@@ -3080,7 +3102,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
 //  DBG("required font %s  required style=%c\n", text->fontFace->fontFamily, text->fontStyle);
   //if the font is not registered then we have to load new one
   NSVGfont        *fontSVG = NULL;
-  NSVGfontChain   *fontChain = fontsDB;
+  NSVGfontChain   *fontChain = p->fontsDB;
   NSVGfontChain   *fontChainSimilar = NULL;
   while (fontChain) {
     fontSVG = fontChain->font;
@@ -3117,14 +3139,21 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
       if (!p1) {
  //       DBG("font %s not parsed\n", text->fontFace->fontFamily);
       } else {
-        fontSVG = fontsDB->font; //last added during parse file data
+        // Jief : this is only taking the first font from the file. It would not be hard to take the whole p1->fontsDB and to link it on p->fontsDB
+        NSVGfontChain* fc = p1->fontsDB;
+        p1->fontsDB = p1->fontsDB->next;
+        fc->next = p->fontsDB;
+        p->fontsDB = fc;
+
+        fontSVG = p->fontsDB->font; //last added during parse file data
         text->font = fontSVG;
+        nsvg__deleteParser(p1);
       }
       FreePool(FileData); //after load // don not use nsvg__delete because it's not allocated by nsvg__alloc...
       FileData = NULL;
     } else {
 //      DBG("set embedded font\n");
-      text->font = p->font; //else embedded if present which is also double fontChain
+      text->font = p->currentFont; //else embedded if present which is also double fontChain
     }
   } else {
 //    DBG("set found font %s\n", fontSVG->fontFamily);
@@ -3136,58 +3165,58 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
     NSVGgroup* group = attr->group;
     while (group) {
       if (strcmp(group->id, "MessageRow") == 0) {
-        if (!textFace[1].valid) {
+        if (!p->textFace[1].valid) {
           //here we want to set text->font as p->font if text->groupID == MessageRow
-          p->font = fontSVG;
+          p->currentFont = fontSVG;
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
-          textFace[1].font = fontSVG;
-          textFace[1].size = (INTN)text->fontSize;
-          textFace[1].color = text->fontColor;
-          textFace[1].valid = true;
+          p->textFace[1].font = fontSVG;
+          p->textFace[1].size = (INTN)text->fontSize;
+          p->textFace[1].color = text->fontColor;
+          p->textFace[1].valid = true;
  //         DBG("set message->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
       } else if (!ThemeX->Daylight && strcmp(group->id, "MessageRow_night") == 0) {
           //replace ThemeX->Daylight settings
-          p->font = fontSVG;
+          p->currentFont = fontSVG;
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
-          textFace[1].font = fontSVG;
-          textFace[1].size = (INTN)text->fontSize;
-          textFace[1].color = text->fontColor;
-          textFace[1].valid = true;
+          p->textFace[1].font = fontSVG;
+          p->textFace[1].size = (INTN)text->fontSize;
+          p->textFace[1].color = text->fontColor;
+          p->textFace[1].valid = true;
   //        DBG("set message_night->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       } else if (strcmp(group->id, "MenuRows") == 0) {
-        if (!textFace[2].valid) {
-          textFace[2].font = fontSVG;
-          textFace[2].size = (INTN)text->fontSize;
-          textFace[2].color = text->fontColor;
-          textFace[2].valid = true;
+        if (!p->textFace[2].valid) {
+          p->textFace[2].font = fontSVG;
+          p->textFace[2].size = (INTN)text->fontSize;
+          p->textFace[2].color = text->fontColor;
+          p->textFace[2].valid = true;
  //         DBG("set menu->font=%s color=%X size=%f as in MenuRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
       } else if (!ThemeX->Daylight && strcmp(group->id, "MenuRows_night") == 0) {
-          textFace[2].font = fontSVG;
-          textFace[2].size = (INTN)text->fontSize;
-          textFace[2].color = text->fontColor;
-          textFace[2].valid = true;
+          p->textFace[2].font = fontSVG;
+          p->textFace[2].size = (INTN)text->fontSize;
+          p->textFace[2].color = text->fontColor;
+          p->textFace[2].valid = true;
         break;
       } else if (strcmp(group->id, "HelpRows") == 0) {
-        if (!textFace[0].valid) {
-          textFace[0].font = fontSVG;
-          textFace[0].size = (INTN)text->fontSize;
-          textFace[0].color = text->fontColor;
-          textFace[0].valid = true;
+        if (!p->textFace[0].valid) {
+          p->textFace[0].font = fontSVG;
+          p->textFace[0].size = (INTN)text->fontSize;
+          p->textFace[0].color = text->fontColor;
+          p->textFace[0].valid = true;
  //         DBG("set help->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
       } else if (!ThemeX->Daylight && strstr(group->id, "HelpRows_night") != NULL) {
-          textFace[0].font = fontSVG;
-          textFace[0].size = (INTN)text->fontSize;
-          textFace[0].color = text->fontColor;
-          textFace[0].valid = true;
+          p->textFace[0].font = fontSVG;
+          p->textFace[0].size = (INTN)text->fontSize;
+          p->textFace[0].color = text->fontColor;
+          p->textFace[0].valid = true;
  //         DBG("set help_night->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       }
@@ -3673,6 +3702,8 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   }
   //  DBG("parse group\n");
   NSVGgroup* group = (NSVGgroup*)nsvg__alloczero(sizeof(NSVGgroup), "nsvg__parseGroup"_XS8);
+  group->next = p->image->groups;
+  p->image->groups = group;
 
   //  if (curAttr->id[0] == '\0') //skip anonymous groups
   //    return;
@@ -3812,10 +3843,10 @@ static void nsvg__parseFont(NSVGparser* p, char** dict)
 
   NSVGfontChain* fontChain = (decltype(fontChain))nsvg__alloc(sizeof(*fontChain), "nsvg__parseFont fontChain"_XS8);
   fontChain->font = font;
-  fontChain->next = fontsDB;
-  p->font = font;
+  fontChain->next = p->fontsDB;
+  p->currentFont = font;
 
-  fontsDB = fontChain;
+  p->fontsDB = fontChain;
 }
 
 static void nsvg__parseFontFace(NSVGparser* p, char** dict)
@@ -3825,7 +3856,7 @@ static void nsvg__parseFontFace(NSVGparser* p, char** dict)
 //    DBG("no parser\n");
     return;
   }
-  NSVGfont* font = p->font;  //if present??? assumed good svg structure
+  NSVGfont* font = p->currentFont;  //if present??? assumed good svg structure
   if (!font) {
     return;
   }
@@ -3982,6 +4013,7 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
       } else if (strcmp(dict[i], "glyph-name") == 0) {
         strncpy(glyph->name, dict[i+1], 16);
         glyph->name[15] = '\0';
+        //DBG("nsvg__parseGlyph name=%s\n", glyph->name);
         if (strcmp(dict[i+1], "nonmarkingreturn") == 0) {
           glyph->unicode = L'\n';
         } else if (strcmp(dict[i+1], ".notdef") == 0) {
@@ -3993,24 +4025,28 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
   nsvg__parsePath(p, dict);
 
   glyph->path = p->pathList;
-  p->pathList = 0; //lastPath;
+  p->pathList = 0;
 
-  if (p->font) {
+  if (p->currentFont) {
+    //DBG("nsvg__parseGlyph name=%s missign=%d currentfont=%s\n", glyph->name, (bool)missing, p->currentFont->id);
     if (missing) {
-      p->font->missingGlyph = glyph;
-      if (!glyph->horizAdvX && p->font->horizAdvX) {
-        p->font->missingGlyph->horizAdvX = p->font->horizAdvX;
+      //Jief : Having more than one missing glyph happen at least with cesium theme.
+      // That's why I add them in the chain instead of just reassign p->currentFont->missingGlyph
+      glyph->next = p->currentFont->missingGlyph;
+      p->currentFont->missingGlyph = glyph;
+      if (!glyph->horizAdvX && p->currentFont->horizAdvX) {
+        p->currentFont->missingGlyph->horizAdvX = p->currentFont->horizAdvX;
       }
     } else {
       if (!glyph->horizAdvX) {
-        if (p->font->missingGlyph) {
-          glyph->horizAdvX = p->font->missingGlyph->horizAdvX;
-        } else if (p->font->horizAdvX) {
-          glyph->horizAdvX = p->font->horizAdvX;
+        if (p->currentFont->missingGlyph) {
+          glyph->horizAdvX = p->currentFont->missingGlyph->horizAdvX;
+        } else if (p->currentFont->horizAdvX) {
+          glyph->horizAdvX = p->currentFont->horizAdvX;
         }
       }
-      glyph->next = p->font->glyphs;
-      p->font->glyphs = glyph;
+      glyph->next = p->currentFont->glyphs;
+      p->currentFont->glyphs = glyph;
     }
   }
   //  DBG("glyph %X parsed\n", glyph->unicode);
@@ -4480,10 +4516,23 @@ void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
   bounds[3] = nsvg__maxf(bounds[3], newBounds[5]);
   bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
 }
+
+bool isShapeInGroup(NSVGshape* shape, const char* groupName)
+{
+    NSVGgroup* group = shape->group;
+    while (group) {
+      if (strcmp(group->id, groupName) == 0) {
+        return true;
+      }
+      group = group->parent;
+    }
+    return false;
+}
+
 //image bounds for a shape group
 //bounds inited before use, called from nsvgParse
 //assumed each shape already has bounds calculated.
-int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
+int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds, const char* groupName)
 {
   NSVGshape *shape, *shapeLink;
   float xform[6];
@@ -4491,6 +4540,9 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
   int count = 0;
   int visibility;
   for (shapeLink = shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
+    if ( groupName && !isShapeInGroup(shapeLink, groupName) ) {
+      continue;
+    }
     memcpy(&xform[0], shapeLink->xform, sizeof(float)*6);
     visibility = (shapeLink->flags & NSVG_VIS_VISIBLE); //check origin visibility, not link
 
@@ -4521,7 +4573,6 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
 
 void nsvg__imageBounds(NSVGimage* image, float* bounds)
 {
-//  NSVGimage* image = p->image;
   NSVGclipPath* clipPath;
   if (!bounds || !image) {
     return;
@@ -4536,14 +4587,55 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds)
   while (clipPath != NULL) {
     for (int i = 0; i < image->clip.count; i++) {
       if (clipPath->index == image->clip.index[i]) {
-        count += nsvg__shapesBound(clipPath->shapes, bounds);
+        count += nsvg__shapesBound(clipPath->shapes, bounds, NULL);
         break;
       }
     }
     clipPath = clipPath->next;
   }
-  count += nsvg__shapesBound(image->shapes, bounds);
+  count += nsvg__shapesBound(image->shapes, bounds, NULL);
 //  DBG("found shapes=%d\n", count);
+  if (count == 0) {
+    bounds[0] = bounds[1] = 0.0f;
+    bounds[2] = bounds[3] = 1.0f;
+  }
+}
+
+NSVGclipPath* getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx)
+{
+  NSVGclipPath* clipPath = image->clipPaths;
+  for (NSVGclipPathIndex i = 0; i < idx; i++) clipPath = clipPath->next;
+  return clipPath;
+
+}
+
+void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName)
+{
+  if (!bounds || !image) {
+    return;
+  }
+  bounds[0] = FLT_MAX;
+  bounds[1] = FLT_MAX;
+  bounds[2] = -FLT_MAX;
+  bounds[3] = -FLT_MAX;
+
+  int count = 0;
+
+  NSVGshape *shape;
+  for (shape = image->shapes; shape != NULL; shape = shape->next) {
+    if ( groupName && !isShapeInGroup(shape, groupName) ) {
+      continue;
+    }
+//    DBG("nsvg__imageBounds2 found shapes=%s shape->clip.count=%d\n", shape->id, shape->clip.count);
+    for (int i = 0; i < shape->clip.count; i++) {
+      NSVGclipPath* clipPath = getClipPathWithIndex(image, shape->clip.index[i]);
+      if ( clipPath ) {
+//        DBG("nsvg__imageBounds found clipPath %s\n", clipPath->id);
+        count += nsvg__shapesBound(clipPath->shapes, bounds, NULL);
+      }
+    }
+  }
+  count += nsvg__shapesBound(image->shapes, bounds, groupName);
   if (count == 0) {
     bounds[0] = bounds[1] = 0.0f;
     bounds[2] = bounds[3] = 1.0f;
@@ -4604,6 +4696,9 @@ void nsvg__deleteShapes(NSVGshape* shape)
       shape->fontFace = NULL;
       nsvg__deletePaint(&shape->fill);
       nsvg__deletePaint(&shape->stroke);
+      if ( !shape->isText ) {
+        nsvg__deletePaths(shape->paths);
+      }
     }
     nsvg__delete(shape, "nsvg__deleteShapes"_XS8);
     shape = snext;
@@ -4629,7 +4724,7 @@ void nsvgDelete(NSVGimage* image)
   nsvg__deleteClipPaths(image->clipPaths);
   group = image->groups;
   while (group != NULL) {
-    gnext = group->parent;
+    gnext = group->next;
     nsvg__delete(group, "nsvgDelete group"_XS8);
     group = gnext;
   }

@@ -115,14 +115,10 @@ const SETTINGS_DATA::SmbiosClass::SlotDeviceClass SETTINGS_DATA::SmbiosClass::Sl
 CUSTOM_LOADER_ENTRY::CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _settings) : settings(_settings)
 {
   if ( settings.ImageData.notEmpty() ) {
-    if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
-      Image.setFilled();
-    }
+    Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size());
   }
   if ( settings.DriveImageData.notEmpty() ) {
-    if ( !EFI_ERROR(DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size())) ) {
-      DriveImage.setFilled();
-    }
+    DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size());
   }
 
   if ( settings.CustomLogoTypeSettings == CUSTOM_BOOT_USER  &&  settings.CustomLogoAsXString8.notEmpty() ) {

@@ -90,7 +90,7 @@ void FILM::AddFrame(XImage* Frame, INTN Index)
   }
 }
 
-
+// 2023-11 : this is currently never called when theme is svg
 void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path already exist as a member. Is it the same ?
 {
   const EFI_FILE *ThemeDir = &TheTheme.getThemeDir();
@@ -99,20 +99,33 @@ void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path alread
   for (INTN Index = 0; Index < NumFrames; Index++) {
     XImage NewImage;
     Status = EFI_NOT_FOUND;
-    if (TheTheme.TypeSVG) {
-      Status = TheTheme.LoadSvgFrame(Index, &NewImage);
-    } else {
-      XStringW Name = SWPrintf("%ls\\%ls_%03lld.png", Path.wc_str(), Path.wc_str(), Index);
- //     DBG("try to load %ls\n", Name.wc_str()); //fine
-      if (FileExists(ThemeDir, Name)) {
-        Status = NewImage.LoadXImage(ThemeDir, Name);
-      }
-//      DBG("  read status=%s\n", efiStrError(Status));
+    XStringW Name = SWPrintf("%ls\\%ls_%03lld.png", Path.wc_str(), Path.wc_str(), Index);
+//     DBG("try to load %ls\n", Name.wc_str()); //fine
+    if (FileExists(ThemeDir, Name)) {
+      Status = NewImage.LoadXImage(ThemeDir, Name);
     }
+//      DBG("  read status=%s\n", efiStrError(Status));
     if (!EFI_ERROR(Status)) {
       AddFrame(&NewImage, Index);
     }
   }
 }
+
+
+// 2023-11 : this is currently never called
+// This should be 2 implementations of the same method in 2 different subclass, I think.
+void FILM::GetFramesSVG(NSVGparser* SVGParser, XTheme& TheTheme /*, const XStringW& Path*/) // Path already exist as a member. Is it the same ?
+{
+  EFI_STATUS Status;
+  LastIndex = 0;
+  for (INTN Index = 0; Index < NumFrames; Index++) {
+    XImage NewImage;
+    Status = TheTheme.LoadSvgFrame(SVGParser, Index, &NewImage);
+    if (!EFI_ERROR(Status)) {
+      AddFrame(&NewImage, Index);
+    }
+  }
+}
+
 
 

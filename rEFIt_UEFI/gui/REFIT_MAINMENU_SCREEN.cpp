@@ -229,7 +229,6 @@ void REFIT_MAINMENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, 
     }
     if (MainIcon.Image.isEmpty()) {
       MainIcon.Image.DummyImage(MainSize);
-      MainIcon.setFilled();
     }
   }
 
@@ -349,8 +348,8 @@ void REFIT_MAINMENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 //  INTN i = 0;
   INTN MessageHeight = 0;
 // clovy
-  if (ThemeX->TypeSVG && textFace[1].valid) {
-    MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
+  if (ThemeX->TypeSVG && ThemeX->getTextFace(1).valid) {
+    MessageHeight = (INTN)(ThemeX->getTextFace(1).size * RowHeightFromTextHeight * ThemeX->Scale);
   } else {
     MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
   }
@@ -574,8 +573,8 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
       INTN VisibleHeight = (UGAHeight - EntriesPosY - (int)(LAYOUT_Y_EDGE * ThemeX->Scale) + EntriesGap) / (EntriesHeight + EntriesGap);
       EntriesPosX = UGAWidth - EntriesWidth - (int)((BAR_WIDTH + LAYOUT_X_EDGE) * ThemeX->Scale);
       INTN MessageHeight = 20;
-      if (ThemeX->TypeSVG && textFace[1].valid) {
-        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
+      if (ThemeX->TypeSVG && ThemeX->getTextFace(1).valid) {
+        MessageHeight = (INTN)(ThemeX->getTextFace(1).size * RowHeightFromTextHeight * ThemeX->Scale);
       } else {
         MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
       }
@@ -684,8 +683,8 @@ void REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CH
 
     case MENU_FUNCTION_PAINT_TIMEOUT:
       INTN MessageHeight = 20;
-      if (ThemeX->TypeSVG && textFace[1].valid) {
-        MessageHeight = (INTN)(textFace[1].size * RowHeightFromTextHeight * ThemeX->Scale);
+      if (ThemeX->TypeSVG && ThemeX->getTextFace(1).valid) {
+        MessageHeight = (INTN)(ThemeX->getTextFace(1).size * RowHeightFromTextHeight * ThemeX->Scale);
       } else {
         MessageHeight = (INTN)(ThemeX->TextHeight * RowHeightFromTextHeight * ThemeX->Scale);
       }

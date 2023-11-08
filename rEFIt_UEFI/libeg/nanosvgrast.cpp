@@ -1645,7 +1645,8 @@ static void nsvg__initPaint(NSVGcachedPaint* cache, NSVGpaint* paint, NSVGshape*
 
 
 static void nsvg__rasterizeShapes(NSVGrasterizer* r,
-                                  NSVGshape* shapes, float tx, float ty, float scalex, float scaley,
+                                  NSVGshape* shapes, const char* groupName,
+                                  float tx, float ty, float scalex, float scaley,
                                   UINT8* dst, int w, int h, int stride,
                                   NSVGscanlineFunction fscanline)
 {
@@ -1679,6 +1680,9 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
   for (shape = shapes; shape != NULL; shape = shape->next) {
     if (!(shape->flags & NSVG_VIS_VISIBLE))
       continue;
+    if ( groupName && !isShapeInGroup(shape, groupName) ) {
+      continue;
+    }
 
     memcpy(&xform[0], shape->xform, sizeof(float)*6);
 
@@ -1801,7 +1805,7 @@ void nsvg__rasterizeClipPaths(
 
   clipPath = image->clipPaths;
   while (clipPath != NULL) {
-    nsvg__rasterizeShapes(r, clipPath->shapes, tx, ty, scalex, scaley,
+    nsvg__rasterizeShapes(r, clipPath->shapes, NULL, tx, ty, scalex, scaley,
                           &r->stencil[r->stencilSize * clipPath->index],
                           w, h, r->stencilStride, nsvg__scanlineBit);
     clipPath = clipPath->next;
@@ -1812,14 +1816,22 @@ void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
                    UINT8* dst, int w, int h, int stride)
 {
-  tx -= image->realBounds[0] * scalex;
-  ty -= image->realBounds[1] * scaley;
+  nsvgRasterize(r, image, &image->realBounds[0], NULL, tx, ty, scalex, scaley, dst, w, h, stride);
+}
+
+void nsvgRasterize(NSVGrasterizer* r,
+                   NSVGimage* image, float* bounds, const char* groupName,
+                   float tx, float ty, float scalex, float scaley,
+                   UINT8* dst, int w, int h, int stride)
+{
+  tx -= bounds[0] * scalex;
+  ty -= bounds[1] * scaley;
 //   DBG("  image %s will be scaled by [%f]\n", image->id, scalex);
 //   DumpFloat("  image real bounds ", image->realBounds, 4);
 
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
 
-  nsvg__rasterizeShapes(r, image->shapes, tx, ty, scalex, scaley,
+  nsvg__rasterizeShapes(r, image->shapes, groupName, tx, ty, scalex, scaley,
                         dst, w, h, stride, nsvg__scanlineSolid);
 
   nsvg__unpremultiplyAlpha(dst, w, h, stride);

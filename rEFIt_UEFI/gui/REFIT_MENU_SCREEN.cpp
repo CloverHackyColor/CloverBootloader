@@ -705,22 +705,22 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
     TextStyle = 2;
   }
   if (ThemeX->TypeSVG) {
-    if (!textFace[TextStyle].valid) {
-      if (textFace[0].valid) {
+    if (!ThemeX->getTextFace(TextStyle).valid) {
+      if (ThemeX->getTextFace(0).valid) {
         TextStyle = 0;
-      } else if (textFace[2].valid) {
+      } else if (ThemeX->getTextFace(2).valid) {
         TextStyle = 2;
-      } else if (textFace[1].valid) {
+      } else if (ThemeX->getTextFace(1).valid) {
         TextStyle = 1;
       } else {
         DBG("no valid text style\n");
-        textFace[TextStyle].size = ThemeX->TextHeight - 4;
+//        ThemeX->getTextFace(TextStyle).size = ThemeX->TextHeight - 4;
       }
     }
-    if (textFace[TextStyle].valid) {
-      // TextHeight = (int)((textFace[TextStyle].size + 4) * GlobalConfig.Scale);
+    if (ThemeX->getTextFace(TextStyle).valid) {
+      // TextHeight = (int)((ThemeX->getTextFace(TextStyle].size + 4) * GlobalConfig.Scale);
       //clovy - row height / text size factor
-      ThemeX->TextHeight = (int)((textFace[TextStyle].size * RowHeightFromTextHeight) * ThemeX->Scale);
+      ThemeX->TextHeight = (int)((ThemeX->getTextFace(TextStyle).size * RowHeightFromTextHeight) * ThemeX->Scale);
     }
   }
 
@@ -1314,8 +1314,8 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
   }
   //TODO assume using embedded font for BootScreen
   //messages must be TextXYStyle = 1 if it is provided by theme
-  if (!textFace[1].valid) {
-    if (textFace[2].valid) {
+  if (!ThemeX->getTextFace(1).valid) {
+    if (ThemeX->getTextFace(2).valid) {
       TextXYStyle = 2;
     } else {
       TextXYStyle = 0;
@@ -1336,11 +1336,11 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
 
   if (!isBootScreen && ThemeX->TypeSVG) {
     TextWidth += ThemeX->TextHeight * 2; //give more place for buffer
-    if (!textFace[TextXYStyle].valid) {
+    if (!ThemeX->getTextFace(TextXYStyle).valid) {
       DBG("no vaid text face for message!\n");
       Height = ThemeX->TextHeight;
     } else {
-      Height = (int)(textFace[TextXYStyle].size * RowHeightFromTextHeight * ThemeX->Scale);
+      Height = (int)(ThemeX->getTextFace(TextXYStyle).size * RowHeightFromTextHeight * ThemeX->Scale);
     }
   } else {
     Height = ThemeX->TextHeight;
@@ -1442,7 +1442,7 @@ void REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWi
   if (ThemeX->TypeSVG) {
     //clovy - text vertically centred on Height
     ThemeX->RenderText(Text, &TextBufferX, 0,
-                 (INTN)((ThemeX->TextHeight - (textFace[TextStyle].size * ThemeX->Scale)) / 2),
+                 (INTN)((ThemeX->TextHeight - (ThemeX->getTextFace(TextStyle).size * ThemeX->Scale)) / 2),
                  Cursor, TextStyle);
   } else {
     ThemeX->RenderText(Text, &TextBufferX, TEXT_XMARGIN, TEXT_YMARGIN, Cursor, TextStyle);

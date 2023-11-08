@@ -10,7 +10,11 @@
 // Mem log sizes
 //
 #define MEM_LOG_INITIAL_SIZE    (128 * 1024)
+#ifdef JIEF_DEBUG
+#define MEM_LOG_MAX_SIZE        (10 * 1024 * 1024)
+#else
 #define MEM_LOG_MAX_SIZE        (2 * 1024 * 1024)
+#endif
 #define MEM_LOG_MAX_LINE_SIZE   1024
 
 

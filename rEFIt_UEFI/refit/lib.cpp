@@ -173,8 +173,6 @@ void UninitRefitLib(void)
 {
   // called before running external programs to close open file handles
   
-  //ThemeX->closeThemeDir();
-
   selfOem.closeHandle();
   self.closeHandle();
   
@@ -190,7 +188,6 @@ EFI_STATUS ReinitRefitLib(void)
   selfOem.reInitialize();
 
   ReinitVolumes();
-  //ThemeX->openThemeDir();
 
   return EFI_SUCCESS;
 }

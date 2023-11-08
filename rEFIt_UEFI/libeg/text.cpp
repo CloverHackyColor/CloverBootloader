@@ -64,7 +64,6 @@ extern "C" {
 #endif
 
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL SemiWhitePixel = {0xFF, 0xFF, 0xFF, 0xD2}; //semitransparent white
-NSVGfontChain *fontsDB = NULL;
 
 //
 // Text rendering

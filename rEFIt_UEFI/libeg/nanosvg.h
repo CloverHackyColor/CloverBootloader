@@ -58,8 +58,8 @@ extern "C" {
 #define NSVG_MAX_ATTR 2048
 #define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
 
-#define NANOSVG_MEMORY_ALLOCATION_TRACE
 #ifdef JIEF_DEBUG
+#define NANOSVG_MEMORY_ALLOCATION_TRACE
 #define NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
 #endif
 
@@ -164,6 +164,7 @@ typedef struct NSVGpattern {
 typedef struct NSVGgroup
 {
   char id[kMaxIDLength];
+  struct NSVGgroup* next;      // Pointer to parent group or NULL
   struct NSVGgroup* parent;      // Pointer to next group or NULL
   int visibility;
 } NSVGgroup;
@@ -369,8 +370,6 @@ typedef struct textFaces {
   XBool valid = false;
 } textFaces;
 
-extern textFaces textFace[]; //0-help 1-message 2-menu 3-test
-
 typedef struct NSVGtext {
   char id[kMaxIDLength];
 //  char class[64];
@@ -416,7 +415,8 @@ typedef struct NSVGparser
   NSVGstyles* styles;
   NSVGgradientData* gradients;
   NSVGshape* shapesTail;
-  struct NSVGfont* font;
+  struct NSVGfont* currentFont;
+  NSVGfontChain* fontsDB;
   float opacity;
   // this is temporary set for Menu text, later each text will have own face
   float fontSize;
@@ -436,6 +436,8 @@ typedef struct NSVGparser
   XBool isText;
   char unknown[64];
   NSVGtext* text;
+  textFaces textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
+
   NSVGsymbol* symbols;
   NSVGpattern *patterns;
   NSVGclipPath* clipPath;
@@ -459,7 +461,7 @@ void nsvg__outputDanglingPtr();
 #endif
 
 bool isShapeInGroup(NSVGshape* shape, const char* groupName);
-
+NSVGclipPath* getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx);
 //---
 
 // Duplicates a path.
@@ -482,7 +484,9 @@ void nsvg__xformSetScale(float* t, float sx, float sy);
 void nsvg__xformPremultiply(float* t, float* s);
 void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
+void nsvg__deleteFontChain(NSVGfontChain *fontChain);
 void nsvg__imageBounds(NSVGimage* image, float* bounds);
+void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName);
 float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
 void RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
 
@@ -503,6 +507,9 @@ NSVGrasterizer* nsvgCreateRasterizer(void);
 //   w - width of the image to render
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
+void nsvgRasterize(NSVGrasterizer* r,
+                   NSVGimage* image, float* bounds, const char* groupName, float tx, float ty, float scalex, float scaley,
+                   UINT8* dst, int w, int h, int stride);
 void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
                    UINT8* dst, int w, int h, int stride);
@@ -605,8 +612,5 @@ struct NSVGrasterizer
 
   NSVGstencil* stencilList;
 };
-
-extern NSVGfontChain *fontsDB;
-//extern struct NSVGparser *mainParser;
 
 #endif

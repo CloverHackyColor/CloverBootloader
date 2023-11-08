@@ -32,12 +32,13 @@ extern "C" {
 #endif
 
 XTheme* ThemeX = NULL;
+textFaces nullTextFaces;
 
 
 EFI_STATUS
 InitTheme(const CHAR8* ChosenTheme)
 {
-  EFI_STATUS Status       = EFI_NOT_FOUND;
+EFI_STATUS Status       = EFI_NOT_FOUND;
   UINTN      i;
   TagDict*     ThemeDict    = NULL;
 //  CHAR8      *ChosenTheme = NULL;
@@ -46,6 +47,9 @@ InitTheme(const CHAR8* ChosenTheme)
 
   gRT->GetTime(&Now, NULL);
   DbgHeader("InitXTheme");
+
+  if ( ThemeX != NULL ) delete ThemeX;
+  ThemeX = new XTheme();
   ThemeX->Init();
 
   //initialize Daylight when we know timezone
@@ -64,33 +68,6 @@ InitTheme(const CHAR8* ChosenTheme)
     DBG("use night theme\n");
   }
 
-  for (i = 0; i < 3; i++) {
-    //    DBG("validate %d face\n", i);
-    textFace[i].valid = false;
-  }
-
-  NSVGfontChain *fontChain = fontsDB;
-  while (fontChain) {
-    NSVGfont *font = fontChain->font;
-    //    DBG("free font %s\n", font->fontFamily);
-    NSVGfontChain *nextChain = fontChain->next;
-    if (font) {
-      nsvg__deleteFont(font);
-      fontChain->font = NULL;
-    }
-    FreePool(fontChain);
-    fontChain = nextChain;
-  }
-  //as all font freed then free the chain
-  fontsDB = NULL;
-
-  /*
-   if (mainParser) {
-     nsvg__deleteParser(mainParser);
-     DBG("parser deleted\n");
-     mainParser = NULL;
-   }
-   */
   ThemeX->FontImage.setEmpty();
 
   Rnd = (ThemeNameArray.size() != 0) ? Now.Second % ThemeNameArray.size() : 0;
@@ -183,11 +160,10 @@ finish:
     ThemeX->FillByEmbedded();
     OldChosenTheme = 0xFFFF;
 
-    ThemeX->closeThemeDir();
-//    if (ThemeX->ThemeDir != NULL) {
-//      ThemeX->ThemeDir->Close(ThemeX->ThemeDir);
-//      ThemeX->ThemeDir = NULL;
-//    }
+    if (ThemeX->ThemeDir != NULL) {
+      ThemeX->ThemeDir->Close(ThemeX->ThemeDir);
+      ThemeX->ThemeDir = NULL;
+    }
 
  //   ThemeX->GetThemeTagSettings(NULL); already done
     //fill some fields
@@ -233,8 +209,9 @@ finish:
   if (!ThemeX->TypeSVG) {
     ThemeX->PrepareFont();
   }
-
   //ThemeX->ClearScreen();
+
+  displayFreeMemory("InitTheme end"_XS8);
   return Status;
 }
 
@@ -253,14 +230,11 @@ XTheme::XTheme() : Icons(), ThemeDir(0), HideBadges(0), HideUIFlags(0), Font(FON
                    row0TileSize(0), row1TileSize(0), BanHeight(0), LayoutHeight(0), LayoutBannerOffset(0), LayoutButtonOffset(0), LayoutTextOffset(0),
                    LayoutAnimMoveForMenuX(0), ScrollWidth(0), ScrollButtonsHeight(0), ScrollBarDecorationsHeight(0), ScrollScrollDecorationsHeight(0),
                    FontWidth(0), FontHeight(0), TextHeight(0), Daylight(false), Background(), BigBack(), Banner(), SelectionImages(), Buttons(), ScrollbarBackgroundImage(), BarStartImage(), BarEndImage(),
-                   ScrollbarImage(), ScrollStartImage(), ScrollEndImage(), UpButtonImage(), DownButtonImage(), FontImage(), BannerPlace(), Cinema(), SVGParser(0)
+                   ScrollbarImage(), ScrollStartImage(), ScrollEndImage(), UpButtonImage(), DownButtonImage(), FontImage(), BannerPlace(), Cinema()
 {
   Init();
 }
 
-XTheme::~XTheme() {
-  //nothing todo?
-}
 
 void XTheme::Init()
 {
@@ -735,7 +709,7 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
       NewFilm->RunOnce = IsPropertyNotNullAndTrue(Prop);
 
       NewFilm->GetFrames(*ThemeX); //used properties: ID, Path, NumFrames
-      ThemeX->Cinema.AddFilm(NewFilm);
+      Cinema.AddFilm(NewFilm);
  //     delete NewFilm; //looks like already deleted
     }
   }
@@ -839,7 +813,6 @@ XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
       // using Alt icon
       Icons[IdFound].Image = Icons[AltFound].Image;
       Icons[IdFound].ImageNight = Icons[AltFound].ImageNight;
-      Icons[IdFound].setFilled();
     } else {
       // check for embedded with ID=Id
       XIcon *NewIcon = new XIcon(Id, true);
@@ -851,7 +824,6 @@ XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
         // using Embedded icon
         Icons[IdFound].Image = NewIcon->Image;
         Icons[IdFound].ImageNight = NewIcon->ImageNight;
-        Icons[IdFound].setFilled(); 
       }
     }
   }
@@ -918,7 +890,6 @@ const XIcon& XTheme::LoadOSIcon(const XString8& Full)
     // else something
     if (DummyIcon.isEmpty()) { //initialize once per session
       DummyIcon.Image.DummyImage(MainEntriesSize);
-      DummyIcon.setFilled();
     }
   }
   return DummyIcon;
@@ -1115,7 +1086,6 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
     }
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
-      NewIcon->setFilled();
       NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
     }
     Icons.AddReference(NewIcon, true);

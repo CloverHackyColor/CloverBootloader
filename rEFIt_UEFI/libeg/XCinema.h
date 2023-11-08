@@ -15,6 +15,7 @@ extern "C" {
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"
+#include "../libeg/nanosvg.h"
 #include "XImage.h"
 
 class XTheme;
@@ -64,6 +65,7 @@ public:
   INTN LastFrameID() { return LastIndex; }
   XBool Finished() { return CurrentFrame == 0; }
   void GetFrames(XTheme& TheTheme/*, const XStringW& Path*/); //read image sequence from Theme/Path/
+  void GetFramesSVG(NSVGparser* SVGParser, XTheme& TheTheme);
   void SetPlace(const EG_RECT& Rect) { FilmPlace = Rect; }
   void Advance() { ++CurrentFrame %= (LastIndex + 1); }
   void Reset() { CurrentFrame = 0; }
