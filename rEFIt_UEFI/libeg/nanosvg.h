@@ -458,6 +458,14 @@ void* nsvg__realloc(UINTN oldsize, UINTN newsize, void* ref, const XString8& msg
 void nsvg__delete(void* buffer, const XString8& msg);
 size_t nsvg__nbDanglingPtr();
 void nsvg__outputDanglingPtr();
+#else
+  // When tracing allocation is not wanted (release version for exemple), we use macro. This way, the msg parameter is not compiled or evaluated.
+  // It prevents all the literal do be compiled and stored in the produced file.
+  #define nsvg__alloc(size, msg) AllocatePool(size)
+  #define nsvg__alloczero(size, msg) AllocateZeroPool(size)
+  #define nsvg__alloccopy(size, ref, msg) AllocateCopyPool(size, ref)
+  #define nsvg__realloc(oldsize, newsize, ref, msg) ReallocatePool(oldsize, newsize, ref)
+  #define nsvg__delete(buffer, msg) FreePool(buffer)
 #endif
 
 bool isShapeInGroup(NSVGshape* shape, const char* groupName);

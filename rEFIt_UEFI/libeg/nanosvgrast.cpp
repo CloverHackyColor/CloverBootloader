@@ -194,7 +194,7 @@ static void nsvg__resetPool(NSVGrasterizer* r)
   r->curpage = r->pages;
 }
 
-static UINT8* nsvg__alloc(NSVGrasterizer* r, int size)
+static UINT8* nsvgrast__alloc(NSVGrasterizer* r, int size)
 {
   UINT8* buf;
   if (size > NSVG__MEMPAGE_SIZE) return NULL;
@@ -989,7 +989,7 @@ static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float sta
     r->freelist = z->next;
   } else {
     // Alloc new edge.
-    z = (NSVGactiveEdge*)nsvg__alloc(r, sizeof(NSVGactiveEdge));
+    z = (NSVGactiveEdge*)nsvgrast__alloc(r, sizeof(NSVGactiveEdge));
     if (z == NULL) return NULL;
   }
 
