@@ -103,7 +103,8 @@ VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCo
   
   for (i = 0; i < PixelCount; i++) {
     *DestPlanePtr = *SrcPlanePtr;
-    DestPlanePtr += 4, SrcPlanePtr += 4;
+    DestPlanePtr += 4;
+    SrcPlanePtr += 4;
   }
 }
 

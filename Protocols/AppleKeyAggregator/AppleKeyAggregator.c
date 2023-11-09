@@ -385,7 +385,7 @@ AggregatorEntryPoint (
   IN EFI_SYSTEM_TABLE  *SystemTable
   ) // start
 #else
-EFI_STATUS InstallAggregator()
+EFI_STATUS InstallAggregator(void)
 #endif
 {
   EFI_STATUS               Status;

@@ -180,7 +180,7 @@ XmlParserPosition valuePos = xmlLiteParser->getPosition();
     if ( xmlLiteParser->xmlParsingError ) {
       return false;
     }
-    int keyLen = keyTmp.value().length();
+    size_t keyLen = keyTmp.value().length();
     if ( keyLen > 0 )
     {
       if ( !( keyTmp.value()[0] == '#' && ignoreCommented ) && !(keyTmp.value()[keyLen-1] == '?') )

@@ -149,7 +149,7 @@ void png_alloc_free(void *addr)
 	FreePool(addr);
 }
 
-void png_alloc_free_all()
+void png_alloc_free_all(void)
 {
 	while (png_alloc_tail) {
 		void *addr = png_alloc_tail->addr;
@@ -301,7 +301,7 @@ typedef struct
 	VECTOR_32 *tree2d;
 } HuffmanTree;
 
-HuffmanTree *HuffmanTree_new()
+HuffmanTree *HuffmanTree_new(void)
 {
 	HuffmanTree *tree = png_alloc_malloc(sizeof (HuffmanTree));
 	tree->tree2d = NULL;
@@ -1025,7 +1025,7 @@ INT32 PNG_convert(const PNG_INFO *info, VECTOR_8 *out, const UINT8 *in)
 	return 0;
 }
 
-PNG_INFO *PNG_info_new()
+PNG_INFO *PNG_info_new(void)
 {
 	PNG_INFO *info = png_alloc_malloc(sizeof (PNG_INFO));
 	UINT32 i;

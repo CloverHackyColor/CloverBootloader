@@ -81,6 +81,6 @@ typedef struct {
   APPLE_KEY_STATE_PROTOCOL          AggregatorProtocol;  ///<0x50 size=8*3
 } APPLE_KEY_MAP_AGGREGATOR;  //size=0x68
 
-EFI_STATUS InstallAggregator();
+EFI_STATUS InstallAggregator(void);
 
 #endif

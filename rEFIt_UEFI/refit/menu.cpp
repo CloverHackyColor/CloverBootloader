@@ -1103,7 +1103,7 @@ void ApplyInputs(void)
   i++; //130
   if (InputItems[i].Valid) {
 	  INTN Minus = 0;
-	  gSettings.Quirks.OcBooterQuirks.TscSyncTimeout = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
+	  gSettings.Quirks.OcBooterQuirks.TscSyncTimeout = (decltype(gSettings.Quirks.OcBooterQuirks.TscSyncTimeout))StrDecimalToUintn(InputItems[i].SValue.data(Minus));
 	  DBG("set TscSyncTimeout=%d\n", gSettings.Quirks.OcBooterQuirks.TscSyncTimeout);
   }
   //gSettings.Smbios.SFakeCPU
