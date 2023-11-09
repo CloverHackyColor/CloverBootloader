@@ -119,6 +119,8 @@
 
 // variables
 
+ EFI_PHYSICAL_ADDRESS  SomePages = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;?
+
 XBool                gGuiIsReady     = false;
 XBool                gThemeNeedInit  = true;
 XBool                DoHibernateWake = false;
@@ -134,6 +136,51 @@ extern void HelpRefit(void);
 extern void AboutRefit(void);
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 extern EFI_DXE_SERVICES  *gDS;
+
+
+VOID
+PrintMemoryMap ()
+{
+  EFI_MEMORY_DESCRIPTOR       *MemMap;
+  EFI_MEMORY_DESCRIPTOR       *MemMapPtr;
+  UINTN                       MemMapSize;
+  UINTN                       MapKey, DescriptorSize;
+  UINT32                      DescriptorVersion;
+  UINT64                      Bytes;
+  EFI_STATUS                  Status;
+
+  MemMapSize = 0;
+  MemMap     = NULL;
+  DescriptorSize = 0;
+  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+  MemMapSize += EFI_PAGE_SIZE;
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    DBG("GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+  }
+  Status = gBS->AllocatePool (EfiBootServicesData, MemMapSize, (void**)&MemMap);
+//  ASSERT (Status == EFI_SUCCESS);
+  if (EFI_ERROR(Status)) return;
+  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+//  ASSERT (Status == EFI_SUCCESS);
+  MemMapPtr = MemMap;
+  DBG("GetMemStatus=%s\n", efiStrError(Status));
+//  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
+
+  for (UINTN Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
+    Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
+    DBG ("%016llX-%016llX  %08llX %02llX %02llX\n",
+          MemMap->PhysicalStart,
+          MemMap->PhysicalStart + Bytes - 1,
+          MemMap->NumberOfPages,
+          MemMap->Attribute,
+          (UINTN)MemMap->Type);
+    MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
+  }
+
+  gBS->FreePool(MemMapPtr);
+}
+
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
@@ -1612,6 +1659,10 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit,
       mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo);
   
+
+//  EFI_STATUS sta = gBS->FreePages(SomePages, 90000);
+//  DBG("free 90000 pages status=%s\n", efiStrError(sta));
+  PrintMemoryMap();
   DBG("Closing log\n");
   if (SavePreBootLog) {
     Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
@@ -2274,7 +2325,7 @@ INTN FindDefaultEntry(void)
   //
   // try to detect volume set by Startup Disk or previous Clover selection
   // with broken nvram this requires emulation to be installed.
-  // enable emulation to determin efi-boot-device-data
+  // enable emulation to determine efi-boot-device-data
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
@@ -2902,6 +2953,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
 //  DumpBiosMemoryMap();
+
+//  PrintMemoryMap();
 
   GuiEventsInitialize();
 
