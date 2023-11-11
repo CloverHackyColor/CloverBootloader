@@ -118,8 +118,8 @@ public:
 
   XCinema Cinema;
 
-  UINTN NumFrames;
-  UINTN FrameTime;
+  UINTN NumFrames = 0;
+  UINTN FrameTime = 0;
 
 
 public:
