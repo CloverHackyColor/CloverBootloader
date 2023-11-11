@@ -90,7 +90,7 @@ class DiscoveredHdaProperties
 public:
   UINT16            controller_vendor_id = 0;
   UINT16            controller_device_id = 0;
-  CHAR16            *controller_name = 0;
+  XStringW          controller_name = XStringW();
 
   DiscoveredHdaProperties() {}
 };

@@ -110,7 +110,7 @@ public:
 template<typename T>
 class MutableRef : public T {
 public:
-  T* t;
+  const T* t;
   const T& operator = (const T* other) {
     t = other;
     return *t;
@@ -133,7 +133,7 @@ extern "C" int main(int argc, const char * argv[])
   
   Background = &test;
   test = 6;
-  float test2 = Background.get();
+  float test2 = Background.get(); (void)test2;
 
     Test t;
     TestWithOverride t1;

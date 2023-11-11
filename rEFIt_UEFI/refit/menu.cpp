@@ -1696,7 +1696,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
   for (UINTN i = 0 ; i < gConf.HdaPropertiesArray.size() ; i++) {
 	  SubScreen->AddMenuInfoLine_f("%llu) %ls [%04hX][%04hX]",
                                            (i+1),
-                                           gConf.HdaPropertiesArray[i].controller_name,
+                                           gConf.HdaPropertiesArray[i].controller_name.wc_str(),
                                            gConf.HdaPropertiesArray[i].controller_vendor_id,
                                            gConf.HdaPropertiesArray[i].controller_device_id
                       );

@@ -438,8 +438,9 @@ void ConfigManager::DiscoverDevices()
           hda->controller_device_id       = Pci.Hdr.DeviceId;
 
           // HDA Controller Info
-          HdaControllerGetName(((hda->controller_device_id << 16) | hda->controller_vendor_id), &hda->controller_name);
-
+          CHAR16* name;
+          HdaControllerGetName(((hda->controller_device_id << 16) | hda->controller_vendor_id), &name);
+          hda->controller_name.stealValueFrom(name, wcslen(name) + 1); // we "steal" the value of name, so we sace one memory allocation, and we don't have de free.
 
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");
