@@ -681,7 +681,8 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
     // Check for ia.log - InstallESD/createinstallmedia/startosinstall
     // Implemented by Sherlocks
     if (OSVersion.isEmpty()) {
-      CONST CHAR8  *s, *fileBuffer;
+      CONST CHAR8  *s;
+      UINT8* fileBuffer;
 //      CHAR8  *Res5 = (__typeof__(Res5))AllocateZeroPool(5);
 //      CHAR8  *Res6 = (__typeof__(Res6))AllocateZeroPool(6);
 //      CHAR8  *Res7 = (__typeof__(Res7))AllocateZeroPool(7);
@@ -696,10 +697,10 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
         }
       }
       if (FileExists (Volume->RootDir, InstallerLog)) {
-        Status = egLoadFile(Volume->RootDir, InstallerLog.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
+        Status = egLoadFile(Volume->RootDir, InstallerLog.wc_str(), &fileBuffer, &fileLen);
         if (!EFI_ERROR(Status)) {
           XString8 targetString;
-          targetString.strncpy(fileBuffer, fileLen);
+          targetString.strncpy((CHAR8*)fileBuffer, fileLen);
       //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
           s = AsciiStrStr(targetString.c_str(), "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {

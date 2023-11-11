@@ -478,10 +478,13 @@ ReallocateReservedPool (
   @param  Buffer                Pointer to the buffer to free.
 
 **/
+/*
+ * Jief : One day, I put JCONST. This is wrong !!! You must never free a ptr that's const.
+ */
 VOID
 EFIAPI
 FreePool(
-  IN JCONST VOID   *Buffer
+  IN VOID   *Buffer
   );
 
 #endif

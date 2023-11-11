@@ -125,8 +125,8 @@ EFI_STATUS Status       = EFI_NOT_FOUND;
         }
         TestTheme.setEmpty();
       }
-      FreePool(ChosenTheme);
-      ChosenTheme = NULL;
+      //FreePool(ChosenTheme); // ChosenTheme is an argument passed here, so the callee is "own" that memory.
+      //ChosenTheme = NULL;    // Why is this bad pratice : it's assuming that ChosenTheme was dynamically allocated and freeable. What is this the content of an XString ?
     }
     // Try to get theme from settings
     if (ThemeDict == NULL) {
@@ -204,7 +204,8 @@ finish:
     }
   }
   if (ChosenTheme != NULL) {
-    FreePool(ChosenTheme);
+      //FreePool(ChosenTheme); // ChosenTheme is an argument passed here, so the callee is "own" that memory.
+                               // Why is this bad pratice : it's assuming that ChosenTheme was dynamically allocated and freeable. What is this the content of an XString ?
   }
   if (!ThemeX->TypeSVG) {
     ThemeX->PrepareFont();

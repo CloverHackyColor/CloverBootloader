@@ -3030,7 +3030,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.isFastBoot()) {
       if (gThemeNeedInit) {
         UINTN      Size         = 0;
-        InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size));
+        CHAR8* ChoosenTheme = (CHAR8*)GetNvramVariable(L"Clover.Theme", gEfiAppleBootGuid, NULL, &Size);
+        InitTheme(ChoosenTheme);
+        FreePool(ChoosenTheme);
         gThemeNeedInit = false;
       } else if (GlobalConfig.gThemeChanged) {
         DBG("change theme\n");
