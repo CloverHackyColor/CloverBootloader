@@ -104,8 +104,6 @@
 
 //TODO there are anime properties should be properties of FilmC
 //which is not accessible here
-UINTN NumFrames;
-UINTN FrameTime;
 
 //#define NANOSVG_MEMORY_ALLOCATION_TRACE
 
@@ -114,18 +112,18 @@ UINTN FrameTime;
 
 int nvsg__memoryallocation_verbose = false;
 
-XArray<uintptr_t> allocatedPtr;
+XArray<uintptr_t> nsvg__allocatedPtr;
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-XObjArray<XString8> allocatedPtrMsg;
+XObjArray<XString8> nsvg__allocatedPtrMsg;
 #endif
 
 void* nsvg__alloc(UINTN size, const XString8& msg)
 {
   void* buffer = AllocatePool(size);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloc(%lld) - %s = %llx\n", size, msg.c_str(), uintptr_t(buffer));
-  allocatedPtr.Add(uintptr_t(buffer));
+  nsvg__allocatedPtr.Add(uintptr_t(buffer));
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.AddCopy(XString8(msg), true);
+  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
 #endif
   return buffer;
 }
@@ -134,9 +132,9 @@ void* nsvg__alloczero(UINTN size, const XString8& msg)
 {
   void* buffer = AllocateZeroPool(size);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloczero(%lld) - %s = %llx\n", size, msg.c_str(), uintptr_t(buffer));
-  allocatedPtr.Add(uintptr_t(buffer));
+  nsvg__allocatedPtr.Add(uintptr_t(buffer));
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.AddCopy(XString8(msg), true);
+  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
 #endif
   return buffer;
 }
@@ -145,9 +143,9 @@ void* nsvg__alloccopy(UINTN size, const void* ref, const XString8& msg)
 {
   void* buffer = AllocateCopyPool(size, ref);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloccopy(%lld, %llx) - %s = %llx\n", size, uintptr_t(ref), msg.c_str(), uintptr_t(buffer));
-  allocatedPtr.Add(uintptr_t(buffer));
+  nsvg__allocatedPtr.Add(uintptr_t(buffer));
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.AddCopy(XString8(msg), true);
+  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
 #endif
   return buffer;
 }
@@ -155,17 +153,17 @@ void* nsvg__alloccopy(UINTN size, const void* ref, const XString8& msg)
 void* nsvg__realloc(UINTN oldsize, UINTN newsize, void* ref, const XString8& msg)
 {
   uintptr_t ref2 = uintptr_t(ref);
-  auto idx = allocatedPtr.indexOf(ref2);
+  auto idx = nsvg__allocatedPtr.indexOf(ref2);
   if ( idx == MAX_XSIZE ) log_technical_bug("nsvg__realloc");
   void* buffer = ReallocatePool(oldsize, newsize, ref);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__realloc(%lld, %lld, %llx) - %s = %llx\n", oldsize, newsize, uintptr_t(ref), msg.c_str(), uintptr_t(buffer));
-  allocatedPtr.RemoveAtIndex(idx);
+  nsvg__allocatedPtr.RemoveAtIndex(idx);
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.RemoveAtIndex(idx);
+  nsvg__allocatedPtrMsg.RemoveAtIndex(idx);
 #endif
-  allocatedPtr.Add(uintptr_t(buffer));
+  nsvg__allocatedPtr.Add(uintptr_t(buffer));
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.AddCopy(XString8(msg), true);
+  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
 #endif
   return buffer;
 }
@@ -176,36 +174,36 @@ void nsvg__delete(void* buffer, const XString8& msg)
 //  DBG("stop");
 //}
   uintptr_t ref2 = uintptr_t(buffer);
-  auto idx = allocatedPtr.indexOf(ref2);
+  auto idx = nsvg__allocatedPtr.indexOf(ref2);
   if ( idx == MAX_XSIZE ) {
     log_technical_bug("nsvg__delete %llx", uintptr_t(buffer));
   }
   EFI_STATUS    Status = gBS->FreePool(buffer);
   (void)Status;
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - allocation msg %s - %s - Status = %s\n", uintptr_t(buffer), allocatedPtrMsg[idx].c_str(), msg.c_str(), efiStrError(Status));
+  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - allocation msg %s - %s - Status = %s\n", uintptr_t(buffer), nsvg__allocatedPtrMsg[idx].c_str(), msg.c_str(), efiStrError(Status));
 #else
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - %s - Status = %s\n", uintptr_t(buffer), msg.c_str(), efiStrError(Status));
 #endif
-  allocatedPtr.RemoveAtIndex(idx);
+  nsvg__allocatedPtr.RemoveAtIndex(idx);
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  allocatedPtrMsg.RemoveAtIndex(idx);
+  nsvg__allocatedPtrMsg.RemoveAtIndex(idx);
 #endif
 }
 
 size_t nsvg__nbDanglingPtr()
 {
-  return allocatedPtr.length();
+  return nsvg__allocatedPtr.length();
 }
 
 
 void nsvg__outputDanglingPtr()
 {
-  for(size_t i=0;i<allocatedPtr.length();++i){
+  for(size_t i=0;i<nsvg__allocatedPtr.length();++i){
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-    DBG("Dangling ptr %llx %s\n", allocatedPtr[i], allocatedPtrMsg[i].c_str());
+    DBG("Dangling ptr %llx %s\n", nsvg__allocatedPtr[i], nsvg__allocatedPtrMsg[i].c_str());
 #else
-    DBG("Dangling ptr %llx\n", allocatedPtr[i]);
+    DBG("Dangling ptr %llx\n", nsvg__allocatedPtr[i]);
 #endif
   }
 }
@@ -217,10 +215,10 @@ void nsvg__outputDanglingPtr()
 
 
 //int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
-void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
+void nsvg__takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
 void nsvg__deleteShapes(NSVGshape* shape);
 
-void DumpFloat2 (CONST char* s, float* t, int N)
+void nsvg__dumpFloat(CONST char* s, float* t, int N)
 {
 #if DEBUG_SVG
   int i;
@@ -240,7 +238,7 @@ void DumpFloat2 (CONST char* s, float* t, int N)
 #endif
 }
 
-static int getIntegerDict(const char* s)
+static int nsvg__getIntegerDict(const char* s)
 {
   if ((s[1] == 'x') || (s[1] == 'X')) {
     return (int)AsciiStrHexToUintn (s);
@@ -743,7 +741,7 @@ void nsvg__deleteParser(NSVGparser* p)
     nsvg__deletePaths(p->pathList);
     nsvg__deleteGradientData(p->gradients);
     nsvg__deleteFontChain(p->fontsDB);
-    nsvgDelete(p->image);
+    nsvg__deleteImage(p->image);
     if (p->cpts > 0 && p->pts) {
       nsvg__delete(p->pts, "nsvg__deleteParser2"_XS8);
     }
@@ -967,7 +965,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   }
   data = nsvg__findGradientData(p, link->id);
   if (data == NULL) return NULL;
-  //  DumpFloat2("gradient data xform:", data->xform, 6);
+  //  nsvg__dumpFloat("gradient data xform:", data->xform, 6);
   stops = data->stops;
   nstops = data->nstops;
   ref = nsvg__findGradientData(p, data->ref);
@@ -987,7 +985,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
     if (refIter > 32) break; // prevent infinite loops on malformed data
   }
   if (stops == NULL) return NULL;
-  //  DumpFloat2("gradient final xform:", data->xform, 6);
+  //  nsvg__dumpFloat("gradient final xform:", data->xform, 6);
   grad = (NSVGgradient*)nsvg__alloczero(sizeof(NSVGgradient) + sizeof(NSVGgradientStop)*(nstops-1), "nsvg__createGradient"_XS8);
   if (grad == NULL) return NULL;
   // The shape width and height.
@@ -1103,8 +1101,8 @@ static void  nsvg__getSymbolBounds(NSVGparser* p)
   symbol->bounds[2] = -FLT_MAX;
   symbol->bounds[3] = -FLT_MAX;
   nsvg__shapesBound(shape, symbol->bounds);
-//  DumpFloat2("Symbol has bounds", symbol->bounds, 4); //nothing
-  DumpFloat2("Symbol has viewbox", symbol->viewBox, 4);
+//  nsvg__dumpFloat("Symbol has bounds", symbol->bounds, 4); //nothing
+  nsvg__dumpFloat("Symbol has viewbox", symbol->viewBox, 4);
 }
 */
 static void nsvg__addShape(NSVGparser* p)
@@ -2097,7 +2095,7 @@ static NSVGclipPath* nsvg__findClipPath(NSVGparser* p, const char* name)
   return *link;
 }
 
-static int substr(const char* aClass, char* style)
+static int nsvg__substr(const char* aClass, char* style)
 {
   const char *p;
 
@@ -2280,7 +2278,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, char* value)
   else if (strcmp(name, "class") == 0) {
     NSVGstyles* style = p->styles;
     while (style) {
-      if (substr(value, style->name) != 0) {
+      if (nsvg__substr(value, style->name) != 0) {
         nsvg__parseStyle(p, style->description);
       }
       style = style->next;
@@ -2929,7 +2927,7 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
 
   nsvg__xformSetTranslation(&xform[0], x, y);
   nsvg__xformMultiply(&xform[0], attr->xform); //translate before rotate
-//  DumpFloat2("use xform", xform, 6);
+//  nsvg__dumpFloat("use xform", xform, 6);
 
   if (ref) {
     shape = (NSVGshape*)nsvg__alloccopy(sizeof(NSVGshape), ref, "nsvg__parseUse shape"_XS8);
@@ -2943,8 +2941,8 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     shape->bounds[1] = FLT_MAX;
     shape->bounds[2] = -FLT_MAX;
     shape->bounds[3] = -FLT_MAX;
-    takeXformBounds(ref, &xform[0], shape->bounds);
-//    DumpFloat2("used shape has bounds", shape->bounds, 4);
+    nsvg__takeXformBounds(ref, &xform[0], shape->bounds);
+//    nsvg__dumpFloat("used shape has bounds", shape->bounds, 4);
   } else if (refSym) {
     shape = (NSVGshape*)nsvg__alloczero(sizeof(NSVGshape), "nsvg__parseUse shape2"_XS8);
     if (!shape) return;
@@ -2963,10 +2961,10 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     while (shapeInt) {
       memcpy(&xform2[0], shape->xform, sizeof(float)*6);
       nsvg__xformPremultiply(&xform2[0], shapeInt->xform);
-      takeXformBounds(shapeInt, &xform2[0], shape->bounds);
+      nsvg__takeXformBounds(shapeInt, &xform2[0], shape->bounds);
       shapeInt = shapeInt->next;
     }
-//    DumpFloat2("used symbol has bounds", shape->bounds, 4);
+//    nsvg__dumpFloat("used symbol has bounds", shape->bounds, 4);
   }
 
   /* //there can't be own gradient
@@ -3129,7 +3127,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
     Status = egLoadFile(&ThemeX->getThemeDir(), FontFileName.wc_str(), &FileData, &FileDataLength);
 //    DBG(" font %s loaded status=%lld, %s\n", text->fontFace->fontFamily, Status, efiStrError(Status));
     if (!EFI_ERROR(Status)) {
-      p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1
+      p1 = nsvg__parse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1
       if (!p1) {
  //       DBG("font %s not parsed\n", text->fontFace->fontFamily);
       } else {
@@ -3419,7 +3417,7 @@ static void nsvg__parsePoly(NSVGparser* p, char** attr, int closeFlag)
  */
 
 //parse embedded PNG image
-static void parseImage(NSVGparser* p, char** dict)
+static void nsvg__parseEmbeddedPNG(NSVGparser* p, char** dict)
 {
   //  NSVGattrib* attr = nsvg__getAttr(p);
   NSVGpattern *pt = NULL;
@@ -3461,7 +3459,7 @@ static void parseImage(NSVGparser* p, char** dict)
   }
 }
 
-static void parsePattern(NSVGparser* p, char** dict)
+static void nsvg__parsePattern(NSVGparser* p, char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   int i;
@@ -3591,9 +3589,9 @@ static void nsvg__parseGradient(NSVGparser* p, char** attr, char type)
       } else if (strcmp(attr[i], "y2") == 0) {
         grad->direction.linear.y2 = nsvg__parseCoordinateRaw(attr[i + 1]);
       } else if (strcmp(attr[i], "clover:ditherCoarse") == 0) {
-        grad->ditherCoarse = getIntegerDict(attr[i + 1]);
+        grad->ditherCoarse = nsvg__getIntegerDict(attr[i + 1]);
       } else if (strcmp(attr[i], "clover:conic") == 0) {
-        int conic = getIntegerDict(attr[i + 1]);
+        int conic = nsvg__getIntegerDict(attr[i + 1]);
         if (conic > 0) {
           grad->type = NSVG_PAINT_CONIC_GRADIENT;
         }
@@ -3729,6 +3727,7 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
 }
 
 //parse Clover settings for theme
+// What's this doing here ???? XTheme method are supposed to be in XTheme.cpp.
 void XTheme::parseTheme(void* parser, char** dict)
 {
   NSVGparser* p = (NSVGparser*)parser;
@@ -3736,24 +3735,24 @@ void XTheme::parseTheme(void* parser, char** dict)
   UINT32 Color = 0x80808080; //default value
   for (int i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "SelectionOnTop") == 0) {
-      SelectionOnTop = getIntegerDict(dict[i+1]) > 0;
+      SelectionOnTop = nsvg__getIntegerDict(dict[i+1]) > 0;
     } else if (strcmp(dict[i], "BadgeOffsetX") == 0) {
-      BadgeOffsetX = getIntegerDict(dict[i + 1]);
+      BadgeOffsetX = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
-      BadgeOffsetY = getIntegerDict(dict[i + 1]);
+      BadgeOffsetY = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "LayoutBannerOffset") == 0) {
-      LayoutBannerOffset = getIntegerDict(dict[i + 1]);
+      LayoutBannerOffset = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "LayoutButtonOffset") == 0) {
-      LayoutButtonOffset = getIntegerDict(dict[i + 1]);
+      LayoutButtonOffset = nsvg__getIntegerDict(dict[i + 1]);
       
     } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
-      NonSelectedGrey = getIntegerDict(dict[i + 1]) > 0;
+      NonSelectedGrey = nsvg__getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "CharWidth") == 0) {
-      CharWidth = getIntegerDict(dict[i + 1]);
+      CharWidth = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundDark") == 0) {
-      BackgroundDark = getIntegerDict(dict[i + 1]) > 0;
+      BackgroundDark = nsvg__getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "BackgroundSharp") == 0) {
-      BackgroundSharp = getIntegerDict(dict[i + 1]);
+      BackgroundSharp = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BackgroundScale") == 0) {
       BackgroundScale = imNone;
       if (strstr(dict[i+1], "scale") != NULL)  {
@@ -3777,28 +3776,28 @@ void XTheme::parseTheme(void* parser, char** dict)
         HideBadges |= HDBADGES_INLINE;
       }
     } else if (strcmp(dict[i], "BadgeScale") == 0) {
-      BadgeScale = getIntegerDict(dict[i + 1]);
+      BadgeScale = nsvg__getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "SelectionColor") == 0) {
-      Color = getIntegerDict(dict[i + 1]);
+      Color = nsvg__getIntegerDict(dict[i + 1]);
       if (ThemeX->Daylight) {
         SelectionColor = Color;
       }
     } else if (strcmp(dict[i], "SelectionColor_night") == 0) {
       found = true;
       if (!ThemeX->Daylight) {
-        SelectionColor = getIntegerDict(dict[i + 1]);
+        SelectionColor = nsvg__getIntegerDict(dict[i + 1]);
       }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {
-      VerticalLayout = getIntegerDict(dict[i + 1]) > 0;
+      VerticalLayout = nsvg__getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "BootCampStyle") == 0) {
-      BootCampStyle = getIntegerDict(dict[i + 1]) > 0;
+      BootCampStyle = nsvg__getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "AnimeFrames") == 0) {
-      NumFrames = getIntegerDict(dict[i + 1]);
+      NumFrames = nsvg__getIntegerDict(dict[i + 1]);
       if (NumFrames == 0xFFFF) {
         NumFrames = 0;
       }
     } else if (strcmp(dict[i], "FrameTime") == 0) {
-      FrameTime = getIntegerDict(dict[i + 1]);
+      FrameTime = nsvg__getIntegerDict(dict[i + 1]);
     } else nsvg__parseAttr(p, dict[i], dict[i + 1]);
   }
   if (!found) {
@@ -3908,7 +3907,7 @@ static void nsvg__parseFontFace(NSVGparser* p, char** dict)
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[1]);
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[2]);
       AsciiStrToFloat((const char*)Next, &Next, &font->bbox[3]);
-//      DumpFloat2("font bbox=", font->bbox, 4);
+//      nsvg__dumpFloat("font bbox=", font->bbox, 4);
     }
     else if (strcmp(dict[i], "unicode-range") == 0) {
       const char * a = dict[i + 1];
@@ -4150,10 +4149,10 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
   } else if (strcmp(el, "image") == 0) {
     //    nsvg__pushAttr(p);
     //    nsvg__parseIMAGE(p, dict);
-    parseImage(p, dict);
+    nsvg__parseEmbeddedPNG(p, dict);
     //    nsvg__popAttr(p);
   } else if (strcmp(el, "pattern") == 0) {
-    parsePattern(p, dict);
+    nsvg__parsePattern(p, dict);
     p->patternFlag = 1;
 
   } else if (strcmp(el, "clover:theme") == 0) {
@@ -4218,7 +4217,7 @@ static void nsvg__endElement(void* ud, const char* el)
   }
 }
 
-float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color)
+float nsvg__addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color)
 {
   float x1 = x; //initial position
   //  INTN y = 0;
@@ -4307,7 +4306,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
 //   if (letter == L'C') {
 //	 DBG("bbox0=%f ", p->text->font->bbox[0]);
 //     DBG("bbox3=%f \n", p->text->font->bbox[3]);
-//     DumpFloat2("glyph xform:", shape->xform, 6);
+//     nsvg__dumpFloat("glyph xform:", shape->xform, 6);
 //     DBG("stroke-color=%X ", shape->stroke.paint.color);
 //     DBG("stroke-width=%f\n", shape->strokeWidth);
 //   }
@@ -4318,12 +4317,12 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   shape->bounds[2] = p->text->font->bbox[2] + x/scale; //x + p->font->bbox[2] * scale;
   shape->bounds[3] = p->text->font->bbox[3] + y/scale; //y + p->font->bbox[3] * scale;
   //  if (letter == L'C') {
-  //      DumpFloat2("glyph bounds in text", shape->bounds, 4);
+  //      nsvg__dumpFloat("glyph bounds in text", shape->bounds, 4);
   //  }
   //  if (color == NSVG_RGBA(0x80, 0xFF, 0, 255)) {
   //    DBG("glyph code=%X\n", letter);
-  //    DumpFloat2("glyph xform", shape->xform, 6);
-  //    DumpFloat2("glyph bounds", shape->bounds, 4);
+  //    nsvg__dumpFloat("glyph xform", shape->xform, 6);
+  //    nsvg__dumpFloat("glyph bounds", shape->bounds, 4);
   //    DBG("glyph width=%d\n", g->horizAdvX);
   //  }
 
@@ -4338,7 +4337,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
   return x1;
 }
 
-static void addString(NSVGparser* p, char* s)
+static void nsvg__addString(NSVGparser* p, char* s)
 {
   //text support should create shape for each letter
   UINTN len = strlen(s);
@@ -4364,7 +4363,7 @@ static void addString(NSVGparser* p, char* s)
     if (!letter) {
       break;
     }
-    x = addLetter(p, letter, x, y, scale, p->text->fontColor);
+    x = nsvg__addLetter(p, letter, x, y, scale, p->text->fontColor);
   }
 }
 
@@ -4435,7 +4434,7 @@ static void nsvg__content(void* ud, char* s)
       }
     }
     else if (p->isText) { //text support
-      addString(p, s);
+      nsvg__addString(p, s);
     }
 }
 
@@ -4482,7 +4481,7 @@ static char *nsvg__strndup(const char *s, size_t n)
   return result;
 }
 
-void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
+void nsvg__takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
 {
   float newBounds[8]; //(x1, y1), (x2, y2), (x2, y1), (x1, y2)
   nsvg__xformPoint(&newBounds[0], &newBounds[1], shape->bounds[0], shape->bounds[1], xform);
@@ -4511,7 +4510,7 @@ void takeXformBounds(NSVGshape *shape, float *xform, float *bounds)
   bounds[3] = nsvg__maxf(bounds[3], newBounds[7]);
 }
 
-bool isShapeInGroup(NSVGshape* shape, const char* groupName)
+bool nsvg__isShapeInGroup(NSVGshape* shape, const char* groupName)
 {
     NSVGgroup* group = shape->group;
     while (group) {
@@ -4534,7 +4533,7 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds, co
   int count = 0;
   int visibility;
   for (shapeLink = shapes; shapeLink != NULL; shapeLink = shapeLink->next) {
-    if ( groupName && !isShapeInGroup(shapeLink, groupName) ) {
+    if ( groupName && !nsvg__isShapeInGroup(shapeLink, groupName) ) {
       continue;
     }
     memcpy(&xform[0], shapeLink->xform, sizeof(float)*6);
@@ -4545,19 +4544,19 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds, co
     }
     shape = shapeLink->link;  //this is <use>
     if (!shape) {
-      takeXformBounds(shapeLink, &xform[0], bounds);
+      nsvg__takeXformBounds(shapeLink, &xform[0], bounds);
     }
     while (shape) { //take bounds from symbol's shapes
       memcpy(xform2, xform, sizeof(float)*6);
       nsvg__xformPremultiply(&xform2[0], shape->xform);
-      takeXformBounds(shape, &xform2[0], bounds);
+      nsvg__takeXformBounds(shape, &xform2[0], bounds);
       shape = shape->next;
     }
 /*
     if (shapeLink->isText) { //strstr(shapeLink->id, "shar")) {
        DBG("take Bounds: shapeID=%s\n", shapeLink->id);
-       DumpFloat2("  transform", xform, 6);
-       DumpFloat2("  shape initial bounds", shapeLink->bounds, 4);
+       nsvg__dumpFloat("  transform", xform, 6);
+       nsvg__dumpFloat("  shape initial bounds", shapeLink->bounds, 4);
      }
 */
     count++; //count visible
@@ -4595,7 +4594,7 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds)
   }
 }
 
-NSVGclipPath* getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx)
+NSVGclipPath* nsvg__getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx)
 {
   NSVGclipPath* clipPath = image->clipPaths;
   for (NSVGclipPathIndex i = 0; i < idx; i++) clipPath = clipPath->next;
@@ -4617,12 +4616,12 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName)
 
   NSVGshape *shape;
   for (shape = image->shapes; shape != NULL; shape = shape->next) {
-    if ( groupName && !isShapeInGroup(shape, groupName) ) {
+    if ( groupName && !nsvg__isShapeInGroup(shape, groupName) ) {
       continue;
     }
 //    DBG("nsvg__imageBounds2 found shapes=%s shape->clip.count=%d\n", shape->id, shape->clip.count);
     for (int i = 0; i < shape->clip.count; i++) {
-      NSVGclipPath* clipPath = getClipPathWithIndex(image, shape->clip.index[i]);
+      NSVGclipPath* clipPath = nsvg__getClipPathWithIndex(image, shape->clip.index[i]);
       if ( clipPath ) {
 //        DBG("nsvg__imageBounds found clipPath %s\n", clipPath->id);
         count += nsvg__shapesBound(clipPath->shapes, bounds, NULL);
@@ -4637,7 +4636,7 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName)
 }
 
 // units like "px" is not used so just exclude it
-NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opacity)
+NSVGparser* nsvg__parse(char* input, /* const char* units,*/ float dpi, float opacity)
 {
   NSVGparser* p;
   NSVGclipPath* clipPath;
@@ -4672,7 +4671,7 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
 #if 1
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 
-//  DumpFloat2("image real bounds", bounds, 4);
+//  nsvg__dumpFloat("image real bounds", bounds, 4);
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 #endif
@@ -4710,7 +4709,7 @@ void nsvg__deleteClipPaths(NSVGclipPath* path)
   }
 }
 
-void nsvgDelete(NSVGimage* image)
+void nsvg__deleteImage(NSVGimage* image)
 {
   NSVGgroup *group, *gnext;
   if (image == NULL) return;

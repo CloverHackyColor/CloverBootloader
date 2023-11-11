@@ -444,11 +444,6 @@ typedef struct NSVGparser
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
 } NSVGparser;
 
-#include "../cpp_foundation/XArray.h"
-#include "../cpp_foundation/XObjArray.h"
-extern XArray<uintptr_t> allocatedPtr;
-extern XObjArray<XString8> allocatedPtrMsg;
-
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE
 extern int nvsg__memoryallocation_verbose;
 void* nsvg__alloc(UINTN size, const XString8& msg);
@@ -468,8 +463,10 @@ void nsvg__outputDanglingPtr();
   #define nsvg__delete(buffer, msg) FreePool(buffer)
 #endif
 
-bool isShapeInGroup(NSVGshape* shape, const char* groupName);
-NSVGclipPath* getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx);
+void nsvg__dumpFloat(CONST char* s, float* t, int N);
+
+bool nsvg__isShapeInGroup(NSVGshape* shape, const char* groupName);
+NSVGclipPath* nsvg__getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx);
 //---
 
 // Duplicates a path.
@@ -480,11 +477,11 @@ NSVGclipPath* getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx);
 
 // Parses SVG file from a null terminated string, returns SVG image as paths.
 // Important note: changes the string.
-NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opacity);
+NSVGparser* nsvg__parse(char* input, /* const char* units,*/ float dpi, float opacity);
 NSVGparser* nsvg__createParser();
 
 // Deletes list of paths.
-void nsvgDelete(NSVGimage* image);
+void nsvg__deleteImage(NSVGimage* image);
 void nsvg__xformIdentity(float* t);
 void nsvg__deleteParser(NSVGparser* p);
 void nsvg__xformInverse(float* inv, float* t);
@@ -495,7 +492,7 @@ void nsvg__deleteFont(NSVGfont* font);
 void nsvg__deleteFontChain(NSVGfontChain *fontChain);
 void nsvg__imageBounds(NSVGimage* image, float* bounds);
 void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName);
-float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
+float nsvg__addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
 void RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
 
 //--------------- Rasterizer --------------
@@ -504,7 +501,7 @@ typedef void (*recursive_image)(const void *obj, NSVGrasterizer *r, const char *
 
 
 // Allocated rasterizer context.
-NSVGrasterizer* nsvgCreateRasterizer(void);
+NSVGrasterizer* nsvg__createRasterizer(void);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context
@@ -523,7 +520,7 @@ void nsvgRasterize(NSVGrasterizer* r,
                    UINT8* dst, int w, int h, int stride);
 
 // Deletes rasterizer context.
-void nsvgDeleteRasterizer(NSVGrasterizer*);
+void nsvg__deleteRasterizer(NSVGrasterizer*);
 
 
 #define NSVG__SUBSAMPLES  5

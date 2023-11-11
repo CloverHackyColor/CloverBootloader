@@ -48,11 +48,6 @@ extern const INTN IconsNamesSize;
 extern void
 WaitForKeyPress(CHAR16 *Message);
 
-extern void DumpFloat2 (CONST char* s, float* t, int N);
-
-extern UINTN NumFrames;
-extern UINTN FrameTime;
-
 
 EFI_STATUS XTheme::ParseSVGXIcon(NSVGparser* SVGParser, INTN Id, const XString8& IconNameX, OUT XImage* Image)
 {
@@ -68,7 +63,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(NSVGparser* SVGParser, INTN Id, const XString8&
   shape = SVGimage->shapes;
   while (shape) {
     shapeNext = shape->next;
-    if ( isShapeInGroup(shape, IconNameX.c_str()) )
+    if ( nsvg__isShapeInGroup(shape, IconNameX.c_str()) )
     {
       if (BootCampStyle && IconNameX.contains("selection_big")) {
         shape->opacity = 0.f;
@@ -138,9 +133,9 @@ EFI_STATUS XTheme::ParseSVGXIcon(NSVGparser* SVGParser, INTN Id, const XString8&
     ty = (Height - realHeight) * 0.5f;
   }
 
-  NSVGrasterizer* rast = nsvgCreateRasterizer();
+  NSVGrasterizer* rast = nsvg__createRasterizer();
   nsvgRasterize(rast, SVGimage, bounds, IconNameX.c_str(), tx, ty, Scale, Scale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
-  nsvgDeleteRasterizer(rast);
+  nsvg__deleteRasterizer(rast);
   *Image = NewImage; //copy array
   
   return EFI_SUCCESS;
@@ -161,7 +156,7 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
   char* buffer2 = (char*)malloc(Size);
   memcpy(buffer2, buffer, Size);
   nvsg__memoryallocation_verbose = false;
-  NSVGparser* p = nsvgParse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works
+  NSVGparser* p = nsvg__parse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works
   nsvg__deleteParser(p);
   if ( nsvg__nbDanglingPtr() > 0 ) {
     nsvg__outputDanglingPtr();
@@ -169,7 +164,7 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
     #if 1
       // Do it a second time, to display all allocations and to be able to step in with debugger
       memcpy(buffer2, buffer, Size);
-      p = nsvgParse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works
+      p = nsvg__parse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works
       nsvg__deleteParser(p);
       nsvg__outputDanglingPtr();
     #endif
@@ -182,7 +177,7 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
 #endif
 
   // --- Parse theme.svg --- low case
-  NSVGparser* SVGParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works// Jief : NEVER cast const to not const. Just change the parameter to not const !!! Nothing better to deceive.
+  NSVGparser* SVGParser = nsvg__parse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works// Jief : NEVER cast const to not const. Just change the parameter to not const !!! Nothing better to deceive.
 
   NSVGimage    *SVGimage = SVGParser->image;
   if (!SVGimage) {
@@ -379,7 +374,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, const textFac
   float fH = fontSVG->bbox[3] - fontSVG->bbox[1]; //1250
   if (fH == 0.f) {
     DBG("wrong font: %f\n", fontSVG->unitsPerEm);
-    DumpFloat2("Font bbox", fontSVG->bbox, 4);
+    nsvg__dumpFloat("Font bbox", fontSVG->bbox, 4);
     fH = (fontSVG->unitsPerEm > 1.f) ? fontSVG->unitsPerEm : 1000.0f;  //1000
   }
   sy = (float)Height / fH; //(float)fontSVG->unitsPerEm; // 260./1250.
@@ -395,21 +390,21 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, const textFac
     }
  //       DBG("add letter 0x%X\n", letter);
     if (i == Cursor) {
-      addLetter(p, 0x5F, x, y, sy, color);
+      nsvg__addLetter(p, 0x5F, x, y, sy, color);
     }
-    x = addLetter(p, letter, x, y, sy, color);
+    x = nsvg__addLetter(p, letter, x, y, sy, color);
   } //end of string
 
   p->image->realBounds[0] = fontSVG->bbox[0] * Scale;
   p->image->realBounds[1] = fontSVG->bbox[1] * Scale;
   p->image->realBounds[2] = fontSVG->bbox[2] * Scale + x; //last bound
   p->image->realBounds[3] = fontSVG->bbox[3] * Scale;
-  rast = nsvgCreateRasterizer();
+  rast = nsvg__createRasterizer();
   nsvgRasterize(rast, p->image, 0, 0, 1.f, 1.f, (UINT8*)TextBufferXY.GetPixelPtr(0,0),
                 (int)TextBufferXY.GetWidth(), (int)TextBufferXY.GetHeight(), (int)(Width*4));
   float RealWidth = p->image->realBounds[2] - p->image->realBounds[0];
 
-  nsvgDeleteRasterizer(rast);
+  nsvg__deleteRasterizer(rast);
   nsvg__deleteParser(p); // this deletes p->text;
 //  nsvgDelete(p->image);
   // TODO delete parser p and p->text?
@@ -498,7 +493,7 @@ void testSVG()
 #endif
 #if TEST_SVG_IMAGE
 
-    NSVGrasterizer* rast = nsvgCreateRasterizer();
+    NSVGrasterizer* rast = nsvg__createRasterizer();
 //    EG_IMAGE        *NewImage;
     NSVGimage       *SVGimage;
     float Scale, ScaleX, ScaleY;
@@ -508,7 +503,7 @@ void testSVG()
     if (!EFI_ERROR(Status)) {
       //Parse XML to vector data
 
-      p = nsvgParse((CHAR8*)FileData, 72, 1.f);
+      p = nsvg__parse((CHAR8*)FileData, 72, 1.f);
       SVGimage = p->image;
       DBG("Test image width=%d heigth=%d\n", (int)(SVGimage->width), (int)(SVGimage->height));
 
@@ -531,7 +526,7 @@ void testSVG()
       FileData = NULL;
 //
 //      nsvg__deleteParser(p);
-      nsvgDeleteRasterizer(rast);
+      nsvg__deleteRasterizer(rast);
 
     }
 
@@ -544,7 +539,7 @@ void testSVG()
     Status = egLoadFile(&self.getSelfVolumeRootDir(), L"Font.svg", &FileData, &FileDataLength);
     DBG("test Font.svg loaded status=%s\n", efiStrError(Status));
     if (!EFI_ERROR(Status)) {
-      p = nsvgParse((CHAR8*)FileData, 72, 1.f);
+      p = nsvg__parse((CHAR8*)FileData, 72, 1.f);
       if (!p) {
         DBG("font not parsed\n");
         break;

@@ -71,20 +71,6 @@
 static void renderShape(NSVGrasterizer* r,
                         NSVGshape* shape, float *xform, float min_scale);
 
-void DumpFloat (char* s, float* t, int N)
-{
-#if DEBUG_SVG
-  int i;
-  DBG("%s: ", s);
-  for(i=0; i<N;i++) {
-    float a = t[i];
-    int b = (int)a;
-    int sign = (a < 0.f);
-    DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
-  }
-  DBG("\n");
-#endif
-}
 
 void nsvg_qsort(NSVGedge* Array, int Low, int High)
 {
@@ -121,7 +107,7 @@ void nsvg_qsort(void* Array, int Num, INTN Size,
 }
 
 //caller is responsible for free memory
-NSVGrasterizer* nsvgCreateRasterizer()
+NSVGrasterizer* nsvg__createRasterizer()
 {
   NSVGrasterizer* r = (NSVGrasterizer*)AllocateZeroPool(sizeof(NSVGrasterizer));
   if (r == NULL) return NULL;
@@ -131,7 +117,7 @@ NSVGrasterizer* nsvgCreateRasterizer()
   return r;
 }
 
-void nsvgDeleteRasterizer(NSVGrasterizer* r)
+void nsvg__deleteRasterizer(NSVGrasterizer* r)
 {
   NSVGmemPage* p;
 
@@ -455,7 +441,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
   NSVGpath* path;
   NSVGpoint pt;
 
-  //  DumpFloat("flattenShape with", xform, 6);
+  //  nsvg__dumpFloat("flattenShape with", xform, 6);
   for (path = shape->paths; path != NULL; path = path->next) {
     r->npoints = 0;
     // Flatten path
@@ -865,7 +851,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
   } else { */
     lineWidth = shape->strokeWidth * scale;
 //  }
-  //DumpFloat("shapeStroke", xform, 6);
+  //nsvg__dumpFloat("shapeStroke", xform, 6);
   for (path = shape->paths; path != NULL; path = path->next) {
     // Flatten path
     r->npoints = 0;
@@ -1178,7 +1164,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
     float fx, fy, gy;
     float* t = cache->xform;
 
-    //    DumpFloat("cache grad xform", t, 6);
+    //    nsvg__dumpFloat("cache grad xform", t, 6);
     int cr, cg, cb, ca;
     unsigned int c;
     //x,y - pixels
@@ -1223,7 +1209,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
     // TODO: focus (fx,fy)
     float fx, fy, gx, gy, gd;
     float* t = cache->xform;
-    //    DumpFloat("cache grad xform", t, 6);
+    //    nsvg__dumpFloat("cache grad xform", t, 6);
     int cr, cg, cb, ca;
     unsigned int c;
     fx = (float)x;
@@ -1329,7 +1315,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
     // TODO: focus (fx,fy)
     float fx, fy, gx, gy, gd;
     float* t = cache->xform;
-    //    DumpFloat("cache grad xform", t, 6);
+    //    nsvg__dumpFloat("cache grad xform", t, 6);
     int cr, cg, cb, ca;
     unsigned int c;
 
@@ -1380,7 +1366,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
   }
 }
 
-UINT8* FindStencil(NSVGrasterizer *r, int index)
+UINT8* nsvg__findStencil(NSVGrasterizer *r, int index)
 {
   NSVGstencil* sl = r->stencilList;
   while (sl != NULL) {
@@ -1680,7 +1666,7 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
   for (shape = shapes; shape != NULL; shape = shape->next) {
     if (!(shape->flags & NSVG_VIS_VISIBLE))
       continue;
-    if ( groupName && !isShapeInGroup(shape, groupName) ) {
+    if ( groupName && !nsvg__isShapeInGroup(shape, groupName) ) {
       continue;
     }
 
@@ -1827,7 +1813,7 @@ void nsvgRasterize(NSVGrasterizer* r,
   tx -= bounds[0] * scalex;
   ty -= bounds[1] * scaley;
 //   DBG("  image %s will be scaled by [%f]\n", image->id, scalex);
-//   DumpFloat("  image real bounds ", image->realBounds, 4);
+//   nsvg__dumpFloat("  image real bounds ", image->realBounds, 4);
 
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
 

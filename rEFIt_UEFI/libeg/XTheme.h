@@ -118,6 +118,10 @@ public:
 
   XCinema Cinema;
 
+  UINTN NumFrames;
+  UINTN FrameTime;
+
+
 public:
   NSVGfontChain* fontsDB = 0;
   textFaces textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id // in VectorGraphics, I use sizeof(textFace)/sizeof(textFace[0]. So if you change that to a pointer, it'll break.
