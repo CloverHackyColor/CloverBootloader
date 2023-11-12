@@ -139,19 +139,18 @@ public:
 class ACPI_DROP_TABLE
 {
 public:
-  ACPI_DROP_TABLE *Next;
   union {
     UINT32   Signature = 0;
     char     SignatureAs4Chars[4];
   };
-  UINT32          Length;
-  UINT64          TableId;
+  UINT32          Length = 0;
+  UINT64          TableId = 0;
   INPUT_ITEM      MenuItem = INPUT_ITEM();
-  XBool           OtherOS;
+  XBool           OtherOS = false;
 
-  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(false) {}
-  ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
-  const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
+  ACPI_DROP_TABLE() {}
+  ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = default;
+  ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = default;
   ~ACPI_DROP_TABLE() {}
 };
 
@@ -2736,7 +2735,7 @@ public:
   XBool       gBootChanged = false;
   XBool       gThemeChanged = false;
   XBool       NeedPMfix = false;
-  ACPI_DROP_TABLE         *ACPIDropTables = NULL;
+  XObjArray<ACPI_DROP_TABLE>  ACPIDropTables = XObjArray<ACPI_DROP_TABLE>();
 
   UINT8                   CustomLogoType = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
   XImage                  *CustomLogo = 0;

@@ -213,7 +213,17 @@ public:
   void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new remove_const(XStringClass1)(aString), pos, true); }
 
   template<typename CharType, enable_if(is_char(CharType))>
-  void AddReference(CharType* newElement, bool FreeIt) { array.AddReference(new XStringClass_(newElement), FreeIt); }
+  void AddReference(CharType* newElement, bool FreeIt) {
+    if ( FreeIt ) {
+      XStringClass_* s = new XStringClass_();
+      s->stealValueFrom(newElement);
+      array.AddReference(s, true);
+    }else{
+      XStringClass_* s = new XStringClass_();
+      s->takeValueFrom(newElement);
+      array.AddReference(s, true);
+    }
+  }
 
   void AddReference(XStringClass* newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
 

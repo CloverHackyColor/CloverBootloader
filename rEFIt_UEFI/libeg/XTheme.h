@@ -144,7 +144,13 @@ public:
 
   
   const EFI_FILE& getThemeDir() const { return *ThemeDir; }
-  XBool IsEmbeddedTheme(void) const { return embedded; }
+  XBool IsEmbeddedTheme(void)
+  {
+    if (embedded) {
+      ThemeDir = NULL;
+    }
+    return ThemeDir == NULL;
+  }
 
 
   //fill the theme

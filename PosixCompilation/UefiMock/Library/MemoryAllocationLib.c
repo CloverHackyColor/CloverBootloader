@@ -35,7 +35,7 @@ void* ReallocatePool(UINTN  OldSize, UINTN  NewSize, void* OldBuffer)
   return (void*)realloc(OldBuffer, (size_t)NewSize);
 }
 
-void FreePool(IN JCONST VOID   *Buffer)
+void FreePool(IN VOID   *Buffer)
 {
   free((void*)Buffer);
 }

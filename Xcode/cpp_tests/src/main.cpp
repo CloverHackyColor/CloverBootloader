@@ -127,6 +127,16 @@ extern "C" int main(int argc, const char * argv[])
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
+  XString8 s("foo");
+//  s.strcat("a");
+  char* p = s.forgetDataWithoutFreeing();
+  free(p);
+
+  XString8 s2;
+//  s2.S8Printf("bar");
+  char* q = s2.forgetDataWithoutFreeing();
+  free(q);
+
   MyFloat test = 5.0f;
   
   MutableRef<MyFloat> Background;

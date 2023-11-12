@@ -439,11 +439,10 @@ void FillInputs(XBool New)
 
 
   //menu for drop table
-  if (GlobalConfig.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
-    while (DropTable) {
-      DropTable->MenuItem.ItemType = BoolValue;
-      DropTable = DropTable->Next;
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
+    for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx ) {
+    ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx];
+      DropTable.MenuItem.ItemType = BoolValue;
     }
   }
 
@@ -1982,21 +1981,21 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->"_XS8);
 
-  if (GlobalConfig.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
-    while (DropTable) {
-      CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
-      CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
+    for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx )
+     {
+      ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx];
+      
+      CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable.Signature), 4);
+      CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable.TableId), 8);
 
       InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title.SWPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable->Length);
+      InputBootArgs->Title.SWPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable.Length);
       InputBootArgs->Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &(DropTable->MenuItem);
+      InputBootArgs->Item = &(DropTable.MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
       SubScreen->AddMenuEntry(InputBootArgs, true);
-
-      DropTable = DropTable->Next;
     }
   }
 
