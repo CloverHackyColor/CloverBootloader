@@ -70,6 +70,7 @@
 #include "../Platform/BootOptions.h"
 #include "../Platform/boot.h"
 #include "../Platform/kext_inject.h"
+#include "../Platform/device_inject.h"
 #include "../Platform/KextList.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../gui/REFIT_MAINMENU_SCREEN.h"
@@ -759,6 +760,8 @@ void LOADER_ENTRY::StartLoader()
 
     delete ThemeX;
     ThemeX = NULL;
+
+    devprop_free_string();
 
 
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE
@@ -1668,7 +1671,7 @@ void LOADER_ENTRY::StartLoader()
     Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
   }
 
-    displayFreeMemory("Just before lauching image"_XS8);
+    displayFreeMemory("Just before launching image"_XS8);
 
     Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
 

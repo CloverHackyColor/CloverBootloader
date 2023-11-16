@@ -938,7 +938,7 @@ void ScanSPD()
       if (!EFI_ERROR(Status)) {
         for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
           if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-            Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],gEfiPciIoProtocolGuid,(void **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+            Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(void **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
             
             if (!EFI_ERROR(Status)) {
               // Read PCI BUS 

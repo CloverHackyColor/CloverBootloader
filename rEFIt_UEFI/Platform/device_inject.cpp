@@ -90,6 +90,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   PCI_TYPE00				Pci;
   UINT32					res;
 
+  //somehow definition for gBS->OpenProtocol() is different from other parts of the project
   Status = gBS->OpenProtocol(PciDt->DeviceHandle, gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)){
     DBG("pci_config_read cant open protocol\n");
@@ -285,8 +286,10 @@ XBool devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl,
   offset = device->length - (24 + (6 * device->num_pci_devpaths));
 
   newdata = (UINT8*)AllocateZeroPool((length + offset));
-  if(!newdata)
+  if(!newdata) {
+    FreePool(data);
     return false;
+  }
   if((device->data) && (offset > 1)) {
  		CopyMem((void*)newdata, (void*)device->data, offset);
   }
@@ -351,22 +354,22 @@ XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
 }
 
 
-void devprop_free_string(DevPropString *StringBuf)
+void devprop_free_string()
 {
   INT32 i;
-  if(!StringBuf)
+  if(!device_inject_string)
     return;
 
-  for(i = 0; i < StringBuf->numentries; i++) {
-    if(StringBuf->entries[i]) {
-      if(StringBuf->entries[i]->data) {
-        FreePool(StringBuf->entries[i]->data);
+  for(i = 0; i < device_inject_string->numentries; i++) {
+    if(device_inject_string->entries[i]) {
+      if(device_inject_string->entries[i]->data) {
+        FreePool(device_inject_string->entries[i]->data);
       }
     }
   }
-  FreePool(StringBuf->entries);
-  FreePool(StringBuf);
-  //	StringBuf = NULL;
+  FreePool(device_inject_string->entries);
+  FreePool(device_inject_string);
+  device_inject_string = NULL;
 }
 
 static UINT8   builtin = 0x0;

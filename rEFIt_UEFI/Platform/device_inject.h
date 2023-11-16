@@ -123,7 +123,7 @@ DevPropDevice	*devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt, EF
 XBool			devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl, UINTN len); // to be removed
 XBool     devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl);
 XBuffer<char> devprop_generate_string(DevPropString *string);
-void		    devprop_free_string(DevPropString *string);
+void		    devprop_free_string();
 
 XBool set_eth_props(pci_dt_t *eth_dev);
 XBool set_usb_props(pci_dt_t *usb_dev);
