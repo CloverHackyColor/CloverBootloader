@@ -4693,7 +4693,7 @@ void nsvg__deleteShapes(NSVGshape* shape)
         nsvg__deletePaths(shape->paths);
       }
     }
-    nsvg__delete(shape, "nsvg__deleteShapes"_XS8);
+//    nsvg__delete(shape, "nsvg__deleteShapes"_XS8); // TODO : BUG, it doesn't boot anymore if we do the delete. Something is wrong.
     shape = snext;
   }
 }

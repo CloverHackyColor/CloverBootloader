@@ -939,6 +939,11 @@ public:
 
 	T* forgetDataWithoutFreeing()
 	{
+    if ( m_allocatedSize == 0 ) {
+      // this is a litteral. We have to copy it before returning. If not, it'll crash when the user will free the pointer returned
+      if ( super::size() == 0 ) return NULL;
+      CheckSize(super::size());
+    }
 		T* ret = super::__m_data;
 		super::__m_data = &nullChar;
     #ifdef XSTRING_CACHING_OF_SIZE
@@ -1346,8 +1351,8 @@ public:
       super::__m_size = S->size();
     #endif
     m_allocatedSize = S->m_allocatedSize;
-    // do forgetDataWithoutFreeing() last : it'll zero the value of size and m_allocatedSize
-    super::__m_data = S->forgetDataWithoutFreeing();
+    // do not use forgetDataWithoutFreeing() : it will allocate m_data if m_data points to a literal. We want to keep the literal and avoid an allocation
+    super::__m_data = S->super::__m_data;
     return *((ThisXStringClass*)this);
   }
 

@@ -334,27 +334,25 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
     GlobalConfig.SecureBoot          = 1;
   }
 
-
   //set to drop
   GlobalConfig.DropSSDT = settingsData.ACPI.SSDT.DropSSDTSetting;
-  if (GlobalConfig.ACPIDropTables) {
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
     for ( size_t idx = 0 ; idx < settingsData.ACPI.ACPIDropTablesArray.size() ; ++idx)
     {
-      ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
       DBG(" - [%02zd]: Drop table : %.4s, %16llx : ", idx, (const char*)&settingsData.ACPI.ACPIDropTablesArray[idx].Signature, settingsData.ACPI.ACPIDropTablesArray[idx].TableId);
       XBool Dropped = false;
-      while (DropTable) {
-        if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
-             (!settingsData.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId)) &&
-             (!settingsData.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable->Length == settingsData.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
-            (!settingsData.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId))) {
-          DropTable->MenuItem.BValue = true;
-          DropTable->OtherOS = settingsData.ACPI.ACPIDropTablesArray[idx].OtherOS;
+      for ( size_t idx2 = 0 ; idx2 < GlobalConfig.ACPIDropTables.length() ; ++idx2 ) {
+        ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx2];
+        if (((settingsData.ACPI.ACPIDropTablesArray[idx].Signature == DropTable.Signature) &&
+             (!settingsData.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable.TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId)) &&
+             (!settingsData.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable.Length == settingsData.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
+            (!settingsData.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable.TableId == settingsData.ACPI.ACPIDropTablesArray[idx].TableId))) {
+          DropTable.MenuItem.BValue = true;
+          DropTable.OtherOS = settingsData.ACPI.ACPIDropTablesArray[idx].OtherOS;
           GlobalConfig.DropSSDT         = false; // if one item=true then dropAll=false by default
           //DBG(" true");
           Dropped = true;
         }
-        DropTable = DropTable->Next;
       }
       DBG(" %s\n", Dropped ? "yes" : "no");
     }

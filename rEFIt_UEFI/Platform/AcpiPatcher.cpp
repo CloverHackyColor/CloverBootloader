@@ -254,8 +254,7 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   DropTable->TableId = Table->OemTableId;
   DropTable->Length = Table->Length;
   DropTable->MenuItem.BValue = false;
-  DropTable->Next = GlobalConfig.ACPIDropTables;
-  GlobalConfig.ACPIDropTables = DropTable;
+  GlobalConfig.ACPIDropTables.AddReference(DropTable, true);
 }
 
 
@@ -284,7 +283,7 @@ void GetAcpiTablesList()
   DbgHeader("GetAcpiTablesList");
 
   GetFadt(); //this is a first call to acpi, we need it to make a pointer to Xsdt
-  GlobalConfig.ACPIDropTables = NULL;
+  GlobalConfig.ACPIDropTables.setEmpty();
 
   DBG("Get Acpi Tables List ");
 /*
@@ -2137,14 +2136,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   LoadAllPatchedAML(L"ACPI\\patched"_XSW, AUTOMERGE_PASS1);
 
   // Drop tables
-  if (GlobalConfig.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable;
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
     DbgHeader("ACPIDropTables");
-    for (DropTable = GlobalConfig.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
-      if (DropTable->MenuItem.BValue) {
-        //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
-        DropTableFromXSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
-        DropTableFromRSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
+    for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx ) {
+      ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx];
+      if (DropTable.MenuItem.BValue) {
+        //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable.Signature), DropTable.Signature, &(DropTable.TableId), DropTable.TableId, DropTable.Length);
+        DropTableFromXSDT(DropTable.Signature, DropTable.TableId, DropTable.Length);
+        DropTableFromRSDT(DropTable.Signature, DropTable.TableId, DropTable.Length);
       }
     }
   }
@@ -2563,15 +2562,21 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, XBool DropSSDT)
    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
    }
    */
-  if (GlobalConfig.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable;
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
+    for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx ) {
+    ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx];
+      DropTable.MenuItem.ItemType = BoolValue;
+    }
+  }
+  if (GlobalConfig.ACPIDropTables.notEmpty()) {
     DbgHeader("ACPIDropTables");
-    for (DropTable = GlobalConfig.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
+    for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx ) {
+      ACPI_DROP_TABLE& DropTable = GlobalConfig.ACPIDropTables[idx];
       // only for tables that have OtherOS true
-      if (DropTable->OtherOS && DropTable->MenuItem.BValue) {
-        //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
-        DropTableFromXSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
-        DropTableFromRSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
+      if (DropTable.OtherOS && DropTable.MenuItem.BValue) {
+        //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable.Signature), DropTable.Signature, &(DropTable.TableId), DropTable.TableId, DropTable.Length);
+        DropTableFromXSDT(DropTable.Signature, DropTable.TableId, DropTable.Length);
+        DropTableFromRSDT(DropTable.Signature, DropTable.TableId, DropTable.Length);
       }
     }
   }
