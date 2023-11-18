@@ -103,13 +103,16 @@ void construct_globals_objects(EFI_HANDLE ImageHandle)
 //  unsigned char* cp = (unsigned char*)p;
 //  for (size_t i=0 ; i<2467264 ; i +=16) DBG("%c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c\n",cp[0]>=32 ? cp[i+0] : '.',cp[i+1]>=32 ? cp[i+1] : '.',cp[i+2]>=32 ? cp[i+2] : '.',cp[i+3]>=32 ? cp[i+3] : '.',cp[i+4]>=32 ? cp[i+4] : '.',cp[i+5]>=32 ? cp[i+5] : '.',cp[i+6]>=32 ? cp[i+6] : '.',cp[i+7]>=32 ? cp[i+7] : '.',cp[i+8]>=32 ? cp[i+8] : '.',cp[i+9]>=32 ? cp[i+9] : '.',cp[i+10]>=32 ? cp[i+10] : '.',cp[i+11]>=32 ? cp[i+11] : '.',cp[i+12]>=32 ? cp[i+12] : '.',cp[i+13]>=32 ? cp[i+13] : '.',cp[i+14]>=32 ? cp[i+14] : '.',cp[i+15]>=32 ? cp[i+15] : '.');
 //  egSaveFile(&self.getCloverDir(), L"dump.bin", LoadedImage->ImageBase, 3000000);
-#endif
-
     DBG("CTORS %llX(%lld), offset from file beginning %llX(%lld) size %ld\n", (UINTN)p, (UINTN)p, (UINTN)p - (UINTN)LoadedImage->ImageBase, (UINTN)p - (UINTN)LoadedImage->ImageBase, pend-p );
+#else
+    DBG("CTORS %llX(%lld), size %ld\n", (UINTN)p, (UINTN)p, pend-p );
+#endif
+    size_t ctor_idx = 0;
     while ( p < pend ) {
-      DBG("CTOR %llX(%lld)\n", (UINTN)p[0], (UINTN)p[0]);
+      DBG("CTOR %zu adr=%llX(%lld)\n", ctor_idx, (UINTN)p[0], (UINTN)p[0]);
       (*p)();
       p++;
+      ctor_idx++;
     }
 //    DBG("CTOR %X %d\n", (UINTN)__CTOR_LIST__, (UINTN)__CTOR_LIST__);
 //   __do_init();

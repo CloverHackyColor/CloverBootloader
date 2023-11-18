@@ -109,9 +109,6 @@ void FillInputs(XBool New)
   tmp[40] = 0;  //make it null-terminated
 
   UINTN InputItemsCount = 0;
-  if (New) {
-    InputItems = new INPUT_ITEM[135];
-  }
 
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later

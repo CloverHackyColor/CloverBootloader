@@ -115,7 +115,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   ACTION             AtDoubleClick = ActionNone;
   ACTION             AtRightClick = ActionNone;
   ACTION             AtMouseOver = ActionNone;
-  REFIT_MENU_SCREEN *SubScreen = NULL;
+  REFIT_MENU_SCREEN* SubScreen = NULL; // we can't use apd<REFIT_MENU_SCREEN*> because of circular reference. We would need to include REFIT_MENU_SCREEN.h, but REFIT_MENU_SCREEN.h includes menu_items.h
 
   virtual XIcon* getDriveImage() { return nullptr; };
   virtual XIcon* getBadgeImage() { return nullptr; };
@@ -150,7 +150,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   REFIT_ABSTRACT_MENU_ENTRY(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
   REFIT_ABSTRACT_MENU_ENTRY& operator=(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
 
-  virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
+  virtual ~REFIT_ABSTRACT_MENU_ENTRY(); // virtual destructor : this is vital
 };
 
 
@@ -288,7 +288,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 		  public:
 			UINT8             NoMemset; //HACK - some non zero value
 			UINT16            Flags;
-			EFI_DEVICE_PATH  *DevicePath;
+			apd<EFI_DEVICE_PATH*> DevicePath;
       
       void              StartTool();
 
@@ -307,7 +307,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 		  public:
 			REFIT_VOLUME     *Volume;
 			XStringW         VolName;
-			EFI_DEVICE_PATH  *DevicePath;
+			apd<EFI_DEVICE_PATH*> DevicePath;
 			UINT16            Flags;
 
 			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), VolName(), DevicePath(NULL), Flags(0)  {};
@@ -356,7 +356,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 
 				XStringW          DisplayedVolName;
 				XStringW          OSName = XStringW();
-				EFI_DEVICE_PATH  *DevicePath;
+				apd<EFI_DEVICE_PATH*> DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;
 				MacOsVersion      macOSVersion;

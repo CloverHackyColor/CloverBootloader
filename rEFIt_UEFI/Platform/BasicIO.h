@@ -10,6 +10,7 @@
 
 
 XBool ReadAllKeyStrokes(void);
+void PauseForKey();
 void PauseForKey(const XString8& msg);
 
 //void DebugPause(void);

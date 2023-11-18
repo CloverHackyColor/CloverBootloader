@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A0064A52B08298E0016E3EB /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */; };
+		9A0064A62B08298E0016E3EB /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */; };
+		9A0064A72B08298E0016E3EB /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */; };
+		9A0064A82B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
+		9A0064A92B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
+		9A0064AA2B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
 		9A27545B263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
 		9A27545C263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
 		9A27545D263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
@@ -1097,6 +1103,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryTracker.cpp; sourceTree = "<group>"; };
+		9A0064A42B08298D0016E3EB /* MemoryTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTracker.h; sourceTree = "<group>"; };
 		9A275455263801920095D456 /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
 		9A275456263801920095D456 /* SelfOem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfOem.h; sourceTree = "<group>"; };
 		9A275457263801930095D456 /* SelfOem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelfOem.cpp; sourceTree = "<group>"; };
@@ -1686,6 +1694,8 @@
 		9A8787D126186896000B9362 /* cpp_lib */ = {
 			isa = PBXGroup;
 			children = (
+				9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */,
+				9A0064A42B08298D0016E3EB /* MemoryTracker.h */,
 				9AF4D932263004E200487D15 /* XmlLiteArrayTypes.cpp */,
 				9AF4D930263004E200487D15 /* XmlLiteArrayTypes.h */,
 				9AF4D92B263004E100487D15 /* XmlLiteCompositeTypes.cpp */,
@@ -2209,6 +2219,7 @@
 				9A878B1926186897000B9362 /* cpu.h in Headers */,
 				9A878CA526186898000B9362 /* XArray.h in Headers */,
 				9A878C3026186898000B9362 /* MSKEK.h in Headers */,
+				9A0064A82B08298E0016E3EB /* MemoryTracker.h in Headers */,
 				9A878A6826186897000B9362 /* AmlGenerator.h in Headers */,
 				9A878B4326186897000B9362 /* Volumes.h in Headers */,
 				9A878C7226186898000B9362 /* screen.h in Headers */,
@@ -2484,6 +2495,7 @@
 				9A2754B3263802230095D456 /* ConfigPlistAbstract.h in Headers */,
 				9A878BC226186898000B9362 /* XIcon.h in Headers */,
 				9A878C3126186898000B9362 /* MSKEK.h in Headers */,
+				9A0064A92B08298E0016E3EB /* MemoryTracker.h in Headers */,
 				9A878C4C26186898000B9362 /* menu_globals.h in Headers */,
 				9A878A8D26186897000B9362 /* Settings.h in Headers */,
 				9A8789D326186897000B9362 /* VolumeTypes.h in Headers */,
@@ -2691,6 +2703,7 @@
 				9A2754B4263802230095D456 /* ConfigPlistAbstract.h in Headers */,
 				9A878BC326186898000B9362 /* XIcon.h in Headers */,
 				9A878C3226186898000B9362 /* MSKEK.h in Headers */,
+				9A0064AA2B08298E0016E3EB /* MemoryTracker.h in Headers */,
 				9A878C4D26186898000B9362 /* menu_globals.h in Headers */,
 				9A878A8E26186897000B9362 /* Settings.h in Headers */,
 				9A8789D426186897000B9362 /* VolumeTypes.h in Headers */,
@@ -2920,6 +2933,7 @@
 				9ACD7ACB299304690095F00A /* load_icns.c in Sources */,
 				9A878B6D26186897000B9362 /* egemb_icons_dark.cpp in Sources */,
 				9A878B2226186897000B9362 /* VersionString.cpp in Sources */,
+				9A0064A52B08298E0016E3EB /* MemoryTracker.cpp in Sources */,
 				9A878B0426186897000B9362 /* MemoryOperation.c in Sources */,
 				9ACBC043264484A5001EB94B /* config-test.cpp in Sources */,
 				9A878A2326186897000B9362 /* xml.cpp in Sources */,
@@ -3037,6 +3051,7 @@
 				9A878A5D26186897000B9362 /* kext_patcher.cpp in Sources */,
 				9A87895826186897000B9362 /* LoadOptions_test.cpp in Sources */,
 				9A878A1B26186897000B9362 /* plist.cpp in Sources */,
+				9A0064A62B08298E0016E3EB /* MemoryTracker.cpp in Sources */,
 				9A8789FA26186897000B9362 /* TagFloat.cpp in Sources */,
 				9A87893426186897000B9362 /* globals_ctor.cpp in Sources */,
 				9A878ABD26186897000B9362 /* Nvram.cpp in Sources */,
@@ -3203,6 +3218,7 @@
 				9A878A5E26186897000B9362 /* kext_patcher.cpp in Sources */,
 				9A87895926186897000B9362 /* LoadOptions_test.cpp in Sources */,
 				9A878A1C26186897000B9362 /* plist.cpp in Sources */,
+				9A0064A72B08298E0016E3EB /* MemoryTracker.cpp in Sources */,
 				9A8789FB26186897000B9362 /* TagFloat.cpp in Sources */,
 				9A87893526186897000B9362 /* globals_ctor.cpp in Sources */,
 				9A878ABE26186897000B9362 /* Nvram.cpp in Sources */,
@@ -3404,6 +3420,7 @@
 					DISABLE_PRINTLIB,
 					OC_TARGET_NOOPT,
 					DISABLE_SECURE_BOOT,
+					IS_UEFI_MODULE,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;

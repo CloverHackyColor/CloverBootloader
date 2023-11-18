@@ -45,31 +45,39 @@
 
 #include "TagDate.h"
 
+#ifdef TagStruct_USE_CACHE
 XObjArray<TagDate> TagDate::tagsFree;
+#endif
 
-//UINTN newtagcount = 0;
-//UINTN tagcachehit = 0;
 TagDate* TagDate::getEmptyTag()
 {
   TagDate* tag;
 
+#ifdef TagStruct_USE_CACHE
   if ( tagsFree.size() > 0 ) {
     tag = &tagsFree[0];
     tagsFree.RemoveWithoutFreeingAtIndex(0);
-//tagcachehit++;
-//DBG("tagcachehit=%lld\n", tagcachehit);
+    #ifdef TagStruct_COUNT_CACHEHITMISS
+      cachehit++;
+     #endif
     return tag;
   }
+#endif
   tag = new TagDate;
-//newtagcount += 1;
-//DBG("newtagcount=%lld\n", newtagcount);
+  #ifdef TagStruct_COUNT_CACHEHITMISS
+    cachemiss++;
+   #endif
   return tag;
 }
 
-void TagDate::FreeTag()
+void TagDate::ReleaseTag()
 {
   string.setEmpty();
+#ifdef TagStruct_USE_CACHE
   tagsFree.AddReference(this, true);
+#else
+  delete this;
+#endif
 }
 
 XBool TagDate::operator == (const TagStruct& other) const

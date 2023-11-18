@@ -12,7 +12,8 @@
 #ifdef __cplusplus
 
 #include <stddef.h> // size_t
-#include <stdint.h> // CHAR_MIN etc.
+#include <limits.h> // CHAR_MIN etc.
+#include <stdint.h> // UINT16_MAX etc.
 
 
 
@@ -22,14 +23,19 @@ template< class T > struct _xtools__remove_ref<T&>            { typedef T type; 
 template< class T > struct _xtools__remove_const                { typedef T type; };
 template< class T > struct _xtools__remove_const<const T>       { typedef T type; };
 template< class T > struct _xtools__remove_const<const T&>       { typedef T& type; };
-template< class T > struct _xtools__remove_const<const T*>       { typedef T* type; };
+template< class T > struct _xtools__remove_const<const T*>       { typedef T* type; }; // this match type with [] and [size]
+
+template< class T > struct _xtools__remove_ptr                          { typedef T type; };
+template< class T > struct _xtools__remove_ptr<T*>                      { typedef T type; };
+template< class T > struct _xtools__remove_ptr<T[]>                     { typedef T type; };
+template <class T, size_t n> struct _xtools__remove_ptr<T[n]>       { typedef T type; };
 
 template< class T > struct _xtools__remove_const_ptr                { typedef T type; };
 template< class T > struct _xtools__remove_const_ptr<const T>       { typedef T type; };
 template< class T > struct _xtools__remove_const_ptr<T*>       { typedef T type; };
 template< class T > struct _xtools__remove_const_ptr<const T*>       { typedef T type; };
-template< class T, int n > struct _xtools__remove_const_ptr<T[n]>       { typedef T type; };
-template< class T, int n > struct _xtools__remove_const_ptr<const T[n]>       { typedef T type; };
+template< class T, size_t n > struct _xtools__remove_const_ptr<T[n]>       { typedef T type; };
+template< class T, size_t n > struct _xtools__remove_const_ptr<const T[n]>       { typedef T type; };
 
 
 
@@ -217,6 +223,7 @@ struct _xtools__has_type_member<T, _xtools__void_t<typename T::char_t>> : _xtool
 
 
 #define remove_const(x) typename _xtools__remove_const<x>::type
+#define remove_ptr(x) typename _xtools__remove_ptr<x>::type
 #define unsigned_type(x) typename _xtools__make_unsigned<remove_const(x)>::type
 #define remove_ref(x) typename _xtools__remove_ref<x>::type
 #define remove_const_ptr(x) typename _xtools__remove_const_ptr<x>::type

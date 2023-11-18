@@ -45,32 +45,40 @@
 
 #include "TagKey.h"
 
+#ifdef TagStruct_USE_CACHE
 XObjArray<TagKey> TagKey::tagsFree;
+#endif
 
 
-//UINTN newtagcount = 0;
-//UINTN tagcachehit = 0;
 TagKey* TagKey::getEmptyTag()
 {
   TagKey* tag;
 
+#ifdef TagStruct_USE_CACHE
   if ( tagsFree.size() > 0 ) {
     tag = &tagsFree[0];
     tagsFree.RemoveWithoutFreeingAtIndex(0);
-//tagcachehit++;
-//DBG("tagcachehit=%lld\n", tagcachehit);
+    #ifdef TagStruct_COUNT_CACHEHITMISS
+      cachehit++;
+     #endif
     return tag;
   }
+#endif
   tag = new TagKey;
-//newtagcount += 1;
-//DBG("newtagcount=%lld\n", newtagcount);
+  #ifdef TagStruct_COUNT_CACHEHITMISS
+    cachemiss++;
+   #endif
   return tag;
 }
 
-void TagKey::FreeTag()
+void TagKey::ReleaseTag()
 {
   _string.setEmpty();
+#ifdef TagStruct_USE_CACHE
   tagsFree.AddReference(this, true);
+#else
+  delete this;
+#endif
 }
 
 XBool TagKey::operator == (const TagStruct& other) const

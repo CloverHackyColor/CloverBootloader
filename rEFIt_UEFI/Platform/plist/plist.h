@@ -26,6 +26,9 @@
 
 #include "../../include/TagTypes.h"
 
+#define TagStruct_USE_CACHE
+//#define TagStruct_COUNT_CACHEHITMISS
+
 class TagDict;
 class TagKey;
 class TagString;
@@ -40,15 +43,18 @@ class TagStruct
 {
 public:
 
+#ifdef TagStruct_COUNT_CACHEHITMISS
+  static size_t cachemiss;
+  static size_t cachehit;
+#endif
+  static void EmptyCache();
+
   TagStruct() {}
   TagStruct(const TagStruct& other) = delete; // Can be defined if needed
   const TagStruct& operator = ( const TagStruct & ) = delete; // Can be defined if needed
   virtual ~TagStruct() { }
 
-//  static TagStruct* getEmptyTag();
-//  static TagStruct* getEmptyDictTag();
-//  static TagStruct* getEmptyArrayTag();
-  virtual void FreeTag() = 0;
+  virtual void ReleaseTag() = 0;
   
   virtual XBool operator == (const TagStruct& other) const = 0;
   virtual XBool operator != (const TagStruct& other) const { return !(*this == other); };

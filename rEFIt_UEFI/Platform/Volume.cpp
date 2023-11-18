@@ -102,7 +102,7 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
       }
     }
 
-    Dict->FreeTag();
+    Dict->ReleaseTag();
     FreePool(PlistBuffer);
   }
 

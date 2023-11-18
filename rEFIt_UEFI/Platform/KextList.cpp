@@ -59,7 +59,7 @@ XStringW GetBundleVersion(const XStringW& pathUnderSelf)
   if (InfoPlistPtr) {
     FreePool(InfoPlistPtr);
   }
-  if ( InfoPlistDict ) InfoPlistDict->FreeTag();
+  if ( InfoPlistDict ) InfoPlistDict->ReleaseTag();
   return CFBundleVersion;
 }
 

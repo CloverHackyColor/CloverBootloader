@@ -15,7 +15,7 @@
 
 
 extern EFI_GUID                        gEfiBootDeviceGuid;
-extern EFI_DEVICE_PATH_PROTOCOL       *gEfiBootDeviceData;
+extern apd<EFI_DEVICE_PATH_PROTOCOL*>  gEfiBootDeviceData;
 
 
 

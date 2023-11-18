@@ -452,7 +452,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
           }
         }
       }
-      PrefDict->FreeTag();
+      PrefDict->ReleaseTag();
     }
   }
   

@@ -12,10 +12,12 @@
 
 class TagDate : public TagStruct
 {
-  static XObjArray<TagDate> tagsFree;
   XString8 string;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static XObjArray<TagDate> tagsFree;
+#endif
 
   TagDate() : string() {}
   TagDate(const TagDate& other) = delete; // Can be defined if needed
@@ -30,7 +32,7 @@ public:
   virtual XBool isDict() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Dict"_XS8; }
   static TagDate* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 

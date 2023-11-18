@@ -35,6 +35,7 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "menu_items.h"
+#include "../REFIT_MENU_SCREEN.h"
 
 #include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
@@ -45,17 +46,21 @@
 #include "../../libeg/XPointer.h"
 #endif
 
+REFIT_ABSTRACT_MENU_ENTRY::~REFIT_ABSTRACT_MENU_ENTRY() {
+  delete SubScreen;
+};
+
 REFIT_MENU_ENTRY_CLOVER* REFIT_MENU_ENTRY_CLOVER::getPartiallyDuplicatedEntry() const
 {
 	REFIT_MENU_ENTRY_CLOVER* DuplicateEntry = new REFIT_MENU_ENTRY_CLOVER;
 
-  DuplicateEntry->AtClick      = ActionEnter;
+  DuplicateEntry->AtClick         = ActionEnter;
   DuplicateEntry->Volume          = Volume;
   DuplicateEntry->DevicePathString= DevicePathString;
   DuplicateEntry->LoadOptions     = LoadOptions;
   DuplicateEntry->LoaderPath      = LoaderPath;
 	DuplicateEntry->VolName         = VolName;
-	DuplicateEntry->DevicePath      = DevicePath;
+	DuplicateEntry->DevicePath      = DuplicateDevicePath(DevicePath);
 	DuplicateEntry->Flags           = Flags;
 	return DuplicateEntry;
 }
@@ -64,16 +69,16 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
 {
 	LOADER_ENTRY* DuplicateEntry = new LOADER_ENTRY;
 
-  DuplicateEntry->AtClick      = ActionEnter;
+  DuplicateEntry->AtClick         = ActionEnter;
   DuplicateEntry->Volume          = Volume;
   DuplicateEntry->DevicePathString= DevicePathString;
   DuplicateEntry->LoadOptions     = LoadOptions;
   DuplicateEntry->LoaderPath      = LoaderPath;
-	DuplicateEntry->DisplayedVolName         = DisplayedVolName;
-	DuplicateEntry->DevicePath      = DevicePath;
+	DuplicateEntry->DisplayedVolName= DisplayedVolName;
+	DuplicateEntry->DevicePath      = DuplicateDevicePath(DevicePath);
 	DuplicateEntry->Flags           = Flags;
 	DuplicateEntry->LoaderType      = LoaderType;
-	DuplicateEntry->macOSVersion       = macOSVersion;
+	DuplicateEntry->macOSVersion    = macOSVersion;
 	DuplicateEntry->BuildVersion    = BuildVersion;
 //  CopyKernelAndKextPatches(&DuplicateEntry->KernelAndKextPatches, &KernelAndKextPatches);
   DuplicateEntry->KernelAndKextPatches = KernelAndKextPatches;

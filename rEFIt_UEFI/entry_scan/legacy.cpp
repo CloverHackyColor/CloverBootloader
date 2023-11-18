@@ -72,7 +72,7 @@ DBG("    AddLegacyEntry:\n");
 	}
 DBG("      FullTitle=%ls\n", FullTitle.wc_str());
 DBG("      LoaderTitle=%ls\n", _LoaderTitle.wc_str());
-DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
+DBG("      Volume->LegacyOS.Name=%ls\n", Volume->LegacyOS.Name.wc_str());
 
   // Ignore this loader if it's device path is already present in another loader
   for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
@@ -88,17 +88,17 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
 
   XStringW LoaderTitle;
   if ( _LoaderTitle.isEmpty() ) {
-    LoaderTitle = Volume->LegacyOS->Name;
+    LoaderTitle = Volume->LegacyOS.Name;
   }else{
     LoaderTitle = _LoaderTitle;
   }
 
   XStringW LTitle;
   if (LoaderTitle.isEmpty()) {
-    if (Volume->LegacyOS->Name.notEmpty()) {
-      LTitle.takeValueFrom(Volume->LegacyOS->Name);
-      if (Volume->LegacyOS->Name[0] == 'W' || Volume->LegacyOS->Name[0] == 'L')
-        ShortcutLetter = (wchar_t)Volume->LegacyOS->Name[0]; // cast safe because value is 'W' or 'L'
+    if (Volume->LegacyOS.Name.notEmpty()) {
+      LTitle.takeValueFrom(Volume->LegacyOS.Name);
+      if (Volume->LegacyOS.Name[0] == 'W' || Volume->LegacyOS.Name[0] == 'L')
+        ShortcutLetter = (wchar_t)Volume->LegacyOS.Name[0]; // cast safe because value is 'W' or 'L'
     } else
       LTitle = L"Legacy OS"_XSW;
   } else
@@ -128,15 +128,15 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   if ( Image && !Image->isEmpty() ) {
     Entry->Image = *Image;
   } else {
-    Entry->Image = ThemeX->LoadOSIcon(Volume->LegacyOS->IconName);
+    Entry->Image = ThemeX->LoadOSIcon(Volume->LegacyOS.IconName);
     if (Entry->Image.Image.isEmpty()) {
       Entry->Image = ThemeX->GetIcon("os_win"_XS8); //we have no legacy.png
     }
   }
 
-//  DBG("IconName=%ls\n", Volume->LegacyOS->IconName);
+//  DBG("IconName=%ls\n", Volume->LegacyOS.IconName);
 
-    Entry->DriveImage = (DriveImage != NULL) ? *DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS->Type, Volume->DevicePath);
+    Entry->DriveImage = (DriveImage != NULL) ? *DriveImage : ScanVolumeDefaultIcon(Volume, Volume->LegacyOS.Type, Volume->DevicePath);
 
   //  DBG("HideBadges=%d Volume=%ls\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%ls OSName=%ls OSIconName=%ls\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
@@ -165,7 +165,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
         if (Custom.settings.Volume.notEmpty()) {
           if ( !Volume->DevicePathString.contains(Custom.settings.Volume)  &&  !Volume->VolName.contains(Custom.settings.Volume) ) {
             if (Custom.settings.Type != 0) {
-              if (Custom.settings.Type == Volume->LegacyOS->Type) {
+              if (Custom.settings.Type == Volume->LegacyOS.Type) {
                 Entry->Hidden = true;
               }
             } else {
@@ -173,7 +173,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
             }
           }
         } else if (Custom.settings.Type != 0) {
-          if (Custom.settings.Type == Volume->LegacyOS->Type) {
+          if (Custom.settings.Type == Volume->LegacyOS.Type) {
             Entry->Hidden = true;
           }
         }
@@ -201,7 +201,7 @@ DBG("      Volume->LegacyOS->Name=%ls\n", Volume->LegacyOS->Name.wc_str());
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;
   MainMenu.AddMenuEntry(Entry, true);
-//  DBG(" added '%ls' OSType=%d Icon=%ls\n", Entry->Title, Volume->LegacyOS->Type, Volume->LegacyOS->IconName);
+//  DBG(" added '%ls' OSType=%d Icon=%ls\n", Entry->Title, Volume->LegacyOS.Type, Volume->LegacyOS.IconName);
   return true;
 }
 
@@ -363,11 +363,11 @@ void AddCustomLegacy(void)
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom.settings.Type != 0) && (Custom.settings.Type != Volume->LegacyOS->Type)) {
+        if ((Custom.settings.Type != 0) && (Custom.settings.Type != Volume->LegacyOS.Type)) {
           DBG("skipped because wrong type\n");
           continue;
         }
-      } else if ((Custom.settings.Type != 0) && (Custom.settings.Type != Volume->LegacyOS->Type)) {
+      } else if ((Custom.settings.Type != 0) && (Custom.settings.Type != Volume->LegacyOS.Type)) {
         DBG("skipped because wrong type\n");
         continue;
       }

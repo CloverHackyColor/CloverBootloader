@@ -44,6 +44,7 @@
 //#include "../include/OneLinerMacros.h"
 #include "../Platform/Utils.h"
 #include "BmLib.h"
+#include "../include/OneLinerMacros.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 1
@@ -111,20 +112,31 @@
 #include "../cpp_foundation/XString.h"
 
 int nvsg__memoryallocation_verbose = false;
+uint64_t nsvg__alloc_count = 0;
 
 XArray<uintptr_t> nsvg__allocatedPtr;
+XArray<uint64_t> nsvg__allocatedPtrIdx;
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
 XObjArray<XString8> nsvg__allocatedPtrMsg;
 #endif
+
+void nsvg__alloc_insert(void* p, const XString8& msg)
+{
+//if ( nsvg__alloc_count == 36602 ) {
+//NOP;
+//}
+  nsvg__allocatedPtr.Add(uintptr_t(p));
+  nsvg__allocatedPtrIdx.Add(nsvg__alloc_count++);
+#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
+  nsvg__allocatedPtrMsg.AddCopy(msg, true);
+#endif
+}
 
 void* nsvg__alloc(UINTN size, const XString8& msg)
 {
   void* buffer = AllocatePool(size);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloc(%lld) - %s = %llx\n", size, msg.c_str(), uintptr_t(buffer));
-  nsvg__allocatedPtr.Add(uintptr_t(buffer));
-#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
-#endif
+  nsvg__alloc_insert(buffer, msg);
   return buffer;
 }
 
@@ -132,10 +144,7 @@ void* nsvg__alloczero(UINTN size, const XString8& msg)
 {
   void* buffer = AllocateZeroPool(size);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloczero(%lld) - %s = %llx\n", size, msg.c_str(), uintptr_t(buffer));
-  nsvg__allocatedPtr.Add(uintptr_t(buffer));
-#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
-#endif
+  nsvg__alloc_insert(buffer, msg);
   return buffer;
 }
 
@@ -143,10 +152,7 @@ void* nsvg__alloccopy(UINTN size, const void* ref, const XString8& msg)
 {
   void* buffer = AllocateCopyPool(size, ref);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__alloccopy(%lld, %llx) - %s = %llx\n", size, uintptr_t(ref), msg.c_str(), uintptr_t(buffer));
-  nsvg__allocatedPtr.Add(uintptr_t(buffer));
-#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
-#endif
+  nsvg__alloc_insert(buffer, msg);
   return buffer;
 }
 
@@ -158,34 +164,35 @@ void* nsvg__realloc(UINTN oldsize, UINTN newsize, void* ref, const XString8& msg
   void* buffer = ReallocatePool(oldsize, newsize, ref);
   if ( nvsg__memoryallocation_verbose ) DBG("nsvg__realloc(%lld, %lld, %llx) - %s = %llx\n", oldsize, newsize, uintptr_t(ref), msg.c_str(), uintptr_t(buffer));
   nsvg__allocatedPtr.RemoveAtIndex(idx);
+  nsvg__allocatedPtrIdx.RemoveAtIndex(idx);
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
   nsvg__allocatedPtrMsg.RemoveAtIndex(idx);
 #endif
-  nsvg__allocatedPtr.Add(uintptr_t(buffer));
-#ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  nsvg__allocatedPtrMsg.AddCopy(XString8(msg), true);
-#endif
+  nsvg__alloc_insert(buffer, msg);
   return buffer;
 }
 
 void nsvg__delete(void* buffer, const XString8& msg)
 {
-//if ( ThemeX->Icons.length() > 0 && buffer == ThemeX->Icons[0].ImageSVG ) {
-//  DBG("stop");
-//}
   uintptr_t ref2 = uintptr_t(buffer);
   auto idx = nsvg__allocatedPtr.indexOf(ref2);
   if ( idx == MAX_XSIZE ) {
     log_technical_bug("nsvg__delete %llx", uintptr_t(buffer));
   }
-  EFI_STATUS    Status = gBS->FreePool(buffer);
+//  EFI_STATUS    Status = gBS->FreePool(buffer);
+//  if ( EFI_ERROR(Status) ) {
+//    log_technical_bug("nsvg__delete %llx", uintptr_t(buffer));
+//  }
+  EFI_STATUS    Status = 0;
   (void)Status;
+  FreePool(buffer);
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - allocation msg %s - %s - Status = %s\n", uintptr_t(buffer), nsvg__allocatedPtrMsg[idx].c_str(), msg.c_str(), efiStrError(Status));
+  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - count=%lld - allocation msg %s - %s - Status = %s\n", uintptr_t(buffer), nsvg__allocatedPtrIdx[idx], nsvg__allocatedPtrMsg[idx].c_str(), msg.c_str(), efiStrError(Status));
 #else
-  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete(%llx) - %s - Status = %s\n", uintptr_t(buffer), msg.c_str(), efiStrError(Status));
+  if ( nvsg__memoryallocation_verbose ) DBG("nsvg__delete[%zu](%llx) - %s - Status = %s\n", idx, uintptr_t(buffer), msg.c_str(), efiStrError(Status));
 #endif
   nsvg__allocatedPtr.RemoveAtIndex(idx);
+  nsvg__allocatedPtrIdx.RemoveAtIndex(idx);
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
   nsvg__allocatedPtrMsg.RemoveAtIndex(idx);
 #endif
@@ -199,11 +206,11 @@ size_t nsvg__nbDanglingPtr()
 
 void nsvg__outputDanglingPtr()
 {
-  for(size_t i=0;i<nsvg__allocatedPtr.length();++i){
+  for(size_t idx=0;idx<nsvg__allocatedPtr.length();++idx){
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE_VERBOSE
-    DBG("Dangling ptr %llx %s\n", nsvg__allocatedPtr[i], nsvg__allocatedPtrMsg[i].c_str());
+    DBG("Dangling ptr %llx - count=%lld - allocation msg=%s\n", nsvg__allocatedPtr[idx], nsvg__allocatedPtrIdx[idx], nsvg__allocatedPtrMsg[idx].c_str());
 #else
-    DBG("Dangling ptr %llx\n", nsvg__allocatedPtr[i]);
+    DBG("Dangling ptr[%zu] %llx\n", idx, nsvg__allocatedPtr[idx]);
 #endif
   }
 }
@@ -4693,7 +4700,7 @@ void nsvg__deleteShapes(NSVGshape* shape)
         nsvg__deletePaths(shape->paths);
       }
     }
-//    nsvg__delete(shape, "nsvg__deleteShapes"_XS8); // TODO : BUG, it doesn't boot anymore if we do the delete. Something is wrong.
+    nsvg__delete(shape, "nsvg__deleteShapes"_XS8);
     shape = snext;
   }
 }

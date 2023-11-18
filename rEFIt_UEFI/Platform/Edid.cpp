@@ -42,14 +42,11 @@ EFI_STATUS
 InitializeEdidOverride ()
 {
   EFI_STATUS              Status;
-  EFI_EDID_OVERRIDE_PROTOCOL *EdidOverride;
-
-  EdidOverride = (__typeof__(EdidOverride))AllocateCopyPool(sizeof(EFI_EDID_OVERRIDE_PROTOCOL), &gEdidOverride);
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                                                    &gImageHandle,
                                                    &gEfiEdidOverrideProtocolGuid,
-                                                   EdidOverride,
+                                                   &gEdidOverride,
                                                    NULL
                                                    );
   if (EFI_ERROR(Status)) {

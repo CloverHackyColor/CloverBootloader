@@ -6,6 +6,7 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../cpp_lib/MemoryTracker.h"
 #include "../include/OSTypes.h"
 #include "Nvram.h"
 #include "BootOptions.h"
@@ -34,7 +35,7 @@ TagDict*                   gNvramDict;
 //
 
 // always contains original efi-boot-device-data
-EFI_DEVICE_PATH *gEfiBootDeviceData;
+apd<EFI_DEVICE_PATH*> gEfiBootDeviceData;
 
 // if gEfiBootDeviceData starts with MemoryMapped node, then gBootCampHD = "BootCampHD" var, otherwise == NULL
 EFI_DEVICE_PATH *gBootCampHD;
@@ -536,8 +537,12 @@ GetSmcKeys (XBool WriteToSMC)
         DBG("%02hhX ", *((UINT8*)Data + Index));
       }
       DBG("\n");
-      if (gAppleSmc && WriteToSMC) {
-        Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, TypeFromName(Name), 0xC0);
+      if (gAppleSmc && WriteToSMC)
+      {
+        {
+          MemoryStopRecord msr;
+          Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, TypeFromName(Name), 0xC0);
+        }
         if (!EFI_ERROR(Status)) {
           Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, Data);
  //         DBG("Write to AppleSMC status=%s\n", efiStrError(Status));
@@ -552,21 +557,25 @@ GetSmcKeys (XBool WriteToSMC)
     NKey[3] = NumKey & 0xFF;
     NKey[2] = (NumKey >> 8) & 0xFF; //key, size, type, attr
 	  DBG("Registered %lld SMC keys\n", NumKey);
-    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("#KEY"), 4, SmcKeyTypeUint32, 0xC0);
-    if (!EFI_ERROR(Status)) {
-      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("#KEY"), 4, (SMC_DATA *)&NKey);
-    }
-    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Adr"), 4, SmcKeyTypeUint32, 0x08);
-    if (!EFI_ERROR(Status)) {
-      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Adr"), 4, (SMC_DATA *)&SAdr);
-    }
-    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Num"), 1, SmcKeyTypeUint8, 0x08);
-    if (!EFI_ERROR(Status)) {
-      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Num"), 1, (SMC_DATA *)&SNum);
-    }
-    Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("RMde"), 1, SmcKeyTypeChar,  0xC0);
-    if (!EFI_ERROR(Status)) {
-      Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("RMde"), 1, (SMC_DATA *)&Mode);
+
+	  {
+	    MemoryStopRecord msr;
+      Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("#KEY"), 4, SmcKeyTypeUint32, 0xC0);
+      if (!EFI_ERROR(Status)) {
+        Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("#KEY"), 4, (SMC_DATA *)&NKey);
+      }
+      Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Adr"), 4, SmcKeyTypeUint32, 0x08);
+      if (!EFI_ERROR(Status)) {
+        Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Adr"), 4, (SMC_DATA *)&SAdr);
+      }
+      Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("$Num"), 1, SmcKeyTypeUint8, 0x08);
+      if (!EFI_ERROR(Status)) {
+        Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("$Num"), 1, (SMC_DATA *)&SNum);
+      }
+      Status = gAppleSmc->SmcAddKey(gAppleSmc, FourCharKey("RMde"), 1, SmcKeyTypeChar,  0xC0);
+      if (!EFI_ERROR(Status)) {
+        Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("RMde"), 1, (SMC_DATA *)&Mode);
+      }
     }
   }
   FreePool(Name);
@@ -791,14 +800,13 @@ GetEfiBootDeviceFromNvram ()
     return EFI_SUCCESS;
   }
 
-  gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"efi-boot-next-data", gEfiAppleBootGuid, NULL, &Size);
+  gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData.get()))GetNvramVariable(L"efi-boot-next-data", gEfiAppleBootGuid, NULL, &Size);
   if (gEfiBootDeviceData != NULL) {
     DBG("Got efi-boot-next-data size=%lld\n", Size);
     if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
 //      DBG(" - efi-boot-next-data: %ls\n", FileDevicePathToStr (gEfiBootDeviceData));
     } else {
       DBG(" - device path for efi-boot-next-data is invalid\n");
-      FreePool(gEfiBootDeviceData);
       gEfiBootDeviceData = NULL;
     }
   }
@@ -808,9 +816,9 @@ GetEfiBootDeviceFromNvram ()
     EFI_STATUS Status;
     Status = GetVariable2 (L"aptiofixflag", gEfiAppleBootGuid, &Value, &Size2);
     if (EFI_ERROR(Status)) {
-      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"efi-boot-device-data", gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData.get()))GetNvramVariable(L"efi-boot-device-data", gEfiAppleBootGuid, NULL, &Size);
     } else {
-      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"specialbootdevice", gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData.get()))GetNvramVariable(L"specialbootdevice", gEfiAppleBootGuid, NULL, &Size);
     }
     
     if (gEfiBootDeviceData != NULL) {
@@ -1394,7 +1402,7 @@ FindStartupDiskVolume (
         //DBG("  checking legacy entry %d. %ls\n", Index, LegacyEntry.Title);
         //DBG("   %ls\n", DevicePathToStr (Volume->DevicePath));
         //DBG("   OSType = %d\n", Volume->OSType);
-        if (Volume->LegacyOS->Type == OSTYPE_WIN) {
+        if (Volume->LegacyOS.Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
 			DBG("    - found legacy entry %lld. '%ls', Volume '%ls'\n", Index, LegacyEntry.Title.s(), Volume->VolName.wc_str());
           return Index;

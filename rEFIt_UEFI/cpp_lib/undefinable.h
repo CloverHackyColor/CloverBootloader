@@ -8,6 +8,8 @@
 #ifndef CPP_LIB_DEF_TYPES_H_
 #define CPP_LIB_DEF_TYPES_H_
 
+#include "../cpp_foundation/XBool.h"
+
 template <class T>
 class undefinable
 {

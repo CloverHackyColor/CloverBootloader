@@ -185,7 +185,7 @@ finish:
         }
       }
     }
-    ThemeDict->FreeTag();
+    ThemeDict->ReleaseTag();
 
     if (!ThemeX->Daylight) {
       Status = StartupSoundPlay(&ThemeX->getThemeDir(), L"sound_night.wav");
@@ -819,6 +819,7 @@ XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
       XIcon *NewIcon = new XIcon(Id, true);
       if (NewIcon->Image.isEmpty()) {
         // check for embedded with ID=Alt
+        delete NewIcon;
         NewIcon = new XIcon(Alt, true);
       }
       if (!NewIcon->Image.isEmpty()) {
@@ -826,6 +827,7 @@ XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
         Icons[IdFound].Image = NewIcon->Image;
         Icons[IdFound].ImageNight = NewIcon->ImageNight;
       }
+      delete NewIcon; // there is probably a way better way to do this. By initializing directly Icons[IdFound].Image instead of using dynamically allocated copy.
     }
   }
 

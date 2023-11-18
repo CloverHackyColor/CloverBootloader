@@ -29,6 +29,7 @@
  */
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../../cpp_foundation/apd.h"
 #include "../b64cdecode.h"
 #include "plist.h"
 #include "../../libeg/FloatLib.h"
@@ -76,6 +77,25 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
 #include "TagInt64.h"
 #include "TagString8.h"
 
+#ifdef TagStruct_COUNT_CACHEHITMISS
+size_t TagStruct::cachemiss = 0;
+size_t TagStruct::cachehit = 0;
+#endif
+
+void TagStruct::EmptyCache()
+{
+#ifdef TagStruct_USE_CACHE
+  TagArray::tagsFree.setEmpty();
+  TagBool::tagsFree.setEmpty();
+  TagData::tagsFree.setEmpty();
+  TagDate::tagsFree.setEmpty();
+  TagDict::tagsFree.setEmpty();
+  TagFloat::tagsFree.setEmpty();
+  TagInt64::tagsFree.setEmpty();
+  TagKey::tagsFree.setEmpty();
+  TagString::tagsFree.setEmpty();
+#endif
+}
 
 XBool TagStruct::debugIsEqual(const TagStruct& other, const XString8& label) const
 {
@@ -140,7 +160,7 @@ EFI_STATUS ParseXML(const UINT8* buffer, TagDict** dict, size_t bufSize)
   UINT32    length = 0;
   UINT32    pos = 0;
   TagStruct*    tag = NULL;
-  CHAR8*    configBuffer = NULL;
+  apd<CHAR8*> configBuffer = NULL;
   size_t    bufferSize = 0;
   UINTN     i;
 
@@ -154,7 +174,7 @@ EFI_STATUS ParseXML(const UINT8* buffer, TagDict** dict, size_t bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = (__typeof__(configBuffer))malloc(bufferSize+1);
+  configBuffer = (CHAR8*)malloc(bufferSize+1);
   memset(configBuffer, 0, bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -185,7 +205,7 @@ EFI_STATUS ParseXML(const UINT8* buffer, TagDict** dict, size_t bufSize)
       break;
     }
 
-	  tag->FreeTag();
+	  tag->ReleaseTag();
     tag = NULL;
   }
 //  FreePool(configBuffer);
@@ -383,7 +403,7 @@ EFI_STATUS __ParseTagList(XBool isArray, CHAR8* buffer, TagStruct** tag, UINT32 
     }
 
     if (EFI_ERROR(Status)) {
-      dictOrArrayTag->FreeTag();
+      dictOrArrayTag->ReleaseTag();
       return Status;
     }
   }
@@ -506,7 +526,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
       else {
         MsgLog("ParseTagInteger hex error (0x%hhX) in buffer %s\n", *val, buffer);
         //        getchar();
-        tmpTag->FreeTag();
+        tmpTag->ReleaseTag();
         return EFI_UNSUPPORTED;
       }
     }
@@ -523,7 +543,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
         if (*val < '0' || *val > '9') {
           MsgLog("ParseTagInteger decimal error (0x%hhX) in buffer %s\n", *val, buffer);
           //          getchar();
-          tmpTag->FreeTag();
+          tmpTag->ReleaseTag();
           return EFI_UNSUPPORTED;
         }
         integer = (integer * 10) + (*val++ - '0');

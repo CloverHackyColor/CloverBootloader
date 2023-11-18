@@ -1,4 +1,5 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../../cpp_lib/MemoryTracker.h"
 
 #if 0
 #define DBG(...) DebugLog(2, __VA_ARGS__)
@@ -57,6 +58,7 @@ extern "C" int atexit(void(__cdecl *destructor_func)(void))
 	DBG("atexit(%p, %p, %p, %d)\n", destructor_func, objptr, dso, sizeof(atexit_func_entry_t));
 
 #endif
+  MemoryStopRecord msr;
 	if ( !atexit_func_entry_array )
 	{
 DBG("atexit : allocate\n");

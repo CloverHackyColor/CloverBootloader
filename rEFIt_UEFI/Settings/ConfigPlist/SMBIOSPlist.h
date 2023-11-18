@@ -43,9 +43,9 @@
 
 #include "ConfigPlistAbstract.h"
 
-extern XStringWArray ThemeNameArray;
-extern XStringWArray ConfigsList;
-extern XStringWArray DsdtsList;
+//extern XStringWArray ThemeNameArray;
+//extern XStringWArray ConfigsList;
+//extern XStringWArray DsdtsList;
 extern XStringWArray SmbiosList;
 
 

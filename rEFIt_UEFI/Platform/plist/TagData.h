@@ -13,10 +13,12 @@
 
 class TagData : public TagStruct
 {
-  static XObjArray<TagData> tagsFree;
   XBuffer<UINT8> dataBuffer;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static XObjArray<TagData> tagsFree;
+#endif
 
   TagData() : dataBuffer() {}
   TagData(const TagData& other) = delete; // Can be defined if needed
@@ -31,7 +33,7 @@ public:
   virtual XBool isData() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Data"_XS8; }
   static TagData* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 

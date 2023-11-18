@@ -39,12 +39,14 @@
 #include <cpp_util/globals_dtor.h>
 
 #include "../cpp_foundation/XString.h"
+#include "../cpp_lib/MemoryTracker.h"
 #include "../cpp_unit_test/all_tests.h"
 
 #include "../entry_scan/entry_scan.h"
 #include "../libeg/nanosvg.h"
 #include "../gui/menu_items/menu_globals.h"
 #include "menu.h"
+#include "../Platform/Utils.h"
 #include "../Platform/Settings.h"
 #include "../Platform/DataHubCpu.h"
 #include "../Platform/Events.h"
@@ -140,48 +142,107 @@ extern EFI_DXE_SERVICES  *gDS;
 
 
 VOID
-PrintMemoryMap ()
+PrintMemoryMap()
 {
   EFI_MEMORY_DESCRIPTOR       *MemMap;
-  EFI_MEMORY_DESCRIPTOR       *MemMapPtr;
   UINTN                       MemMapSize;
   UINTN                       MapKey, DescriptorSize;
   UINT32                      DescriptorVersion;
-  UINT64                      Bytes;
   EFI_STATUS                  Status;
 
   MemMapSize = 0;
   MemMap     = NULL;
   DescriptorSize = 0;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
-  MemMapSize += EFI_PAGE_SIZE;
   if (Status != EFI_BUFFER_TOO_SMALL) {
-    DBG("GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+    return;
   }
-  Status = gBS->AllocatePool (EfiBootServicesData, MemMapSize, (void**)&MemMap);
-//  ASSERT (Status == EFI_SUCCESS);
-  if (EFI_ERROR(Status)) return;
+  MemMapSize += EFI_PAGE_SIZE;
+  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
+
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  ASSERT (Status == EFI_SUCCESS);
-  MemMapPtr = MemMap;
-  DBG("GetMemStatus=%s\n", efiStrError(Status));
-//  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
-
-  for (UINTN Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
-    Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
-    DBG ("%016llX-%016llX  %08llX %02llX %02llX\n",
-          MemMap->PhysicalStart,
-          MemMap->PhysicalStart + Bytes - 1,
-          MemMap->NumberOfPages,
-          MemMap->Attribute,
-          (UINTN)MemMap->Type);
-    MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
+  if ( EFI_ERROR(Status) ) {
+    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
+    return;
   }
 
-  gBS->FreePool(MemMapPtr);
+  OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
+
+  gBS->FreePool(MemMap);
 }
 
+
+void AllocSmallBlocks(UINTN NumberOfPagesMax)
+{
+  EFI_MEMORY_DESCRIPTOR       *MemMap;
+  UINTN                       MemMapSize;
+  UINTN                       MapKey, DescriptorSize;
+  UINT32                      DescriptorVersion;
+  EFI_STATUS                  Status;
+
+
+  MemMapSize = 0;
+  MemMap     = NULL;
+  DescriptorSize = 0;
+  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+    return;
+  }
+  MemMapSize += EFI_PAGE_SIZE;
+  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
+
+  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+  if ( EFI_ERROR(Status) ) {
+    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
+    return;
+  }
+
+  for (
+       EFI_MEMORY_DESCRIPTOR* EntryWalker = MemMap;
+       (UINT8 *)EntryWalker < ((UINT8 *)MemMap + MemMapSize);
+       EntryWalker = NEXT_MEMORY_DESCRIPTOR (EntryWalker, DescriptorSize))
+  {
+    if (EntryWalker->Type != EfiConventionalMemory) {
+      continue;
+    }
+
+    if ( (UINTN)EntryWalker->NumberOfPages < NumberOfPagesMax )
+    {
+      gBS->AllocatePages(AllocateAddress, EfiBootServicesData, EntryWalker->NumberOfPages, &EntryWalker->PhysicalStart);
+    }
+  }
+
+  FreePool(MemMap);
+}
+
+void AllocSmallBlocks()
+{
+  CONST EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable;
+
+PrintMemoryMap();
+
+  UINTN size = 64;
+  UINTN nb = 0;
+
+  AllocSmallBlocks(size); // 252KB
+
+  MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+  nb = MemoryAttributesTable->NumberOfEntries;
+
+PrintMemoryMap();
+  while ( size <= 2048  &&  nb > 100 ) { // XNU seems to handle max 128 entries. So let's shrink a little bit under 128
+    size *= 2;
+    AllocSmallBlocks(size);
+    MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+    nb = MemoryAttributesTable->NumberOfEntries;
+PrintMemoryMap();
+  }
+  if ( size > 2048 ) {
+    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
+  }
+}
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
@@ -1218,7 +1279,6 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
-
     if ( OpenRuntimeEfiName.notEmpty() ) {
       XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), OpenRuntimeEfiName.wc_str());
       EFI_HANDLE DriverHandle;
@@ -1663,14 +1723,13 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo);
   
 
-//  EFI_STATUS sta = gBS->FreePages(SomePages, 90000);
-//  DBG("free 90000 pages status=%s\n", efiStrError(sta));
-  PrintMemoryMap();
-  DBG("Closing log\n");
-  if (SavePreBootLog) {
-    Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
-  }
+    DBG("Closing log\n");
+    if (SavePreBootLog) {
+      Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
+    }
 
+    AllocSmallBlocks(); // shrink memory map;
+    PrintMemoryMap();
     displayFreeMemory("Just before launching image"_XS8);
 
     Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
@@ -1740,7 +1799,7 @@ void LEGACY_ENTRY::StartLegacy()
   egClearScreen(&MenuBackgroundPixel);
   BeginExternalScreen(true/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
-  BootLogoX.LoadXImage(&ThemeX->getThemeDir(), Volume->LegacyOS->IconName);
+  BootLogoX.LoadXImage(&ThemeX->getThemeDir(), Volume->LegacyOS.IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 
@@ -1907,7 +1966,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 #undef BOOLEAN_AT_INDEX
 
     XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), Path, DirEntry->FileName);
-    Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NullXString8Array, LStringW(DirEntry->FileName), XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
+    Status = StartEFIImage(apd<EFI_DEVICE_PATH_PROTOCOL*>(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName)), NullXString8Array, LStringW(DirEntry->FileName), XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
     }
@@ -1931,6 +1990,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       if (!EFI_ERROR(Status) && DriverBinding != NULL) {
         DBG(" - driver needs connecting\n");
         // standard UEFI driver - we would reconnect after loading - add to array
+        MemoryStopRecord msr; // DriversArr won't be deallocated because it's passed to RegisterDriversToHighestPriority that keeps it global.
         if (DriversArrSize == 0) {
           // new array
           DriversArrSize = 16;
@@ -2260,6 +2320,7 @@ static void LoadDrivers(void)
 #else
   ScanDriverDir(L"drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
+  // DriversToConnect is allocated by ScanDriverDir, but DO NOT free it. RegisterDriversToHighestPriority will store it in the global var mPriorityDrivers.
 
   VBiosPatchNeeded = gSettings.Graphics.PatchVBios || gSettings.Graphics.PatchVBiosBytes.getVBIOS_PATCH_BYTES_count() > 0;
   if (VBiosPatchNeeded) {
@@ -2622,11 +2683,11 @@ GetListOfThemes ()
 }
 
 //
-// main entry point
+// secondary main entry point
 //
 EFI_STATUS
 EFIAPI
-RefitMain (IN EFI_HANDLE           ImageHandle,
+RefitMainMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
   EFI_STATUS Status;
@@ -2660,7 +2721,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //#define DEBUG_ERALY_CRASH
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step1");
-  PauseForKey("press any key\n"_XS8);
+//  PauseForKey();
 #endif
 
 #ifdef DEBUG_ON_SERIAL_PORT
@@ -2673,7 +2734,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step2");
-  PauseForKey("press any key\n"_XS8);
+//  PauseForKey();
 #endif
 
 //    if ( !EFI_ERROR(Status) ) {
@@ -2685,18 +2746,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("Clover ImageHandle = %llx\n", (uintptr_t)ImageHandle);
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step3");
-  PauseForKey("press any key\n"_XS8);
+//  PauseForKey();
 #endif
     }
 #ifdef JIEF_DEBUG
-    gBS->Stall(2500000); // to give time to gdb to connect
-//  PauseForKey("press\n"_XS8);
+    gBS->Stall(5500000); // to give time to gdb to connect
+//  PauseForKey();
 #endif
   }
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step4");
-  PauseForKey("press any key\n"_XS8);
+//  PauseForKey();
 #endif
 
 #ifdef CLOVER_BUILD
@@ -2705,11 +2766,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   construct_globals_objects(gImageHandle);
 #endif
 
+  MemoryTrackerInstallHook();
+
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step5");
-  PauseForKey("press any key\n"_XS8);
+  PauseForKey();
 #endif
 
 #ifdef JIEF_DEBUG
@@ -2725,7 +2788,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 #ifdef DEBUG_ERALY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step6");
-  PauseForKey("press any key\n"_XS8);
+  PauseForKey();
 #endif
 
 // firmware detection
@@ -3149,7 +3212,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.Boot.FastBoot = false; //Hmm... will never be here
     }
 #ifdef JIEF_DEBUG
-MainMenu.TimeoutSeconds=60;
+MainMenu.TimeoutSeconds=1;
+DefaultEntry = NULL;
+DefaultIndex = MainMenu.Entries.length()-1; // this should be "Exit Clover"
 #endif
     AfterTool = false;
     gEvent = 0; //clear to cancel loop
@@ -3458,6 +3523,9 @@ log_technical_bug("not done yet");
 
   UninitializeConsoleSim ();
 
+  delete ThemeX; // do this before destruct_globals_objects()
+  FreePool(BlankLine); // Convert BlankLine to XStringW instead.
+
 #ifdef CLOVER_BUILD
   destruct_globals_objects(NULL);
 #endif
@@ -3465,4 +3533,27 @@ log_technical_bug("not done yet");
   return EFI_SUCCESS;
 }
 
+//
+// main entry point
+//
+EFI_STATUS
+EFIAPI
+RefitMain (IN EFI_HANDLE           ImageHandle,
+           IN EFI_SYSTEM_TABLE     *SystemTable)
+{
+  MemoryTrackerInit();
+
+  EFI_STATUS Status = RefitMainMain(ImageHandle, SystemTable);
+
+
+  DBG("MT_alloc_count=%lld\n", MT_getAllocCount());
+  MT_outputDanglingPtr();
+
+#ifdef TagStruct_COUNT_CACHEHIT
+  DBG("cache hits = %zu\n", TagStruct::cachehit);
+  DBG("cache miss = %zu\n", TagStruct::cachemiss);
+#endif
+
+  return Status;
+}
 

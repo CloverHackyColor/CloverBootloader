@@ -44,7 +44,9 @@
 
 #include "TagArray.h"
 
+#ifdef TagStruct_USE_CACHE
 XObjArray<TagArray> TagArray::tagsFree;
+#endif
 
 XBool TagArray::operator == (const TagStruct& other) const
 {
@@ -79,26 +81,28 @@ XBool TagArray::debugIsEqual(const TagStruct& other, const XString8& label) cons
 }
 
 
-//UINTN newtagcount = 0;
-//UINTN tagcachehit = 0;
 TagArray* TagArray::getEmptyTag()
 {
   TagArray* tag;
 
+#ifdef TagStruct_USE_CACHE
   if ( tagsFree.size() > 0 ) {
     tag = &tagsFree[0];
     tagsFree.RemoveWithoutFreeingAtIndex(0);
-//tagcachehit++;
-//DBG("tagcachehit=%lld\n", tagcachehit);
+    #ifdef TagStruct_COUNT_CACHEHITMISS
+      cachehit++;
+     #endif
     return tag;
   }
+#endif
   tag = new TagArray;
-//newtagcount += 1;
-//DBG("newtagcount=%lld\n", newtagcount);
+  #ifdef TagStruct_COUNT_CACHEHITMISS
+    cachemiss++;
+   #endif
   return tag;
 }
 
-void TagArray::FreeTag()
+void TagArray::ReleaseTag()
 {
   //while ( tagIdx < _dictOrArrayContent.notEmpty() ) {
   //  _dictOrArrayContent[0].FreeTag();
@@ -107,10 +111,18 @@ void TagArray::FreeTag()
   // this loop is better because removing objects from the end don't do any memory copying.
   for (size_t tagIdx = _arrayContent.size() ; tagIdx > 0  ; ) {
     tagIdx--;
-    _arrayContent[tagIdx].FreeTag();
+#ifdef TagStruct_USE_CACHE
+    _arrayContent[tagIdx].ReleaseTag();
     _arrayContent.RemoveWithoutFreeingAtIndex(tagIdx);
+#else
+    _arrayContent.RemoveAtIndex(tagIdx);
+#endif
   }
+#ifdef TagStruct_USE_CACHE
   tagsFree.AddReference(this, true);
+#else
+  delete this;
+#endif
 }
 
 const TagStruct* TagArray::elementAt(size_t idx) const

@@ -39,6 +39,19 @@ XBool ReadAllKeyStrokes(void)
     return GotKeyStrokes;
 }
 
+void PauseForKey()
+{
+    UINTN index;
+
+    if (ReadAllKeyStrokes()) {  // remove buffered key strokes
+        gBS->Stall(5000000);     // 5 seconds delay
+        ReadAllKeyStrokes();    // empty the buffer again
+    }
+
+    gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
+    ReadAllKeyStrokes();        // empty the buffer to protect the menu
+}
+
 void PauseForKey(const XString8& msg)
 {
     UINTN index;

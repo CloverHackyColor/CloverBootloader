@@ -5,6 +5,8 @@
  *      Author: jief
  */
 
+#include <Platform.h>
+#include "../cpp_lib/MemoryTracker.h"
 #include "ConfigManager.h"
 #include "../Settings/SelfOem.h"
 #include "../refit/lib.h"
@@ -484,7 +486,8 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
-  UINT8*     ConfigPtr = NULL;
+  UINT8*     ConfigPtr = NULL; // not needed. but avoids warning
+  apd<UINT8*>  apdConfigPtr;
 //  XStringW   ConfigPlistPath;
 //  XStringW   ConfigOemPath;
 
@@ -503,6 +506,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
     configPlistPath = SWPrintf("%ls\\%ls.plist", selfOem.getOemFullPath().wc_str(), ConfName.wc_str());
     if (FileExists (&selfOem.getOemDir(), configFilename)) {
       Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), &ConfigPtr, &Size);
+      apdConfigPtr = ConfigPtr; // This will automatically destruct ConfigPtr when the method exit.
       if (EFI_ERROR(Status)) {
         DBG("Cannot find %ls at path (%s): '%ls', trying '%ls'\n", configFilename.wc_str(), efiStrError(Status), selfOem.getOemFullPath().wc_str(), self.getCloverDirFullPath().wc_str());
       }else{
@@ -514,6 +518,7 @@ EFI_STATUS LoadPlist(const XStringW& ConfName, C* plist)
     configPlistPath = SWPrintf("%ls\\%ls.plist", self.getCloverDirFullPath().wc_str(), ConfName.wc_str());
     if ( FileExists(&self.getCloverDir(), configFilename.wc_str())) {
       Status = egLoadFile(&self.getCloverDir(), configFilename.wc_str(), &ConfigPtr, &Size);
+      apdConfigPtr = ConfigPtr; // This will automatically destruct ConfigPtr when the method exit.
     }
     if (EFI_ERROR(Status)) {
       DBG("Cannot find %ls at path '%ls' : %s\n", configFilename.wc_str(), self.getCloverDirFullPath().wc_str(), efiStrError(Status));

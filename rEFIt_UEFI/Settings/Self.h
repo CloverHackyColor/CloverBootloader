@@ -9,6 +9,7 @@
 #define PLATFORM_SELF_H_
 
 #include "../cpp_foundation/XString.h"
+#include "../cpp_foundation/apd.h"
 extern "C" {
 #include <Uefi/UefiSpec.h>
 #include <Protocol/LoadedImage.h>
@@ -26,8 +27,8 @@ public:
 
 protected:
   EFI_HANDLE        m_SelfImageHandle {};  // this efi.
-  EFI_LOADED_IMAGE* m_SelfLoadedImage {}; // this efi.
-  EFI_DEVICE_PATH*  m_SelfDevicePath {}; // path to device containing this efi.
+  EFI_LOADED_IMAGE* m_SelfLoadedImage = NULL; // this efi.
+  apd<EFI_DEVICE_PATH*> m_SelfDevicePath = NULL; // path to device containing this efi.
 //  XStringW          m_SelfDevicePathAsXStringW; // path to device containing this efi.
 
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* m_SelfSimpleVolume {};  // Volume containing this efi.

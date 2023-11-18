@@ -10,6 +10,7 @@
 
 #include "../include/VolumeTypes.h"
 #include <Efi.h>
+#include "../cpp_foundation/apd.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"
 #include "../Platform/guid.h"
@@ -17,15 +18,10 @@
 class LEGACY_OS
 {
 public:
-  UINT8         Type;
-  XStringW      IconName;
-  XStringW      Name;
-
-  LEGACY_OS() : Type(0), IconName(), Name() {}
-  LEGACY_OS(const LEGACY_OS& other) = delete; // Can be defined if needed
-  const LEGACY_OS& operator = ( const LEGACY_OS & ) = delete; // Can be defined if needed
-  ~LEGACY_OS() {}
-} ;
+  UINT8         Type = 0;
+  XStringW      IconName = XStringW();
+  XStringW      Name = XStringW();
+};
 
 class REFIT_VOLUME {
 public:
@@ -36,7 +32,7 @@ public:
   XStringW            VolName = XStringW(); // comes from EfiLibFileSystemInfo, EfiLibFileSystemVolumeLabelInfo, "EFI" if gEfiPartTypeSystemPartGuid or "Unknown HD"
   XStringW            VolLabel = XStringW(); // comes from \\.VolumeLabel.txt, or empty.
   UINT8               DiskKind = 0;
-  LEGACY_OS           *LegacyOS = 0;
+  LEGACY_OS           LegacyOS = LEGACY_OS();
   XBool               Hidden = false;
   UINT8               BootType = 0;
   XBool               IsAppleLegacy = false;
@@ -46,7 +42,7 @@ public:
   EFI_BLOCK_IO        *BlockIO = 0;
   UINT64              BlockIOOffset = 0;
   EFI_BLOCK_IO        *WholeDiskBlockIO = 0;
-  EFI_DEVICE_PATH     *WholeDiskDevicePath = 0;
+  apd<EFI_DEVICE_PATH*> WholeDiskDevicePath = NULL;
   EFI_HANDLE          WholeDiskDeviceHandle = 0;
   MBR_PARTITION_INFO  *MbrPartitionTable = 0;
   UINT32              DriveCRC32 = 0;

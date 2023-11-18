@@ -501,7 +501,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
             }
           }
         }
-        Dict->FreeTag();
+        Dict->ReleaseTag();
       }
     }
   }
@@ -555,7 +555,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
             }
           }
         }
-        Dict->FreeTag();
+        Dict->ReleaseTag();
       }
     }
 
@@ -672,7 +672,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
               }
             }
           }
-          Dict->FreeTag();
+          Dict->ReleaseTag();
         }
       }
     }
@@ -771,7 +771,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
             }
           }
         }
-        Dict->FreeTag();
+        Dict->ReleaseTag();
       }
     }
   }
@@ -816,7 +816,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
           }
         }
       }
-      Dict->FreeTag();
+      Dict->ReleaseTag();
     } else if (FileExists (Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
       OSVersion = "10.9"_XS8;
@@ -1745,6 +1745,7 @@ XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path)
     }
   }
   if ( PlistBuffer ) FreePool(PlistBuffer);
+  if ( Dict ) Dict->ReleaseTag();
   return returnValue;
 }
 

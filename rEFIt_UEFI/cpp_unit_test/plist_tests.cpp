@@ -912,6 +912,9 @@ int ParseXML_tests()
 {
   TagDict* dict = NULL;
   EFI_STATUS Status = ParseXML((UINT8*)config_all, &dict, (UINT32)strlen(config_all));
+  dict->ReleaseTag();
+  TagStruct::EmptyCache();
+
   if ( !EFI_ERROR(Status) ) {
     XString8 s;
     dict->sprintf(0, &s);

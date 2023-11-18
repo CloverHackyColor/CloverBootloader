@@ -44,35 +44,47 @@
 
 #include "TagDict.h"
 
-XObjArray<TagDict> TagDict::tagsFree;
+#ifdef TagStruct_USE_CACHE
+TagsDictFreeArray TagDict::tagsFree;
+#endif
 
-//UINTN newtagcount = 0;
-//UINTN tagcachehit = 0;
 TagDict* TagDict::getEmptyTag()
 {
   TagDict* tag;
 
+#ifdef TagStruct_USE_CACHE
   if ( tagsFree.size() > 0 ) {
     tag = &tagsFree[0];
     tagsFree.RemoveWithoutFreeingAtIndex(0);
-//tagcachehit++;
-//DBG("tagcachehit=%lld\n", tagcachehit);
+    #ifdef TagStruct_COUNT_CACHEHITMISS
+      cachehit++;
+     #endif
     return tag;
   }
+#endif
   tag = new TagDict;
-//newtagcount += 1;
-//DBG("newtagcount=%lld\n", newtagcount);
+  #ifdef TagStruct_COUNT_CACHEHITMISS
+    cachemiss++;
+   #endif
   return tag;
 }
 
-void TagDict::FreeTag()
+void TagDict::ReleaseTag()
 {
   for (size_t tagIdx = _dictContent.size() ; tagIdx > 0  ; ) {
     tagIdx--;
-    _dictContent[tagIdx].FreeTag();
+#ifdef TagStruct_USE_CACHE
+    _dictContent[tagIdx].ReleaseTag();
     _dictContent.RemoveWithoutFreeingAtIndex(tagIdx);
+#else
+    _dictContent.RemoveAtIndex(tagIdx);
+#endif
   }
+#ifdef TagStruct_USE_CACHE
   tagsFree.AddReference(this, true);
+#else
+  delete this;
+#endif
 }
 
 XBool TagDict::operator == (const TagStruct& other) const

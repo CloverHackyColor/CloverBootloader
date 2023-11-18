@@ -17,7 +17,7 @@ extern INTN TextStyle; //why global? It will be class SCREEN member
 
 extern CONST CHAR16 *VBIOS_BIN;
 
-extern INPUT_ITEM *InputItems;
+extern INPUT_ITEM InputItems[135];
 
 void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry);
 UINT32 EncodeOptions(const XString8Array& Options);

@@ -12,10 +12,12 @@
 
 class TagBool : public TagStruct
 {
-  static XObjArray<TagBool> tagsFree;
   XBool value;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static XObjArray<TagBool> tagsFree;
+#endif
 
   TagBool() : value(false) {}
   TagBool(const TagBool& other) = delete; // Can be defined if needed
@@ -30,7 +32,7 @@ public:
   virtual XBool isBool() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Bool"_XS8; }
   static TagBool* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 

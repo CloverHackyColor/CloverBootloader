@@ -10,12 +10,22 @@
 
 #include "plist.h"
 
+class TagsDictFreeArray : public XObjArray<TagDict>
+{
+public:
+  ~TagsDictFreeArray () {
+    NOP;
+  }
+};
+
 class TagDict : public TagStruct
 {
-  static XObjArray<TagDict> tagsFree;
   XObjArray<TagStruct> _dictContent;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static TagsDictFreeArray tagsFree;
+#endif
 
   TagDict() : _dictContent() {}
   TagDict(const TagDict& other) = delete; // Can be defined if needed
@@ -31,7 +41,7 @@ public:
   virtual XBool isDict() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Dict"_XS8; }
   static TagDict* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 

@@ -21,6 +21,7 @@ Headers collection for procedures
 #include "../cpp_foundation/XObjArray.h"
 #include "../include/remove_ref.h"
 #include "../cpp_lib/undefinable.h"
+#include "../cpp_foundation/apd.h"
 #endif
 
 #include "../include/OneLinerMacros.h"

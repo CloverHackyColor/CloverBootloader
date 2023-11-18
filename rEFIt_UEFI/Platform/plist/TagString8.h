@@ -12,10 +12,12 @@
 
 class TagString : public TagStruct
 {
-  static XObjArray<TagString> tagsFree;
   XString8 _string;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static XObjArray<TagString> tagsFree;
+#endif
 
   TagString() : _string() {}
   TagString(const TagString& other) = delete; // Can be defined if needed
@@ -30,7 +32,7 @@ public:
   virtual XBool isString() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "String8"_XS8; }
   static TagString* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 

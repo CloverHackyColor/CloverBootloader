@@ -8,6 +8,7 @@
 #ifndef __XML_LITE_H__
 #define __XML_LITE_H__
 
+#include "../cpp_foundation/apd.h"
 #include "../cpp_foundation/XBool.h"
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_lib/XmlLiteSimpleTypes.h"
@@ -73,7 +74,7 @@ class XmlLiteParser
 {
   friend class XmlParserPosition;
   
-  char* p_start = NULL;
+  apd<char*> p_start = NULL;
   char* p_end = NULL;
   XmlParserPosition currentPos = XmlParserPosition();
   XObjArray<XmlParserMessage> XmlParserMessageArray = XObjArray<XmlParserMessage>();

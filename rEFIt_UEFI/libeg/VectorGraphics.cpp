@@ -153,7 +153,7 @@ displayFreeMemory("XTheme::ParseSVGXTheme begin"_XS8);
 if ( nsvg__nbDanglingPtr() > 0 ) {
   DBG("There is already dangling ptr. nano svg memory leak test not done\n");
 }else{
-  char* buffer2 = (char*)malloc(Size);
+  apd<char*> buffer2 = (char*)malloc(Size);
   memcpy(buffer2, buffer, Size);
   nvsg__memoryallocation_verbose = false;
   NSVGparser* p = nsvg__parse(buffer2, 72, 1.f); //the buffer will be modified, it is how nanosvg works

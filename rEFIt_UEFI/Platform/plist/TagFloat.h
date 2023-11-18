@@ -12,10 +12,12 @@
 
 class TagFloat : public TagStruct
 {
-  static XObjArray<TagFloat> tagsFree;
   float value;
 
 public:
+#ifdef TagStruct_USE_CACHE
+  static XObjArray<TagFloat> tagsFree;
+#endif
 
   TagFloat() : value(0) {}
   TagFloat(const TagFloat& other) = delete; // Can be defined if needed
@@ -30,7 +32,7 @@ public:
   virtual XBool isFloat() const { return true; }
   virtual const XString8 getTypeAsXString8() const { return "Float"_XS8; }
   static TagFloat* getEmptyTag();
-  virtual void FreeTag();
+  virtual void ReleaseTag();
   
   virtual void sprintf(unsigned int ident, XString8* s) const;
 
