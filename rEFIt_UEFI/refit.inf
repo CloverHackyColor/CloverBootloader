@@ -50,6 +50,7 @@
   cpp_foundation/XStringArray.cpp
   cpp_foundation/XStringArray.h
   cpp_foundation/XToolsCommon.h
+  cpp_foundation/apd.h
   cpp_lib/undefinable.h
   cpp_lib/XmlLiteArrayTypes.cpp
   cpp_lib/XmlLiteArrayTypes.h
@@ -63,6 +64,9 @@
   cpp_lib/XmlLiteSimpleTypes.h
   cpp_lib/XmlLiteUnionTypes.cpp
   cpp_lib/XmlLiteUnionTypes.h
+  cpp_lib/MemoryTracker.cpp
+  cpp_lib/MemoryTracker.h
+  
 #  cpp_unit_test/all_tests.cpp
 #  cpp_unit_test/all_tests.h
 #  cpp_unit_test/config-test.cpp
@@ -109,6 +113,8 @@
 #  cpp_unit_test/XString_test.h
 # cpp_unit_test/XToolsCommon_test.cpp
 #  cpp_unit_test/XToolsCommon_test.h
+# cpp_unit_test/MemoryTracker_test.cpp
+# cpp_unit_test/MemoryTracker_test.h
   entry_scan/bootscreen.cpp
   entry_scan/bootscreen.h
   entry_scan/CanonicalDB.h
