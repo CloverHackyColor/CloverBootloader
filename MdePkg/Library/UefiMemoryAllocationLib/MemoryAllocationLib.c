@@ -29,6 +29,7 @@
   @return A pointer to the allocated buffer or NULL if allocation fails.
 
 **/
+__attribute__((weak))
 VOID *
 InternalAllocatePages (
   IN EFI_MEMORY_TYPE  MemoryType,
@@ -132,6 +133,7 @@ AllocateReservedPages (
   @param  Pages                 The number of 4 KB pages to free.
 
 **/
+__attribute__((weak))
 VOID
 EFIAPI
 FreePages (
@@ -170,6 +172,7 @@ FreePages (
   @return A pointer to the allocated buffer or NULL if allocation fails.
 
 **/
+__attribute__((weak))
 VOID *
 InternalAllocateAlignedPages (
   IN EFI_MEMORY_TYPE  MemoryType,
@@ -351,6 +354,7 @@ AllocateAlignedReservedPages (
   @param  Pages                 The number of 4 KB pages to free.
 
 **/
+__attribute__((weak))
 VOID
 EFIAPI
 FreeAlignedPages (
@@ -381,6 +385,7 @@ FreeAlignedPages (
   @return A pointer to the allocated buffer or NULL if allocation fails.
 
 **/
+__attribute__((weak))
 VOID *
 InternalAllocatePool (
   IN EFI_MEMORY_TYPE  MemoryType,
@@ -832,6 +837,7 @@ ReallocateReservedPool (
   @param  Buffer                The pointer to the buffer to free.
 
 **/
+__attribute__((weak))
 VOID
 EFIAPI
 FreePool(
