@@ -24,6 +24,7 @@ Abstract:
 #ifndef _EFI_IMAGE_FORMAT_H_
 #define _EFI_IMAGE_FORMAT_H_
 
+#include <Pi/PiFirmwareFile.h>
 //
 // pack all data structures since this is actually a binary format and we cannot
 // allow internal padding in the data structures because of some compilerism..
@@ -102,14 +103,14 @@ typedef UINT8 EFI_SECTION_TYPE;
 //
 // Common section header
 //
-typedef struct {
-  UINT8 Size[3];
-  UINT8 Type;
-} EFI_COMMON_SECTION_HEADER;
-
-#define SECTION_SIZE(SectionHeaderPtr) \
+//typedef struct {
+//  UINT8 Size[3];
+//  UINT8 Type;
+//} EFI_COMMON_SECTION_HEADER;
+//
+/*#define SECTION_SIZE(SectionHeaderPtr) \
     ((UINT32) (*((UINT32 *) ((EFI_COMMON_SECTION_HEADER *) SectionHeaderPtr)->Size) & 0x00ffffff))
-
+*/
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -122,23 +123,23 @@ typedef struct {
 #define EFI_STANDARD_COMPRESSION    0x01
 #define EFI_CUSTOMIZED_COMPRESSION  0x02
 
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-  UINT32                    UncompressedLength;
-  UINT8                     CompressionType;
-} EFI_COMPRESSION_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//  UINT32                    UncompressedLength;
+//  UINT8                     CompressionType;
+//} EFI_COMPRESSION_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
 // GUID defined section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-  EFI_GUID                  SectionDefinitionGuid;
-  UINT16                    DataOffset;
-  UINT16                    Attributes;
-} EFI_GUID_DEFINED_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//  EFI_GUID                  SectionDefinitionGuid;
+//  UINT16                    DataOffset;
+//  UINT16                    Attributes;
+//} EFI_GUID_DEFINED_SECTION;
 
 //
 // Bit values for Attributes
@@ -166,18 +167,18 @@ typedef struct {
 //
 // PE32+ section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-} EFI_PE32_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//} EFI_PE32_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
 // PIC section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-} EFI_PIC_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//} EFI_PIC_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
@@ -202,21 +203,21 @@ typedef struct {
 //
 // Version section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-  UINT16                    BuildNumber;
-  INT16                     VersionString[1];
-} EFI_VERSION_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//  UINT16                    BuildNumber;
+//  INT16                     VersionString[1];
+//} EFI_VERSION_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
 // User interface section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-  INT16                     FileNameString[1];
-} EFI_USER_INTERFACE_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//  INT16                     FileNameString[1];
+//} EFI_USER_INTERFACE_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
@@ -232,28 +233,28 @@ typedef struct {
 //
 // Firmware Volume Image section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-} EFI_FIRMWARE_VOLUME_IMAGE_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//} EFI_FIRMWARE_VOLUME_IMAGE_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
 // Freeform subtype GUID section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-  EFI_GUID                  SubTypeGuid;
-} EFI_FREEFORM_SUBTYPE_GUID_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//  EFI_GUID                  SubTypeGuid;
+//} EFI_FREEFORM_SUBTYPE_GUID_SECTION;
 
 //
 // ////////////////////////////////////////////////////////////////////////////
 //
 // Raw section
 //
-typedef struct {
-  EFI_COMMON_SECTION_HEADER CommonHeader;
-} EFI_RAW_SECTION;
+//typedef struct {
+//  EFI_COMMON_SECTION_HEADER CommonHeader;
+//} EFI_RAW_SECTION;
 
 //
 // undo the pragma from the beginning...
