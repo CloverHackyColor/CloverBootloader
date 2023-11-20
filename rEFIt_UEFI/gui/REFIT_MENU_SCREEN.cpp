@@ -431,7 +431,7 @@ void REFIT_MENU_SCREEN::FreeMenu()
   InfoLines.setEmpty();
 }
 
-INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN char32_t Shortcut)
+INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN wchar_t Shortcut)
 {
   if (Shortcut >= 'a' && Shortcut <= 'z')
     Shortcut -= ('a' - 'A');
@@ -694,7 +694,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
   //    UINTN         Index;
-  INTN          ShortcutEntry;
+  CHAR16        ShortcutEntry;
   XBool         HaveTimeout = false;
   INTN          TimeoutCountdown = 0;
   UINTN         MenuExit;

@@ -423,7 +423,7 @@ public:
   void AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
   void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, XBool Cursor);
   void FreeMenu();
-  INTN FindMenuShortcutEntry(IN char32_t Shortcut);
+  INTN FindMenuShortcutEntry(IN wchar_t Shortcut);
   UINTN RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN InputDialog();
