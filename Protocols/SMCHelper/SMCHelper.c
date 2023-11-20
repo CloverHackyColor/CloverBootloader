@@ -337,7 +337,6 @@ SmcGetKeyInfoImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
                    OUT SMC_KEY_ATTRIBUTES     *Attributes
                    )
 {
-  UINT32 Num = 0;
   SMC_STACK *TmpStack = SmcStack;
   if (!Size || !Type || !Attributes) {
     return EFI_INVALID_PARAMETER;
@@ -349,7 +348,6 @@ SmcGetKeyInfoImpl (IN  APPLE_SMC_IO_PROTOCOL  *This,
       *Attributes = TmpStack->Attributes;
       return EFI_SUCCESS;
     }
-    Num++;
     TmpStack = TmpStack->Next;
   }
   return EFI_NOT_FOUND;  

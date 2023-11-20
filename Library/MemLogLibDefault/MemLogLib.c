@@ -469,7 +469,7 @@ static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context
   mMemLog->Cursor += nbchar;
 }
 
-const char* printf_lite_get_timestamp()
+const char* printf_lite_get_timestamp(void)
 {
   UINT64    dTStartSec;
   UINT64    dTStartMs;

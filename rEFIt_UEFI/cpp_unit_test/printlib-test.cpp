@@ -171,6 +171,9 @@ int printlib_tests(void)
     loggf(F("SIZE_T_MAX=%zu\n"), SIZE_T_MAX);
     loggf(F("\n"));
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat"
+
     loggf(F("PRId16=%a\n"), PRId16);
     loggf(F("PRIu16=%a\n"), PRIu16);
     loggf(F("PRId32=%a\n"), PRId32);
@@ -179,6 +182,9 @@ int printlib_tests(void)
     loggf(F("PRIu32=%a\n"), PRIu32);
     loggf(F("PRId64=%a\n"), PRId64);
     loggf(F("PRIu64=%a\n"), PRIu64);
+
+#pragma GCC diagnostic pop
+
     loggf(F("\n"));
 #endif
 

@@ -551,7 +551,7 @@ DebugPrintLevelEnabled (
   are not included in a module.
 
 **/
-#define DEBUG_CODE_END()    __DebugCodeLocal = 0; __DebugCodeLocal++; } } while (FALSE)
+#define DEBUG_CODE_END()    __DebugCodeLocal = 0; __DebugCodeLocal++; (void)__DebugCodeLocal; } } while (FALSE)
 
 
 /**
