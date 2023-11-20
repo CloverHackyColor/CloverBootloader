@@ -6,6 +6,7 @@
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 //#ifndef __cplusplus // C doesn't know bool
 //#define bool unsigned char

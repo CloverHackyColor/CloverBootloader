@@ -321,6 +321,8 @@
   Platform/usbfix.h
   Platform/Utils.cpp
   Platform/Utils.h
+  Platform/UtilsEFI.cpp
+  Platform/UtilsEFI.h
   Platform/VersionString.cpp
   Platform/VersionString.h
   Platform/Volume.cpp

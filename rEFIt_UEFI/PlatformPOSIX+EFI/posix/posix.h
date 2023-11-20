@@ -15,7 +15,7 @@
 
 #include "abort.h"
 
-#include "posix_additions.h"
+//#include "posix_additions.h"
 
 #if defined(__APPLE__) && defined(__clang__) && __WCHAR_MAX__ <= 0xFFFFu
 // 2020-03 : w... function are broken under macOs and clang with short-wchar.

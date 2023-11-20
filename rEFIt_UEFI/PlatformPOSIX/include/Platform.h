@@ -11,19 +11,14 @@
 
 
 // Replacing uintptr_t with unsigned long long doesn't work anymore with stdlic++ with xcode 12.5 (or probably some before)
-//
-//#ifndef _UINTPTR_T
-//#define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
-//#endif
-//#ifndef _PTRDIFF_T_DECLARED
-//#define _PTRDIFF_T_DECLARED // to prevent macOS/GCC definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
-//#endif
-//
-//// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
-//typedef unsigned long long  uintptr_t;
-//#undef PRIuPTR
-//#define PRIuPTR "llu"
-////#define _UINTPTR_T
+// seems to work again in xcode 14. (don't know for 13)
+
+#ifndef _UINTPTR_T
+#define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+#endif
+#ifndef _PTRDIFF_T_DECLARED
+#define _PTRDIFF_T_DECLARED // to prevent macOS/GCC definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+#endif
 
 #ifdef _MSC_VER
 #include <Windows.h>
@@ -31,13 +26,39 @@
 
 //#pragma clang diagnostic ignored "-Wc99-extensions"
 
-#ifdef __cplusplus
-#include "../../cpp_foundation/XBool.h"
-#endif
+// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
+typedef unsigned long long  uintptr_t;
+// Replacement of printf format
+#include <inttypes.h>
+#undef PRIdPTR
+#undef PRIiPTR
+#undef PRIoPTR
+#undef PRIuPTR
+#undef PRIxPTR
+#undef PRIXPTR
+#  define PRIdPTR       "lld"
+#  define PRIiPTR       "lli"
+#  define PRIoPTR       "llo"
+#  define PRIuPTR       "llu"
+#  define PRIxPTR       "llx"
+#  define PRIXPTR       "llX"
 
 #include "posix/posix.h"
 #include <Efi.h>
+#include "posix/posix_additions.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define malloc(size) my_malloc(size)
+#define free(size) my_free(size)
+void* my_malloc(size_t size);
+void my_free(void* p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #include "../../../../rEFIt_UEFI/include/OneLinerMacros.h"
 
@@ -46,6 +67,7 @@
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 
 #ifdef __cplusplus
+#include "../../../rEFIt_UEFI/cpp_foundation/apd.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XArray.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
@@ -61,7 +83,7 @@
 #include "../Platform/VersionString.h"
 #include "../Platform/Utils.h"
 #include "../../../rEFIt_UEFI/Platform/Utils.h"
-
+#include "../cpp_util/operatorNewDelete.h"
 #endif
 
 

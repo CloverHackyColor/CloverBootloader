@@ -24,12 +24,27 @@
 
 #ifdef MEMORY_TRACKER_ENABLED
 
+#define MAGIC_BEGINNING 0xDEADBEEFBBBBBBBB
+#define MAGIC_END 0xEEEEEEEEDEADBEEF
+
 
 uint64_t MT_alloc_count = 0;
 bool MT_recording = false;
+uint64_t MT_count_to_break_into = 0;
 
 MTArray<uintptr_t> allocatedPtrArray;
 MTArray<uint64_t> allocatedPtrInfoArray;
+
+#if defined(IS_UEFI_MODULE)
+void* real_malloc(EFI_MEMORY_TYPE MemoryType, size_t size);
+#define _real_malloc(MemoryType, size) real_malloc(MemoryType, size)
+#else
+#define _real_malloc(MemoryType, size) real_malloc(size)
+#endif
+void* real_malloc(size_t size);
+void real_free(void*);
+
+
 
 void MT_import(const void* p)
 {
@@ -40,38 +55,9 @@ void MT_import(const void* p)
   allocatedPtrInfoArray.Add(count); // this can allocate memory, so don't record that.
   MT_recording = true;
 }
-//
-//void MT_delete(const void* p)
-//{
-//  if ( p ) {
-//    uintptr_t ref2 = uintptr_t(p);
-//    auto idx = allocatedPtrArray.indexOf(ref2);
-//    if ( idx == MAX_XSIZE ) {
-////      printf("MT_delete unknown ptr %llx\n", uintptr_t(p));
-//    }else{
-////if ( allocatedPtrInfoArray[idx]->alloc_idx == 15579 ) printf("MT_delete(0x%llx) - %lld\n", uintptr_t(p), allocatedPtrInfoArray[idx]->alloc_idx);
-//      allocatedPtrArray.RemoveAtIndex(idx);
-//      allocatedPtrInfoArray.RemoveAtIndex(idx);
-//    }
-//  }
-//}
-
 
 extern "C" {
 
-void* real_malloc(size_t size);
-void* real_type_malloc(EFI_MEMORY_TYPE MemoryType, size_t size);
-void* my_malloc(size_t size);
-void real_free(void*);
-void my_free(void*);
-
-//#define MAGIC_BEGINNING 0xDEADBEEF32659821
-//#define MAGIC_END 0x1245788956231973
-
-#define MAGIC_BEGINNING 0xDEADBEEFBBBBBBBB
-#define MAGIC_END 0xEEEEEEEEDEADBEEF
-
-uint64_t MT_count_to_break_into = 0;
 
 #if defined(IS_UEFI_MODULE)
 
@@ -95,7 +81,7 @@ NOP;
 #endif
   if ( MT_recording )
   {
-      Memory = real_type_malloc(MemoryType, AllocationSize+24);
+      Memory = _real_malloc(MemoryType, AllocationSize+24);
       if ( !Memory ) return NULL;
 
       *(uint64_t*)Memory = AllocationSize;
@@ -111,7 +97,7 @@ NOP;
       return ((uint8_t*)Memory) + 16;
 
   }else{
-      Memory = real_type_malloc(MemoryType, AllocationSize);
+      Memory = _real_malloc(MemoryType, AllocationSize);
       return Memory;
   }
 }
@@ -321,7 +307,7 @@ void MTArray<TYPE>::FreeAndRemoveAtIndex(size_t nIndex)
 #undef free
 
 
-void* real_type_malloc(EFI_MEMORY_TYPE MemoryType, size_t size)
+void* real_malloc(EFI_MEMORY_TYPE MemoryType, size_t size)
 {
   #if defined(IS_UEFI_MODULE)
     void* Memory;
@@ -329,10 +315,10 @@ void* real_type_malloc(EFI_MEMORY_TYPE MemoryType, size_t size)
     if (EFI_ERROR(Status)) return NULL;
     return Memory;
   #else
-    return malloc(AllocationSize);
+    return malloc(size);
   #endif
 }
-void* real_malloc(size_t size) { return real_type_malloc(EfiBootServicesData, size); }
+void* real_malloc(size_t size) { return real_malloc(EfiBootServicesData, size); }
 
 void real_free(void* p)
 {
@@ -346,20 +332,17 @@ void real_free(void* p)
   #endif
 }
 
-
-
-#if !defined(IS_UEFI_MODULE)
-
-extern "C" {
-
-#if !defined(IS_UEFI_MODULE)
-void* malloc(size_t size);
-void free(void* p);
+#if defined(IS_UEFI_MODULE)
+void* my_malloc(size_t size) { return InternalAllocatePool(EfiBootServicesData, size); }
+void my_free(IN void *p) { FreePool(p); }
 #endif
 
-} //extern C
-
-#endif // !defined(IS_UEFI_MODULE)
+//#if !defined(IS_UEFI_MODULE)
+//extern "C" {
+//void* malloc(size_t size);
+//void free(void* p);
+//} //extern C
+//#endif // !defined(IS_UEFI_MODULE)
 
 
 #else // MEMORY_TRACKER_ENABLED
@@ -377,6 +360,10 @@ void MemoryTrackerCheck() {};
 #undef malloc
 #undef free
 
+extern "C" {
+
+// we don't use MemoryTracker. Let's define passthrough function to avoid having to have to remove function hooks.
+
 void* my_malloc(size_t size)
 {
   return malloc(size);
@@ -386,6 +373,8 @@ void my_free(void* p)
 {
   free(p);
 }
+
+} // extern "C"
 
 
 #endif// MEMORY_TRACKER_ENABLED

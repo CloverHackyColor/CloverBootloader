@@ -44,6 +44,14 @@
 		9A071C3F2619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
 		9A071C402619FF850007CC44 /* XmlLiteArrayTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */; };
 		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A0FF3FE2B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */; };
+		9A0FF3FF2B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */; };
+		9A0FF4002B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */; };
+		9A0FF4012B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */; };
+		9A0FF4042B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */; };
+		9A0FF4052B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */; };
+		9A0FF4062B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */; };
+		9A0FF4072B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */; };
 		9A27552E2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A27552F2639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
 		9A2755302639A1FA0095D456 /* ConfigPlistAbstract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */; };
@@ -335,6 +343,10 @@
 		9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteArrayTypes.cpp; sourceTree = "<group>"; };
 		9A071C3C2619FF840007CC44 /* XmlLiteArrayTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteArrayTypes.h; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryTracker.cpp; sourceTree = "<group>"; };
+		9A0FF3FD2B0BB00D00F9BC7C /* MemoryTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTracker.h; sourceTree = "<group>"; };
+		9A0FF4022B0BB02C00F9BC7C /* MemoryTracker_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTracker_test.h; sourceTree = "<group>"; };
+		9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryTracker_test.cpp; sourceTree = "<group>"; };
 		9A2754F22639A1FA0095D456 /* Readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
 		9A2755042639A1FA0095D456 /* ConfigPlistAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlistAbstract.h; sourceTree = "<group>"; };
 		9A27550B2639A1FA0095D456 /* ConfigPlistAbstract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlistAbstract.cpp; sourceTree = "<group>"; };
@@ -4545,91 +4557,6 @@
 		9A87859C26186300000B9362 /* printf_lite-conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
 		9A87859F26186300000B9362 /* MemLogLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		9A8785A126186300000B9362 /* ReadmeJief.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadmeJief.txt; sourceTree = "<group>"; };
-		9A8785A426186300000B9362 /* OcDataHubLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDataHubLib.lib; sourceTree = "<group>"; };
-		9A8785A526186300000B9362 /* OcXmlLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcXmlLib.lib; sourceTree = "<group>"; };
-		9A8785A626186300000B9362 /* OcConfigurationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcConfigurationLib.lib; sourceTree = "<group>"; };
-		9A8785A726186300000B9362 /* OcFirmwareVolumeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcFirmwareVolumeLib.lib; sourceTree = "<group>"; };
-		9A8785A826186300000B9362 /* OcStorageLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcStorageLib.lib; sourceTree = "<group>"; };
-		9A8785A926186300000B9362 /* OcVirtualFsLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcVirtualFsLib.lib; sourceTree = "<group>"; };
-		9A8785AA26186300000B9362 /* OcAppleEventLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleEventLib.lib; sourceTree = "<group>"; };
-		9A8785AB26186300000B9362 /* OcCryptoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCryptoLib.lib; sourceTree = "<group>"; };
-		9A8785AC26186300000B9362 /* OcAudioLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAudioLib.lib; sourceTree = "<group>"; };
-		9A8785AD26186300000B9362 /* OcDevicePropertyLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDevicePropertyLib.lib; sourceTree = "<group>"; };
-		9A8785AE26186301000B9362 /* OcAppleChunklistLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleChunklistLib.lib; sourceTree = "<group>"; };
-		9A8785AF26186301000B9362 /* OcStringLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcStringLib.lib; sourceTree = "<group>"; };
-		9A8785B026186301000B9362 /* OcTemplateLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcTemplateLib.lib; sourceTree = "<group>"; };
-		9A8785B126186301000B9362 /* OcUnicodeCollationEngGenericLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcUnicodeCollationEngGenericLib.lib; sourceTree = "<group>"; };
-		9A8785B226186301000B9362 /* ControlMsrE2.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = ControlMsrE2.lib; sourceTree = "<group>"; };
-		9A8785B326186301000B9362 /* OcAppleKeyMapLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKeyMapLib.lib; sourceTree = "<group>"; };
-		9A8785B426186301000B9362 /* OcConsoleLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcConsoleLib.lib; sourceTree = "<group>"; };
-		9A8785B526186301000B9362 /* OcRtcLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcRtcLib.lib; sourceTree = "<group>"; };
-		9A8785B626186301000B9362 /* OcDebugLogLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDebugLogLib.lib; sourceTree = "<group>"; };
-		9A8785B726186301000B9362 /* OcCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCpuLib.lib; sourceTree = "<group>"; };
-		9A8785B826186301000B9362 /* OcGuardLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcGuardLib.lib; sourceTree = "<group>"; };
-		9A8785B926186301000B9362 /* OcDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDevicePathLib.lib; sourceTree = "<group>"; };
-		9A8785BA26186301000B9362 /* OcAppleKernelLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKernelLib.lib; sourceTree = "<group>"; };
-		9A8785BB26186301000B9362 /* OcAppleKeysLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleKeysLib.lib; sourceTree = "<group>"; };
-		9A8785BC26186301000B9362 /* OcInputLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcInputLib.lib; sourceTree = "<group>"; };
-		9A8785BD26186301000B9362 /* OpenRuntime.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenRuntime.lib; sourceTree = "<group>"; };
-		9A8785BE26186301000B9362 /* OcAppleRamDiskLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleRamDiskLib.lib; sourceTree = "<group>"; };
-		9A8785BF26186301000B9362 /* OcPeCoffLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcPeCoffLib.lib; sourceTree = "<group>"; };
-		9A8785C026186301000B9362 /* OcApfsLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcApfsLib.lib; sourceTree = "<group>"; };
-		9A8785C126186301000B9362 /* OcSmbiosLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSmbiosLib.lib; sourceTree = "<group>"; };
-		9A8785C226186301000B9362 /* OcSerializeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSerializeLib.lib; sourceTree = "<group>"; };
-		9A8785C326186301000B9362 /* OcRngLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcRngLib.lib; sourceTree = "<group>"; };
-		9A8785C426186301000B9362 /* OcAfterBootCompatLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAfterBootCompatLib.lib; sourceTree = "<group>"; };
-		9A8785C526186301000B9362 /* OcCompressionLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcCompressionLib.lib; sourceTree = "<group>"; };
-		9A8785C626186301000B9362 /* OcAppleImageVerificationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleImageVerificationLib.lib; sourceTree = "<group>"; };
-		9A8785C726186301000B9362 /* OcMemoryLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMemoryLib.lib; sourceTree = "<group>"; };
-		9A8785C826186301000B9362 /* OcMacInfoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMacInfoLib.lib; sourceTree = "<group>"; };
-		9A8785C926186301000B9362 /* OcBootManagementLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcBootManagementLib.lib; sourceTree = "<group>"; };
-		9A8785CA26186301000B9362 /* OcAppleImg4Lib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleImg4Lib.lib; sourceTree = "<group>"; };
-		9A8785CB26186301000B9362 /* OcAcpiLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAcpiLib.lib; sourceTree = "<group>"; };
-		9A8785CC26186301000B9362 /* OcAppleDiskImageLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleDiskImageLib.lib; sourceTree = "<group>"; };
-		9A8785CD26186301000B9362 /* OcMachoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMachoLib.lib; sourceTree = "<group>"; };
-		9A8785CE26186301000B9362 /* OcSmcLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcSmcLib.lib; sourceTree = "<group>"; };
-		9A8785CF26186301000B9362 /* OcFileLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcFileLib.lib; sourceTree = "<group>"; };
-		9A8785D026186301000B9362 /* OcAppleUserInterfaceThemeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleUserInterfaceThemeLib.lib; sourceTree = "<group>"; };
-		9A8785D126186301000B9362 /* OcDeviceTreeLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDeviceTreeLib.lib; sourceTree = "<group>"; };
-		9A8785D226186301000B9362 /* OcOSInfoLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcOSInfoLib.lib; sourceTree = "<group>"; };
-		9A8785D326186301000B9362 /* OcDriverConnectionLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcDriverConnectionLib.lib; sourceTree = "<group>"; };
-		9A8785D426186301000B9362 /* OpenCore.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenCore.lib; sourceTree = "<group>"; };
-		9A8785D526186301000B9362 /* OcHashServicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcHashServicesLib.lib; sourceTree = "<group>"; };
-		9A8785D626186301000B9362 /* OcMiscLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcMiscLib.lib; sourceTree = "<group>"; };
-		9A8785D726186301000B9362 /* OcAppleBootPolicyLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleBootPolicyLib.lib; sourceTree = "<group>"; };
-		9A8785D826186301000B9362 /* OcAppleSecureBootLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OcAppleSecureBootLib.lib; sourceTree = "<group>"; };
-		9A8785DA26186301000B9362 /* VideoBiosPatchLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = VideoBiosPatchLib.lib; sourceTree = "<group>"; };
-		9A8785DB26186301000B9362 /* VBoxPeCoffLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = VBoxPeCoffLib.lib; sourceTree = "<group>"; };
-		9A8785DC26186301000B9362 /* DuetTimerLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DuetTimerLib.lib; sourceTree = "<group>"; };
-		9A8785DE26186301000B9362 /* OpensslLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpensslLib.lib; sourceTree = "<group>"; };
-		9A8785DF26186301000B9362 /* HdaDevicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = HdaDevicesLib.lib; sourceTree = "<group>"; };
-		9A8785E026186301000B9362 /* WaveLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = WaveLib.lib; sourceTree = "<group>"; };
-		9A8785E226186301000B9362 /* BasePciCf8Lib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePciCf8Lib.lib; sourceTree = "<group>"; };
-		9A8785E326186301000B9362 /* UefiApplicationEntryPoint.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiApplicationEntryPoint.lib; sourceTree = "<group>"; };
-		9A8785E426186301000B9362 /* BaseLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseLib.lib; sourceTree = "<group>"; };
-		9A8785E526186301000B9362 /* UefiRuntimeServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiRuntimeServicesTableLib.lib; sourceTree = "<group>"; };
-		9A8785E626186301000B9362 /* BaseMemoryLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseMemoryLib.lib; sourceTree = "<group>"; };
-		9A8785E726186301000B9362 /* BaseIoLibIntrinsic.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseIoLibIntrinsic.lib; sourceTree = "<group>"; };
-		9A8785E826186301000B9362 /* DxeServicesLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeServicesLib.lib; sourceTree = "<group>"; };
-		9A8785E926186301000B9362 /* BaseCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseCpuLib.lib; sourceTree = "<group>"; };
-		9A8785EA26186301000B9362 /* UefiLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiLib.lib; sourceTree = "<group>"; };
-		9A8785EB26186301000B9362 /* PeCoffExtraActionLibNull.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = PeCoffExtraActionLibNull.lib; sourceTree = "<group>"; };
-		9A8785EC26186301000B9362 /* UefiMemoryAllocationLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiMemoryAllocationLib.lib; sourceTree = "<group>"; };
-		9A8785ED26186301000B9362 /* UefiFileHandleLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiFileHandleLib.lib; sourceTree = "<group>"; };
-		9A8785EE26186301000B9362 /* DxeHobLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeHobLib.lib; sourceTree = "<group>"; };
-		9A8785EF26186301000B9362 /* UefiBootServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiBootServicesTableLib.lib; sourceTree = "<group>"; };
-		9A8785F026186301000B9362 /* BaseDebugLibSerialPort.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseDebugLibSerialPort.lib; sourceTree = "<group>"; };
-		9A8785F126186301000B9362 /* DxeServicesTableLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = DxeServicesTableLib.lib; sourceTree = "<group>"; };
-		9A8785F226186301000B9362 /* BasePciLibCf8.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePciLibCf8.lib; sourceTree = "<group>"; };
-		9A8785F326186301000B9362 /* BasePrintLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePrintLib.lib; sourceTree = "<group>"; };
-		9A8785F426186301000B9362 /* UefiDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = UefiDevicePathLib.lib; sourceTree = "<group>"; };
-		9A8785F526186301000B9362 /* BaseDebugPrintErrorLevelLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseDebugPrintErrorLevelLib.lib; sourceTree = "<group>"; };
-		9A8785F726186301000B9362 /* MtrrLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = MtrrLib.lib; sourceTree = "<group>"; };
-		9A8785F926186301000B9362 /* BasePlatformHookLibNull.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BasePlatformHookLibNull.lib; sourceTree = "<group>"; };
-		9A8785FA26186301000B9362 /* BaseSerialPortLib16550.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = BaseSerialPortLib16550.lib; sourceTree = "<group>"; };
-		9A8785FB26186301000B9362 /* FrameBufferBltLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = FrameBufferBltLib.lib; sourceTree = "<group>"; };
-		9A8785FD26186301000B9362 /* AutoGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoGen.h; sourceTree = "<group>"; };
-		9A8785FE26186301000B9362 /* AutoGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AutoGen.c; sourceTree = "<group>"; };
 		9A87860026186301000B9362 /* xcode_utf_fixed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xcode_utf_fixed.cpp; sourceTree = "<group>"; };
 		9A87860326186301000B9362 /* BaseMemoryLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BaseMemoryLib.c; sourceTree = "<group>"; };
 		9A87860426186301000B9362 /* MemoryAllocationLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MemoryAllocationLib.c; sourceTree = "<group>"; };
@@ -4683,6 +4610,8 @@
 		9A071C0F26196C4A0007CC44 /* cpp_lib */ = {
 			isa = PBXGroup;
 			children = (
+				9A0FF3FC2B0BB00C00F9BC7C /* MemoryTracker.cpp */,
+				9A0FF3FD2B0BB00D00F9BC7C /* MemoryTracker.h */,
 				9A071C3B2619FF840007CC44 /* XmlLiteArrayTypes.cpp */,
 				9A071C3C2619FF840007CC44 /* XmlLiteArrayTypes.h */,
 				9A071C1326196C4A0007CC44 /* undefinable.h */,
@@ -5422,110 +5351,110 @@
 		9A82ECEA26184663006F973B /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				9A82ECEB26184663006F973B /* PeiServicesTablePointerLibIdt */,
-				9A82ECEF26184663006F973B /* StandaloneMmServicesTableLib */,
-				9A82ECF326184663006F973B /* PeiPciLibPciCfg2 */,
-				9A82ECF726184663006F973B /* PeiSmbusLibSmbus2Ppi */,
-				9A82ECFD26184663006F973B /* BaseDebugPrintErrorLevelLib */,
 				9A82ED0126184663006F973B /* BaseCacheMaintenanceLib */,
-				9A82ED0726184663006F973B /* DxeIoLibCpuIo2 */,
-				9A82ED0E26184663006F973B /* BasePciLibCf8 */,
-				9A82ED1226184663006F973B /* PeiServicesTablePointerLib */,
-				9A82ED1626184663006F973B /* BaseDebugLibNull */,
-				9A82ED1A26184663006F973B /* UefiPciSegmentLibPciRootBridgeIo */,
-				9A82ED1F26184663006F973B /* PeiServicesLib */,
-				9A82ED2326184663006F973B /* BasePciExpressLib */,
-				9A82ED2726184663006F973B /* BaseS3SmbusLib */,
-				9A82ED2B26184663006F973B /* DxeServicesLib */,
-				9A82ED3226184663006F973B /* SecPeiDxeTimerLibCpu */,
-				9A82ED3626184663006F973B /* StandaloneMmDriverEntryPoint */,
-				9A82ED3A26184663006F973B /* SmmPciLibPciRootBridgeIo */,
-				9A82ED3E26184663006F973B /* BaseLib */,
-				9A82EEB926184665006F973B /* BaseMemoryLibRepStr */,
-				9A82EEE426184665006F973B /* BaseSynchronizationLib */,
-				9A82EF0A26184665006F973B /* UefiMemoryLib */,
-				9A82EF1D26184665006F973B /* PciSegmentLibSegmentInfo */,
 				9A82EF2626184665006F973B /* BaseCpuLib */,
-				9A82EF3F26184665006F973B /* PeiExtractGuidedSectionLib */,
-				9A82EF4326184665006F973B /* UefiDriverEntryPoint */,
-				9A82EF4726184665006F973B /* UefiDebugLibDebugPortProtocol */,
-				9A82EF4C26184665006F973B /* SmmPciExpressLib */,
-				9A82EF4F26184665006F973B /* DxeRuntimePciExpressLib */,
-				9A82EF5326184665006F973B /* BaseMemoryLibOptDxe */,
-				9A82EF9126184665006F973B /* BasePerformanceLibNull */,
-				9A82EF9526184665006F973B /* BasePciSegmentLibPci */,
-				9A82EF9926184665006F973B /* PeiDxePostCodeLibReportStatusCode */,
-				9A82EF9D26184665006F973B /* BasePcdLibNull */,
-				9A82EFA126184665006F973B /* BaseStackCheckLib */,
-				9A82EFA626184665006F973B /* BaseRngLib */,
-				9A82EFAA26184666006F973B /* DxeCoreEntryPoint */,
-				9A82EFAE26184666006F973B /* BasePostCodeLibPort80 */,
-				9A82EFB226184666006F973B /* PeiCoreEntryPoint */,
-				9A82EFB626184666006F973B /* BasePeCoffLib */,
-				9A82EFBE26184666006F973B /* SmmLibNull */,
-				9A82EFC226184666006F973B /* BasePciCf8Lib */,
-				9A82EFC626184666006F973B /* MmServicesTableLib */,
-				9A82EFCA26184666006F973B /* BaseSafeIntLib */,
-				9A82EFD026184666006F973B /* SmmServicesTableLib */,
-				9A82EFD426184666006F973B /* DxeExtractGuidedSectionLib */,
-				9A82EFD826184666006F973B /* UefiApplicationEntryPoint */,
-				9A82EFDC26184666006F973B /* BaseMemoryLib */,
-				9A82EFF026184666006F973B /* SmmIoLibSmmCpuIo2 */,
-				9A82EFF726184666006F973B /* DxeSmbusLib */,
-				9A82EFFD26184666006F973B /* BaseSmbusLibNull */,
-				9A82F00126184666006F973B /* BaseTimerLibNullTemplate */,
-				9A82F00526184666006F973B /* BaseS3IoLib */,
+				9A82ED1626184663006F973B /* BaseDebugLibNull */,
 				9A82F00926184666006F973B /* BaseDebugLibSerialPort */,
-				9A82F00D26184666006F973B /* BaseMemoryLibSse2 */,
-				9A82F03826184666006F973B /* BaseUefiDecompressLib */,
-				9A82F03F26184666006F973B /* BaseSerialPortLibNull */,
-				9A82F04326184666006F973B /* BaseS3BootScriptLibNull */,
-				9A82F04726184666006F973B /* DxePcdLib */,
-				9A82F04B26184666006F973B /* SmmPeriodicSmiLib */,
-				9A82F04F26184666006F973B /* UefiScsiLib */,
-				9A82F05326184666006F973B /* PeiResourcePublicationLib */,
-				9A82F05726184666006F973B /* DxeHobLib */,
-				9A82F05B26184666006F973B /* BaseS3PciSegmentLib */,
-				9A82F05F26184666006F973B /* BasePciSegmentInfoLibNull */,
-				9A82F06326184666006F973B /* SmmMemoryAllocationLib */,
+				9A82ECFD26184663006F973B /* BaseDebugPrintErrorLevelLib */,
 				9A82F06726184666006F973B /* BaseExtractGuidedSectionLib */,
-				9A82F06B26184666006F973B /* UefiBootServicesTableLib */,
-				9A82F06F26184666006F973B /* UefiDebugLibStdErr */,
-				9A82F07426184666006F973B /* PeiMemoryAllocationLib */,
-				9A82F07826184666006F973B /* UefiDevicePathLib */,
-				9A82F08326184667006F973B /* PeiHobLib */,
-				9A82F08726184667006F973B /* PeiMemoryLib */,
 				9A82F09A26184667006F973B /* BaseIoLibIntrinsic */,
-				9A82F0B526184667006F973B /* PeiPciSegmentLibPciCfg2 */,
-				9A82F0B926184667006F973B /* BasePeCoffGetEntryPointLib */,
-				9A82F0BD26184667006F973B /* UefiDevicePathLibDevicePathProtocol */,
-				9A82F0C126184667006F973B /* SmmIoLib */,
-				9A82F0C526184667006F973B /* DxeCoreHobLib */,
-				9A82F0C926184667006F973B /* UefiRuntimeServicesTableLib */,
-				9A82F0CD26184667006F973B /* PeiPcdLib */,
-				9A82F0D126184667006F973B /* SmmMemLib */,
-				9A82F0D526184667006F973B /* UefiFileHandleLib */,
-				9A82F0D926184667006F973B /* DxeRuntimeDebugLibSerialPort */,
+				9A82ED3E26184663006F973B /* BaseLib */,
+				9A82EFDC26184666006F973B /* BaseMemoryLib */,
 				9A82F0DD26184667006F973B /* BaseMemoryLibMmx */,
-				9A82F10826184667006F973B /* BaseOrderedCollectionRedBlackTreeLib */,
-				9A82F10C26184667006F973B /* UefiMemoryAllocationLib */,
-				9A82F11026184667006F973B /* UefiRuntimeLib */,
-				9A82F11426184667006F973B /* UefiDebugLibConOut */,
-				9A82F11926184667006F973B /* BasePciLibPciExpress */,
-				9A82F11D26184667006F973B /* UefiLib */,
-				9A82F12726184667006F973B /* DxeHstiLib */,
-				9A82F12D26184667006F973B /* BasePostCodeLibDebug */,
-				9A82F13126184667006F973B /* BaseS3StallLib */,
+				9A82EF5326184665006F973B /* BaseMemoryLibOptDxe */,
 				9A82F13526184667006F973B /* BaseMemoryLibOptPei */,
-				9A82F16026184668006F973B /* UefiPciLibPciRootBridgeIo */,
-				9A82F16426184668006F973B /* PeimEntryPoint */,
-				9A82F16826184668006F973B /* SmiHandlerProfileLibNull */,
-				9A82F16C26184668006F973B /* BaseS3PciLib */,
-				9A82F17026184668006F973B /* BasePrintLib */,
-				9A82F17626184668006F973B /* PeiIoLibCpuIo */,
-				9A82F17C26184668006F973B /* BaseReportStatusCodeLibNull */,
-				9A82F18026184668006F973B /* DxeServicesTableLib */,
+				9A82EEB926184665006F973B /* BaseMemoryLibRepStr */,
+				9A82F00D26184666006F973B /* BaseMemoryLibSse2 */,
+				9A82F10826184667006F973B /* BaseOrderedCollectionRedBlackTreeLib */,
+				9A82EF9D26184665006F973B /* BasePcdLibNull */,
+				9A82EFC226184666006F973B /* BasePciCf8Lib */,
+				9A82ED2326184663006F973B /* BasePciExpressLib */,
+				9A82ED0E26184663006F973B /* BasePciLibCf8 */,
+				9A82F11926184667006F973B /* BasePciLibPciExpress */,
+				9A82F05F26184666006F973B /* BasePciSegmentInfoLibNull */,
+				9A82EF9526184665006F973B /* BasePciSegmentLibPci */,
 				9A82F18426184668006F973B /* BasePeCoffExtraActionLibNull */,
+				9A82F0B926184667006F973B /* BasePeCoffGetEntryPointLib */,
+				9A82EFB626184666006F973B /* BasePeCoffLib */,
+				9A82EF9126184665006F973B /* BasePerformanceLibNull */,
+				9A82F12D26184667006F973B /* BasePostCodeLibDebug */,
+				9A82EFAE26184666006F973B /* BasePostCodeLibPort80 */,
+				9A82F17026184668006F973B /* BasePrintLib */,
+				9A82F17C26184668006F973B /* BaseReportStatusCodeLibNull */,
+				9A82EFA626184665006F973B /* BaseRngLib */,
+				9A82F04326184666006F973B /* BaseS3BootScriptLibNull */,
+				9A82F00526184666006F973B /* BaseS3IoLib */,
+				9A82F16C26184668006F973B /* BaseS3PciLib */,
+				9A82F05B26184666006F973B /* BaseS3PciSegmentLib */,
+				9A82ED2726184663006F973B /* BaseS3SmbusLib */,
+				9A82F13126184667006F973B /* BaseS3StallLib */,
+				9A82EFCA26184666006F973B /* BaseSafeIntLib */,
+				9A82F03F26184666006F973B /* BaseSerialPortLibNull */,
+				9A82EFFD26184666006F973B /* BaseSmbusLibNull */,
+				9A82EFA126184665006F973B /* BaseStackCheckLib */,
+				9A82EEE426184665006F973B /* BaseSynchronizationLib */,
+				9A82F00126184666006F973B /* BaseTimerLibNullTemplate */,
+				9A82F03826184666006F973B /* BaseUefiDecompressLib */,
+				9A82EFAA26184666006F973B /* DxeCoreEntryPoint */,
+				9A82F0C526184667006F973B /* DxeCoreHobLib */,
+				9A82EFD426184666006F973B /* DxeExtractGuidedSectionLib */,
+				9A82F05726184666006F973B /* DxeHobLib */,
+				9A82F12726184667006F973B /* DxeHstiLib */,
+				9A82ED0726184663006F973B /* DxeIoLibCpuIo2 */,
+				9A82F04726184666006F973B /* DxePcdLib */,
+				9A82F0D926184667006F973B /* DxeRuntimeDebugLibSerialPort */,
+				9A82EF4F26184665006F973B /* DxeRuntimePciExpressLib */,
+				9A82ED2B26184663006F973B /* DxeServicesLib */,
+				9A82F18026184668006F973B /* DxeServicesTableLib */,
+				9A82EFF726184666006F973B /* DxeSmbusLib */,
+				9A82EFC626184666006F973B /* MmServicesTableLib */,
+				9A82EF1D26184665006F973B /* PciSegmentLibSegmentInfo */,
+				9A82EFB226184666006F973B /* PeiCoreEntryPoint */,
+				9A82EF9926184665006F973B /* PeiDxePostCodeLibReportStatusCode */,
+				9A82EF3F26184665006F973B /* PeiExtractGuidedSectionLib */,
+				9A82F08326184667006F973B /* PeiHobLib */,
+				9A82F17626184668006F973B /* PeiIoLibCpuIo */,
+				9A82F07426184666006F973B /* PeiMemoryAllocationLib */,
+				9A82F08726184667006F973B /* PeiMemoryLib */,
+				9A82F16426184668006F973B /* PeimEntryPoint */,
+				9A82F0CD26184667006F973B /* PeiPcdLib */,
+				9A82ECF326184663006F973B /* PeiPciLibPciCfg2 */,
+				9A82F0B526184667006F973B /* PeiPciSegmentLibPciCfg2 */,
+				9A82F05326184666006F973B /* PeiResourcePublicationLib */,
+				9A82ED1F26184663006F973B /* PeiServicesLib */,
+				9A82ED1226184663006F973B /* PeiServicesTablePointerLib */,
+				9A82ECEB26184663006F973B /* PeiServicesTablePointerLibIdt */,
+				9A82ECF726184663006F973B /* PeiSmbusLibSmbus2Ppi */,
+				9A82ED3226184663006F973B /* SecPeiDxeTimerLibCpu */,
+				9A82F16826184668006F973B /* SmiHandlerProfileLibNull */,
+				9A82F0C126184667006F973B /* SmmIoLib */,
+				9A82EFF026184666006F973B /* SmmIoLibSmmCpuIo2 */,
+				9A82EFBE26184666006F973B /* SmmLibNull */,
+				9A82F0D126184667006F973B /* SmmMemLib */,
+				9A82F06326184666006F973B /* SmmMemoryAllocationLib */,
+				9A82EF4C26184665006F973B /* SmmPciExpressLib */,
+				9A82ED3A26184663006F973B /* SmmPciLibPciRootBridgeIo */,
+				9A82F04B26184666006F973B /* SmmPeriodicSmiLib */,
+				9A82EFD026184666006F973B /* SmmServicesTableLib */,
+				9A82ED3626184663006F973B /* StandaloneMmDriverEntryPoint */,
+				9A82ECEF26184663006F973B /* StandaloneMmServicesTableLib */,
+				9A82EFD826184666006F973B /* UefiApplicationEntryPoint */,
+				9A82F06B26184666006F973B /* UefiBootServicesTableLib */,
+				9A82F11426184667006F973B /* UefiDebugLibConOut */,
+				9A82EF4726184665006F973B /* UefiDebugLibDebugPortProtocol */,
+				9A82F06F26184666006F973B /* UefiDebugLibStdErr */,
+				9A82F07826184666006F973B /* UefiDevicePathLib */,
+				9A82F0BD26184667006F973B /* UefiDevicePathLibDevicePathProtocol */,
+				9A82EF4326184665006F973B /* UefiDriverEntryPoint */,
+				9A82F0D526184667006F973B /* UefiFileHandleLib */,
+				9A82F11D26184667006F973B /* UefiLib */,
+				9A82F10C26184667006F973B /* UefiMemoryAllocationLib */,
+				9A82EF0A26184665006F973B /* UefiMemoryLib */,
+				9A82F16026184668006F973B /* UefiPciLibPciRootBridgeIo */,
+				9A82ED1A26184663006F973B /* UefiPciSegmentLibPciRootBridgeIo */,
+				9A82F11026184667006F973B /* UefiRuntimeLib */,
+				9A82F0C926184667006F973B /* UefiRuntimeServicesTableLib */,
+				9A82F04F26184666006F973B /* UefiScsiLib */,
 				9A82F18826184668006F973B /* UefiUsbLib */,
 			);
 			path = Library;
@@ -5813,94 +5742,94 @@
 		9A82ED5126184663006F973B /* X64 */ = {
 			isa = PBXGroup;
 			children = (
-				9A82ED5226184663006F973B /* WriteMm4.nasm */,
-				9A82ED5326184663006F973B /* WriteDr6.nasm */,
-				9A82ED5426184663006F973B /* Nasm.inc */,
-				9A82ED5526184663006F973B /* WriteTr.nasm */,
-				9A82ED5626184663006F973B /* WriteCr4.nasm */,
-				9A82ED5726184663006F973B /* Mwait.nasm */,
-				9A82ED5826184663006F973B /* ReadFs.nasm */,
-				9A82ED5926184663006F973B /* ReadDs.nasm */,
-				9A82ED5A26184663006F973B /* FxRestore.nasm */,
-				9A82ED5B26184663006F973B /* ReadMm4.nasm */,
-				9A82ED5C26184663006F973B /* ReadDr6.nasm */,
-				9A82ED5D26184663006F973B /* CpuPause.nasm */,
-				9A82ED5E26184663006F973B /* ReadCr4.nasm */,
-				9A82ED5F26184663006F973B /* WriteLdtr.nasm */,
-				9A82ED6026184663006F973B /* ReadDr7.nasm */,
-				9A82ED6126184663006F973B /* SwitchStack.nasm */,
-				9A82ED6226184663006F973B /* ReadMm5.nasm */,
-				9A82ED6326184663006F973B /* WriteMsr64.nasm */,
-				9A82ED6426184663006F973B /* ReadIdtr.nasm */,
-				9A82ED6526184663006F973B /* WriteDr7.nasm */,
-				9A82ED6626184663006F973B /* WriteMm5.nasm */,
-				9A82ED6726184663006F973B /* ReadMm2.nasm */,
-				9A82ED6826184663006F973B /* ReadDr0.nasm */,
-				9A82ED6926184663006F973B /* ReadEs.nasm */,
-				9A82ED6A26184663006F973B /* ReadCr2.nasm */,
-				9A82ED6B26184663006F973B /* EnableCache.nasm */,
-				9A82ED6C26184663006F973B /* CpuIdEx.nasm */,
-				9A82ED6D26184663006F973B /* SetJump.nasm */,
-				9A82ED6E26184663006F973B /* WriteMm2.nasm */,
-				9A82ED6F26184663006F973B /* EnableInterrupts.nasm */,
-				9A82ED7026184663006F973B /* RdRand.nasm */,
-				9A82ED7126184663006F973B /* WriteDr0.nasm */,
-				9A82ED7226184663006F973B /* DisableCache.nasm */,
-				9A82ED7326184663006F973B /* WriteCr2.nasm */,
-				9A82ED7426184663006F973B /* ReadGs.nasm */,
-				9A82ED7526184663006F973B /* WriteGdtr.nasm */,
-				9A82ED7626184663006F973B /* ReadCs.nasm */,
-				9A82ED7726184663006F973B /* EnableDisableInterrupts.nasm */,
-				9A82ED7826184663006F973B /* WriteCr3.nasm */,
-				9A82ED7926184663006F973B /* WriteDr1.nasm */,
-				9A82ED7A26184663006F973B /* ReadMsr64.c */,
-				9A82ED7B26184663006F973B /* WriteMm3.nasm */,
-				9A82ED7C26184663006F973B /* Thunk16.nasm */,
-				9A82ED7D26184663006F973B /* ReadCr3.nasm */,
-				9A82ED7E26184663006F973B /* ReadDr1.nasm */,
-				9A82ED7F26184663006F973B /* ReadMm3.nasm */,
-				9A82ED8026184663006F973B /* ReadCr0.nasm */,
-				9A82ED8126184663006F973B /* DisableInterrupts.nasm */,
-				9A82ED8226184663006F973B /* ReadDr2.nasm */,
-				9A82ED8326184663006F973B /* Lfence.nasm */,
-				9A82ED8426184663006F973B /* ReadMm0.nasm */,
-				9A82ED8526184663006F973B /* DisablePaging64.nasm */,
-				9A82ED8626184663006F973B /* WriteCr0.nasm */,
-				9A82ED8726184663006F973B /* WriteDr2.nasm */,
-				9A82ED8826184663006F973B /* WriteMm0.nasm */,
-				9A82ED8926184663006F973B /* GccInline.c */,
 				9A82ED8A26184663006F973B /* CpuBreakpoint.c */,
-				9A82ED8B26184663006F973B /* WriteMm1.nasm */,
-				9A82ED8C26184663006F973B /* ReadTr.nasm */,
-				9A82ED8D26184663006F973B /* WriteDr3.nasm */,
-				9A82ED8E26184663006F973B /* ReadMm1.nasm */,
-				9A82ED8F26184663006F973B /* ReadDr3.nasm */,
 				9A82ED9026184663006F973B /* CpuBreakpoint.nasm */,
-				9A82ED9126184663006F973B /* Invd.nasm */,
-				9A82ED9226184663006F973B /* LongJump.nasm */,
-				9A82ED9326184663006F973B /* ReadGdtr.nasm */,
-				9A82ED9426184663006F973B /* Wbinvd.nasm */,
-				9A82ED9526184663006F973B /* ReadEflags.nasm */,
-				9A82ED9626184663006F973B /* WriteMsr64.c */,
-				9A82ED9726184663006F973B /* Non-existing.c */,
-				9A82ED9826184663006F973B /* WriteDr4.nasm */,
-				9A82ED9926184663006F973B /* FlushCacheLine.nasm */,
-				9A82ED9A26184663006F973B /* WriteMm6.nasm */,
-				9A82ED9B26184663006F973B /* ReadLdtr.nasm */,
-				9A82ED9C26184663006F973B /* WriteIdtr.nasm */,
-				9A82ED9D26184663006F973B /* FxSave.nasm */,
-				9A82ED9E26184663006F973B /* Monitor.nasm */,
-				9A82ED9F26184663006F973B /* ReadDr4.nasm */,
-				9A82EDA026184663006F973B /* ReadMm6.nasm */,
-				9A82EDA126184663006F973B /* ReadMsr64.nasm */,
-				9A82EDA226184663006F973B /* ReadMm7.nasm */,
-				9A82EDA326184663006F973B /* ReadDr5.nasm */,
-				9A82EDA426184663006F973B /* ReadSs.nasm */,
-				9A82EDA526184663006F973B /* WriteMm7.nasm */,
 				9A82EDA626184663006F973B /* CpuId.nasm */,
-				9A82EDA726184663006F973B /* WriteDr5.nasm */,
+				9A82ED6C26184663006F973B /* CpuIdEx.nasm */,
+				9A82ED5D26184663006F973B /* CpuPause.nasm */,
+				9A82ED7226184663006F973B /* DisableCache.nasm */,
+				9A82ED8126184663006F973B /* DisableInterrupts.nasm */,
+				9A82ED8526184663006F973B /* DisablePaging64.nasm */,
+				9A82ED6B26184663006F973B /* EnableCache.nasm */,
+				9A82ED7726184663006F973B /* EnableDisableInterrupts.nasm */,
+				9A82ED6F26184663006F973B /* EnableInterrupts.nasm */,
+				9A82ED9926184663006F973B /* FlushCacheLine.nasm */,
+				9A82ED5A26184663006F973B /* FxRestore.nasm */,
+				9A82ED9D26184663006F973B /* FxSave.nasm */,
+				9A82ED8926184663006F973B /* GccInline.c */,
+				9A82ED9126184663006F973B /* Invd.nasm */,
+				9A82ED8326184663006F973B /* Lfence.nasm */,
+				9A82ED9226184663006F973B /* LongJump.nasm */,
+				9A82ED9E26184663006F973B /* Monitor.nasm */,
+				9A82ED5726184663006F973B /* Mwait.nasm */,
+				9A82ED5426184663006F973B /* Nasm.inc */,
+				9A82ED9726184663006F973B /* Non-existing.c */,
+				9A82ED7026184663006F973B /* RdRand.nasm */,
+				9A82ED8026184663006F973B /* ReadCr0.nasm */,
+				9A82ED6A26184663006F973B /* ReadCr2.nasm */,
+				9A82ED7D26184663006F973B /* ReadCr3.nasm */,
+				9A82ED5E26184663006F973B /* ReadCr4.nasm */,
+				9A82ED7626184663006F973B /* ReadCs.nasm */,
+				9A82ED6826184663006F973B /* ReadDr0.nasm */,
+				9A82ED7E26184663006F973B /* ReadDr1.nasm */,
+				9A82ED8226184663006F973B /* ReadDr2.nasm */,
+				9A82ED8F26184663006F973B /* ReadDr3.nasm */,
+				9A82ED9F26184663006F973B /* ReadDr4.nasm */,
+				9A82EDA326184663006F973B /* ReadDr5.nasm */,
+				9A82ED5C26184663006F973B /* ReadDr6.nasm */,
+				9A82ED6026184663006F973B /* ReadDr7.nasm */,
+				9A82ED5926184663006F973B /* ReadDs.nasm */,
+				9A82ED9526184663006F973B /* ReadEflags.nasm */,
+				9A82ED6926184663006F973B /* ReadEs.nasm */,
+				9A82ED5826184663006F973B /* ReadFs.nasm */,
+				9A82ED9326184663006F973B /* ReadGdtr.nasm */,
+				9A82ED7426184663006F973B /* ReadGs.nasm */,
+				9A82ED6426184663006F973B /* ReadIdtr.nasm */,
+				9A82ED9B26184663006F973B /* ReadLdtr.nasm */,
+				9A82ED8426184663006F973B /* ReadMm0.nasm */,
+				9A82ED8E26184663006F973B /* ReadMm1.nasm */,
+				9A82ED6726184663006F973B /* ReadMm2.nasm */,
+				9A82ED7F26184663006F973B /* ReadMm3.nasm */,
+				9A82ED5B26184663006F973B /* ReadMm4.nasm */,
+				9A82ED6226184663006F973B /* ReadMm5.nasm */,
+				9A82EDA026184663006F973B /* ReadMm6.nasm */,
+				9A82EDA226184663006F973B /* ReadMm7.nasm */,
+				9A82ED7A26184663006F973B /* ReadMsr64.c */,
+				9A82EDA126184663006F973B /* ReadMsr64.nasm */,
 				9A82EDA826184663006F973B /* ReadPmc.nasm */,
+				9A82EDA426184663006F973B /* ReadSs.nasm */,
+				9A82ED8C26184663006F973B /* ReadTr.nasm */,
 				9A82EDA926184663006F973B /* ReadTsc.nasm */,
+				9A82ED6D26184663006F973B /* SetJump.nasm */,
+				9A82ED6126184663006F973B /* SwitchStack.nasm */,
+				9A82ED7C26184663006F973B /* Thunk16.nasm */,
+				9A82ED9426184663006F973B /* Wbinvd.nasm */,
+				9A82ED8626184663006F973B /* WriteCr0.nasm */,
+				9A82ED7326184663006F973B /* WriteCr2.nasm */,
+				9A82ED7826184663006F973B /* WriteCr3.nasm */,
+				9A82ED5626184663006F973B /* WriteCr4.nasm */,
+				9A82ED7126184663006F973B /* WriteDr0.nasm */,
+				9A82ED7926184663006F973B /* WriteDr1.nasm */,
+				9A82ED8726184663006F973B /* WriteDr2.nasm */,
+				9A82ED8D26184663006F973B /* WriteDr3.nasm */,
+				9A82ED9826184663006F973B /* WriteDr4.nasm */,
+				9A82EDA726184663006F973B /* WriteDr5.nasm */,
+				9A82ED5326184663006F973B /* WriteDr6.nasm */,
+				9A82ED6526184663006F973B /* WriteDr7.nasm */,
+				9A82ED7526184663006F973B /* WriteGdtr.nasm */,
+				9A82ED9C26184663006F973B /* WriteIdtr.nasm */,
+				9A82ED5F26184663006F973B /* WriteLdtr.nasm */,
+				9A82ED8826184663006F973B /* WriteMm0.nasm */,
+				9A82ED8B26184663006F973B /* WriteMm1.nasm */,
+				9A82ED6E26184663006F973B /* WriteMm2.nasm */,
+				9A82ED7B26184663006F973B /* WriteMm3.nasm */,
+				9A82ED5226184663006F973B /* WriteMm4.nasm */,
+				9A82ED6626184663006F973B /* WriteMm5.nasm */,
+				9A82ED9A26184663006F973B /* WriteMm6.nasm */,
+				9A82EDA526184663006F973B /* WriteMm7.nasm */,
+				9A82ED9626184663006F973B /* WriteMsr64.c */,
+				9A82ED6326184663006F973B /* WriteMsr64.nasm */,
+				9A82ED5526184663006F973B /* WriteTr.nasm */,
 			);
 			path = X64;
 			sourceTree = "<group>";
@@ -12799,6 +12728,8 @@
 		9A82FCA726184686006F973B /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A0FF4032B0BB02C00F9BC7C /* MemoryTracker_test.cpp */,
+				9A0FF4022B0BB02C00F9BC7C /* MemoryTracker_test.h */,
 				9A39C8B12816BFA8004B3DCE /* guid_tests.cpp */,
 				9A39C8B22816BFA9004B3DCE /* guid_tests.h */,
 				9A071C2A26196CA40007CC44 /* xml_lite-reapeatingdict-test.cpp */,
@@ -12982,7 +12913,6 @@
 			isa = PBXGroup;
 			children = (
 				9A87859926186300000B9362 /* CloverMock */,
-				9A8785A226186300000B9362 /* Libs */,
 				9A8785A126186300000B9362 /* ReadmeJief.txt */,
 				9A87860126186301000B9362 /* UefiMock */,
 				9A87860026186301000B9362 /* xcode_utf_fixed.cpp */,
@@ -13023,146 +12953,6 @@
 				9A87859F26186300000B9362 /* MemLogLib.c */,
 			);
 			path = MemLogLibDefault;
-			sourceTree = "<group>";
-		};
-		9A8785A226186300000B9362 /* Libs */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785A326186300000B9362 /* OC */,
-				9A8785D926186301000B9362 /* Library */,
-				9A8785E126186301000B9362 /* MdePkg */,
-				9A8785F626186301000B9362 /* CloverEFI */,
-				9A8785F826186301000B9362 /* MdeModulePkg */,
-				9A8785FC26186301000B9362 /* Autogen */,
-			);
-			path = Libs;
-			sourceTree = "<group>";
-		};
-		9A8785A326186300000B9362 /* OC */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785B226186301000B9362 /* ControlMsrE2.lib */,
-				9A8785CB26186301000B9362 /* OcAcpiLib.lib */,
-				9A8785C426186301000B9362 /* OcAfterBootCompatLib.lib */,
-				9A8785C026186301000B9362 /* OcApfsLib.lib */,
-				9A8785D726186301000B9362 /* OcAppleBootPolicyLib.lib */,
-				9A8785AE26186301000B9362 /* OcAppleChunklistLib.lib */,
-				9A8785CC26186301000B9362 /* OcAppleDiskImageLib.lib */,
-				9A8785AA26186300000B9362 /* OcAppleEventLib.lib */,
-				9A8785C626186301000B9362 /* OcAppleImageVerificationLib.lib */,
-				9A8785CA26186301000B9362 /* OcAppleImg4Lib.lib */,
-				9A8785BA26186301000B9362 /* OcAppleKernelLib.lib */,
-				9A8785B326186301000B9362 /* OcAppleKeyMapLib.lib */,
-				9A8785BB26186301000B9362 /* OcAppleKeysLib.lib */,
-				9A8785BE26186301000B9362 /* OcAppleRamDiskLib.lib */,
-				9A8785D826186301000B9362 /* OcAppleSecureBootLib.lib */,
-				9A8785D026186301000B9362 /* OcAppleUserInterfaceThemeLib.lib */,
-				9A8785AC26186300000B9362 /* OcAudioLib.lib */,
-				9A8785C926186301000B9362 /* OcBootManagementLib.lib */,
-				9A8785C526186301000B9362 /* OcCompressionLib.lib */,
-				9A8785A626186300000B9362 /* OcConfigurationLib.lib */,
-				9A8785B426186301000B9362 /* OcConsoleLib.lib */,
-				9A8785B726186301000B9362 /* OcCpuLib.lib */,
-				9A8785AB26186300000B9362 /* OcCryptoLib.lib */,
-				9A8785A426186300000B9362 /* OcDataHubLib.lib */,
-				9A8785B626186301000B9362 /* OcDebugLogLib.lib */,
-				9A8785B926186301000B9362 /* OcDevicePathLib.lib */,
-				9A8785AD26186300000B9362 /* OcDevicePropertyLib.lib */,
-				9A8785D126186301000B9362 /* OcDeviceTreeLib.lib */,
-				9A8785D326186301000B9362 /* OcDriverConnectionLib.lib */,
-				9A8785CF26186301000B9362 /* OcFileLib.lib */,
-				9A8785A726186300000B9362 /* OcFirmwareVolumeLib.lib */,
-				9A8785B826186301000B9362 /* OcGuardLib.lib */,
-				9A8785D526186301000B9362 /* OcHashServicesLib.lib */,
-				9A8785BC26186301000B9362 /* OcInputLib.lib */,
-				9A8785CD26186301000B9362 /* OcMachoLib.lib */,
-				9A8785C826186301000B9362 /* OcMacInfoLib.lib */,
-				9A8785C726186301000B9362 /* OcMemoryLib.lib */,
-				9A8785D626186301000B9362 /* OcMiscLib.lib */,
-				9A8785D226186301000B9362 /* OcOSInfoLib.lib */,
-				9A8785BF26186301000B9362 /* OcPeCoffLib.lib */,
-				9A8785C326186301000B9362 /* OcRngLib.lib */,
-				9A8785B526186301000B9362 /* OcRtcLib.lib */,
-				9A8785C226186301000B9362 /* OcSerializeLib.lib */,
-				9A8785C126186301000B9362 /* OcSmbiosLib.lib */,
-				9A8785CE26186301000B9362 /* OcSmcLib.lib */,
-				9A8785A826186300000B9362 /* OcStorageLib.lib */,
-				9A8785AF26186301000B9362 /* OcStringLib.lib */,
-				9A8785B026186301000B9362 /* OcTemplateLib.lib */,
-				9A8785B126186301000B9362 /* OcUnicodeCollationEngGenericLib.lib */,
-				9A8785A926186300000B9362 /* OcVirtualFsLib.lib */,
-				9A8785A526186300000B9362 /* OcXmlLib.lib */,
-				9A8785D426186301000B9362 /* OpenCore.lib */,
-				9A8785BD26186301000B9362 /* OpenRuntime.lib */,
-			);
-			path = OC;
-			sourceTree = "<group>";
-		};
-		9A8785D926186301000B9362 /* Library */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785DA26186301000B9362 /* VideoBiosPatchLib.lib */,
-				9A8785DB26186301000B9362 /* VBoxPeCoffLib.lib */,
-				9A8785DC26186301000B9362 /* DuetTimerLib.lib */,
-				9A8785DE26186301000B9362 /* OpensslLib.lib */,
-				9A8785DF26186301000B9362 /* HdaDevicesLib.lib */,
-				9A8785E026186301000B9362 /* WaveLib.lib */,
-			);
-			path = Library;
-			sourceTree = "<group>";
-		};
-		9A8785E126186301000B9362 /* MdePkg */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785E226186301000B9362 /* BasePciCf8Lib.lib */,
-				9A8785E326186301000B9362 /* UefiApplicationEntryPoint.lib */,
-				9A8785E426186301000B9362 /* BaseLib.lib */,
-				9A8785E526186301000B9362 /* UefiRuntimeServicesTableLib.lib */,
-				9A8785E626186301000B9362 /* BaseMemoryLib.lib */,
-				9A8785E726186301000B9362 /* BaseIoLibIntrinsic.lib */,
-				9A8785E826186301000B9362 /* DxeServicesLib.lib */,
-				9A8785E926186301000B9362 /* BaseCpuLib.lib */,
-				9A8785EA26186301000B9362 /* UefiLib.lib */,
-				9A8785EB26186301000B9362 /* PeCoffExtraActionLibNull.lib */,
-				9A8785EC26186301000B9362 /* UefiMemoryAllocationLib.lib */,
-				9A8785ED26186301000B9362 /* UefiFileHandleLib.lib */,
-				9A8785EE26186301000B9362 /* DxeHobLib.lib */,
-				9A8785EF26186301000B9362 /* UefiBootServicesTableLib.lib */,
-				9A8785F026186301000B9362 /* BaseDebugLibSerialPort.lib */,
-				9A8785F126186301000B9362 /* DxeServicesTableLib.lib */,
-				9A8785F226186301000B9362 /* BasePciLibCf8.lib */,
-				9A8785F326186301000B9362 /* BasePrintLib.lib */,
-				9A8785F426186301000B9362 /* UefiDevicePathLib.lib */,
-				9A8785F526186301000B9362 /* BaseDebugPrintErrorLevelLib.lib */,
-			);
-			path = MdePkg;
-			sourceTree = "<group>";
-		};
-		9A8785F626186301000B9362 /* CloverEFI */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785F726186301000B9362 /* MtrrLib.lib */,
-			);
-			path = CloverEFI;
-			sourceTree = "<group>";
-		};
-		9A8785F826186301000B9362 /* MdeModulePkg */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785F926186301000B9362 /* BasePlatformHookLibNull.lib */,
-				9A8785FA26186301000B9362 /* BaseSerialPortLib16550.lib */,
-				9A8785FB26186301000B9362 /* FrameBufferBltLib.lib */,
-			);
-			path = MdeModulePkg;
-			sourceTree = "<group>";
-		};
-		9A8785FC26186301000B9362 /* Autogen */ = {
-			isa = PBXGroup;
-			children = (
-				9A8785FD26186301000B9362 /* AutoGen.h */,
-				9A8785FE26186301000B9362 /* AutoGen.c */,
-			);
-			path = Autogen;
 			sourceTree = "<group>";
 		};
 		9A87860126186301000B9362 /* UefiMock */ = {
@@ -13320,7 +13110,7 @@
 		9A9223252402FD1000483CBA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = Jief_Machak;
 				TargetAttributes = {
 					9A92232C2402FD1000483CBA = {
@@ -13361,6 +13151,7 @@
 				9A82FE8E26184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB326187478000B9362 /* b64cdecode.cpp in Sources */,
 				9A071C1D26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
+				9A0FF4002B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */,
 				9A82FE6A26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5626184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A82FEA626184688006F973B /* TagDate.cpp in Sources */,
@@ -13391,6 +13182,7 @@
 				9A8200B226184688006F973B /* XBuffer.cpp in Sources */,
 				9A82FE4E26184688006F973B /* strcmp_test.cpp in Sources */,
 				9A82FE4A26184688006F973B /* MacOsVersion_test.cpp in Sources */,
+				9A0FF4062B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */,
 				9A82FE2E26184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9626184688006F973B /* base64.cpp in Sources */,
 				9A3D2C64261855D000F0D7A1 /* BasicIO.cpp in Sources */,
@@ -13435,6 +13227,7 @@
 				9A82FE9026184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB426187478000B9362 /* b64cdecode.cpp in Sources */,
 				9A071C1E26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
+				9A0FF4012B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */,
 				9A82FE6C26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5826184688006F973B /* XStringArray_test.cpp in Sources */,
 				9A82FEA826184688006F973B /* TagDate.cpp in Sources */,
@@ -13465,6 +13258,7 @@
 				9A8200B426184688006F973B /* XBuffer.cpp in Sources */,
 				9A82FE5026184688006F973B /* strcmp_test.cpp in Sources */,
 				9A82FE4C26184688006F973B /* MacOsVersion_test.cpp in Sources */,
+				9A0FF4072B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */,
 				9A82FE3026184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9826184688006F973B /* base64.cpp in Sources */,
 				9A3D2C66261855D000F0D7A1 /* BasicIO.cpp in Sources */,
@@ -13509,6 +13303,7 @@
 				9A82FE6326184688006F973B /* XObjArray_tests.cpp in Sources */,
 				9A82FE8F26184688006F973B /* TagFloat.cpp in Sources */,
 				9A878CB226187478000B9362 /* b64cdecode.cpp in Sources */,
+				9A0FF3FF2B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */,
 				9A071C1C26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
 				9A82FE6B26184688006F973B /* strncmp_test.cpp in Sources */,
 				9A82FE5726184688006F973B /* XStringArray_test.cpp in Sources */,
@@ -13539,6 +13334,7 @@
 				9A87860C26186301000B9362 /* MemLogLib.c in Sources */,
 				9A8200B326184688006F973B /* XBuffer.cpp in Sources */,
 				9A82FE4F26184688006F973B /* strcmp_test.cpp in Sources */,
+				9A0FF4052B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */,
 				9A82FE4B26184688006F973B /* MacOsVersion_test.cpp in Sources */,
 				9A82FE2F26184688006F973B /* XBuffer_tests.cpp in Sources */,
 				9A82FE9726184688006F973B /* base64.cpp in Sources */,
@@ -13583,6 +13379,7 @@
 				9A82009D26184688006F973B /* XStringArray.cpp in Sources */,
 				9A82FEA126184688006F973B /* TagDict.cpp in Sources */,
 				9A071C1B26196C4B0007CC44 /* XmlLiteParser.cpp in Sources */,
+				9A0FF3FE2B0BB00D00F9BC7C /* MemoryTracker.cpp in Sources */,
 				9A82FE3526184688006F973B /* printf_lite-test.cpp in Sources */,
 				9A878CB126187478000B9362 /* b64cdecode.cpp in Sources */,
 				9A82FF3526184688006F973B /* MacOsVersion.cpp in Sources */,
@@ -13613,6 +13410,7 @@
 				9A82FE7126184688006F973B /* XString_test.cpp in Sources */,
 				9A82002526184688006F973B /* FloatLib.cpp in Sources */,
 				9A82FE6126184688006F973B /* XObjArray_tests.cpp in Sources */,
+				9A0FF4042B0BB02D00F9BC7C /* MemoryTracker_test.cpp in Sources */,
 				9A82FF5D26184688006F973B /* MemoryOperation.c in Sources */,
 				9A8200A526184688006F973B /* unicode_conversions.cpp in Sources */,
 				9A82FE8D26184688006F973B /* TagFloat.cpp in Sources */,
@@ -13654,8 +13452,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13665,7 +13465,9 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -13676,8 +13478,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13688,7 +13492,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -13698,6 +13504,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -13707,6 +13514,7 @@
 					"wcsstr=wcsstr_fixed",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",
@@ -13720,8 +13528,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",
@@ -13765,6 +13575,7 @@
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES_AGGRESSIVE;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -13776,6 +13587,7 @@
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -13895,6 +13707,7 @@
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES_AGGRESSIVE;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SEMICOLON_BEFORE_METHOD_BODY = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -13906,6 +13719,7 @@
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -13991,6 +13805,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"wcslen=wcslen_fixed",
@@ -13999,6 +13814,7 @@
 					"wcsstr=wcsstr_fixed",
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",
@@ -14012,7 +13828,9 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",

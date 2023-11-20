@@ -9,6 +9,10 @@
 #ifndef Platform_h_h
 #define Platform_h_h
 
+
+// Replacing uintptr_t with unsigned long long doesn't work anymore with stdlic++ with xcode 12.5 (or probably some before)
+// seems to work again in xcode 14. (don't know for 13)
+
 #ifndef _UINTPTR_T
 #define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
 #endif
@@ -22,33 +26,69 @@
 
 //#pragma clang diagnostic ignored "-Wc99-extensions"
 
+// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
+typedef unsigned long long  uintptr_t;
+// Replacement of printf format
+#include <inttypes.h>
+#undef PRIdPTR
+#undef PRIiPTR
+#undef PRIoPTR
+#undef PRIuPTR
+#undef PRIxPTR
+#undef PRIXPTR
+#  define PRIdPTR       "lld"
+#  define PRIiPTR       "lli"
+#  define PRIoPTR       "llo"
+#  define PRIuPTR       "llu"
+#  define PRIxPTR       "llx"
+#  define PRIXPTR       "llX"
+
+//#ifdef __cplusplus
+//#include "../../cpp_foundation/XBool.h"
+//#endif
+
+#include "posix/posix.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <Uefi.h>
-#include <Base.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include "../../../../rEFIt_UEFI/Platform/BootLog.h"
-//#include "BootLog.h"
-#include <Library/DebugLib.h> // this is just to define DEBUG, because Slice wrongly did some #ifdef DEBUG
+#define malloc(size) my_malloc(size)
+#define free(size) my_free(size)
+void* my_malloc(size_t size);
+void my_free(void* p);
+
+//#include <Uefi.h>
+//#include <Base.h>
+//#include <Library/BaseLib.h>
+//#include <Library/BaseMemoryLib.h>
+//#include <Library/MemoryAllocationLib.h>
+////#include "BootLog.h"
+//#include <Library/DebugLib.h> // this is just to define DEBUG, because Slice wrongly did some #ifdef DEBUG
 
 #ifdef __cplusplus
 }
 #endif
 
+#ifdef __cplusplus
+#include "../cpp_util/operatorNewDelete.h"
+#endif
 
-#include <stdio.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <inttypes.h>
-#include <wchar.h>
-#include "posix/posix.h"
+#include <Efi.h>
+#include "posix/posix_additions.h"
+
+//#include <stdio.h>
+//#include <limits.h>
+//#include <stdarg.h>
+//#include <stdint.h>
+//#include <stdbool.h>
+//#include <string.h>
+//#include <inttypes.h>
+//#include <wchar.h>
+//#include "posix/posix.h"
+//
+//#include "../../../../rEFIt_UEFI/Platform/BootLog.h"
+
 
 #include "../../../../rEFIt_UEFI/include/OneLinerMacros.h"
 
@@ -59,16 +99,12 @@ extern "C" {
 //typedef uint8_t bool;
 //#endif
 
-// Replacement of uintptr_t to avoid warning in printf. It needs macro _UINTPTR_T to avoid to standard definition
-typedef unsigned long long  uintptr_t;
-#undef PRIuPTR
-#define PRIuPTR "llu"
-//#define _UINTPTR_T
 
 #include "./posix/abort.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 
 #ifdef __cplusplus
+#include "../../../rEFIt_UEFI/cpp_foundation/apd.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XArray.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
@@ -84,7 +120,8 @@ typedef unsigned long long  uintptr_t;
 #include "../Platform/VersionString.h"
 #include "../Platform/Utils.h"
 #include "../../../rEFIt_UEFI/Platform/Utils.h"
-
+#include "../../../rEFIt_UEFI/Platform/UtilsEFI.h"
+#include "../cpp_util/operatorNewDelete.h"
 #endif
 
 
@@ -111,5 +148,6 @@ EFI_STATUS EFIAPI RefitMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *Syst
 }
 #endif
 
+//static_assert(sizeof(void*)==8, "sizeof(void*)==8");
 
 #endif /* Platform_h_h */

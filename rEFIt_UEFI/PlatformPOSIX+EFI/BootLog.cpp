@@ -11,6 +11,10 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <Efi.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** Prints Number of bytes in a row (hex and ascii). Row size is MaxNumber. */
 void
 PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
@@ -52,7 +56,8 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 	}
 }
 
-XBool gEnableCloverLog = false;
+XBool gEnableCloverLog = true;
+int g_OpeningLogFile = 0;
 
 // Changed MsgLog(...) it now calls this function
 //  with DebugMode == 0. - apianti
@@ -72,6 +77,7 @@ void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
   // Print message to log buffer
   VA_START(Marker, FormatString);
   #if __WCHAR_MAX__ < 0xffff
+    #error TODO :
   #else
     vprintf(FormatString, Marker);
   #endif
@@ -109,7 +115,7 @@ SaveBooterLog (
 
 EFI_STATUS
 SetupBooterLog (
-  BOOLEAN AllowGrownSize
+  XBool AllowGrownSize
   )
 {
   return EFI_SUCCESS;
@@ -138,3 +144,6 @@ void EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...)
   VA_END(Marker);
 }
 
+#ifdef __cplusplus
+}
+#endif

@@ -33,12 +33,7 @@ Headers collection for procedures
 #include "../Platform/BasicIO.h"
 #include "../Platform/VersionString.h"
 #include "../Platform/Utils.h"
-//#include "Settings.h"
-
-#ifndef CLOVERAPPLICATION
-#include "../Platform/Utils.h"
-#endif
-
+#include "../Platform/UtilsEFI.h"
 
 #if defined(_MSC_VER) && !defined(__PRETTY_FUNCTION__)
 #define __PRETTY_FUNCTION__ __FUNCSIG__

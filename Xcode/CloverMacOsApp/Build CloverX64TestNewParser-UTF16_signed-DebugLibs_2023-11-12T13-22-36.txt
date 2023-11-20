@@ -1,0 +1,25 @@
+
+Showing Recent Messages
+
+Prepare build
+note: Building targets in dependency order
+
+
+Building targets in dependency order
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 2b6774c265cfe3de315e98eade02c001
+Build description path: /JiefLand/5.Devel/Clover/Clover-projects/Clover--CloverHackyColor--master.2/Xcode/cpp_tests_new/DerivedData/CloverX64TestNewParser/Build/Intermediates.noindex/XCBuildData/2b6774c265cfe3de315e98eade02c001-desc.xcbuild
+
+
+Build target CloverX64TestNewParser-UTF16_signed-DebugLibs of project CloverX64TestNewParser with configuration Debug
+error: unable to find sdk 'macosx10.14' (in target 'CloverX64TestNewParser-UTF16_signed-DebugLibs' from project 'CloverX64TestNewParser')
+
+
+unable to find sdk 'macosx10.14'
+
+
+
+Build failed    2023/11/12 13:22    0.3 seconds

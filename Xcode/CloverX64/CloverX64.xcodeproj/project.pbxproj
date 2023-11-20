@@ -13,6 +13,15 @@
 		9A0064A82B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
 		9A0064A92B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
 		9A0064AA2B08298E0016E3EB /* MemoryTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0064A42B08298D0016E3EB /* MemoryTracker.h */; };
+		9A0FF4102B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40D2B0BB6C600F9BC7C /* PlatformdataModels.h */; };
+		9A0FF4112B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40D2B0BB6C600F9BC7C /* PlatformdataModels.h */; };
+		9A0FF4122B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40D2B0BB6C600F9BC7C /* PlatformdataModels.h */; };
+		9A0FF4132B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF40E2B0BB6C600F9BC7C /* UtilsEFI.cpp */; };
+		9A0FF4142B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF40E2B0BB6C600F9BC7C /* UtilsEFI.cpp */; };
+		9A0FF4152B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0FF40E2B0BB6C600F9BC7C /* UtilsEFI.cpp */; };
+		9A0FF4162B0BB6C600F9BC7C /* UtilsEFI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40F2B0BB6C600F9BC7C /* UtilsEFI.h */; };
+		9A0FF4172B0BB6C600F9BC7C /* UtilsEFI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40F2B0BB6C600F9BC7C /* UtilsEFI.h */; };
+		9A0FF4182B0BB6C600F9BC7C /* UtilsEFI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0FF40F2B0BB6C600F9BC7C /* UtilsEFI.h */; };
 		9A27545B263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
 		9A27545C263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
 		9A27545D263801930095D456 /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A275455263801920095D456 /* Self.h */; };
@@ -1105,6 +1114,9 @@
 /* Begin PBXFileReference section */
 		9A0064A32B08298D0016E3EB /* MemoryTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryTracker.cpp; sourceTree = "<group>"; };
 		9A0064A42B08298D0016E3EB /* MemoryTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTracker.h; sourceTree = "<group>"; };
+		9A0FF40D2B0BB6C600F9BC7C /* PlatformdataModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformdataModels.h; sourceTree = "<group>"; };
+		9A0FF40E2B0BB6C600F9BC7C /* UtilsEFI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsEFI.cpp; sourceTree = "<group>"; };
+		9A0FF40F2B0BB6C600F9BC7C /* UtilsEFI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilsEFI.h; sourceTree = "<group>"; };
 		9A275455263801920095D456 /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
 		9A275456263801920095D456 /* SelfOem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfOem.h; sourceTree = "<group>"; };
 		9A275457263801930095D456 /* SelfOem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelfOem.cpp; sourceTree = "<group>"; };
@@ -1740,6 +1752,9 @@
 		9A8787E526186896000B9362 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A0FF40D2B0BB6C600F9BC7C /* PlatformdataModels.h */,
+				9A0FF40E2B0BB6C600F9BC7C /* UtilsEFI.cpp */,
+				9A0FF40F2B0BB6C600F9BC7C /* UtilsEFI.h */,
 				9A87881226186896000B9362 /* AcpiPatcher.cpp */,
 				9A87880326186896000B9362 /* AcpiPatcher.h */,
 				9A87881726186896000B9362 /* AmlGenerator.cpp */,
@@ -2144,6 +2159,7 @@
 				9A87891B26186897000B9362 /* printf_lite-test-cpp_conf.h in Headers */,
 				9A8788E526186897000B9362 /* stddef.h in Headers */,
 				9A878A3526186897000B9362 /* TagBool.h in Headers */,
+				9A0FF4102B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */,
 				9A878C0F26186898000B9362 /* MSUEFICADB.h in Headers */,
 				9A878BAF26186898000B9362 /* BmLib.h in Headers */,
 				9A878B4026186897000B9362 /* VersionString.h in Headers */,
@@ -2193,6 +2209,7 @@
 				9A87890626186897000B9362 /* stdio.h in Headers */,
 				9A878ACB26186897000B9362 /* BootOptions.h in Headers */,
 				9A878A9E26186897000B9362 /* sse3_5_patcher.h in Headers */,
+				9A0FF4162B0BB6C600F9BC7C /* UtilsEFI.h in Headers */,
 				9A87894B26186897000B9362 /* strncmp_test.h in Headers */,
 				9A8788DC26186897000B9362 /* stdlib.h in Headers */,
 				9A8789E726186897000B9362 /* TagTypes.h in Headers */,
@@ -2437,6 +2454,7 @@
 				9A878B1726186897000B9362 /* APFS.h in Headers */,
 				9A878C1026186898000B9362 /* MSUEFICADB.h in Headers */,
 				9A878AB126186897000B9362 /* device_inject.h in Headers */,
+				9A0FF4172B0BB6C600F9BC7C /* UtilsEFI.h in Headers */,
 				9A87899726186897000B9362 /* printlib-test.h in Headers */,
 				9A2754AA263802230095D456 /* Config_Devices_Properties.h in Headers */,
 				9A878BB926186898000B9362 /* XImage.h in Headers */,
@@ -2469,6 +2487,7 @@
 				9A878A5426186897000B9362 /* Utils.h in Headers */,
 				9A878A4E26186897000B9362 /* MacOsVersion.h in Headers */,
 				9A8789F726186897000B9362 /* TagKey.h in Headers */,
+				9A0FF4112B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */,
 				9A275495263802230095D456 /* Config_Graphics.h in Headers */,
 				9A878C5526186898000B9362 /* shared_with_menu.h in Headers */,
 				9A87894C26186897000B9362 /* strncmp_test.h in Headers */,
@@ -2645,6 +2664,7 @@
 				9A878B1826186897000B9362 /* APFS.h in Headers */,
 				9A878C1126186898000B9362 /* MSUEFICADB.h in Headers */,
 				9A878AB226186897000B9362 /* device_inject.h in Headers */,
+				9A0FF4182B0BB6C600F9BC7C /* UtilsEFI.h in Headers */,
 				9A87899826186897000B9362 /* printlib-test.h in Headers */,
 				9A2754AB263802230095D456 /* Config_Devices_Properties.h in Headers */,
 				9A878BBA26186898000B9362 /* XImage.h in Headers */,
@@ -2677,6 +2697,7 @@
 				9A878A5526186897000B9362 /* Utils.h in Headers */,
 				9A878A4F26186897000B9362 /* MacOsVersion.h in Headers */,
 				9A8789F826186897000B9362 /* TagKey.h in Headers */,
+				9A0FF4122B0BB6C600F9BC7C /* PlatformdataModels.h in Headers */,
 				9A275496263802230095D456 /* Config_Graphics.h in Headers */,
 				9A878C5626186898000B9362 /* shared_with_menu.h in Headers */,
 				9A87894D26186897000B9362 /* strncmp_test.h in Headers */,
@@ -3008,6 +3029,7 @@
 				9A878C5D26186898000B9362 /* shared_with_menu.cpp in Sources */,
 				9A878A9826186897000B9362 /* PlatformDriverOverride.cpp in Sources */,
 				9A87890326186897000B9362 /* strlen.cpp in Sources */,
+				9A0FF4132B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */,
 				9A878C2A26186898000B9362 /* lockedgraphics.cpp in Sources */,
 				9A878C0926186898000B9362 /* secureboot.cpp in Sources */,
 				9A878B1C26186897000B9362 /* sound.cpp in Sources */,
@@ -3173,6 +3195,7 @@
 				9A8788F826186897000B9362 /* wchar.cpp in Sources */,
 				9A87897C26186897000B9362 /* MacOsVersion_test.cpp in Sources */,
 				9A87898226186897000B9362 /* printlib-test.cpp in Sources */,
+				9A0FF4142B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */,
 				9A878C4626186898000B9362 /* REFIT_MAINMENU_SCREEN.cpp in Sources */,
 				9A878C5E26186898000B9362 /* shared_with_menu.cpp in Sources */,
 				9A878A9926186897000B9362 /* PlatformDriverOverride.cpp in Sources */,
@@ -3340,6 +3363,7 @@
 				9A8788F926186897000B9362 /* wchar.cpp in Sources */,
 				9A87897D26186897000B9362 /* MacOsVersion_test.cpp in Sources */,
 				9A87898326186897000B9362 /* printlib-test.cpp in Sources */,
+				9A0FF4152B0BB6C600F9BC7C /* UtilsEFI.cpp in Sources */,
 				9A878C4726186898000B9362 /* REFIT_MAINMENU_SCREEN.cpp in Sources */,
 				9A878C5F26186898000B9362 /* shared_with_menu.cpp in Sources */,
 				9A878A9A26186897000B9362 /* PlatformDriverOverride.cpp in Sources */,
