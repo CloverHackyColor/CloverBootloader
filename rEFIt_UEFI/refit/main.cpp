@@ -144,14 +144,13 @@ extern EFI_DXE_SERVICES  *gDS;
 VOID
 PrintMemoryMap()
 {
-  EFI_MEMORY_DESCRIPTOR       *MemMap;
+  apd<EFI_MEMORY_DESCRIPTOR*> MemMap;
   UINTN                       MemMapSize;
   UINTN                       MapKey, DescriptorSize;
   UINT32                      DescriptorVersion;
   EFI_STATUS                  Status;
 
   MemMapSize = 0;
-  MemMap     = NULL;
   DescriptorSize = 0;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
   if (Status != EFI_BUFFER_TOO_SMALL) {
@@ -168,8 +167,6 @@ PrintMemoryMap()
   }
 
   OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
-
-  gBS->FreePool(MemMap);
 }
 
 
@@ -1131,7 +1128,6 @@ void LOADER_ENTRY::StartLoader()
       XBool NoContents = false;
       XStringW  infoPlistPath = getKextPlist(&self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
       DBG("InfoPlistPath=%ls\n", infoPlistPath.wc_str());
-      TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPath);
   //    XBool inject = checkOSBundleRequired(dict);
       XBool inject = true;
       if (inject) {
@@ -1144,11 +1140,13 @@ void LOADER_ENTRY::StartLoader()
         } else {
           DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
         }
+        TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPath);
         XString8 execpath = getKextExecPath(&self.getCloverDir(), dirPath, KextEntry.FileName, dict, NoContents);
         if (execpath.notEmpty()) {
           OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, execpath.c_str());
           DBG("assign executable as '%s'\n", execpath.c_str());
         }
+        if ( dict ) dict->ReleaseTag();
       }
 
   #else
@@ -2750,7 +2748,7 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
 #endif
     }
 #ifdef JIEF_DEBUG
-    gBS->Stall(5500000); // to give time to gdb to connect
+    gBS->Stall(2500000); // to give time to gdb to connect
 //  PauseForKey();
 #endif
   }
@@ -3525,6 +3523,7 @@ log_technical_bug("not done yet");
 
   delete ThemeX; // do this before destruct_globals_objects()
   FreePool(BlankLine); // Convert BlankLine to XStringW instead.
+  TagStruct::EmptyCache();
 
 #ifdef CLOVER_BUILD
   destruct_globals_objects(NULL);
