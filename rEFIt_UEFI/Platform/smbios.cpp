@@ -1454,10 +1454,14 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
   XArray<UINT16>& mHandle17 = *mHandle17Ptr;
   XString8   deviceLocator;
   XString8   bankLocator;
+#if defined (__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wvla-extension"
+#endif
   UINT8   channelMap[mMemory17.size()]; // mMemory17.size() == SlotCounts
+#if defined (__clang__)
 #pragma clang diagnostic pop
+#endif
   UINT8   expectedCount = 0;
   UINT8   channels = 2;
   XBool insertingEmpty = true;

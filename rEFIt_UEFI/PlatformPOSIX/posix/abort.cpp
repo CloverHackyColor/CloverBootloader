@@ -38,9 +38,10 @@ static void panic_(const char* format, VA_LIST va)
   printf(FATAL_ERROR_MSG);
   abort();
 }
-
+#if defined (__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-noreturn"
+#endif
 
 void panic(const char* format, ...)
 {
@@ -59,7 +60,9 @@ void panic(const char* format, ...)
   panic_(format, va); // panic doesn't return
 #endif
 }
+#if defined (__clang__)
 #pragma clang diagnostic pop
+#endif
 
 /*
  * Future version to warn about problem but offer the possibility to try to continue
