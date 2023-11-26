@@ -433,12 +433,13 @@ void REFIT_MENU_SCREEN::FreeMenu()
 
 INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN wchar_t Shortcut)
 {
-  if (Shortcut >= 'a' && Shortcut <= 'z')
-    Shortcut -= ('a' - 'A');
+  if (Shortcut >= L'a' && Shortcut <= L'z')
+    Shortcut -= (L'a' - L'A');
   if (Shortcut) {
     for (UINTN i = 0; i < Entries.size(); i++) {
       if (Entries[i].ShortcutDigit == Shortcut ||
           Entries[i].ShortcutLetter == Shortcut) {
+        DBG("found entry %lld because shorcut=%x and ShortcutLetter=%x\n", i, Shortcut, Entries[i].ShortcutLetter);
         return i;
       }
     }
@@ -694,7 +695,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
   //    UINTN         Index;
-  CHAR16        ShortcutEntry;
+  INTN          ShortcutEntry;
   XBool         HaveTimeout = false;
   INTN          TimeoutCountdown = 0;
   UINTN         MenuExit;
@@ -881,7 +882,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       HidePointer(); //ycr.ru
       HaveTimeout = false;
     }
-
+    DBG("key: scancode=0x%x unicode=0x%x\n", key.ScanCode, key.UnicodeChar);
     mAction = ActionNone; //do action once
     // react to key press
     switch (key.ScanCode) {

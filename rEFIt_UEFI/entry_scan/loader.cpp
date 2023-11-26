@@ -909,7 +909,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN XIcon *DriveImage,
                                        IN UINT8 OSType,
                                        IN UINT8 Flags,
-                                       IN char32_t Hotkey,
+                                       IN wchar_t Hotkey,
                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor,
                                        IN UINT8 CustomBoot,
                                        IN const XImage& CustomLogo,
@@ -919,7 +919,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   EFI_DEVICE_PATH       *LoaderDevicePath;
   XStringW               LoaderDevicePathString;
   XStringW               FilePathAsString;
-  CHAR16                ShortcutLetter;
+  wchar_t                ShortcutLetter;
   LOADER_ENTRY          *Entry;
   CONST CHAR8           *indent = "      ";
 
@@ -1085,7 +1085,7 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
         DBG("%s  =>set entry as hibernated\n", indent);
       }
-      ShortcutLetter = 'M';
+      ShortcutLetter = L'M';
       if ( Entry->DisplayedVolName.isEmpty() ) {
         // else no sense to override it with dubious name
         GetOSXVolumeName(Entry);
@@ -1093,12 +1093,12 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
       break;
     case OSTYPE_WIN:
       OSIconName = L"win"_XSW;
-      ShortcutLetter = 'W';
+      ShortcutLetter = L'W';
       break;
     case OSTYPE_WINEFI:
       OSIconName = L"vista,win"_XSW;
       //ShortcutLetter = 'V';
-      ShortcutLetter = 'W';
+      ShortcutLetter = L'W';
       break;
     case OSTYPE_LIN:
     case OSTYPE_LINEFI:
@@ -1109,12 +1109,12 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
         DBG("%slinux image not found\n", indent);
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
       }
-      ShortcutLetter = 'L';
+      ShortcutLetter = L'L';
       break;
     //case OSTYPE_OTHER: 
     case OSTYPE_EFI:
       OSIconName = L"clover"_XSW;
-      ShortcutLetter = 'E';
+      ShortcutLetter = L'E';
       Entry->LoaderType = OSTYPE_OTHER;
       break;
     default:

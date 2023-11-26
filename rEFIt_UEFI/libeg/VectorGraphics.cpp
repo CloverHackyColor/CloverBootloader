@@ -146,9 +146,9 @@ EFI_STATUS XTheme::ParseSVGXTheme(UINT8* buffer, UINTN Size)
   EFI_STATUS      Status;
 
   Icons.setEmpty();
-
+#ifdef JIEF_DEBUG
 displayFreeMemory("XTheme::ParseSVGXTheme begin"_XS8);
-
+#endif
 #if defined(JIEF_DEBUG) && defined(NANOSVG_MEMORY_ALLOCATION_TRACE)
 if ( nsvg__nbDanglingPtr() > 0 ) {
   DBG("There is already dangling ptr. nano svg memory leak test not done\n");
@@ -307,9 +307,9 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
   SVGParser->fontsDB = NULL; // To avoid nsvg__deleteParser to delete it;
   nsvg__deleteParser(SVGParser); // comment out this line and the next to keep the parser memory, in case of doubt that font are dependent.
   SVGParser = NULL;
-
+#ifdef JIEF_DEBUG
   displayFreeMemory("XTheme::ParseSVGXTheme end"_XS8);
-
+#endif
   return EFI_SUCCESS;
 }
 

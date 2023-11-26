@@ -107,8 +107,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
   XStringW           Title = XStringW();
   XBool              Hidden = false;
   UINTN              Row = 0;
-  CHAR16             ShortcutDigit = 0;
-  CHAR16           ShortcutLetter = 0;
+  wchar_t             ShortcutDigit = 0;
+  wchar_t            ShortcutLetter = 0;
   XIcon              Image = 0;
   EG_RECT            Place = EG_RECT();
   ACTION             AtClick = ActionNone;
@@ -145,7 +145,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
   REFIT_ABSTRACT_MENU_ENTRY() {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_) : Title(Title_) {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_) : Title(Title_), AtClick(AtClick_) {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_) : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), AtClick(AtClick_) {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_) : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), AtClick(AtClick_) {};
 
   REFIT_ABSTRACT_MENU_ENTRY(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
   REFIT_ABSTRACT_MENU_ENTRY& operator=(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
@@ -177,7 +177,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  REFIT_MENU_ITEM_RETURN() : REFIT_ABSTRACT_MENU_ENTRY() {};
-	  REFIT_MENU_ITEM_RETURN(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+	  REFIT_MENU_ITEM_RETURN(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_)
 				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, AtClick_)
 				 {};
 	  virtual REFIT_MENU_ITEM_RETURN* getREFIT_MENU_ITEM_RETURN() { return this; };
@@ -187,7 +187,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  REFIT_MENU_ITEM_SHUTDOWN() : REFIT_ABSTRACT_MENU_ENTRY() {};
-	  REFIT_MENU_ITEM_SHUTDOWN(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+	  REFIT_MENU_ITEM_SHUTDOWN(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_)
 				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, AtClick_)
 				 {};
 	  virtual REFIT_MENU_ITEM_SHUTDOWN* getREFIT_MENU_ITEM_SHUTDOWN() { return this; };
@@ -196,7 +196,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	class REFIT_MENU_ITEM_RESET : public REFIT_ABSTRACT_MENU_ENTRY {
 	public:
 	  REFIT_MENU_ITEM_RESET() : REFIT_ABSTRACT_MENU_ENTRY() {};
-	  REFIT_MENU_ITEM_RESET(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+	  REFIT_MENU_ITEM_RESET(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_)
 				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, AtClick_)
 				 {};
 	  virtual REFIT_MENU_ITEM_RESET* getREFIT_MENU_ITEM_RESET() { return this; };
@@ -206,7 +206,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  REFIT_MENU_ITEM_ABOUT() : REFIT_ABSTRACT_MENU_ENTRY() {};
-	  REFIT_MENU_ITEM_ABOUT(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+	  REFIT_MENU_ITEM_ABOUT(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_)
 				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, AtClick_)
 				 {};
 	  virtual REFIT_MENU_ITEM_ABOUT* getREFIT_MENU_ITEM_ABOUT() { return this; };
@@ -215,7 +215,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	class REFIT_MENU_ITEM_OPTIONS : public REFIT_ABSTRACT_MENU_ENTRY {
 	public:
 	  REFIT_MENU_ITEM_OPTIONS() : REFIT_ABSTRACT_MENU_ENTRY() {};
-	  REFIT_MENU_ITEM_OPTIONS(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
+	  REFIT_MENU_ITEM_OPTIONS(const XStringW& Title_, UINTN Row_, wchar_t ShortcutDigit_, wchar_t ShortcutLetter_, ACTION AtClick_)
 				 : REFIT_ABSTRACT_MENU_ENTRY(Title_, Row_, ShortcutDigit_, ShortcutLetter_, AtClick_)
 				 {};
 	  virtual REFIT_MENU_ITEM_OPTIONS* getREFIT_MENU_ITEM_OPTIONS() { return this; };

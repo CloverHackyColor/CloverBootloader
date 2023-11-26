@@ -57,12 +57,13 @@
 
 //the function is not in the class and deals always with MainMenu
 //I made args as pointers to have an ability to call with NULL
-XBool AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& _LoaderTitle, IN REFIT_VOLUME *Volume, IN const XIcon* Image, IN const XIcon* DriveImage, IN char32_t Hotkey, IN XBool CustomEntry)
+XBool AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& _LoaderTitle, IN REFIT_VOLUME *Volume,
+    IN const XIcon* Image, IN const XIcon* DriveImage, IN wchar_t Hotkey, IN XBool CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   XStringW           VolDesc;
-  CHAR16             ShortcutLetter = 0;
+  wchar_t             ShortcutLetter = 0;
 //  INTN               i;
   
 DBG("    AddLegacyEntry:\n");

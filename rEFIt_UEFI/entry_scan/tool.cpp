@@ -81,7 +81,7 @@
 
 STATIC XBool AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XIcon& Image,
-                            IN char32_t ShortcutLetter, IN CONST XString8Array& Options)
+                            IN wchar_t ShortcutLetter, IN CONST XString8Array& Options)
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
@@ -128,7 +128,7 @@ STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   Entry->Title.takeValueFrom(LoaderTitle);
 //  Entry->Tag            = TAG_CLOVER;
   Entry->Row            = 1;
-  Entry->ShortcutLetter = 'C';
+  Entry->ShortcutLetter = L'C';
   Entry->Image          = ThemeX->GetIcon(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
   Entry->LoaderPath      = LoaderPath;

@@ -779,7 +779,9 @@ void LOADER_ENTRY::StartLoader()
   DbgHeader("StartLoader");
 
   DBG("Starting %ls\n", FileDevicePathToXStringW(DevicePath).wc_str());
+#ifdef JIEF_DEBUG
   displayFreeMemory("LOADER_ENTRY::StartLoader()"_XS8);
+#endif
 //  while ( OcCountFreePages(NULL) > 300000  &&  AllocatePages(100) ) /*DBG("Free memory : %lld\n", OcCountFreePages(NULL))*/;
 //  displayFreeMemory();
 
@@ -1728,8 +1730,9 @@ void LOADER_ENTRY::StartLoader()
 
     AllocSmallBlocks(); // shrink memory map;
     PrintMemoryMap();
+#ifdef JIEF_DEBUG
     displayFreeMemory("Just before launching image"_XS8);
-
+#endif
     Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
 
     if ( EFI_ERROR(Status) ) {
@@ -2809,9 +2812,9 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
   MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
   MsgLog("Build id: %s\n", gBuildId.c_str());
   if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
-
+#ifdef JIEF_DEBUG
   displayFreeMemory(""_XS8);
-
+#endif
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets
@@ -2901,6 +2904,11 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
 #if 0
   //testing place
   {
+    DBG(" size CHAR8=%ld\n", sizeof(CHAR8));
+    DBG(" size CHAR16=%ld\n", sizeof(CHAR16));
+    DBG(" size wchar_t=%ld\n", sizeof(wchar_t));
+    DBG(" size char32_t=%ld\n", sizeof(char32_t));
+    DBG(" size char16_t=%ld\n", sizeof(char16_t));
     const CHAR16 aaa[] = L"12345  ";
     const CHAR8 *bbb = "12345  ";
     DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
@@ -2908,8 +2916,8 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
     DBG(" string %s, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", ccc, AsciiStrSize(ccc), AsciiStrLen(ccc), sizeof(ccc), iStrLen(ccc, 10));
     XString8 ddd = "Выход "_XS8;
  //   size_t sizex = ddd.allocatedSize();
-    DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd),
-      ddd.indexOf(ddd.lastChar()));
+    DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(),
+        ddd.sizeInBytes(), sizeof(ddd), ddd.indexOf(ddd.lastChar()));
     CHAR8           compatible[64];
     UINT32 FakeLAN = 0x0030168c;
     UINT32 FakeID = FakeLAN >> 16;
@@ -2926,12 +2934,16 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
         sizeof(void*), sizeof(int), sizeof(long int), sizeof(long long), sizeof(EFI_ALLOCATE_TYPE));
     /*
      Results
-     41:381  0:000   string 12345  , size=16, len=7 sizeof=16 iStrLen=5
-     41:381  0:000   string Выход  , size=13, len=12 sizeof=8 iStrLen=10
-     41:381  0:000   xstring Выход , asize=0, sizeinbyte=11 sizeof=16 lastcharat=5
-     41:381  0:000   FakeLAN = 0x30168c
-     41:381  0:000   Compatible=pci168c,30 strlen=10 sizeof=64 iStrLen=10
-
+     1:200  0:025   size CHAR8=1
+     1:226  0:025   size CHAR16=2
+     1:251  0:024   size wchar_t=2
+     1:275  0:024   size char16_t=2
+     1:381  0:000   string 12345  , size=16, len=7 sizeof=16 iStrLen=5
+     1:381  0:000   string Выход  , size=13, len=12 sizeof=8 iStrLen=10
+     1:381  0:000   xstring Выход , asize=0, sizeinbyte=11 sizeof=16 lastcharat=5
+     1:381  0:000   FakeLAN = 0x30168c
+     1:381  0:000   Compatible=pci168c,30 strlen=10 sizeof=64 iStrLen=10
+     1:430  0:025  void*=8 int=4 long=8 longlong=8 enum=4
      */
   }
 #endif
@@ -3226,7 +3238,9 @@ DefaultIndex = MainMenu.Entries.length()-1; // this should be "Exit Clover"
           GlobalConfig.gThemeChanged = false;
           ThemeX->ClearScreen();
         }
+#ifdef JIEF_DEBUG
 displayFreeMemory("Before RunMainMenu"_XS8);
+#endif
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
  //   DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
@@ -3383,7 +3397,7 @@ log_technical_bug("not done yet");
   #endif // ENABLE_SECURE_BOOT
 //      DBG("come to Clover entry with letter %c\n", ChosenEntry->ShortcutLetter);
       REFIT_MENU_ENTRY_CLOVER* LoaderEntry = ChosenEntry->getREFIT_MENU_ENTRY_CLOVER();
-      if ((ChosenEntry->ShortcutLetter == 'C') || LoaderEntry != NULL ) {     // Clover options
+      if ((ChosenEntry->ShortcutLetter == L'C') || LoaderEntry != NULL ) {     // Clover options
 //        DBG("enter Clover entry\n");
 
         if (LoaderEntry->LoadOptions.notEmpty()) {

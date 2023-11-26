@@ -211,8 +211,9 @@ finish:
     ThemeX->PrepareFont();
   }
   //ThemeX->ClearScreen();
-
+#ifdef JIEF_DEBUG
   displayFreeMemory("InitTheme end"_XS8);
+#endif
   return Status;
 }
 
