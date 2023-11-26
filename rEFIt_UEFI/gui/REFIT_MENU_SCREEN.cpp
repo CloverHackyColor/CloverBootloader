@@ -439,7 +439,7 @@ INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN wchar_t Shortcut)
     for (UINTN i = 0; i < Entries.size(); i++) {
       if (Entries[i].ShortcutDigit == Shortcut ||
           Entries[i].ShortcutLetter == Shortcut) {
-        DBG("found entry %lld because shorcut=%x and ShortcutLetter=%x\n", i, Shortcut, Entries[i].ShortcutLetter);
+//        DBG("found entry %lld because shorcut=%x and ShortcutLetter=%x\n", i, Shortcut, Entries[i].ShortcutLetter);
         return i;
       }
     }
@@ -453,6 +453,7 @@ INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN wchar_t Shortcut)
 //
 UINTN REFIT_MENU_SCREEN::InputDialog()
 {
+  //it's impossible so no matter what to do
 	if ( !Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT() ) {
 		DebugLog(2, "BUG : InputDialog called with !Entries[ScrollState.CurrentSelection].REFIT_MENU_ENTRY_ITEM_ABSTRACT()\n");
 		return 0; // is it the best thing to do ? CpuDeadLog ?
@@ -882,7 +883,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       HidePointer(); //ycr.ru
       HaveTimeout = false;
     }
-    DBG("key: scancode=0x%x unicode=0x%x\n", key.ScanCode, key.UnicodeChar);
+//    DBG("key: scancode=0x%x unicode=0x%x\n", key.ScanCode, key.UnicodeChar);
     mAction = ActionNone; //do action once
     // react to key press
     switch (key.ScanCode) {
