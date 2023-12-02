@@ -64,7 +64,6 @@
 #define fmodf(x,y) ModF(x,y)
 #define acosf(x) AcosF(x)
 #define atan2f(y,x) Atan2F(y,x)
-//#define fabsf(x) ((x >= 0.0f)?x:(-x))
 #define fabsf(x) FabsF(x)
 
 
@@ -76,11 +75,10 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
 {
   int i = Low, j = High;
   NSVGedge Temp;
-//  UINTN Size = sizeof(NSVGedge);
-  int Imed;
-  Imed = (Low + High) / 2; // Central element, just pointer
+
+  int Imed = (Low + High) / 2; // Central element, just pointer
   float med = Array[Imed].y0;
-  //  Temp = (__typeof__(Temp))AllocatePool(sizeof(NSVGedge));
+
   // Sort around center
   while (i <= j) {
     while (Array[i].y0 < med) i++;
@@ -92,7 +90,7 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
       memcpy(&Array[j--], &Temp, sizeof(NSVGedge));
     }
   }
-  //  FreePool(Temp);
+
   // Recursion
   if (j > Low)    nsvg_qsort(Array, Low, j);
   if (High > i)   nsvg_qsort(Array, i, High);
@@ -357,7 +355,7 @@ static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int ty
   NSVGpoint p;
   float firstFDX, firstFDY, secondFDX, secondFDY, thirdFDX, thirdFDY;
   float h, h2, h3;
-  int i;
+
   float control_path_len;
   int N;
 
@@ -414,7 +412,7 @@ static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int ty
   thirdFDY = 6.0f * ay * h3;
 
   /* Compute points at each step */
-  for (i = 0; i < N-1; i++)  {
+  for (int i = 0; i < N-1; i++)  {
     nsvg__addPathPoint(r, &p, NULL, 0);
     p.x += firstFDX;
     p.y += firstFDY;
@@ -437,7 +435,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
 #ifdef DEBUG_TRACE
  DBG("nsvg__flattenShape\n");
 #endif
-  int i, j;
+//  int j;
   NSVGpath* path;
   NSVGpoint pt;
 
@@ -448,7 +446,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
     pt.x = path->pts[0];
     pt.y = path->pts[1];
     nsvg__addPathPoint(r, &pt, xform, 0);
-    for (i = 0; i < path->npts-1; i += 3) {
+    for (int i = 0; i < path->npts-1; i += 3) {
       float* p = &path->pts[i*2];
       nsvg__flattenCubicBez2(r, p, xform, 0);
     }
@@ -456,7 +454,7 @@ static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float* xform
     nsvg__addPathPoint(r, &pt, xform, 0);
 
     // Build edges
-    for (i = 0, j = r->npoints-1; i < r->npoints; j = i++)
+    for (int i = 0, j = r->npoints-1; i < r->npoints; j = i++)
       nsvg__addEdge(r, r->points[j].x, r->points[j].y, r->points[i].x, r->points[i].y);
   }
 }
