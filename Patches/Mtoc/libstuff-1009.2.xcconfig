@@ -1,0 +1,31 @@
+//
+//  libstuff.xcconfig
+//  stuff
+//
+//  Created by Michael Trent on 12/20/18.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// HEADER_SEARCH_PATHS includes the local toolchain headers in order to find
+// "llvm-c/lto.h"
+HEADER_SEARCH_PATHS = ${inherited} ${DT_TOOLCHAIN_DIR}/usr/local/include ${TOOLCHAIN_DIR}/usr/local/include
+
+// libstuff currently requires the LTO_SUPPORT macro to be defined in order to
+// compile support for LTO. This is built non-conditionally, and can probably
+// be factored out of the source code at some future point.
+// LIBSTUFF_C_FLAGS_LTO = -DLTO_SUPPORT
+
+// libstuff builds an "apple_version.c" file that stamps the current project
+// version into the archive. Various cctools commands will print this version
+// upon request. To support this, libstuff passes the value of the
+// CURRENT_PROJECT_VERSION setting into apple_version.c as a #define
+LIBSTUFF_C_FLAGS_VERS = -DCURRENT_PROJECT_VERSION=\"${CURRENT_PROJECT_VERSION}\"
+
+// MacOS and Xcode default toolchain binaries are built with support for
+// re-signing binaries via libcodedirectory.
+// CCTOOLS_C_FLAGS_CODEDIR_YES = -DCODEDIRECTORY_SUPPORT
+// CCTOOLS_C_FLAGS_CODEDIR = ${CCTOOLS_C_FLAGS_CODEDIR_${CCTB_MACOS}${CCTB_XCODE}}
+
+OTHER_CFLAGS = ${inherited} ${LIBSTUFF_C_FLAGS_LTO} ${LIBSTUFF_C_FLAGS_VERS} ${CCTOOLS_C_FLAGS_CODEDIR}
