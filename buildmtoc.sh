@@ -183,6 +183,14 @@ fnCompileMtoc ()
     # Mtoc build
     local cmd logfile
     cd "$CCTOOLS_DIR"
+
+# Replace deprecated DT_TOOLCHAIN_DIR as a workaround for building in Xcode 15
+	xcodeapp=$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)
+	if [[ $xcodeapp == 15.* ]]; then
+		sed -i '' 's/DT_TOOLCHAIN_DIR/TOOLCHAIN_DIR/g' "$CCTOOLS_DIR"/xcode/cctools.xcconfig
+		sed -i '' 's/DT_TOOLCHAIN_DIR/TOOLCHAIN_DIR/g' "$CCTOOLS_DIR"/xcode/libstuff.xcconfig
+		sed -i '' 's/DT_TOOLCHAIN_DIR/TOOLCHAIN_DIR/g' "$CCTOOLS_DIR"/xcode/strip.xcconfig
+	fi
     # Removal of _structs.h needed as a workaround for a bug in cctools-900 or above
     /bin/rm -f ./include/mach/i386/_structs.h
     echo "-  cctools-${CCTOOLS_VERSION} make mtoc..."

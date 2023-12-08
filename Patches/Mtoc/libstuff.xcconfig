@@ -10,7 +10,7 @@
 
 // HEADER_SEARCH_PATHS includes the local toolchain headers in order to find
 // "llvm-c/lto.h"
-HEADER_SEARCH_PATHS = ${inherited} ${DT_TOOLCHAIN_DIR}/usr/local/include
+HEADER_SEARCH_PATHS = ${inherited} ${TOOLCHAIN_DIR}/usr/local/include
 
 // libstuff currently requires the LTO_SUPPORT macro to be defined in order to
 // compile support for LTO. This is built non-conditionally, and can probably
