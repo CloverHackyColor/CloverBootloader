@@ -19,14 +19,32 @@ COL_CYAN="\x1b[36;01m"
 COL_WHITE="\x1b[37;01m"
 COL_BLUE="\x1b[34;01m"
 COL_RESET="\x1b[39;49;00m"
+# ====== Main Window SetUp ======
+osascript <<EOF
+tell application "System Events" to tell application "Finder"
+	tell process "Terminal"
+		set frontmost to true
+	end tell
+end tell
 
+tell application "Terminal"
+	activate
+	set bounds of window 1 to {0, 23, 615, 420}
+	set current settings of window 1 to settings set "Pro"
+	set font name of window 1 to "Monaco"
+	set font size of window 1 to "11"
+	set normal text color of window 1 to {3341, 35186, 50092}
+	set position of first window to {650, 420}
+end tell
+EOF
+# ====== Clover workspace SetUp ======
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
 declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC131}
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 lsha1="not a git repo"
-pyversion=$(echo $COL_CYAN"Installed Python version: "$COL_WHITE$($(which python3) --version))
+pyversion=$(echo $COL_CYAN"Current Python version: "$COL_WHITE$($(which python3) --version))
 pynone=$(echo -e "$COL_RED    Python3 seems missing on this machine, it is required to build Clover ")
 export DIR_OUT=${DIR_OUT:-"$CLOVERROOT"/toolchain/tools/output}
 export DIR_SCT=${DIR_SCT:-${CLOVERROOT}/toolchain/tools/Scripts}
@@ -188,7 +206,7 @@ makeRelease() {
 
   echo "[BUILD CLOVER RELEASE]"
   ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t $MYTOOLCHAIN
-  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN
+  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t $MYTOOLCHAIN	  
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
 		chmod +x "${DIR_TOOLS}"/CloverScripts/postbuild.sh
@@ -196,6 +214,44 @@ makeRelease() {
 		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
   fi
 }
+
+makeReleaseXC() {
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  if [[ -z "$WORKSPACE" ]]; then
+    export EDK_TOOLS_PATH="${PWD}"/BaseTools
+    set +u
+    source ./edksetup.sh BaseTools
+    set -u
+    cd "$CLOVERROOT"
+    WORKSPACE="${PWD}"
+  fi
+
+  echo "[BUILD CLOVER RELEASE WITH XCODE]"
+  local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
+  if [[ "$xrel" < "14.*" ]]; then
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE8
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE8
+  elif [[ "$xrel" == "14.*" ]]; then
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE14
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE14
+  elif [[ "$xrel" == "15.*" ]]; then
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE15
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE15
+  fi
+  # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
+		chmod +x "${DIR_TOOLS}"/CloverScripts/postbuild.sh
+		echo "Running Clover postbuild script"
+		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
+}
+
 
 buildCCPV() {
   cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
@@ -256,6 +312,52 @@ buildClover() {
   fi
 }
 
+buildCloverXC() {
+  checkTools
+
+  # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
+  rm -rf "$CLOVERROOT"/Conf
+  mkdir "$CLOVERROOT"/Conf
+
+  cd "${CLOVERROOT}"
+  if [[ -z "$WORKSPACE" ]]; then
+    export EDK_TOOLS_PATH="${PWD}"/BaseTools
+    set +u
+    source ./edksetup.sh BaseTools
+    set -u
+    cd "$CLOVERROOT"
+    WORKSPACE="${PWD}"
+  fi
+
+  echo "[BUILD CLOVER WITH XCODE]"
+  # Run a custom build script if exist (${DIR_TOOLS}/Scripts/build.sh)
+  # This allow the user to run ebuild.sh with own parameters
+  if [[ -x "${DIR_TOOLS}"/Scripts/build.sh ]]; then
+    echo "Running custom build script"
+    "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  else
+	local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
+    if [[ "$xrel" < "14.*" ]]; then
+  	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE8
+    elif [[ "$xrel" == "14.*" ]]; then
+  	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE14
+    elif [[ "$xrel" == "15.*" ]]; then
+  	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE15
+    fi
+  fi
+  # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
+		chmod +x "${DIR_TOOLS}"/CloverScripts/postbuild.sh
+		echo "Running Clover postbuild script"
+		"${DIR_TOOLS}"/CloverScripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
+  # Run a custom post build script if exist (${DIR_TOOLS}/Scripts/postbuild.sh)
+  if [[ -x "${DIR_TOOLS}"/Scripts/postbuild.sh ]]; then
+    echo "Running postbuild script"
+    "${DIR_TOOLS}"/Scripts/postbuild.sh "${CLOVERROOT}" $MYTOOLCHAIN
+  fi
+}
+
 buildtestsix() {
   checkTools
 
@@ -277,7 +379,7 @@ buildtestsev() {
 
   cd "${CLOVERROOT}"
   echo "[BUILD CLOVERDB]"
-  ./ebuild.sh -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED  -t $MYTOOLCHAIN
+  ./hebuild.sh -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED  -t $MYTOOLCHAIN
 }
 
 
@@ -340,10 +442,18 @@ buildIso() {
 }
 
 makeV2() {
-  cd "${CLOVERROOT}"/CloverPackage
-  echo "[BUILD CloverV2]"
-  make zip
+	#clear
+	export V2=${V2:-${CLOVERROOT}/CloverPackage/CloverV2}
+	if [[ -f $V2/EFI/CLOVER/CLOVERX64.efi ]]; then
+		cd "${CLOVERROOT}"/CloverPackage
+		echo "" && echo -e $COL_CYAN"[BUILD CloverV2]"
+		make zip
+	else
+		echo "" && echo -e $COL_RED"please, Compile Clover first!!"
+		Sleep 3
+	fi
 }
+
 
 checkStatus() {
   if [[ -d .git ]]; then
@@ -495,12 +605,12 @@ mountR/W() {
 
 
 testing() {
-clear
+#clear
 echo
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
 echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e $COL_CYAN"                                     Test Builds"
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"$COL_RESET
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
 echo -e "\n\n\n\n\n\n\n\n\n\n\n"
 
 PS3='
@@ -508,8 +618,8 @@ Please enter your choice: '
 options=( 'test Clover with boot6'
           'test Clover with boot7'
           'test build (no autogen, no boot files)'
-          'back to buildme'
-          'quit')
+          'back to Cloverbuilds'
+          'Exit')
 select opt in "${options[@]}"
  do
     case $opt in
@@ -525,11 +635,11 @@ select opt in "${options[@]}"
       buildCloverTest
       break
     ;;
-    "back to buildme")
+    "back to Cloverbuilds")
       menu
       break
     ;;
-    "quit")
+    "Exit")
       exit
       break
     ;;
@@ -544,62 +654,63 @@ testing
 
 Utilities() {
 echo
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
 echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e $COL_CYAN"                                  External Utilities "
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n\n"
+echo -e $COL_WHITE"                     All Files will be put on Desktop/ClovUtils"
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
+echo -e "\n\n\n\n\n\n\n"
 
 PS3='
-Files will be put on Desktop/ClovUtils: '
-options=( 'Get CloverConfigPlistValidator    '
-          'Get PlistEDPlus  '
-          'Get Hackintool '
-          'Get BitmaskDecode  '
-          'Get MaciASL  '
-          'Get dmidecode  '
-          'Get IOReg-Devices  '
-          'Get NativeDisplayBrightness  '
+Please enter your choice: '
+options=( 'Get CloverConfigPlistValidator		  '
+          'Get PlistEDPlus		'
+          'Get Hackintool		'
+          'Get BitmaskDecode		'
+          'Get MaciASL			'
+          'Get dmidecode		'
+          'Get IOReg-Devices		'
+          'Get NativeDisplayBrightness			  '
           'Get SSDTTime'
           'Get USBMap'
           'Get Xiasl'
           'Get CsrDecode'
           'Get gibMacOS'
           'Get mountR/W'
-          'back to buildme'
-          'quit')
+          'back to Cloverbuilds'
+          'Exit')
 select opt in "${options[@]}"
  do
     case $opt in
-    "Get CloverConfigPlistValidator    ")
+    "Get CloverConfigPlistValidator		  ")
       buildCPV
       break
     ;;
-    "Get PlistEDPlus  ")
+    "Get PlistEDPlus		")
       PlistEDPlus
       break
     ;;
-    "Get Hackintool ")
+    "Get Hackintool		")
       Hackintool
       break
     ;;
-    "Get BitmaskDecode  ")
+    "Get BitmaskDecode		")
       BitmaskDecode
       break
     ;;
-    "Get MaciASL  ")
+    "Get MaciASL			")
       MaciASL
       break
     ;;
-    "Get dmidecode  ")
+    "Get dmidecode		")
       dmidecode
       break
     ;;
-    "Get IOReg-Devices  ")
+    "Get IOReg-Devices		")
       Get-IOReg-Devices
       break
     ;;
-    "Get NativeDisplayBrightness  ")
+    "Get NativeDisplayBrightness			  ")
       NDBrightness
       break
     ;;
@@ -627,11 +738,11 @@ select opt in "${options[@]}"
       mountR/W
       break
     ;;
-    "back to buildme")
-      menu
-      break
+	"back to Cloverbuilds")
+	  menu
+	  break
     ;;
-    "quit")
+    "Exit")
       exit
       break
     ;;
@@ -644,104 +755,55 @@ select opt in "${options[@]}"
 Utilities
 }
 
-menu() {
+Extra() {
+#clear
 echo
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
 if [[ ! -x "$(which python3)" ]]; then
 	echo -e " ${pynone}"
 fi
-echo -e "$COL_GREEN                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
-echo -e "$COL_CYAN              TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme XCODE8')"
+echo -e "$COL_GREEN                           🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "$COL_WHITE                              Default TOOLCHAIN:$COL_CYAN $MYTOOLCHAIN$COL_WHITE "
+echo -e "${COL_WHITE}                     Switch to${COL_CYAN} XCODE${COL_WHITE} can be done on${COL_CYAN} Cloverbuilds"
 if [[ -x "$(which python3)" ]]; then
-	echo -e $COL_GREEN" ------------------- ${pyversion}$COL_GREEN ------------------ "$COL_RESET
-	echo -e "\n\n\n\n\n\n\n\n"
+	echo -e $COL_GREEN" ---------------------- ${pyversion}$COL_GREEN -------------------- "$COL_RESET
+	echo -e "\n\n\n\n\n\n\n\n\n\n"
 else
-echo -e $COL_GREEN" ------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n"
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
+echo -e "\n\n\n\n\n\n\n\n\n"
 fi
 PS3='
 Please enter your choice: '
-options=( 'build Clover'
-          'update Clover'
-          'build Clover with HFSPlus'
-          'make pkg'
-          'make iso'
-          'make app'
-          'build all'
-          'make Release'
-          'test Clover'
-          'check status'
-          'show diff'
-          'open CloverV2/EFI/CLOVER directory'
+options=( 'Cloverbuilds		'
+          'test Clover	'
+          'check status		'
+          'show diff	'
+          'open CloverV2 directory'
           'update Clover (reset changes)'
           'clean BaseTools'
           'Utilities'
-          'quit')
+          'Exit')
 
 select opt in "${options[@]}"
 do
   case $opt in
-    "build Clover")
-      buildClover
+    "Cloverbuilds		")
+      menu
       break
     ;;
-    "update Clover")
-      updateClover
-      break
-    ;;
-    "build Clover with HFSPlus")
-      buildCloverHFSPlus
-      break
-    ;;
-    "make pkg")
- #     buildCCPV
-      BLC
-      buildPkg
-      break
-    ;;
-    "make iso")
-      buildIso
-      break
-    ;;
-    "make app")
-      buildApp withV2
-      break
-    ;;
-    # "make app (with Clover)")
-    #   buildApp withV2
-    #   break
-    # ;;
-    "build all")
-      buildClover
- #     buildCCPV
-      BLC
-      buildPkg
-      buildIso
-      makeV2
-      break
-    ;;
-    "make Release")
-      makeRelease
- #     buildCCPV
-      BLC
-      buildPkg
-      buildIso
-      makeV2
-      break
-    ;;
-    "test Clover")
+    "test Clover	")
       testing
       break
     ;;
-    "check status")
+    "check status	")
       checkStatus
       break
     ;;
-    "show diff")
+    "show diff		")
       showdiff
       break
     ;;
-    "open CloverV2/EFI/CLOVER directory")
+    "open CloverV2 directory")
       if [[ -d "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER ]]; then
         open "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER
       else
@@ -770,7 +832,123 @@ do
       Utilities
       break
     ;;
-    "quit")
+    "Exit")
+      exit 0
+    ;;
+    *)
+      echo "invalid option $REPLY"
+      break
+    ;;
+  esac
+done
+Extra
+}
+
+menu() {
+#clear
+echo
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
+if [[ ! -x "$(which python3)" ]]; then
+	echo -e " ${pynone}"
+fi
+echo -e "$COL_GREEN                           🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "$COL_WHITE                              Default TOOLCHAIN:$COL_CYAN $MYTOOLCHAIN$COL_WHITE "
+echo -e "${COL_WHITE}                     Switch to${COL_CYAN} XCODE${COL_WHITE} select:${COL_CYAN} build (with XCode)"
+echo -e "${COL_WHITE}     Depending on your${COL_CYAN} XCODE version${COL_WHITE} the Toolset will be${COL_CYAN} automatically chosen"
+# echo -e "${COL_WHITE}    Toolset${COL_CYAN} is automatically chosen${COL_WHITE} depending on the${COL_CYAN} XCODE installed version"
+if [[ -x "$(which python3)" ]]; then
+	echo -e $COL_GREEN" ---------------------- ${pyversion}$COL_GREEN -------------------- "$COL_RESET
+	echo -e "\n\n\n\n\n\n\n"
+else
+echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
+echo -e "\n\n\n\n\n\n\n"
+fi
+PS3='
+Please enter your choice: '
+options=( 'build Clover (Default Toolchain)	 '
+          'build all (Default Toolchain)	'
+		  'make Release (Default Toolchain)	'
+		  # 'build Clover with HFSPlus	'
+          'update Clover	'
+          'make pkg	'
+          'make iso	'
+		  'make Clover_V2'
+          'build Clover (with XCode)'
+          'build all (with XCode)'
+		  'make Release (with XCode)'
+		  'build Clover with HFSPlus'
+		  'Extra Options'
+          'Exit')
+
+select opt in "${options[@]}"
+do
+  case $opt in
+    "build Clover (Default Toolchain)	 ")
+      buildClover
+      break
+    ;;
+	"build all (Default Toolchain)	")
+      buildClover
+      BLC
+      buildPkg
+      buildIso
+      makeV2  
+      break
+	;;
+    "build Clover with HFSPlus	")
+      buildCloverHFSPlus
+      break
+    ;;
+    "update Clover	")
+      updateClover
+      break
+    ;;
+    "make pkg	")
+      BLC
+      buildPkg
+      break
+    ;;
+    "make iso	")
+      buildIso
+      break
+    ;;
+    "make Clover_V2")
+      makeV2
+      break
+    ;;
+    "build Clover (with XCode)")
+      buildCloverXC
+      break
+    ;;
+	"build all (with XCode)")
+	  buildCloverXC
+      BLC
+	  buildPkg
+	  buildIso
+	  makeV2
+	  break
+	;;
+    "make Release (Default Toolchain)")
+      makeRelease
+      BLC
+      buildPkg
+      buildIso
+      makeV2
+      break
+    ;;
+	"make Release (with XCode)")
+	 makeReleaseXC
+	 BLC
+	 buildPkg
+	 buildIso
+	 makeV2
+	 break
+	;;
+	"Extra Options")
+	 Extra
+	 break	
+	;;
+    "Exit")
       exit 0
     ;;
     *)
