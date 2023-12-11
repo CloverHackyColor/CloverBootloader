@@ -326,9 +326,11 @@ void GetCPUProperties (void)
       case CPU_MODEL_COMETLAKE_U:
       case CPU_MODEL_TIGERLAKE_C:
       case CPU_MODEL_TIGERLAKE_D:
-      case CPU_MODEL_ALDERLAKE:
       case CPU_MODEL_ROCKETLAKE:
+      case CPU_MODEL_ALDERLAKE:
       case CPU_MODEL_RAPTORLAKE:
+      case CPU_MODEL_ALDERLAKE_ULT:
+      case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_METEORLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);
@@ -525,19 +527,22 @@ void GetCPUProperties (void)
            case CPU_MODEL_TIGERLAKE_D:
            case CPU_MODEL_ALDERLAKE:
            case CPU_MODEL_ROCKETLAKE:
+           case CPU_MODEL_ALDERLAKE_ULT:
+           case CPU_MODEL_RAPTORLAKE_B:
            case CPU_MODEL_RAPTORLAKE:
            case CPU_MODEL_METEORLAKE:
 
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
-             
-             //----test C3 patch
-             msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
-             MsgLog("MSR 0xE2 before patch %08llX\n", msr);
-             if (msr & 0x8000) {
-               MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
-               GlobalConfig.NeedPMfix = true;
+             if (gCPUStructure.Model < 0x90) {
+                 //----test C3 patch
+                 msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
+                 MsgLog("MSR 0xE2 before patch %08llX\n", msr);
+                 if (msr & 0x8000) {
+                   MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
+                   GlobalConfig.NeedPMfix = true;
+                 }
              }
              //   AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
              //   msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
@@ -556,7 +561,8 @@ void GetCPUProperties (void)
                MsgLog("   EIST is locked and %s\n", (msr & _Bit(16))?"enabled":"disabled");
              }
              
-             if (gCPUStructure.Model != CPU_MODEL_GOLDMONT && gCPUStructure.Model != CPU_MODEL_AIRMONT &&
+             if (gCPUStructure.Model != CPU_MODEL_GOLDMONT &&
+            	 gCPUStructure.Model != CPU_MODEL_AIRMONT &&
                  gCPUStructure.Model != CPU_MODEL_AVOTON) {
                msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
                if ((RShiftU64(msr, 16) & 0x01) != 0) {
@@ -1405,6 +1411,8 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_TIGERLAKE_C:
           case CPU_MODEL_TIGERLAKE_D:
           case CPU_MODEL_ALDERLAKE:
+          case CPU_MODEL_ALDERLAKE_ULT:
+          case CPU_MODEL_RAPTORLAKE_B:
           case CPU_MODEL_ROCKETLAKE:
           case CPU_MODEL_RAPTORLAKE:
           case CPU_MODEL_METEORLAKE:
@@ -1656,7 +1664,10 @@ MacModel GetDefaultModel()
         DefaultType = MacPro61;
         break;
       case CPU_MODEL_ALDERLAKE:
+      case CPU_MODEL_ALDERLAKE_ULT:  //???
+      case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_COMETLAKE_S:
+      case CPU_MODEL_ROCKETLAKE:
       case CPU_MODEL_RAPTORLAKE:
       case CPU_MODEL_METEORLAKE:
         DefaultType = MacPro71;

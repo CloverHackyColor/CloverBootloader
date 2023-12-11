@@ -72,14 +72,17 @@
 #define CPU_MODEL_TIGERLAKE_D   0x8D  /* 11h generation Tiger Lake */
 #define CPU_MODEL_KABYLAKE1     0x8E  /* 7h Kabylake Mobile */
 #define CPU_MODEL_ALDERLAKE     0x97  /* 12h generation Alder Lake */
+#define CPU_MODEL_ALDERLAKE_ULT 0x9A  /* 12h generation Alder Lake, i5-12500h */
 #define CPU_MODEL_KABYLAKE2     0x9E  /* 7h CoffeeLake */
 #undef CPU_MODEL_COMETLAKE_S // Jief : mistake in ProcessorInfo.h ?
 #define CPU_MODEL_COMETLAKE_S   0x9F  /* desktop Comet Lake */
 #define CPU_MODEL_COMETLAKE_Y   0xA5  /* 10h Comet Lake */
 #define CPU_MODEL_COMETLAKE_U   0xA6  /* 10h Comet Lake */
 #define CPU_MODEL_ROCKETLAKE    0xA7  /* 11h Rocket Lake */
+#define CPU_MODEL_METEORLAKE    0xAA  /* 14h Meteor Lake */
 #define CPU_MODEL_RAPTORLAKE    0xB7  /* 13h Raptor Lake */
-#define CPU_MODEL_METEORLAKE    0xAA
+#define CPU_MODEL_RAPTORLAKE_B  0xBF  /* 13h Raptor Lake, i5-13400h */
+
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
