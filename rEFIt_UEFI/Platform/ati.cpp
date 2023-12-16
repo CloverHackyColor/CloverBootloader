@@ -33,6 +33,19 @@ static value_t aty_nameparent;
 card_t *card;
 //static value_t aty_model;
 
+#define ATI_LESS 1
+#if ATI_LESS
+const card_config_t card_configs[] = {
+  {NULL,  0},
+  {"Radeon",4},
+};
+
+const radeon_card_info_t radeon_cards[] = {
+    { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",  kNull },
+    { 0x0000,  CHIP_FAMILY_UNKNOW, "AMD Unknown",   kNull  }
+};
+
+#else
 const card_config_t card_configs[] = {
   {NULL,  0},
   /* OLDController */
@@ -956,7 +969,7 @@ const radeon_card_info_t radeon_cards[] = {
 
   { 0x0000,  CHIP_FAMILY_UNKNOW, "AMD Unknown",   kNull  }
 };
-
+#endif
 //native ID for 10.8.3
 /*
  ATI7000
@@ -1192,6 +1205,13 @@ Lexa-based WX 2100, WX 3100 and WX 3200 do NOT work.
 
 */
 
+#if ATI_LESS
+const CHAR8 *chip_family_name[] = {
+  "UNKNOW",
+  "Ellesmere",
+  ""
+};
+#else
 const CHAR8 *chip_family_name[] = {
   "UNKNOW",
   "R420",
@@ -1265,6 +1285,7 @@ const CHAR8 *chip_family_name[] = {
   // Navi
   ""
 };
+#endif
 
 AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE, false, "@0,AAPL,boot-display",  get_bootdisplay_val, NULVAL    },
@@ -2152,11 +2173,11 @@ static XBool init_card(pci_dt_t *pci_dev)
     // if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
 
     // else, match cfg_name with card_configs list and retrive default nr of ports.
-    for (i = 0; i < kCfgEnd; i++) {
-      if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0) {
-        card->ports = card_configs[i].ports; // default
-      }
-    }
+//    for (i = 0; i < kCfgEnd; i++) {
+//      if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0) {
+//        card->ports = card_configs[i].ports; // default
+//      }
+//    }
     DBG("Nr of ports set to framebuffer's default: %d\n", card->ports);
   }
 

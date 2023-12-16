@@ -16,6 +16,8 @@
 
 #include "device_inject.h"
 
+#define IGPU_LESS 1
+
 /*
  ============== Information ===============
  https://en.wikipedia.org/wiki/List_of_Intel_chipsets
@@ -470,7 +472,14 @@ UINT8 mn_HD3000_os_info[20] = {
   0xf0, 0x1f, 0x01, 0x00, 0x00, 0x00, 0x10, 0x07, 0x00, 0x00
 };
 
+#if IGPU_LESS
+static struct gma_gpu_t KnownGPUS[] = {
+  { 0xFFFF, "Intel Unsupported"              }, // common name for unsuported devices
+  { 0x27A2, "Intel GMA 950"                  }, // Mobile - Intel 945GM Express Chipset Family - MacBook1,1/MacBook2,1
+  { 0x2A12, "Intel GMA X3100"                }, // Mobile - Intel 965 Express Chipset Family
 
+};
+#else
 static struct gma_gpu_t KnownGPUS[] = {
   { 0xFFFF, "Intel Unsupported"              }, // common name for unsuported devices
 #if WILL_WORK
@@ -944,6 +953,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x4500, "Intel Jasper Lake"              }, //
 
 };
+#endif
 
 
 CONST CHAR8 *get_gma_model(UINT16 id)
@@ -962,13 +972,13 @@ CONST CHAR8 *get_gma_model(UINT16 id)
 XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildVersion, EFI_FILE* RootDir, pci_dt_t *gma_dev)
 {
   UINTN           j;
-  UINTN           i;
+//  UINTN           i;
   XString8        devicepath;
   CONST CHAR8           *model;
   DevPropDevice   *device = NULL;
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
-  UINT32          DualLink = 1;
+//  UINT32          DualLink = 1;
 //  UINT64          os_version = AsciiOSVersionToUint64(macOSVersion);
   XBool           SetUGAWidth = false;
   XBool           SetUGAHeight = false;
@@ -994,7 +1004,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
 
 	MsgLog("%s [%04hX:%04hX] :: %s\n",
       model, gma_dev->vendor_id, gma_dev->device_id, devicepath.c_str());
-
+#if IGPU_LESS == 0
   // Resolution
   switch (UGAWidth) {
     case 640:
@@ -1324,7 +1334,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
 		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       break;
   }
-
+#endif
   if (!device_inject_string) {
     device_inject_string = devprop_create_string();
   }
@@ -1338,25 +1348,25 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
     return false;
   }
 
-  if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
-    for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
-      if (gSettings.Devices.AddPropertyArray[i].Device != DEV_INTEL) {
-        continue;
-      }
-      Injected = true;
+//  if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+//    for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
+//      if (gSettings.Devices.AddPropertyArray[i].Device != DEV_INTEL) {
+//        continue;
+//      }
+//      Injected = true;
+//
+//      if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
+//        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
+//      } else {
+//        devprop_add_value(device, gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].Value);
+//        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
+//      }
+//    }
+//  }
 
-      if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
-      } else {
-        devprop_add_value(device, gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].Value);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
-      }
-    }
-  }
-
-  if (Injected) {
-    MsgLog("  Additional Intel GFX properties injected, continue\n");
-  }
+//  if (Injected) {
+//    MsgLog("  Additional Intel GFX properties injected, continue\n");
+//  }
 
   if (gSettings.Devices.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
@@ -1388,6 +1398,19 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
     }
   }
 
+#if IGPU_LESS == 1
+
+  if ((gSettings.Graphics.DualLink == 0) || (gSettings.Graphics.DualLink == 1)) {
+    if (gSettings.Graphics.DualLink == 1) {
+      DBG("  DualLink: set to 1\n");
+      devprop_add_value(device, "AAPL01,DualLink", (UINT8*)&gSettings.Graphics.DualLink, 1);
+//      DBG("  AAPL01,DualLink = 1\n");
+    } else {
+      DBG("  DualLink: set to 0\n");
+//      DBG("  AAPL01,DualLink: not used\n");
+    }
+  }
+#else
   // DualLink
   // Low resolution(1366x768-) - DualLink = 0, but no need it
   // High resolution(1400x1050+) - DualLink = 1
@@ -1462,7 +1485,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
       }
       break;
   }
-
+#endif
   if (gSettings.Devices.FakeID.FakeIntel) {
     FakeID = gSettings.Devices.FakeID.FakeIntel >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
@@ -1950,7 +1973,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
       }
       break;
 
-
+#if IGPU_LESS == 0
       //============== 7th generation ============
       //----------------Ivy Bridge----------------
       //GT1
@@ -3341,7 +3364,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
     case 0x4500: // "Intel Jasper Lake"               //
       break;
 
-
+#endif
     default:
 		  DBG("  Intel card id=%hX unsupported, please report to the clover thread\n", gma_dev->device_id);
       return false;

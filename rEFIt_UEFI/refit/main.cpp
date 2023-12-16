@@ -140,6 +140,7 @@ extern void AboutRefit(void);
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 extern EFI_DXE_SERVICES  *gDS;
 
+EFI_PHYSICAL_ADDRESS ExtraSpace = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 
 VOID
 PrintMemoryMap()
@@ -1727,7 +1728,7 @@ void LOADER_ENTRY::StartLoader()
     if (SavePreBootLog) {
       Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
     }
-
+    gBS->FreePages (ExtraSpace, 90000);
     AllocSmallBlocks(); // shrink memory map;
     PrintMemoryMap();
 #ifdef JIEF_DEBUG
@@ -2715,6 +2716,12 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
   gRT       = SystemTable->RuntimeServices;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (void **) &gDS);
   
+
+  Status = gBS->AllocatePages(AllocateMaxAddress,
+                                         EfiACPIReclaimMemory,
+                                         90000,
+                                         &ExtraSpace);
+
   InitBooterLog();
 
 //  ConsoleInHandle = SystemTable->ConsoleInHandle;

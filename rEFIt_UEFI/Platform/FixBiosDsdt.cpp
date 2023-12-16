@@ -175,7 +175,12 @@ struct net_chipsets_t {
   UINT32 id;
   CONST CHAR8  *name;
 };
-
+#define NET_LESS 1
+#if NET_LESS == 1
+static struct net_chipsets_t NetChipsets[] = {
+  { 0x00000000, "Unknown" },
+};
+#else
 static struct net_chipsets_t NetChipsets[] = {
   { 0x00000000, "Unknown" },
   // 8169
@@ -222,7 +227,7 @@ static struct net_chipsets_t NetChipsets[] = {
   // Atheros AR8151 Ethernet
   { 0x19691083, "Qualcomm Atheros AR8151 v2.0 Gigabit Ethernet" },
 };
-
+#endif
 struct ide_chipsets_t {
     UINT32 id;
 };

@@ -73,6 +73,7 @@
 #define DBG(...) DebugLog(DEBUG_NVIDIA, __VA_ARGS__)
 #endif
 
+#define NVIDIA_LESS 1
 CHAR8 generic_name[128];
 
 const CHAR8 *nvidia_compatible_0[]        =  { "@0,compatible",  "NVDA,NVMac"    };
@@ -116,6 +117,26 @@ const UINT8  pwm_info[] = {
 };
 #define PWM_LEN ( sizeof(pwm_info) / sizeof(UINT8) )
 
+#if NVIDIA_LESS == 1
+static const nvidia_pci_info_t nvidia_card_vendors[] = {
+    { 0x106B0000,  "Apple" },
+};
+
+static const nvidia_pci_info_t nvidia_card_generic[] = {
+  // 0000 - 0040
+  { 0x10DE0000,  "GeForce" },
+};
+
+static nvidia_card_info_t nvidia_card_exceptions[] = {
+  /* ========================================================================================
+   * Layout is device(VendorId + DeviceId), subdev (SubvendorId + SubdeviceId), display name.
+   * ========================================================================================
+   */
+  /* ------ Specific DeviceID and SubDevID. ------ */
+  // 0000 - 00FF
+  { 0x10DE0040,  0x10438178,  "Asus V9999 Ultra V62.11", 0 },
+};
+#else
 static const nvidia_pci_info_t nvidia_card_vendors[] = {
   { 0x10190000,  "Elitegroup" },
   { 0x10250000,  "Acer" },
@@ -1664,6 +1685,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
 
   { 0x10DE124D,  0x146210CC,  "MSi GeForce GT 635M", 0 }
 };
+#endif
 
 EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, void* rom, UINT16 arch)
 {
