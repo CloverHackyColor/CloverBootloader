@@ -198,6 +198,7 @@
   OcFlexArrayLib|OpenCorePkg/Library/OcFlexArrayLib/OcFlexArrayLib.inf
   OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf
   OcMemoryLib|OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf
+# OcMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   OcMiscLib|OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf
   OcOSInfoLib|OpenCorePkg/Library/OcOSInfoLib/OcOSInfoLib.inf
 #  OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
@@ -372,10 +373,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+ # OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
+ #   <BuildOptions>
+ #     *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+ # }
   OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)

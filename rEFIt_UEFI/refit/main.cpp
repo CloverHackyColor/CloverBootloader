@@ -142,32 +142,73 @@ extern EFI_DXE_SERVICES  *gDS;
 
 EFI_PHYSICAL_ADDRESS ExtraSpace = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 
+//VOID
+//PrintMemoryMap()
+//{
+//  apd<EFI_MEMORY_DESCRIPTOR*> MemMap;
+//  UINTN                       MemMapSize;
+//  UINTN                       MapKey, DescriptorSize;
+//  UINT32                      DescriptorVersion;
+//  EFI_STATUS                  Status;
+//
+//  MemMapSize = 0;
+//  DescriptorSize = 0;
+//  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+//  if (Status != EFI_BUFFER_TOO_SMALL) {
+//    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+//    return;
+//  }
+//  MemMapSize += EFI_PAGE_SIZE;
+//  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
+//
+//  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+//  if ( EFI_ERROR(Status) ) {
+//    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
+//    return;
+//  }
+//
+//  OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
+//}
+
 VOID
-PrintMemoryMap()
+PrintMemoryMap (
+  VOID
+  )
 {
-  apd<EFI_MEMORY_DESCRIPTOR*> MemMap;
-  UINTN                       MemMapSize;
-  UINTN                       MapKey, DescriptorSize;
-  UINT32                      DescriptorVersion;
-  EFI_STATUS                  Status;
+  EFI_MEMORY_DESCRIPTOR       *MemMap;
+  EFI_MEMORY_DESCRIPTOR       *MemMapPtr;
+  UINTN                       MemMapSize = 0;
+  UINTN                       MapKey = 0, DescriptorSize = 0;
+  UINT32                      DescriptorVersion = 0;
+  UINT64                      Bytes;
+  EFI_STATUS                  Status = EFI_SUCCESS;
 
   MemMapSize = 0;
-  DescriptorSize = 0;
+  MemMap     = NULL;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-  if (Status != EFI_BUFFER_TOO_SMALL) {
-    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
-    return;
-  }
+//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
   MemMapSize += EFI_PAGE_SIZE;
-  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
-
+  Status = gBS->AllocatePool (EfiBootServicesData, MemMapSize, (VOID**)&MemMap);
+//  ASSERT (Status == EFI_SUCCESS);
+  if (EFI_ERROR(Status)) return;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-  if ( EFI_ERROR(Status) ) {
-    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
-    return;
+//  ASSERT (Status == EFI_SUCCESS);
+  MemMapPtr = MemMap;
+
+//  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
+
+  for (UINTN Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
+    Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
+    DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
+          MemMap->PhysicalStart,
+          MemMap->PhysicalStart + Bytes - 1,
+          MemMap->NumberOfPages,
+          MemMap->Attribute,
+          (UINTN)MemMap->Type));
+    MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
   }
 
-  OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
+  gBS->FreePool(MemMapPtr);
 }
 
 
@@ -215,32 +256,32 @@ void AllocSmallBlocks(UINTN NumberOfPagesMax)
   FreePool(MemMap);
 }
 
-void AllocSmallBlocks()
-{
-  CONST EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable;
-
-PrintMemoryMap();
-
-  UINTN size = 64;
-  UINTN nb = 0;
-
-  AllocSmallBlocks(size); // 252KB
-
-  MemoryAttributesTable = OcGetMemoryAttributes (NULL);
-  nb = MemoryAttributesTable->NumberOfEntries;
-
-PrintMemoryMap();
-  while ( size <= 2048  &&  nb > 100 ) { // XNU seems to handle max 128 entries. So let's shrink a little bit under 128
-    size *= 2;
-    AllocSmallBlocks(size);
-    MemoryAttributesTable = OcGetMemoryAttributes (NULL);
-    nb = MemoryAttributesTable->NumberOfEntries;
-PrintMemoryMap();
-  }
-  if ( size > 2048 ) {
-    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
-  }
-}
+//void AllocSmallBlocks()
+//{
+//  CONST EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable;
+//
+////PrintMemoryMap();
+//
+//  UINTN size = 64;
+//  UINTN nb = 0;
+//
+//  AllocSmallBlocks(size); // 252KB
+//
+//  MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+//  nb = MemoryAttributesTable->NumberOfEntries;
+//
+////PrintMemoryMap();
+//  while ( size <= 2048  &&  nb > 100 ) { // XNU seems to handle max 128 entries. So let's shrink a little bit under 128
+//    size *= 2;
+//    AllocSmallBlocks(size);
+//    MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+//    nb = MemoryAttributesTable->NumberOfEntries;
+////PrintMemoryMap();
+//  }
+//  if ( size > 2048 ) {
+//    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
+//  }
+//}
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
@@ -1729,9 +1770,11 @@ void LOADER_ENTRY::StartLoader()
       Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
     }
     gBS->FreePages (ExtraSpace, 90000);
+
+
+#ifdef JIEF_DEBUG
     AllocSmallBlocks(); // shrink memory map;
     PrintMemoryMap();
-#ifdef JIEF_DEBUG
     displayFreeMemory("Just before launching image"_XS8);
 #endif
     Status = gBS->StartImage (ImageHandle, 0, NULL); // point to OcStartImage from OC
@@ -2911,6 +2954,9 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
 #if 0
   //testing place
   {
+    //#define ARRAY_SIZE(Array) (sizeof (Array) / sizeof ((Array)[0]))
+  #define L_STR_LEN(String) (ARRAY_SIZE (String) - 1)
+DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
     DBG(" size CHAR8=%ld\n", sizeof(CHAR8));
     DBG(" size CHAR16=%ld\n", sizeof(CHAR16));
     DBG(" size wchar_t=%ld\n", sizeof(wchar_t));

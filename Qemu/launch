@@ -70,9 +70,9 @@ then
 
   bios_file=("$(dirname "$qemu_path")"/bios*)
   
-diskutil umount /dev/disk4s1
-diskutil umount /dev/disk4s2
-diskutil eject disk4
+diskutil umount /dev/disk3s1
+diskutil umount /dev/disk3s2
+diskutil eject disk3
 
   "$qemu_path" \
     -L "$(dirname "$qemu_path")" \
@@ -94,7 +94,7 @@ diskutil eject disk4
 #      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
 hdiutil attach ./disk_image_gpt.img
-diskutil mount disk4s1
+diskutil mount disk3s1
 
 fi
 
