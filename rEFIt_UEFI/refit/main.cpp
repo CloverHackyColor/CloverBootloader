@@ -1307,14 +1307,25 @@ void LOADER_ENTRY::StartLoader()
         memset(mOpenCoreConfiguration.Kernel.Block.Values, 0, valuesSize);
 
         mOpenCoreConfiguration.Kernel.Block.Values[0] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(mOpenCoreConfiguration.Kernel.Block.ValueSize);
-          memset(mOpenCoreConfiguration.Kernel.Block.Values[0], 0, mOpenCoreConfiguration.Kernel.Block.ValueSize);
-          mOpenCoreConfiguration.Kernel.Block.Values[0]->Enabled = 1;
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "");
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel, "");
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "23");
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier, "com.apple.iokit.IOSkywalkFamily");
-          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Strategy, "Exclude");
+        memset(mOpenCoreConfiguration.Kernel.Block.Values[0], 0, mOpenCoreConfiguration.Kernel.Block.ValueSize);
+        mOpenCoreConfiguration.Kernel.Block.Values[0]->Enabled = 1;
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "");
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel, "");
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "23");
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier, "com.apple.iokit.IOSkywalkFamily");
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Strategy, "Exclude");
+
+//        mOpenCoreConfiguration.Kernel.Block.Values[1] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(mOpenCoreConfiguration.Kernel.Block.ValueSize);
+//        memset(mOpenCoreConfiguration.Kernel.Block.Values[1], 0, mOpenCoreConfiguration.Kernel.Block.ValueSize);
+//        mOpenCoreConfiguration.Kernel.Block.Values[1]->Enabled = 1;
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Comment, "");
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->MaxKernel, "");
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->MinKernel, "23");
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Identifier, "com.apple.driver.mDNSOffloadUserClient");
+//        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Strategy, "Exclude");
+
     }
   #endif
 
