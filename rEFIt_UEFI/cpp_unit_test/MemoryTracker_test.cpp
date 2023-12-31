@@ -77,6 +77,7 @@ void f_p1void(void* p)
 int MemoryTracker_tests()
 {
 #ifdef MEMORY_TRACKER_ENABLED
+// Work in progress !!!!!!!!!!!!!!
   void* p; (void)p;
   
 //  int t1_v = 3;
@@ -126,6 +127,8 @@ int MemoryTracker_tests()
 //  MT_delete(p, "return g_ta.testAlloc2()"_XS8);
 //  MT_outputDanglingPtr();
 //  printf("------------------\n");
+#else
+  breakpoint(0); // to avoid warning.
 #endif
 	return 0;
 }

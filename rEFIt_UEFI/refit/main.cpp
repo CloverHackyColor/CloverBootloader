@@ -142,75 +142,47 @@ extern EFI_DXE_SERVICES  *gDS;
 
 EFI_PHYSICAL_ADDRESS ExtraSpace = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 
-//VOID
-//PrintMemoryMap()
-//{
-//  apd<EFI_MEMORY_DESCRIPTOR*> MemMap;
-//  UINTN                       MemMapSize;
-//  UINTN                       MapKey, DescriptorSize;
-//  UINT32                      DescriptorVersion;
-//  EFI_STATUS                  Status;
-//
-//  MemMapSize = 0;
-//  DescriptorSize = 0;
-//  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  if (Status != EFI_BUFFER_TOO_SMALL) {
-//    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
-//    return;
-//  }
-//  MemMapSize += EFI_PAGE_SIZE;
-//  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
-//
-//  Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  if ( EFI_ERROR(Status) ) {
-//    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
-//    return;
-//  }
-//
-//  OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
-//}
-
-VOID
-PrintMemoryMap (
-  VOID
-  )
+void PrintMemoryMap()
 {
-  EFI_MEMORY_DESCRIPTOR       *MemMap;
-  EFI_MEMORY_DESCRIPTOR       *MemMapPtr;
-  UINTN                       MemMapSize = 0;
-  UINTN                       MapKey = 0, DescriptorSize = 0;
-  UINT32                      DescriptorVersion = 0;
-  UINT64                      Bytes;
-  EFI_STATUS                  Status = EFI_SUCCESS;
+  apd<EFI_MEMORY_DESCRIPTOR*> MemMap;
+  UINTN                       MemMapSize;
+  UINTN                       MapKey, DescriptorSize;
+  UINT32                      DescriptorVersion;
+  EFI_STATUS                  Status;
 
   MemMapSize = 0;
-  MemMap     = NULL;
+  DescriptorSize = 0;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+  if (Status != EFI_BUFFER_TOO_SMALL) {
+    DBG("PrintMemoryMap: GetMemStatus=%s not EFI_BUFFER_TOO_SMALL\n", efiStrError(Status));
+    return;
+  }
   MemMapSize += EFI_PAGE_SIZE;
-  Status = gBS->AllocatePool (EfiBootServicesData, MemMapSize, (VOID**)&MemMap);
-//  ASSERT (Status == EFI_SUCCESS);
-  if (EFI_ERROR(Status)) return;
+  MemMap = (EFI_MEMORY_DESCRIPTOR*)AllocatePool(MemMapSize);
+
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-//  ASSERT (Status == EFI_SUCCESS);
-  MemMapPtr = MemMap;
-
-//  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
-
-  for (UINTN Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
-    Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
-    DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
-          MemMap->PhysicalStart,
-          MemMap->PhysicalStart + Bytes - 1,
-          MemMap->NumberOfPages,
-          MemMap->Attribute,
-          (UINTN)MemMap->Type));
-    MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
+  if ( EFI_ERROR(Status) ) {
+    DBG("PrintMemoryMap: GetMemoryMap failed=%s\n", efiStrError(Status));
+    return;
   }
 
-  gBS->FreePool(MemMapPtr);
-}
+#ifndef JIEF_DEBUG
+  EFI_MEMORY_DESCRIPTOR* MemMapPtr = MemMap;
 
+  for (UINTN Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
+    UINT64 Bytes = LShiftU64 (MemMapPtr->NumberOfPages, 12);
+    DEBUG ((EFI_D_ERROR, "%llX-%llX  %llX %llX %X\n",
+          MemMapPtr->PhysicalStart,
+          MemMapPtr->PhysicalStart + Bytes - 1,
+          MemMapPtr->NumberOfPages,
+          MemMapPtr->Attribute,
+          MemMapPtr->Type));
+    MemMapPtr = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMapPtr + DescriptorSize);
+  }
+#else
+  OcPrintMemoryMap(MemMapSize, MemMap, DescriptorSize);
+#endif
+}
 
 void AllocSmallBlocks(UINTN NumberOfPagesMax)
 {
@@ -256,32 +228,32 @@ void AllocSmallBlocks(UINTN NumberOfPagesMax)
   FreePool(MemMap);
 }
 
-//void AllocSmallBlocks()
-//{
-//  CONST EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable;
-//
-////PrintMemoryMap();
-//
-//  UINTN size = 64;
-//  UINTN nb = 0;
-//
-//  AllocSmallBlocks(size); // 252KB
-//
-//  MemoryAttributesTable = OcGetMemoryAttributes (NULL);
-//  nb = MemoryAttributesTable->NumberOfEntries;
-//
-////PrintMemoryMap();
-//  while ( size <= 2048  &&  nb > 100 ) { // XNU seems to handle max 128 entries. So let's shrink a little bit under 128
-//    size *= 2;
-//    AllocSmallBlocks(size);
-//    MemoryAttributesTable = OcGetMemoryAttributes (NULL);
-//    nb = MemoryAttributesTable->NumberOfEntries;
-////PrintMemoryMap();
-//  }
-//  if ( size > 2048 ) {
-//    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
-//  }
-//}
+void AllocSmallBlocks()
+{
+  CONST EFI_MEMORY_ATTRIBUTES_TABLE  *MemoryAttributesTable;
+
+//PrintMemoryMap();
+
+  UINTN size = 64;
+  UINTN nb = 0;
+
+  AllocSmallBlocks(size); // 252KB
+
+  MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+  nb = MemoryAttributesTable->NumberOfEntries;
+
+//PrintMemoryMap();
+  while ( size <= 2048  &&  nb > 100 ) { // XNU seems to handle max 128 entries. So let's shrink a little bit under 128
+    size *= 2;
+    AllocSmallBlocks(size);
+    MemoryAttributesTable = OcGetMemoryAttributes (NULL);
+    nb = MemoryAttributesTable->NumberOfEntries;
+//PrintMemoryMap();
+  }
+  if ( size > 2048 ) {
+    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
+  }
+}
 
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
@@ -1782,9 +1754,9 @@ void LOADER_ENTRY::StartLoader()
     }
     gBS->FreePages (ExtraSpace, 90000);
 
+    AllocSmallBlocks(); // shrink memory map;
 
 #ifdef JIEF_DEBUG
-    AllocSmallBlocks(); // shrink memory map;
     PrintMemoryMap();
     displayFreeMemory("Just before launching image"_XS8);
 #endif
@@ -3286,9 +3258,9 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
       gSettings.Boot.FastBoot = false; //Hmm... will never be here
     }
 #ifdef JIEF_DEBUG
-MainMenu.TimeoutSeconds=1;
-DefaultEntry = NULL;
-DefaultIndex = MainMenu.Entries.length()-1; // this should be "Exit Clover"
+//MainMenu.TimeoutSeconds=1;
+//DefaultEntry = NULL;
+//DefaultIndex = MainMenu.Entries.length()-1; // this should be "Exit Clover"
 #endif
     AfterTool = false;
     gEvent = 0; //clear to cancel loop

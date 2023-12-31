@@ -375,10 +375,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
- # OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
- #   <BuildOptions>
- #     *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
- # }
+  OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
   OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
