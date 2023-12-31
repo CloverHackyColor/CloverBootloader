@@ -1,0 +1,17 @@
+## @file
+#  Ext4 Package
+#
+#  This package provides libraries and drivers related to the ext4 filesystem implementation.
+#  More details are available at: https://www.kernel.org/doc/html/v5.4/filesystems/ext4/index.html
+#
+#  Copyright (c) 2021 Pedro Falcato
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = Ext4Pkg
+  PACKAGE_UNI_FILE               = Ext4Pkg.uni
+  PACKAGE_GUID                   = 6B4BF998-668B-46D3-BCFA-971F99F8708C
+  PACKAGE_VERSION                = 0.1

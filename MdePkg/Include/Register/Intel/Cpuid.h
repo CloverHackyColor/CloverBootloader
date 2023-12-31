@@ -322,9 +322,9 @@ typedef union {
     ///
     UINT32  RDRAND:1;
     ///
-    /// [Bit 31] Always returns 0.
+    /// [Bit 31] A value of 1 indicates that processor is in Para-Virtualized.
     ///
-    UINT32  NotUsed:1;
+    UINT32    ParaVirtualized     : 1;
   } Bits;
   ///
   /// All bit fields as a 32-bit value

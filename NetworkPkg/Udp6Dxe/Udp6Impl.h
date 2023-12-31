@@ -28,22 +28,22 @@
 
 #include "Udp6Driver.h"
 
-extern EFI_COMPONENT_NAME2_PROTOCOL   gUdp6ComponentName2;
-extern EFI_COMPONENT_NAME_PROTOCOL    gUdp6ComponentName;
-extern EFI_UNICODE_STRING_TABLE       *gUdp6ControllerNameTable;
-extern EFI_SERVICE_BINDING_PROTOCOL   mUdp6ServiceBinding;
-extern EFI_UDP6_PROTOCOL              mUdp6Protocol;
-extern UINT16                         mUdp6RandomPort;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gUdp6ComponentName2;
+extern EFI_COMPONENT_NAME_PROTOCOL   gUdp6ComponentName;
+extern EFI_UNICODE_STRING_TABLE      *gUdp6ControllerNameTable;
+extern EFI_SERVICE_BINDING_PROTOCOL  mUdp6ServiceBinding;
+extern EFI_UDP6_PROTOCOL             mUdp6Protocol;
+extern UINT16                        mUdp6RandomPort;
 
 //
 // Define time out 50 milliseconds
 //
-#define UDP6_TIMEOUT_INTERVAL (50 * TICKS_PER_MS)
-#define UDP6_HEADER_SIZE      sizeof (EFI_UDP_HEADER)
-#define UDP6_MAX_DATA_SIZE    65507
-#define UDP6_PORT_KNOWN       1024
+#define UDP6_TIMEOUT_INTERVAL  (50 * TICKS_PER_MS)
+#define UDP6_HEADER_SIZE       sizeof (EFI_UDP_HEADER)
+#define UDP6_MAX_DATA_SIZE     65507
+#define UDP6_PORT_KNOWN        1024
 
-#define UDP6_SERVICE_DATA_SIGNATURE SIGNATURE_32 ('U', 'd', 'p', '6')
+#define UDP6_SERVICE_DATA_SIGNATURE   SIGNATURE_32 ('U', 'd', 'p', '6')
 #define UDP6_INSTANCE_DATA_SIGNATURE  SIGNATURE_32 ('U', 'd', 'p', 'S')
 
 #define UDP6_SERVICE_DATA_FROM_THIS(a) \
@@ -65,47 +65,47 @@ extern UINT16                         mUdp6RandomPort;
 // Udp6 service contest data
 //
 typedef struct _UDP6_SERVICE_DATA {
-  UINT32                        Signature;
-  EFI_SERVICE_BINDING_PROTOCOL  ServiceBinding;
-  EFI_HANDLE                    ImageHandle;
-  EFI_HANDLE                    ControllerHandle;
-  LIST_ENTRY                    ChildrenList;
-  UINTN                         ChildrenNumber;
-  IP_IO                         *IpIo;
-  EFI_EVENT                     TimeoutEvent;
- } UDP6_SERVICE_DATA;
+  UINT32                          Signature;
+  EFI_SERVICE_BINDING_PROTOCOL    ServiceBinding;
+  EFI_HANDLE                      ImageHandle;
+  EFI_HANDLE                      ControllerHandle;
+  LIST_ENTRY                      ChildrenList;
+  UINTN                           ChildrenNumber;
+  IP_IO                           *IpIo;
+  EFI_EVENT                       TimeoutEvent;
+} UDP6_SERVICE_DATA;
 
 typedef struct _UDP6_INSTANCE_DATA {
-  UINT32                Signature;
-  LIST_ENTRY            Link;
-  UDP6_SERVICE_DATA     *Udp6Service;
-  EFI_UDP6_PROTOCOL     Udp6Proto;
-  EFI_UDP6_CONFIG_DATA  ConfigData;
-  EFI_HANDLE            ChildHandle;
-  BOOLEAN               Configured;
-  BOOLEAN               IsNoMapping;
-  NET_MAP               TxTokens;
-  NET_MAP               RxTokens;
-  NET_MAP               McastIps;
-  LIST_ENTRY            RcvdDgramQue;
-  LIST_ENTRY            DeliveredDgramQue;
-  UINT16                HeadSum;
-  EFI_STATUS            IcmpError;
-  IP_IO_IP_INFO         *IpInfo;
-  BOOLEAN               InDestroy;
+  UINT32                  Signature;
+  LIST_ENTRY              Link;
+  UDP6_SERVICE_DATA       *Udp6Service;
+  EFI_UDP6_PROTOCOL       Udp6Proto;
+  EFI_UDP6_CONFIG_DATA    ConfigData;
+  EFI_HANDLE              ChildHandle;
+  BOOLEAN                 Configured;
+  BOOLEAN                 IsNoMapping;
+  NET_MAP                 TxTokens;
+  NET_MAP                 RxTokens;
+  NET_MAP                 McastIps;
+  LIST_ENTRY              RcvdDgramQue;
+  LIST_ENTRY              DeliveredDgramQue;
+  UINT16                  HeadSum;
+  EFI_STATUS              IcmpError;
+  IP_IO_IP_INFO           *IpInfo;
+  BOOLEAN                 InDestroy;
 } UDP6_INSTANCE_DATA;
 
 typedef struct _UDP6_RXDATA_WRAP {
-  LIST_ENTRY             Link;
-  NET_BUF                *Packet;
-  UINT32                 TimeoutTick;
-  EFI_UDP6_RECEIVE_DATA  RxData;
+  LIST_ENTRY               Link;
+  NET_BUF                  *Packet;
+  UINT32                   TimeoutTick;
+  EFI_UDP6_RECEIVE_DATA    RxData;
 } UDP6_RXDATA_WRAP;
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } UDP6_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
 /**
@@ -151,7 +151,7 @@ Udp6CleanInstance (
   );
 
 /**
-  This function intializes the new created udp instance.
+  This function initializes the new created udp instance.
 
   @param[in]      Udp6Service      Pointer to the UDP6_SERVICE_DATA.
   @param[in, out]  Instance         Pointer to the un-initialized UDP6_INSTANCE_DATA.
@@ -221,7 +221,7 @@ Udp6GetModeData (
 
   @retval EFI_SUCCESS            The configuration settings were set, changed, or
                                  reset successfully.
-  @retval EFI_NO_MAPPING         When the UdpConifgData.UseAnyStationAddress is set
+  @retval EFI_NO_MAPPING         When the UdpConfigData.UseAnyStationAddress is set
                                  to true  and there is no address available for IP6
                                  driver to binding  source address to this
                                  instance.
@@ -281,12 +281,12 @@ Udp6Configure (
                                  .FragmentBuffer fields is NULL.
                                  One or more of the
                                  Token.Packet.TxData.UdpSessionData.
-                                 DestinationAddres are not valid unicast IPv6
+                                 DestinationAddress are not valid unicast IPv6
                                  addresses, if the  UdpSessionData is not NULL.
                                  Token.Packet.TxData.UdpSessionData.
-                                 DestinationAddres is NULL
+                                 DestinationAddress is NULL
                                  Token.Packet.TxData.UdpSessionData.
-                                 DestinatioPort is zero.
+                                 DestinationPort is zero.
                                  Token.Packet.TxData.UdpSessionData is
                                  NULL and this  instance's
                                  UdpConfigData.RemoteAddress is unspecified.
@@ -430,7 +430,7 @@ Udp6Groups (
 
 /**
   This function tries to bind the udp instance according to the configured port
-  allocation stragety.
+  allocation strategy.
 
   @param[in]  InstanceList       Pointer to the head of the list linking the udp
                                  instances.
@@ -458,8 +458,8 @@ Udp6Bind (
 **/
 VOID
 Udp6BuildIp6ConfigData (
-  IN EFI_UDP6_CONFIG_DATA      *Udp6ConfigData,
-  IN OUT EFI_IP6_CONFIG_DATA   *Ip6ConfigData
+  IN EFI_UDP6_CONFIG_DATA     *Udp6ConfigData,
+  IN OUT EFI_IP6_CONFIG_DATA  *Ip6ConfigData
   );
 
 /**
@@ -600,8 +600,8 @@ Udp6NetVectorExtFree (
 **/
 UINT16
 Udp6Checksum (
-  IN NET_BUF *Packet,
-  IN UINT16  HeadSum
+  IN NET_BUF  *Packet,
+  IN UINT16   HeadSum
   );
 
 /**
@@ -645,4 +645,3 @@ Udp6FlushRcvdDgram (
   );
 
 #endif
-

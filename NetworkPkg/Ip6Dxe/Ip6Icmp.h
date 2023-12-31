@@ -10,18 +10,17 @@
 #ifndef __EFI_IP6_ICMP_H__
 #define __EFI_IP6_ICMP_H__
 
-#define ICMP_V6_DEFAULT_CODE          0
+#define ICMP_V6_DEFAULT_CODE  0
 
-#define ICMP_V6_ERROR_MAX             127
+#define ICMP_V6_ERROR_MAX  127
 
 //
 // ICMPv6 message classes, each class of ICMPv6 message shares
 // a common message format. INVALID_MESSAGE is only a flag.
 //
-#define ICMP_V6_INVALID_MESSAGE       0
-#define ICMP_V6_ERROR_MESSAGE         1
-#define ICMP_V6_INFORMATION_MESSAGE   2
-
+#define ICMP_V6_INVALID_MESSAGE      0
+#define ICMP_V6_ERROR_MESSAGE        1
+#define ICMP_V6_INFORMATION_MESSAGE  2
 
 extern EFI_IP6_ICMP_TYPE  mIp6SupportedIcmp[];
 
@@ -35,16 +34,16 @@ extern EFI_IP6_ICMP_TYPE  mIp6SupportedIcmp[];
   @param[in]  Packet             The content of the ICMPv6 packet with IP head
                                  removed.
 
-  @retval EFI_INVALID_PARAMETER  The packet is malformated.
+  @retval EFI_INVALID_PARAMETER  The packet is malformatted.
   @retval EFI_SUCCESS            The ICMPv6 message successfully processed.
   @retval Others                 Failed to handle the ICMPv6 packet.
 
 **/
 EFI_STATUS
 Ip6IcmpHandle (
-  IN IP6_SERVICE            *IpSb,
-  IN EFI_IP6_HEADER         *Head,
-  IN NET_BUF                *Packet
+  IN IP6_SERVICE     *IpSb,
+  IN EFI_IP6_HEADER  *Head,
+  IN NET_BUF         *Packet
   );
 
 /**
@@ -59,8 +58,8 @@ Ip6IcmpHandle (
 **/
 BOOLEAN
 Ip6IsAnycast (
-  IN IP6_SERVICE            *IpSb,
-  IN EFI_IPv6_ADDRESS       *DestinationAddress
+  IN IP6_SERVICE       *IpSb,
+  IN EFI_IPv6_ADDRESS  *DestinationAddress
   );
 
 /**
@@ -80,7 +79,7 @@ Ip6IsAnycast (
   @param[in]  Pointer            If not NULL, identifies the octet offset within
                                  the invoking packet where the error was detected.
 
-  @retval EFI_INVALID_PARAMETER  The packet is malformated.
+  @retval EFI_INVALID_PARAMETER  The packet is malformatted.
   @retval EFI_OUT_OF_RESOURCES   There is no sufficient resource to complete the
                                  operation.
   @retval EFI_SUCCESS            The ICMPv6 message was successfully sent out.
@@ -89,14 +88,13 @@ Ip6IsAnycast (
 **/
 EFI_STATUS
 Ip6SendIcmpError (
-  IN IP6_SERVICE            *IpSb,
-  IN NET_BUF                *Packet,
-  IN EFI_IPv6_ADDRESS       *SourceAddress       OPTIONAL,
-  IN EFI_IPv6_ADDRESS       *DestinationAddress,
-  IN UINT8                  Type,
-  IN UINT8                  Code,
-  IN UINT32                 *Pointer             OPTIONAL
+  IN IP6_SERVICE       *IpSb,
+  IN NET_BUF           *Packet,
+  IN EFI_IPv6_ADDRESS  *SourceAddress       OPTIONAL,
+  IN EFI_IPv6_ADDRESS  *DestinationAddress,
+  IN UINT8             Type,
+  IN UINT8             Code,
+  IN UINT32            *Pointer             OPTIONAL
   );
 
 #endif
-

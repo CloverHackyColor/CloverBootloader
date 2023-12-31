@@ -10,18 +10,15 @@
 #ifndef __EFI_PXEBC_SUPPORT_H__
 #define __EFI_PXEBC_SUPPORT_H__
 
-
-#define ICMP_DEST_UNREACHABLE      3
-#define ICMP_SOURCE_QUENCH         4
-#define ICMP_REDIRECT              5
-#define ICMP_ECHO_REQUEST          8
-#define ICMP_TIME_EXCEEDED         11
-#define ICMP_PARAMETER_PROBLEM     12
-
-
+#define ICMP_DEST_UNREACHABLE   3
+#define ICMP_SOURCE_QUENCH      4
+#define ICMP_REDIRECT           5
+#define ICMP_ECHO_REQUEST       8
+#define ICMP_TIME_EXCEEDED      11
+#define ICMP_PARAMETER_PROBLEM  12
 
 /**
-  Flush the previous configration using the new station Ip address.
+  Flush the previous configuration using the new station Ip address.
 
   @param[in]   Private        Pointer to PxeBc private data.
   @param[in]   StationIp      Pointer to the station Ip address.
@@ -33,11 +30,10 @@
 **/
 EFI_STATUS
 PxeBcFlushStationIp (
-  PXEBC_PRIVATE_DATA       *Private,
-  EFI_IP_ADDRESS           *StationIp,     OPTIONAL
-  EFI_IP_ADDRESS           *SubnetMask     OPTIONAL
+  PXEBC_PRIVATE_DATA  *Private,
+  EFI_IP_ADDRESS      *StationIp      OPTIONAL,
+  EFI_IP_ADDRESS      *SubnetMask     OPTIONAL
   );
-
 
 /**
   Notify callback function when an event is triggered.
@@ -49,17 +45,16 @@ PxeBcFlushStationIp (
 VOID
 EFIAPI
 PxeBcCommonNotify (
-  IN EFI_EVENT           Event,
-  IN VOID                *Context
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   );
-
 
 /**
   Perform arp resolution from the arp cache in PxeBcMode.
 
   @param  Mode           Pointer to EFI_PXE_BASE_CODE_MODE.
   @param  Ip4Addr        The Ip4 address for resolution.
-  @param  MacAddress     The resoluted MAC address if the resolution is successful.
+  @param  MacAddress     The resolved MAC address if the resolution is successful.
                          The value is undefined if resolution fails.
 
   @retval TRUE           Found a matched entry.
@@ -68,11 +63,10 @@ PxeBcCommonNotify (
 **/
 BOOLEAN
 PxeBcCheckArpCache (
-  IN  EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN  EFI_IPv4_ADDRESS          *Ip4Addr,
-  OUT EFI_MAC_ADDRESS           *MacAddress
+  IN  EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN  EFI_IPv4_ADDRESS        *Ip4Addr,
+  OUT EFI_MAC_ADDRESS         *MacAddress
   );
-
 
 /**
   Update arp cache periodically.
@@ -84,10 +78,9 @@ PxeBcCheckArpCache (
 VOID
 EFIAPI
 PxeBcArpCacheUpdate (
-  IN EFI_EVENT    Event,
-  IN VOID         *Context
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   );
-
 
 /**
   xxx
@@ -99,10 +92,9 @@ PxeBcArpCacheUpdate (
 VOID
 EFIAPI
 PxeBcIcmpErrorUpdate (
-  IN EFI_EVENT             Event,
-  IN VOID                  *Context
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   );
-
 
 /**
   xxx
@@ -114,10 +106,9 @@ PxeBcIcmpErrorUpdate (
 VOID
 EFIAPI
 PxeBcIcmp6ErrorUpdate (
-  IN EFI_EVENT             Event,
-  IN VOID                  *Context
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
   );
-
 
 /**
   This function is to configure a UDPv4 instance for UdpWrite.
@@ -148,7 +139,6 @@ PxeBcConfigUdp4Write (
   IN     UINT8              ToS
   );
 
-
 /**
   This function is to configure a UDPv6 instance for UdpWrite.
 
@@ -156,7 +146,7 @@ PxeBcConfigUdp4Write (
   @param[in]       StationIp            Pointer to the station address.
   @param[in, out]  SrcPort              Pointer to the source port.
 
-  @retval          EFI_SUCCESS          Successfuly configured this instance.
+  @retval          EFI_SUCCESS          Successfully configured this instance.
   @retval          Others               Failed to configure this instance.
 
 **/
@@ -187,16 +177,15 @@ PxeBcConfigUdp6Write (
 **/
 EFI_STATUS
 PxeBcUdp4Write (
-  IN EFI_UDP4_PROTOCOL       *Udp4,
-  IN EFI_UDP4_SESSION_DATA   *Session,
-  IN EFI_EVENT               TimeoutEvent,
-  IN EFI_IPv4_ADDRESS        *Gateway      OPTIONAL,
-  IN UINTN                   *HeaderSize   OPTIONAL,
-  IN VOID                    *HeaderPtr    OPTIONAL,
-  IN UINTN                   *BufferSize,
-  IN VOID                    *BufferPtr
+  IN EFI_UDP4_PROTOCOL      *Udp4,
+  IN EFI_UDP4_SESSION_DATA  *Session,
+  IN EFI_EVENT              TimeoutEvent,
+  IN EFI_IPv4_ADDRESS       *Gateway      OPTIONAL,
+  IN UINTN                  *HeaderSize   OPTIONAL,
+  IN VOID                   *HeaderPtr    OPTIONAL,
+  IN UINTN                  *BufferSize,
+  IN VOID                   *BufferPtr
   );
-
 
 /**
   This function is to configure a UDPv6 instance for UdpWrite.
@@ -217,15 +206,14 @@ PxeBcUdp4Write (
 **/
 EFI_STATUS
 PxeBcUdp6Write (
-  IN EFI_UDP6_PROTOCOL       *Udp6,
-  IN EFI_UDP6_SESSION_DATA   *Session,
-  IN EFI_EVENT               TimeoutEvent,
-  IN UINTN                   *HeaderSize   OPTIONAL,
-  IN VOID                    *HeaderPtr    OPTIONAL,
-  IN UINTN                   *BufferSize,
-  IN VOID                    *BufferPtr
+  IN EFI_UDP6_PROTOCOL      *Udp6,
+  IN EFI_UDP6_SESSION_DATA  *Session,
+  IN EFI_EVENT              TimeoutEvent,
+  IN UINTN                  *HeaderSize   OPTIONAL,
+  IN VOID                   *HeaderPtr    OPTIONAL,
+  IN UINTN                  *BufferSize,
+  IN VOID                   *BufferPtr
   );
-
 
 /**
   Check the received packet with the Ip filter.
@@ -234,17 +222,16 @@ PxeBcUdp6Write (
   @param[in]  Session             Pointer to the current UDPv4 session.
   @param[in]  OpFlags             Operation flag for UdpRead/UdpWrite.
 
-  @retval     TRUE                Succesfully passed the Ip filter.
+  @retval     TRUE                Successfully passed the Ip filter.
   @retval     FALSE               Failed to pass the Ip filter.
 
 **/
 BOOLEAN
 PxeBcCheckByIpFilter (
-  IN EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN VOID                      *Session,
-  IN UINT16                    OpFlags
+  IN EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN VOID                    *Session,
+  IN UINT16                  OpFlags
   );
-
 
 /**
   Filter the received packet with the destination Ip.
@@ -254,18 +241,17 @@ PxeBcCheckByIpFilter (
   @param[in, out]  DestIp         Pointer to the dest Ip address.
   @param[in]       OpFlags        Operation flag for UdpRead/UdpWrite.
 
-  @retval     TRUE                Succesfully passed the IPv4 filter.
+  @retval     TRUE                Successfully passed the IPv4 filter.
   @retval     FALSE               Failed to pass the IPv4 filter.
 
 **/
 BOOLEAN
 PxeBcCheckByDestIp (
-  IN     EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN     VOID                      *Session,
-  IN OUT EFI_IP_ADDRESS            *DestIp,
-  IN     UINT16                    OpFlags
+  IN     EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN     VOID                    *Session,
+  IN OUT EFI_IP_ADDRESS          *DestIp,
+  IN     UINT16                  OpFlags
   );
-
 
 /**
   Check the received packet with the destination port.
@@ -275,18 +261,17 @@ PxeBcCheckByDestIp (
   @param[in, out]  DestPort       Pointer to the destination port.
   @param[in]       OpFlags        Operation flag for UdpRead/UdpWrite.
 
-  @retval     TRUE                Succesfully passed the IPv4 filter.
+  @retval     TRUE                Successfully passed the IPv4 filter.
   @retval     FALSE               Failed to pass the IPv4 filter.
 
 **/
 BOOLEAN
 PxeBcCheckByDestPort (
-  IN     EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN     VOID                      *Session,
-  IN OUT UINT16                    *DestPort,
-  IN     UINT16                    OpFlags
+  IN     EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN     VOID                    *Session,
+  IN OUT UINT16                  *DestPort,
+  IN     UINT16                  OpFlags
   );
-
 
 /**
   Filter the received packet with the source Ip.
@@ -296,18 +281,17 @@ PxeBcCheckByDestPort (
   @param[in, out]  SrcIp          Pointer to the source Ip address.
   @param[in]       OpFlags        Operation flag for UdpRead/UdpWrite.
 
-  @retval     TRUE                Succesfully passed the IPv4 filter.
+  @retval     TRUE                Successfully passed the IPv4 filter.
   @retval     FALSE               Failed to pass the IPv4 filter.
 
 **/
 BOOLEAN
 PxeBcFilterBySrcIp (
-  IN     EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN     VOID                      *Session,
-  IN OUT EFI_IP_ADDRESS            *SrcIp,
-  IN     UINT16                    OpFlags
+  IN     EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN     VOID                    *Session,
+  IN OUT EFI_IP_ADDRESS          *SrcIp,
+  IN     UINT16                  OpFlags
   );
-
 
 /**
   Filter the received packet with the source port.
@@ -317,18 +301,17 @@ PxeBcFilterBySrcIp (
   @param[in, out]  SrcPort        Pointer to the source port.
   @param[in]       OpFlags        Operation flag for UdpRead/UdpWrite.
 
-  @retval     TRUE                Succesfully passed the IPv4 filter.
+  @retval     TRUE                Successfully passed the IPv4 filter.
   @retval     FALSE               Failed to pass the IPv4 filter.
 
 **/
 BOOLEAN
 PxeBcFilterBySrcPort (
-  IN     EFI_PXE_BASE_CODE_MODE    *Mode,
-  IN     VOID                      *Session,
-  IN OUT UINT16                    *SrcPort,
-  IN     UINT16                    OpFlags
+  IN     EFI_PXE_BASE_CODE_MODE  *Mode,
+  IN     VOID                    *Session,
+  IN OUT UINT16                  *SrcPort,
+  IN     UINT16                  OpFlags
   );
-
 
 /**
   This function is to receive packet with Udp4Read.
@@ -351,19 +334,18 @@ PxeBcFilterBySrcPort (
 **/
 EFI_STATUS
 PxeBcUdp4Read (
-  IN     EFI_UDP4_PROTOCOL            *Udp4,
-  IN     EFI_UDP4_COMPLETION_TOKEN    *Token,
-  IN     EFI_PXE_BASE_CODE_MODE       *Mode,
-  IN     EFI_EVENT                    TimeoutEvent,
-  IN     UINT16                       OpFlags,
-  IN     BOOLEAN                      *IsDone,
-     OUT BOOLEAN                      *IsMatched,
-  IN OUT EFI_IP_ADDRESS               *DestIp      OPTIONAL,
-  IN OUT EFI_PXE_BASE_CODE_UDP_PORT   *DestPort    OPTIONAL,
-  IN OUT EFI_IP_ADDRESS               *SrcIp       OPTIONAL,
-  IN OUT EFI_PXE_BASE_CODE_UDP_PORT   *SrcPort     OPTIONAL
+  IN     EFI_UDP4_PROTOCOL           *Udp4,
+  IN     EFI_UDP4_COMPLETION_TOKEN   *Token,
+  IN     EFI_PXE_BASE_CODE_MODE      *Mode,
+  IN     EFI_EVENT                   TimeoutEvent,
+  IN     UINT16                      OpFlags,
+  IN     BOOLEAN                     *IsDone,
+  OUT BOOLEAN                        *IsMatched,
+  IN OUT EFI_IP_ADDRESS              *DestIp      OPTIONAL,
+  IN OUT EFI_PXE_BASE_CODE_UDP_PORT  *DestPort    OPTIONAL,
+  IN OUT EFI_IP_ADDRESS              *SrcIp       OPTIONAL,
+  IN OUT EFI_PXE_BASE_CODE_UDP_PORT  *SrcPort     OPTIONAL
   );
-
 
 /**
   This function is to receive packet with Udp6Read.
@@ -386,19 +368,18 @@ PxeBcUdp4Read (
 **/
 EFI_STATUS
 PxeBcUdp6Read (
-  IN     EFI_UDP6_PROTOCOL            *Udp6,
-  IN     EFI_UDP6_COMPLETION_TOKEN    *Token,
-  IN     EFI_PXE_BASE_CODE_MODE       *Mode,
-  IN     EFI_EVENT                    TimeoutEvent,
-  IN     UINT16                       OpFlags,
-  IN     BOOLEAN                      *IsDone,
-     OUT BOOLEAN                      *IsMatched,
-  IN OUT EFI_IP_ADDRESS               *DestIp      OPTIONAL,
-  IN OUT EFI_PXE_BASE_CODE_UDP_PORT   *DestPort    OPTIONAL,
-  IN OUT EFI_IP_ADDRESS               *SrcIp       OPTIONAL,
-  IN OUT EFI_PXE_BASE_CODE_UDP_PORT   *SrcPort     OPTIONAL
+  IN     EFI_UDP6_PROTOCOL           *Udp6,
+  IN     EFI_UDP6_COMPLETION_TOKEN   *Token,
+  IN     EFI_PXE_BASE_CODE_MODE      *Mode,
+  IN     EFI_EVENT                   TimeoutEvent,
+  IN     UINT16                      OpFlags,
+  IN     BOOLEAN                     *IsDone,
+  OUT BOOLEAN                        *IsMatched,
+  IN OUT EFI_IP_ADDRESS              *DestIp      OPTIONAL,
+  IN OUT EFI_PXE_BASE_CODE_UDP_PORT  *DestPort    OPTIONAL,
+  IN OUT EFI_IP_ADDRESS              *SrcIp       OPTIONAL,
+  IN OUT EFI_PXE_BASE_CODE_UDP_PORT  *SrcPort     OPTIONAL
   );
-
 
 /**
   This function is to display the IPv4 address.
@@ -408,9 +389,8 @@ PxeBcUdp6Read (
 **/
 VOID
 PxeBcShowIp4Addr (
-  IN EFI_IPv4_ADDRESS   *Ip
+  IN EFI_IPv4_ADDRESS  *Ip
   );
-
 
 /**
   This function is to display the IPv6 address.
@@ -420,9 +400,8 @@ PxeBcShowIp4Addr (
 **/
 VOID
 PxeBcShowIp6Addr (
-  IN EFI_IPv6_ADDRESS   *Ip
+  IN EFI_IPv6_ADDRESS  *Ip
   );
-
 
 /**
   This function is to convert UINTN to ASCII string with required format.
@@ -434,11 +413,10 @@ PxeBcShowIp6Addr (
 **/
 VOID
 PxeBcUintnToAscDecWithFormat (
-  IN UINTN                       Number,
-  IN UINT8                       *Buffer,
-  IN INTN                        Length
+  IN UINTN  Number,
+  IN UINT8  *Buffer,
+  IN INTN   Length
   );
-
 
 /**
   This function is to convert a UINTN to a ASCII string, and return the
@@ -453,9 +431,9 @@ PxeBcUintnToAscDecWithFormat (
 **/
 UINTN
 PxeBcUintnToAscDec (
-  IN UINTN               Number,
-  IN UINT8               *Buffer,
-  IN UINTN               BufferSize
+  IN UINTN  Number,
+  IN UINT8  *Buffer,
+  IN UINTN  BufferSize
   );
 
 /**
@@ -470,8 +448,8 @@ PxeBcUintnToAscDec (
 **/
 EFI_STATUS
 PxeBcUniHexToUint8 (
-  OUT UINT8                *Digit,
-  IN  CHAR16               Char
+  OUT UINT8   *Digit,
+  IN  CHAR16  Char
   );
 
 /**
@@ -482,7 +460,7 @@ PxeBcUniHexToUint8 (
 **/
 VOID
 CalcElapsedTime (
-  IN     PXEBC_PRIVATE_DATA     *Private
+  IN     PXEBC_PRIVATE_DATA  *Private
   );
 
 /**
@@ -495,7 +473,7 @@ CalcElapsedTime (
 **/
 EFI_HANDLE
 PxeBcGetNicByIp4Children (
-  IN EFI_HANDLE                 ControllerHandle
+  IN EFI_HANDLE  ControllerHandle
   );
 
 /**
@@ -508,6 +486,7 @@ PxeBcGetNicByIp4Children (
 **/
 EFI_HANDLE
 PxeBcGetNicByIp6Children (
-  IN EFI_HANDLE                  ControllerHandle
+  IN EFI_HANDLE  ControllerHandle
   );
+
 #endif

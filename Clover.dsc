@@ -28,9 +28,11 @@
   FLASH_DEFINITION               = Clover.fdf
 !endif
 
-  !ifndef OPENSSL_VERSION
-    DEFINE OPENSSL_VERSION       = 1.0.1e
-  !endif
+!ifndef OPENSSL_VERSION
+  DEFINE OPENSSL_VERSION       = 1.0.1e
+!endif
+
+  !include MdePkg/MdeLibs.dsc.inc
 
 ################################################################################
 #

@@ -1,0 +1,39 @@
+## @file
+# Common code for the Memory Allocation Library based on
+# PhaseMemoryAllocationLib.
+#
+# Copyright (c) 2007 - 2018, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = CommonMemoryAllocationLib
+  MODULE_UNI_FILE                = CommonMemoryAllocationLib.uni
+  FILE_GUID                      = 020172f8-f96d-479b-9f29-c4d2f204573d
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = CommonMemoryAllocationLib
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  AlignedPages.h
+  AlignedPages.c
+  CommonMemoryAllocationLib.c
+  CommonMemoryAllocationLibEx.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  DebugLib
+  BaseMemoryLib
+  MemoryProfileLib
+

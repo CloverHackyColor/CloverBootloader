@@ -48,6 +48,9 @@
   MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
+  MdePkg/Library/BaseUefiImageLib/BaseUefiImageOnlyNonFvLib.inf
+  MdePkg/Library/BaseUefiImageLib/BaseUefiImageOnlyFvLib.inf
+  MdePkg/Library/BaseUefiImageLib/BaseUefiImageAllLib.inf
   MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   MdePkg/Library/BasePostCodeLibDebug/BasePostCodeLibDebug.inf
   MdePkg/Library/BasePostCodeLibPort80/BasePostCodeLibPort80.inf

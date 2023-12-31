@@ -51,7 +51,6 @@
 ///
 #define HTTP_HEADER_ACCEPT             "Accept"
 
-
 ///
 /// Accept-Charset Request Header
 /// The Accept-Charset request-header field can be used to indicate what character sets
@@ -75,7 +74,6 @@
 /// indicate its acceptance of range requests for a resource:
 ///
 #define HTTP_HEADER_ACCEPT_RANGES      "Accept-Ranges"
-
 
 ///
 /// Accept-Encoding Request Header
@@ -105,7 +103,6 @@
 #define HTTP_CONTENT_ENCODING_DEFLATE  "deflate"   /// The "zlib" format defined in RFC 1950 in combination with the "deflate"
                                                    /// compression mechanism described in RFC 1951.
 
-
 ///
 /// Content-Type Header
 /// The Content-Type entity-header field indicates the media type of the entity-body sent to
@@ -129,7 +126,6 @@
 #define HTTP_CONTENT_TYPE_IMAGE_PNG         "image/png"
 #define HTTP_CONTENT_TYPE_IMAGE_SVG_XML     "image/svg+xml"
 
-
 ///
 /// Content-Length Header
 /// The Content-Length entity-header field indicates the size of the entity-body,
@@ -146,7 +142,11 @@
 /// is a property of the message, not of the entity.
 ///
 #define HTTP_HEADER_TRANSFER_ENCODING  "Transfer-Encoding"
-
+#define HTTP_HEADER_TRANSFER_ENCODING_CHUNKED        "chunked"
+#define CHUNKED_TRANSFER_CODING_CR                   '\r'
+#define CHUNKED_TRANSFER_CODING_LF                   '\n'
+#define CHUNKED_TRANSFER_CODING_LAST_CHUNK           '0'
+#define CHUNKED_TRANSFER_CODING_EXTENSION_SEPARATOR  ';'
 
 ///
 /// User Agent Request Header
@@ -193,7 +193,6 @@
 ///
 #define HTTP_HEADER_IF_MATCH          "If-Match"
 
-
 ///
 /// The If-None-Match request-header field is used with a method to make it conditional.
 /// A client that has one or more entities previously obtained from the resource can verify
@@ -205,7 +204,13 @@
 ///
 #define HTTP_HEADER_IF_NONE_MATCH     "If-None-Match"
 
-
+///
+/// The WWW-Authenticate Response Header
+/// If a server receives a request for an access-protected object, and an
+/// acceptable Authorization header is not sent, the server responds with
+/// a "401 Unauthorized" status code, and a WWW-Authenticate header.
+///
+#define HTTP_HEADER_WWW_AUTHENTICATE  "WWW-Authenticate"
 
 ///
 /// Authorization Request Header

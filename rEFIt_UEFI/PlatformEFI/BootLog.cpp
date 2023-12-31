@@ -349,6 +349,9 @@ void EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...)
 {
    VA_LIST Marker;
 
+   if ( DebugLevel == 0 ) {
+     return;
+   }
    if (FormatString == NULL ) return;
 
    // Print message to log buffer

@@ -16,14 +16,15 @@ extern EFI_COMPONENT_NAME2_PROTOCOL  gIp4ComponentName2;
 extern EFI_UNICODE_STRING_TABLE      *gIp4ControllerNameTable;
 
 typedef struct {
-  EFI_SERVICE_BINDING_PROTOCOL  *ServiceBinding;
-  UINTN                         NumberOfChildren;
-  EFI_HANDLE                    *ChildHandleBuffer;
+  EFI_SERVICE_BINDING_PROTOCOL    *ServiceBinding;
+  UINTN                           NumberOfChildren;
+  EFI_HANDLE                      *ChildHandleBuffer;
 } IP4_DESTROY_CHILD_IN_HANDLE_BUF_CONTEXT;
 
 //
 // Function prototype for the driver's entry point
 //
+
 /**
   This is the declaration of an EFI image entry point. This entry point is
   the same for UEFI Applications, UEFI OS Loaders, and UEFI Drivers including
@@ -42,13 +43,14 @@ typedef struct {
 EFI_STATUS
 EFIAPI
 Ip4DriverEntryPoint (
-  IN EFI_HANDLE             ImageHandle,
-  IN EFI_SYSTEM_TABLE       *SystemTable
+  IN EFI_HANDLE        ImageHandle,
+  IN EFI_SYSTEM_TABLE  *SystemTable
   );
 
 //
-// Function prototypes for the Drivr Binding Protocol
+// Function prototypes for the Driver Binding Protocol
 //
+
 /**
   Test to see if this driver supports ControllerHandle. This service
   is called by the EFI boot service ConnectController(). In
@@ -70,9 +72,9 @@ Ip4DriverEntryPoint (
 EFI_STATUS
 EFIAPI
 Ip4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL  * This,
+  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     * RemainingDevicePath OPTIONAL
+  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -96,9 +98,9 @@ Ip4DriverBindingSupported (
 EFI_STATUS
 EFIAPI
 Ip4DriverBindingStart (
-  IN EFI_DRIVER_BINDING_PROTOCOL  * This,
+  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                   ControllerHandle,
-  IN EFI_DEVICE_PATH_PROTOCOL     * RemainingDevicePath OPTIONAL
+  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath OPTIONAL
   );
 
 /**
@@ -131,6 +133,7 @@ Ip4DriverBindingStop (
 //
 // Function prototypes for the ServiceBinding Protocol
 //
+
 /**
   Creates a child handle and installs a protocol.
 
@@ -143,7 +146,7 @@ Ip4DriverBindingStop (
                       then a new handle is created. If it is a pointer to an existing UEFI handle,
                       then the protocol is added to the existing UEFI handle.
 
-  @retval EFI_SUCCES            The protocol was added to ChildHandle.
+  @retval EFI_SUCCESS           The protocol was added to ChildHandle.
   @retval EFI_INVALID_PARAMETER ChildHandle is NULL.
   @retval EFI_OUT_OF_RESOURCES  There are not enough resources available to create
                                 the child
@@ -167,7 +170,7 @@ Ip4ServiceBindingCreateChild (
   @param  This        Pointer to the EFI_SERVICE_BINDING_PROTOCOL instance.
   @param  ChildHandle Handle of the child to destroy
 
-  @retval EFI_SUCCES            The protocol was removed from ChildHandle.
+  @retval EFI_SUCCESS           The protocol was removed from ChildHandle.
   @retval EFI_UNSUPPORTED       ChildHandle does not support the protocol that is being removed.
   @retval EFI_INVALID_PARAMETER Child handle is NULL.
   @retval EFI_ACCESS_DENIED     The protocol could not be removed from the ChildHandle
@@ -181,4 +184,5 @@ Ip4ServiceBindingDestroyChild (
   IN EFI_SERVICE_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                    ChildHandle
   );
+
 #endif

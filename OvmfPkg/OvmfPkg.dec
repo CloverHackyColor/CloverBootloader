@@ -1,0 +1,505 @@
+## @file
+#  EFI/Framework Open Virtual Machine Firmware (OVMF) platform
+#
+#  Copyright (c) 2020, Rebecca Cran <rebecca@bsdio.com>
+#  Copyright (c) 2006 - 2019, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2014, Pluribus Networks, Inc.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = OvmfPkg
+  PACKAGE_GUID                   = 2daf5f34-50e5-4b9d-b8e3-5562334d87e5
+  PACKAGE_VERSION                = 0.1
+
+[Includes]
+  Include
+  Csm/Include
+
+[LibraryClasses]
+  ##  @libraryclass  Search and install ACPI tables.
+  #
+  AcpiPlatformLib|Include/Library/AcpiPlatformLib.h
+
+  ##  @libraryclass  Access bhyve's firmware control interface.
+  BhyveFwCtlLib|Include/Library/BhyveFwCtlLib.h
+
+  ##  @libraryclass  Verify blobs read from the VMM
+  BlobVerifierLib|Include/Library/BlobVerifierLib.h
+
+  ##  @libraryclass  Loads and boots a Linux kernel image
+  #
+  LoadLinuxLib|Include/Library/LoadLinuxLib.h
+
+  ##  @libraryclass  Declares helper functions for Secure Encrypted
+  #                  Virtualization (SEV) guests.
+  MemEncryptSevLib|Include/Library/MemEncryptSevLib.h
+
+  ##  @libraryclass  Declares helper functions for TDX guests.
+  #
+  MemEncryptTdxLib|Include/Library/MemEncryptTdxLib.h
+
+  ##  @libraryclass  Handle TPL changes within nested interrupt handlers
+  #
+  NestedInterruptTplLib|Include/Library/NestedInterruptTplLib.h
+
+  ##  @libraryclass  Save and restore variables using a file
+  #
+  NvVarsFileLib|Include/Library/NvVarsFileLib.h
+
+  ##  @libraryclass  Provides services to work with PCI capabilities in PCI
+  #                  config space.
+  PciCapLib|Include/Library/PciCapLib.h
+
+  ##  @libraryclass  Layered on top of PciCapLib, allows clients to plug an
+  #                  EFI_PCI_IO_PROTOCOL backend into PciCapLib, for config
+  #                  space access.
+  PciCapPciIoLib|Include/Library/PciCapPciIoLib.h
+
+  ##  @libraryclass  Layered on top of PciCapLib, allows clients to plug a
+  #                  PciSegmentLib backend into PciCapLib, for config space
+  #                  access.
+  PciCapPciSegmentLib|Include/Library/PciCapPciSegmentLib.h
+
+  ##  @libraryclass  Provide common utility functions to PciHostBridgeLib
+  #                  instances in ArmVirtPkg and OvmfPkg.
+  PciHostBridgeUtilityLib|Include/Library/PciHostBridgeUtilityLib.h
+
+  ##  @libraryclass  Register a status code handler for printing the Boot
+  #                  Manager's LoadImage() and StartImage() preparations, and
+  #                  return codes, to the UEFI console.
+  PlatformBmPrintScLib|Include/Library/PlatformBmPrintScLib.h
+
+  ##  @libraryclass  Customize FVB2 protocol member functions for a platform.
+  PlatformFvbLib|Include/Library/PlatformFvbLib.h
+
+  ##  @libraryclass  Access QEMU's firmware configuration interface
+  #
+  QemuFwCfgLib|Include/Library/QemuFwCfgLib.h
+
+  ##  @libraryclass  S3 support for QEMU fw_cfg
+  #
+  QemuFwCfgS3Lib|Include/Library/QemuFwCfgS3Lib.h
+
+  ##  @libraryclass  Parse the contents of named fw_cfg files as simple
+  #                  (scalar) data types.
+  QemuFwCfgSimpleParserLib|Include/Library/QemuFwCfgSimpleParserLib.h
+
+  ##  @libraryclass  Rewrite the BootOrder NvVar based on QEMU's "bootorder"
+  #                  fw_cfg file.
+  #
+  QemuBootOrderLib|Include/Library/QemuBootOrderLib.h
+
+  ##  @libraryclass  Load a kernel image and command line passed to QEMU via
+  #                  the command line
+  #
+  QemuLoadImageLib|Include/Library/QemuLoadImageLib.h
+
+  ##  @libraryclass  Serialize (and deserialize) variables
+  #
+  SerializeVariablesLib|Include/Library/SerializeVariablesLib.h
+
+  ##  @libraryclass  TdxHelper
+  #
+  TdxHelperLib|Include/Library/TdxHelperLib.h
+
+  ##  @libraryclass  Declares utility functions for virtio device drivers.
+  VirtioLib|Include/Library/VirtioLib.h
+
+  ##  @libraryclass  Install Virtio Device Protocol instances on virtio-mmio
+  #                  transports.
+  VirtioMmioDeviceLib|Include/Library/VirtioMmioDeviceLib.h
+
+  ##  @libraryclass  Provides a Nor flash interface.
+  #
+  VirtNorFlashPlatformLib|Include/Library/VirtNorFlashPlatformLib.h
+
+  ##  @libraryclass  Invoke Xen hypercalls
+  #
+  XenHypercallLib|Include/Library/XenHypercallLib.h
+
+  ##  @libraryclass  Manage XenBus device path and I/O handles
+  #
+  XenIoMmioLib|Include/Library/XenIoMmioLib.h
+
+  ##  @libraryclass  Get information about Xen
+  #
+  XenPlatformLib|Include/Library/XenPlatformLib.h
+
+  ##  @libraryclass  TdxMailboxLib
+  #
+  TdxMailboxLib|Include/Library/TdxMailboxLib.h
+
+  ##  @libraryclass  PlatformInitLib
+  #
+  PlatformInitLib|Include/Library/PlatformInitLib.h
+
+  ##  @libraryclass  PeilessStartupLib
+  #
+  PeilessStartupLib|Include/Library/PeilessStartupLib.h
+
+  ##  @libraryclass  HardwareInfoLib
+  #
+  HardwareInfoLib|Include/Library/HardwareInfoLib.h
+
+[Guids]
+  gUefiOvmfPkgTokenSpaceGuid            = {0x93bb96af, 0xb9f2, 0x4eb8, {0x94, 0x62, 0xe0, 0xba, 0x74, 0x56, 0x42, 0x36}}
+  gEfiXenInfoGuid                       = {0xd3b46f3b, 0xd441, 0x1244, {0x9a, 0x12, 0x0, 0x12, 0x27, 0x3f, 0xc1, 0x4d}}
+  gOvmfPkKek1AppPrefixGuid              = {0x4e32566d, 0x8e9e, 0x4f52, {0x81, 0xd3, 0x5b, 0xb9, 0x71, 0x5f, 0x97, 0x27}}
+  gOvmfPlatformConfigGuid               = {0x7235c51c, 0x0c80, 0x4cab, {0x87, 0xac, 0x3b, 0x08, 0x4a, 0x63, 0x04, 0xb1}}
+  gVirtioMmioTransportGuid              = {0x837dca9e, 0xe874, 0x4d82, {0xb2, 0x9a, 0x23, 0xfe, 0x0e, 0x23, 0xd1, 0xe2}}
+  gQemuRamfbGuid                        = {0x557423a1, 0x63ab, 0x406c, {0xbe, 0x7e, 0x91, 0xcd, 0xbc, 0x08, 0xc4, 0x57}}
+  gXenBusRootDeviceGuid                 = {0xa732241f, 0x383d, 0x4d9c, {0x8a, 0xe1, 0x8e, 0x09, 0x83, 0x75, 0x89, 0xd7}}
+  gRootBridgesConnectedEventGroupGuid   = {0x24a2d66f, 0xeedd, 0x4086, {0x90, 0x42, 0xf2, 0x6e, 0x47, 0x97, 0xee, 0x69}}
+  gMicrosoftVendorGuid                  = {0x77fa9abd, 0x0359, 0x4d32, {0xbd, 0x60, 0x28, 0xf4, 0xe7, 0x8f, 0x78, 0x4b}}
+  gEfiLegacyBiosGuid                    = {0x2E3044AC, 0x879F, 0x490F, {0x97, 0x60, 0xBB, 0xDF, 0xAF, 0x69, 0x5F, 0x50}}
+  gEfiLegacyDevOrderVariableGuid        = {0xa56074db, 0x65fe, 0x45f7, {0xbd, 0x21, 0x2d, 0x2b, 0xdd, 0x8e, 0x96, 0x52}}
+  gQemuKernelLoaderFsMediaGuid          = {0x1428f772, 0xb64a, 0x441e, {0xb8, 0xc3, 0x9e, 0xbd, 0xd7, 0xf8, 0x93, 0xc7}}
+  gGrubFileGuid                         = {0xb5ae312c, 0xbc8a, 0x43b1, {0x9c, 0x62, 0xeb, 0xb8, 0x26, 0xdd, 0x5d, 0x07}}
+  gConfidentialComputingSecretGuid      = {0xadf956ad, 0xe98c, 0x484c, {0xae, 0x11, 0xb5, 0x1c, 0x7d, 0x33, 0x64, 0x47}}
+  gConfidentialComputingSevSnpBlobGuid  = {0x067b1f5f, 0xcf26, 0x44c5, {0x85, 0x54, 0x93, 0xd7, 0x77, 0x91, 0x2d, 0x42}}
+  gUefiOvmfPkgPlatformInfoGuid          = {0xdec9b486, 0x1f16, 0x47c7, {0x8f, 0x68, 0xdf, 0x1a, 0x41, 0x88, 0x8b, 0xa5}}
+  gVMMBootOrderGuid                     = {0x668f4529, 0x63d0, 0x4bb5, {0xb6, 0x5d, 0x6f, 0xbb, 0x9d, 0x36, 0xa4, 0x4a}}
+  gUefiOvmfPkgTdxAcpiHobGuid            = {0x6a0c5870, 0xd4ed, 0x44f4, {0xa1, 0x35, 0xdd, 0x23, 0x8b, 0x6f, 0x0c, 0x8d}}
+  gEfiNonCcFvGuid                       = {0xae047c6d, 0xbce9, 0x426c, {0xae, 0x03, 0xa6, 0x8e, 0x3b, 0x8a, 0x04, 0x88}}
+  gOvmfVariableGuid                     = {0x50bea1e5, 0xa2c5, 0x46e9, {0x9b, 0x3a, 0x59, 0x59, 0x65, 0x16, 0xb0, 0x0a}}
+  gUefiImageLoaderImageContextGuid      = {0x05cc29cc, 0xfbdf, 0x4cc8, {0x98, 0x25, 0x71, 0x76, 0x08, 0x5b, 0x05, 0x01}}
+
+[Ppis]
+  # PPI whose presence in the PPI database signals that the TPM base address
+  # has been discovered and recorded
+  gOvmfTpmDiscoveredPpiGuid             = {0xb9a61ad0, 0x2802, 0x41f3, {0xb5, 0x13, 0x96, 0x51, 0xce, 0x6b, 0xd5, 0x75}}
+
+  # This PPI signals that accessing the MMIO range of the TPM is possible in
+  # the PEI phase, regardless of memory encryption
+  gOvmfTpmMmioAccessiblePpiGuid         = {0x35c84ff2, 0x7bfe, 0x453d, {0x84, 0x5f, 0x68, 0x3a, 0x49, 0x2c, 0xf7, 0xb7}}
+
+  gEfiPeiMpInitLibMpDepPpiGuid          = {0x138f9cf4, 0xf0e7, 0x4721, { 0x8f, 0x49, 0xf5, 0xff, 0xec, 0xf4, 0x2d, 0x40}}
+  gEfiPeiMpInitLibUpDepPpiGuid          = {0xb590774, 0xbc67, 0x49f4, { 0xa7, 0xdb, 0xe8, 0x2e, 0x89, 0xe6, 0xb5, 0xd6}}
+
+[Protocols]
+  gVirtioDeviceProtocolGuid             = {0xfa920010, 0x6785, 0x4941, {0xb6, 0xec, 0x49, 0x8c, 0x57, 0x9f, 0x16, 0x0a}}
+  gXenBusProtocolGuid                   = {0x3d3ca290, 0xb9a5, 0x11e3, {0xb7, 0x5d, 0xb8, 0xac, 0x6f, 0x7d, 0x65, 0xe6}}
+  gXenIoProtocolGuid                    = {0x6efac84f, 0x0ab0, 0x4747, {0x81, 0xbe, 0x85, 0x55, 0x62, 0x59, 0x04, 0x49}}
+  gIoMmuAbsentProtocolGuid              = {0xf8775d50, 0x8abd, 0x4adf, {0x92, 0xac, 0x85, 0x3e, 0x51, 0xf6, 0xc8, 0xdc}}
+  gEfiLegacy8259ProtocolGuid            = {0x38321dba, 0x4fe0, 0x4e17, {0x8a, 0xec, 0x41, 0x30, 0x55, 0xea, 0xed, 0xc1}}
+  gEfiFirmwareVolumeProtocolGuid        = {0x389F751F, 0x1838, 0x4388, {0x83, 0x90, 0xcd, 0x81, 0x54, 0xbd, 0x27, 0xf8}}
+  gEfiIsaAcpiProtocolGuid               = {0x64a892dc, 0x5561, 0x4536, {0x92, 0xc7, 0x79, 0x9b, 0xfc, 0x18, 0x33, 0x55}}
+  gEfiIsaIoProtocolGuid                 = {0x7ee2bd44, 0x3da0, 0x11d4, {0x9a, 0x38, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d}}
+  gEfiLegacyBiosProtocolGuid            = {0xdb9a1e3d, 0x45cb, 0x4abb, {0x85, 0x3b, 0xe5, 0x38, 0x7f, 0xdb, 0x2e, 0x2d}}
+  gEfiLegacyBiosPlatformProtocolGuid    = {0x783658a3, 0x4172, 0x4421, {0xa2, 0x99, 0xe0, 0x09, 0x07, 0x9c, 0x0c, 0xb4}}
+  gEfiLegacyInterruptProtocolGuid       = {0x31ce593d, 0x108a, 0x485d, {0xad, 0xb2, 0x78, 0xf2, 0x1f, 0x29, 0x66, 0xbe}}
+  gEfiVgaMiniPortProtocolGuid           = {0xc7735a2f, 0x88f5, 0x4882, {0xae, 0x63, 0xfa, 0xac, 0x8c, 0x8b, 0x86, 0xb3}}
+  gOvmfLoadedX86LinuxKernelProtocolGuid = {0xa3edc05d, 0xb618, 0x4ff6, {0x95, 0x52, 0x76, 0xd7, 0x88, 0x63, 0x43, 0xc8}}
+  gOvmfSevMemoryAcceptanceProtocolGuid  = {0xc5a010fe, 0x38a7, 0x4531, {0x8a, 0x4a, 0x05, 0x00, 0xd2, 0xfd, 0x16, 0x49}}
+  gQemuAcpiTableNotifyProtocolGuid      = {0x928939b2, 0x4235, 0x462f, {0x95, 0x80, 0xf6, 0xa2, 0xb2, 0xc2, 0x1a, 0x4f}}
+  gEfiMpInitLibMpDepProtocolGuid        = {0xbb00a5ca, 0x8ce,  0x462f, {0xa5, 0x37, 0x43, 0xc7, 0x4a, 0x82, 0x5c, 0xa4}}
+  gEfiMpInitLibUpDepProtocolGuid        = {0xa9e7cef1, 0x5682, 0x42cc, {0xb1, 0x23, 0x99, 0x30, 0x97, 0x3f, 0x4a, 0x9f}}
+
+[PcdsFixedAtBuild]
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfPeiMemFvBase|0x0|UINT32|0
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfPeiMemFvSize|0x0|UINT32|1
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeMemFvBase|0x0|UINT32|0x15
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeMemFvSize|0x0|UINT32|0x16
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeNonCcFvBase|0x0|UINT32|0x6a
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDxeNonCcFvSize|0x0|UINT32|0x6b
+
+  ## This flag is used to control the destination port for PlatformDebugLibIoPort
+  gUefiOvmfPkgTokenSpaceGuid.PcdDebugIoPort|0x402|UINT16|4
+
+  ## When VirtioScsiDxe is instantiated for a HBA, the numbers of targets and
+  #  LUNs are retrieved from the host during virtio-scsi setup.
+  #  MdeModulePkg/Bus/Scsi/ScsiBusDxe then scans all MaxTarget * MaxLun
+  #  possible devices. This can take extremely long, for example with
+  #  MaxTarget=255 and MaxLun=16383. The *inclusive* constants below limit
+  #  MaxTarget and MaxLun, independently, should the host report higher values,
+  #  so that scanning the number of devices given by their product is still
+  #  acceptably fast.
+  gUefiOvmfPkgTokenSpaceGuid.PcdVirtioScsiMaxTargetLimit|31|UINT16|6
+  gUefiOvmfPkgTokenSpaceGuid.PcdVirtioScsiMaxLunLimit|7|UINT32|7
+
+  ## Sets the *inclusive* number of targets and LUNs that PvScsi exposes for
+  #  scan by ScsiBusDxe.
+  #  As specified above for VirtioScsi, ScsiBusDxe scans all MaxTarget * MaxLun
+  #  possible devices, which can take extremely long. Thus, the below constants
+  #  are used so that scanning the number of devices given by their product
+  #  is still acceptably fast.
+  gUefiOvmfPkgTokenSpaceGuid.PcdPvScsiMaxTargetLimit|64|UINT8|0x36
+  gUefiOvmfPkgTokenSpaceGuid.PcdPvScsiMaxLunLimit|0|UINT8|0x37
+
+  ## After PvScsiDxe sends a SCSI request to the device, it waits for
+  #  the request completion in a polling loop.
+  #  This constant defines how many micro-seconds to wait between each
+  #  polling loop iteration.
+  gUefiOvmfPkgTokenSpaceGuid.PcdPvScsiWaitForCmpStallInUsecs|5|UINT32|0x38
+
+  ## Set the *inclusive* number of targets that MptScsi exposes for scan
+  #  by ScsiBusDxe.
+  gUefiOvmfPkgTokenSpaceGuid.PcdMptScsiMaxTargetLimit|7|UINT8|0x39
+
+  ## Microseconds to stall between polling for MptScsi request result
+  gUefiOvmfPkgTokenSpaceGuid.PcdMptScsiStallPerPollUsec|5|UINT32|0x3a
+
+  ## Set the *inclusive* number of targets and LUNs that LsiScsi exposes for
+  #  scan by ScsiBusDxe.
+  gUefiOvmfPkgTokenSpaceGuid.PcdLsiScsiMaxTargetLimit|7|UINT8|0x3b
+  gUefiOvmfPkgTokenSpaceGuid.PcdLsiScsiMaxLunLimit|0|UINT8|0x3c
+
+  ## Microseconds to stall between polling for LsiScsi request result
+  gUefiOvmfPkgTokenSpaceGuid.PcdLsiScsiStallPerPollUsec|5|UINT32|0x3d
+
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageEventLogBase|0x0|UINT32|0x8
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageEventLogSize|0x0|UINT32|0x9
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFirmwareFdSize|0x0|UINT32|0xa
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFirmwareBlockSize|0|UINT32|0xb
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageVariableBase|0x0|UINT32|0xc
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwSpareBase|0x0|UINT32|0xd
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwWorkingBase|0x0|UINT32|0xe
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFdBaseAddress|0x0|UINT32|0xf
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPageTablesBase|0x0|UINT32|0x11
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPageTablesSize|0x0|UINT32|0x12
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPeiTempRamBase|0x0|UINT32|0x13
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecPeiTempRamSize|0x0|UINT32|0x14
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfLockBoxStorageBase|0x0|UINT32|0x18
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfLockBoxStorageSize|0x0|UINT32|0x19
+  gUefiOvmfPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize|0x0|UINT32|0x1a
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfDecompressionScratchEnd|0x0|UINT32|0x1f
+
+  ## Pcd8259LegacyModeMask defines the default mask value for platform. This
+  #  value is determined.
+  #  1) If platform only support pure UEFI, value should be set to 0xFFFF or
+  #     0xFFFE; Because only clock interrupt is allowed in legacy mode in pure
+  #     UEFI platform.
+  #  2) If platform install CSM and use thunk module:
+  #     a) If thunk call provided by CSM binary requires some legacy interrupt
+  #        support, the corresponding bit should be opened as 0.
+  #        For example, if keyboard interfaces provided CSM binary use legacy
+  #        keyboard interrupt in 8259 bit 1, then the value should be set to
+  #        0xFFFC.
+  #     b) If all thunk call provied by CSM binary do not require legacy
+  #        interrupt support, value should be set to 0xFFFF or 0xFFFE.
+  #
+  #  The default value of legacy mode mask could be changed by
+  #  EFI_LEGACY_8259_PROTOCOL->SetMask(). But it is rarely need change it
+  #  except some special cases such as when initializing the CSM binary, it
+  #  should be set to 0xFFFF to mask all legacy interrupt. Please restore the
+  #  original legacy mask value if changing is made for these special case.
+  gUefiOvmfPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFF|UINT16|0x3
+
+  ## Pcd8259LegacyModeEdgeLevel defines the default edge level for legacy
+  #  mode's interrrupt controller.
+  #  For the corresponding bits, 0 = Edge triggered and 1 = Level triggered.
+  gUefiOvmfPkgTokenSpaceGuid.Pcd8259LegacyModeEdgeLevel|0x0000|UINT16|0x5
+
+  ## Indicates if BiosVideo driver will switch to 80x25 Text VGA Mode when
+  #  exiting boot service.
+  #   TRUE  - Switch to Text VGA Mode.
+  #   FALSE - Does not switch to Text VGA Mode.
+  gUefiOvmfPkgTokenSpaceGuid.PcdBiosVideoSetTextVgaModeEnable|FALSE|BOOLEAN|0x28
+
+  ## Indicates if BiosVideo driver will check for VESA BIOS Extension service
+  #  support.
+  #   TRUE  - Check for VESA BIOS Extension service.
+  #   FALSE - Does not check for VESA BIOS Extension service.
+  gUefiOvmfPkgTokenSpaceGuid.PcdBiosVideoCheckVbeEnable|TRUE|BOOLEAN|0x29
+
+  ## Indicates if BiosVideo driver will check for VGA service support.
+  #  NOTE: If both PcdBiosVideoCheckVbeEnable and PcdBiosVideoCheckVgaEnable
+  #  are set to FALSE, that means Graphics Output protocol will not be
+  #  installed, the VGA miniport protocol will be installed instead.
+  #   TRUE  - Check for VGA service.<BR>
+  #   FALSE - Does not check for VGA service.<BR>
+  gUefiOvmfPkgTokenSpaceGuid.PcdBiosVideoCheckVgaEnable|TRUE|BOOLEAN|0x2a
+
+  ## Indicates if memory space for legacy region will be set as cacheable.
+  #   TRUE  - Set cachebility for legacy region.
+  #   FALSE - Does not set cachebility for legacy region.
+  gUefiOvmfPkgTokenSpaceGuid.PcdLegacyBiosCacheLegacyRegion|TRUE|BOOLEAN|0x2b
+
+  ## Specify memory size with bytes to reserve EBDA below 640K for OPROM.
+  #  The value should be a multiple of 4KB.
+  gUefiOvmfPkgTokenSpaceGuid.PcdEbdaReservedMemorySize|0x8000|UINT32|0x2c
+
+  ## Specify memory base address for OPROM to find free memory.
+  #  Some OPROMs do not use EBDA or PMM to allocate memory for its usage,
+  #  instead they find the memory filled with zero from 0x20000.
+  #  The value should be a multiple of 4KB.
+  #  The range should be below the EBDA reserved range from
+  #  (CONVENTIONAL_MEMORY_TOP - Reserved EBDA Memory Size) to
+  #  CONVENTIONAL_MEMORY_TOP.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOpromReservedMemoryBase|0x60000|UINT32|0x2d
+
+  ## Specify memory size with bytes for OPROM to find free memory.
+  #  The value should be a multiple of 4KB. And the range should be below the
+  #  EBDA reserved range from
+  #  (CONVENTIONAL_MEMORY_TOP - Reserved EBDA Memory Size) to
+  #  CONVENTIONAL_MEMORY_TOP.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOpromReservedMemorySize|0x28000|UINT32|0x2e
+
+  ## Specify the end of address below 1MB for the OPROM.
+  #  The last shadowed OpROM should not exceed this address.
+  gUefiOvmfPkgTokenSpaceGuid.PcdEndOpromShadowAddress|0xdffff|UINT32|0x2f
+
+  ## Specify the low PMM (Post Memory Manager) size with bytes below 1MB.
+  #  The value should be a multiple of 4KB.
+  # @Prompt Low PMM (Post Memory Manager) Size
+  gUefiOvmfPkgTokenSpaceGuid.PcdLowPmmMemorySize|0x10000|UINT32|0x30
+
+  ## Specify the high PMM (Post Memory Manager) size with bytes above 1MB.
+  #  The value should be a multiple of 4KB.
+  gUefiOvmfPkgTokenSpaceGuid.PcdHighPmmMemorySize|0x400000|UINT32|0x31
+
+  gUefiOvmfPkgTokenSpaceGuid.PcdXenPvhStartOfDayStructPtr|0x0|UINT32|0x17
+  gUefiOvmfPkgTokenSpaceGuid.PcdXenPvhStartOfDayStructPtrSize|0x0|UINT32|0x32
+
+  ## Number of page frames to use for storing grant table entries.
+  gUefiOvmfPkgTokenSpaceGuid.PcdXenGrantFrames|4|UINT32|0x33
+
+  ## Specify the extra page table needed to mark the GHCB as unencrypted.
+  #  The value should be a multiple of 4KB for each.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbPageTableBase|0x0|UINT32|0x3e
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbPageTableSize|0x0|UINT32|0x3f
+
+  ## The base address of the SEC GHCB page used by SEV-ES.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbBase|0|UINT32|0x40
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbSize|0|UINT32|0x41
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbBackupBase|0|UINT32|0x44
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecGhcbBackupSize|0|UINT32|0x45
+
+  ## The base address and size of the SEV Launch Secret Area provisioned
+  #  after remote attestation.  If this is set in the .fdf, the platform
+  #  is responsible for protecting the area from DXE phase overwrites.
+  gUefiOvmfPkgTokenSpaceGuid.PcdSevLaunchSecretBase|0x0|UINT32|0x42
+  gUefiOvmfPkgTokenSpaceGuid.PcdSevLaunchSecretSize|0x0|UINT32|0x43
+
+  ## The base address and size of a hash table confirming allowed
+  #  parameters to be passed in via the Qemu firmware configuration
+  #  device
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuHashTableBase|0x0|UINT32|0x47
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuHashTableSize|0x0|UINT32|0x48
+
+  ## The base address and size of the work area used during the SEC
+  # phase by the SEV and TDX supports.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfWorkAreaBase|0|UINT32|0x49
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfWorkAreaSize|0|UINT32|0x50
+
+  ## The work area contains a fixed size header in the Include/WorkArea.h.
+  # The size of this header is used early boot, and is provided through
+  # a fixed PCD. It need to be kept in sync with any changes to the
+  # header definition.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfConfidentialComputingWorkAreaHeader|4|UINT32|0x51
+
+  ## The base address and size of the TDX Cfv base and size.
+  gUefiOvmfPkgTokenSpaceGuid.PcdCfvBase|0|UINT32|0x52
+  gUefiOvmfPkgTokenSpaceGuid.PcdCfvRawDataOffset|0|UINT32|0x53
+  gUefiOvmfPkgTokenSpaceGuid.PcdCfvRawDataSize|0|UINT32|0x54
+
+  ## The base address and size of the TDX Bfv base and size.
+  gUefiOvmfPkgTokenSpaceGuid.PcdBfvBase|0|UINT32|0x55
+  gUefiOvmfPkgTokenSpaceGuid.PcdBfvRawDataOffset|0|UINT32|0x56
+  gUefiOvmfPkgTokenSpaceGuid.PcdBfvRawDataSize|0|UINT32|0x57
+
+  ## The base address and size of the SEV-SNP Secrets Area that contains
+  #  the VM platform communication key used to send and recieve the
+  #  messages to the PSP. If this is set in the .fdf, the platform
+  #  is responsible to reserve this area from DXE phase overwrites.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSnpSecretsBase|0|UINT32|0x58
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSnpSecretsSize|0|UINT32|0x59
+
+  ## The base address and size of a CPUID Area that contains the hypervisor
+  #  provided CPUID results. In the case of SEV-SNP, the CPUID results are
+  #  filtered by the SEV-SNP firmware. If this is set in the .fdf, the
+  #  platform is responsible to reserve this area from DXE phase overwrites.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfCpuidBase|0|UINT32|0x60
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfCpuidSize|0|UINT32|0x61
+
+  ## The range of memory that is validated by the SEC phase.
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecValidatedStart|0|UINT32|0x62
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfSecValidatedEnd|0|UINT32|0x63
+
+  ## The Tdx accept page size. 0x1000(4k),0x200000(2M)
+  gUefiOvmfPkgTokenSpaceGuid.PcdTdxAcceptPageSize|0x200000|UINT32|0x65
+
+  ## The QEMU fw_cfg variable that UefiDriverEntryPointFwCfgOverrideLib will
+  #  check to decide whether to abort dispatch of the driver it is linked into.
+  gUefiOvmfPkgTokenSpaceGuid.PcdEntryPointOverrideFwCfgVarName|""|VOID*|0x68
+
+  ## Restrict boot to EFI applications in firmware volumes.
+  gUefiOvmfPkgTokenSpaceGuid.PcdBootRestrictToFirmware|FALSE|BOOLEAN|0x6c
+
+[PcdsDynamic, PcdsDynamicEx]
+  gUefiOvmfPkgTokenSpaceGuid.PcdEmuVariableEvent|0|UINT64|2
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashVariablesEnable|FALSE|BOOLEAN|0x10
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId|0|UINT16|0x1b
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|FALSE|BOOLEAN|0x21
+
+  ## The IO port aperture shared by all PCI root bridges.
+  #
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciIoBase|0x0|UINT64|0x22
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciIoSize|0x0|UINT64|0x23
+
+  ## The 32-bit MMIO aperture shared by all PCI root bridges.
+  #
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciMmio32Base|0x0|UINT64|0x24
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciMmio32Size|0x0|UINT64|0x25
+
+  ## The 64-bit MMIO aperture shared by all PCI root bridges.
+  #
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciMmio64Base|0x0|UINT64|0x26
+  gUefiOvmfPkgTokenSpaceGuid.PcdPciMmio64Size|0x0|UINT64|0x27
+
+  ## The following setting controls how many megabytes we configure as TSEG on
+  #  Q35, for SMRAM purposes. Permitted defaults are: 1, 2, 8. Other defaults
+  #  cause undefined behavior. During boot, the PCD is updated by PlatformPei
+  #  to reflect the extended TSEG size, if one is advertized by QEMU.
+  #
+  #  This PCD is only accessed if PcdSmmSmramRequire is TRUE (see below).
+  gUefiOvmfPkgTokenSpaceGuid.PcdQ35TsegMbytes|8|UINT16|0x20
+
+  ## Set to TRUE by PlatformPei if the Q35 board supports the "SMRAM at default
+  #  SMBASE" feature.
+  #
+  #  This PCD is only accessed if PcdSmmSmramRequire is TRUE (see below).
+  gUefiOvmfPkgTokenSpaceGuid.PcdQ35SmramAtDefaultSmbase|FALSE|BOOLEAN|0x34
+
+  ## This PCD adds a communication channel between OVMF's SmmCpuFeaturesLib
+  #  instance in PiSmmCpuDxeSmm, and CpuHotplugSmm.
+  gUefiOvmfPkgTokenSpaceGuid.PcdCpuHotEjectDataAddress|0|UINT64|0x46
+
+  ## This PCD tracks where PcdVideo{Horizontal,Vertical}Resolution
+  #  values are coming from.
+  #    0 - unset (defaults from platform dsc)
+  #    1 - set from PlatformConfig
+  #    2 - set by GOP Driver.
+  gUefiOvmfPkgTokenSpaceGuid.PcdVideoResolutionSource|0|UINT8|0x64
+
+  #
+  # Whether to force disable ACPI, regardless of the fw_cfg settings
+  # exposed by QEMU
+  #
+  gUefiOvmfPkgTokenSpaceGuid.PcdForceNoAcpi|0x0|BOOLEAN|0x69
+
+[PcdsFeatureFlag]
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuBootOrderPciTranslation|TRUE|BOOLEAN|0x1c
+  gUefiOvmfPkgTokenSpaceGuid.PcdQemuBootOrderMmioTranslation|FALSE|BOOLEAN|0x1d
+
+  ## This feature flag enables SMM/SMRAM support. Note that it also requires
+  #  such support from the underlying QEMU instance; if that support is not
+  #  present, the firmware will reject continuing after a certain point.
+  #
+  #  The flag also acts as a general "security switch"; when TRUE, many
+  #  components will change behavior, with the goal of preventing a malicious
+  #  runtime OS from tampering with firmware structures (special memory ranges
+  #  used by OVMF, the varstore pflash chip, LockBox etc).
+  gUefiOvmfPkgTokenSpaceGuid.PcdSmmSmramRequire|FALSE|BOOLEAN|0x1e
+
+  ## This feature flag indicates the firmware build supports secure boot.
+  gUefiOvmfPkgTokenSpaceGuid.PcdSecureBootSupported|FALSE|BOOLEAN|0x6d
+
+  ## Informs modules (including pre-DXE-phase modules) whether the platform
+  #  firmware contains a CSM (Compatibility Support Module).
+  #
+  gUefiOvmfPkgTokenSpaceGuid.PcdCsmEnable|FALSE|BOOLEAN|0x35

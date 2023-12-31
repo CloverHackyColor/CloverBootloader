@@ -1,0 +1,49 @@
+## @file
+#  PE/COFF Loader Library implementation.
+#
+#  Copyright (c) 2020 - 2021, Marvin Häuser. All rights reserved.<BR>
+#  Copyright (c) 2020, Vitaly Cheptsov. All rights reserved.<BR>
+#  Copyright (c) 2020, ISP RAS. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-3-Clause
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = BasePeCoffLib2
+  FILE_GUID      = 454A346E-3064-464E-8285-99DF1E220E0F
+  MODULE_TYPE    = BASE
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = PeCoffLib2
+
+[Sources]
+  PeCoffDebug.c
+  PeCoffHash.c
+  PeCoffHii.c
+  PeCoffInfo.c
+  PeCoffInit.c
+  PeCoffLoad.c
+  PeCoffRelocate.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  BaseOverflowLib
+  DebugLib
+  MemoryAllocationLib
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRtRelocAllowTargetMismatch
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderHashProhibitOverlap
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderLoadHeader
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRelocTypePolicy
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAlignmentPolicy
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderWXorX
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderDebugSupport
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAllowMisalignedOffset
+  gEfiMdePkgTokenSpaceGuid.PcdDebugRaisePropertyMask
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRemoveXForWX
+  gEfiMdePkgTokenSpaceGuid.PcdImageProtectionPolicy

@@ -37,4 +37,5 @@
   BaseMemoryLib
   PeiServicesLib
   HobLib
+  CommonMemoryAllocationLib
 

@@ -1,0 +1,32 @@
+## @file
+# Memory Profile Library Null instance.
+#
+# Copyright (c) 2008 - 2018, Intel Corporation. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BaseMemoryProfileLibNull
+  MODULE_UNI_FILE                = BaseMemoryProfileLibNull.uni
+  FILE_GUID                      = 888809d7-e5c5-4848-b8b9-f920a7b89ce1
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = MemoryProfileLib
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 EBC
+#
+
+[Sources]
+  BaseMemoryProfileLibNull.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+

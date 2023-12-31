@@ -6,7 +6,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
-
 #ifndef __EFI_MTFTP4_OPTION_H__
 #define __EFI_MTFTP4_OPTION_H__
 
@@ -16,21 +15,21 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define MTFTP4_BLKNO_LEN          2
 #define MTFTP4_DATA_HEAD_LEN      4
 
-#define MTFTP4_BLKSIZE_EXIST      0x01
-#define MTFTP4_TIMEOUT_EXIST      0x02
-#define MTFTP4_TSIZE_EXIST        0x04
-#define MTFTP4_MCAST_EXIST        0x08
-#define MTFTP4_WINDOWSIZE_EXIST   0x10
+#define MTFTP4_BLKSIZE_EXIST     0x01
+#define MTFTP4_TIMEOUT_EXIST     0x02
+#define MTFTP4_TSIZE_EXIST       0x04
+#define MTFTP4_MCAST_EXIST       0x08
+#define MTFTP4_WINDOWSIZE_EXIST  0x10
 
 typedef struct {
-  UINT16                    BlkSize;
-  UINT16                    WindowSize;
-  UINT8                     Timeout;
-  UINT32                    Tsize;
-  IP4_ADDR                  McastIp;
-  UINT16                    McastPort;
-  BOOLEAN                   Master;
-  UINT32                    Exist;
+  UINT16      BlkSize;
+  UINT16      WindowSize;
+  UINT8       Timeout;
+  UINT32      Tsize;
+  IP4_ADDR    McastIp;
+  UINT16      McastPort;
+  BOOLEAN     Master;
+  UINT32      Exist;
 } MTFTP4_OPTION;
 
 /**
@@ -45,17 +44,17 @@ typedef struct {
   @param  OptionList             The point to get the option array.
 
   @retval EFI_INVALID_PARAMETER  The parametera are invalid or packet isn't a
-                                 well-formated OACK packet.
+                                 well-formatted OACK packet.
   @retval EFI_SUCCESS            The option array is build
   @retval EFI_OUT_OF_RESOURCES   Failed to allocate memory for the array
 
 **/
 EFI_STATUS
 Mtftp4ExtractOptions (
-  IN     EFI_MTFTP4_PACKET     *Packet,
-  IN     UINT32                PacketLen,
-     OUT UINT32                *OptionCount,
-     OUT EFI_MTFTP4_OPTION     **OptionList        OPTIONAL
+  IN     EFI_MTFTP4_PACKET  *Packet,
+  IN     UINT32             PacketLen,
+  OUT UINT32                *OptionCount,
+  OUT EFI_MTFTP4_OPTION     **OptionList        OPTIONAL
   );
 
 /**
@@ -70,18 +69,18 @@ Mtftp4ExtractOptions (
   @param  Operation              The current performed operation.
   @param  MtftpOption            The MTFTP4_OPTION for easy access.
 
-  @retval EFI_INVALID_PARAMETER  The option is mal-formated
+  @retval EFI_INVALID_PARAMETER  The option is malformatted
   @retval EFI_UNSUPPORTED        Some option isn't supported
   @retval EFI_SUCCESS            The option are OK and has been parsed.
 
 **/
 EFI_STATUS
 Mtftp4ParseOption (
-  IN     EFI_MTFTP4_OPTION     *Options,
-  IN     UINT32                Count,
-  IN     BOOLEAN               Request,
-  IN     UINT16                Operation,
-     OUT MTFTP4_OPTION         *MtftpOption
+  IN     EFI_MTFTP4_OPTION  *Options,
+  IN     UINT32             Count,
+  IN     BOOLEAN            Request,
+  IN     UINT16             Operation,
+  OUT MTFTP4_OPTION         *MtftpOption
   );
 
 /**
@@ -93,17 +92,17 @@ Mtftp4ParseOption (
   @param  Operation              The current performed operation.
   @param  MtftpOption            The MTFTP_OPTION for easy access.
 
-  @retval EFI_INVALID_PARAMETER  The packet option is mal-formated
+  @retval EFI_INVALID_PARAMETER  The packet option is malformatted
   @retval EFI_UNSUPPORTED        Some option isn't supported
   @retval EFI_SUCCESS            The option are OK and has been parsed.
 
 **/
 EFI_STATUS
 Mtftp4ParseOptionOack (
-  IN     EFI_MTFTP4_PACKET     *Packet,
-  IN     UINT32                PacketLen,
-  IN     UINT16                Operation,
-     OUT MTFTP4_OPTION         *MtftpOption
+  IN     EFI_MTFTP4_PACKET  *Packet,
+  IN     UINT32             PacketLen,
+  IN     UINT16             Operation,
+  OUT MTFTP4_OPTION         *MtftpOption
   );
 
 extern CHAR8  *mMtftp4SupportedOptions[MTFTP4_SUPPORTED_OPTIONS];

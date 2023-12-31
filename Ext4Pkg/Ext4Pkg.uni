@@ -1,0 +1,14 @@
+## @file
+#  Ext4 Package
+#
+#  This package provides libraries and drivers related to the ext4 filesystem implementation.
+#  More details are available at: https://www.kernel.org/doc/html/v5.4/filesystems/ext4/index.html
+#
+#  Copyright (c) 2021 Pedro Falcato
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+#string STR_PACKAGE_ABSTRACT            #language en-US "Module implementations for the EXT4 file system"
+
+#string STR_PACKAGE_DESCRIPTION         #language en-US "This package contains UEFI drivers and libraries for the EXT4 file system."

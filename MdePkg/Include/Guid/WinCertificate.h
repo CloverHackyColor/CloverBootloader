@@ -56,11 +56,10 @@ typedef struct {
 /// WIN_CERTIFICATE_UEFI_GUID.CertData
 ///
 typedef struct {
-  EFI_GUID  HashType;
+  GUID      HashType;
   UINT8     PublicKey[256];
   UINT8     Signature[256];
 } EFI_CERT_BLOCK_RSA_2048_SHA256;
-
 
 ///
 /// Certificate which encapsulates a GUID-specific digital signature
@@ -75,7 +74,7 @@ typedef struct {
   /// This is the unique id which determines the
   /// format of the CertData. .
   ///
-  EFI_GUID          CertType;
+  GUID              CertType;
   ///
   /// The following is the certificate data. The format of
   /// the data is determined by the CertType.
@@ -84,7 +83,6 @@ typedef struct {
   ///
   UINT8            CertData[1];
 } WIN_CERTIFICATE_UEFI_GUID;
-
 
 ///
 /// Certificate which encapsulates the RSASSA_PKCS1-v1_5 digital signature.
@@ -104,7 +102,7 @@ typedef struct {
   /// This is the hashing algorithm which was performed on the
   /// UEFI executable when creating the digital signature.
   ///
-  EFI_GUID        HashAlgorithm;
+  GUID            HashAlgorithm;
   ///
   /// The following is the actual digital signature. The
   /// size of the signature is the same size as the key
@@ -117,6 +115,6 @@ typedef struct {
   ///
 } WIN_CERTIFICATE_EFI_PKCS1_15;
 
-extern EFI_GUID gEfiCertTypeRsa2048Sha256Guid;
+extern GUID gEfiCertTypeRsa2048Sha256Guid;
 
 #endif

@@ -9,7 +9,7 @@
 #define CPP_LIB_MEMORYTRACKER_H_
 
 #ifdef JIEF_DEBUG
-#define MEMORY_TRACKER_ENABLED
+//#define MEMORY_TRACKER_ENABLED
 #endif
 
 
@@ -26,7 +26,7 @@ void MemoryTrackerCheck();
 class MemoryStopRecord
 {
 protected:
-  bool recording;
+  bool recording = 0;
 public:
   MemoryStopRecord();
   ~MemoryStopRecord();

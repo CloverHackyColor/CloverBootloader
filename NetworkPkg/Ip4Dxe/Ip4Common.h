@@ -13,17 +13,17 @@ typedef struct _IP4_INTERFACE  IP4_INTERFACE;
 typedef struct _IP4_PROTOCOL   IP4_PROTOCOL;
 typedef struct _IP4_SERVICE    IP4_SERVICE;
 
-#define IP4_ETHER_PROTO       0x0800
+#define IP4_ETHER_PROTO  0x0800
 
 //
 // The packet is received as link level broadcast/multicast/promiscuous.
 //
-#define IP4_LINK_BROADCAST    0x00000001
-#define IP4_LINK_MULTICAST    0x00000002
-#define IP4_LINK_PROMISC      0x00000004
+#define IP4_LINK_BROADCAST  0x00000001
+#define IP4_LINK_MULTICAST  0x00000002
+#define IP4_LINK_PROMISC    0x00000004
 
 //
-// IP4 address cast type classfication. Keep it true that any
+// IP4 address cast type classification. Keep it true that any
 // type bigger than or equal to LOCAL_BROADCAST is broadcast.
 //
 #define IP4_PROMISCUOUS       1
@@ -40,10 +40,10 @@ typedef struct _IP4_SERVICE    IP4_SERVICE;
 #define IP4_HEAD_MF_MASK      0x2000
 #define IP4_HEAD_OFFSET_MASK  0x1fff
 
-#define IP4_ALLZERO_ADDRESS   0x00000000u
-#define IP4_ALLONE_ADDRESS    0xFFFFFFFFu
-#define IP4_ALLSYSTEM_ADDRESS 0xE0000001u
-#define IP4_ALLROUTER_ADDRESS 0xE0000002u
+#define IP4_ALLZERO_ADDRESS    0x00000000u
+#define IP4_ALLONE_ADDRESS     0xFFFFFFFFu
+#define IP4_ALLSYSTEM_ADDRESS  0xE0000001u
+#define IP4_ALLROUTER_ADDRESS  0xE0000002u
 
 ///
 /// Compose the fragment field to be used in the IP4 header.
@@ -60,16 +60,16 @@ typedef struct _IP4_SERVICE    IP4_SERVICE;
 #define IP4_DO_NOT_FRAGMENT(FragmentField) \
           ((BOOLEAN)(((FragmentField) & IP4_HEAD_DF_MASK) == IP4_HEAD_DF_MASK))
 
-#define IP4_IS_BROADCAST(CastType) ((CastType) >= IP4_LOCAL_BROADCAST)
+#define IP4_IS_BROADCAST(CastType)  ((CastType) >= IP4_LOCAL_BROADCAST)
 
 ///
-/// Conver the Microsecond to second. IP transmit/receive time is
+/// Convert the Microsecond to second. IP transmit/receive time is
 /// in the unit of microsecond. IP ticks once per second.
 ///
-#define IP4_US_TO_SEC(Us) (((Us) + 999999) / 1000000)
+#define IP4_US_TO_SEC(Us)  (((Us) + 999999) / 1000000)
 
 /**
-  Return the cast type (Unicast/Boradcast) specific to an
+  Return the cast type (Unicast/Broadcast) specific to an
   interface. All the addresses are host byte ordered.
 
   @param[in]  IpAddr                The IP address to classify in host byte order
@@ -77,7 +77,7 @@ typedef struct _IP4_SERVICE    IP4_SERVICE;
 
   @return The cast type of this IP address specific to the interface.
   @retval IP4_LOCAL_HOST        The IpAddr equals to the interface's address
-  @retval IP4_SUBNET_BROADCAST  The IpAddr is a directed subnet boradcast to  the
+  @retval IP4_SUBNET_BROADCAST  The IpAddr is a directed subnet broadcast to  the
                                 interface
   @retval IP4_NET_BROADCAST     The IpAddr is a network broadcast to the interface
   @retval 0                     Otherwise.
@@ -85,8 +85,8 @@ typedef struct _IP4_SERVICE    IP4_SERVICE;
 **/
 INTN
 Ip4GetNetCast (
-  IN  IP4_ADDR          IpAddr,
-  IN  IP4_INTERFACE     *IpIf
+  IN  IP4_ADDR       IpAddr,
+  IN  IP4_INTERFACE  *IpIf
   );
 
 /**
@@ -107,9 +107,9 @@ Ip4GetNetCast (
 **/
 INTN
 Ip4GetHostCast (
-  IN  IP4_SERVICE       *IpSb,
-  IN  IP4_ADDR          Dst,
-  IN  IP4_ADDR          Src
+  IN  IP4_SERVICE  *IpSb,
+  IN  IP4_ADDR     Dst,
+  IN  IP4_ADDR     Src
   );
 
 /**
@@ -123,8 +123,8 @@ Ip4GetHostCast (
 **/
 IP4_INTERFACE *
 Ip4FindInterface (
-  IN IP4_SERVICE        *IpSb,
-  IN IP4_ADDR           Ip
+  IN IP4_SERVICE  *IpSb,
+  IN IP4_ADDR     Ip
   );
 
 /**
@@ -138,15 +138,15 @@ Ip4FindInterface (
 **/
 IP4_INTERFACE *
 Ip4FindNet (
-  IN IP4_SERVICE        *IpSb,
-  IN IP4_ADDR           Ip
+  IN IP4_SERVICE  *IpSb,
+  IN IP4_ADDR     Ip
   );
 
 /**
   Find an interface of the service with the same Ip/Netmask pair.
 
   @param[in]  IpSb                  Ip4 service binding instance
-  @param[in]  Ip                    The Ip adress to find (host byte order)
+  @param[in]  Ip                    The Ip address to find (host byte order)
   @param[in]  Netmask               The network to find (host byte order)
 
   @return The IP4_INTERFACE point if found, otherwise NULL
@@ -154,9 +154,9 @@ Ip4FindNet (
 **/
 IP4_INTERFACE *
 Ip4FindStationAddress (
-  IN IP4_SERVICE        *IpSb,
-  IN IP4_ADDR           Ip,
-  IN IP4_ADDR           Netmask
+  IN IP4_SERVICE  *IpSb,
+  IN IP4_ADDR     Ip,
+  IN IP4_ADDR     Netmask
   );
 
 /**
@@ -175,9 +175,9 @@ Ip4FindStationAddress (
 **/
 EFI_STATUS
 Ip4GetMulticastMac (
-  IN  EFI_MANAGED_NETWORK_PROTOCOL *Mnp,
-  IN  IP4_ADDR                     Multicast,
-  OUT EFI_MAC_ADDRESS              *Mac
+  IN  EFI_MANAGED_NETWORK_PROTOCOL  *Mnp,
+  IN  IP4_ADDR                      Multicast,
+  OUT EFI_MAC_ADDRESS               *Mac
   );
 
 /**
@@ -192,17 +192,16 @@ Ip4GetMulticastMac (
 **/
 IP4_HEAD *
 Ip4NtohHead (
-  IN IP4_HEAD           *Head
+  IN IP4_HEAD  *Head
   );
-
 
 /**
   Validate that Ip/Netmask pair is OK to be used as station
   address. Only continuous netmasks are supported. and check
-  that StationAddress is a unicast address on the newtwork.
+  that StationAddress is a unicast address on the network.
 
   @param[in]  Ip                 The IP address to validate.
-  @param[in]  Netmask            The netmaks of the IP.
+  @param[in]  Netmask            The netmask of the IP.
 
   @retval TRUE                   The Ip/Netmask pair is valid.
   @retval FALSE                  The Ip/Netmask pair is invalid.
@@ -210,8 +209,8 @@ Ip4NtohHead (
 **/
 BOOLEAN
 Ip4StationAddressValid (
-  IN IP4_ADDR               Ip,
-  IN IP4_ADDR               Netmask
+  IN IP4_ADDR  Ip,
+  IN IP4_ADDR  Netmask
   );
 
 #endif

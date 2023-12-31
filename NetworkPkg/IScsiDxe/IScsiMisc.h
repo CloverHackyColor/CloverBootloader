@@ -14,49 +14,47 @@ typedef struct _ISCSI_DRIVER_DATA ISCSI_DRIVER_DATA;
 ///
 /// IPv4 Device Path Node Length
 ///
-#define IP4_NODE_LEN_NEW_VERSIONS    27
+#define IP4_NODE_LEN_NEW_VERSIONS  27
 
 ///
 /// IPv6 Device Path Node Length
 ///
-#define IP6_NODE_LEN_OLD_VERSIONS    43
-#define IP6_NODE_LEN_NEW_VERSIONS    60
+#define IP6_NODE_LEN_OLD_VERSIONS  43
+#define IP6_NODE_LEN_NEW_VERSIONS  60
 
 ///
 /// The ignored field StaticIpAddress's offset in old IPv6 Device Path
 ///
-#define IP6_OLD_IPADDRESS_OFFSET      42
-
+#define IP6_OLD_IPADDRESS_OFFSET  42
 
 #pragma pack(1)
 typedef struct _ISCSI_SESSION_CONFIG_NVDATA {
-  UINT16            TargetPort;
-  UINT8             Enabled;
-  UINT8             IpMode;
+  UINT16              TargetPort;
+  UINT8               Enabled;
+  UINT8               IpMode;
 
-  EFI_IP_ADDRESS    LocalIp;
-  EFI_IPv4_ADDRESS  SubnetMask;
-  EFI_IP_ADDRESS    Gateway;
+  EFI_IP_ADDRESS      LocalIp;
+  EFI_IPv4_ADDRESS    SubnetMask;
+  EFI_IP_ADDRESS      Gateway;
 
-  BOOLEAN           InitiatorInfoFromDhcp;
-  BOOLEAN           TargetInfoFromDhcp;
+  BOOLEAN             InitiatorInfoFromDhcp;
+  BOOLEAN             TargetInfoFromDhcp;
 
-  CHAR8             TargetName[ISCSI_NAME_MAX_SIZE];
-  EFI_IP_ADDRESS    TargetIp;
-  UINT8             PrefixLength;
-  UINT8             BootLun[8];
+  CHAR8               TargetName[ISCSI_NAME_MAX_SIZE];
+  EFI_IP_ADDRESS      TargetIp;
+  UINT8               PrefixLength;
+  UINT8               BootLun[8];
 
-  UINT16            ConnectTimeout; ///< timout value in milliseconds.
-  UINT8             ConnectRetryCount;
-  UINT8             IsId[6];
+  UINT16              ConnectTimeout; ///< timeout value in milliseconds.
+  UINT8               ConnectRetryCount;
+  UINT8               IsId[6];
 
-  BOOLEAN           RedirectFlag;
-  UINT16            OriginalTargetPort;     // The port of proxy/virtual target.
-  EFI_IP_ADDRESS    OriginalTargetIp;       // The address of proxy/virtual target.
+  BOOLEAN             RedirectFlag;
+  UINT16              OriginalTargetPort;   // The port of proxy/virtual target.
+  EFI_IP_ADDRESS      OriginalTargetIp;     // The address of proxy/virtual target.
 
-  BOOLEAN           DnsMode;  // Flag indicate whether the Target address is expressed as URL format.
-  CHAR8             TargetUrl[ISCSI_TARGET_URI_MAX_SIZE];
-
+  BOOLEAN             DnsMode; // Flag indicate whether the Target address is expressed as URL format.
+  CHAR8               TargetUrl[ISCSI_TARGET_URI_MAX_SIZE];
 } ISCSI_SESSION_CONFIG_NVDATA;
 #pragma pack()
 
@@ -104,7 +102,7 @@ IScsiLunToUnicodeStr (
   );
 
 /**
-  Convert the mac address into a hexadecimal encoded "-" seperated string.
+  Convert the mac address into a hexadecimal encoded "-" separated string.
 
   @param[in]  Mac     The mac address.
   @param[in]  Len     Length in bytes of the mac address.
@@ -134,9 +132,9 @@ IScsiMacAddrToStr (
 **/
 EFI_STATUS
 IScsiAsciiStrToIp (
-  IN  CHAR8             *Str,
-  IN  UINT8             IpMode,
-  OUT EFI_IP_ADDRESS    *Ip
+  IN  CHAR8           *Str,
+  IN  UINT8           IpMode,
+  OUT EFI_IP_ADDRESS  *Ip
   );
 
 /**
@@ -150,36 +148,40 @@ IScsiAsciiStrToIp (
   @retval EFI_SUCCESS          The binary data is converted to the hexadecimal string
                                and the length of the string is updated.
   @retval EFI_BUFFER_TOO_SMALL The string is too small.
+  @retval EFI_BAD_BUFFER_SIZE  BinLength is too large for hex encoding.
   @retval EFI_INVALID_PARAMETER The IP string is malformatted.
 
 **/
 EFI_STATUS
 IScsiBinToHex (
-  IN     UINT8  *BinBuffer,
-  IN     UINT32 BinLength,
-  IN OUT CHAR8  *HexStr,
-  IN OUT UINT32 *HexLength
+  IN     UINT8   *BinBuffer,
+  IN     UINT32  BinLength,
+  IN OUT CHAR8   *HexStr,
+  IN OUT UINT32  *HexLength
   );
 
 /**
   Convert the hexadecimal string into a binary encoded buffer.
 
-  @param[in, out]  BinBuffer   The binary buffer.
-  @param[in, out]  BinLength   Length of the binary buffer.
-  @param[in]       HexStr      The hexadecimal string.
+  @param[in, out]  BinBuffer    The binary buffer.
+  @param[in, out]  BinLength    Length of the binary buffer.
+  @param[in]       HexStr       The hexadecimal string.
 
-  @retval EFI_SUCCESS          The hexadecimal string is converted into a binary
-                               encoded buffer.
-  @retval EFI_BUFFER_TOO_SMALL The binary buffer is too small to hold the converted data.
-
+  @retval EFI_SUCCESS           The hexadecimal string is converted into a
+                                binary encoded buffer.
+  @retval EFI_INVALID_PARAMETER Invalid hex encoding found in HexStr.
+  @retval EFI_BAD_BUFFER_SIZE   The length of HexStr is too large for decoding:
+                                the decoded size cannot be expressed in
+                                BinLength on output.
+  @retval EFI_BUFFER_TOO_SMALL  The binary buffer is too small to hold the
+                                converted data.
 **/
 EFI_STATUS
 IScsiHexToBin (
-  IN OUT UINT8  *BinBuffer,
-  IN OUT UINT32 *BinLength,
-  IN     CHAR8  *HexStr
+  IN OUT UINT8   *BinBuffer,
+  IN OUT UINT32  *BinLength,
+  IN     CHAR8   *HexStr
   );
-
 
 /**
   Convert the decimal-constant string or hex-constant string into a numerical value.
@@ -250,7 +252,7 @@ IScsiRemoveNic (
 **/
 EFI_STATUS
 IScsiCreateAttempts (
-  IN UINTN            AttemptNum
+  IN UINTN  AttemptNum
   );
 
 /**
@@ -264,7 +266,7 @@ IScsiCreateAttempts (
 **/
 EFI_STATUS
 IScsiCreateKeywords (
-  IN UINTN            KeywordNum
+  IN UINTN  KeywordNum
   );
 
 /**
@@ -287,9 +289,8 @@ IScsiCleanAttemptVariable (
 **/
 ISCSI_NIC_INFO *
 IScsiGetNicInfoByIndex (
-  IN UINT8      NicIndex
+  IN UINT8  NicIndex
   );
-
 
 /**
   Get the NIC's PCI location and return it according to the composited
@@ -326,9 +327,9 @@ IScsiGetNICPciLocation (
 **/
 VOID *
 IScsiGetVariableAndSize (
-  IN  CHAR16              *Name,
-  IN  EFI_GUID            *VendorGuid,
-  OUT UINTN               *VariableSize
+  IN  CHAR16    *Name,
+  IN  EFI_GUID  *VendorGuid,
+  OUT UINTN     *VariableSize
   );
 
 /**
@@ -352,7 +353,7 @@ IScsiCreateDriverData (
 
   @param[in]              Private The iSCSI driver data.
 
-  @retval EFI_SUCCES      The clean operation is successful.
+  @retval EFI_SUCCESS     The clean operation is successful.
   @retval Others          Other errors as indicated.
 
 **/
@@ -417,7 +418,7 @@ IScsiGetConfigData (
 **/
 EFI_DEVICE_PATH_PROTOCOL *
 IScsiGetTcpConnDevicePath (
-  IN ISCSI_SESSION      *Session
+  IN ISCSI_SESSION  *Session
   );
 
 /**
@@ -439,7 +440,7 @@ IScsiOnExitBootService (
 
   This function tests whether the driver specified by DriverBindingHandle is
   currently managing the controller specified by ControllerHandle.  This test
-  is performed by evaluating if the the protocol specified by ProtocolGuid is
+  is performed by evaluating if the protocol specified by ProtocolGuid is
   present on ControllerHandle and is was opened by DriverBindingHandle and Nic
   Device handle with an attribute of EFI_OPEN_PROTOCOL_BY_DRIVER.
   If ProtocolGuid is NULL, then ASSERT().
@@ -460,8 +461,9 @@ IScsiOnExitBootService (
 EFI_STATUS
 EFIAPI
 IScsiTestManagedDevice (
-  IN  EFI_HANDLE       ControllerHandle,
-  IN  EFI_HANDLE       DriverBindingHandle,
-  IN  EFI_GUID         *ProtocolGuid
+  IN  EFI_HANDLE  ControllerHandle,
+  IN  EFI_HANDLE  DriverBindingHandle,
+  IN  EFI_GUID    *ProtocolGuid
   );
+
 #endif

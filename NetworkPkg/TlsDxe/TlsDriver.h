@@ -22,20 +22,19 @@
 //
 #define TLS_VERSION  0x00000000
 
-#define TLS_SERVICE_SIGNATURE    SIGNATURE_32 ('T', 'L', 'S', 'S')
+#define TLS_SERVICE_SIGNATURE  SIGNATURE_32 ('T', 'L', 'S', 'S')
 
-#define TLS_INSTANCE_SIGNATURE   SIGNATURE_32 ('T', 'L', 'S', 'I')
+#define TLS_INSTANCE_SIGNATURE  SIGNATURE_32 ('T', 'L', 'S', 'I')
 
 ///
 /// TLS Service Data
 ///
-typedef struct _TLS_SERVICE  TLS_SERVICE;
+typedef struct _TLS_SERVICE TLS_SERVICE;
 
 ///
 /// TLS Instance Data
 ///
 typedef struct _TLS_INSTANCE TLS_INSTANCE;
-
 
 struct _TLS_SERVICE {
   UINT32                          Signature;
@@ -59,26 +58,25 @@ struct _TLS_SERVICE {
 };
 
 struct _TLS_INSTANCE {
-  UINT32                          Signature;
-  LIST_ENTRY                      Link;
+  UINT32                            Signature;
+  LIST_ENTRY                        Link;
 
-  BOOLEAN                         InDestroy;
+  BOOLEAN                           InDestroy;
 
-  TLS_SERVICE                     *Service;
-  EFI_HANDLE                      ChildHandle;
+  TLS_SERVICE                       *Service;
+  EFI_HANDLE                        ChildHandle;
 
-  EFI_TLS_PROTOCOL                Tls;
-  EFI_TLS_CONFIGURATION_PROTOCOL  TlsConfig;
+  EFI_TLS_PROTOCOL                  Tls;
+  EFI_TLS_CONFIGURATION_PROTOCOL    TlsConfig;
 
-  EFI_TLS_SESSION_STATE           TlsSessionState;
+  EFI_TLS_SESSION_STATE             TlsSessionState;
 
   //
   // Main SSL Connection which is created by a server or a client
   // per established connection.
   //
-  VOID                            *TlsConn;
+  VOID                              *TlsConn;
 };
-
 
 #define TLS_SERVICE_FROM_THIS(a)   \
   CR (a, TLS_SERVICE, ServiceBinding, TLS_SERVICE_SIGNATURE)
@@ -89,7 +87,6 @@ struct _TLS_INSTANCE {
 #define TLS_INSTANCE_FROM_CONFIGURATION(a)  \
   CR (a, TLS_INSTANCE, TlsConfig, TLS_INSTANCE_SIGNATURE)
 
-
 /**
   Release all the resources used by the TLS instance.
 
@@ -98,7 +95,7 @@ struct _TLS_INSTANCE {
 **/
 VOID
 TlsCleanInstance (
-  IN TLS_INSTANCE           *Instance
+  IN TLS_INSTANCE  *Instance
   );
 
 /**
@@ -113,8 +110,8 @@ TlsCleanInstance (
 **/
 EFI_STATUS
 TlsCreateInstance (
-  IN  TLS_SERVICE         *Service,
-  OUT TLS_INSTANCE        **Instance
+  IN  TLS_SERVICE   *Service,
+  OUT TLS_INSTANCE  **Instance
   );
 
 /**
@@ -125,7 +122,7 @@ TlsCreateInstance (
 **/
 VOID
 TlsCleanService (
-  IN TLS_SERVICE     *Service
+  IN TLS_SERVICE  *Service
   );
 
 /**
@@ -140,8 +137,8 @@ TlsCleanService (
 **/
 EFI_STATUS
 TlsCreateService (
-  IN  EFI_HANDLE            Image,
-  OUT TLS_SERVICE           **Service
+  IN  EFI_HANDLE   Image,
+  OUT TLS_SERVICE  **Service
   );
 
 /**
@@ -189,7 +186,7 @@ TlsDriverEntryPoint (
                          then a new handle is created. If it is a pointer to an existing UEFI handle,
                          then the protocol is added to the existing UEFI handle.
 
-  @retval EFI_SUCCES            The protocol was added to ChildHandle.
+  @retval EFI_SUCCESS           The protocol was added to ChildHandle.
   @retval EFI_INVALID_PARAMETER ChildHandle is NULL.
   @retval EFI_OUT_OF_RESOURCES  There are not enough resources available to create
                                 the child.
@@ -213,7 +210,7 @@ TlsServiceBindingCreateChild (
   @param  This        Pointer to the EFI_SERVICE_BINDING_PROTOCOL instance.
   @param  ChildHandle Handle of the child to destroy.
 
-  @retval EFI_SUCCES            The protocol was removed from ChildHandle.
+  @retval EFI_SUCCESS           The protocol was removed from ChildHandle.
   @retval EFI_UNSUPPORTED       ChildHandle does not support the protocol that is being removed.
   @retval EFI_INVALID_PARAMETER Child handle is NULL.
   @retval EFI_ACCESS_DENIED     The protocol could not be removed from the ChildHandle
@@ -229,4 +226,3 @@ TlsServiceBindingDestroyChild (
   );
 
 #endif
-

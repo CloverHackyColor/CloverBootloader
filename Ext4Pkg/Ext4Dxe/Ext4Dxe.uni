@@ -1,0 +1,15 @@
+## @file
+#  Ext4 Package
+#
+#  UEFI Driver that produces the Simple File System Protocol for a partition that is formatted
+#  with the EXT4 file system.
+#  More details are available at: https://www.kernel.org/doc/html/v5.4/filesystems/ext4/index.html
+#
+#  Copyright (c) 2021 Pedro Falcato
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+#string STR_MODULE_ABSTRACT            #language en-US "UEFI driver for the EXT4 file system."
+
+#string STR_MODULE_DESCRIPTION         #language en-US "Produces the EFI Simple File System protocol."

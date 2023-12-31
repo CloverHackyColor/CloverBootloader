@@ -16,15 +16,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IGMP_V2_MEMBERSHIP_REPORT  0x16
 #define IGMP_LEAVE_GROUP           0x17
 
-#define IGMP_V1ROUTER_PRESENT      400
-#define IGMP_UNSOLICIATED_REPORT   10
+#define IGMP_V1ROUTER_PRESENT     400
+#define IGMP_UNSOLICIATED_REPORT  10
 
 #pragma pack(1)
 typedef struct {
-  UINT8                   Type;
-  UINT8                   MaxRespTime;
-  UINT16                  Checksum;
-  IP4_ADDR                Group;
+  UINT8       Type;
+  UINT8       MaxRespTime;
+  UINT16      Checksum;
+  IP4_ADDR    Group;
 } IGMP_HEAD;
 #pragma pack()
 
@@ -35,12 +35,12 @@ typedef struct {
 /// "idle member" state.
 ///
 typedef struct {
-  LIST_ENTRY              Link;
-  INTN                    RefCnt;
-  IP4_ADDR                Address;
-  INTN                    DelayTime;
-  BOOLEAN                 ReportByUs;
-  EFI_MAC_ADDRESS         Mac;
+  LIST_ENTRY         Link;
+  INTN               RefCnt;
+  IP4_ADDR           Address;
+  INTN               DelayTime;
+  BOOLEAN            ReportByUs;
+  EFI_MAC_ADDRESS    Mac;
 } IGMP_GROUP;
 
 ///
@@ -49,8 +49,8 @@ typedef struct {
 /// connected network is v1 or v2.
 ///
 typedef struct {
-  INTN                    Igmpv1QuerySeen;
-  LIST_ENTRY              Groups;
+  INTN          Igmpv1QuerySeen;
+  LIST_ENTRY    Groups;
 } IGMP_SERVICE_DATA;
 
 /**
@@ -66,7 +66,7 @@ typedef struct {
 **/
 EFI_STATUS
 Ip4InitIgmp (
-  IN OUT IP4_SERVICE            *IpSb
+  IN OUT IP4_SERVICE  *IpSb
   );
 
 /**
@@ -82,8 +82,8 @@ Ip4InitIgmp (
 **/
 EFI_STATUS
 Ip4JoinGroup (
-  IN IP4_PROTOCOL           *IpInstance,
-  IN IP4_ADDR               Address
+  IN IP4_PROTOCOL  *IpInstance,
+  IN IP4_ADDR      Address
   );
 
 /**
@@ -100,8 +100,8 @@ Ip4JoinGroup (
 **/
 EFI_STATUS
 Ip4LeaveGroup (
-  IN IP4_PROTOCOL           *IpInstance,
-  IN IP4_ADDR               Address
+  IN IP4_PROTOCOL  *IpInstance,
+  IN IP4_ADDR      Address
   );
 
 /**
@@ -111,15 +111,15 @@ Ip4LeaveGroup (
   @param[in]  Head               The IP4 header of the received message.
   @param[in]  Packet             The IGMP message, without IP4 header.
 
-  @retval EFI_INVALID_PARAMETER  The IGMP message is malformated.
+  @retval EFI_INVALID_PARAMETER  The IGMP message is malformatted.
   @retval EFI_SUCCESS            The IGMP message is successfully processed.
 
 **/
 EFI_STATUS
 Ip4IgmpHandle (
-  IN IP4_SERVICE            *IpSb,
-  IN IP4_HEAD               *Head,
-  IN NET_BUF                *Packet
+  IN IP4_SERVICE  *IpSb,
+  IN IP4_HEAD     *Head,
+  IN NET_BUF      *Packet
   );
 
 /**
@@ -135,7 +135,7 @@ Ip4IgmpHandle (
 **/
 VOID
 Ip4IgmpTicking (
-  IN IP4_SERVICE            *IpSb
+  IN IP4_SERVICE  *IpSb
   );
 
 /**
@@ -155,9 +155,9 @@ Ip4IgmpTicking (
 **/
 IP4_ADDR *
 Ip4CombineGroups (
-  IN  IP4_ADDR              *Source,
-  IN  UINT32                Count,
-  IN  IP4_ADDR              Addr
+  IN  IP4_ADDR  *Source,
+  IN  UINT32    Count,
+  IN  IP4_ADDR  Addr
   );
 
 /**
@@ -170,15 +170,15 @@ Ip4CombineGroups (
   @param  Count             The number of group addresses in the Groups.
   @param  Addr              The IP4 multicast address to remove.
 
-  @return The nubmer of group addresses in the Groups after remove.
+  @return The number of group addresses in the Groups after remove.
           It is Count if the Addr isn't in the Groups.
 
 **/
 INTN
 Ip4RemoveGroupAddr (
-  IN OUT IP4_ADDR               *Groups,
-  IN     UINT32                 Count,
-  IN     IP4_ADDR               Addr
+  IN OUT IP4_ADDR  *Groups,
+  IN     UINT32    Count,
+  IN     IP4_ADDR  Addr
   );
 
 /**
@@ -195,7 +195,8 @@ Ip4RemoveGroupAddr (
 **/
 IGMP_GROUP *
 Ip4FindGroup (
-  IN IGMP_SERVICE_DATA      *IgmpCtrl,
-  IN IP4_ADDR               Address
+  IN IGMP_SERVICE_DATA  *IgmpCtrl,
+  IN IP4_ADDR           Address
   );
+
 #endif

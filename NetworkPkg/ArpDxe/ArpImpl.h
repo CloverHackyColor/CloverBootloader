@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _ARP_IMPL_H_
 #define _ARP_IMPL_H_
 
-
 #include <Uefi.h>
 
 #include <Protocol/Arp.h>
@@ -29,15 +28,15 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Ethernet protocol type definitions.
 //
-#define ARP_ETHER_PROTO_TYPE         0x0806
-#define IPV4_ETHER_PROTO_TYPE        0x0800
-#define IPV6_ETHER_PROTO_TYPE        0x86DD
+#define ARP_ETHER_PROTO_TYPE   0x0806
+#define IPV4_ETHER_PROTO_TYPE  0x0800
+#define IPV6_ETHER_PROTO_TYPE  0x86DD
 
 //
 // ARP opcode definitions.
 //
-#define ARP_OPCODE_REQUEST           0x0001
-#define ARP_OPCODE_REPLY             0x0002
+#define ARP_OPCODE_REQUEST  0x0001
+#define ARP_OPCODE_REPLY    0x0002
 
 //
 // ARP timeout, retry count and interval definitions.
@@ -52,11 +51,11 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 #pragma pack(1)
 typedef struct {
-  UINT16  HwType;
-  UINT16  ProtoType;
-  UINT8   HwAddrLen;
-  UINT8   ProtoAddrLen;
-  UINT16  OpCode;
+  UINT16    HwType;
+  UINT16    ProtoType;
+  UINT8     HwAddrLen;
+  UINT8     ProtoAddrLen;
+  UINT16    OpCode;
 } ARP_HEAD;
 #pragma pack()
 
@@ -64,10 +63,10 @@ typedef struct {
 // ARP Address definition for internal use.
 //
 typedef struct {
-  UINT8  *SenderHwAddr;
-  UINT8  *SenderProtoAddr;
-  UINT8  *TargetHwAddr;
-  UINT8  *TargetProtoAddr;
+  UINT8    *SenderHwAddr;
+  UINT8    *SenderProtoAddr;
+  UINT8    *TargetHwAddr;
+  UINT8    *TargetProtoAddr;
 } ARP_ADDRESS;
 
 #define MATCH_SW_ADDRESS  0x1
@@ -104,20 +103,20 @@ typedef enum {
   ARP_INSTANCE_DATA_SIGNATURE \
   )
 
-typedef struct _ARP_SERVICE_DATA  ARP_SERVICE_DATA;
+typedef struct _ARP_SERVICE_DATA ARP_SERVICE_DATA;
 
 //
 // ARP instance context data structure.
 //
 typedef struct {
-  UINT32               Signature;
-  ARP_SERVICE_DATA     *ArpService;
-  EFI_HANDLE           Handle;
-  EFI_ARP_PROTOCOL     ArpProto;
-  LIST_ENTRY           List;
-  EFI_ARP_CONFIG_DATA  ConfigData;
-  BOOLEAN              Configured;
-  BOOLEAN              InDestroy;
+  UINT32                 Signature;
+  ARP_SERVICE_DATA       *ArpService;
+  EFI_HANDLE             Handle;
+  EFI_ARP_PROTOCOL       ArpProto;
+  LIST_ENTRY             List;
+  EFI_ARP_CONFIG_DATA    ConfigData;
+  BOOLEAN                Configured;
+  BOOLEAN                InDestroy;
 } ARP_INSTANCE_DATA;
 
 #define ARP_SERVICE_DATA_SIGNATURE  SIGNATURE_32('A', 'R', 'P', 'S')
@@ -144,55 +143,55 @@ typedef struct {
 // ARP service data structure.
 //
 struct _ARP_SERVICE_DATA {
-  UINT32                           Signature;
-  EFI_SERVICE_BINDING_PROTOCOL     ServiceBinding;
+  UINT32                                  Signature;
+  EFI_SERVICE_BINDING_PROTOCOL            ServiceBinding;
 
-  EFI_HANDLE                       MnpChildHandle;
-  EFI_HANDLE                       ImageHandle;
-  EFI_HANDLE                       ControllerHandle;
+  EFI_HANDLE                              MnpChildHandle;
+  EFI_HANDLE                              ImageHandle;
+  EFI_HANDLE                              ControllerHandle;
 
-  EFI_MANAGED_NETWORK_PROTOCOL          *Mnp;
-  EFI_MANAGED_NETWORK_CONFIG_DATA       MnpConfigData;
-  EFI_MANAGED_NETWORK_COMPLETION_TOKEN  RxToken;
+  EFI_MANAGED_NETWORK_PROTOCOL            *Mnp;
+  EFI_MANAGED_NETWORK_CONFIG_DATA         MnpConfigData;
+  EFI_MANAGED_NETWORK_COMPLETION_TOKEN    RxToken;
 
-  EFI_SIMPLE_NETWORK_MODE          SnpMode;
+  EFI_SIMPLE_NETWORK_MODE                 SnpMode;
 
-  UINTN                            ChildrenNumber;
-  LIST_ENTRY                       ChildrenList;
+  UINTN                                   ChildrenNumber;
+  LIST_ENTRY                              ChildrenList;
 
-  LIST_ENTRY                       PendingRequestTable;
-  LIST_ENTRY                       DeniedCacheTable;
-  LIST_ENTRY                       ResolvedCacheTable;
+  LIST_ENTRY                              PendingRequestTable;
+  LIST_ENTRY                              DeniedCacheTable;
+  LIST_ENTRY                              ResolvedCacheTable;
 
-  EFI_EVENT                        PeriodicTimer;
+  EFI_EVENT                               PeriodicTimer;
 };
 
 //
 // User request context structure.
 //
 typedef struct {
-  LIST_ENTRY         List;
-  ARP_INSTANCE_DATA  *Instance;
-  EFI_EVENT          UserRequestEvent;
-  VOID               *UserHwAddrBuffer;
+  LIST_ENTRY           List;
+  ARP_INSTANCE_DATA    *Instance;
+  EFI_EVENT            UserRequestEvent;
+  VOID                 *UserHwAddrBuffer;
 } USER_REQUEST_CONTEXT;
 
 #define ARP_MAX_PROTOCOL_ADDRESS_LEN  sizeof(EFI_IP_ADDRESS)
 #define ARP_MAX_HARDWARE_ADDRESS_LEN  sizeof(EFI_MAC_ADDRESS)
 
 typedef union {
-  UINT8  ProtoAddress[ARP_MAX_PROTOCOL_ADDRESS_LEN];
-  UINT8  HwAddress[ARP_MAX_HARDWARE_ADDRESS_LEN];
+  UINT8    ProtoAddress[ARP_MAX_PROTOCOL_ADDRESS_LEN];
+  UINT8    HwAddress[ARP_MAX_HARDWARE_ADDRESS_LEN];
 } NET_ARP_ADDRESS_UNION;
 
 //
 // ARP address structure in an ARP packet.
 //
 typedef struct {
-  UINT16                Type;
-  UINT8                 Length;
-  UINT8                 *AddressPtr;
-  NET_ARP_ADDRESS_UNION Buffer;
+  UINT16                   Type;
+  UINT8                    Length;
+  UINT8                    *AddressPtr;
+  NET_ARP_ADDRESS_UNION    Buffer;
 } NET_ARP_ADDRESS;
 
 //
@@ -207,16 +206,16 @@ typedef enum {
 // ARP cache entry definition.
 //
 typedef struct {
-  LIST_ENTRY      List;
+  LIST_ENTRY         List;
 
-  UINT32          RetryCount;
-  UINT32          DefaultDecayTime;
-  UINT32          DecayTime;
-  UINT32          NextRetryTime;
+  UINT32             RetryCount;
+  UINT32             DefaultDecayTime;
+  UINT32             DecayTime;
+  UINT32             NextRetryTime;
 
-  NET_ARP_ADDRESS  Addresses[2];
+  NET_ARP_ADDRESS    Addresses[2];
 
-  LIST_ENTRY      UserRequestList;
+  LIST_ENTRY         UserRequestList;
 } ARP_CACHE_ENTRY;
 
 /**
@@ -436,7 +435,7 @@ ArpRequest (
 
   If the request is in the internal ARP request queue, the request is aborted
   immediately and its ResolvedEvent is signaled. Only an asynchronous address
-  request needs to be canceled. If TargeSwAddress and ResolveEvent are both
+  request needs to be canceled. If TargetSwAddress and ResolvedEvent are both
   NULL, all the pending asynchronous requests that have been issued by This
   instance will be cancelled and their corresponding events will be signaled.
 
@@ -522,11 +521,11 @@ ArpFindDeniedCacheEntry (
 **/
 ARP_CACHE_ENTRY *
 ArpFindNextCacheEntryInTable (
-  IN LIST_ENTRY        *CacheTable,
-  IN LIST_ENTRY        *StartEntry,
-  IN FIND_OPTYPE       FindOpType,
-  IN NET_ARP_ADDRESS   *ProtocolAddress OPTIONAL,
-  IN NET_ARP_ADDRESS   *HardwareAddress OPTIONAL
+  IN LIST_ENTRY       *CacheTable,
+  IN LIST_ENTRY       *StartEntry,
+  IN FIND_OPTYPE      FindOpType,
+  IN NET_ARP_ADDRESS  *ProtocolAddress OPTIONAL,
+  IN NET_ARP_ADDRESS  *HardwareAddress OPTIONAL
   );
 
 /**
@@ -599,7 +598,7 @@ ArpDeleteCacheEntry (
   );
 
 /**
-  Send out an arp frame using the CachEntry and the ArpOpCode.
+  Send out an arp frame using the CacheEntry and the ArpOpCode.
 
   @param[in]  Instance               Pointer to the instance context data.
   @param[in]  CacheEntry             Pointer to the configuration data used to
@@ -636,7 +635,7 @@ ArpInitInstance (
 /**
   Process the Arp packets received from Mnp, the procedure conforms to RFC826.
 
-  @param[in]  Context            Pointer to the context data registerd to the
+  @param[in]  Context            Pointer to the context data registered to the
                                  Event.
 
   @return None.
@@ -645,14 +644,14 @@ ArpInitInstance (
 VOID
 EFIAPI
 ArpOnFrameRcvdDpc (
-  IN VOID       *Context
+  IN VOID  *Context
   );
 
 /**
   Queue ArpOnFrameRcvdDpc as a DPC at TPL_CALLBACK.
 
   @param[in]  Event                  The Event this notify function registered to.
-  @param[in]  Context                Pointer to the context data registerd to the
+  @param[in]  Context                Pointer to the context data registered to the
                                      Event.
 
   @return None.
@@ -668,7 +667,7 @@ ArpOnFrameRcvd (
 /**
   Process the already sent arp packets.
 
-  @param[in]  Context                Pointer to the context data registerd to the
+  @param[in]  Context                Pointer to the context data registered to the
                                      Event.
 
   @return None.
@@ -677,14 +676,14 @@ ArpOnFrameRcvd (
 VOID
 EFIAPI
 ArpOnFrameSentDpc (
-  IN VOID       *Context
+  IN VOID  *Context
   );
 
 /**
   Request ArpOnFrameSentDpc as a DPC at TPL_CALLBACK.
 
   @param[in]  Event                  The Event this notify function registered to.
-  @param[in]  Context                Pointer to the context data registerd to the
+  @param[in]  Context                Pointer to the context data registered to the
                                      Event.
 
   @return None.
@@ -701,7 +700,7 @@ ArpOnFrameSent (
   Process the arp cache olding and drive the retrying arp requests.
 
   @param[in]  Event                  The Event this notify function registered to.
-  @param[in]  Context                Pointer to the context data registerd to the
+  @param[in]  Context                Pointer to the context data registered to the
                                      Event.
 
   @return None.

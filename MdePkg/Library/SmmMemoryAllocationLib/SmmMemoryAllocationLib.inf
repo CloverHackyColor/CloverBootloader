@@ -36,6 +36,7 @@
   BaseMemoryLib
   SmmServicesTableLib
   UefiBootServicesTableLib
+  CommonMemoryAllocationLib
 
 [Protocols]
   gEfiSmmAccess2ProtocolGuid    ## CONSUMES

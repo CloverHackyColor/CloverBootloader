@@ -1,0 +1,14 @@
+// /** @file
+// Memory Profile Library Null instance.
+//
+// Copyright (c) 2008 - 2016, Intel Corporation. All rights reserved.<BR>
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// **/
+
+
+#string STR_MODULE_ABSTRACT             #language en-US "Memory Profile Library Null instance"
+
+#string STR_MODULE_DESCRIPTION          #language en-US "Memory Profile Library Null instance."
+

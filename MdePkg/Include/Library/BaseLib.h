@@ -3029,6 +3029,34 @@ PathCleanUpDirectories(
 
 
 /**
+  Iterates over each node in a doubly linked list using each node's forward link.
+
+  @param  Entry     A pointer to a list node used as a loop cursor during iteration
+  @param  ListHead  The head node of the doubly linked list
+
+**/
+#define BASE_LIST_FOR_EACH(Entry, ListHead)    \
+  for(Entry = (ListHead)->ForwardLink; Entry != (ListHead); Entry = Entry->ForwardLink)
+
+/**
+  Iterates over each node in a doubly linked list using each node's forward link
+  with safety against node removal.
+
+  This macro uses NextEntry to temporarily store the next list node so the node
+  pointed to by Entry may be deleted in the current loop iteration step and
+  iteration can continue from the node pointed to by NextEntry.
+
+  @param  Entry     A pointer to a list node used as a loop cursor during iteration
+  @param  NextEntry A pointer to a list node used to temporarily store the next node
+  @param  ListHead  The head node of the doubly linked list
+
+**/
+#define BASE_LIST_FOR_EACH_SAFE(Entry, NextEntry, ListHead)            \
+  for(Entry = (ListHead)->ForwardLink, NextEntry = Entry->ForwardLink;\
+      Entry != (ListHead); Entry = NextEntry, NextEntry = Entry->ForwardLink)
+
+
+/**
   Checks whether FirstEntry and SecondEntry are part of the same doubly-linked
   list.
 
@@ -5063,6 +5091,40 @@ EFIAPI
 CalculateCrc32(
   IN  VOID                         *Buffer,
   IN  UINTN                        Length
+  );
+
+/**
+   Calculates the CRC16-ANSI checksum of the given buffer.
+
+   @param[in]      Buffer        Pointer to the buffer.
+   @param[in]      Length        Length of the buffer, in bytes.
+   @param[in]      InitialValue  Initial value of the CRC.
+
+   @return The CRC16-ANSI checksum.
+**/
+UINT16
+EFIAPI
+CalculateCrc16Ansi (
+  IN  CONST VOID  *Buffer,
+  IN  UINTN       Length,
+  IN  UINT16      InitialValue
+  );
+
+/**
+   Calculates the CRC32c checksum of the given buffer.
+
+   @param[in]      Buffer        Pointer to the buffer.
+   @param[in]      Length        Length of the buffer, in bytes.
+   @param[in]      InitialValue  Initial value of the CRC.
+
+   @return The CRC32c checksum.
+**/
+UINT32
+EFIAPI
+CalculateCrc32c (
+  IN CONST VOID  *Buffer,
+  IN UINTN       Length,
+  IN UINT32      InitialValue
   );
 
 //

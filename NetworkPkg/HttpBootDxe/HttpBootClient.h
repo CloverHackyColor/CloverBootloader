@@ -1,7 +1,7 @@
 /** @file
   Declaration of the boot file download function.
 
-Copyright (c) 2015 - 2018, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2015 - 2021, Intel Corporation. All rights reserved.<BR>
 (C) Copyright 2016 Hewlett Packard Enterprise Development LP<BR>
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -10,34 +10,30 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef __EFI_HTTP_BOOT_HTTP_H__
 #define __EFI_HTTP_BOOT_HTTP_H__
 
-#define HTTP_BOOT_REQUEST_TIMEOUT            5000      // 5 seconds in uints of millisecond.
-#define HTTP_BOOT_RESPONSE_TIMEOUT           5000      // 5 seconds in uints of millisecond.
-#define HTTP_BOOT_BLOCK_SIZE                 1500
-
-
-
-#define HTTP_USER_AGENT_EFI_HTTP_BOOT        "UefiHttpBoot/1.0"
+#define HTTP_BOOT_BLOCK_SIZE                   32000
+#define HTTP_USER_AGENT_EFI_HTTP_BOOT          "UefiHttpBoot/1.0"
+#define HTTP_BOOT_AUTHENTICATION_INFO_MAX_LEN  255
 
 //
 // Record the data length and start address of a data block.
 //
 typedef struct {
-  LIST_ENTRY                 Link;        // Link to the EntityDataList in HTTP_BOOT_CACHE_CONTENT
-  UINT8                      *Block;      // If NULL, the data is in previous data block.
-  UINT8                      *DataStart;  // Point to somewhere in the Block
-  UINTN                      DataLength;
+  LIST_ENTRY    Link;                     // Link to the EntityDataList in HTTP_BOOT_CACHE_CONTENT
+  UINT8         *Block;                   // If NULL, the data is in previous data block.
+  UINT8         *DataStart;               // Point to somewhere in the Block
+  UINTN         DataLength;
 } HTTP_BOOT_ENTITY_DATA;
 
 //
 // Structure for a cache item
 //
 typedef struct {
-  LIST_ENTRY                 Link;            // Link to the CacheList in driver's private data.
-  EFI_HTTP_REQUEST_DATA      *RequestData;
-  HTTP_IO_RESPONSE_DATA      *ResponseData;   // Not include any message-body data.
-  HTTP_BOOT_IMAGE_TYPE       ImageType;
-  UINTN                      EntityLength;
-  LIST_ENTRY                 EntityDataList;  // Entity data (message-body)
+  LIST_ENTRY               Link;              // Link to the CacheList in driver's private data.
+  EFI_HTTP_REQUEST_DATA    *RequestData;
+  HTTP_IO_RESPONSE_DATA    *ResponseData;     // Not include any message-body data.
+  HTTP_BOOT_IMAGE_TYPE     ImageType;
+  UINTN                    EntityLength;
+  LIST_ENTRY               EntityDataList;    // Entity data (message-body)
 } HTTP_BOOT_CACHE_CONTENT;
 
 //
@@ -73,7 +69,7 @@ typedef struct {
 **/
 EFI_STATUS
 HttpBootDiscoverBootInfo (
-  IN OUT HTTP_BOOT_PRIVATE_DATA   *Private
+  IN OUT HTTP_BOOT_PRIVATE_DATA  *Private
   );
 
 /**
@@ -87,7 +83,7 @@ HttpBootDiscoverBootInfo (
 **/
 EFI_STATUS
 HttpBootCreateHttpIo (
-  IN     HTTP_BOOT_PRIVATE_DATA       *Private
+  IN     HTTP_BOOT_PRIVATE_DATA  *Private
   );
 
 /**
@@ -111,16 +107,17 @@ HttpBootCreateHttpIo (
   @retval EFI_BUFFER_TOO_SMALL     The BufferSize is too small to read the current directory entry.
                                    BufferSize has been updated with the size needed to complete
                                    the request.
+  @retval EFI_ACCESS_DENIED        The server needs to authenticate the client.
   @retval Others                   Unexpected error happened.
 
 **/
 EFI_STATUS
 HttpBootGetBootFile (
-  IN     HTTP_BOOT_PRIVATE_DATA   *Private,
-  IN     BOOLEAN                  HeaderOnly,
-  IN OUT UINTN                    *BufferSize,
-     OUT UINT8                    *Buffer,
-     OUT HTTP_BOOT_IMAGE_TYPE     *ImageType
+  IN     HTTP_BOOT_PRIVATE_DATA  *Private,
+  IN     BOOLEAN                 HeaderOnly,
+  IN OUT UINTN                   *BufferSize,
+  OUT UINT8                      *Buffer,
+  OUT HTTP_BOOT_IMAGE_TYPE       *ImageType
   );
 
 /**
@@ -131,7 +128,7 @@ HttpBootGetBootFile (
 **/
 VOID
 HttpBootFreeCacheList (
-  IN     HTTP_BOOT_PRIVATE_DATA   *Private
+  IN     HTTP_BOOT_PRIVATE_DATA  *Private
   );
 
 #endif

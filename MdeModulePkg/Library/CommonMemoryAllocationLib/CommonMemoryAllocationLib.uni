@@ -1,0 +1,15 @@
+// /** @file
+// Common code for the Memory Allocation Library based on
+// PhaseMemoryAllocationLib.
+//
+// Copyright (c) 2007 - 2014, Intel Corporation. All rights reserved.<BR>
+//
+// SPDX-License-Identifier: BSD-2-Clause-Patent
+//
+// **/
+
+
+#string STR_MODULE_ABSTRACT             #language en-US "Common code for the Memory Allocation Library based on PhaseMemoryAllocationLib"
+
+#string STR_MODULE_DESCRIPTION          #language en-US "Common code for the Memory Allocation Library based on PhaseMemoryAllocationLib."
+

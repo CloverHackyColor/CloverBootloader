@@ -37,9 +37,9 @@ extern EFI_UNICODE_STRING_TABLE      *gMtftp4ControllerNameTable;
 EFI_STATUS
 EFIAPI
 Mtftp4DriverBindingSupported (
-  IN EFI_DRIVER_BINDING_PROTOCOL    *This,
-  IN EFI_HANDLE                     Controller,
-  IN EFI_DEVICE_PATH_PROTOCOL       *RemainingDevicePath
+  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
+  IN EFI_HANDLE                   Controller,
+  IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   );
 
 /**
@@ -82,10 +82,10 @@ Mtftp4DriverBindingStart (
 EFI_STATUS
 EFIAPI
 Mtftp4DriverBindingStop (
-  IN EFI_DRIVER_BINDING_PROTOCOL *This,
-  IN EFI_HANDLE                  Controller,
-  IN UINTN                       NumberOfChildren,
-  IN EFI_HANDLE                  *ChildHandleBuffer
+  IN EFI_DRIVER_BINDING_PROTOCOL  *This,
+  IN EFI_HANDLE                   Controller,
+  IN UINTN                        NumberOfChildren,
+  IN EFI_HANDLE                   *ChildHandleBuffer
   );
 
 /**
@@ -104,7 +104,7 @@ EFI_STATUS
 EFIAPI
 Mtftp4ServiceBindingCreateChild (
   IN EFI_SERVICE_BINDING_PROTOCOL  *This,
-  IN EFI_HANDLE                *ChildHandle
+  IN EFI_HANDLE                    *ChildHandle
   );
 
 /**
@@ -113,7 +113,7 @@ Mtftp4ServiceBindingCreateChild (
   @param  This                   The service binding instance
   @param  ChildHandle            The child handle to destroy
 
-  @retval EFI_INVALID_PARAMETER  The parameter is invaid.
+  @retval EFI_INVALID_PARAMETER  The parameter is invalid.
   @retval EFI_UNSUPPORTED        The child may have already been destroyed.
   @retval EFI_SUCCESS            The child is destroyed and removed from the
                                  parent's child list.
@@ -122,10 +122,8 @@ Mtftp4ServiceBindingCreateChild (
 EFI_STATUS
 EFIAPI
 Mtftp4ServiceBindingDestroyChild (
-  IN EFI_SERVICE_BINDING_PROTOCOL *This,
-  IN EFI_HANDLE                   ChildHandle
+  IN EFI_SERVICE_BINDING_PROTOCOL  *This,
+  IN EFI_HANDLE                    ChildHandle
   );
-
-
 
 #endif

@@ -2088,6 +2088,99 @@
   # @Prompt Speculation Barrier Type.
   gEfiMdePkgTokenSpaceGuid.PcdSpeculationBarrierType|0x01|UINT8|0x30001018
 
+  ## Indicates whether Image Relocation target values at Runtime may mismatch
+  #  the values assigned during initial load.<BR><BR>
+  #   TRUE  - Image relocation target values may mismatch the expected values.<BR>
+  #   FALSE - Image relocation target values must match the expected values.<BR>
+  # @Prompt Allow Runtime Relocation Target Mismatch.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRtRelocAllowTargetMismatch|FALSE|BOOLEAN|0x40001018
+
+  ## Indicates whether Image section may overlap with the previous one.
+  #  Overlapping Sections could dramatically increase the hashing time.<BR><BR>
+  #   TRUE  - Image section must not overlap with the previous one.<BR>
+  #   FALSE - Image section may overlap with the previous one.<BR>
+  # @Prompt Prohibit Overlapping Sections.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderHashProhibitOverlap|TRUE|BOOLEAN|0x40001019
+
+  ## Indicates whether Image Headers must be loaded into the memory space.<BR><BR>
+  #   TRUE  - Image Headers will be loaded into the memory space.<BR>
+  #   FALSE - Image Headers will not be loaded into the memory space.<BR>
+  # @Prompt Load Image Headers.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderLoadHeader|TRUE|BOOLEAN|0x4000101A
+
+  ## This flag is used to control the set of supported relocations' types.<BR><BR>
+  #  BIT0  - If set, ARM Thumb Image relocations are supported.<BR>
+  # @Prompt Image Relocations Policy.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRelocTypePolicy|0xFFFFFFFF|UINT32|0x4000101B
+
+  ## Indicates whether Image sections must adhere to the W^X principle.<BR><BR>
+  #   TRUE  - Image sections must adhere to the W^X principle.<BR>
+  #   FALSE - Image sections may not adhere to the W^X principle.<BR>
+  # @Prompt Enforce W^X principle.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderWXorX|TRUE|BOOLEAN|0x4000101C
+
+  ## Indicates whether Debug information can be retrieved
+  #  from the Debug Directory of the Image.<BR><BR>
+  #   TRUE  - Debug Directory will be scaned for Debug Information.<BR>
+  #   FALSE - Debug Directory will not be scaned.<BR>
+  # @Prompt Support Debug Information.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderDebugSupport|TRUE|BOOLEAN|0x4000101D
+
+  ## This flag is used to control Image Loader alignment policy.<BR><BR>
+  #  BIT0  - If set, unaligned Image sections are permitted.<BR>
+  #  BIT1  - If set, unaligned Image Relocation Block sizes are permitted.<BR>
+  #  BIT2  - If set, unaligned Image certificate sizes are permitted.<BR>
+  # @Prompt Image Loader Alignment Policy.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAlignmentPolicy|0xFFFFFFFF|UINT32|0x4000101E
+
+  ## Indicates whether PE32+ header offset is sufficiently aligned.<BR><BR>
+  #   TRUE  - Execution Header offset may be not aligned.<BR>
+  #   FALSE - Execution Header offset must be sufficiently aligned.<BR>
+  # @Prompt Allow Misaligned Offset.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAllowMisalignedOffset|FALSE|BOOLEAN|0x40001020
+
+  ## Indicates whether Image sections that do not adhere to the W^X principle
+  #  by mistake will have their X permission removed at load time.<BR><BR>
+  #   TRUE  - Image sections with WX permissions will have X permission removed.<BR>
+  #   FALSE - Image sections with WX permissions will be treated by PcdImageLoaderWXorX.<BR>
+  # This feature is only useful for images created by old Apple mtoc utility. Do not enable
+  # it unless such images need to be supported.
+  # @Prompt Remove X permission from WX sections.
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRemoveXForWX|FALSE|BOOLEAN|0x40001021
+
+  ## Indicates the UEFI image file formats supported outside FVs.<BR><BR>
+  #  BIT0 - PE.<BR>
+  #  BIT1 - UE.<BR>
+  # @Prompt Supported UEFI image file formats outside FVs.
+  gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportNonFv|0x02|UINT8|0x40002000
+
+  ## Indicates the UEFI image file formats supported inside FVs.<BR><BR>
+  #  BIT0 - PE.<BR>
+  #  BIT1 - UE.<BR>
+  # @Prompt Supported UEFI image file formats inside FVs.
+  gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv|0x03|UINT8|0x40002001
+
+  ## Set image protection policy. The policy is applied for each source individually.
+  #  If a bit is set, aligned images from this source will be protected and
+  #  unaligned images won't be loaded. Image protection means that
+  #  the code section becomes read-only, and the data section becomes non-executable.<BR>
+  #  If a bit is cleared, both aligned and unaligned images from this source will
+  #  be loaded but protection will be applied only to aligned images.<BR>
+  #  Image is aligned, if its SectionAlignment is a power of 2 and >= 4KB.<BR>
+  #  If BIT31 is set, unaligned image from firmware volume will stop boot process.<BR>
+  #  If BIT31 is cleared, unaligned images from firmware volume will be ignored.<BR>
+  #
+  #    BIT0 - Images from firmware volume.<BR>
+  #    BIT1 - Images from option ROM.<BR>
+  #    BIT2 - Images supplied by user.<BR>
+  #    <BR>
+  #    BIT31 - Firmware volume policy.<BR>
+  #    BIT30 - Turn off protection for images from firmware volume.<BR>
+  #    BIT29 - Turn off protection for images from option ROM.<BR>
+  #    BIT28 - Turn off protection for images supplied by user.<BR>
+  # @Prompt Set image protection policy.
+  gEfiMdePkgTokenSpaceGuid.PcdImageProtectionPolicy|0x00000007|UINT32|0x40002002
+
 [PcdsFixedAtBuild,PcdsPatchableInModule]
   ## Indicates the maximum length of unicode string used in the following
   #  BaseLib functions: StrLen(), StrSize(), StrCmp(), StrnCmp(), StrCpy(), StrnCpy()<BR><BR>
@@ -2132,6 +2225,13 @@
   # @Prompt Debug Property.
   # @Expression  0x80000002 | (gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask & 0xC0) == 0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0|UINT8|0x00000005
+
+  ## The mask is used to control DEBUG_RAISE() behavior.<BR><BR>
+  #  BIT0 - Enable Debug Assert.<BR>
+  #  BIT1 - Enable Debug Print.<BR>
+  #  BIT4 - Enable BreakPoint as ASSERT.<BR>
+  # @Prompt DEBUG_RAISE() Property.
+  gEfiMdePkgTokenSpaceGuid.PcdDebugRaisePropertyMask|0|UINT8|0x0000001b
 
   ## This flag is used to control the print out Debug message.<BR><BR>
   #  BIT0  - Initialization message.<BR>

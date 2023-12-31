@@ -12,5 +12,5 @@
 ##
 
 !if $(NETWORK_ALLOW_HTTP_CONNECTIONS) == TRUE
-  gEfiNetworkPkgTokenSpaceGuid.PcdAllowHttpConnections|TRUE
+#  gEfiNetworkPkgTokenSpaceGuid.PcdAllowHttpConnections|TRUE
 !endif

@@ -7,6 +7,7 @@
 
 Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
 Portions copyright (c) 2011 - 2013, ARM Ltd. All rights reserved.<BR>
+Copyright (c) 2020, Hewlett Packard Enterprise Development LP. All rights reserved.<BR>
 
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -14,8 +15,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 
 #ifndef __DEBUG_SUPPORT_H__
 #define __DEBUG_SUPPORT_H__
-
-#include <IndustryStandard/PeImage.h>
 
 typedef struct _EFI_DEBUG_SUPPORT_PROTOCOL EFI_DEBUG_SUPPORT_PROTOCOL;
 
@@ -428,7 +427,6 @@ typedef struct {
   // virtual registers - nat bits for R1-R31
   //
   UINT64  IntNat;
-
 } EFI_SYSTEM_CONTEXT_IPF;
 
 ///
@@ -466,8 +464,6 @@ typedef struct {
   UINT64  ControlFlags;
   UINT64  Ip;
 } EFI_SYSTEM_CONTEXT_EBC;
-
-
 
 ///
 ///  ARM processor exception types.
@@ -512,7 +508,6 @@ typedef struct {
   UINT32  IFSR;
   UINT32  IFAR;
 } EFI_SYSTEM_CONTEXT_ARM;
-
 
 ///
 ///  AARCH64 processor exception types.
@@ -603,6 +598,177 @@ typedef struct {
   UINT64  FAR;  // Fault Address Register
 } EFI_SYSTEM_CONTEXT_AARCH64;
 
+///
+/// RISC-V processor exception types.
+///
+#define EXCEPT_RISCV_INST_MISALIGNED               0
+#define EXCEPT_RISCV_INST_ACCESS_FAULT             1
+#define EXCEPT_RISCV_ILLEGAL_INST                  2
+#define EXCEPT_RISCV_BREAKPOINT                    3
+#define EXCEPT_RISCV_LOAD_ADDRESS_MISALIGNED       4
+#define EXCEPT_RISCV_LOAD_ACCESS_FAULT             5
+#define EXCEPT_RISCV_STORE_AMO_ADDRESS_MISALIGNED  6
+#define EXCEPT_RISCV_STORE_AMO_ACCESS_FAULT        7
+#define EXCEPT_RISCV_ENV_CALL_FROM_UMODE           8
+#define EXCEPT_RISCV_ENV_CALL_FROM_SMODE           9
+#define EXCEPT_RISCV_ENV_CALL_FROM_VS_MODE         10
+#define EXCEPT_RISCV_ENV_CALL_FROM_MMODE           11
+#define EXCEPT_RISCV_INST_ACCESS_PAGE_FAULT        12
+#define EXCEPT_RISCV_LOAD_ACCESS_PAGE_FAULT        13
+#define EXCEPT_RISCV_14                            14
+#define EXCEPT_RISCV_STORE_ACCESS_PAGE_FAULT       15
+#define EXCEPT_RISCV_16                            16
+#define EXCEPT_RISCV_17                            17
+#define EXCEPT_RISCV_18                            18
+#define EXCEPT_RISCV_19                            19
+#define EXCEPT_RISCV_INST_GUEST_PAGE_FAULT         20
+#define EXCEPT_RISCV_LOAD_GUEST_PAGE_FAULT         21
+#define EXCEPT_RISCV_VIRTUAL_INSTRUCTION           22
+#define EXCEPT_RISCV_STORE_GUEST_PAGE_FAULT        23
+#define EXCEPT_RISCV_MAX_EXCEPTIONS                (EXCEPT_RISCV_STORE_GUEST_PAGE_FAULT)
+
+///
+/// RISC-V processor exception types for interrupts.
+///
+#define EXCEPT_RISCV_IS_IRQ(x)     ((x & 0x8000000000000000UL) != 0)
+#define EXCEPT_RISCV_IRQ_INDEX(x)  (x & 0x7FFFFFFFFFFFFFFFUL)
+#define EXCEPT_RISCV_IRQ_0                 0x8000000000000000UL
+#define EXCEPT_RISCV_IRQ_SOFT_FROM_SMODE   0x8000000000000001UL
+#define EXCEPT_RISCV_IRQ_SOFT_FROM_VSMODE  0x8000000000000002UL
+#define EXCEPT_RISCV_IRQ_SOFT_FROM_MMODE   0x8000000000000003UL
+#define EXCEPT_RISCV_IRQ_4                 0x8000000000000004UL
+#define EXCEPT_RISCV_IRQ_TIMER_FROM_SMODE  0x8000000000000005UL
+#define EXCEPT_RISCV_MAX_IRQS              (EXCEPT_RISCV_IRQ_INDEX(EXCEPT_RISCV_IRQ_TIMER_FROM_SMODE))
+
+typedef struct {
+  UINT64    X0;
+  UINT64    X1;
+  UINT64    X2;
+  UINT64    X3;
+  UINT64    X4;
+  UINT64    X5;
+  UINT64    X6;
+  UINT64    X7;
+  UINT64    X8;
+  UINT64    X9;
+  UINT64    X10;
+  UINT64    X11;
+  UINT64    X12;
+  UINT64    X13;
+  UINT64    X14;
+  UINT64    X15;
+  UINT64    X16;
+  UINT64    X17;
+  UINT64    X18;
+  UINT64    X19;
+  UINT64    X20;
+  UINT64    X21;
+  UINT64    X22;
+  UINT64    X23;
+  UINT64    X24;
+  UINT64    X25;
+  UINT64    X26;
+  UINT64    X27;
+  UINT64    X28;
+  UINT64    X29;
+  UINT64    X30;
+  UINT64    X31;
+  UINT64    SEPC;
+  UINT32    SSTATUS;
+  UINT32    STVAL;
+} EFI_SYSTEM_CONTEXT_RISCV64;
+
+//
+// LoongArch processor exception types.
+//
+#define EXCEPT_LOONGARCH_INT   0
+#define EXCEPT_LOONGARCH_PIL   1
+#define EXCEPT_LOONGARCH_PIS   2
+#define EXCEPT_LOONGARCH_PIF   3
+#define EXCEPT_LOONGARCH_PME   4
+#define EXCEPT_LOONGARCH_PNR   5
+#define EXCEPT_LOONGARCH_PNX   6
+#define EXCEPT_LOONGARCH_PPI   7
+#define EXCEPT_LOONGARCH_ADE   8
+#define EXCEPT_LOONGARCH_ALE   9
+#define EXCEPT_LOONGARCH_BCE   10
+#define EXCEPT_LOONGARCH_SYS   11
+#define EXCEPT_LOONGARCH_BRK   12
+#define EXCEPT_LOONGARCH_INE   13
+#define EXCEPT_LOONGARCH_IPE   14
+#define EXCEPT_LOONGARCH_FPD   15
+#define EXCEPT_LOONGARCH_SXD   16
+#define EXCEPT_LOONGARCH_ASXD  17
+#define EXCEPT_LOONGARCH_FPE   18
+#define EXCEPT_LOONGARCH_TBR   64 // For code only, there is no such type in the ISA spec, the TLB refill is defined for an independent exception.
+
+//
+// LoongArch processor Interrupt types.
+//
+#define EXCEPT_LOONGARCH_INT_SIP0   0
+#define EXCEPT_LOONGARCH_INT_SIP1   1
+#define EXCEPT_LOONGARCH_INT_IP0    2
+#define EXCEPT_LOONGARCH_INT_IP1    3
+#define EXCEPT_LOONGARCH_INT_IP2    4
+#define EXCEPT_LOONGARCH_INT_IP3    5
+#define EXCEPT_LOONGARCH_INT_IP4    6
+#define EXCEPT_LOONGARCH_INT_IP5    7
+#define EXCEPT_LOONGARCH_INT_IP6    8
+#define EXCEPT_LOONGARCH_INT_IP7    9
+#define EXCEPT_LOONGARCH_INT_PMC    10
+#define EXCEPT_LOONGARCH_INT_TIMER  11
+#define EXCEPT_LOONGARCH_INT_IPI    12
+
+//
+// For coding convenience, define the maximum valid
+// LoongArch interrupt.
+//
+#define MAX_LOONGARCH_INTERRUPT  14
+
+typedef struct {
+  UINT64    R0;
+  UINT64    R1;
+  UINT64    R2;
+  UINT64    R3;
+  UINT64    R4;
+  UINT64    R5;
+  UINT64    R6;
+  UINT64    R7;
+  UINT64    R8;
+  UINT64    R9;
+  UINT64    R10;
+  UINT64    R11;
+  UINT64    R12;
+  UINT64    R13;
+  UINT64    R14;
+  UINT64    R15;
+  UINT64    R16;
+  UINT64    R17;
+  UINT64    R18;
+  UINT64    R19;
+  UINT64    R20;
+  UINT64    R21;
+  UINT64    R22;
+  UINT64    R23;
+  UINT64    R24;
+  UINT64    R25;
+  UINT64    R26;
+  UINT64    R27;
+  UINT64    R28;
+  UINT64    R29;
+  UINT64    R30;
+  UINT64    R31;
+
+  UINT64    CRMD;  // CuRrent MoDe information
+  UINT64    PRMD;  // PRe-exception MoDe information
+  UINT64    EUEN;  // Extended component Unit ENable
+  UINT64    MISC;  // MISCellaneous controller
+  UINT64    ECFG;  // Exception ConFiGuration
+  UINT64    ESTAT; // Exception STATus
+  UINT64    ERA;   // Exception Return Address
+  UINT64    BADV;  // BAD Virtual address
+  UINT64    BADI;  // BAD Instruction
+} EFI_SYSTEM_CONTEXT_LOONGARCH64;
 
 ///
 /// Universal EFI_SYSTEM_CONTEXT definition.
@@ -614,6 +780,8 @@ typedef union {
   EFI_SYSTEM_CONTEXT_IPF  *SystemContextIpf;
   EFI_SYSTEM_CONTEXT_ARM  *SystemContextArm;
   EFI_SYSTEM_CONTEXT_AARCH64  *SystemContextAArch64;
+  EFI_SYSTEM_CONTEXT_RISCV64        *SystemContextRiscV64;
+  EFI_SYSTEM_CONTEXT_LOONGARCH64    *SystemContextLoongArch64;
 } EFI_SYSTEM_CONTEXT;
 
 //
@@ -650,14 +818,13 @@ VOID
 /// Machine type definition
 ///
 typedef enum {
-  IsaIa32 = IMAGE_FILE_MACHINE_I386,           ///< 0x014C
-  IsaX64  = IMAGE_FILE_MACHINE_X64,            ///< 0x8664
-  IsaIpf  = IMAGE_FILE_MACHINE_IA64,           ///< 0x0200
-  IsaEbc  = IMAGE_FILE_MACHINE_EBC,            ///< 0x0EBC
-  IsaArm  = IMAGE_FILE_MACHINE_ARMTHUMB_MIXED, ///< 0x01c2
-  IsaAArch64  = IMAGE_FILE_MACHINE_ARM64       ///< 0xAA64
+  IsaIa32     = EFI_IMAGE_MACHINE_IA32,           ///< 0x014C
+  IsaX64      = EFI_IMAGE_MACHINE_X64,            ///< 0x8664
+  IsaIpf      = EFI_IMAGE_MACHINE_IA64,           ///< 0x0200
+  IsaEbc      = EFI_IMAGE_MACHINE_EBC,            ///< 0x0EBC
+  IsaArm      = EFI_IMAGE_MACHINE_ARMTHUMB_MIXED, ///< 0x01c2
+  IsaAArch64  = EFI_IMAGE_MACHINE_AARCH64         ///< 0xAA64
 } EFI_INSTRUCTION_SET_ARCHITECTURE;
-
 
 //
 // DebugSupport member function definitions

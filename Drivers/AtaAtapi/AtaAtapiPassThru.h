@@ -149,7 +149,7 @@ struct _ATA_NONBLOCK_TASK {
 //
 #define ATA_ATAPI_TIMEOUT           EFI_TIMER_PERIOD_SECONDS(3)
 
-#define IS_ALIGNED(addr, size)      (((UINTN) (addr) & (size - 1)) == 0)
+//#define IS_ALIGNED(addr, size)      (((UINTN) (addr) & (size - 1)) == 0)
 
 #define ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS(a) \
   CR (a, \

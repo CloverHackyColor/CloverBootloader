@@ -9,7 +9,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #ifndef _ARP_DRIVER_H_
 #define _ARP_DRIVER_H_
 
-
 #include <Uefi.h>
 
 #include <Protocol/Arp.h>
@@ -21,17 +20,17 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 
-
 //
 // Global variables
 //
-extern EFI_DRIVER_BINDING_PROTOCOL    gArpDriverBinding;
-extern EFI_COMPONENT_NAME_PROTOCOL    gArpComponentName;
-extern EFI_COMPONENT_NAME2_PROTOCOL   gArpComponentName2;
+extern EFI_DRIVER_BINDING_PROTOCOL   gArpDriverBinding;
+extern EFI_COMPONENT_NAME_PROTOCOL   gArpComponentName;
+extern EFI_COMPONENT_NAME2_PROTOCOL  gArpComponentName2;
 
 //
-// Function prototypes for the Drivr Binding Protocol
+// Function prototypes for the Driver Binding Protocol
 //
+
 /**
   Tests to see if this driver supports a given controller.
 
@@ -55,7 +54,7 @@ extern EFI_COMPONENT_NAME2_PROTOCOL   gArpComponentName2;
   @retval EFI_ACCESS_DENIED        The device specified by ControllerHandle and
                                    RemainingDevicePath is already being managed by
                                    a different driver or an application that
-                                   requires exclusive acces. Currently not implemented.
+                                   requires exclusive access. Currently not implemented.
   @retval EFI_UNSUPPORTED          The device specified by ControllerHandle and
                                    RemainingDevicePath is not supported by the
                                    driver specified by This.
@@ -97,7 +96,7 @@ ArpDriverBindingSupported (
                                    Currently not implemented.
   @retval EFI_OUT_OF_RESOURCES     The request could not be completed due to a lack of
                                    resources.
-  @retval Others                   The driver failded to start the device.
+  @retval Others                   The driver failed to start the device.
 
 **/
 EFI_STATUS
@@ -159,7 +158,7 @@ ArpDriverBindingStop (
                       then a new handle is created. If it is a pointer to an existing
                       UEFI handle, then the protocol is added to the existing UEFI handle.
 
-  @retval EFI_SUCCES            The protocol was added to ChildHandle.
+  @retval EFI_SUCCESS           The protocol was added to ChildHandle.
   @retval EFI_INVALID_PARAMETER ChildHandle is NULL.
   @retval EFI_OUT_OF_RESOURCES  There are not enough resources available to create
                                 the child
@@ -183,7 +182,7 @@ ArpServiceBindingCreateChild (
   @param  This        Pointer to the EFI_SERVICE_BINDING_PROTOCOL instance.
   @param  ChildHandle Handle of the child to destroy
 
-  @retval EFI_SUCCES            The protocol was removed from ChildHandle.
+  @retval EFI_SUCCESS           The protocol was removed from ChildHandle.
   @retval EFI_UNSUPPORTED       ChildHandle does not support the protocol that is
                                 being removed.
   @retval EFI_INVALID_PARAMETER Child handle is NULL.
@@ -199,10 +198,10 @@ ArpServiceBindingDestroyChild (
   IN EFI_HANDLE                    ChildHandle
   );
 
-
 //
 // EFI Component Name Functions
 //
+
 /**
   Retrieves a Unicode string that is the user readable name of the driver.
 
@@ -249,7 +248,6 @@ ArpComponentNameGetDriverName (
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
-
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -322,13 +320,11 @@ ArpComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 ArpComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
-  IN  EFI_HANDLE                                      ControllerHandle,
-  IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
-  IN  CHAR8                                           *Language,
-  OUT CHAR16                                          **ControllerName
+  IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
+  IN  EFI_HANDLE                   ControllerHandle,
+  IN  EFI_HANDLE                   ChildHandle        OPTIONAL,
+  IN  CHAR8                        *Language,
+  OUT CHAR16                       **ControllerName
   );
 
-
 #endif
-

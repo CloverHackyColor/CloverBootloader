@@ -1294,15 +1294,15 @@ AtaPassThruPassThru (
   Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
 
 //  DBG(L"This->Mode->IoAlign=%d Packet=%x Packet->InDataBuffer=%x\n", This->Mode->IoAlign, (UINTN)Packet, (UINTN)Packet->InDataBuffer); 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->InDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->InDataBuffer, This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->OutDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->OutDataBuffer, This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->Asb, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->Asb, This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -2011,17 +2011,17 @@ ExtScsiPassThruPassThru (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->InDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->InDataBuffer, This->Mode->IoAlign)) {
 //    DBG(L"IN not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->OutDataBuffer, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->OutDataBuffer, This->Mode->IoAlign)) {
 //    DBG(L"OUT not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->SenseData, This->Mode->IoAlign)) {
+  if ((This->Mode->IoAlign > 1) && !IS_ALIGNED((UINTN)Packet->SenseData, This->Mode->IoAlign)) {
 //    DBG(L"SenseData not aligned\n");
     return EFI_INVALID_PARAMETER;
   }

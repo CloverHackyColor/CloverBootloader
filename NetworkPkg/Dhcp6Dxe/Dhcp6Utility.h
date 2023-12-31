@@ -10,9 +10,8 @@
 #ifndef __EFI_DHCP6_UTILITY_H__
 #define __EFI_DHCP6_UTILITY_H__
 
-
-#define  DHCP6_10_BIT_MASK             0x3ff
-#define  DHCP6_DAD_ADDITIONAL_DELAY    30000000 // 3 seconds
+#define  DHCP6_10_BIT_MASK           0x3ff
+#define  DHCP6_DAD_ADDITIONAL_DELAY  30000000   // 3 seconds
 
 /**
   Generate client Duid in the format of Duid-llt.
@@ -25,7 +24,7 @@
 **/
 EFI_DHCP6_DUID *
 Dhcp6GenerateClientId (
-  IN EFI_SIMPLE_NETWORK_MODE    *Mode
+  IN EFI_SIMPLE_NETWORK_MODE  *Mode
   );
 
 /**
@@ -40,8 +39,8 @@ Dhcp6GenerateClientId (
 **/
 EFI_STATUS
 Dhcp6CopyConfigData (
-  IN EFI_DHCP6_CONFIG_DATA     *DstCfg,
-  IN EFI_DHCP6_CONFIG_DATA     *SorCfg
+  IN EFI_DHCP6_CONFIG_DATA  *DstCfg,
+  IN EFI_DHCP6_CONFIG_DATA  *SorCfg
   );
 
 /**
@@ -52,7 +51,7 @@ Dhcp6CopyConfigData (
 **/
 VOID
 Dhcp6CleanupConfigData (
-  IN OUT EFI_DHCP6_CONFIG_DATA       *CfgData
+  IN OUT EFI_DHCP6_CONFIG_DATA  *CfgData
   );
 
 /**
@@ -63,7 +62,7 @@ Dhcp6CleanupConfigData (
 **/
 VOID
 Dhcp6CleanupModeData (
-  IN OUT EFI_DHCP6_MODE_DATA        *ModeData
+  IN OUT EFI_DHCP6_MODE_DATA  *ModeData
   );
 
 /**
@@ -71,16 +70,16 @@ Dhcp6CleanupModeData (
 
   @param[in]  Base          The base value of the time.
   @param[in]  IsFirstRt     If TRUE, it is the first time to calculate expire time.
-  @param[in]  NeedSigned    If TRUE, the the signed factor is needed.
+  @param[in]  NeedSigned    If TRUE, the signed factor is needed.
 
   @return     Expire        The calculated result for the new expire time.
 
 **/
 UINT32
 Dhcp6CalculateExpireTime (
-  IN UINT32                    Base,
-  IN BOOLEAN                   IsFirstRt,
-  IN BOOLEAN                   NeedSigned
+  IN UINT32   Base,
+  IN BOOLEAN  IsFirstRt,
+  IN BOOLEAN  NeedSigned
   );
 
 /**
@@ -91,7 +90,7 @@ Dhcp6CalculateExpireTime (
 **/
 VOID
 Dhcp6CalculateLeaseTime (
-  IN DHCP6_IA_CB               *IaCb
+  IN DHCP6_IA_CB  *IaCb
   );
 
 /**
@@ -107,9 +106,9 @@ Dhcp6CalculateLeaseTime (
 **/
 EFI_STATUS
 Dhcp6CheckAddress (
-  IN EFI_DHCP6_IA              *Ia,
-  IN UINT32                    AddressCount,
-  IN EFI_IPv6_ADDRESS          *Addresses
+  IN EFI_DHCP6_IA      *Ia,
+  IN UINT32            AddressCount,
+  IN EFI_IPv6_ADDRESS  *Addresses
   );
 
 /**
@@ -125,9 +124,9 @@ Dhcp6CheckAddress (
 **/
 EFI_DHCP6_IA *
 Dhcp6DepriveAddress (
-  IN EFI_DHCP6_IA              *Ia,
-  IN UINT32                    AddressCount,
-  IN EFI_IPv6_ADDRESS          *Addresses
+  IN EFI_DHCP6_IA      *Ia,
+  IN UINT32            AddressCount,
+  IN EFI_IPv6_ADDRESS  *Addresses
   );
 
 /**
@@ -139,7 +138,7 @@ Dhcp6DepriveAddress (
 VOID
 EFIAPI
 Dhcp6DummyExtFree (
-  IN VOID                      *Arg
+  IN VOID  *Arg
   );
 
 /**
@@ -154,10 +153,10 @@ Dhcp6DummyExtFree (
 VOID
 EFIAPI
 Dhcp6OnTransmitted (
-  IN NET_BUF                   *Wrap,
-  IN UDP_END_POINT             *EndPoint,
-  IN EFI_STATUS                IoStatus,
-  IN VOID                      *Context
+  IN NET_BUF        *Wrap,
+  IN UDP_END_POINT  *EndPoint,
+  IN EFI_STATUS     IoStatus,
+  IN VOID           *Context
   );
 
 /**
@@ -165,7 +164,7 @@ Dhcp6OnTransmitted (
 
   @param[in, out] Buf           The pointer to buffer.
   @param[in]      OptType       The option type.
-  @param[in]      OptLen        The lenght of option content.s
+  @param[in]      OptLen        The length of option content.s
   @param[in]      Data          The pointer to the option content.
 
   @return         Buf           The position to append the next option.
@@ -173,10 +172,10 @@ Dhcp6OnTransmitted (
 **/
 UINT8 *
 Dhcp6AppendOption (
-  IN OUT UINT8                 *Buf,
-  IN     UINT16                OptType,
-  IN     UINT16                OptLen,
-  IN     UINT8                 *Data
+  IN OUT UINT8   *Buf,
+  IN     UINT16  OptType,
+  IN     UINT16  OptLen,
+  IN     UINT8   *Data
   );
 
 /**
@@ -193,11 +192,11 @@ Dhcp6AppendOption (
 **/
 UINT8 *
 Dhcp6AppendIaOption (
-  IN OUT UINT8                  *Buf,
-  IN     EFI_DHCP6_IA           *Ia,
-  IN     UINT32                 T1,
-  IN     UINT32                 T2,
-  IN     UINT32                 MessageType
+  IN OUT UINT8         *Buf,
+  IN     EFI_DHCP6_IA  *Ia,
+  IN     UINT32        T1,
+  IN     UINT32        T2,
+  IN     UINT32        MessageType
   );
 
 /**
@@ -213,9 +212,9 @@ Dhcp6AppendIaOption (
 **/
 UINT8 *
 Dhcp6AppendETOption (
-  IN OUT UINT8                  *Buf,
-  IN     DHCP6_INSTANCE         *Instance,
-  OUT    UINT16                 **Elapsed
+  IN OUT UINT8           *Buf,
+  IN     DHCP6_INSTANCE  *Instance,
+  OUT    UINT16          **Elapsed
   );
 
 /**
@@ -227,8 +226,8 @@ Dhcp6AppendETOption (
 **/
 VOID
 SetElapsedTime (
-  IN     UINT16                 *Elapsed,
-  IN     DHCP6_INSTANCE         *Instance
+  IN     UINT16          *Elapsed,
+  IN     DHCP6_INSTANCE  *Instance
   );
 
 /**
@@ -244,9 +243,9 @@ SetElapsedTime (
 **/
 UINT8 *
 Dhcp6SeekOption (
-  IN UINT8                     *Buf,
-  IN UINT32                    SeekLen,
-  IN UINT16                    OptType
+  IN UINT8   *Buf,
+  IN UINT32  SeekLen,
+  IN UINT16  OptType
   );
 
 /**
@@ -262,15 +261,15 @@ Dhcp6SeekOption (
 **/
 UINT8 *
 Dhcp6SeekIaOption (
-  IN UINT8                     *Buf,
-  IN UINT32                    SeekLen,
-  IN EFI_DHCP6_IA_DESCRIPTOR   *IaDesc
+  IN UINT8                    *Buf,
+  IN UINT32                   SeekLen,
+  IN EFI_DHCP6_IA_DESCRIPTOR  *IaDesc
   );
 
 /**
   Parse the address option and update the address info.
 
-  @param[in]      CurrentIa     The pointer to the Ia Address in control blcok.
+  @param[in]      CurrentIa     The pointer to the Ia Address in control block.
   @param[in]      IaInnerOpt    The pointer to the buffer.
   @param[in]      IaInnerLen    The length to parse.
   @param[out]     AddrNum       The number of addresses.
@@ -279,15 +278,15 @@ Dhcp6SeekIaOption (
 **/
 VOID
 Dhcp6ParseAddrOption (
-  IN     EFI_DHCP6_IA            *CurrentIa,
-  IN     UINT8                   *IaInnerOpt,
-  IN     UINT16                  IaInnerLen,
-     OUT UINT32                  *AddrNum,
-  IN OUT EFI_DHCP6_IA_ADDRESS    *AddrBuf
+  IN     EFI_DHCP6_IA          *CurrentIa,
+  IN     UINT8                 *IaInnerOpt,
+  IN     UINT16                IaInnerLen,
+  OUT UINT32                   *AddrNum,
+  IN OUT EFI_DHCP6_IA_ADDRESS  *AddrBuf
   );
 
 /**
-  Create a control blcok for the Ia according to the corresponding options.
+  Create a control block for the Ia according to the corresponding options.
 
   @param[in]  Instance              The pointer to DHCP6 Instance.
   @param[in]  IaInnerOpt            The pointer to the inner options in the Ia option.
@@ -303,13 +302,12 @@ Dhcp6ParseAddrOption (
 **/
 EFI_STATUS
 Dhcp6GenerateIaCb (
-  IN  DHCP6_INSTANCE           *Instance,
-  IN  UINT8                    *IaInnerOpt,
-  IN  UINT16                   IaInnerLen,
-  IN  UINT32                   T1,
-  IN  UINT32                   T2
+  IN  DHCP6_INSTANCE  *Instance,
+  IN  UINT8           *IaInnerOpt,
+  IN  UINT16          IaInnerLen,
+  IN  UINT32          T1,
+  IN  UINT32          T2
   );
-
 
 /**
   Cache the current IA configuration information.
@@ -322,23 +320,22 @@ Dhcp6GenerateIaCb (
 **/
 EFI_STATUS
 Dhcp6CacheIa (
-  IN DHCP6_INSTANCE           *Instance
+  IN DHCP6_INSTANCE  *Instance
   );
 
-
 /**
-  Append CacheIa to the currrent IA. Meanwhile, clear CacheIa.ValidLifetime to 0.
+  Append CacheIa to the current IA. Meanwhile, clear CacheIa.ValidLifetime to 0.
 
   @param[in]  Instance            The pointer to DHCP6 instance.
 
 **/
 VOID
 Dhcp6AppendCacheIa (
-  IN DHCP6_INSTANCE           *Instance
+  IN DHCP6_INSTANCE  *Instance
   );
 
 /**
-  Calculate the Dhcp6 get mapping timeout by adding additinal delay to the IP6 DAD transmits count.
+  Calculate the Dhcp6 get mapping timeout by adding additional delay to the IP6 DAD transmits count.
 
   @param[in]   Ip6Cfg              The pointer to Ip6 config protocol.
   @param[out]  TimeOut             The time out value in 100ns units.
@@ -348,7 +345,8 @@ Dhcp6AppendCacheIa (
 **/
 EFI_STATUS
 Dhcp6GetMappingTimeOut (
-  IN  EFI_IP6_CONFIG_PROTOCOL       *Ip6Cfg,
-  OUT UINTN                         *TimeOut
+  IN  EFI_IP6_CONFIG_PROTOCOL  *Ip6Cfg,
+  OUT UINTN                    *TimeOut
   );
+
 #endif

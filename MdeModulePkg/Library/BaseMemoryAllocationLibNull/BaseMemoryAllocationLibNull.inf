@@ -31,3 +31,4 @@
 
 [LibraryClasses]
   DebugLib
+  CommonMemoryAllocationLib

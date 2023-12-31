@@ -1,0 +1,49 @@
+## @file
+#  UEFI Image Loader library implementation for UE FV Images.
+#
+#  Copyright (c) 2023, Marvin Häuser. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-3-Clause
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = BaseUefiImageLibOnlyFv
+  FILE_GUID      = 11bb7a90-175d-4117-a66f-65b84a9544b7
+  MODULE_TYPE    = BASE
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = UefiImageLib
+  LIBRARY_CLASS  = UefiImageOnlyFvLib
+
+[Sources]
+  CommonSupport.c
+  ExecutionSupport.c
+  UeSupport.c
+  PeSupport.c
+  UefiImageLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseOverflowLib
+  BaseMemoryLib
+  CacheMaintenanceLib
+  DebugLib
+  MemoryAllocationLib
+  PeCoffLib2
+  UeImageLib
+  UefiImageExtraActionLib
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderAlignmentPolicy
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderLoadHeader
+  gEfiMdePkgTokenSpaceGuid.PcdDebugRaisePropertyMask
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRemoveXForWX
+  gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportNonFv
+  gEfiMdePkgTokenSpaceGuid.PcdUefiImageFormatSupportFv
+
+[BuildOptions]
+  *_*_*_CC_FLAGS = -DUEFI_IMAGE_FORMAT_SUPPORT_SOURCES=0x02
+  MSFT:*_*_*_CC_FLAGS = /wd4204

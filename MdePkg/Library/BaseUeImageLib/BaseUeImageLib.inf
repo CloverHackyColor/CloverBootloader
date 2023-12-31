@@ -1,0 +1,33 @@
+## @file
+#  UEFI Image Loader library implementation for UE Images.
+#
+#  Copyright (c) 2021, Marvin Häuser. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-3-Clause
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = UeImageLib
+  FILE_GUID      = 357AD87E-8D6B-468A-B3FA-0D9CC4C725CD
+  MODULE_TYPE    = BASE
+  VERSION_STRING = 1.0
+  LIBRARY_CLASS  = BaseUeImageLib
+
+[Sources]
+  UeImageLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  BaseOverflowLib
+  DebugLib
+  PcdLib
+
+[FixedPcd]
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRelocTypePolicy
+  gEfiMdePkgTokenSpaceGuid.PcdDebugRaisePropertyMask
+  gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRtRelocAllowTargetMismatch

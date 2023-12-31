@@ -62,7 +62,7 @@ extern "C" {
 #if defined(IS_UEFI_MODULE)
 
 VOID *
-InternalAllocatePool (
+PhaseAllocatePool (
   IN EFI_MEMORY_TYPE  MemoryType,
   IN UINTN            AllocationSize
   )
@@ -105,7 +105,10 @@ NOP;
 
 #if defined(IS_UEFI_MODULE)
 
-void (EFIAPI FreePool)(IN void *MemoryPlus16)
+//void (EFIAPI FreePool)(IN void *MemoryPlus16)
+VOID
+EFIAPI
+PhaseFreePool (IN VOID *MemoryPlus16)
 
 #else
 
@@ -333,7 +336,7 @@ void real_free(void* p)
 }
 
 #if defined(IS_UEFI_MODULE)
-void* my_malloc(size_t size) { return InternalAllocatePool(EfiBootServicesData, size); }
+void* my_malloc(size_t size) { return PhaseAllocatePool(EfiBootServicesData, size); }
 void my_free(IN void *p) { FreePool(p); }
 #endif
 

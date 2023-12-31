@@ -10,29 +10,29 @@
 #ifndef _TCP_DRIVER_H_
 #define _TCP_DRIVER_H_
 
-#define TCP_DRIVER_SIGNATURE   SIGNATURE_32 ('T', 'C', 'P', 'D')
+#define TCP_DRIVER_SIGNATURE  SIGNATURE_32 ('T', 'C', 'P', 'D')
 
-#define TCP_PORT_KNOWN         1024
-#define TCP_PORT_USER_RESERVED 65535
+#define TCP_PORT_KNOWN          1024
+#define TCP_PORT_USER_RESERVED  65535
 
 typedef struct _TCP_HEARTBEAT_TIMER {
-  EFI_EVENT  TimerEvent;
-  INTN       RefCnt;
+  EFI_EVENT    TimerEvent;
+  INTN         RefCnt;
 } TCP_HEARTBEAT_TIMER;
 
 typedef struct _TCP_SERVICE_DATA {
-  UINT32                        Signature;
-  EFI_HANDLE                    ControllerHandle;
-  EFI_HANDLE                    DriverBindingHandle;
-  UINT8                         IpVersion;
-  IP_IO                         *IpIo;
-  EFI_SERVICE_BINDING_PROTOCOL  ServiceBinding;
-  LIST_ENTRY                    SocketList;
+  UINT32                          Signature;
+  EFI_HANDLE                      ControllerHandle;
+  EFI_HANDLE                      DriverBindingHandle;
+  UINT8                           IpVersion;
+  IP_IO                           *IpIo;
+  EFI_SERVICE_BINDING_PROTOCOL    ServiceBinding;
+  LIST_ENTRY                      SocketList;
 } TCP_SERVICE_DATA;
 
 typedef struct _TCP_PROTO_DATA {
-  TCP_SERVICE_DATA  *TcpService;
-  TCP_CB            *TcpPcb;
+  TCP_SERVICE_DATA    *TcpService;
+  TCP_CB              *TcpPcb;
 } TCP_PROTO_DATA;
 
 #define TCP_SERVICE_FROM_THIS(a) \
@@ -203,13 +203,13 @@ Tcp6DriverBindingStop (
   );
 
 /**
-  The Callback funtion called after the TCP socket is created.
+  The Callback function called after the TCP socket is created.
 
   @param[in]  This            Pointer to the socket just created.
   @param[in]  Context         The context of the socket.
 
   @retval EFI_SUCCESS         This protocol is installed successfully.
-  @retval other               An error occured.
+  @retval other               An error occurred.
 
 **/
 EFI_STATUS
@@ -248,7 +248,7 @@ TcpDestroySocketCallback (
                                 If it is a pointer to an existing UEFI handle,
                                 then the protocol is added to the existing UEFI handle.
 
-  @retval EFI_SUCCES            The protocol was added to ChildHandle.
+  @retval EFI_SUCCESS           The protocol was added to ChildHandle.
   @retval EFI_INVALID_PARAMETER ChildHandle is NULL.
   @retval EFI_OUT_OF_RESOURCES  There are not enough resources available to create
                                 the child.
@@ -272,7 +272,7 @@ TcpServiceBindingCreateChild (
   @param  This        Pointer to the EFI_SERVICE_BINDING_PROTOCOL instance.
   @param  ChildHandle Handle of the child to destroy.
 
-  @retval EFI_SUCCES            The protocol was removed from ChildHandle.
+  @retval EFI_SUCCESS           The protocol was removed from ChildHandle.
   @retval EFI_UNSUPPORTED       ChildHandle does not support the protocol that is being removed.
   @retval EFI_INVALID_PARAMETER The child handle is NULL.
   @retval EFI_ACCESS_DENIED     The protocol could not be removed from the ChildHandle
