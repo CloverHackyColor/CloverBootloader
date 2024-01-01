@@ -203,6 +203,7 @@
 # OcMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   OcMiscLib|OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf
   OcOSInfoLib|OpenCorePkg/Library/OcOSInfoLib/OcOSInfoLib.inf
+  OcPciIoLib|OpenCorePkg/Library/OcPciIoLib/OcPciIoLib.inf
 #  OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
   OcRngLib|OpenCorePkg/Library/OcRngLib/OcRngLib.inf
   OcRtcLib|OpenCorePkg/Library/OcRtcLib/OcRtcLib.inf
@@ -219,6 +220,7 @@
   OcAppleKernelLib|OpenCorePkg/Library/OcAppleKernelLib/OcAppleKernelLib.inf
   OcMachoLib|OpenCorePkg/Library/OcMachoLib/OcMachoLib.inf
   OcVirtualFsLib|OpenCorePkg/Library/OcVirtualFsLib/OcVirtualFsLib.inf
+  OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
   OcMacInfoLib|OpenCorePkg/Library/OcMacInfoLib/OcMacInfoLib.inf
   OcApfsLib|OpenCorePkg/Library/OcApfsLib/OcApfsLib.inf
   OcAppleSecureBootLib|OpenCorePkg/Library/OcAppleSecureBootLib/OcAppleSecureBootLib.inf
@@ -233,18 +235,22 @@
   OcAppleUserInterfaceThemeLib|OpenCorePkg/Library/OcAppleUserInterfaceThemeLib/OcAppleUserInterfaceThemeLib.inf
   OcConfigurationLib|OpenCorePkg/Library/OcConfigurationLib/OcConfigurationLib.inf
   OcDevicePropertyLib|OpenCorePkg/Library/OcDevicePropertyLib/OcDevicePropertyLib.inf
+  OcDirectResetLib|OpenCorePkg/Library/OcDirectResetLib/OcDirectResetLib.inf
  # OcFirmwareVolumeLib|OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf
   OcHashServicesLib|OpenCorePkg/Library/OcHashServicesLib/OcHashServicesLib.inf
   OcSmbiosLib|OpenCorePkg/Library/OcSmbiosLib/OcSmbiosLib.inf
 #  OcSmcLib|OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf
   OcUnicodeCollationEngGenericLib|OpenCorePkg/Library/OcUnicodeCollationEngLib/OcUnicodeCollationEngGenericLib.inf
-  OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
-  OcPeCoffLib|OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf
-  OcVariableLib|OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf
+#  OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
+#  OcPeCoffLib|OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf
+  PeCoffLib2|MdePkg/Library/BasePeCoffLib2/BasePeCoffLib2.inf
+  UefiImageExtraActionLib|MdePkg/Library/BaseUefiImageExtraActionLibNull/BaseUefiImageExtraActionLibNull.inf
   ResetSystemLib|OpenCorePkg/Library/OcResetSystemLib/OcResetSystemLib.inf
 
+  OcVariableLib|OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf
+
     
-  OpenCoreLib|OpenCorePkg/Application/OpenCore/OpenCoreLib.inf
+#  OpenCoreLib|OpenCorePkg/Application/OpenCore/OpenCoreLib.inf
   OcDebugLogLibOc2Clover|OpenCorePkg/Library/OcDebugLogLibOc2Clover/OcDebugLogLibOc2Clover.inf
 
   #MachoLib|Library/MachoLib/MachoLib.inf
@@ -307,10 +313,10 @@
   DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h
 !endif
 
-  OpenCorePkg/Application/OpenCore/OpenCoreLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+#  OpenCorePkg/Application/OpenCore/OpenCoreLib.inf {
+#    <BuildOptions>
+#      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+#  }
   OpenCorePkg/Library/OcGuardLib/OcGuardLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -489,6 +495,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
+  OpenCorePkg/Library/OcDirectResetLib/OcDirectResetLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
  # OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf {
  #   <BuildOptions>
  #     *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -509,10 +519,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+#  OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf {
+#    <BuildOptions>
+#      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+#  }
   OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -821,7 +831,7 @@
   #Sample/Application/Sample.inf
   #gptsync/gptsync.inf
   bdmesg_efi/bdmesg.inf
-  OpenCorePkg/Application/ControlMsrE2/ControlMsrE2Clover.inf
+  #OpenCorePkg/Application/ControlMsrE2/ControlMsrE2Clover.inf
   
 !ifndef NO_CLOVER_SHELL
   ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
@@ -869,6 +879,20 @@ rEFIt_UEFI/refit.inf {
     gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
 }
 
+#from OpenCore
+[PcdsPatchableInModule]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterAccessWidth|8
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseMmio|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseHardwareFlowControl|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialDetectCable|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase|0x03F8
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate|115200
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialLineControl|0x03
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialFifoControl|0x07
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialClockRate|1843200
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialPciDeviceInfo|{0xFF,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialExtendedTxFifoSize|64
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterStride|1
 
 [Components.X64]
 

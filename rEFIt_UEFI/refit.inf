@@ -436,7 +436,7 @@
   VideoBiosPatchLib
 #  OpensslLib # for secureboot, I think
   WaveLib
-  OpenCoreLib
+  OcMainLib
   DebugLib
   OcDebugLogLibOc2Clover
   CppMemLib

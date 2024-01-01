@@ -255,6 +255,106 @@ void AllocSmallBlocks()
   }
 }
 
+OC_GLOBAL_CONFIG
+  mOpenCoreConfiguration;
+
+OC_STORAGE_CONTEXT
+  mOpenCoreStorage;
+
+OC_CPU_INFO
+  mOpenCoreCpuInfo;
+
+UINT8
+  mOpenCoreBooterHash[SHA1_DIGEST_SIZE];
+
+OC_RSA_PUBLIC_KEY *
+  mOpenCoreVaultKey;
+
+OC_PRIVILEGE_CONTEXT
+  mOpenCorePrivilege;
+
+EFI_HANDLE
+  mStorageHandle;
+
+EFI_DEVICE_PATH_PROTOCOL *
+  mStoragePath;
+
+CHAR16 *
+  mStorageRoot;
+
+VOID
+OcMain (
+  IN OC_STORAGE_CONTEXT        *Storage,
+  IN EFI_DEVICE_PATH_PROTOCOL  *LoadPath
+  )
+{
+  EFI_STATUS            Status;
+//  OC_PRIVILEGE_CONTEXT  *Privilege;
+
+  DEBUG ((DEBUG_INFO, "OC: OcMiscEarlyInit...\n"));
+  Status = OcMiscEarlyInit (
+             Storage,
+             &mOpenCoreConfiguration,
+             mOpenCoreVaultKey
+             );
+
+  if (EFI_ERROR (Status)) {
+    return;
+  }
+
+  OcCpuScanProcessor (&mOpenCoreCpuInfo);
+
+  DEBUG ((DEBUG_INFO, "OC: OcLoadNvramSupport...\n"));
+  OcLoadNvramSupport (Storage, &mOpenCoreConfiguration);
+  DEBUG ((DEBUG_INFO, "OC: OcMiscMiddleInit...\n"));
+  OcMiscMiddleInit (
+    Storage,
+    &mOpenCoreConfiguration,
+    mStorageRoot,
+    LoadPath,
+    mStorageHandle,
+    mOpenCoreConfiguration.Booter.Quirks.ForceBooterSignature ? mOpenCoreBooterHash : NULL
+    );
+  DEBUG ((DEBUG_INFO, "OC: OcLoadUefiSupport...\n"));
+  OcLoadUefiSupport (Storage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo, mOpenCoreBooterHash);
+  DEBUG_CODE_BEGIN ();
+  DEBUG ((DEBUG_INFO, "OC: OcMiscLoadSystemReport...\n"));
+  OcMiscLoadSystemReport (&mOpenCoreConfiguration, mStorageHandle);
+  DEBUG_CODE_END ();
+  DEBUG ((DEBUG_INFO, "OC: OcLoadAcpiSupport...\n"));
+  OcLoadAcpiSupport (&mOpenCoreStorage, &mOpenCoreConfiguration);
+  DEBUG ((DEBUG_INFO, "OC: OcLoadPlatformSupport...\n"));
+  OcLoadPlatformSupport (&mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+  DEBUG ((DEBUG_INFO, "OC: OcLoadDevPropsSupport...\n"));
+  OcLoadDevPropsSupport (&mOpenCoreConfiguration);
+  DEBUG ((DEBUG_INFO, "OC: OcMiscLateInit...\n"));
+  OcMiscLateInit (Storage, &mOpenCoreConfiguration);
+  DEBUG ((DEBUG_INFO, "OC: OcLoadKernelSupport...\n"));
+  OcLoadKernelSupport (&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+
+  if (mOpenCoreConfiguration.Misc.Security.EnablePassword) {
+    mOpenCorePrivilege.CurrentLevel = OcPrivilegeUnauthorized;
+    mOpenCorePrivilege.Hash         = mOpenCoreConfiguration.Misc.Security.PasswordHash;
+    mOpenCorePrivilege.Salt         = OC_BLOB_GET (&mOpenCoreConfiguration.Misc.Security.PasswordSalt);
+    mOpenCorePrivilege.SaltSize     = mOpenCoreConfiguration.Misc.Security.PasswordSalt.Size;
+
+//    Privilege = &mOpenCorePrivilege;
+  } else {
+//    Privilege = NULL;
+  }
+
+  DEBUG ((DEBUG_INFO, "OC: All green, starting boot management...\n"));
+
+//  OcMiscBoot (
+//    &mOpenCoreStorage,
+//    &mOpenCoreConfiguration,
+//    Privilege,
+//    OcStartImage,
+//    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
+//    mStorageHandle
+//    );
+}
+
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CONST XStringW& ImageTitle,
@@ -3593,7 +3693,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   MemoryTrackerInit();
 
   EFI_STATUS Status = RefitMainMain(ImageHandle, SystemTable);
-
+debugStartImageWithOC();
 
   DBG("MT_alloc_count=%lld\n", MT_getAllocCount());
   MT_outputDanglingPtr();

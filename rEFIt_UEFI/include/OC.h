@@ -37,15 +37,15 @@ extern OC_CPU_INFO mOpenCoreCpuInfo;
 //extern EFI_HANDLE mLoadHandle;
 
 
-EFI_STATUS
-EFIAPI
-OcKernelFileOpen (
-  IN  EFI_FILE_PROTOCOL       *This,
-  OUT EFI_FILE_PROTOCOL       **NewHandle,
-  IN  CHAR16                  *FileName,
-  IN  UINT64                  OpenMode,
-  IN  UINT64                  Attributes
-  );
+//EFI_STATUS
+//EFIAPI
+//OcKernelFileOpen (
+//  IN  EFI_FILE_PROTOCOL       *This,
+//  OUT EFI_FILE_PROTOCOL       **NewHandle,
+//  IN  CHAR16                  *FileName,
+//  IN  UINT64                  OpenMode,
+//  IN  UINT64                  Attributes
+//  );
 
 EFI_STATUS
 EFIAPI
