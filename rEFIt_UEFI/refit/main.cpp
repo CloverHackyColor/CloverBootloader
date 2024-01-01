@@ -302,10 +302,10 @@ OcMain (
     return;
   }
 
-  OcCpuScanProcessor (&mOpenCoreCpuInfo);
+//  OcCpuScanProcessor (&mOpenCoreCpuInfo);
 
-  DEBUG ((DEBUG_INFO, "OC: OcLoadNvramSupport...\n"));
-  OcLoadNvramSupport (Storage, &mOpenCoreConfiguration);
+//  DEBUG ((DEBUG_INFO, "OC: OcLoadNvramSupport...\n"));
+//  OcLoadNvramSupport (Storage, &mOpenCoreConfiguration);
   DEBUG ((DEBUG_INFO, "OC: OcMiscMiddleInit...\n"));
   OcMiscMiddleInit (
     Storage,
@@ -317,16 +317,16 @@ OcMain (
     );
   DEBUG ((DEBUG_INFO, "OC: OcLoadUefiSupport...\n"));
   OcLoadUefiSupport (Storage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo, mOpenCoreBooterHash);
-  DEBUG_CODE_BEGIN ();
-  DEBUG ((DEBUG_INFO, "OC: OcMiscLoadSystemReport...\n"));
-  OcMiscLoadSystemReport (&mOpenCoreConfiguration, mStorageHandle);
-  DEBUG_CODE_END ();
-  DEBUG ((DEBUG_INFO, "OC: OcLoadAcpiSupport...\n"));
-  OcLoadAcpiSupport (&mOpenCoreStorage, &mOpenCoreConfiguration);
-  DEBUG ((DEBUG_INFO, "OC: OcLoadPlatformSupport...\n"));
-  OcLoadPlatformSupport (&mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-  DEBUG ((DEBUG_INFO, "OC: OcLoadDevPropsSupport...\n"));
-  OcLoadDevPropsSupport (&mOpenCoreConfiguration);
+//  DEBUG_CODE_BEGIN ();
+//  DEBUG ((DEBUG_INFO, "OC: OcMiscLoadSystemReport...\n"));
+//  OcMiscLoadSystemReport (&mOpenCoreConfiguration, mStorageHandle);
+//  DEBUG_CODE_END ();
+//  DEBUG ((DEBUG_INFO, "OC: OcLoadAcpiSupport...\n"));
+//  OcLoadAcpiSupport (&mOpenCoreStorage, &mOpenCoreConfiguration);
+//  DEBUG ((DEBUG_INFO, "OC: OcLoadPlatformSupport...\n"));
+//  OcLoadPlatformSupport (&mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+//  DEBUG ((DEBUG_INFO, "OC: OcLoadDevPropsSupport...\n"));
+//  OcLoadDevPropsSupport (&mOpenCoreConfiguration);
   DEBUG ((DEBUG_INFO, "OC: OcMiscLateInit...\n"));
   OcMiscLateInit (Storage, &mOpenCoreConfiguration);
   DEBUG ((DEBUG_INFO, "OC: OcLoadKernelSupport...\n"));
