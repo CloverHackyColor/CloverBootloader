@@ -3693,7 +3693,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   MemoryTrackerInit();
 
   EFI_STATUS Status = RefitMainMain(ImageHandle, SystemTable);
-debugStartImageWithOC();
 
   DBG("MT_alloc_count=%lld\n", MT_getAllocCount());
   MT_outputDanglingPtr();

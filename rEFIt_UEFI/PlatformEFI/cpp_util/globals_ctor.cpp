@@ -18,6 +18,7 @@ extern "C" {
 #include "globals_ctor.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <Protocol/LoadedImage.h>
+#include <IndustryStandard/PeImage.h> // for EFI_IMAGE_DOS_HEADER
 
 //#define DUMP_EFI_FROM_MEMORY
 
