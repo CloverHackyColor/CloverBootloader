@@ -12,7 +12,7 @@
 
 
 #ifndef DEBUG_ALL
-#define DEBUG_KEXTLIST 1
+#define DEBUG_SET 1
 #else
 #define DEBUG_KEXTLIST DEBUG_ALL
 #endif
@@ -20,7 +20,7 @@
 #if DEBUG_SET == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog (DEBUG_KEXTLIST, __VA_ARGS__)
+#define DBG(...) DebugLog (DEBUG_SET, __VA_ARGS__)
 #endif
 
 
@@ -31,7 +31,7 @@ XObjArray<SIDELOAD_KEXT>        InjectKextList;
 /*
  * Relative path to SelfDir (the efi dir)
  */
-XStringW GetBundleVersion(const XStringW& pathUnderSelf)
+XStringW GetBundleVersion(const XStringW& pathUnderKextdDir)
 {
   EFI_STATUS      Status;
   XStringW        CFBundleVersion;
@@ -40,10 +40,10 @@ XStringW GetBundleVersion(const XStringW& pathUnderSelf)
   TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
-  InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Contents\\Info.plist");
+  InfoPlistPath = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), pathUnderKextdDir.wc_str(), L"Contents\\Info.plist");
   Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), &InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
-    InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Info.plist");
+    InfoPlistPath = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), pathUnderKextdDir.wc_str(), L"Info.plist");
     Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), &InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
@@ -94,19 +94,19 @@ void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <string>8.8.8</string>
      */
 //    FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
-    XStringW pathRelToSelfDir = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), KextDirNameUnderOEMPath, DirEntry->FileName);
+    XStringW pathUnderKextsDir = SWPrintf("%ls\\%ls", KextDirNameUnderOEMPath, DirEntry->FileName);
     mKext = new SIDELOAD_KEXT;
     mKext->FileName.SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
     mKext->KextDirNameUnderOEMPath.SWPrintf("%ls", KextDirNameUnderOEMPath);
-    mKext->Version = GetBundleVersion(pathRelToSelfDir);
+    mKext->Version = GetBundleVersion(pathUnderKextsDir);
     InjectKextList.AddReference(mKext, true);
 
     DBG("Added Kext=%ls\\%ls\n", mKext->KextDirNameUnderOEMPath.wc_str(), mKext->FileName.wc_str());
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
-    PlugInsPath = SWPrintf("%ls\\Contents\\PlugIns", pathRelToSelfDir.wc_str());
+    PlugInsPath = SWPrintf("%ls\\%ls\\Contents\\PlugIns", selfOem.getKextsDirPathRelToSelfDir().wc_str(), pathUnderKextsDir.wc_str());
 
     DirIterOpen(&self.getCloverDir(), PlugInsPath.wc_str(), &PlugInsIter);
     while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {

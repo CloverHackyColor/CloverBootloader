@@ -1220,7 +1220,7 @@ void LOADER_ENTRY::StartLoader()
 
     for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
       const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
-      DBG("Bridge kext to OC : Path=%ls\n", KextEntry.FileName.wc_str());
+      DBG("Bridge kext to OC : Path=%ls\%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))malloc(mOpenCoreConfiguration.Kernel.Add.ValueSize);
       memset(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Add.ValueSize);
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
@@ -1233,34 +1233,37 @@ void LOADER_ENTRY::StartLoader()
       assert( selfOem.isKextsDirFound() ); // be sure before calling getKextsPathRelToSelfDir()
       XStringW dirPath = SWPrintf("%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str());
 
-      XString8 bundlePath = S8Printf("%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str());
-      if ( FileExists(&self.getCloverDir(), bundlePath) ) {
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, bundlePath.c_str());
+      XString8 bundleFullPath = S8Printf("%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str());
+      if ( FileExists(&self.getCloverDir(), bundleFullPath) ) {
+        XString8 bundlePathUnderKextsDir = S8Printf("%ls\\%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, bundlePathUnderKextsDir.c_str());
+        DBG("OC BundlePath     = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
       } else {
-        DBG("Cannot find kext bundlePath at '%s'\n", bundlePath.c_str());
+        DBG("Cannot find kext bundlePath at '%s'\n", bundleFullPath.c_str());
       }
   #if 1
       //CFBundleExecutable
       XBool NoContents = false;
-      XStringW  infoPlistPath = getKextPlist(&self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
-      DBG("InfoPlistPath=%ls\n", infoPlistPath.wc_str());
+      XStringW  infoPlistPathRelToSelf = getKextPlist(&self.getCloverDir(), dirPath, KextEntry.FileName, &NoContents); //it will be fullPath, including dir
+
   //    XBool inject = checkOSBundleRequired(dict);
       XBool inject = true;
       if (inject) {
-        if ( infoPlistPath.notEmpty()) {
+        if ( infoPlistPathRelToSelf.notEmpty()) {
           if (NoContents) {
             OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Info.plist");
           } else {
-            OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist");
+            OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents\\Info.plist");
           }
+          DBG("OC PlistPath      = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath));
         } else {
           DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
         }
-        TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPath);
-        XString8 execpath = getKextExecPath(&self.getCloverDir(), dirPath, KextEntry.FileName, dict, NoContents);
+        TagDict*  dict = getInfoPlist(&self.getCloverDir(), infoPlistPathRelToSelf);
+        XString8 execpath = getKextExecPath(&self.getCloverDir(), KextEntry.KextDirNameUnderOEMPath, KextEntry.FileName, dict, NoContents);
         if (execpath.notEmpty()) {
           OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, execpath.c_str());
-          DBG("assign executable as '%s'\n", execpath.c_str());
+          DBG("OC ExecutablePath = '%s'\n", execpath.c_str());
         }
         if ( dict ) dict->ReleaseTag();
       }
@@ -1271,11 +1274,11 @@ void LOADER_ENTRY::StartLoader()
       if ( FileExists(&self.getCloverDir(), fullPath) ) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
       }
-      XStringW infoPlistPath = SWPrintf("%s\\Contents\\Info.plist", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
-      if (FileExists(&self.getCloverDir(), infoPlistPath)) {
+      XStringW infoPlistPathRelToSelf = SWPrintf("%s\\Contents\\Info.plist", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
+      if (FileExists(&self.getCloverDir(), infoPlistPathRelToSelf)) {
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
       } else {
-        DBG("Cannot find kext info.plist at '%ls'\n", infoPlistPath.wc_str());
+        DBG("Cannot find kext info.plist at '%ls'\n", infoPlistPathRelToSelf.wc_str());
       }
   #endif
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;

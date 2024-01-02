@@ -147,9 +147,7 @@ XStringW LOADER_ENTRY::getKextPlist(const EFI_FILE* Root, const XStringW& dirPat
   }
   
   TempName = SWPrintf("%ls\\%ls",  FullName.wc_str(), L"Contents\\Info.plist");
-//#ifndef LESS_DEBUG
-  MsgLog("info plist path: %ls\n", TempName.wc_str());
-//#endif
+
   if (!FileExists(Root, TempName)) {
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
@@ -198,7 +196,7 @@ XString8  LOADER_ENTRY::getKextExecPath(const EFI_FILE* Root, const XStringW& di
     } else {
       TempName = S8Printf("Contents\\MacOS\\%s", Executable.c_str());
     }
-    const XStringW& fullPath = SWPrintf("%ls\\%ls\\%s", dirPath.wc_str(), FileName.wc_str(), TempName.c_str());
+    const XStringW& fullPath = SWPrintf("%ls\\%ls\\%ls\\%s", selfOem.getKextsDirPathRelToSelfDir().wc_str(), dirPath.wc_str(), FileName.wc_str(), TempName.c_str());
     if (!FileExists(Root, fullPath)) {
       MsgLog("Failed to load kext executable: %ls\n", FileName.wc_str());
       return ""_XS8; //no executable

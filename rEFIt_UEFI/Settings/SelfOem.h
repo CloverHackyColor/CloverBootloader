@@ -63,7 +63,7 @@ public:
 
   XBool isKextsDirFound() { return m_KextsDir != NULL; }
   const EFI_FILE& getKextsDir() { assert(m_KextsDir != NULL); return *m_KextsDir; }
-  const XStringW& getKextsDirPathRelToSelfDir() { assert(m_KextsPathRelToSelfDir.notEmpty()); return m_KextsPathRelToSelfDir; }
+  const XStringW& getKextsDirPathRelToSelfDir() { assert(m_KextsPathRelToSelfDir.notEmpty()); return m_KextsPathRelToSelfDir; } // Usually "Kexts". Init from KEXTS_DIRNAME
   const XStringW& getKextsFullPath() { assert(m_KextsFullPath.notEmpty()); return m_KextsFullPath; }
 
 };
