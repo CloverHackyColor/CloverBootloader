@@ -189,3 +189,21 @@ SerialPortSetAttributes (
   return RETURN_UNSUPPORTED;
 }
 
+
+/**
+  Retrieve the I/O or MMIO base address register for the PCI UART device.
+
+  This function assumes Root Bus Numer is Zero, and enables I/O and MMIO in PCI UART
+  Device if they are not already enabled.
+
+  @return  The base address register of the UART device.
+
+**/
+UINTN
+GetSerialRegisterBase (
+  VOID
+  )
+{
+  return 0;
+}
+
