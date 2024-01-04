@@ -61,6 +61,7 @@ public:
       XmlBool ExtendBTFeatureFlags = XmlBool();
       XmlBool ExternalDiskIcons = XmlBool();
       XmlBool IncreasePciBarSize = XmlBool();
+      XmlBool ForceAquantiaEthernet = XmlBool();
       XmlBool PowerTimeoutKernelPanic = XmlBool();
       XmlBool ThirdPartyDrives = XmlBool();
       XmlBool XhciPortLimit = XmlBool();
@@ -74,6 +75,7 @@ public:
       XBool dgetExtendBTFeatureFlags() const { return ExtendBTFeatureFlags.isDefined() ? ExtendBTFeatureFlags.value() : ExtendBTFeatureFlags.nullValue; };
       XBool dgetExternalDiskIcons() const { return ExternalDiskIcons.isDefined() ? ExternalDiskIcons.value() : ExternalDiskIcons.nullValue; };
       XBool dgetIncreasePciBarSize() const { return IncreasePciBarSize.isDefined() ? IncreasePciBarSize.value() : IncreasePciBarSize.nullValue; };
+      XBool dgetForceAquantiaEthernet() const { return ForceAquantiaEthernet.isDefined() ? ForceAquantiaEthernet.value() : ForceAquantiaEthernet.nullValue; };
       XBool dgetPowerTimeoutKernelPanic() const { return PowerTimeoutKernelPanic.isDefined() ? PowerTimeoutKernelPanic.value() : PowerTimeoutKernelPanic.nullValue; };
       XBool dgetThirdPartyDrives() const { return ThirdPartyDrives.isDefined() ? ThirdPartyDrives.value() : ThirdPartyDrives.nullValue; };
       XBool dgetXhciPortLimit() const { return XhciPortLimit.isDefined() ? XhciPortLimit.value() : XhciPortLimit.nullValue; };
@@ -138,7 +140,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[35] = {
+  XmlDictField m_fields[36] = {
     {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
     {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
     {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -170,6 +172,7 @@ public:
     {"ExtendBTFeatureFlags", OcKernelQuirks.ExtendBTFeatureFlags},
     {"ExternalDiskIcons", OcKernelQuirks.ExternalDiskIcons},
     {"IncreasePciBarSize", OcKernelQuirks.IncreasePciBarSize},
+    {"ForceAquantiaEthernet", OcKernelQuirks.ForceAquantiaEthernet},
     {"PowerTimeoutKernelPanic", OcKernelQuirks.PowerTimeoutKernelPanic},
     {"ThirdPartyDrives", OcKernelQuirks.ThirdPartyDrives},
     {"XhciPortLimit", OcKernelQuirks.XhciPortLimit},

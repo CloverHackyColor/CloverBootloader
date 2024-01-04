@@ -1175,6 +1175,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Quirks.ExtendBTFeatureFlags = gSettings.Quirks.OcKernelQuirks.ExtendBTFeatureFlags;
     mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons = gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons;
     mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize = gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize;
+    mOpenCoreConfiguration.Kernel.Quirks.ForceAquantiaEthernet = gSettings.Quirks.OcKernelQuirks.ForceAquantiaEthernet;
     mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
     mOpenCoreConfiguration.Kernel.Quirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
     mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic = gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic;
@@ -1830,7 +1831,7 @@ void LOADER_ENTRY::StartLoader()
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
   DBG("Kernel quirks\n");
-  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d PCC %d\n",
+  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d FAI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d PCC %d\n",
       mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock,
       mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs,
@@ -1843,6 +1844,7 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.ExtendBTFeatureFlags,
       mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons,
       mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize,
+      mOpenCoreConfiguration.Kernel.Quirks.ForceAquantiaEthernet,
       mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic,
       mOpenCoreConfiguration.Kernel.Quirks.PanicNoKextDump,
       mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic,
