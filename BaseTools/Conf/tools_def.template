@@ -2746,7 +2746,7 @@ RELEASEMACOS_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAG
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter
+         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter
  
 
 
@@ -2823,7 +2823,7 @@ RELEASEMACOS_XCODE14_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE14_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype
+         DEFINE XCODE14_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype
  
 
 
@@ -2900,7 +2900,7 @@ RELEASEMACOS_XCODE15_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE15_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype -Wno-unused-command-line-argument 
+         DEFINE XCODE15_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype -Wno-unused-command-line-argument 
  
 
 
