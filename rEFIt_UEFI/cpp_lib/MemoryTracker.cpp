@@ -31,6 +31,7 @@
 uint64_t MT_alloc_count = 0;
 bool MT_recording = false;
 uint64_t MT_count_to_break_into = 0;
+bool MT_report_deleting_non_recoded_ptr = false;
 
 MTArray<uintptr_t> allocatedPtrArray;
 MTArray<uint64_t> allocatedPtrInfoArray;
@@ -121,7 +122,9 @@ void my_free(IN void *MemoryPlus16)
   uintptr_t ref2 = uintptr_t(MemoryPlus16);
   auto idx = allocatedPtrArray.indexOf(ref2);
   if ( idx == MAX_XSIZE ) {
-    //DBG("Delete non recorded ptr %llx\n", uintptr_t(MemoryPlus16));
+    if ( MT_report_deleting_non_recoded_ptr ) {
+      DBG("ERROR : Delete non recorded ptr %llx\n", uintptr_t(MemoryPlus16));
+    }
     real_free(MemoryPlus16);
     return;
   }
@@ -130,10 +133,10 @@ void my_free(IN void *MemoryPlus16)
   uint64_t AllocationSize = *(uint64_t*)Memory;
 
   if ( *((uint64_t*)Memory + 1) != MAGIC_BEGINNING ) {
-    DBG("Buffer underrun for ptr %llx count %lld\n", uintptr_t(MemoryPlus16), allocatedPtrInfoArray[idx]);
+    DBG("ERROR : Buffer underrun for ptr %llx count %lld\n", uintptr_t(MemoryPlus16), allocatedPtrInfoArray[idx]);
   }
   if ( *(uint64_t*)( ((uint8_t*)Memory) + 16 + AllocationSize ) != MAGIC_END ) {
-    DBG("Buffer overrun for ptr %llx count %lld\n", uintptr_t(MemoryPlus16), allocatedPtrInfoArray[idx]);
+    DBG("ERROR : Buffer overrun for ptr %llx count %lld\n", uintptr_t(MemoryPlus16), allocatedPtrInfoArray[idx]);
   }
   allocatedPtrArray.RemoveAtIndex(idx);
   allocatedPtrInfoArray.RemoveAtIndex(idx);
@@ -165,6 +168,7 @@ void MemoryTrackerInit()
 {
   MT_alloc_count = 0;
   MT_recording = false;
+  MT_report_deleting_non_recoded_ptr = false;
 }
 
 
@@ -174,6 +178,7 @@ void MemoryTrackerInit()
 void MemoryTrackerInstallHook()
 {
   MT_recording = true;
+  MT_report_deleting_non_recoded_ptr = true;
 }
 
 void MT_outputDanglingPtr()
@@ -216,14 +221,14 @@ MTArray<TYPE>::MTArray() : m_data(0), m_len(0), m_allocatedSize(4096)
 
 
 template<class TYPE>
-size_t MTArray<TYPE>::indexOf(TYPE& e) const
+size_t MTArray<TYPE>::indexOf(TYPE e) const
 {
   size_t i;
 
-	for ( i=0 ; i<length() ; i+=1 ) {
-		if ( m_data[i] == e ) return i;
-	}
-	return MAX_XSIZE;
+  for ( i=0 ; i<length() ; i+=1 ) {
+    if ( m_data[i] == e ) return i;
+  }
+  return MAX_XSIZE;
 }
 
 /* CheckSize()  // nNewSize is number of TYPE, not in bytes */

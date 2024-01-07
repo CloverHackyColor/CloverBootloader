@@ -9,7 +9,7 @@
 #define CPP_LIB_MEMORYTRACKER_H_
 
 #ifdef JIEF_DEBUG
-//#define MEMORY_TRACKER_ENABLED
+#define MEMORY_TRACKER_ENABLED
 #endif
 
 
@@ -77,7 +77,7 @@ class MTArray
 	size_t Add(const TYPE newElement, size_t count = 1);
 	void RemoveAtIndex(size_t nIndex);
 	void FreeAndRemoveAtIndex(size_t nIndex);
-  size_t indexOf(TYPE& e) const;
+  size_t indexOf(TYPE e) const;
 };
 
 
