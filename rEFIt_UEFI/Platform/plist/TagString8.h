@@ -52,8 +52,11 @@ public:
   void setStringValue(const XString8& xstring)
   {
     // empty string is allowed
-    //if ( xstring.isEmpty() ) panic("TagStruct::setStringValue() : xstring.isEmpty() ");
     _string = xstring;
+  }
+  void setStringValue(const char* value, size_t length)
+  {
+    _string.strncpy(value, length); // strncpy can handle value==NULL, *value=0 and length=0
   }
 
 };

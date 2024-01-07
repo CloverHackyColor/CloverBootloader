@@ -29,6 +29,10 @@
 #define TagStruct_USE_CACHE
 //#define TagStruct_COUNT_CACHEHITMISS
 
+#ifdef JIEF_DEBUG
+#undef TagStruct_USE_CACHE
+#endif
+
 class TagDict;
 class TagKey;
 class TagString;

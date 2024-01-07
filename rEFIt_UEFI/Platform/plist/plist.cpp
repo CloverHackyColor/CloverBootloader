@@ -446,7 +446,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagStruct** tag, UINT32* lenPtr)
 //    return Status;
 //  }
   tmpTag = TagKey::getEmptyTag();
-  tmpTag->setKeyValue(LString8(buffer, strlen(buffer)));
+  tmpTag->setKeyValue(buffer, strlen(buffer));
 
   *tag = tmpTag;
   *lenPtr = length + length2;
@@ -474,7 +474,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
   }
 
   size_t outlen = XMLDecode(buffer, strlen(buffer), buffer, strlen(buffer));
-  tmpTag->setStringValue(LString8(buffer, outlen));
+  tmpTag->setStringValue(buffer, outlen);
   *tag = tmpTag;
   *lenPtr = length;
   DBG(" parse string %s\n", tmpTag->getString()->stringValue().c_str());
@@ -605,7 +605,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
 
   tmpTag = TagData::getEmptyTag();
   //Slice - correction as Apple 2003
-//  tmpTag->setStringValue(LString8(buffer));
+//  tmpTag->setStringValue(buffer);
   // dmazar: base64 decode data
   UINTN  len = 0;
   UINT8* data = (UINT8 *)Base64DecodeClover(buffer, &len);
@@ -632,7 +632,7 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
 
 
   tmpTag = TagDate::getEmptyTag();
-  tmpTag->setDateValue(LString8(buffer, length));
+  tmpTag->setDateValue(buffer, length);
 
   *tag = tmpTag;
   *lenPtr = length;

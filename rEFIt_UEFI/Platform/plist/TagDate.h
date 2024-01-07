@@ -46,9 +46,11 @@ public:
   }
   void setDateValue(const XString8& xstring)
   {
-//    if ( xstring.isEmpty() ) panic("TagDate::setDateValue() : xstring.isEmpty() ");
-    if ( xstring.isEmpty() ) return; //do nothing rather then assign empty date
     string = xstring;
+  }
+  void setDateValue(const char* value, size_t length)
+  {
+    string.strncpy(value, length); // strncpy can handle value==NULL, *value=0 and length=0
   }
 
 };
