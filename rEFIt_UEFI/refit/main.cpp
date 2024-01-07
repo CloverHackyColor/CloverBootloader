@@ -1217,11 +1217,14 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM3.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IO80211FamilyLegacy.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "HS80211Family.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "corecaptureElCap.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "IO80211ElCap.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "IO80211ElCap\\Contents\\Plugins\\AirPortAtheros40.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AirPortAtheros40.kext"_XS8, pos);
 
     for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
       const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
-      DBG("Bridge kext to OC : Path=%ls\%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+      DBG("Bridge kext to OC : Path=%ls\\%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))malloc(mOpenCoreConfiguration.Kernel.Add.ValueSize);
       memset(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Add.ValueSize);
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
@@ -3696,6 +3699,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
   MemoryTrackerInit();
+  //MemoryTrackerInstallHook(); can't install hook before construct_globals_objects()... yet
 
   EFI_STATUS Status = RefitMainMain(ImageHandle, SystemTable);
 

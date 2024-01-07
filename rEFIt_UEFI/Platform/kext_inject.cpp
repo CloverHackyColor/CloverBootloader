@@ -196,10 +196,29 @@ XString8  LOADER_ENTRY::getKextExecPath(const EFI_FILE* Root, const XStringW& di
     } else {
       TempName = S8Printf("Contents\\MacOS\\%s", Executable.c_str());
     }
-    const XStringW& fullPath = SWPrintf("%ls\\%ls\\%ls\\%s", selfOem.getKextsDirPathRelToSelfDir().wc_str(), dirPath.wc_str(), FileName.wc_str(), TempName.c_str());
+    XStringW fullPath = SWPrintf("%ls\\%ls\\%ls\\%s", selfOem.getKextsDirPathRelToSelfDir().wc_str(), dirPath.wc_str(), FileName.wc_str(), TempName.c_str());
     if (!FileExists(Root, fullPath)) {
-      MsgLog("Failed to load kext executable: %ls\n", FileName.wc_str());
-      return ""_XS8; //no executable
+
+      // kext from OpenCoreLegacyPatcher renamed the executable without updating CFBundleExecutable
+      // let's see if there is an executable that has the same name as the kext.
+      XString8 TempName2;
+      XStringW FileNameWithoutExt;
+      if ( FileName.indexOf('.') != MAX_XSIZE ) FileNameWithoutExt = FileName.subString(0, FileName.indexOf('.'));
+      else FileNameWithoutExt = FileName;
+      if (NoContents) {
+        TempName2 = S8Printf("%ls", FileNameWithoutExt.wc_str());
+      } else {
+        TempName2 = S8Printf("Contents\\MacOS\\%ls", FileNameWithoutExt.wc_str());
+      }
+      fullPath = SWPrintf("%ls\\%ls\\%ls\\%s", selfOem.getKextsDirPathRelToSelfDir().wc_str(), dirPath.wc_str(), FileName.wc_str(), TempName2.c_str());
+
+      if (!FileExists(Root, fullPath)) {
+        MsgLog("Failed to load kext executable: %ls\n", FileName.wc_str());
+        return ""_XS8; //no executable
+      }else{
+        MsgLog("Warning : wrong value for CFBundleExecutable for kext %ls. It's %s and should be %ls\n", FileName.wc_str(), Executable.c_str(), FileName.wc_str());
+        return TempName2;
+      }
     }
   }
   return TempName;
