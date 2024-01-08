@@ -141,20 +141,19 @@ static UINTN GetDebugLogFile()
     const EFI_FILE_PROTOCOL& CloverDir = self.getCloverDir();
     const XString& efiFileName = self.getCloverEfiFileName();
   #else
-    XStringW efiFileName;
-    const EFI_FILE_PROTOCOL* CloverDirPtr = Self::getCloverDirAndEfiFileName(gImageHandle, &efiFileName);
+    const EFI_FILE_PROTOCOL* CloverDirPtr = &self.getCloverDirOrNull();
     if ( CloverDirPtr == NULL ) return 0;
     const EFI_FILE_PROTOCOL& CloverDir = *CloverDirPtr;
   #endif
 
   if ( debugLogFileName.isEmpty() )
   {
-    debugLogFileName = S8Printf("misc\\%04d-%02d-%02d_%02d-%02d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute,  efiFileName.wc_str());
+    debugLogFileName = S8Printf("misc\\%04d-%02d-%02d_%02d-%02d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, self.getCloverEfiFileNameOrNull().wc_str());
     Status = CloverDir.Open(&CloverDir, &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( !EFI_ERROR(Status) ) LogFile->Close(LogFile); // DO NOT modify Status here.
     INTN i=1;
     while ( Status != EFI_NOT_FOUND  &&  (i < MAX_INTN) ) {
-      debugLogFileName = S8Printf("misc\\%04d-%02d-%02d_%02d-%02d_%ls(%lld).log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute,  efiFileName.wc_str(), i);
+      debugLogFileName = S8Printf("misc\\%04d-%02d-%02d_%02d-%02d_%ls(%lld).log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, self.getCloverEfiFileNameOrNull().wc_str(), i);
       Status = CloverDir.Open(&CloverDir, &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ, 0);
       if ( !EFI_ERROR(Status) ) LogFile->Close(LogFile); // DO NOT modify Status here.
     }

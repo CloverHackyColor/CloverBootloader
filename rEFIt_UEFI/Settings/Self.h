@@ -23,7 +23,6 @@ class Self
 protected:
   static EFI_STATUS __initialize(XBool debugMsg, EFI_HANDLE m_SelfImageHandle, EFI_LOADED_IMAGE** m_SelfLoadedImage, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL** m_SelfSimpleVolumePtr, EFI_FILE** m_SelfVolumeRootDirPtr, XStringW* m_CloverDirFullPathPtr, XStringW* m_efiFileNamePtr, EFI_FILE** m_CloverDirPtr);
 public:
-  static const EFI_FILE_PROTOCOL* getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle, XStringW* efiFileName);
 
 protected:
   EFI_HANDLE        m_SelfImageHandle {};  // this efi.
@@ -76,8 +75,10 @@ public:
   const EFI_FILE& getSelfVolumeRootDir() { checkInitialized(); return *m_SelfVolumeRootDir; }
 
   const XStringW& getCloverEfiFileName() { checkInitialized(); return m_efiFileName; }
+  const XStringW& getCloverEfiFileNameOrNull() { return m_efiFileName; }
   const EFI_DEVICE_PATH& getCloverDirFullDevicePath() { checkInitialized(); return *m_CloverDirFullDevicePath; }
   const EFI_FILE& getCloverDir() { checkInitialized(); return *m_CloverDir; }
+  const EFI_FILE& getCloverDirOrNull() { return *m_CloverDir; }
   const XStringW& getCloverDirFullPath() { checkInitialized(); return m_CloverDirFullPath; }
   const XStringW& getCloverDirFullPath4Display() { checkInitialized(); return m_CloverDirFullPath4Display; }
 

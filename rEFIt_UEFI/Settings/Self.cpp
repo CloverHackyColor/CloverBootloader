@@ -109,23 +109,6 @@ EFI_STATUS Self::__initialize(XBool debugMsg, EFI_HANDLE SelfImageHandle, EFI_LO
   return EFI_SUCCESS;
 }
 
-const EFI_FILE_PROTOCOL* Self::getCloverDirAndEfiFileName(EFI_HANDLE ImageHandle, XStringW* efiFileName)
-{
-    EFI_LOADED_IMAGE* SelfLoadedImage;            // this efi.
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* SelfSimpleVolume;  // Volume containing this efi.
-    EFI_FILE*         SelfVolumeRootDir;          // Root dir of the volume containing this efi.
-    XStringW          CloverDirFullPath;          // full path of folder containing this efi.
-    EFI_FILE*         CloverDir;                  // opened folder containing this efi
-
-  /*EFI_STATUS Status = */__initialize(false, ImageHandle, &SelfLoadedImage, &SelfSimpleVolume, &SelfVolumeRootDir, &CloverDirFullPath, efiFileName, &CloverDir);
-  if ( efiFileName->isEmpty() ) {
-    if ( CloverDir != NULL ) CloverDir->Close(CloverDir);
-    return NULL;
-  }
-  return CloverDir;
-}
-
-
 
 Self self;
 
