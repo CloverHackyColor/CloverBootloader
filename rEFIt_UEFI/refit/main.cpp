@@ -1860,8 +1860,6 @@ void LOADER_ENTRY::StartLoader()
     if (SavePreBootLog) {
       Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
     }
-    gBS->FreePages (ExtraSpace, 90000);
-
     AllocSmallBlocks(); // shrink memory map;
 
 #ifdef JIEF_DEBUG
@@ -2262,9 +2260,9 @@ void DisconnectInvalidDiskIoChildDrivers(void)
         DBG(" - Handle %llx with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %llx, Disconnect: %s\n", (uintptr_t)Handles[Index], (uintptr_t)(OpenInfo[OpenInfoIndex].AgentHandle), efiStrError(Status));
       }
     }
-    FreePool(OpenInfo);
+    gBS->FreePool(OpenInfo); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
   }
-  FreePool(Handles);
+  gBS->FreePool(Handles); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
 
   if (!Found) {
     DBG(" not found, all ok\n");
@@ -2371,10 +2369,10 @@ void DisconnectSomeDevices(void)
           }
         }
       }
-      FreePool(Handles);
+      gBS->FreePool(Handles); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
     }
 //    DBG("\n");
-    FreePool(ControllerHandles);
+    gBS->FreePool(ControllerHandles); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
   }
 
 
@@ -2851,11 +2849,6 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (void **) &gDS);
   
 
-  Status = gBS->AllocatePages(AllocateMaxAddress,
-                                         EfiACPIReclaimMemory,
-                                         90000,
-                                         &ExtraSpace);
-
   InitBooterLog();
 
 //  ConsoleInHandle = SystemTable->ConsoleInHandle;
@@ -3004,7 +2997,7 @@ RefitMainMain (IN EFI_HANDLE           ImageHandle,
   gConf.InitialisePlatform();
 
 #ifdef JIEF_DEBUG
-  DumpNvram();
+  //DumpNvram();
 #endif
 
   /*

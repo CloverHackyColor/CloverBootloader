@@ -1023,7 +1023,7 @@ void ScanVolumes(void)
       FreePool(Volume);
     }
   }
-  FreePool(Handles);
+  gBS->FreePool(Handles); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
   //  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("        WARNING: SelfVolume not found"); //Slice - and what?

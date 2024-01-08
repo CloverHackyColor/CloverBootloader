@@ -390,15 +390,10 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
             }
           }
           
-//MsgLog("ScanDeviceHandles FreePool(OpenInfo)\n");
-          FreePool(OpenInfo);
-//MsgLog("ScanDeviceHandles FreePool(OpenInfo) after\n");
+          gBS->FreePool(OpenInfo); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
         }
       }
-//MsgLog("ScanDeviceHandles FreePool(ProtocolGuidArray)\n");
-      
-      FreePool(ProtocolGuidArray);
-//MsgLog("ScanDeviceHandles FreePool(ProtocolGuidArray) after\n");
+      gBS->FreePool(ProtocolGuidArray); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
     }
   }
   
@@ -410,7 +405,7 @@ Error:
   }
   
   if (*HandleBuffer != NULL) {
-    FreePool(*HandleBuffer);
+    gBS->FreePool(*HandleBuffer); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
   }
   
   *HandleCount  = 0;
@@ -477,12 +472,12 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 			}
 		}
     
-		FreePool(HandleBuffer);
+		gBS->FreePool(HandleBuffer); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
 		FreePool(HandleType);
 	}
   
 Done:
-	FreePool(AllHandleBuffer);
+	gBS->FreePool(AllHandleBuffer); // use gBS->FreePool instead of FreePool to avoid message from MemoryTracker
 	return Status;
 }
 

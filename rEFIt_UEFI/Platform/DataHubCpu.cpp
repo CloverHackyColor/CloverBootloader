@@ -501,7 +501,6 @@ AddSMCkey(SMC_KEY Key, SMC_DATA_SIZE Size, SMC_KEY_TYPE Type, SMC_DATA *Data)
 {
   if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE))
   {
-    MemoryStopRecord msr; // Do not record allocation made by SmcAddKey
     gAppleSmc->SmcAddKey(gAppleSmc,     Key, Size, Type, 0xC0);
     gAppleSmc->SmcWriteValue(gAppleSmc, Key, Size, Data);
   }
