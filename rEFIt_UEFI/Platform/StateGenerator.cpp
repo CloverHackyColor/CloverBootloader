@@ -196,8 +196,9 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
               // Find how many P-States machine supports
               p_states_count = (UINT8)(maximum.CID - minimum.CID + 1);
 
-              if (p_states_count > 32)
+              if (p_states_count > 32) {
                 p_states_count = 32;
+              }
                 DBG("PStates count=%d\n", p_states_count);
 
                 vidstep = ((maximum.Control.VID_FID.VID << 2) - (minimum.Control.VID_FID.VID << 2)) / (p_states_count - 1);
