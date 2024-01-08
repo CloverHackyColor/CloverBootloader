@@ -20,7 +20,7 @@
 
 //------------------------------------------------------------------------------------------------------------------
 class XString8;
-class LString8 : public LString<char, XString8>
+class LString8 : public LString<char, XString8, LString8>
 {
   public:
 	constexpr LString8() = delete;
@@ -28,8 +28,8 @@ class LString8 : public LString<char, XString8>
     LString8(const char* s) : LString<char, XString8>(s, utf8_size_of_utf8_string(s)) {};
     constexpr LString8(const char* s, size_t size) : LString<char, XString8>(s, size) {};
   #else
-    constexpr LString8(const char* s) : LString<char, XString8>(s) {};
-    constexpr LString8(const char* s, size_t size) : LString<char, XString8>(s) {};
+    constexpr LString8(const char* s) : LString<char, XString8, LString8>(s) {};
+    constexpr LString8(const char* s, size_t size) : LString<char, XString8, LString8>(s) {};
   #endif
 
 	// no assignement, no destructor
@@ -40,19 +40,19 @@ class LString8 : public LString<char, XString8>
 
 };
 
-class XString8 : public XStringAbstract<char, XString8>
+class XString8 : public XStringAbstract<char, XString8, LString8>
 {
   public:
-	XString8() : XStringAbstract<char, XString8>() {};
-	XString8(const XString8& S) : XStringAbstract<char, XString8>(S) {}
-	XString8(const LString8& S) : XStringAbstract<char, XString8>(S) { }
+	XString8() : XStringAbstract<char, XString8, LString8>() {};
+	XString8(const XString8& S) : XStringAbstract<char, XString8, LString8>(S) {}
+	XString8(const LString8& S) : XStringAbstract<char, XString8, LString8>(S) { }
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
-	XString8(const OtherXStringClass& S) : XStringAbstract<char, XString8>(S) {}
+	XString8(const OtherXStringClass& S) : XStringAbstract<char, XString8, LString8>(S) {}
 
-	XString8& operator=(const XString8 &S) { this->XStringAbstract<char, XString8>::operator=(S); return *this; }
+	XString8& operator=(const XString8 &S) { this->XStringAbstract<char, XString8, LString8>::operator=(S); return *this; }
 
-	using XStringAbstract<char, XString8>::operator =;
+	using XStringAbstract<char, XString8, LString8>::operator =;
 
   const char* c_str() const { return data(); }
 //  char* copy_str() const { return (char*)AllocateCopyPool(length()+1, m_data); }
@@ -93,30 +93,30 @@ public:
 
 //------------------------------------------------------------------------------------------------------------------
 class XString16;
-class LString16 : public LString<char16_t, XString16>
+class LString16 : public LString<char16_t, XString16, LString16>
 {
   #ifdef XSTRING_CACHING_OF_SIZE
-    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16>(s, size) {};
+    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16, LString16>(s, size) {};
   #else
-    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16>(s) {};
+    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16, LString16>(s) {};
   #endif
 	
 	friend constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t size) { return LString16(s, size); }
 };
 
-class XString16 : public XStringAbstract<char16_t, XString16>
+class XString16 : public XStringAbstract<char16_t, XString16, LString16>
 {
   public:
-	XString16() : XStringAbstract<char16_t, XString16>() {};
-  XString16(const XString16& S) : XStringAbstract<char16_t, XString16>(S) {}
-  XString16(const LString16& S) : XStringAbstract<char16_t, XString16>(S) {}
+	XString16() : XStringAbstract<char16_t, XString16, LString16>() {};
+  XString16(const XString16& S) : XStringAbstract<char16_t, XString16, LString16>(S) {}
+  XString16(const LString16& S) : XStringAbstract<char16_t, XString16, LString16>(S) {}
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
-	XString16(const OtherXStringClass& S) : XStringAbstract<char16_t, XString16>(S) {}
+	XString16(const OtherXStringClass& S) : XStringAbstract<char16_t, XString16, LString16>(S) {}
 
-	XString16& operator=(const XString16 &S) { this->XStringAbstract<char16_t, XString16>::operator=(S); return *this; }
+	XString16& operator=(const XString16 &S) { this->XStringAbstract<char16_t, XString16, LString16>::operator=(S); return *this; }
 
-	using XStringAbstract<char16_t, XString16>::operator =;
+	using XStringAbstract<char16_t, XString16, LString16>::operator =;
 
 //	friend LString16 operator "" _XS16 ( const char16_t* s, size_t len);
 };
@@ -124,37 +124,37 @@ class XString16 : public XStringAbstract<char16_t, XString16>
 
 //------------------------------------------------------------------------------------------------------------------
 class XString32;
-class LString32 : public LString<char32_t, XString32>
+class LString32 : public LString<char32_t, XString32 ,LString32>
 {
   #ifdef XSTRING_CACHING_OF_SIZE
-    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32>(s, size) {};
+    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32 ,LString32>(s, size) {};
   #else
-    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32>(s) {};
+    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32 ,LString32>(s) {};
   #endif
 	
 	friend constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t size) { return LString32(s, size); }
 };
 
-class XString32 : public XStringAbstract<char32_t, XString32>
+class XString32 : public XStringAbstract<char32_t, XString32, LString32>
 {
   public:
-	XString32() : XStringAbstract<char32_t, XString32>() {};
-  XString32(const XString32& S) : XStringAbstract<char32_t, XString32>(S) {}
-  XString32(const LString32& S) : XStringAbstract<char32_t, XString32>(S) {}
+	XString32() : XStringAbstract<char32_t, XString32 ,LString32>() {};
+  XString32(const XString32& S) : XStringAbstract<char32_t, XString32 ,LString32>(S) {}
+  XString32(const LString32& S) : XStringAbstract<char32_t, XString32 ,LString32>(S) {}
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
-	XString32(const OtherXStringClass& S) : XStringAbstract<char32_t, XString32>(S) {}
+	XString32(const OtherXStringClass& S) : XStringAbstract<char32_t, XString32, LString32>(S) {}
 
-	XString32& operator=(const XString32 &S) { this->XStringAbstract<char32_t, XString32>::operator=(S); return *this; }
+	XString32& operator=(const XString32 &S) { this->XStringAbstract<char32_t, XString32 ,LString32>::operator=(S); return *this; }
 	
-	using XStringAbstract<char32_t, XString32>::operator =;
+	using XStringAbstract<char32_t, XString32 ,LString32>::operator =;
 
 //	friend LString32 operator "" _XS32 ( const char32_t* s, size_t len);
 };
 
 //------------------------------------------------------------------------------------------------------------------
 class XStringW;
-class LStringW : public LString<wchar_t, XStringW>
+class LStringW : public LString<wchar_t, XStringW, LStringW>
 {
   public:
 	constexpr LStringW() = delete;
@@ -163,8 +163,8 @@ class LStringW : public LString<wchar_t, XStringW>
     LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s, wchar_size_of_wchar_string(s)) {};
     constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW>(s, size) {};
   #else
-    constexpr LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s) {};
-    constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW>(s) {};
+    constexpr LStringW(const wchar_t* s) : LString<wchar_t, XStringW, LStringW>(s) {};
+    constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW, LStringW>(s) {};
   #endif
 
 	friend constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t size) { return LStringW(s, size); }
@@ -172,20 +172,20 @@ class LStringW : public LString<wchar_t, XStringW>
   const wchar_t* wc_str() const { return data(); }
 };
 
-class XStringW : public XStringAbstract<wchar_t, XStringW>
+class XStringW : public XStringAbstract<wchar_t, XStringW, LStringW>
 {
 public:
-	XStringW() : XStringAbstract<wchar_t, XStringW>() {};
-	XStringW(const XStringW& S) : XStringAbstract<wchar_t, XStringW>(S) {}
-  XStringW(const LStringW& S) : XStringAbstract<wchar_t, XStringW>(S) { }
+	XStringW() : XStringAbstract<wchar_t, XStringW, LStringW>() {};
+	XStringW(const XStringW& S) : XStringAbstract<wchar_t, XStringW, LStringW>(S) {}
+  XStringW(const LStringW& S) : XStringAbstract<wchar_t, XStringW, LStringW>(S) { }
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
-	XStringW(const OtherXStringClass& S) : XStringAbstract<wchar_t, XStringW>(S) {}
+	XStringW(const OtherXStringClass& S) : XStringAbstract<wchar_t, XStringW, LStringW>(S) {}
 	
 
-	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW>::operator=(S); return *this; }
+	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW, LStringW>::operator=(S); return *this; }
 
-	using XStringAbstract<wchar_t, XStringW>::operator =;
+	using XStringAbstract<wchar_t, XStringW, LStringW>::operator =;
 
   const wchar_t* wc_str() const { return data(); }
 

@@ -202,12 +202,13 @@ size_t XStringAbstract__rindexOf(const O* s, size_t Pos, const P* other, bool to
 }
 
 
-template<class T, class ThisXStringClass>
+template<class T, class ThisXStringClass, class ThisLStringClass>
 class __String
 {
 public:
 	typedef T char_t;
-	typedef ThisXStringClass xs_t;
+  typedef ThisXStringClass xs_t;
+  typedef ThisLStringClass ls_t;
 protected:
   T *__m_data;
 protected:
@@ -367,7 +368,7 @@ public:
 	template<typename O>
 	size_t indexOf(const O* S, size_t Pos = 0) const { return XStringAbstract__indexOf(data(), Pos, S, false); }
 	template<typename O, class OtherXStringClass>
-	size_t indexOf(const __String<O, OtherXStringClass>& S, size_t Pos = 0) const { return indexOf(S.s(), Pos); }
+  size_t indexOf(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S, size_t Pos = 0) const { return indexOf(S.s(), Pos); }
 	/* IC */
 	size_t indexOfIC(char32_t char32Searched, size_t Pos = 0) const
 	{
@@ -377,7 +378,7 @@ public:
 	template<typename O>
 	size_t indexOfIC(const O* S, size_t Pos = 0) const { return XStringAbstract__indexOf(data(), Pos, S, true); }
 	template<typename O, class OtherXStringClass>
-	size_t indexOfIC(const __String<O, OtherXStringClass>& S, size_t Pos = 0) const { return indexOfIC(S.s(), Pos); }
+	size_t indexOfIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S, size_t Pos = 0) const { return indexOfIC(S.s(), Pos); }
 
 
 	/* rindexOf */
@@ -389,7 +390,7 @@ public:
 	template<typename O>
 	size_t rindexOf(const O* S, size_t Pos = MAX_XSIZE-1) const { return XStringAbstract__rindexOf(data(), Pos, S, false); }
 	template<typename O, class OtherXStringClass>
-	size_t rindexOf(const __String<O, OtherXStringClass>& S, size_t Pos = MAX_XSIZE-1) const { return rindexOf(S.s(), Pos); }
+	size_t rindexOf(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S, size_t Pos = MAX_XSIZE-1) const { return rindexOf(S.s(), Pos); }
 	/* IC */
 	size_t rindexOfIC(const char32_t char32Searched, size_t Pos = MAX_XSIZE-1) const
 	{
@@ -399,14 +400,14 @@ public:
 	template<typename O>
 	size_t rindexOfIC(const O* S, size_t Pos = MAX_XSIZE-1) const { return XStringAbstract__rindexOf(data(), Pos, S, true); }
 	template<typename O, class OtherXStringClass>
-	size_t rindexOfIC(const __String<O, OtherXStringClass>& S, size_t Pos = MAX_XSIZE-1) const { return rindexOf(S.s(), Pos); }
+	size_t rindexOfIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S, size_t Pos = MAX_XSIZE-1) const { return rindexOf(S.s(), Pos); }
 
 	template<typename O, class OtherXStringClass>
-	bool contains(const __String<O, OtherXStringClass>& S) const { return indexOf(S) != MAX_XSIZE; }
+	bool contains(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) const { return indexOf(S) != MAX_XSIZE; }
 	template<typename O>
 	bool contains(const O* S) const { return indexOf(S) != MAX_XSIZE; }
 	template<typename O, class OtherXStringClass>
-	size_t containsIC(const __String<O, OtherXStringClass>& S) const { return indexOfIC(S) != MAX_XSIZE; }
+	size_t containsIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) const { return indexOfIC(S) != MAX_XSIZE; }
 	template<typename O>
 	size_t containsIC(const O* S) const { return indexOfIC(S) != MAX_XSIZE; }
 
@@ -434,11 +435,11 @@ public:
     return XStringAbstract__startWith(data(), other, false);
   }
 	template<typename O, class OtherXStringClass>
-	bool startWith(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(data(), otherS.data(), false); }
+	bool startWith(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& otherS) const { return XStringAbstract__startWith(data(), otherS.data(), false); }
 	template<typename O>
 	bool startWith(const O* other) const { return XStringAbstract__startWith(data(), other, false); }
 	template<typename O, class OtherXStringClass>
-	bool startWithIC(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(data(), otherS.data(), true); }
+	bool startWithIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& otherS) const { return XStringAbstract__startWith(data(), otherS.data(), true); }
 	template<typename O>
 	bool startWithIC(const O* other) const { return XStringAbstract__startWith(data(), other, true); }
 
@@ -448,16 +449,16 @@ public:
     return XStringAbstract__startWithOrEqualTo(data(), other, false);
   }
   template<typename O, class OtherXStringClass>
-  bool startWithOrEqualTo(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWithOrEqualTo(data(), otherS.data(), false); }
+  bool startWithOrEqualTo(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& otherS) const { return XStringAbstract__startWithOrEqualTo(data(), otherS.data(), false); }
   template<typename O>
   bool startWithOrEqualTo(const O* other) const { return XStringAbstract__startWithOrEqualTo(data(), other, false); }
   template<typename O, class OtherXStringClass>
-  bool startWithOrEqualToIC(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWithOrEqualTo(data(), otherS.data(), true); }
+  bool startWithOrEqualToIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& otherS) const { return XStringAbstract__startWithOrEqualTo(data(), otherS.data(), true); }
   template<typename O>
   bool startWithOrEqualToIC(const O* other) const { return XStringAbstract__startWithOrEqualTo(data(), other, true); }
 
   template<typename O, class OtherXStringClass>
-  bool endWithOrEqualToIC(const __String<O, OtherXStringClass>& otherS) const { if ( length() < otherS.length() ) return false; return XStringAbstract__rindexOf(data(), SIZE_T_MAX-1, otherS.data(), true) == length() - otherS.length(); }
+  bool endWithOrEqualToIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& otherS) const { if ( length() < otherS.length() ) return false; return XStringAbstract__rindexOf(data(), SIZE_T_MAX-1, otherS.data(), true) == length() - otherS.length(); }
 
 	//---------------------------------------------------------------------
 
@@ -522,19 +523,19 @@ public:
   int strncmp(const O* S, size_t n) const { return XStringAbstract__ncompare(data(), S, n, false); }
 
 	template<typename O, class OtherXStringClass>
-	bool isEqual(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), false) == 0; }
+	bool isEqual(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) const { return XStringAbstract__compare(data(), S.s(), false) == 0; }
 	template<typename O>
 	bool isEqual(const O* S) const { return XStringAbstract__compare(data(), S, false) == 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool isEqualIC(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), true) == 0; }
+	bool isEqualIC(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) const { return XStringAbstract__compare(data(), S.s(), true) == 0; }
 	template<typename O>
 	bool isEqualIC(const O* S) const { return XStringAbstract__compare(data(), S, true) == 0; }
 
 //	bool SubStringEqual(size_t Pos, const T* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
 
   template<typename IntegralType, typename O, class OtherXStringClass>
-  bool isEqualAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
+  bool isEqualAtIC(IntegralType pos, const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) const
   {
     
 #ifdef JIEF_DEBUG
@@ -550,42 +551,42 @@ public:
 public:
 	// == operator
 	template<typename O, class OtherXStringClass>
-	bool operator == (const __String<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) == 0; }
+	bool operator == (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return (*this).strcmp(s2.s()) == 0; }
 //	template<typename O>
 //	bool operator == (const O* s2) const { return (*this).strcmp(s2) == 0; }
 //	template<typename O>
 //	friend bool operator == (const O* s1, ThisXStringClass& s2) { return s2.strcmp(s1) == 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool operator != (const __String<O, OtherXStringClass>& s2) const { return !(*this == s2); }
+	bool operator != (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return !(*this == s2); }
 //	template<typename O>
 //	bool operator != (const O* s2) const { return !(*this == s2); }
 //	template<typename O>
 //	friend bool operator != (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) != 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool operator <  (const __String<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) < 0; }
+	bool operator <  (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return (*this).strcmp(s2.s()) < 0; }
 //	template<typename O>
 //	bool operator <  (const O* s2) const { return (*this).strcmp(s2) < 0; }
 //	template<typename O>
 //	friend bool operator <  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) > 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool operator >  (const __String<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) > 0; }
+	bool operator >  (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return (*this).strcmp(s2.s()) > 0; }
 //	template<typename O>
 //	bool operator >  (const O* s2) const { return  (*this).strcmp(s2) > 0; }
 //	template<typename O>
 //	friend bool operator >  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) < 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool operator <= (const __String<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) <= 0; }
+	bool operator <= (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return (*this).strcmp(s2.s()) <= 0; }
 //	template<typename O>
 //	bool operator <= (const O* s2) const { return  (*this).strcmp(s2) <= 0; }
 //	template<typename O>
 //	friend bool operator <= (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) >= 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool operator >= (const __String<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) >= 0; }
+	bool operator >= (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& s2) const { return (*this).strcmp(s2.s()) >= 0; }
 //	template<typename O>
 //	bool operator >= (const O* s2) const { return  (*this).strcmp(s2) >= 0; }
 //	template<typename O>
@@ -596,8 +597,8 @@ public:
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  LString  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-template<class T, class ThisXStringClass>
-class LString : public __String<T, ThisXStringClass>
+template<class T, class ThisXStringClass, class ThisLStringClass>
+class LString : public __String<T, ThisXStringClass, ThisLStringClass>
 {
 public:
 protected:
@@ -606,8 +607,9 @@ protected:
   constexpr LString(const T* s, size_t size) : __String<T, ThisXStringClass>(s, size) {};
 	constexpr LString(const LString& L) : __String<T, ThisXStringClass>(L.data(), L.size()) {};
 #else
-	constexpr LString(const T* s) : __String<T, ThisXStringClass>(s) {};
-	constexpr LString(const LString& L) : __String<T, ThisXStringClass>(L.data()) {};
+  constexpr LString(const T* s) : __String<T, ThisXStringClass, ThisLStringClass>(s) {};
+  constexpr LString(const T* s, size_t size) : __String<T, ThisXStringClass, ThisLStringClass>(s, size) {};
+	constexpr LString(const LString& L) : __String<T, ThisXStringClass, ThisLStringClass>(L.data()) {};
 #endif
 
 	constexpr LString() = delete;
@@ -643,19 +645,26 @@ template <typename B, typename D>
 auto test_pre_is_base_of(int) -> decltype(is_base_of_test_func<B>(static_cast<D*>(nullptr)));
 
 
-template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
+template< class, class = _xtools__void_t<>, class = _xtools__void_t<>, class = _xtools__void_t<> >
 struct __string_type { typedef void type; };
 template< typename T >
-struct __string_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t> type; };
+//struct __string_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t> type; };
+//struct __string_type<T, _xtools__void_t<typename T::char_t>, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::ls_t>> { typedef __String<typename T::char_t, typename T::xs_t, typename T::ls_t> type; };
+struct __string_type<T, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t, typename T::ls_t> type; };
 
 #define is___String_t(x) decltype(test_pre_is_base_of<typename __string_type<x>::type , x>(0))
 #define is___String(x) is___String_t(x)::value
 
 
-template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
+//template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
+//struct __lstring_type { typedef void type; };
+//template< typename T >
+//struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef LString<typename T::char_t, typename T::xs_t> type; };
+template< class, class = _xtools__void_t<>, class = _xtools__void_t<>, class = _xtools__void_t<> >
 struct __lstring_type { typedef void type; };
 template< typename T >
-struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef LString<typename T::char_t, typename T::xs_t> type; };
+struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>, _xtools__void_t<typename T::ls_t>> { typedef LString<typename T::char_t, typename T::xs_t, typename T::ls_t> type; };
+//struct __lstring_type<T, _xtools__void_t<typename T::char_t>, _xtools__void_t<typename T::xs_t>, xtools__void_t<typename T::ls_t>> { typedef LString<typename T::char_t, typename T::xs_t, typename T::ls_t> type; };
 
 #define is___LString_t(x) decltype(test_pre_is_base_of<    typename __lstring_type<x>::type , x>(0))
 #define is___LString(x) is___LString_t(x)::value
@@ -726,13 +735,15 @@ struct _xstringarray__char_type<T, enable_if_t(is___LString(T))>
 
 //#define data() super::data()
 
-template<class T, class ThisXStringClass>
-class XStringAbstract : public __String<T, ThisXStringClass>
+template<class T, class ThisXStringClass, class ThisLStringClass>
+class XStringAbstract : public __String<T, ThisXStringClass, ThisLStringClass>
 {
-  using super = __String<T, ThisXStringClass>;
-	static T nullChar;
+  public:
+    using super = __String<T, ThisXStringClass, ThisLStringClass>;
+    using ls_t = ThisLStringClass;
 
   protected:
+    static T nullChar;
   	size_t m_allocatedSize; // Must include null terminator. Real memory allocated is only m_allocatedSize (not m_allocatedSize+1)
 	
 	//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -790,16 +801,16 @@ public:
 
 	/* default ctor */
 #ifdef XSTRING_CACHING_OF_SIZE
-	XStringAbstract() : __String<T, ThisXStringClass>(&nullChar, 0), m_allocatedSize(0) {}
+	XStringAbstract() : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar, 0), m_allocatedSize(0) {}
 #else
-	XStringAbstract() : __String<T, ThisXStringClass>(&nullChar), m_allocatedSize(0) {}
+	XStringAbstract() : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0) {}
 #endif
 	
 	/* copy ctor */
 #ifdef XSTRING_CACHING_OF_SIZE
-	XStringAbstract(const XStringAbstract& S) : __String<T, ThisXStringClass>(&nullChar, 0), m_allocatedSize(0)
+	XStringAbstract(const XStringAbstract& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar, 0), m_allocatedSize(0)
 #else
-	XStringAbstract(const XStringAbstract& S) : __String<T, ThisXStringClass>(&nullChar), m_allocatedSize(0)
+	XStringAbstract(const XStringAbstract& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0)
 #endif
 	{
     *this = S;
@@ -827,19 +838,19 @@ public:
 #else
 	/* ctor */
 	template<class OtherLStringClass>
-	explicit XStringAbstract(const LString<T, OtherLStringClass>& S) : __String<T, ThisXStringClass>(S.s()), m_allocatedSize(0) {}
+	explicit XStringAbstract(const LString<T, OtherLStringClass, typename OtherLStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(S.s()), m_allocatedSize(0) {}
 	
 	template<typename O, class OtherXStringClass>
-	explicit XStringAbstract<T, ThisXStringClass>(const XStringAbstract<O, OtherXStringClass>& S) : __String<T, ThisXStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const XStringAbstract<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
 	template<typename O, class OtherXStringClass>
-	explicit XStringAbstract<T, ThisXStringClass>(const LString<O, OtherXStringClass>& S) : __String<T, ThisXStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const LString<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
 // TEMPORARILY DISABLED
 //	template<typename O>
 //	explicit __String<T, ThisXStringClass>(const O* S) { Init(0); takeValueFrom(S); }
 //
 #endif
-	/* Copy Assign */
-	XStringAbstract& operator=(const XStringAbstract &S) {
+  /* Copy Assign */
+  XStringAbstract& operator=(const XStringAbstract &S) {
     if ( S.data()  &&  S.m_allocatedSize == 0 ) {
       // S points to a litteral
       if ( m_allocatedSize > 0 ) {
@@ -855,6 +866,19 @@ public:
     }
     return *this;
   }
+
+  /* Copy Assign */
+  XStringAbstract& operator=(const ls_t& S) {
+    if ( m_allocatedSize > 0 ) {
+      delete super::__m_data;
+      m_allocatedSize = 0;
+    }
+    super::__m_data = (T*)S.data(); // because it's a litteral, we don't copy. We need to cast, but we won't modify.
+    #ifdef XSTRING_CACHING_OF_SIZE
+      super::__m_size = S.size();
+    #endif
+    return *this;
+  }
   
 	/* Assign */
 	#ifndef _MSC_VER
@@ -862,7 +886,7 @@ public:
 	#pragma GCC diagnostic ignored "-Weffc++"
 	#endif
 	template<typename O, class OtherXStringClass>
-	ThisXStringClass& operator =(const __String<O, OtherXStringClass>& S)	{ strcpy(S.s()); return *((ThisXStringClass*)this); }
+	ThisXStringClass& operator =(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S)	{ strcpy(S.s()); return *((ThisXStringClass*)this); }
 	#ifndef _MSC_VER
   #pragma GCC diagnostic pop
 	#endif
@@ -1057,7 +1081,7 @@ public:
   }
 	/* strcat __String */
 	template<typename OtherCharType, class OtherXStringClass>
-	void strcat(const __String<OtherCharType, OtherXStringClass>& other)
+	void strcat(const __String<OtherCharType, OtherXStringClass, typename OtherXStringClass::ls_t>& other)
 	{
 		size_t currentSize = super::size(); // size is number of T, not in bytes
 		size_t newSize = currentSize + utf_size_of_utf_string(data(), other.s()); // size is number of T, not in bytes
@@ -1358,7 +1382,7 @@ public:
 
 	/* takeValueFrom */
 	template<typename O, class OtherXStringClass>
-	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S) { *this = S; return *((ThisXStringClass*)this); }
+	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) { *this = S; return *((ThisXStringClass*)this); }
   template<typename O>
   ThisXStringClass& takeValueFrom(const O* S) { strcpy(S); return *((ThisXStringClass*)this); }
   template<typename O, enable_if(is_char(O))>
@@ -1371,7 +1395,7 @@ public:
 
 	/* += */
 	template<typename O, class OtherXStringClass>
-	ThisXStringClass& operator += (const __String<O, OtherXStringClass>& S) { strcat(S.s()); return *((ThisXStringClass*)this); }
+	ThisXStringClass& operator += (const __String<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) { strcat(S.s()); return *((ThisXStringClass*)this); }
 	template<typename O, enable_if(is_char(O))>
 	ThisXStringClass& operator += (O S) { strcat(S); return *((ThisXStringClass*)this); }
 	template<typename O>
@@ -1380,8 +1404,8 @@ public:
 	
 };
 
-template<class T, class ThisXStringClass>
-T XStringAbstract<T, ThisXStringClass>::nullChar = 0;
+template<class T, class ThisXStringClass, class ThisLStringClass>
+T XStringAbstract<T, ThisXStringClass, ThisLStringClass>::nullChar = 0;
 
 
 //------------------------------------------------------- + operator
