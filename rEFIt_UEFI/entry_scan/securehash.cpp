@@ -41,6 +41,8 @@
 #include "entry_scan.h"
 #include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
 #include <Guid/ImageAuthentication.h>
+#include <IndustryStandard/PeImage.h>
+//#include <IndustryStandard/PeImage2.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_HASH 1
@@ -840,9 +842,9 @@ void *GetImageSignatureDatabase(IN void    *FileBuffer,
       GuidCert = (WIN_CERTIFICATE_UEFI_GUID *)Cert;
       if ( GuidCert->CertType == gEfiCertX509Guid ) {
         SigGuid = gEfiCertX509Guid;
-      } else if ( GuidCert->CertType == gEfiCertTypeRsa2048Sha256Guid, sizeof(EFI_GUID)) == 0) {
+      } else if ( GuidCert->CertType == gEfiCertTypeRsa2048Sha256Guid ) {
         SigGuid = gEfiCertRsa2048Sha256Guid;
-      } else if ( GuidCert->CertType == gEfiCertPkcs7Guid, sizeof(EFI_GUID)) == 0) {
+      } else if ( GuidCert->CertType == gEfiCertPkcs7Guid ) {
         SigGuid = gEfiCertPkcs7Guid;
       }
     } else if (Cert->wCertificateType == WIN_CERT_TYPE_EFI_PKCS115) {
