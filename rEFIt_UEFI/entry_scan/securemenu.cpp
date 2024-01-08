@@ -165,7 +165,7 @@ STATIC void *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
 {
   EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
   EFI_IMAGE_EXECUTION_INFO        *ImageExeInfo;
-  CHAR16                          *FDP;
+  XStringW                        FDP;
   UINT8                           *Ptr;
   UINTN                            Index;
   // Check parameters
@@ -182,8 +182,8 @@ STATIC void *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
     return NULL;
   }
   // Get device path string
-  FDP = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-  if (FDP == NULL) {
+  FDP = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+  if ( FDP.isEmpty() ) {
     return NULL;
   }
   // Get the execution information
@@ -205,20 +205,16 @@ STATIC void *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
       Offset += sizeof(CHAR16);
     } while (*Name++);
     // Compare the device paths
-    Name = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)Offset);
-    if (Name) {
-      if (StrCmp(FDP, Name) == 0) {
+    XStringW Name2 = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)Offset);
+    if (Name2.notEmpty()) {
+      if ( FDP == Name2 ) {
         // Get the signature list and size
         Offset += GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)Offset);
         *DatabaseSize = (ImageExeInfo->InfoSize - (Offset - Ptr));
-        FreePool(Name);
-        FreePool(FDP);
         return Offset;
       }
-      FreePool(Name);
     }
   }
-  FreePool(FDP);
   // Not found
   return NULL;
 }
@@ -279,17 +275,16 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
     }
   }
   if (ErrorString.notEmpty()) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr != NULL) {
+    XStringW DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if (DevicePathStr.notEmpty()) {
       XStringW FileDevicePathStr = FileDevicePathFileToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr.notEmpty()) {
-        XStringW Str = SWPrintf("%ls\n%ls\n%ls", ErrorString.wc_str(), DevicePathStr, FileDevicePathStr.wc_str());
+        XStringW Str = SWPrintf("%ls\n%ls\n%ls", ErrorString.wc_str(), DevicePathStr.wc_str(), FileDevicePathStr.wc_str());
 				AlertMessage(L"Insert Image Authentication"_XSW, Str);
       } else {
-        XStringW Str = SWPrintf("%ls\n%ls", ErrorString.wc_str(), DevicePathStr);
+        XStringW Str = SWPrintf("%ls\n%ls", ErrorString.wc_str(), DevicePathStr.wc_str());
 				AlertMessage(L"Insert Image Authentication"_XSW, Str);
       }
-      FreePool(DevicePathStr);
     } else {
       AlertMessage(L"Insert Image Authentication"_XSW, ErrorString);
     }
@@ -353,17 +348,16 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
     }
   }
   if (ErrorString.notEmpty()) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr != NULL) {
+    XStringW DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if (DevicePathStr.notEmpty()) {
       XStringW FileDevicePathStr = FileDevicePathFileToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr.notEmpty()) {
-        XStringW Str = SWPrintf("%ls\n%ls\n%ls", ErrorString.wc_str(), DevicePathStr, FileDevicePathStr.wc_str());
+        XStringW Str = SWPrintf("%ls\n%ls\n%ls", ErrorString.wc_str(), DevicePathStr.wc_str(), FileDevicePathStr.wc_str());
 				AlertMessage(L"Remove Image Authentication"_XSW, Str);
       } else {
-        XStringW Str = SWPrintf("%ls\n%ls", ErrorString.wc_str(), DevicePathStr);
+        XStringW Str = SWPrintf("%ls\n%ls", ErrorString.wc_str(), DevicePathStr.wc_str());
 				AlertMessage(L"Remove Image Authentication"_XSW, Str);
       }
-      FreePool(DevicePathStr);
     } else {
       AlertMessage(L"Remove Image Authentication"_XSW, ErrorString);
     }

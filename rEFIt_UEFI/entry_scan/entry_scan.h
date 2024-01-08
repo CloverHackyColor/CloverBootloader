@@ -111,7 +111,7 @@ void *GetSignatureDatabase(const wchar_t* DatabaseName,
                            const EFI_GUID& DatabaseGuid,
                            OUT UINTN    * DatabaseSize);
 EFI_STATUS SetSignatureDatabase(const wchar_t* DatabaseName,
-                                const EFI_GUID&  DatabaseGuid,
+                                const GUID&  DatabaseGuid,
                                 IN void     *  Database,
                                 IN UINTN       DatabaseSize);
 

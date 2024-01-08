@@ -222,7 +222,7 @@ STATIC XBool EFIAPI
 PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatus,
                          IN     CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
-  CHAR16 *DevicePathStr;
+  XStringW DevicePathStr;
   UINTN   Index;
   if ((AuthenticationStatus == NULL) || (DevicePath == NULL)) {
     return false;
@@ -235,13 +235,13 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
 
   case SECURE_BOOT_POLICY_WHITELIST:
     // Check the white list for this image
-    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr == NULL) {
+    DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.isEmpty() ) {
       return false;
     }
     for (Index = 0; Index < gSettings.Boot.SecureBootWhiteList.size(); ++Index) {
-      if ((gSettings.Boot.SecureBootWhiteList[Index].notEmpty()) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
+      if ( gSettings.Boot.SecureBootWhiteList[Index].notEmpty() &&
+          DevicePathStr.contains(gSettings.Boot.SecureBootWhiteList[Index]) ) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return true;
@@ -251,13 +251,13 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
 
   case SECURE_BOOT_POLICY_BLACKLIST:
     // Check the black list for this image
-    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr == NULL) {
+    DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.isEmpty() ) {
       return false;
     }
     for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
-      if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
+      if ( gSettings.Boot.SecureBootBlackList[Index].notEmpty() &&
+          DevicePathStr.contains(gSettings.Boot.SecureBootBlackList[Index]) ) {
         // Black listed
         return true;
       }
@@ -266,22 +266,22 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     return true;
 
   case SECURE_BOOT_POLICY_USER:
-    DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr == NULL) {
+    DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.isEmpty() ) {
       return false;
     }
     // Check the black list for this image
     for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
-      if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
+      if ( gSettings.Boot.SecureBootBlackList[Index].notEmpty() &&
+          DevicePathStr.contains(gSettings.Boot.SecureBootBlackList[Index]) ) {
         // Black listed
         return true;
       }
     }
     // Check the white list for this image
     for (Index = 0; Index < gSettings.Boot.SecureBootWhiteList.size(); ++Index) {
-      if ((gSettings.Boot.SecureBootWhiteList[Index].notEmpty()) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
+      if ( gSettings.Boot.SecureBootWhiteList[Index].notEmpty() &&
+          DevicePathStr.contains(gSettings.Boot.SecureBootWhiteList[Index]) ) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return true;
@@ -360,10 +360,9 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr) {
-      DBG("VerifySecureBootImage(1): %s %ls\n", efiStrError(Status), DevicePathStr);
-      FreePool(DevicePathStr);
+    XStringW DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.notEmpty() ) {
+      DBG("VerifySecureBootImage(1): %s %ls\n", efiStrError(Status), DevicePathStr.wc_str());
     }
   }
   return Status;
@@ -387,10 +386,9 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr) {
-      DBG("VerifySecureBootImage(2): %s %ls\n", efiStrError(Status), DevicePathStr);
-      FreePool(DevicePathStr);
+    XStringW DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.notEmpty() ) {
+      DBG("VerifySecureBootImage(2): %s %ls\n", efiStrError(Status), DevicePathStr.wc_str());
     }
   }
   return Status;
@@ -406,10 +404,9 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
-    if (DevicePathStr) {
-      DBG("VerifySecureBootImage: %s %ls\n", efiStrError(Status), DevicePathStr);
-      FreePool(DevicePathStr);
+    XStringW DevicePathStr = FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
+    if ( DevicePathStr.notEmpty() ) {
+      DBG("VerifySecureBootImage: %s %ls\n", efiStrError(Status), DevicePathStr.wc_str());
     }
   }
   return Status;

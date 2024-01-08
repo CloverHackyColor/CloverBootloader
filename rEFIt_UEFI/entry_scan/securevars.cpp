@@ -372,7 +372,7 @@ STATIC EFI_STATUS GetUTCTime(OUT EFI_TIME *Timestamp)
 }
 
 // Write signed variable
-EFI_STATUS SetSignedVariable(IN CHAR16             *DatabaseName,
+EFI_STATUS SetSignedVariable(const wchar_t*    DatabaseName,
                              const EFI_GUID&   DatabaseGuid,
                              IN UINT32              Attributes,
                              IN void               *Database,
@@ -501,7 +501,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16             *DatabaseName,
 }
 
 // Write signature database
-EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
+EFI_STATUS SetSignatureDatabase(const wchar_t* DatabaseName,
                                 const EFI_GUID& DatabaseGuid,
                                 IN void     *Database,
                                 IN UINTN     DatabaseSize)
