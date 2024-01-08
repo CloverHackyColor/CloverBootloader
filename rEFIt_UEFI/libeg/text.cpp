@@ -101,7 +101,7 @@ void XTheme::LoadFontImage(IN XBool UseEmbedded, IN INTN Rows, IN INTN Cols)
     Status = NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data)); //always success
     MsgLog("Using embedded font\n");
   } else if (isKorean){
-    Status = NewImage.LoadXImage(ThemeDir, L"FontKorean.png"_XSW);
+    Status = NewImage.LoadXImage(ThemeDir, "FontKorean.png"_XS8);
     MsgLog("Loading korean font from ThemeDir: %s\n", efiStrError(Status));
     if (!EFI_ERROR(Status)) {
       CharWidth = 22; //standard for korean

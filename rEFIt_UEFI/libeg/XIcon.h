@@ -9,7 +9,7 @@
 #include "../Platform/BootLog.h"
 #include "../Platform/Utils.h"
 
-extern CONST CHAR8* IconsNames[];
+extern CONST LString8 IconsNames[];
 extern const INTN IconsNamesSize;
 
 

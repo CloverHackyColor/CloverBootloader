@@ -55,8 +55,6 @@
 #define DBG(...) DebugLog(DEBUG_COMMON_MENU, __VA_ARGS__)
 #endif
 
-extern CONST CHAR8* IconsNames[];
-
 const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 
 {
@@ -115,7 +113,7 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const 
 //  DBG("asked IconNum = %llu Volume->DiskKind=%d OSType=%d\n", IconNum, Volume->DiskKind, OSType);
   IconX = &ThemeX->GetIcon(IconNum); //asked IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS, got day icon
   if (IconX->Image.isEmpty()) {
-    DBG("asked Icon %s not found, took internal\n", IconsNames[IconNum]);
+    DBG("asked Icon %s not found, took internal\n", IconsNames[IconNum].c_str());
     IconX = &ThemeX->GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
   }
 

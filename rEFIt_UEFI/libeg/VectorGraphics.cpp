@@ -38,8 +38,8 @@
 
 #include "XTheme.h"
 
-extern const CHAR8* IconsNames[];
-extern const INTN IconsNamesSize;
+//extern const LString8 IconsNames[]; -> Include XIcon.h instead if duplicating declaration.
+//extern const INTN IconsNamesSize;
 
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
@@ -254,7 +254,7 @@ if ( nsvg__nbDanglingPtr() > 0 ) {
   
   // --- Make other OSes
   for (INTN i = ICON_OTHER_OS; i < IconsNamesSize; ++i) {
-    if (AsciiStrLen(IconsNames[i]) == 0) break;
+    if ( IconsNames[i].isEmpty() ) break;
     XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(SVGParser, i, NewIcon->Name, &NewIcon->Image);
 //    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, efiStrError(Status));

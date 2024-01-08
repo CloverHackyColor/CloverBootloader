@@ -1045,7 +1045,7 @@ void XTheme::ClearScreen() //and restore background and banner
     default:
       // already scaled
       Background = BigBack;
-//        DBG("back copy equal\n");
+      //DBG("Assign Background = BigBack.  BigBack.Width=%lld  BigBack.Height=%lld\n", BigBack.GetWidth(), BigBack.GetHeight());
       break;
     }
   } else {
@@ -1090,7 +1090,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
     }
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
-      NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
+      NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i].c_str()));
     }
     Icons.AddReference(NewIcon, true);
     if (EFI_ERROR(Status)) {

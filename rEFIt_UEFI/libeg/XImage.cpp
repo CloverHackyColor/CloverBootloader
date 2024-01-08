@@ -630,7 +630,7 @@ EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const wchar_t* LIconName)
 }
 //dont call this procedure for SVG theme BaseDir == NULL?
 //it can be used for other files
-EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
+EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const XString8& IconName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
@@ -668,7 +668,7 @@ EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
   // decode it
   Status = FromPNG(FileData, FileDataLength);  
   if (EFI_ERROR(Status)) {
-    DBG("%ls not decoded. Status=%s\n", IconName.wc_str(), efiStrError(Status));
+    DBG("%s not decoded. Status=%s\n", IconName.c_str(), efiStrError(Status));
   }
   FreePool(FileData);
   return Status;

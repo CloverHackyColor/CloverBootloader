@@ -25,7 +25,7 @@ extern "C" {
 #define DBG(...) DebugLog(DEBUG_XICON, __VA_ARGS__)
 #endif
 
-CONST CHAR8* IconsNames[] = {
+CONST LString8 IconsNames[] = {
   "func_about",
   "func_options",
   "func_clover",
@@ -105,7 +105,7 @@ ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 XIcon::XIcon(INTN Index, XBool TakeEmbedded) : Id(Index), Empty(false)
 {
   if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index < IconsNamesSize) { //full table
-    Name.takeValueFrom(IconsNames[Index]);
+    Name = IconsNames[Index];
   }
   if (TakeEmbedded) {
     GetEmbedded();
@@ -195,7 +195,7 @@ void XIcon::GetEmbedded()
       DEC_BUILTIN_ICON(BUILTIN_CHECKBOX_CHECKED, emb_checkbox_checked)
       break;
     case BUILTIN_ICON_SELECTION:
-      Name.takeValueFrom("selection_indicator");
+      Name = "selection_indicator"_XS8;
       DEC_BUILTIN_ICON(BUILTIN_ICON_SELECTION, emb_selection_indicator)
       break;
     default:
