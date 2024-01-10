@@ -307,10 +307,11 @@
 ###################################################################################################
 [Components]
 
+# Jief : I've added -Wno-maybe-uninitialized. Doesn't the OC team use that warning? I prefer NOT want to change OC because it makes it harder to re-sync
 !ifdef MSFT
   DEFINE OC_INCLUDE_FLAG = /FI OpenCoreFromClover.h
 !else
-  DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h
+  DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h -Wno-maybe-uninitialized
 !endif
 
 #  OpenCorePkg/Application/OpenCore/OpenCoreLib.inf {
