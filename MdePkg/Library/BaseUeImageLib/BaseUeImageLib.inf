@@ -31,3 +31,10 @@
   gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRelocTypePolicy
   gEfiMdePkgTokenSpaceGuid.PcdDebugRaisePropertyMask
   gEfiMdePkgTokenSpaceGuid.PcdImageLoaderRtRelocAllowTargetMismatch
+
+[BuildOptions]
+
+  # Jief : I've added -Wno-uninitialized. I prefer to minimum changes the sources. It makes it easier to re-sync
+  XCODE:*_*_*_CC_FLAGS  =  -Wno-uninitialized
+  GCC:*_*_*_CC_FLAGS    =  -Wno-uninitialized
+  #MSFT:*_*_*_CC_FLAGS  = ??

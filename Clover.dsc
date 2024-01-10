@@ -311,7 +311,7 @@
 !ifdef MSFT
   DEFINE OC_INCLUDE_FLAG = /FI OpenCoreFromClover.h
 !else
-  DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h -Wno-maybe-uninitialized
+  DEFINE OC_INCLUDE_FLAG = -include OpenCoreFromClover.h -Wno-uninitialized
 !endif
 
 #  OpenCorePkg/Application/OpenCore/OpenCoreLib.inf {
@@ -358,6 +358,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
+  OpenCorePkg/Library/OcConsoleControlEntryModeLib/OcConsoleControlEntryModeGenericLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
   OpenCorePkg/Library/OcConsoleLib/OcConsoleLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -382,6 +386,14 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
+  OpenCorePkg/Library/OcFlexArrayLib/OcFlexArrayLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
   OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -391,6 +403,10 @@
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
   OpenCorePkg/Library/OcOSInfoLib/OcOSInfoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcPciIoLib/OcPciIoLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -422,6 +438,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
+  OpenCorePkg/Library/OcTypingLib/OcTypingLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
   OpenCorePkg/Library/OcDeviceTreeLib/OcDeviceTreeLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
@@ -443,6 +463,10 @@
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
   OpenCorePkg/Library/OcVirtualFsLib/OcVirtualFsLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -475,8 +499,11 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  #OcAppleImageConversionLib|OpenCorePkg/Library/OcAppleImageConversionLib/OcAppleImageConversionLib.inf
   OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
+  OpenCorePkg/Library/OcBlitLib/OcBlitLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
@@ -524,6 +551,10 @@
 #    <BuildOptions>
 #      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
 #  }
+  OpenCorePkg/Library/OcResetSystemLib/OcResetSystemLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+  }
   OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
