@@ -51,7 +51,7 @@ InternalCalculateTscFrequency (
 //
 // Cached performance counter frequency
 //
-UINT64  mPerformanceCounterFrequency = 0;
+static UINT64  mAcpiTimerLibTscFrequency = 0;
 
 /**
   Internal function to retrieves the 64-bit frequency in Hz.
@@ -66,7 +66,7 @@ InternalGetPerformanceCounterFrequency (
   VOID
   )
 {
-  return  mPerformanceCounterFrequency;
+  return  mAcpiTimerLibTscFrequency;
 }
 
 /**
@@ -97,9 +97,9 @@ DxeAcpiTimerLibConstructor (
   //
   GuidHob = GetFirstGuidHob (&mFrequencyHobGuid);
   if (GuidHob != NULL) {
-    mPerformanceCounterFrequency = *(UINT64*)GET_GUID_HOB_DATA (GuidHob);
+    mAcpiTimerLibTscFrequency = *(UINT64*)GET_GUID_HOB_DATA (GuidHob);
   } else {
-    mPerformanceCounterFrequency = InternalCalculateTscFrequency ();
+    mAcpiTimerLibTscFrequency = InternalCalculateTscFrequency ();
   }
 
   return EFI_SUCCESS;
