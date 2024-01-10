@@ -5526,13 +5526,13 @@ static int nss_keylog_int(const char *prefix,
     *cursor++ = ' ';
 
     for (i = 0; i < parameter_1_len; i++) {
-        sprintf(cursor, "%02x", parameter_1[i]);
+        snprintf(cursor, out_len, "%02x", parameter_1[i]);
         cursor += 2;
     }
     *cursor++ = ' ';
 
     for (i = 0; i < parameter_2_len; i++) {
-        sprintf(cursor, "%02x", parameter_2[i]);
+        snprintf(cursor, out_len, "%02x", parameter_2[i]);
         cursor += 2;
     }
     *cursor = '\0';

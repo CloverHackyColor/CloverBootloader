@@ -5,7 +5,7 @@
 #ifndef __MEMLOG_LIB_H__
 #define __MEMLOG_LIB_H__
 
-
+#include <Uefi/UefiBaseType.h> // for EFI_STATUS
 //
 // Mem log sizes
 //

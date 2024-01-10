@@ -5,9 +5,7 @@
 #   define __attribute__(x)
 #endif
 
-#ifndef __cplusplus // C doesn't know bool
-#define bool unsigned char
-#endif
+#include "stdbool.h" // C doesn't know bool, in case this header is included by a C source
 
 extern bool stop_at_panic;
 extern bool i_have_panicked;
@@ -35,15 +33,6 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
 
 void log_technical_bug(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
 
-
-#ifdef _MSC_VER
-# define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __FUNCSIG__)
-#else
-# define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __PRETTY_FUNCTION__)
-#endif
-#define assertf(...) _assert(__VA_ARGS__)
-
-void _assert(bool b, const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
 
 #ifdef __cplusplus
 class DontStopAtPanic

@@ -2015,7 +2015,7 @@ DEFINE GCC_X64_RC_FLAGS            = -I binary -O elf64-x86-64      -B i386 --re
 DEFINE GCC_ARM_RC_FLAGS            = -I binary -O elf32-littlearm     -B arm     --rename-section .data=.hii
 DEFINE GCC_AARCH64_RC_FLAGS        = -I binary -O elf64-littleaarch64 -B aarch64 --rename-section .data=.hii
 
-DEFINE GCC48_ALL_CC_FLAGS            = -fshort-wchar -fno-builtin -Wall -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -nostdinc -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -DNO_MSABI_VA_FUNCS -fno-strict-aliasing
+DEFINE GCC48_ALL_CC_FLAGS            = -fshort-wchar -fno-builtin -Wall -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -DNO_MSABI_VA_FUNCS -fno-strict-aliasing
 DEFINE GCC48_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x20
 DEFINE GCC48_IA32_CC_FLAGS           = DEF(GCC48_ALL_CC_FLAGS) -m32 -march=i586 -malign-double -fno-stack-protector -D EFI32 -fno-asynchronous-unwind-tables -Wno-address
 DEFINE GCC48_X64_CC_FLAGS            = DEF(GCC48_ALL_CC_FLAGS) -m64 -fno-stack-protector -mabi=ms "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -mcmodel=small -fpie -fno-asynchronous-unwind-tables
@@ -2673,7 +2673,7 @@ RELEASE_XCODE5_X64_ASM_FLAGS  = -arch x86_64
 # $(PLATFORM_FLAGS)
 
 RELEASE_XCODE5_X64_CC_FLAGS   = -target x86_64-pc-win32-macho -c -Os -Wall -Werror -Wextra -include AutoGen.h -funsigned-char -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -DNO_MSABI_VA_FUNCS
-RELEASE_XCODE5_X64_CXX_FLAGS = -target x86_64-pc-win32-macho  -nostdinc -c -Os -Wall -Werror -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -DNO_MSABI_VA_FUNCS -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings 
+RELEASE_XCODE5_X64_CXX_FLAGS = -target x86_64-pc-win32-macho  -c -Os -Wall -Werror -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-missing-field-initializers -Wno-tautological-compare -Wno-sign-compare -DNO_MSABI_VA_FUNCS -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings 
 # -mno-implicit-float
 # -Wno-varargs
 # -Wno-unused-const-variable
@@ -2746,7 +2746,7 @@ RELEASEMACOS_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAG
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter
+         DEFINE XCODE8_COMMON_FLAGS      =  -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter
  
 
 
@@ -2823,7 +2823,7 @@ RELEASEMACOS_XCODE14_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE14_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype
+         DEFINE XCODE14_COMMON_FLAGS      =  -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype
  
 
 
@@ -2900,7 +2900,7 @@ RELEASEMACOS_XCODE15_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE15_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype -Wno-unused-command-line-argument 
+         DEFINE XCODE15_COMMON_FLAGS      =  -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype -Wno-unused-command-line-argument 
  
 
 

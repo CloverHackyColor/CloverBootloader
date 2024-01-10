@@ -27,7 +27,7 @@ extern "C" {
 	typedef UINT32 char32_t;
 	typedef UINT16 char16_t;
   typedef UINT32 uint32_t;
-  #define PRIu32 d
+  #define PRIu32 "u"
 #endif
 
 #ifdef _MSC_VER

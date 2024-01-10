@@ -8,10 +8,10 @@ Copyright (c) 2022, Loongson Technology Corporation Limited. All rights reserved
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-
 #ifndef __CRT_LIB_SUPPORT_H__
 #define __CRT_LIB_SUPPORT_H__
 
+#include "../../../rEFIt_UEFI/PlatformEFI/posix/posix.h"
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -65,10 +65,10 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Map all va_xxxx elements to VA_xxx defined in MdePkg/Include/Base.h
 //
 #if !defined (__CC_ARM) // if va_list is not already defined
-#define va_list   VA_LIST
-#define va_arg    VA_ARG
-#define va_start  VA_START
-#define va_end    VA_END
+//#define va_list   VA_LIST
+//#define va_arg    VA_ARG
+//#define va_start  VA_START
+//#define va_end    VA_END
 #else // __CC_ARM
 #define va_start(Marker, Parameter)  __va_start(Marker, Parameter)
 #define va_arg(Marker, TYPE)         __va_arg(Marker, TYPE)
@@ -80,14 +80,16 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 #define EINVAL        22              /* Invalid argument */
 #define EAFNOSUPPORT  47              /* Address family not supported by protocol family */
-#define INT_MAX       0x7FFFFFFF      /* Maximum (signed) int value */
-#define INT_MIN       (-INT_MAX-1)    /* Minimum (signed) int value */
-#define LONG_MAX      0X7FFFFFFFL     /* max value for a long */
-#define LONG_MIN      (-LONG_MAX-1)   /* min value for a long */
-#define UINT_MAX      0xFFFFFFFF      /* Maximum unsigned int value */
-#define ULONG_MAX     0xFFFFFFFF      /* Maximum unsigned long value */
+//#define INT_MAX       0x7FFFFFFF      /* Maximum (signed) int value */
+//#define INT_MIN       (-INT_MAX-1)    /* Minimum (signed) int value */
+//#define LONG_MAX      0X7FFFFFFFL     /* max value for a long */
+//#define LONG_MIN      (-LONG_MAX-1)   /* min value for a long */
+//#define UINT_MAX      0xFFFFFFFF      /* Maximum unsigned int value */
+//#define ULONG_MAX     0xFFFFFFFF      /* Maximum unsigned long value */
 #define CHAR_BIT      8               /* Number of bits in a char */
+#ifndef SIZE_MAX
 #define SIZE_MAX      0xFFFFFFFF      /* Maximum unsigned size_t */
+#endif
 
 //
 // Address families.
@@ -105,7 +107,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 // Basic types mapping
 //
-typedef UINTN   size_t;
+//typedef UINTN   size_t;
 typedef UINTN   off_t;
 typedef UINTN   u_int;
 typedef INTN    ptrdiff_t;
@@ -116,7 +118,7 @@ typedef UINT8   sa_family_t;
 typedef UINT8   u_char;
 typedef UINT32  uid_t;
 typedef UINT32  gid_t;
-typedef CHAR16  wchar_t;
+//typedef CHAR16  wchar_t;
 
 //
 // File operations are not required for EFI building,
@@ -158,38 +160,42 @@ struct sockaddr {
 extern int   errno;
 extern FILE  *stderr;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 //
 // Function prototypes of CRT Library routines
 //
+// Jief : need to comment out prototypes that we already have because ours are inlines. These prototypes make the compiler link for a non inline version that we don't have.
 void           *
-malloc     (
+CryptoPkg_BaseMemAllocation_malloc     (
   size_t
   );
 
 void           *
-realloc    (
+CryptoPkg_BaseMemAllocation_realloc    (
   void *,
   size_t
   );
 
 void
-free        (
+CryptoPkg_BaseMemAllocation_free        (
   void *
   );
 
-void           *
-memset     (
-  void *,
-  int,
-  size_t
-  );
-
-int
-memcmp      (
-  const void *,
-  const void *,
-  size_t
-  );
+//void           *
+//memset     (
+//  void *,
+//  int,
+//  size_t
+//  );
+//
+//int
+//memcmp      (
+//  const void *,
+//  const void *,
+//  size_t
+//  );
 
 int
 isdigit     (
@@ -221,30 +227,30 @@ tolower     (
   int
   );
 
-int
-strcmp      (
-  const char *,
-  const char *
-  );
-
-int
-strncasecmp (
-  const char *,
-  const char *,
-  size_t
-  );
-
-char           *
-strchr     (
-  const char *,
-  int
-  );
-
-char           *
-strrchr    (
-  const char *,
-  int
-  );
+//int
+//strcmp      (
+//  const char *,
+//  const char *
+//  );
+//
+//int
+//strncasecmp (
+//  const char *,
+//  const char *,
+//  size_t
+//  );
+//
+//char           *
+//strchr     (
+//  const char *,
+//  int
+//  );
+//
+//char           *
+//strrchr    (
+//  const char *,
+//  int
+//  );
 
 unsigned long
 strtoul     (
@@ -265,17 +271,17 @@ strerror   (
   int
   );
 
-size_t
-strspn      (
-  const char *,
-  const char *
-  );
-
-size_t
-strcspn     (
-  const char *,
-  const char *
-  );
+//size_t
+//strspn      (
+//  const char *,
+//  const char *
+//  );
+//
+//size_t
+//strcspn     (
+//  const char *,
+//  const char *
+//  );
 
 int
 printf      (
@@ -403,25 +409,31 @@ strcpy (
   const char  *strSource
   );
 
+int snprintf(char*  str, size_t size, const char* format, ...);
 //
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
 //
-#define memcpy(dest, source, count)         CopyMem(dest,source,(UINTN)(count))
-#define memset(dest, ch, count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
+// Jief : comment out macro we already have
+//#define memcpy(dest, source, count)         CopyMem(dest,source,(UINTN)(count))
+//#define memset(dest, ch, count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define memchr(buf, ch, count)              ScanMem8(buf,(UINTN)(count),(UINT8)ch)
-#define memcmp(buf1, buf2, count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
-#define memmove(dest, source, count)        CopyMem(dest,source,(UINTN)(count))
-#define strlen(str)                         (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
-#define strncpy(strDest, strSource, count)  AsciiStrnCpyS(strDest,MAX_STRING_SIZE,strSource,(UINTN)count)
-#define strcat(strDest, strSource)          AsciiStrCatS(strDest,MAX_STRING_SIZE,strSource)
-#define strncmp(string1, string2, count)    (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
-#define strcasecmp(str1, str2)              (int)AsciiStriCmp(str1,str2)
-#define strstr(s1, s2)                      AsciiStrStr(s1,s2)
-#define sprintf(buf, ...)                   AsciiSPrint(buf,MAX_STRING_SIZE,__VA_ARGS__)
+//#define memcmp(buf1, buf2, count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
+//#define memmove(dest, source, count)        CopyMem(dest,source,(UINTN)(count))
+//#define strlen(str)                         (size_t)(AsciiStrnLenS(str,MAX_STRING_SIZE))
+//#define strncpy(strDest, strSource, count)  AsciiStrnCpyS(strDest,MAX_STRING_SIZE,strSource,(UINTN)count)
+//#define strcat(strDest, strSource)          AsciiStrCatS(strDest,MAX_STRING_SIZE,strSource)
+//#define strncmp(string1, string2, count)    (int)(AsciiStrnCmp(string1,string2,(UINTN)(count)))
+//#define strcasecmp(str1, str2)              (int)AsciiStriCmp(str1,str2)
+//#define strstr(s1, s2)                      AsciiStrStr(s1,s2)
+//#define sprintf(buf, ...)                   AsciiSPrint(buf,MAX_STRING_SIZE,__VA_ARGS__)
 #define localtime(timer)                    NULL
-#define assert(expression)
+//#define assert(expression)
 #define offsetof(type, member)  OFFSET_OF(type,member)
 #define atoi(nptr)              AsciiStrDecimalToUintn(nptr)
 #define gettimeofday(tvp, tz)   do { (tvp)->tv_sec = time(NULL); (tvp)->tv_usec = 0; } while (0)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

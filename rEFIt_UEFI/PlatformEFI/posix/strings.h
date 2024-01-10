@@ -8,8 +8,7 @@
 #ifndef strings_h
 #define strings_h
 
-//#include <stdio.h>
-#include <stddef.h>
+#include "stddef.h"
 
 #ifdef __cplusplus
 extern "C" {

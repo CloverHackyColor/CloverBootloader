@@ -28,10 +28,6 @@
   FLASH_DEFINITION               = Clover.fdf
 !endif
 
-!ifndef OPENSSL_VERSION
-  DEFINE OPENSSL_VERSION       = 1.0.1e
-!endif
-
   !include MdePkg/MdeLibs.dsc.inc
 
 ################################################################################
@@ -92,7 +88,9 @@
   SortLib|MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
   UefiCpuLib|CloverEFI/UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
 !ifdef ENABLE_SECURE_BOOT
-  OpensslLib|Library/OpensslLib/openssl-$(OPENSSL_VERSION)/OpensslLib.inf
+  #RngLib|MdePkg/Library/BaseRngLib/BaseRngLib.inf
+  RngLib|OpenCorePkg/Library/OcRngLib/OcRngLib.inf
+  OpensslLib|Library/OpensslLib/OpensslLib.inf
   IntrinsicLib|Library/IntrinsicLib/IntrinsicLib.inf
 !else
   OpensslLib|Library/OpensslLib/OpensslLibNull.inf

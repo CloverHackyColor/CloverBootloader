@@ -28,7 +28,7 @@ typedef struct {
 
 /* Allocates memory blocks */
 void *
-malloc (
+CryptoPkg_BaseMemAllocation_malloc (
   size_t  size
   )
 {
@@ -61,7 +61,7 @@ malloc (
 
 /* Reallocate memory blocks */
 void *
-realloc (
+CryptoPkg_BaseMemAllocation_realloc (
   void    *ptr,
   size_t  size
   )
@@ -104,7 +104,7 @@ realloc (
 
 /* De-allocates or frees a memory block */
 void
-free (
+CryptoPkg_BaseMemAllocation_free (
   void  *ptr
   )
 {

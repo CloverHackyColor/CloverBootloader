@@ -4,7 +4,7 @@
  *  Created by Slice on 03.10.2016.
  *
  */
-/*
+
 #include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -16,8 +16,7 @@
 #include <Library/MemLogLib.h>
 
 #include <Protocol/AppleSMC.h>
-*/
-#include "SmcHelper.h"
+
 
 // DBG_TO: 0=no debug, 1=serial, 2=console 3=log
 // serial requires

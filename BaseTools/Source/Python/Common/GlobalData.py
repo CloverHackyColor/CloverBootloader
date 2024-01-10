@@ -23,7 +23,7 @@ gPlatformOtherPcds = {}
 gActivePlatform = None
 gCommandLineDefines = {}
 gEdkGlobal = {}
-gCommandMaxLength = 4096
+gCommandMaxLength = 13684
 # for debug trace purpose when problem occurs
 gProcessingFile = ''
 gBuildingModule = ''

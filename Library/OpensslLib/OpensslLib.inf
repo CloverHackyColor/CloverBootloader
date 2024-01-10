@@ -20,7 +20,7 @@
 
   DEFINE OPENSSL_PATH            = openssl
   DEFINE OPENSSL_GEN_PATH        = OpensslGen
-  DEFINE OPENSSL_FLAGS           = -DL_ENDIAN -DOPENSSL_SMALL_FOOTPRINT -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DEDK2_OPENSSL_NOEC=1 -DOPENSSL_NO_ASM
+  DEFINE OPENSSL_FLAGS           = -DL_ENDIAN -DOPENSSL_SMALL_FOOTPRINT -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DEDK2_OPENSSL_NOEC=1 -DOPENSSL_NO_ASM -D__STDC_NO_ATOMICS__
   DEFINE OPENSSL_FLAGS_NOASM     =
 
 #
@@ -656,10 +656,14 @@
   OpensslStub/SslStatServNull.c
   OpensslStub/SslExtServNull.c
   OpensslStub/Pkcs12Null.c
+  CryptoPkg/CrtWrapper.c
+  CryptoPkg/TimerWrapper.c
+  CryptoPkg/BaseMemAllocation.c
 
 [Packages]
   MdePkg/MdePkg.dec
-  CryptoPkg/CryptoPkg.dec
+  Library/OpensslLib/OpensslLib.dec
+#  CryptoPkg/CryptoPkg.dec
 
 [LibraryClasses]
   BaseLib

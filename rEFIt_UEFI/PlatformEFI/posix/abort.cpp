@@ -142,13 +142,3 @@ void panic(void)
 {
   panic(nullptr);
 }
-
-
-void _assert(bool b, const char* format, ...)
-{
-  if ( !b ) {
-    VA_LIST va;
-    VA_START(va, format);
-    panic_(format, va); // panic doesn't return
-  }
-}

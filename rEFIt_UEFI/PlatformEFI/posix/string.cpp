@@ -175,4 +175,81 @@ char* strstr(const char *haystack, const char *needle)
 }
 
 
+/* Computes the length of the maximum initial segment of the string pointed to by s1
+   which consists entirely of characters from the string pointed to by s2. */
+size_t strspn(const char  *s1, const char  *s2)
+{
+  UINT8   Map[32];
+  UINT32  Index;
+  size_t  Count;
+
+  for (Index = 0; Index < 32; Index++) {
+    Map[Index] = 0;
+  }
+
+  while (*s2) {
+    Map[*s2 >> 3] |= (1 << (*s2 & 7));
+    s2++;
+  }
+
+  if (*s1) {
+    Count = 0;
+    while (Map[*s1 >> 3] & (1 << (*s1 & 7))) {
+      Count++;
+      s1++;
+    }
+
+    return Count;
+  }
+
+  return 0;
+}
+
+/* Computes the length of the maximum initial segment of the string pointed to by s1
+   which consists entirely of characters not from the string pointed to by s2. */
+size_t strcspn(const char  *s1, const char  *s2)
+{
+  UINT8   Map[32];
+  UINT32  Index;
+  size_t  Count;
+
+  for (Index = 0; Index < 32; Index++) {
+    Map[Index] = 0;
+  }
+
+  while (*s2) {
+    Map[*s2 >> 3] |= (1 << (*s2 & 7));
+    s2++;
+  }
+
+  Map[0] |= 1;
+
+  Count = 0;
+  while (!(Map[*s1 >> 3] & (1 << (*s1 & 7)))) {
+    Count++;
+    s1++;
+  }
+
+  return Count;
+}
+
+
+/* Scan a string for the last occurrence of a character */
+char* strrchr(const char *str, int c)
+{
+  char  *save;
+
+  for (save = NULL; ; ++str) {
+    if (*str == c) {
+      save = (char *)str;
+    }
+
+    if (*str == 0) {
+      return (save);
+    }
+  }
+}
+
+
+
 #endif

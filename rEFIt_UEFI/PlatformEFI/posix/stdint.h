@@ -13,6 +13,14 @@ static_assert(sizeof(long long) == 8, "sizeof(long long) != 8");
 static_assert(true, "true");
 #endif
 
+////#if defined(OPENSSL_SMALL_FOOTPRINT) && defined(__clang__)
+//// let's include the one from the compiler. Except for uintptr_t because it's define as a long and we prefer long long for microsoft compatibility. It's same on macos.
+//// It's currently (Jan 2024) only needed when you compile with OpenSsl and xcode because of the inclusion of stdatomic
+//#define _UINTPTR_T // for clang to avoid to declare uintptr_t
+//#undef __UINTPTR_TYPE__
+//#include_next <stdint.h>
+////#endif
+
 
 typedef UINT8 uint8_t;
 typedef UINT16 uint16_t;

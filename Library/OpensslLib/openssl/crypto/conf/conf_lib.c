@@ -408,7 +408,7 @@ int NCONF_dump_bio(const CONF *conf, BIO *out)
  */
 OPENSSL_INIT_SETTINGS *OPENSSL_INIT_new(void)
 {
-    OPENSSL_INIT_SETTINGS *ret = malloc(sizeof(*ret));
+    OPENSSL_INIT_SETTINGS *ret = CryptoPkg_BaseMemAllocation_malloc(sizeof(*ret));
 
     if (ret == NULL)
         return NULL;
@@ -464,7 +464,7 @@ int OPENSSL_INIT_set_config_appname(OPENSSL_INIT_SETTINGS *settings,
 
 void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *settings)
 {
-    free(settings->filename);
-    free(settings->appname);
-    free(settings);
+    CryptoPkg_BaseMemAllocation_free(settings->filename);
+    CryptoPkg_BaseMemAllocation_free(settings->appname);
+    CryptoPkg_BaseMemAllocation_free(settings);
 }

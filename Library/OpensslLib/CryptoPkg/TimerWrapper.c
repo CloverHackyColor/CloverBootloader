@@ -148,7 +148,7 @@ gmtime (
     return NULL;
   }
 
-  GmTime = malloc (sizeof (struct tm));
+  GmTime = CryptoPkg_BaseMemAllocation_malloc (sizeof (struct tm));
   if (GmTime == NULL) {
     return NULL;
   }

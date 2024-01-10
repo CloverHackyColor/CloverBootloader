@@ -39,7 +39,7 @@
 
 #include <Platform.h>
 #include "entry_scan.h"
-#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
+#include <openssl/sha.h>
 #include <Guid/ImageAuthentication.h>
 #include <IndustryStandard/PeImage.h>
 //#include <IndustryStandard/PeImage2.h>

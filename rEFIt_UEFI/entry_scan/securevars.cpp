@@ -45,11 +45,14 @@
 
 #include "securebootkeys.h"
 
-#include "../../Library/OpensslLib/Include/OpenSslSupport.h"
-#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/err.h"
-#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/pem.h"
-#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
-#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/bio.h"
+#include <openssl/configuration.h>
+#undef OPENSSL_NO_DEPRECATED
+
+#include <openssl/types.h>
+#include <openssl/pkcs7.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_VARS 1

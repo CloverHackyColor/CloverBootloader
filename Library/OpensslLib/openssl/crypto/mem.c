@@ -187,7 +187,7 @@ void *CRYPTO_malloc(size_t num, const char *file, int line)
         allow_customize = 0;
     }
 
-    return malloc(num);
+    return CryptoPkg_BaseMemAllocation_malloc(num);
 }
 
 void *CRYPTO_zalloc(size_t num, const char *file, int line)
@@ -217,7 +217,7 @@ void *CRYPTO_realloc(void *str, size_t num, const char *file, int line)
         return NULL;
     }
 
-    return realloc(str, num);
+    return CryptoPkg_BaseMemAllocation_realloc(str, num);
 }
 
 void *CRYPTO_clear_realloc(void *str, size_t old_len, size_t num,
@@ -255,7 +255,7 @@ void CRYPTO_free(void *str, const char *file, int line)
         return;
     }
 
-    free(str);
+    CryptoPkg_BaseMemAllocation_free(str);
 }
 
 void CRYPTO_clear_free(void *str, size_t num, const char *file, int line)

@@ -18,6 +18,7 @@
 #include "strings.h"
 #include "wchar.h"
 #include "abort.h"
+#include "assert.h"
 #include "posix_additions.h"
 //
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
@@ -48,7 +49,7 @@ void abort(void);
 #endif
 
 
-inline float fabsf(float x) {
+static inline __attribute__((always_inline)) float fabsf(float x) {
   if (x < 0.f) return -x;
   return x;
 }
