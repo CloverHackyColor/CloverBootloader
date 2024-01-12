@@ -1839,7 +1839,7 @@ XBool load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 void get_vram_size(void)
 {
   //check card->vram_size in bytes!
-  ati_chip_family_t chip_family = CHIP_FAMILY_UNKNOW; //card->info->chip_family;
+  ati_chip_family_t chip_family = card->info->chip_family;
 
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.Graphics.VRAM != 0) {
