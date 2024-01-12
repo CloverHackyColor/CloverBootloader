@@ -3520,7 +3520,7 @@ displayFreeMemory("Before RunMainMenu"_XS8);
         AfterTool = true;
       }
   #ifdef ENABLE_SECURE_BOOT
-log_technical_bug("not done yet");
+//log_technical_bug("not done yet");
 //      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
 //            EnableSecureBoot();
 //            MainLoopRunning = false;

@@ -41,7 +41,37 @@ const card_config_t card_configs[] = {
 };
 
 const radeon_card_info_t radeon_cards[] = {
+    /* Vega 20 */
+     { 0x66AF,  CHIP_FAMILY_VEGA20, "AMD Radeon VII",        kNull },
+     // Polaris 10
     { 0x67DF,  CHIP_FAMILY_ELLESMERE, "AMD Radeon RX 480/570/580",  kNull },
+    // Polaris 11
+    { 0x67E0,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 460",             kNull },
+    { 0x67E3,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro WX4100",        kNull },
+    { 0x67EF,  CHIP_FAMILY_BAFFIN, "AMD Radeon Pro 555",           kNull },
+    { 0x67FF,  CHIP_FAMILY_BAFFIN, "AMD Radeon RX 560",          kNull },
+    /* Vega 10 */
+    { 0x6863,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega Frontier",  kNull },
+    { 0x6867,  CHIP_FAMILY_VEGA10, "AMD Radeon Pro Vega 56",    kNull },
+    { 0x687F,  CHIP_FAMILY_VEGA10, "AMD Radeon Vega 64",        kNull },
+    /* Polaris12 */
+    { 0x6987,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX640",     kNull },
+    { 0x699F,  CHIP_FAMILY_GREENLAND, "AMD Radeon RX550",          kNull },
+    // Fiji
+    { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",             kNull },
+     // Navi10
+    { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",            kNull },
+    // Navi15
+    { 0x7340,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5500",            kNull },
+    { 0x7360,  CHIP_FAMILY_NAVI10, "AMD Radeon Pro RX5600M",       kNull }, // found in MacBookPro16,4
+    // Navi2x
+    { 0x73A5,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6950XT",          kNull },
+    { 0x73AF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6900XT",          kNull },
+    { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",          kNull },
+    { 0x73DF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6700XT",          kNull },
+    { 0x73EF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6650XT",          kNull },
+    { 0x73FF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6600XT",          kNull },
+
     { 0x0000,  CHIP_FAMILY_UNKNOW, "AMD Unknown",   kNull  }
 };
 
@@ -1205,7 +1235,7 @@ Lexa-based WX 2100, WX 3100 and WX 3200 do NOT work.
 
 */
 
-#if ATI_LESS
+#if 0 //ATI_LESS
 const CHAR8 *chip_family_name[] = {
   "UNKNOW",
   "Ellesmere",
@@ -1281,6 +1311,9 @@ const CHAR8 *chip_family_name[] = {
   "Baffin",
   "Greenland",
   "Vega10",
+  "Vega20",
+  "Navi10",
+  "Navi20",
   // Vega11
   // Navi
   ""
@@ -1806,7 +1839,7 @@ XBool load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 void get_vram_size(void)
 {
   //check card->vram_size in bytes!
-  ati_chip_family_t chip_family = card->info->chip_family;
+  ati_chip_family_t chip_family = CHIP_FAMILY_UNKNOW; //card->info->chip_family;
 
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.Graphics.VRAM != 0) {

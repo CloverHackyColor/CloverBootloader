@@ -160,7 +160,6 @@ SMBIOS_TABLE_STRING    SMBIOS_TABLE_TYPE4_STR_IDX[] = {
 // validate the SMBIOS entry point structure
 XBool IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructure)
 {
-  UINTN                     I;
   UINT8                     Length;
   UINT8                     Checksum = 0;
   UINT8                     *BytePtr;
@@ -171,7 +170,7 @@ XBool IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructu
   BytePtr = (UINT8*) EntryPointStructure;
   Length = EntryPointStructure->EntryPointLength;
 
-  for (I = 0; I < Length; I++) {
+  for (UINTN I = 0; I < Length; I++) {
     Checksum = Checksum + (UINT8) BytePtr[I];
   }
 
@@ -181,10 +180,8 @@ XBool IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStructu
 
 void* FindOemSMBIOSPtr (void)
 {
-  UINTN      Address;
-
   // Search 0x0f0000 - 0x0fffff for SMBIOS Ptr
-  for (Address = 0xf0000; Address < 0xfffff; Address += 0x10) {
+  for (UINTN Address = 0xf0000; Address < 0xfffff; Address += 0x10) {
     if (*(UINT32 *)(Address) == SMBIOS_PTR && IsEntryPointStructureValid((SMBIOS_TABLE_ENTRY_POINT*)Address)) {
       return (void *)Address;
     }
@@ -217,7 +214,7 @@ void* GetSmbiosTablesFromHob (void)
 void* GetSmbiosTablesFromConfigTables (void)
 {
   EFI_STATUS              Status;
-  EFI_PHYSICAL_ADDRESS    *Table;
+  EFI_PHYSICAL_ADDRESS    *Table = NULL;
 
   Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (void **)&Table);
   if (EFI_ERROR(Status) || Table == NULL) {
@@ -1604,41 +1601,42 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
   // Detect whether the SMBIOS is trusted information
   if (trustSMBIOS) {
     if (gRAM.SMBIOS.size() != 0) {
-      if (gRAM.SPD.size() != 0) {
-        if (gRAM.SPD.size() != gRAM.SMBIOS.size()) {
-          // Prefer the SPD information
-          if (gRAM.SPD.size() > gRAM.SMBIOS.size()) {
-            DBG("Not trusting SMBIOS because SPD reports more modules...\n");
-            trustSMBIOS = false;
-          } else if (gRAM.SPD.doesSlotForIndexExist(0) || !gRAM.SMBIOS.doesSlotForIndexExist(0)) {
-            if (gRAM.SPD.size() > 1) {
-              DBG("Not trusting SMBIOS because SPD reports different modules...\n");
-              trustSMBIOS = false;
-            } else if (gRAM.SMBIOS.size() == 1) {
-              channels = 1;
-            }
-          } else if (gRAM.SPD.size() == 1) {
-            // The SMBIOS may contain table for built-in module
-            if (gRAM.SMBIOS.size() <= 2) {
-              if (!gRAM.SMBIOS.doesSlotForIndexExist(0) || !gRAM.SPD.doesSlotForIndexExist(2) ||
-                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).Frequency != gRAM.SPD.getSlotInfoForSlotIndex(2).Frequency) ||
-                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize != gRAM.SPD.getSlotInfoForSlotIndex(2).ModuleSize)) {
-                channels = 1;
-              }
-            } else {
-              DBG("Not trusting SMBIOS because SPD reports only one module...\n");
-              trustSMBIOS = false;
-            }
-          } else {
-            DBG("Not trusting SMBIOS because SPD reports less modules...\n");
-            trustSMBIOS = false;
-          }
-        } else if (gRAM.SPD.doesSlotForIndexExist(0) != gRAM.SMBIOS.doesSlotForIndexExist(0)) {
-          // Never trust a sneaky SMBIOS!
-          DBG("Not trusting SMBIOS because it's being sneaky...\n");
-          trustSMBIOS = false;
-        }
-      } else if (gRAM.SMBIOS.size() == 1) {
+//      if (gRAM.SPD.size() != 0) {
+//        if (gRAM.SPD.size() != gRAM.SMBIOS.size()) {
+//          // Prefer the SPD information -- no, we trust SMBIOS!
+//          if (gRAM.SPD.size() > gRAM.SMBIOS.size()) {
+//            DBG("Not trusting SMBIOS because SPD reports more modules...\n");
+//            trustSMBIOS = false;
+//          } else if (gRAM.SPD.doesSlotForIndexExist(0) || !gRAM.SMBIOS.doesSlotForIndexExist(0)) {
+//            if (gRAM.SPD.size() > 1) {
+//              DBG("Not trusting SMBIOS because SPD reports different modules...\n");
+//              trustSMBIOS = false;
+//            } else if (gRAM.SMBIOS.size() == 1) {
+//              channels = 1;
+//            }
+//          } else if (gRAM.SPD.size() == 1) {
+//            // The SMBIOS may contain table for built-in module
+//            if (gRAM.SMBIOS.size() <= 2) {
+//              if (!gRAM.SMBIOS.doesSlotForIndexExist(0) || !gRAM.SPD.doesSlotForIndexExist(2) ||
+//                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).Frequency != gRAM.SPD.getSlotInfoForSlotIndex(2).Frequency) ||
+//                  (gRAM.SMBIOS.getSlotInfoForSlotIndex(0).ModuleSize != gRAM.SPD.getSlotInfoForSlotIndex(2).ModuleSize)) {
+//                channels = 1;
+//              }
+//            } else {
+//              DBG("Not trusting SMBIOS because SPD reports only one module...\n");
+//              trustSMBIOS = false;
+//            }
+//          } else {
+//            DBG("Not trusting SMBIOS because SPD reports less modules...\n");
+//            trustSMBIOS = false;
+//          }
+//        } else if (gRAM.SPD.doesSlotForIndexExist(0) != gRAM.SMBIOS.doesSlotForIndexExist(0)) {
+//          // Never trust a sneaky SMBIOS!
+//          DBG("Not trusting SMBIOS because it's being sneaky...\n");
+//          trustSMBIOS = false;
+//        }
+//      } else
+        if (gRAM.SMBIOS.size() == 1) {
         channels = 1;
       }
     }
@@ -1656,7 +1654,7 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
     // Check if smbios has a good total count
     if ( (!gMobile || smbiosSettings.RamSlotCount == 2)  &&  expectedCount < smbiosSettings.RamSlotCount ) {
       if ( smbiosSettings.RamSlotCount > MAX_UINT8 ) {
-        log_technical_bug("smbiosSettings.RamSlotCount > MAX_UINT8");
+ //       log_technical_bug("smbiosSettings.RamSlotCount > MAX_UINT8");
         expectedCount = MAX_RAM_SLOTS;
       }else{
         expectedCount = (UINT8)smbiosSettings.RamSlotCount;
@@ -2279,7 +2277,7 @@ void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
   PatchTableTypeSome();
   auto SlotCounts = smbiosSettings.RamSlotCount;
   if ( SlotCounts > MAX_RAM_SLOTS ) {
-    log_technical_bug("GetTableType16() assign smbiosSettings.RamSlotCount a value bigger than MAX_RAM_SLOTS");
+//    log_technical_bug("GetTableType16() assign smbiosSettings.RamSlotCount a value bigger than MAX_RAM_SLOTS");
     SlotCounts = MAX_RAM_SLOTS;
   }
   XArray<UINT16> mMemory17;
