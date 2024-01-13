@@ -1573,6 +1573,7 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
         newSmbiosTable.Type17->MemoryType = smbiosSettings.Memory.getSlotInfoForSlotID(UserIndex).Type;
         if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
+            (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr5) &&
             (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
           newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
         }
@@ -1876,9 +1877,10 @@ void PatchTableType17(const SmbiosInjectedSettings& smbiosSettings, XArray<UINT1
 
 //    gSettings.MemorySpeed.S8Printf("%d", newSmbiosTable.Type17->Speed);
 
-    // Assume DDR3 unless explicitly set to DDR2/DDR/DDR4
+    // Assume DDR3 unless explicitly set to DDR2/DDR/DDR4/DDR5
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
         (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr4) &&
+        (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr5) &&
         (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
       newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
     }

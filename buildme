@@ -30,7 +30,7 @@ end tell
 tell application "Terminal"
 	activate
 	set bounds of window 1 to {0, 23, 615, 420}
-	set current settings of window 1 to settings set "Pro"
+#	set current settings of window 1 to settings set "Pro"
 #	set font name of window 1 to "Monaco"
 #	set font size of window 1 to "11"
 #	set normal text color of window 1 to {3341, 35186, 50092}

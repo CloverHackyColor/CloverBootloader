@@ -146,11 +146,13 @@ public:
                return MemoryTypeDdr3;
               } else if (Type.value().isEqualIC("DDR4")) {
                return MemoryTypeDdr4;
-              } else if (Type.value().isEqualIC("DDR")) {
+              } else if (Type.value().isEqualIC("DDR5")) {
+               return MemoryTypeDdr5;
+              } else /*if (Type.value().isEqualIC("DDR"))*/ {
                return MemoryTypeDdr;
               }
               // Cannot happen if validate has been done properly.
-              panic("invalid DDRx value");
+              //panic("invalid DDRx value");
             }
 
           };
