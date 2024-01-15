@@ -146,7 +146,8 @@ public:
         }
         
         const XString8& dgetName() const { return Name.isDefined() ? Name.value() : NullXString8; };
-        XString8 dgetLabel() const override { return Comment.isDefined() ? S8Printf("%s (%s)", Name.value().c_str(), Comment.value().c_str()) : S8Printf("%s (NoLabel)", Name.value().c_str()); };
+//        XString8 dgetLabel() const override { return Comment.isDefined() ? S8Printf("%s (%s)", Name.value().c_str(), Comment.value().c_str()) : S8Printf("%s (NoLabel)", Name.value().c_str()); };
+        XString8 dgetLabel() const override { return Comment.isDefined() ? Comment.value().c_str() : "NoLabel"_XS8; };
         XBool dgetIsPlistPatch() const { return InfoPlistPatch.isDefined() ? InfoPlistPatch.value() : XBool(false); };
 
         // override because of different defaultvalue
