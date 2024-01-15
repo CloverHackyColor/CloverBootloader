@@ -187,10 +187,14 @@ void GetCPUProperties (void)
 
   DBG(" The CPU%s supported SSE4.1\n", (gCPUStructure.Features & CPUID_FEATURE_SSE4_1)?"":" not");
   DBG(" The CPU%s supported RDRAND\n", (gCPUStructure.Features & CPUID_FEATURE_RDRAND)?"":" not");
-  /* Pack CPU Family and Model */
-  if (gCPUStructure.Family == 0x0f) {
-    gCPUStructure.Family += gCPUStructure.Extfamily;
-  }
+
+
+//  /* Pack CPU Family -> We can't do that, or else we'll give a wrong to OC. */
+//  if (gCPUStructure.Family == 0x0f) {
+//    gCPUStructure.Family += gCPUStructure.Extfamily;
+//  }
+
+  /* Pack Model */
   gCPUStructure.Model += (gCPUStructure.Extmodel << 4);
   
   /* get BrandString (if supported) */
@@ -710,7 +714,7 @@ void GetCPUProperties (void)
     gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
 	  DBG("CurrentSpeed: %llu\n", DivU64x32(gCPUStructure.TSCFrequency, Mega));
     
-    switch (gCPUStructure.Family)
+    switch (gCPUStructure.Family + gCPUStructure.Extfamily)
     {
         
         //if(gCPUStructure.Extfamily == 0x00 /* K8 */)
@@ -1169,8 +1173,10 @@ void GetCPUProperties (void)
   }
   gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.MaxRatio), Mega * 10)); //kHz->MHz
   
-//  DBG("Vendor/Model/Stepping: 0x%X/0x%X/0x%X\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
-//  DBG("Family/ExtFamily: 0x%X/0x%X\n", gCPUStructure.Family, gCPUStructure.Extfamily);
+#ifdef JIEF_DEBUG
+  DBG("Vendor=0x%X Model=0x%X Stepping: 0x%X\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
+  DBG("Family=0x%X ExtFamily=0x%X\n", gCPUStructure.Family, gCPUStructure.Extfamily);
+#endif
   DBG("MaxDiv/MinDiv: %d.%d/%d\n", gCPUStructure.MaxRatio/10, gCPUStructure.MaxRatio%10 , gCPUStructure.MinRatio/10);
   DBG("Turbo: %d/%d/%d/%d\n", gCPUStructure.Turbo4/10, gCPUStructure.Turbo3/10, gCPUStructure.Turbo2/10, gCPUStructure.Turbo1/10);
 	DBG("Features: 0x%llX\n",gCPUStructure.Features);
@@ -1689,7 +1695,7 @@ void FillOCCpuInfo(OC_CPU_INFO* CpuInfo)
   CpuInfo->Hypervisor = gSettings.CPU.QEMU;
   CpuInfo->Type = (UINT8)gCPUStructure.Type;
   CpuInfo->Family = (UINT8)gCPUStructure.Family;
-  CpuInfo->Model = (UINT8)gCPUStructure.Model;
+  CpuInfo->Model = (UINT8)gCPUStructure.Model - (gCPUStructure.Extmodel << 4);
   CpuInfo->ExtModel = (UINT8)gCPUStructure.Extmodel;
   CpuInfo->ExtFamily = (UINT8)gCPUStructure.Extfamily;
   CpuInfo->Stepping = (UINT8)gCPUStructure.Stepping;
