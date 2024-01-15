@@ -148,6 +148,13 @@ static UINTN GetDebugLogFile()
 
   if ( debugLogFileName.isEmpty() )
   {
+    EFI_FILE_PROTOCOL   *miscDirHandle;
+
+    Status = CloverDir.Open(&CloverDir, &miscDirHandle, L"misc", EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
+    if ( !EFI_ERROR(Status) ) {
+        miscDirHandle->Close(miscDirHandle);
+    }
+
     debugLogFileName = S8Printf("misc\\%04d-%02d-%02d_%02d-%02d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, self.getCloverEfiFileNameOrNull().wc_str());
     Status = CloverDir.Open(&CloverDir, &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( !EFI_ERROR(Status) ) LogFile->Close(LogFile); // DO NOT modify Status here.
