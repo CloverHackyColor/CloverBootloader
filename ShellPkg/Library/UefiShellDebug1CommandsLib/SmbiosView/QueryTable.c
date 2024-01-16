@@ -49,6 +49,10 @@ TABLE_ITEM  SystemWakeupTypeTable[] = {
   },
   {
     0x7,
+    L" PCI Pme"
+  },
+  {
+    0x8,
     L" AC Power Restored"
   }
 };
@@ -607,7 +611,43 @@ TABLE_ITEM  ProcessorUpgradeTable[] = {
   {
     0x3F,
     L"Socket LGA4677"
-  }
+  },
+  {
+    0x3C,
+    L"Socket BGA1528"
+  },
+  {
+    0x3D,
+    L"Socket LGA4189"
+  },
+  {
+    0x3E,
+    L"Socket LGA1200"
+  },
+  {
+    0x3F,
+    L"Socket LGA4677"
+  },
+  {
+    0x40,
+    L"Socket LGA1700"
+  },
+  {
+    0x45,
+    L"Socket LGA1211"
+  },
+  {
+    0x46,
+    L"Socket LGA2422"
+  },
+  {
+    0x47,
+    L"Socket LGA5773"
+  },
+  {
+    0x49,
+    L"Socket AM5"
+  },
 
 };
 
@@ -639,6 +679,10 @@ TABLE_ITEM  ProcessorCharacteristicsTable[] = {
   {
     7,
     L" Power/Performance Control"
+  },
+  {
+    8,
+    L" 128 bit Capable"
   }
 };
 
@@ -2611,9 +2655,29 @@ TABLE_ITEM  MemoryDeviceTypeTable[] = {
     L"  LPDDR3"
   },
   {
-    0x1E,
-    L"  LPDDR4"
-  }
+     0x1E,
+     L"  LPDDR4"
+   },
+   {
+       0x1F,
+       L"  NON-VOLATILE"
+    },
+    {
+       0x20,
+       L"  HBM"
+    },
+    {
+       0x21,
+       L"  HBM2"
+    },
+    {
+       0x22,
+       L"  DDR5"
+    },
+    {
+       0x23,
+       L"  LPDDR5"
+    }
 };
 
 TABLE_ITEM  MemoryDeviceTypeDetailTable[] = {
@@ -2672,6 +2736,10 @@ TABLE_ITEM  MemoryDeviceTypeDetailTable[] = {
   {
     14,
     L" Unbuffered(Unregistered)"
+  },
+  {
+    15,
+    L"LrDIMM"
   }
 };
 
