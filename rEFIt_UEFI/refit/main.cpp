@@ -711,11 +711,10 @@ size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kext
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
     if ( kextArray[kextIdx].FileName.contains(kextName) ) {
-#ifdef JIEF_DEBUG
-      if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
-#else
-      //it is impossible
-#endif
+      if ( pos >= kextArray.size() ) {
+        log_technical_bug("pos >= kextArray.size()");
+        return kextArray.size() - 1 ; // If we're here, kextArray.size() is at least 1
+      }
       if ( pos == kextIdx ) return pos+1;
       if ( pos > kextIdx ) pos -= 1;
       SIDELOAD_KEXT* kextToMove = &kextArray[kextIdx];
@@ -829,15 +828,15 @@ void debugStartImageWithOC()
 void LOADER_ENTRY::DelegateKernelPatches()
 {
   XObjArray<ABSTRACT_KEXT_OR_KERNEL_PATCH> selectedPathArray;
-  for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
-  {
-    if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
-      selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
-  }
   for (size_t kernelPatchIdx = 0 ; kernelPatchIdx < KernelAndKextPatches.KernelPatches.size() ; kernelPatchIdx++ )
   {
     if ( KernelAndKextPatches.KernelPatches[kernelPatchIdx].MenuItem.BValue )
       selectedPathArray.AddReference(&KernelAndKextPatches.KernelPatches[kernelPatchIdx], false);
+  }
+  for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
+  {
+    if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
+      selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
   }
   mOpenCoreConfiguration.Kernel.Patch.Count = (UINT32)selectedPathArray.size();
   mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
@@ -1193,6 +1192,7 @@ void LOADER_ENTRY::StartLoader()
     size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
     pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakeSMC.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IOSkywalkFamily.kext"_XS8, pos);
@@ -1200,7 +1200,6 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "SMCAMDProcessor.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
     pos = setKextAtPos(&kextArray, "SMCProcessor.kext"_XS8, pos);
@@ -1216,10 +1215,10 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM2.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM3.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IO80211FamilyLegacy.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "AirPortBrcmNIC.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "HS80211Family.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "corecaptureElCap.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IO80211ElCap.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "IO80211ElCap\\Contents\\Plugins\\AirPortAtheros40.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AirPortAtheros40.kext"_XS8, pos);
 
     for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
