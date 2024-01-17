@@ -539,7 +539,7 @@ void GetCPUProperties (void)
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
-             if (gCPUStructure.Model < 0x90) {
+             if (gCPUStructure.Model >= 0x2A) {
                  //----test C3 patch
                  msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
                  MsgLog("MSR 0xE2 before patch %08llX\n", msr);
