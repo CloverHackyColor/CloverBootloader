@@ -670,6 +670,7 @@ public:
       XBool                   NeverDoRecovery = false;
       XBool                   LastBootedVolume = false;
       XStringW                DefaultVolume = XStringW();
+      bool                    BootFirstAvailable = false;
       XStringW                DefaultLoader = XStringW();
       XBool                   DebugLog = false;
       XBool                   FastBoot = false;
@@ -736,6 +737,7 @@ public:
         NeverDoRecovery = other.dgetNeverDoRecovery();
         LastBootedVolume = other.dgetLastBootedVolume();
         DefaultVolume = other.dgetDefaultVolume();
+        BootFirstAvailable = other.dgetBootFirstAvailable();
         DefaultLoader = other.dgetDefaultLoader();
         DebugLog = other.dgetDebugLog();
         FastBoot = other.dgetFastBoot();

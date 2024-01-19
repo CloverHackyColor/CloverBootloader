@@ -310,7 +310,7 @@ void AddCustomLegacy(void)
       
       if (Custom.settings.VolumeType != 0) {
         if (((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) == 0) {
-          DBG("skipped because media is ignored\n");
+          DBG("skipped because media is ignored (VolumeType=%d DiskKind=%d)\n", Custom.settings.VolumeType, Volume->DiskKind);
           continue;
         }
       }

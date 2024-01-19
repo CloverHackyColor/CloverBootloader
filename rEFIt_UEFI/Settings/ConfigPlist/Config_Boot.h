@@ -141,7 +141,12 @@ public:
   const decltype(DefaultVolume)::ValueType&  dgetDefaultVolume() const {
     if ( !DefaultVolume.isDefined() ) return DefaultVolume.nullValue;
     if ( DefaultVolume.value().isEqualIC("LastBootedVolume") ) return DefaultVolume.nullValue;
-    return DefaultVolume.isDefined() ? DefaultVolume.value() : DefaultVolume.nullValue;
+    if ( DefaultVolume.value().isEqualIC("FirstAvailable") ) return DefaultVolume.nullValue;
+    return DefaultVolume.value();
+  };
+  bool  dgetBootFirstAvailable() const {
+    if ( !DefaultVolume.isDefined() ) return false;
+    return DefaultVolume.value().isEqualIC("FirstAvailable");
   };
   const XString8&  dgetDefaultLoader() const { return DefaultLoader.isDefined() ? DefaultLoader.value() : NullXString8; };
   XBool dgetDebugLog() const { return Debug.isDefined() ? Debug.value() : XBool(false); };
