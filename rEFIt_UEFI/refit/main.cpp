@@ -1160,8 +1160,8 @@ void LOADER_ENTRY::StartLoader()
 
     memset(&mOpenCoreConfiguration.Kernel.Quirks, 0, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
     mOpenCoreConfiguration.Kernel.Quirks.SetApfsTrimTimeout = -1; // Jief: Slice modified OcConfigurationLib.h to set -1 by default instead of 999. I prefer the modification here to minimize commts in OC submodule. Makes it easier to upgrade submodule.
-    mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
-    mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
+    mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM || GlobalConfig.NeedPMfix ;
+    mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm || GlobalConfig.NeedPMfix ;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs = gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmForceBoost = gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost;
     #ifndef USE_OC_SECTION_PlatformInfo
