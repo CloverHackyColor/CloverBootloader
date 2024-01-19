@@ -873,11 +873,6 @@ void LOADER_ENTRY::DelegateKernelPatches()
     OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Replace.data(), kextPatch.Replace.size());
     OC_DATA_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.data(), kextPatch.MaskReplace.size());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = (UINT32)kextPatch.Skip;
-#ifdef JIEF_DEBUG
-if ( kextPatch.Label ==  "algrey - cpuid_set_info - ryzen cores and logicals count - part 3 - 10.14"_XS8 ) {
-  DEBUG (( DEBUG_INFO, "" ));
-}
-#endif
   }
 }
 
@@ -1159,7 +1154,7 @@ void LOADER_ENTRY::StartLoader()
     mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
 
     memset(&mOpenCoreConfiguration.Kernel.Quirks, 0, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
-    mOpenCoreConfiguration.Kernel.Quirks.SetApfsTrimTimeout = -1; // Jief: Slice modified OcConfigurationLib.h to set -1 by default instead of 999. I prefer the modification here to minimize commts in OC submodule. Makes it easier to upgrade submodule.
+    mOpenCoreConfiguration.Kernel.Quirks.SetApfsTrimTimeout = -1; // Jief: Slice modified OcConfigurationLib.h to set -1 by default instead of 999. I prefer the modification here to minimize commits in OC submodule. Makes it easier to upgrade submodule.
     mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs = gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
@@ -1193,6 +1188,10 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakeSMC.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "AppleMCEReporterDisabler.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "AppleIntelI210Ethernet.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "USBWakeFixup.kext"_XS8, pos);
+//    pos = setKextAtPos(&kextArray, "FeatureUnlock.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IOSkywalkFamily.kext"_XS8, pos);
@@ -1203,7 +1202,6 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
     pos = setKextAtPos(&kextArray, "SMCProcessor.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "USBPorts.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "VoodooGPIO.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "VoodooI2CServices.kext"_XS8, pos);
@@ -1220,6 +1218,8 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "corecaptureElCap.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "IO80211ElCap.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AirPortAtheros40.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "SMCProcessorAMD.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
 
     for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
       const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
@@ -1388,7 +1388,7 @@ void LOADER_ENTRY::StartLoader()
         memset(mOpenCoreConfiguration.Kernel.Block.Values[0], 0, mOpenCoreConfiguration.Kernel.Block.ValueSize);
         mOpenCoreConfiguration.Kernel.Block.Values[0]->Enabled = 1;
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "");
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment, "Allow IOSkywalk Downgrade");
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel, "");
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel, "23");
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier, "com.apple.iokit.IOSkywalkFamily");
