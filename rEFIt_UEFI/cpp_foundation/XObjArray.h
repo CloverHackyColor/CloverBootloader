@@ -110,6 +110,14 @@ class XObjArrayNC
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	TYPE &operator[](IntegralType nIndex) { return ElementAt(nIndex); }
 
+	size_t indexOf(TYPE& e) const {
+    size_t i;
+    for ( i=0 ; i<size() ; i+=1 ) {
+        if ( &ElementAt(i) == &e ) return i;
+    }
+    return MAX_XSIZE;
+  }
+
   bool operator==(const XObjArrayNC<TYPE>& other) const
   {
     if ( size() != other.size() ) return false;

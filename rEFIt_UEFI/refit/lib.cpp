@@ -584,16 +584,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     Volume->DevicePathString = FileDevicePathToXStringW(Volume->DevicePath);
   }
   
-#if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
     DBG(" %ls\n", FileDevicePathToXStringW(Volume->DevicePath).wc_str());
-    //#if REFIT_DEBUG >= 2
-    //    DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
-    //#endif
   }
-#else
-    DBG("\n");
-#endif
   
   Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtract(Volume->DevicePath); // NullXString8 if it's not an APFS volume
   Volume->DiskKind = DISK_KIND_INTERNAL;  // default
@@ -996,6 +989,10 @@ void ScanVolumes(void)
     Volume->Hidden = false; // default to not hidden
     
     Status = ScanVolume(Volume);
+#ifdef JIEF_DEBUG
+  DBG("          kind=%d\n", Volume->DiskKind);
+#endif
+
     if (!EFI_ERROR(Status)) {
       Volume->Index = HandleIndex;
       Volumes.AddReference(Volume, true);

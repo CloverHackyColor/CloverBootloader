@@ -2519,6 +2519,8 @@ INTN FindDefaultEntry(void)
 //  DBG("FindDefaultEntry ...\n");
   //DbgHeader("FindDefaultEntry");
 
+  if ( gSettings.Boot.BootFirstAvailable ) return 0;
+
   //
   // try to detect volume set by Startup Disk or previous Clover selection
   // with broken nvram this requires emulation to be installed.
@@ -3379,7 +3381,7 @@ displayFreeMemory("Before RunMainMenu"_XS8);
 #endif
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
- //   DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+//      DBG("exit from MainMenu %llu  ChosenEntry=%zu\n", MenuExit, MainMenu.Entries.indexOf(*ChosenEntry)); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       gSettings.Boot.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {

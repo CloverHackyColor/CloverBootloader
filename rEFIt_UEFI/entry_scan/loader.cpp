@@ -2406,7 +2406,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     }
 
     if (Custom.settings.VolumeType != 0 && ((1<<Volume->DiskKind) & Custom.settings.VolumeType) == 0) {
-      DBG("skipped because media is ignored\n");
+      DBG("skipped because media is ignored (VolumeType=%d DiskKind=%d)\n", Custom.settings.VolumeType, Volume->DiskKind);
       continue;
     }
     
