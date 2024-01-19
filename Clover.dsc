@@ -227,7 +227,7 @@
   #OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   OcAcpiLib|OpenCorePkg/Library/OcAcpiLib/OcAcpiLib.inf
   OcAppleEventLib|OpenCorePkg/Library/OcAppleEventLib/OcAppleEventLib.inf
-  OcAudioLib|OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf
+#  OcAudioLib|OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf
   OcBlitLib|OpenCorePkg/Library/OcBlitLib/OcBlitLib.inf
   OcInputLib|OpenCorePkg/Library/OcInputLib/OcInputLib.inf
   OcAppleUserInterfaceThemeLib|OpenCorePkg/Library/OcAppleUserInterfaceThemeLib/OcAppleUserInterfaceThemeLib.inf
@@ -497,10 +497,10 @@
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
   }
-  OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf {
-    <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
-  }
+#  OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf {
+#    <BuildOptions>
+#      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+#  }
   OpenCorePkg/Library/OcBlitLib/OcBlitLib.inf {
     <BuildOptions>
       *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
