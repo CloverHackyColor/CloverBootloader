@@ -978,7 +978,7 @@ XBool setup_gma_devprop(const MacOsVersion& macOSVersion, const XString8& BuildV
   DevPropDevice   *device = NULL;
   UINT8           BuiltIn = 0x00;
   UINT32          FakeID;
-//  UINT32          DualLink = 1;
+  UINT32          DualLink = 1;
 //  UINT64          os_version = AsciiOSVersionToUint64(macOSVersion);
   XBool           SetUGAWidth = false;
   XBool           SetUGAHeight = false;
