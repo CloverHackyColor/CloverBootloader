@@ -16,7 +16,7 @@
 
 #include "device_inject.h"
 
-#define IGPU_LESS 1
+#define IGPU_LESS 0
 
 /*
  ============== Information ===============
