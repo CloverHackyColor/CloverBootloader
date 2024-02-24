@@ -1446,7 +1446,7 @@ void LOADER_ENTRY::StartLoader()
         DBG("Error when loading '%ls' : Status %s.\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
       }
     }else{
-      DBG("No OpenRuntime driver. This is ok, OpenRuntime is not mandatory.\n");
+      DBG("No OpenRuntime driver. This is wrong, OpenRuntime is mandatory.\n");
     }
 
     OcMain(&mOpenCoreStorage, NULL);
