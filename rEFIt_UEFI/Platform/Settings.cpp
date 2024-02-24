@@ -691,7 +691,7 @@ SetDevices (LOADER_ENTRY *Entry)
               if (gSettings.Graphics.RadeonDeInit) {
                 for (j = 0; j < gConf.GfxPropertiesArrayNonConst.size(); j++) {
                   if (gConf.GfxPropertiesArrayNonConst[j].Handle == PCIdevice.DeviceHandle) {
-                    SetMem((void*)gConf.GfxPropertiesArrayNonConst[j].Mmio, 100, 0);
+                    SetMem((void*)(gConf.GfxPropertiesArrayNonConst[j].Mmio + 0x6800), 0x800, 0);
                     *(UINT32*)(gConf.GfxPropertiesArrayNonConst[j].Mmio + 0x6848) = 0; //EVERGREEN_GRPH_FLIP_CONTROL, 1<<0 SURFACE_UPDATE_H_RETRACE_EN
                     *(UINT32*)(gConf.GfxPropertiesArrayNonConst[j].Mmio + 0x681C) = 0; //EVERGREEN_GRPH_PRIMARY_SURFACE_ADDRESS_HIGH
                     *(UINT32*)(gConf.GfxPropertiesArrayNonConst[j].Mmio + 0x6820) = 0; //EVERGREEN_GRPH_SECONDARY_SURFACE_ADDRESS_HIGH
