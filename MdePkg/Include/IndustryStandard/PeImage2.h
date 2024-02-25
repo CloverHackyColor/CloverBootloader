@@ -505,6 +505,12 @@ typedef struct {
 #define EFI_IMAGE_REL_BASED_RISCV_LOW12I    7
 #define EFI_IMAGE_REL_BASED_RISCV_LOW12S    8
 
+//
+// Relocation types of LoongArch processor.
+//
+#define EFI_IMAGE_REL_BASED_LOONGARCH32_MARK_LA  8
+#define EFI_IMAGE_REL_BASED_LOONGARCH64_MARK_LA  8
+
 ///
 /// Line number format.
 ///

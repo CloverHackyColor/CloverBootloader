@@ -34,6 +34,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #define IMAGE_FILE_MACHINE_X64             0x8664
 #define IMAGE_FILE_MACHINE_ARMTHUMB_MIXED  0x01c2
 #define IMAGE_FILE_MACHINE_ARM64           0xAA64
+#define IMAGE_FILE_MACHINE_RISCV32         0x5032
+#define IMAGE_FILE_MACHINE_RISCV64         0x5064
+#define IMAGE_FILE_MACHINE_RISCV128        0x5128
+#define IMAGE_FILE_MACHINE_LOONGARCH32     0x6232
+#define IMAGE_FILE_MACHINE_LOONGARCH64     0x6264
+
 
 //
 // EXE file formats
@@ -492,6 +498,19 @@ typedef struct {
 #define EFI_IMAGE_REL_BASED_IA64_IMM64      9
 #define EFI_IMAGE_REL_BASED_MIPS_JMPADDR16  9
 #define EFI_IMAGE_REL_BASED_DIR64           10
+
+///
+/// Relocation types of RISC-V processor.
+///
+#define EFI_IMAGE_REL_BASED_RISCV_HI20      5
+#define EFI_IMAGE_REL_BASED_RISCV_LOW12I    7
+#define EFI_IMAGE_REL_BASED_RISCV_LOW12S    8
+
+//
+// Relocation types of LoongArch processor.
+//
+#define EFI_IMAGE_REL_BASED_LOONGARCH32_MARK_LA  8
+#define EFI_IMAGE_REL_BASED_LOONGARCH64_MARK_LA  8
 
 ///
 /// Line number format.
