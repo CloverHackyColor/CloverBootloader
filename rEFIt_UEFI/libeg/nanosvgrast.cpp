@@ -520,7 +520,7 @@ static void nsvg__squareCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right
 }
 
 #ifndef NSVG_PI
-#define NSVG_PI (3.14159265358979323846264338327f)
+const float NSVG_PI = 3.141592653589793f;
 #endif
 
 static void nsvg__roundCap(NSVGrasterizer* r, NSVGpoint* left, NSVGpoint* right, NSVGpoint* p, float dx, float dy, float lineWidth, int ncap, int connect)

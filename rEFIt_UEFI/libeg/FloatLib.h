@@ -8,12 +8,12 @@
 #ifndef FloatLib_h
 #define FloatLib_h
 
-#define PI (3.1415926536f)
-#define PI2 (6.283185307179586f)
-#define PI5 (1.570796326794897f)
-#define PI4 (0.78539816339745f)
-#define FLT_MAX (1.0e38f)
-#define FLT_MIN (1.0e-37f)
+const float PI = 3.1415926536f;
+const float PI2 = 6.283185307179586f;
+const float PI5 = 1.570796326794897f;
+const float PI4 = 0.78539816339745f;
+const float FLT_MAX = 1.0e38f;
+const float FLT_MIN = 1.0e-37f;
 
 float SqrtF(float X);
 float PowF(float X, INTN N);
