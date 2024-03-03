@@ -1,7 +1,7 @@
 
 # CloverBootloader
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
-### Read the DOC [Clover-Documentaion](https://github.com/chris1111/Clover-Documentaion) / [Clover-Documentaion-HTML](https://chris1111.github.io/Clover-Documentaion/)
+### Read the DOC [Clover-Documentaion](https://github.com/CloverHackyColor/Clover-Documentaion) / [Clover-Documentaion-HTML](https://cloverhackycolor.github.io/Clover-Documentaion/)
 
 # Features
 
