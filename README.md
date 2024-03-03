@@ -1,9 +1,12 @@
 
 # CloverBootloader
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
+### Read the DOC [Clover-Documentaion](https://github.com/CloverHackyColor/Clover-Documentaion) / [Clover-Documentaion-HTML](https://cloverhackycolor.github.io/Clover-Documentaion/)
+
 # Features
 
-- Boot macOS, Windows, and Linux in UEFI or legacy mode on Mac or PC with UEFI or BIOS firmware
+- Boot macOS, Windows, and Linux in UEFI
+-  or legacy mode on Mac or PC with UEFI or BIOS firmware
 - Boot using UEFI firmware directly or CloverEFI UEFI firmware emulation
 - Customizable GUI including themes, icons, fonts, background images, animations, and mouse pointers.
 - Theme manager and theme repository at https://github.com/CloverHackyColor/CloverThemes
@@ -26,13 +29,18 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Launch EFI command shell from GUI
 - Startup sound controlled by **F8** and checked by **F7**
 
-# Building from Source
+### Developers:
 
-```bash
-mkdir -p $HOME/src && cd $HOME/src
-git clone -q https://github.com/CloverHackyColor/CloverBootloader
-cd CloverBootloader && git submodule update --init --recursive
-cd OpenCorePkg && git checkout master && git pull
-cd ..
-./buildme
-```
+*   Slice, with help of Kabyl, usr-sse2, jadran, Blackosx, dmazar, STLVNUB, pcj, apianti, JrCs, pene, FrodoKenny, skoczy, ycr.ru, Oscar09, xsmile, SoThOr, rehabman, Download-Fritz, nms42, Sherlocks, Zenit432, cecekpawon, stinga11, TheRacerMaster, solstice, Micky1979, Needy, joevt, ErmaC, vit9696, ath, savvas, syscl, goodwin\_c, clovy, jief\_machak, chris1111, vector\_sigma, LAbyOne, Florin9doi.
+    
+    ### Source code credits to:
+    Intel, Apple, Oracle, Chameleon, rEFIt and Xom, nanosvg.
+    
+    ### Packages credits to :
+    Chameleon team, crazybirdy, JrCs, chris1111.
+    
+    ### Clover is open source based on different projects :    
+*   Clover, rEFIt, XNU, VirtualBox. [The main is EDK2 latest revision](https://github.com/CloverHackyColor/CloverBootloader)
+*   Recent developments and changes in details at [Clover Change Explanations](https://www.insanelymac.com/forum/topic/304530-clover-change-explanations/)
+*   Support forum discussion [AppleLife](https://applelife.ru/threads/clover.42089/) (Russian) [Insanelymac](https://www.insanelymac.com/forum/topic/284656-clover-general-discussion/) (English) [macos86.it](https://www.macos86.it/forum/46-clover/) (Italian)
+---------------------------------------------------------
