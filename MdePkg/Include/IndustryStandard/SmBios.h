@@ -733,7 +733,32 @@ typedef enum {
   ProcessorFamilyVideoProcessor        = 0x01F4,
   ProcessorFamilyRiscvRV32             = 0x0200,
   ProcessorFamilyRiscVRV64             = 0x0201,
-  ProcessorFamilyRiscVRV128            = 0x0202
+  ProcessorFamilyRiscVRV128            = 0x0202,
+  ProcessorFamilyLoongArch             = 0x0258,
+    ProcessorFamilyLoongson1           = 0x0259,
+    ProcessorFamilyLoongson2           = 0x025A,
+    ProcessorFamilyLoongson3           = 0x025B,
+    ProcessorFamilyLoongson2K          = 0x025C,
+    ProcessorFamilyLoongson3A          = 0x025D,
+    ProcessorFamilyLoongson3B          = 0x025E,
+    ProcessorFamilyLoongson3C          = 0x025F,
+    ProcessorFamilyLoongson3D          = 0x0260,
+    ProcessorFamilyLoongson3E          = 0x0261,
+    ProcessorFamilyDualCoreLoongson2K  = 0x0262,
+    ProcessorFamilyQuadCoreLoongson3A  = 0x026C,
+    ProcessorFamilyMultiCoreLoongson3A = 0x026D,
+    ProcessorFamilyQuadCoreLoongson3B  = 0x026E,
+    ProcessorFamilyMultiCoreLoongson3B = 0x026F,
+    ProcessorFamilyMultiCoreLoongson3C = 0x0270,
+    ProcessorFamilyMultiCoreLoongson3D = 0x0271,
+    ProcessorFamilyIntelCore3          = 0x0300,
+    ProcessorFamilyIntelCore5          = 0x0301,
+    ProcessorFamilyIntelCore7          = 0x0302,
+    ProcessorFamilyIntelCore9          = 0x0303,
+    ProcessorFamilyIntelCoreUltra3     = 0x0304,
+    ProcessorFamilyIntelCoreUltra5     = 0x0305,
+    ProcessorFamilyIntelCoreUltra7     = 0x0306,
+    ProcessorFamilyIntelCoreUltra9     = 0x0307
 } PROCESSOR_FAMILY2_DATA;
 
 ///

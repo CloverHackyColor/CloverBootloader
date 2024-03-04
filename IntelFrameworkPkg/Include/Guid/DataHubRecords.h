@@ -585,7 +585,15 @@ typedef enum {
   EfiProcessorFamilyMii           = 0x12E,
   EfiProcessorFamilyWinChip       = 0x140,
   EfiProcessorFamilyDsp           = 0x15E,
-  EfiProcessorFamilyVideo         = 0x1F4
+  EfiProcessorFamilyVideo         = 0x1F4,
+  EfiProcessorFamilyIntelCore3          = 0x0300,
+  EfiProcessorFamilyIntelCore5          = 0x0301,
+  EfiProcessorFamilyIntelCore7          = 0x0302,
+  EfiProcessorFamilyIntelCore9          = 0x0303,
+  EfiProcessorFamilyIntelCoreUltra3     = 0x0304,
+  EfiProcessorFamilyIntelCoreUltra5     = 0x0305,
+  EfiProcessorFamilyIntelCoreUltra7     = 0x0306,
+  EfiProcessorFamilyIntelCoreUltra9     = 0x0307
 } EFI_PROCESSOR_FAMILY2_DATA;
 
 ///
