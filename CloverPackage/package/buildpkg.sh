@@ -1418,6 +1418,7 @@ fi
 # build BootLoaderChooser
 if [[ -d "${SRCROOT}"/BootLoaderChooser && ${NOEXTRAS} != *"BootLoaderChooser"* ]]; then
     echo "===================== BootLoaderChooser ====================="
+    BLC_Dir="${SRCROOT}/BootLoaderChooser"
     local BLC_Dir="${SRCROOT}"/BootLoaderChooser
     local BLC_Dest='/EFI/BOOT'
     
@@ -1431,11 +1432,17 @@ if [[ -d "${SRCROOT}"/BootLoaderChooser && ${NOEXTRAS} != *"BootLoaderChooser"* 
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        BootLoaderChooser
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
+
+      if [ -d "$BLC_Dir" ]; then
         addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
                   --pkg-refs="$packageRefId" "${choiceId}"
-    else
-        addChoice --start-visible="true" --start-selected="false"  \
+                  echo "   **** Option usable with buildme only ****"
+      else
+
+        addChoice --start-visible="false" --start-selected="false"  \
                   --pkg-refs="$packageRefId" "${choiceId}"
+      fi
+
 # End BootLoaderChooser
 fi
 
