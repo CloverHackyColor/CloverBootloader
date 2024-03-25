@@ -94,7 +94,7 @@ fnDownloadNasm ()
     local tarball="nasm-${NASM_VERSION}.tar.xz"
     if [[ ! -f "$tarball" ]]; then
         echo "Status: $tarball not found."
-        curl -f -o download.tmp --remote-name -k https://ftp.osuosl.org/pub/blfs/conglomeration/nasm/$tarball || exit 1
+        curl -k -f -o download.tmp --remote-name https://ftp2.osuosl.org/pub/blfs/conglomeration/nasm/$tarball || exit 1
         mv download.tmp $tarball
     fi
 }
