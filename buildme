@@ -34,7 +34,7 @@ tell application "Terminal"
 #	set font name of window 1 to "Monaco"
 #	set font size of window 1 to "11"
 #	set normal text color of window 1 to {3341, 35186, 50092}
-	set position of first window to {650, 420}
+#	set position of first window to {650, 420}
 end tell
 EOF
 # ====== Clover workspace SetUp ======

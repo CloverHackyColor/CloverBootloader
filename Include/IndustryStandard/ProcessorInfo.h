@@ -213,9 +213,12 @@ enum {
 #define CPU_SOCKET_LGA1366  0x19
 
 #define AMD_CPU_FAMILY          0xF
+#define AMD_CPU_EXT_FAMILY_0FH  0x0
+#define AMD_CPU_EXT_FAMILY_10H  0x1
 #define AMD_CPU_EXT_FAMILY_15H  0x6
 #define AMD_CPU_EXT_FAMILY_16H  0x7
 #define AMD_CPU_EXT_FAMILY_17H  0x8
+#define AMD_CPU_EXT_FAMILY_19H  0xA
 
 // CPU_P_STATE_COORDINATION
 /// P-State Coordination
