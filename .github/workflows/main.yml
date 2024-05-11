@@ -27,6 +27,8 @@ jobs:
       - name: Build Clover Pack
         run: |
           chmod +x ./buildme
+          chmod +x ./Clover_Duet.command
+          cp -rf ./Clover_Duet.command ./CloverPackage/CloverV2/
           ./buildme "" ci
       - name: Prepare Release Packs
         run: |
