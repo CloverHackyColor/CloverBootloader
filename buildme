@@ -120,9 +120,9 @@ checkTools() {
 if [[ "$SYSNAME" == Darwin ]]; then
   checkXCODE
   exportPaths
-  local GCC131_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
-  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC131_BIN}" ]]; then
-    if [[ $MYTOOLCHAIN == GCC131 ]]; then
+  local GCC141_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
+  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC141_BIN}" ]]; then
+    if [[ $MYTOOLCHAIN == GCC141 ]]; then
       cd "${CLOVERROOT}"
       ./build_gcc13.sh
     else
