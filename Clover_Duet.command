@@ -9,7 +9,6 @@ rm -rf ./boot*
 Sleep 1
 cp -Rp ./Bootloaders/x64/{boot6,boot7} ./
 cp -Rp ./BootSectors/{boot0af,boot1f32} ./
-
 # Install Clover booter on physical disk.
 
 #get BOOT File
