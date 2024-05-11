@@ -16,7 +16,7 @@ OSXVER="`/usr/bin/sw_vers -productVersion | cut -d '.' -f1,2`"
 if [[ ${OSXVER} < 10.15 ]]; then
 	export CCTOOLS_VERSION=${CCTOOLS_VERSION:-cctools-994.1}
 else
-	export CCTOOLS_VERSION=${CCTOOLS_VERSION:-cctools-986}
+	export CCTOOLS_VERSION=${CCTOOLS_VERSION:-cctools-994.1}
 fi
 # Change PREFIX if you want mtoc installed on different place
 #
