@@ -197,7 +197,7 @@ fnCompileMtoc ()
 		if [[ ${OSXVER} < 10.15 ]]; then
 			cmd="(make LTO= EFITOOLS=efitools -C libstuff) && (make -C efitools)"
 		else
-			cmd="(xcodebuild -scheme mtoc -configuration Release ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$PREFIX/bin)"
+			cmd="(xcodebuild -scheme mtoc -configuration Release ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$PREFIX/bin)"
 		fi
     logfile="$DIR_LOGS/mtoc.make.log.txt"
     echo "$cmd" > "$logfile"
