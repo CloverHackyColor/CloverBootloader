@@ -841,10 +841,16 @@ public:
 	explicit XStringAbstract(const LString<T, OtherLStringClass, typename OtherLStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(S.s()), m_allocatedSize(0) {}
 	
 	template<typename O, class OtherXStringClass>
-	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const XStringAbstract<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
-	template<typename O, class OtherXStringClass>
-	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const LString<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
-// TEMPORARILY DISABLED
+	// changed for gcc-14
+//	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const XStringAbstract<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+//	template<typename O, class OtherXStringClass>
+//	explicit XStringAbstract<T, ThisXStringClass, ThisLStringClass>(const LString<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+  explicit XStringAbstract(const XStringAbstract<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, ThisLStringClass>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+  template<typename O, class OtherXStringClass>
+  explicit XStringAbstract(const LString<O, OtherXStringClass, typename OtherXStringClass::ls_t>& S) : __String<T, ThisXStringClass, typename ThisXStringClass::ls_t>(&nullChar), m_allocatedSize(0) { takeValueFrom(S); }
+
+
+	// TEMPORARILY DISABLED
 //	template<typename O>
 //	explicit __String<T, ThisXStringClass>(const O* S) { Init(0); takeValueFrom(S); }
 //

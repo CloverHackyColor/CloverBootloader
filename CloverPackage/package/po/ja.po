@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-03 19:51+0300\n"
+"POT-Creation-Date: 2024-03-30 12:26+0300\n"
 "PO-Revision-Date: 2018-10-02 11:41+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: \n"
@@ -1035,18 +1035,19 @@ msgid ""
 "The first time, you'll get the menu. Choose one bootloader.\n"
 "The next times, it'll immediately load the bootloader you chose before.\n"
 "When you need the menu back, just boot your computer with a key pressed.\n"
+"INSTALL ONLY FROM BUILDME !!!\n"
 "INSTALL ONLY IF YOU KNOW WHAT YOU ARE DOING !!!\n"
 "More infos https://github.com/jief666/BootloaderChooser. "
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_title"
-#: Resources/templates/Localizable.strings:231
+#: Resources/templates/Localizable.strings:232
 #, no-wrap
 msgid "CloverConfigPlistValidator"
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_description"
-#: Resources/templates/Localizable.strings:232
+#: Resources/templates/Localizable.strings:233
 #, no-wrap
 msgid ""
 "CloverConfigPlistValidator by jief,\n"
@@ -1055,13 +1056,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:239
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:241
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1071,43 +1072,43 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:242
+#: Resources/templates/Localizable.strings:243
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:243
+#: Resources/templates/Localizable.strings:244
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:244
+#: Resources/templates/Localizable.strings:245
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:245
+#: Resources/templates/Localizable.strings:246
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:246
+#: Resources/templates/Localizable.strings:247
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:251
+#: Resources/templates/Localizable.strings:252
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:252
+#: Resources/templates/Localizable.strings:253
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

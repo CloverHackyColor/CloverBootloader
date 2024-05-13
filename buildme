@@ -10,7 +10,7 @@
 
 # $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
 # ====== COLORS ======
-COL_BLACK="\x1b[30;01m"
+COL_BLACK="\x1b[40;01m"
 COL_RED="\x1b[31;01m"
 COL_GREEN="\x1b[32;01m"
 COL_YELLOW="\x1b[33;01m"

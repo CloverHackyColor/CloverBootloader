@@ -33,8 +33,11 @@ class XmlArray : public XmlAbstractType, public XObjArray<T>
 //    XObjArray<T> array = XObjArray<T>();
 
   public:
-    XmlArray<T>() {}
-    virtual ~XmlArray<T>() {}
+    // changed for gcc-14
+//    XmlArray<T>() {}
+//    virtual ~XmlArray<T>() {}
+    XmlArray() {}
+    virtual ~XmlArray() {}
 
     virtual const char* getDescription() override { return "array"; };
     virtual void reset() override { super1::reset(); super2::setEmpty(); };
