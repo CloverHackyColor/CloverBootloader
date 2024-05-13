@@ -20,6 +20,7 @@ COL_WHITE="\x1b[37;01m"
 COL_BLUE="\x1b[34;01m"
 COL_RESET="\x1b[39;49;00m"
 # ====== Main Window SetUp ======
+if [[ "$2" != ci ]]; then
 osascript <<EOF
 tell application "System Events" to tell application "Finder"
 	tell process "Terminal"
@@ -37,6 +38,7 @@ tell application "Terminal"
 #	set position of first window to {650, 420}
 end tell
 EOF
+fi
 # ====== Clover workspace SetUp ======
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
