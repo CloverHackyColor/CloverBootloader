@@ -1,5 +1,7 @@
 
-# CloverBootloader
+# CloverBootloader 
+![Github Actions](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg?branch=main)
+
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 ### Read the DOC [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover-Documentation Site](https://cloverhackycolor.github.io/Clover-Documentation/)
 
