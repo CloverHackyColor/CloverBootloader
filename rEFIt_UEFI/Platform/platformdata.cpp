@@ -66,6 +66,8 @@
  GFX0+IGPU+display
  Mac-7BA5B2D9E42DDD94 iMacPro1,1 Vega 56, no IGPU
  
+ VMWare
+ VMM-x86_64
  */
 
 // for HWTarget recommended values for T2 models (by Gradou)

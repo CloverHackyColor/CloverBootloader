@@ -761,8 +761,9 @@ public:
   SmbiosDictClass SMBIOS_monterey = SmbiosDictClass();
   SmbiosDictClass SMBIOS_ventura = SmbiosDictClass();
   SmbiosDictClass SMBIOS_sonoma = SmbiosDictClass();
+  SmbiosDictClass SMBIOS_fifteen = SmbiosDictClass();
   
-  XmlDictField m_fields[14] = {
+  XmlDictField m_fields[15] = {
     {"SMBIOS", SMBIOS},
     {"SMBIOS_lion", SMBIOS_lion},
     {"SMBIOS_cougar", SMBIOS_cougar},
@@ -777,6 +778,7 @@ public:
     {"SMBIOS_monterey", SMBIOS_monterey},
     {"SMBIOS_ventura", SMBIOS_ventura},
     {"SMBIOS_sonoma", SMBIOS_sonoma},
+    {"SMBIOS_fifteen", SMBIOS_fifteen},
   };
 
 public:
