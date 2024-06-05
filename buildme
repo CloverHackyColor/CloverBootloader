@@ -846,8 +846,9 @@ done
 Extra
 }
 
-menu() 
+menu() {
 #clear
+echo
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
 if [[ ! -x "$(which python3)" ]]; then
 	echo -e " ${pynone}"
