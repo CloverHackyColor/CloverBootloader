@@ -599,16 +599,17 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
 void ConfigManager::ReloadSmbios(XStringW& str)
 {
   size_t N = SmbiosList.size();
-  if (OldChosenSmbios == 0) {
+  if (OldChosenSmbios == 0) {  // this is auto fill by OSName
     for (size_t i=1; i<N; i++) {
       if (SmbiosList[i].contains(str)) {
         OldChosenSmbios = i;
         break;
       }
     }
+    FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+    DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
   }
-  FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
-  DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+
 }
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)

@@ -101,6 +101,7 @@ XBool gResetSMC = false;
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
 extern ConfigManager gConf;
 
+
 void FillInputs(XBool New)
 {
   UINTN i,j; //for loops
@@ -790,6 +791,7 @@ void ApplyInputs(void)
     if (Model != MaxMacModel) {
       GlobalConfig.CurrentModel = Model;
       SetDMISettingsForModel(Model, &gSettings);
+      FillInputs(false);
     }
   }
 

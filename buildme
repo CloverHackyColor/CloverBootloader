@@ -126,7 +126,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC131_BIN}" ]]; then
     if [[ $MYTOOLCHAIN == GCC131 ]]; then
       cd "${CLOVERROOT}"
-      ./build_gcc13.sh
+      ./build_gcc14.sh
     else
       MYTOOLCHAIN=XCODE8
     fi
@@ -264,7 +264,7 @@ BLC() {
 if [[ ! -d "${CLOVERROOT}"/CloverPackage/BootLoaderChooser ]]; then
   mkdir -p "${CLOVERROOT}"/CloverPackage/BootLoaderChooser
 fi
-curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/0.5/BootX64.efi > "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
+curl -sLq https://github.com/jief666/BootloaderChooser/releases/download/1.4/BootX64.efi  > "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
 chmod 775 "${CLOVERROOT}"/CloverPackage/BootLoaderChooser/BootX64.efi
 }
 
@@ -846,7 +846,7 @@ done
 Extra
 }
 
-menu() {
+menu() 
 #clear
 echo
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
