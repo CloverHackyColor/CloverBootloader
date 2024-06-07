@@ -8,7 +8,7 @@ on:
 jobs:
   build-macos:
     name: Build Clover Release
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
