@@ -55,12 +55,11 @@
 //these functions used for icns, not with png
 void egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
 {
-  UINTN i;
   if (!SrcDataPtr || !DestPlanePtr) {
     return;
   }
   
-  for (i = 0; i < PixelCount; i++) {
+  for (UINTN i = 0; i < PixelCount; i++) {
     *DestPlanePtr = *SrcDataPtr++;
     DestPlanePtr += 4;
   }
@@ -68,12 +67,11 @@ void egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelC
 
 void egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount)
 {
-  UINT64 i;
   if (!DestPlanePtr) {
     return;
   }
   
-  for (i = 0; i < PixelCount; i++) {
+  for (UINT64 i = 0; i < PixelCount; i++) {
     *DestPlanePtr = Value;
     DestPlanePtr += 4;
   }
@@ -81,12 +79,11 @@ void egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount)
 
 void egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount)
 {
-  UINTN i;
   if (!SrcPlanePtr || !DestPlanePtr) {
     return;
   }
   
-  for (i = 0; i < PixelCount; i++) {
+  for (UINTN i = 0; i < PixelCount; i++) {
     *DestPlanePtr = *SrcPlanePtr;
     DestPlanePtr += 4; SrcPlanePtr += 4;
   }
@@ -103,7 +100,7 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
     UINT8 *cp_end;
     UINT8 *pp;
     UINTN pp_left;
-    UINTN len, i;
+    UINTN len;
     UINT8 value;
     
     // setup variables
@@ -120,7 +117,7 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
             if (len > pp_left)
                 break;
             value = *cp++;
-            for (i = 0; i < len; i++) {
+            for (UINTN i = 0; i < len; i++) {
                 *pp = value;
                 pp += 4;
             }
@@ -128,7 +125,7 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
             len++;
             if (len > pp_left || cp + len > cp_end)
                 break;
-            for (i = 0; i < len; i++) {
+            for (UINTN i = 0; i < len; i++) {
                 *pp = *cp++;
                 pp += 4;
             }

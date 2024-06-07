@@ -87,6 +87,8 @@ public:
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
   EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);
   EFI_STATUS FromICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize);
+  EFI_STATUS FromBMP(UINT8 * Data, UINTN Length);
+  EFI_STATUS ToBMP(UINT8** FileDataReturn, UINTN& FileDataLengthReturn);
 
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);

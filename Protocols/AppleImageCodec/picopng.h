@@ -74,7 +74,7 @@ typedef struct {
 
 EG_IMAGE *egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha);
 EG_IMAGE *egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
-EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha);
+EG_IMAGE *egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha);
 
 VOID      egFreeImage(IN EG_IMAGE *Image);
 EG_IMAGE *egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha);

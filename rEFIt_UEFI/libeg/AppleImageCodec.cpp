@@ -53,7 +53,7 @@ struct EFI_RES {
  Num=20
  1. avatar.png Offset=0x05EC (LittleEndian) Size=0x2DAF Offset+Size=0x339B
  2. avatar@2x.png Offset=0x339C (!) Aligned Size=0x8432 End=0xB7CE
- 3. Offset=0xB7CD = 0x339B+0x8432 Not alinged(!!!) File=0xB7CE Aligned
+ 3. Offset=0xB7CD = 0x339B+0x8432 Not aligned(!!!) File=0xB7CE Aligned
  */
 
 XImage egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength)
@@ -65,6 +65,11 @@ XImage egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength)
   if (NewXImage.isEmpty()) {
      DBG(" ..png is wrong try to decode icns\n");
      NewXImage.FromICNS(FileData, FileDataLength, 128);
+  }
+
+  if (NewXImage.isEmpty()) {
+    DBG(" ..png is wrong try to decode bmp\n");
+    NewXImage.FromBMP(FileData, FileDataLength);
   }
 
   return NewXImage;

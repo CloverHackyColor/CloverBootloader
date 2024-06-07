@@ -381,6 +381,7 @@ void XImage::FlipRB()
   }
 }
 
+
 /*
  * The function converted plain array into XImage object
  * Error = 0 - Success
@@ -628,6 +629,7 @@ EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const wchar_t* LIconName)
 {
   return LoadXImage(BaseDir, XStringW().takeValueFrom(LIconName));
 }
+
 //dont call this procedure for SVG theme BaseDir == NULL?
 //it can be used for other files
 EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const XString8& IconName)

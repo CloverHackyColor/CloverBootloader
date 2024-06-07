@@ -181,6 +181,7 @@
   libeg/load_icns.cpp
   libeg/lodepng.cpp
   libeg/lodepng.h
+  libeg/load_bmp.cpp
   libeg/nanosvg.cpp
   libeg/nanosvg.h
   libeg/nanosvgrast.cpp
