@@ -212,7 +212,7 @@ GetEsrtFwType (
   //
   Status = EfiGetSystemConfigurationTable(&gEfiSystemResourceTableGuid, (VOID **)&Esrt);
   if (!EFI_ERROR(Status)) {
-    ASSERT(Esrt != NULL);
+//    ASSERT(Esrt != NULL);
     EsrtEntry = (VOID *)(Esrt + 1);
     for (Index = 0; Index < Esrt->FwResourceCount; Index++, EsrtEntry++) {
       if (CompareGuid(&EsrtEntry->FwClass, ImageTypeId)) {

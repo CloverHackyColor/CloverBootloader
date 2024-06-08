@@ -303,9 +303,9 @@ BdsLibUpdateConsoleVariable (
     Status = EFI_SUCCESS;
   }
 //  ASSERT_EFI_ERROR(Status);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
+//  if (EFI_ERROR(Status)) {
+//    return Status;
+//  }
 
   if (VarConsole == NewDevicePath) {
     if (VarConsole != NULL) {
@@ -690,8 +690,8 @@ ConvertBmpToGopBlt (
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *Blt;
   UINT64                        BltBufferSize;
   UINTN                         Index;
-  UINTN                         Height;
-  UINTN                         Width;
+  //UINTN                         Height;
+  //UINTN                         Width;
   UINTN                         ImageIndex;
 //  UINT32                        DataSizePerLine;
   BOOLEAN                       IsAllocated;
@@ -710,9 +710,10 @@ ConvertBmpToGopBlt (
   //
   // Doesn't support compress.
   //
-  if (BmpHeader->CompressionType != 0) {
-    return EFI_UNSUPPORTED;
-  }
+  //Slice: if CompressionType == 3 then the image is uncompressed!
+//  if (BmpHeader->CompressionType != 0) {
+//    return EFI_UNSUPPORTED;
+//  }
 /*
   //
   // Only support BITMAPINFOHEADER format.
@@ -809,25 +810,29 @@ ConvertBmpToGopBlt (
     }
   }
 
-  *PixelWidth   = BmpHeader->PixelWidth;
-  *PixelHeight  = BmpHeader->PixelHeight;
+  // check bounds
+  INT32 RealPixelHeight = (BmpHeader->PixelHeight > 0 ? BmpHeader->PixelHeight : -BmpHeader->PixelHeight);
+  INT32 RealPixelWidth = (BmpHeader->PixelWidth > 0 ? BmpHeader->PixelWidth : -BmpHeader->PixelWidth);
+
+  *PixelWidth   = RealPixelWidth;
+  *PixelHeight  = RealPixelHeight;
 
   //
   // Convert image from BMP to Blt buffer format
   //
   BltBuffer = *GopBlt;
-  for (Height = 0; Height < BmpHeader->PixelHeight; Height++) {
-    Blt = &BltBuffer[(BmpHeader->PixelHeight - Height - 1) * BmpHeader->PixelWidth];
-    for (Width = 0; Width < BmpHeader->PixelWidth; Width++, Image++, Blt++) {
+  for (INT32 Height = 0; Height < RealPixelHeight; Height++) {
+    Blt = &BltBuffer[(RealPixelHeight - Height - 1) * RealPixelWidth];
+    for (INT32 Width = 0; Width < RealPixelWidth; Width++, Image++, Blt++) {
       switch (BmpHeader->BitPerPixel) {
       case 1:
         //
         // Convert 1-bit (2 colors) BMP to 24-bit color
         //
-        for (Index = 0; Index < 8 && Width < BmpHeader->PixelWidth; Index++) {
-          Blt->Red    = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Red;
-          Blt->Green  = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Green;
-          Blt->Blue   = BmpColorMap[((*Image) >> (7 - Index)) & 0x1].Blue;
+        for (INT32 Index1 = 0; Index1 < 8 && Width < RealPixelWidth; Index1++) {
+          Blt->Red    = BmpColorMap[((*Image) >> (7 - Index1)) & 0x1].Red;
+          Blt->Green  = BmpColorMap[((*Image) >> (7 - Index1)) & 0x1].Green;
+          Blt->Blue   = BmpColorMap[((*Image) >> (7 - Index1)) & 0x1].Blue;
           Blt++;
           Width++;
         }
@@ -844,7 +849,7 @@ ConvertBmpToGopBlt (
         Blt->Red    = BmpColorMap[Index].Red;
         Blt->Green  = BmpColorMap[Index].Green;
         Blt->Blue   = BmpColorMap[Index].Blue;
-        if (Width < (BmpHeader->PixelWidth - 1)) {
+        if (Width < (RealPixelWidth - 1)) {
           Blt++;
           Width++;
           Index       = (*Image) & 0x0f;
@@ -881,12 +886,11 @@ ConvertBmpToGopBlt (
           *GopBlt = NULL;
         }
         return EFI_UNSUPPORTED;
-        break;
       };
 
     }
 
-    ImageIndex = (UINTN) (Image - ImageHeader);
+    ImageIndex = ((UINTN)Image - (UINTN)ImageHeader);
     if ((ImageIndex % 4) != 0) {
       //
       // Bmp Image starts each row on a 32-bit boundary!
@@ -953,7 +957,7 @@ EnableQuietBoot (
   // Try to open GOP first
   //
   Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
-  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet(PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
     //
     // Open GOP failed, try to open UGA
