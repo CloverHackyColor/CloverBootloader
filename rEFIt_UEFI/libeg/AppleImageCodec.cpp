@@ -17,11 +17,12 @@
 #include <Protocol/AppleImageCodecProtocol.h>
 
 #include "XImage.h"
+#include "../Platform/Utils.h"
 
 //#include "picopng.h"
 #include "lodepng.h"
 
-//#define DBG(...) AsciiPrint(__VA_ARGS__);
+//#define DBG(...) DebugLog(1, __VA_ARGS__)
 #define DBG(...)
 
 struct EFI_RES_ENTRY {
@@ -105,7 +106,7 @@ RecognizeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   }
   
   DBG("EFI_SUCCESS\n");
-  DBG(" ImageSize=%d\n", ImageSize);
+  DBG(" ImageSize=%lld\n", ImageSize);
 //  DBG("Decoded: W=%d, H=%d\n", Image.GetWidth(), Image.GetHeight());
   return EFI_SUCCESS;
 }
@@ -132,7 +133,7 @@ GetImageDims (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   *ImageHeight = (UINT32)Image.GetHeight();
   
   DBG("EFI_SUCCESS, Width=%d, Height=%d\n", *ImageWidth, *ImageHeight);
-  DBG("ImageSize=%d\n", ImageSize);
+  DBG("ImageSize=%lld\n", ImageSize);
   return EFI_SUCCESS;
 }
 
@@ -167,11 +168,11 @@ DecodeImageData (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   }
   
   DBG("EFI_SUCCESS, RawImageDataSize=%d\n", *RawImageDataSize);
-//  DBG("ImageBuffer=%p, ImageSize=%d\n", ImageBuffer, ImageSize);
-//  DBG("Decoded: W=%d, H=%d\n", Image->Width, Image->Height);
-//  for (int Index=0; Index<10; Index++) {
-//    DBG("P%d: r,g,b,a= %x, %x, %x, %x\n", Index, (*RawImageData)[Index].Red, (*RawImageData)[Index].Green, (*RawImageData)[Index].Blue, (*RawImageData)[Index].Reserved);
-//  }
+  DBG("ImageBuffer=%p, ImageSize=%lld\n", ImageBuffer, ImageSize);
+  DBG("Decoded: W=%lld, H=%lld\n", Image.GetWidth(), Image.GetHeight());
+  for (int Index=0; Index<10; Index++) {
+    DBG("P%d: r,g,b,a= %x, %x, %x, %x\n", Index, (*RawImageData)[Index].Red, (*RawImageData)[Index].Green, (*RawImageData)[Index].Blue, (*RawImageData)[Index].Reserved);
+  }
 //  egFreeImage(Image);
   return EFI_SUCCESS;
 }

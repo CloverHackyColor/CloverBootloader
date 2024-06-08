@@ -40,6 +40,7 @@
 
 #define DBG(...)
 
+
 // BMP structures
 
 //#pragma pack(1)
@@ -81,7 +82,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   EG_IMAGE            *NewImage;
   BMP_IMAGE_HEADER    *BmpHeader;
   BMP_COLOR_MAP       *BmpColorMap;
-  UINT32               RealPixelHeight, RealPixelWidth;
+  INT32               RealPixelHeight, RealPixelWidth;
   UINT8               *ImagePtr;
   UINT8               *ImagePtrBase;
   UINTN               ImageLineOffset;
@@ -132,7 +133,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
   // convert image
   BmpColorMap = (BMP_COLOR_MAP *)(FileData + sizeof(BMP_IMAGE_HEADER));
   ImagePtrBase = FileData + BmpHeader->ImageOffset;
-  for (UINT32 y = 0; y < RealPixelHeight; y++) {
+  for (INT32 y = 0; y < RealPixelHeight; y++) {
     ImagePtr = ImagePtrBase;
     ImagePtrBase += ImageLineOffset;
     // vertically mirror
@@ -145,7 +146,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
     switch (BmpHeader->BitPerPixel) {
         
       case 1:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           BitIndex = x & 0x07;
           if (BitIndex == 0)
             ImageValue = *ImagePtr++;
@@ -161,8 +162,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         
       case 4:
       {
-        UINT32 x;
-        for (x = 0; x <= RealPixelWidth - 2; x += 2) {
+        for (INT32 x = 0; x <= RealPixelWidth - 2; x += 2) {
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -179,7 +179,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
           PixelPtr->Reserved = AlphaValue;
           PixelPtr++;
         }
-        if (x < RealPixelWidth) {
+        if ((RealPixelWidth & 1) == 1) {
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -192,7 +192,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         break;
       }
       case 8:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           Index = *ImagePtr++;
           PixelPtr->Blue = BmpColorMap[Index].Blue;
           PixelPtr->Green = BmpColorMap[Index].Green;
@@ -203,7 +203,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         break;
         
       case 24:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           PixelPtr->Blue = *ImagePtr++;
           PixelPtr->Green = *ImagePtr++;
           PixelPtr->Red = *ImagePtr++;
@@ -212,13 +212,13 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN W
         }
         break;
       case 32:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           PixelPtr->Blue = *ImagePtr++;
           PixelPtr->Green = *ImagePtr++;
           PixelPtr->Red = *ImagePtr++;
           PixelPtr->Reserved = *ImagePtr++;
-          if (!WantAlpha)
-            PixelPtr->Reserved = 255 - PixelPtr->Reserved;
+ //         if (!WantAlpha)
+ //           PixelPtr->Reserved = 255 - PixelPtr->Reserved;
           PixelPtr++;
         }
         
