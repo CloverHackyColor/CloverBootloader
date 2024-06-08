@@ -752,8 +752,9 @@ void nsvg__deleteParser(NSVGparser* p)
 
     auto text = p->text;
     while ( text ) {
+      auto text1 = text->next;
       nsvg__delete(text, "nsvg__deleteParser3"_XS8);
-      text = text->next;
+      text = text1;
     }
 
     while ( p->attrHead > 0 ) {
