@@ -579,10 +579,10 @@ void XImage::Draw(INTN x, INTN y, float scale) const
 
 void XImage::Draw(INTN x, INTN y, float scale, XBool Opaque) const
 {
-  DBG("draw at %lld %lld\n", x, y);
+//  DBG("draw at %lld %lld\n", x, y);
   //prepare images
   if (isEmpty()) {
-    DBG("emptyimage\n");
+//    DBG("emptyimage\n");
     return;
   }
 
