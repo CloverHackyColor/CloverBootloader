@@ -19,19 +19,19 @@ typedef struct {
 } BMP_COLOR_MAP;
 
 typedef struct {
-  CHAR8         CharB;
-  CHAR8         CharM;
-  UINT32        Size;
-  UINT16        Reserved[2];
-  UINT32        ImageOffset;
-  UINT32        HeaderSize;
-  UINT32        PixelWidth;
-  UINT32        PixelHeight;
-  UINT16        Planes;          ///< Must be 1
-  UINT16        BitPerPixel;     ///< 1, 4, 8, or 24
-  UINT32        CompressionType;
-  UINT32        ImageSize;       ///< Compressed image size in bytes
-  UINT32        XPixelsPerMeter;
+  CHAR8         CharB;  //B
+  CHAR8         CharM;  //M
+  UINT32        Size;   // 8A 44 01 00
+  UINT16        Reserved[2]; // 00 00 00 00
+  UINT32        ImageOffset; // 8A 00 00 00
+  UINT32        HeaderSize;  // 7C 00 00 00
+  INT32        PixelWidth;  // 90 00 00 00
+  INT32        PixelHeight; // 70 FF FF FF
+  UINT16        Planes;          // 01 00  //< Must be 1
+  UINT16        BitPerPixel;     // 20 00  //< 1, 4, 8, or 24
+  UINT32        CompressionType; // 03 00 0000
+  UINT32        ImageSize;       // 00 44 01 00 //< Compressed image size in bytes
+  UINT32        XPixelsPerMeter; //
   UINT32        YPixelsPerMeter;
   UINT32        NumberOfColors;
   UINT32        ImportantColors;

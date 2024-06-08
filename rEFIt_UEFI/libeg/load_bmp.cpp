@@ -34,11 +34,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "libegint.h"
+#include "../Platform/Utils.h"
 #include "XImage.h"
 
 #include <IndustryStandard/Bmp.h>
 //#include "picopng.h"
 
+//#define DBG(...) DebugLog(1, __VA_ARGS__)
 #define DBG(...)
 
 // BMP structures
@@ -83,7 +85,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
 //  EG_IMAGE            *NewImage;
   BMP_IMAGE_HEADER    *BmpHeader;
   BMP_COLOR_MAP       *BmpColorMap;
-  UINT32               RealPixelHeight, RealPixelWidth;
+  INT32               RealPixelHeight, RealPixelWidth;
   UINT8               *ImagePtr;
   UINT8               *ImagePtrBase;
   UINTN               ImageLineOffset;
@@ -95,18 +97,25 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
   // read and check header
   if (FileDataLength < sizeof(BMP_IMAGE_HEADER) || FileData == NULL) {
     setEmpty(); // to be 100% sure
+    DBG("1\n");
     return EFI_NOT_FOUND;
   }
   BmpHeader = (BMP_IMAGE_HEADER *) FileData;
-  if (BmpHeader->CharB != 'B' || BmpHeader->CharM != 'M')
+  if (BmpHeader->CharB != 'B' || BmpHeader->CharM != 'M') {
+    DBG("2\n");
     return EFI_NOT_FOUND;
+  }
   if (BmpHeader->BitPerPixel != 1 && BmpHeader->BitPerPixel != 4 &&
       BmpHeader->BitPerPixel != 8 && BmpHeader->BitPerPixel != 24 &&
-      BmpHeader->BitPerPixel != 32)
+      BmpHeader->BitPerPixel != 32) {
+    DBG("3\n");
     return EFI_NOT_FOUND;
+  }
   // 32-bit images are always stored uncompressed
-  if (BmpHeader->CompressionType > 0 && BmpHeader->BitPerPixel != 32)
+  if (BmpHeader->CompressionType > 0 && BmpHeader->BitPerPixel != 32) {
+    DBG("4\n");
     return EFI_NOT_FOUND;
+  }
   
   // calculate parameters
   ImageLineOffset = BmpHeader->PixelWidth;
@@ -121,11 +130,16 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
   if ((ImageLineOffset % 4) != 0)
     ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset % 4));
   
+  DBG("ImageOffset=%d ImageLineOffset=%lld FileDataLength=%lld\n",
+      BmpHeader->ImageOffset, ImageLineOffset, FileDataLength);
+
   // check bounds
-  RealPixelHeight = BmpHeader->PixelHeight > 0 ? BmpHeader->PixelHeight : -BmpHeader->PixelHeight;
-  RealPixelWidth = BmpHeader->PixelWidth > 0 ? BmpHeader->PixelWidth : -BmpHeader->PixelWidth;
-  if (BmpHeader->ImageOffset + ImageLineOffset * RealPixelHeight > FileDataLength)
+  RealPixelHeight = (BmpHeader->PixelHeight > 0 ? BmpHeader->PixelHeight : -BmpHeader->PixelHeight);
+  RealPixelWidth = (BmpHeader->PixelWidth > 0 ? BmpHeader->PixelWidth : -BmpHeader->PixelWidth);
+  if (BmpHeader->ImageOffset + ImageLineOffset * RealPixelHeight > FileDataLength) {
+    DBG("5 H=%d W=%d\n", RealPixelHeight, RealPixelWidth);
     return EFI_NOT_FOUND;
+  }
   
   // allocate image structure and buffer
 //  NewImage = egCreateImage(RealPixelWidth, RealPixelHeight, WantAlpha);
@@ -135,12 +149,13 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
 
   AlphaValue = 255;
   setSizeInPixels(RealPixelWidth, RealPixelHeight);
+  DBG("set sizes %u,%u\n", RealPixelWidth, RealPixelHeight);
 //  PixelCount = RealPixelWidth * RealPixelHeight;
   
   // convert image
   BmpColorMap = (BMP_COLOR_MAP *)(FileData + sizeof(BMP_IMAGE_HEADER));
   ImagePtrBase = FileData + BmpHeader->ImageOffset;
-  for (UINT32 y = 0; y < RealPixelHeight; y++) {
+  for (INT32 y = 0; y < RealPixelHeight; y++) {
     ImagePtr = ImagePtrBase;
     ImagePtrBase += ImageLineOffset;
     // vertically mirror
@@ -150,11 +165,11 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
     } else {
       PixelPtr = GetPixelPtr(0,0) + (RealPixelHeight - 1 - y) * RealPixelWidth;
     }    
-    
+    DBG("6 BitPerPixel=%d\n", BmpHeader->BitPerPixel);
     switch (BmpHeader->BitPerPixel) {
         
       case 1:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           BitIndex = x & 0x07;
           if (BitIndex == 0)
             ImageValue = *ImagePtr++;
@@ -170,8 +185,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
         
       case 4:
       {
-        UINT32 x;
-        for (x = 0; x <= RealPixelWidth - 2; x += 2) {
+        for (INT32 x = 0; x <= RealPixelWidth - 2; x += 2) {
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -188,7 +202,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
           PixelPtr->Reserved = AlphaValue;
           PixelPtr++;
         }
-        if (x < RealPixelWidth) {
+        if ((RealPixelWidth & 1) == 1) { // для нечетных
           ImageValue = *ImagePtr++;
           
           Index = ImageValue >> 4;
@@ -201,7 +215,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
         break;
       }
       case 8:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           Index = *ImagePtr++;
           PixelPtr->Blue = BmpColorMap[Index].Blue;
           PixelPtr->Green = BmpColorMap[Index].Green;
@@ -212,7 +226,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
         break;
         
       case 24:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           PixelPtr->Blue = *ImagePtr++;
           PixelPtr->Green = *ImagePtr++;
           PixelPtr->Red = *ImagePtr++;
@@ -221,7 +235,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
         }
         break;
       case 32:
-        for (UINT32 x = 0; x < RealPixelWidth; x++) {
+        for (INT32 x = 0; x < RealPixelWidth; x++) {
           PixelPtr->Blue = *ImagePtr++;
           PixelPtr->Green = *ImagePtr++;
           PixelPtr->Red = *ImagePtr++;
@@ -233,6 +247,7 @@ EFI_STATUS XImage::FromBMP(UINT8 *FileData, IN UINTN FileDataLength)
         
     }
   }
+  DBG("sucсess\n");
   return EFI_SUCCESS;
 }
 
@@ -263,7 +278,7 @@ EFI_STATUS XImage::ToBMP(UINT8** FileDataReturn, UINTN& FileDataLengthReturn)
     FileDataLength = sizeof(BMP_IMAGE_HEADER) + MultU64x64(Height, ImageLineOffset);
     FileData = (UINT8*)AllocateZeroPool((UINTN)FileDataLength);
     if (FileData == NULL) {
-        DBG("Error allocate %d bytes\n", FileDataLength);
+        DBG("Error allocate %lld bytes\n", FileDataLength);
         *FileDataReturn = NULL;
         FileDataLengthReturn = 0;
         return EFI_NOT_FOUND;

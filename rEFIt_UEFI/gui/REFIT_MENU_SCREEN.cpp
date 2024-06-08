@@ -690,6 +690,30 @@ EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
   return Status;
 }
 
+void testBMP()
+{
+    EFI_STATUS      Status;
+    UINT8           *FileData = NULL;
+    UINTN           FileDataLength = 0;
+    INTN Width = 256, Height = 256;
+
+        // load file
+    Status = egLoadFile(&self.getSelfVolumeRootDir(), L"Sample.bmp", &FileData, &FileDataLength);
+
+    if (!EFI_ERROR(Status)) {
+      DBG("read file size=%llu\n", FileDataLength);
+      XImage NewImage(Width, Height);
+      NewImage.FromBMP(FileData, FileDataLength);
+      Width = NewImage.GetWidth();
+      Height = NewImage.GetHeight();
+      DBG("new image sizes w=%llu h=%llu\n", Width, Height);
+      NewImage.Draw((UGAWidth - Width) / 2, (UGAHeight - Height) / 2);
+      FreePool(FileData);
+      FileData = NULL;
+    }
+
+}
+
 
 UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
@@ -975,7 +999,8 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         
         break;
       case SCAN_F8:
-        testSVG();
+ //       testSVG();
+        testBMP();
 //        SaveHdaDumpBin();
 //        SaveHdaDumpTxt();
         break;
@@ -1013,6 +1038,9 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         } else if (!Entries[ScrollState.CurrentSelection].getREFIT_INFO_DIALOG()) {
           MenuExit = MENU_EXIT_ENTER;
         }
+        break;
+      case 'B':
+        testBMP();
         break;
       case ' ': //CHAR_SPACE
         if ((Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) ||
