@@ -51,12 +51,20 @@ extern "C" {
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
 #define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
-#define kMaxIDLength 64
-#define kMaxTextLength 256
+//#define kMaxIDLength 64
+//#define kMaxTextLength 256
+//
+//
+//#define NSVG_MAX_ATTR 2048
+//#define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
+
+const int kMaxIDLength = 64;
+const int kMaxTextLength  = 256;
 
 
-#define NSVG_MAX_ATTR 2048
-#define NSVG_MAX_CLIP_PATHS 1024 // also note NSVGclipPathIndex
+const int NSVG_MAX_ATTR = 2048;
+const int NSVG_MAX_CLIP_PATHS = 1024;  // also note NSVGclipPathIndex
+
 
 #ifdef JIEF_DEBUG
 #define NANOSVG_MEMORY_ALLOCATION_TRACE

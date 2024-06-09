@@ -22,8 +22,8 @@
 //#include "picopng.h"
 #include "lodepng.h"
 
-//#define DBG(...) DebugLog(1, __VA_ARGS__)
-#define DBG(...)
+#define DBG(...) DebugLog(1, __VA_ARGS__)
+//#define DBG(...)
 
 struct EFI_RES_ENTRY {
   CHAR8 Name[64];
@@ -133,7 +133,7 @@ GetImageDims (//IN APPLE_IMAGE_CODEC_PROTOCOL* This,
   *ImageHeight = (UINT32)Image.GetHeight();
   
   DBG("EFI_SUCCESS, Width=%d, Height=%d\n", *ImageWidth, *ImageHeight);
-  DBG("ImageSize=%lld\n", ImageSize);
+//  DBG("ImageSize=%lld\n", ImageSize);
   return EFI_SUCCESS;
 }
 

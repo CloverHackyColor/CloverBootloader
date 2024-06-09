@@ -318,7 +318,7 @@ EFI_PART_TYPE_LEGACY_MBR_GUID {0x024DEE41, 0x33E7, 0x11D3, {0x9D, 0x69, 0x00, 0x
 // 00 00 08 00 00 00 00 00                         | ........
 // gAppleFpfConfigurationHobGuid  = { 0xE3CC8EC6, 0x81C1, 0x4271, { 0xAC, 0xBC, 0xDB, 0x65, 0x08, 0x6E, 0x8D, 0xC8 }}
 // 59D76AE4-37E3-55A7-B460-EF13D46E6020 AppleEncryptedPartitionProtocolGuid
-// ->LocateProtocol(3496A19A-2E99-41BA-833E-0FDE2EBF2A55, 0, 0/0) = Not Found
+
 /*
 #define APPLE_SECURE_BOOT_VARIABLE_GUID  \
 { 0x94B73556, 0x2197, 0x4702,          \

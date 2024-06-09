@@ -99,7 +99,7 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
     UINT8 *cp;
     UINT8 *cp_end;
     UINT8 *pp;
-    UINTN pp_left;
+    INTN pp_left;
     UINTN len;
     UINT8 value;
     
@@ -114,7 +114,7 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
         len = *cp++;
         if (len & 0x80) {   // compressed data: repeat next byte
             len -= 125;
-            if (len > pp_left)
+            if (len > (UINTN)pp_left)
                 break;
             value = *cp++;
             for (UINTN i = 0; i < len; i++) {
@@ -123,14 +123,14 @@ void egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
             }
         } else {            // uncompressed data: copy bytes
             len++;
-            if (len > pp_left || cp + len > cp_end)
+            if (len > (UINTN)pp_left || cp + len > cp_end)
                 break;
             for (UINTN i = 0; i < len; i++) {
                 *pp = *cp++;
                 pp += 4;
             }
         }
-        pp_left -= len;
+        pp_left -= (INTN)len;
     }
     
   if (pp_left > 0) {
