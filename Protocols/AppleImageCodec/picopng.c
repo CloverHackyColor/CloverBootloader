@@ -273,6 +273,7 @@ VECTOR_8 *vector8_new(UINT32 size, UINT8 value)
 VECTOR_8 *vector8_copy(VECTOR_8 *p)
 {
 	VECTOR_8 *q = vector8_new(p->size, 0);
+	if (!q) return NULL;
 	UINT32 n;
 	for (n = 0; n < q->size; n++)
 		q->data[n] = p->data[n];
@@ -1182,6 +1183,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 	bpp = PNG_getBpp(info);
 	// now the out buffer will be filled
 	scanlines = vector8_new(((info->width * (info->height * bpp + 7)) / 8) + info->height, 0);
+	if (!scanlines) return NULL;
 	PNG_error = Zlib_decompress(scanlines, idat);
 	if (PNG_error) {
     //      DBG("Zlib_decompress return %d", PNG_error);
@@ -1189,7 +1191,8 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
   }
 	bytewidth = (bpp + 7) / 8;
 	outlength = (info->height * info->width * bpp + 7) / 8;
-	vector8_resize(info->image, outlength); // time to fill the out buffer
+	UINT32 res = vector8_resize(info->image, outlength); // time to fill the out buffer
+	if (!res) return NULL;
 	out_data = outlength ? info->image->data : 0;
 	if (info->interlaceMethod == 0)
 	{ // no interlace, just filter
@@ -1215,6 +1218,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 			{ // less than 8 bits per pixel, so fill it up bit per bit
         VECTOR_8 *templine; // only used if bpp < 8
         templine = vector8_new((info->width * bpp + 7) >> 3, 0);
+        if (!templine) return NULL;
         for (y = 0, obp = 0; y < info->height; y++)
         {
           UINT32 filterType = scanlines->data[linestart];
@@ -1267,6 +1271,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 	if (info->colorType != 6 || info->bitDepth != 8)
 	{ // conversion needed
 		VECTOR_8 *copy = vector8_copy(info->image); // xxx: is this copy necessary?
+		if (!copy) return NULL;
 		PNG_error = PNG_convert(info, info->image, copy->data);
     if (PNG_error) {
       //	            DBG("PNG_convert return %d", PNG_error);
