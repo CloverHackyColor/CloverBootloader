@@ -1242,7 +1242,7 @@ void LOADER_ENTRY::StartLoader()
       if ( FileExists(&self.getCloverDir(), bundleFullPath) ) {
         XString8 bundlePathUnderKextsDir = S8Printf("%ls\\%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
         OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, bundlePathUnderKextsDir.c_str());
-        DBG("OC BundlePath     = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
+ //       DBG("OC BundlePath     = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath));
       } else {
         DBG("Cannot find kext bundlePath at '%s'\n", bundleFullPath.c_str());
       }
@@ -1260,7 +1260,7 @@ void LOADER_ENTRY::StartLoader()
           } else {
             OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents\\Info.plist");
           }
-          DBG("OC PlistPath      = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath));
+ //         DBG("OC PlistPath      = '%s'\n", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath));
         } else {
           DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
         }
@@ -1268,7 +1268,7 @@ void LOADER_ENTRY::StartLoader()
         XString8 execpath = getKextExecPath(&self.getCloverDir(), KextEntry.KextDirNameUnderOEMPath, KextEntry.FileName, dict, NoContents);
         if (execpath.notEmpty()) {
           OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, execpath.c_str());
-          DBG("OC ExecutablePath = '%s'\n", execpath.c_str());
+ //         DBG("OC ExecutablePath = '%s'\n", execpath.c_str());
         }
         if ( dict ) dict->ReleaseTag();
       }

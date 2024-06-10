@@ -89,7 +89,7 @@ public:
   SmbiosPlistClass::SmbiosDictClass SMBIOS_monterey = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_ventura = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_sonoma = SmbiosPlistClass::SmbiosDictClass();
-  SmbiosPlistClass::SmbiosDictClass SMBIOS_fifteen = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_sequoia = SmbiosPlistClass::SmbiosDictClass();
 //  SmbiosPlistClass::SmbiosDictClass SMBIOS_lion = SmbiosPlistClass::SmbiosDictClass();
 public:
   SystemParameters_Class SystemParameters = SystemParameters_Class();
@@ -120,7 +120,7 @@ public:
     {"SMBIOS_monterey", SMBIOS_monterey},
     {"SMBIOS_ventura", SMBIOS_ventura},
     {"SMBIOS_sonoma", SMBIOS_sonoma},
-    {"SMBIOS_fifteen", SMBIOS_fifteen},
+    {"SMBIOS_sequoia", SMBIOS_sequoia},
     {"SystemParameters", SystemParameters},
     {"RtVariables", RtVariables},
     {"Quirks", Quirks},

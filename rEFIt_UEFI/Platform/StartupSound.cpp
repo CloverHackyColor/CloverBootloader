@@ -239,7 +239,7 @@ DONE_ERROR:
     // and we can't free memory up to stop AsyncPlay
     FreeAlignedPages(WaveData.Samples, EFI_SIZE_TO_PAGES(WaveData.SamplesLength + 4095));
   }
-  DBG("sound play end with status=%s\n", efiStrError(Status));
+//  DBG("sound play end with status=%s\n", efiStrError(Status));
   return Status;
 }
 

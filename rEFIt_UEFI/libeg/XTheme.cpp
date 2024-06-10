@@ -138,11 +138,11 @@ EFI_STATUS Status       = EFI_NOT_FOUND;
           ThemeDict = ThemeX->LoadTheme(XStringW(ThemeNameArray[Rnd]));
         } else {
           ThemeDict = ThemeX->LoadTheme(gSettings.GUI.Theme);
-          if (ThemeDict == NULL) {
-            DBG("GlobalConfig: %ls not found, get embedded theme\n", gSettings.GUI.Theme.wc_str());
-          } else {
-            DBG("chosen theme %ls\n", gSettings.GUI.Theme.wc_str());
-          }
+//          if (ThemeDict == NULL) {
+//            DBG("GlobalConfig: %ls not found, get embedded theme\n", gSettings.GUI.Theme.wc_str());
+//          } else {
+//            DBG("chosen theme %ls\n", gSettings.GUI.Theme.wc_str());
+//          }
         }
       }
     }

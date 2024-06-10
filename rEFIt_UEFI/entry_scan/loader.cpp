@@ -587,7 +587,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
                 OSVersion = "13"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sonoma") || Prop->getString()->stringValue().contains("Install%20macOS%2014")) {
                 OSVersion = "14"_XS8;
-              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Fifteen") || Prop->getString()->stringValue().contains("Install%20macOS%2015")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sequoia") || Prop->getString()->stringValue().contains("Install%20macOS%2015")) {
                 OSVersion = "15"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
@@ -842,8 +842,8 @@ GetOSIconName (const MacOsVersion& OSVersion)
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
   } else if (OSVersion.elementAt(0) == 15 ){
-    // Fifteen
-    OSIconName = L"fifteen,mac"_XSW;
+    // Sequoia
+    OSIconName = L"sequoia,mac"_XSW;
   } else if (OSVersion.elementAt(0) == 14 ){
     // Sonoma
     OSIconName = L"sonoma,mac"_XSW;
