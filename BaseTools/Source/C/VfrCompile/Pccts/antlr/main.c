@@ -1241,7 +1241,7 @@ int d;
 {
 	static char buf[250];			/* DANGEROUS as hell !!!!!! */
 	
-	sprintf(buf, s, d);
+	snprintf(buf, 250, s, d);
 	return( buf );
 }
 
@@ -1257,7 +1257,7 @@ int d2;
 {
 	static char buf[250];			/* DANGEROUS as hell !!!!!! */
 	
-	sprintf(buf, s, d1, d2);
+	snprintf(buf, 250, s, d1, d2);
 	return( buf );
 }
 
@@ -1306,7 +1306,7 @@ int token;
 	}
 
     if (1) {
-      sprintf(imag_name,"UnknownToken#%d",token);           /* MR13 */
+      sprintf(imag_name, 20, "UnknownToken#%d",token);           /* MR13 */
       return imag_name;                                     /* MR13 */
     }
 
@@ -1720,7 +1720,7 @@ char *name;
 {
 	static char buf[100];
 	char *p;
-	sprintf(buf, "%s", name);
+	snprintf(buf, 100, "%s", name);
 
 	for (p=buf; *p!='\0'; p++)
 	{
@@ -1740,7 +1740,7 @@ int altnum;
 {
 	static char buf[100];
 	char *p;
-	sprintf(buf, "_blk%d_alt%d", blockid, altnum);
+	snprintf(buf, 100, "_blk%d_alt%d", blockid, altnum);
 	p = (char *)malloc(strlen(buf)+1);
 	strcpy(p, buf);
 	return p;

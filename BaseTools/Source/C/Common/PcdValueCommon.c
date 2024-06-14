@@ -257,16 +257,16 @@ Returns:
     }
     break;
   case PcdDataTypeUint8:
-    sprintf(PcdList[Index].Value, "0x%02x", (UINT8)(Value & 0xff));
+    snprintf(PcdList[Index].Value, 20, "0x%02x", (UINT8)(Value & 0xff));
     break;
   case PcdDataTypeUint16:
-    sprintf(PcdList[Index].Value, "0x%04x", (UINT16)(Value & 0xffff));
+    snprintf(PcdList[Index].Value, 20, "0x%04x", (UINT16)(Value & 0xffff));
     break;
   case PcdDataTypeUint32:
-    sprintf(PcdList[Index].Value, "0x%08x", (UINT32)(Value & 0xffffffff));
+    snprintf(PcdList[Index].Value, 20, "0x%08x", (UINT32)(Value & 0xffffffff));
     break;
   case PcdDataTypeUint64:
-    sprintf(PcdList[Index].Value, "0x%016llx", (unsigned long long)Value);
+    snprintf(PcdList[Index].Value, 20, "0x%016llx", (unsigned long long)Value);
     break;
   case PcdDataTypePointer:
     fprintf (stderr, "PCD %s.%s.%s.%s is structure.  Use PcdSetPtr()\n", SkuName, DefaultValueName, TokenSpaceGuidName, TokenName);
@@ -392,7 +392,7 @@ Returns:
     PcdList[Index].Value = malloc(Size * 5 + 3);
     PcdList[Index].Value[0] = '{';
     for (ValueIndex = 0; ValueIndex < Size; ValueIndex++) {
-      sprintf(&PcdList[Index].Value[1 + ValueIndex * 5], "0x%02x,", Value[ValueIndex]);
+      snprintf(&PcdList[Index].Value[1 + ValueIndex * 5], 20, "0x%02x,", Value[ValueIndex]);
     }
     PcdList[Index].Value[1 + Size * 5 - 1] = '}';
     PcdList[Index].Value[1 + Size * 5    ] = 0;

@@ -1745,8 +1745,8 @@ Returns:
           Error (NULL, 0, 4001, "Resource", "memory cannot be allocated!");
           return EFI_OUT_OF_RESOURCES;
         }
-        sprintf (
-          SystemCommand,
+        snprintf (
+          SystemCommand, sizeof(SystemCommand),
           OPENSSL_COMMAND_FORMAT_STRING,
           OpenSslPath,
           ToolOutputFileName,
@@ -1987,8 +1987,8 @@ Returns:
           Error (NULL, 0, 4001, "Resource", "memory cannot be allocated!");
           return EFI_OUT_OF_RESOURCES;
         }
-        sprintf (
-          SystemCommand,
+        snprintf (
+          SystemCommand, sizeof(SystemCommand),
           EXTRACT_COMMAND_FORMAT_STRING,
           ExtractionTool,
           ToolOutputFile,
@@ -2269,8 +2269,8 @@ Returns:
   //
   // Generate the format string for fscanf
   //
-  sprintf (
-    FormatString,
+  snprintf (
+    FormatString, sizeof(FormatString),
     "%%%us %%%us",
     (unsigned) sizeof (GPtr->Guid) - 1,
     (unsigned) sizeof (GPtr->BaseName) - 1

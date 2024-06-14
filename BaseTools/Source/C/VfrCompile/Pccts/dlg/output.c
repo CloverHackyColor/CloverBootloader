@@ -122,7 +122,7 @@ char *name;
 #endif
 {
 	static char buf[100];
-	sprintf(buf, "%s_h", name);
+	snprintf(buf, sizeof(buf), "%s_h", name);
 	return buf;
 }
 
@@ -712,7 +712,7 @@ char *suffix;
 	static char buf[200];
 	extern char *class_name;
 
-	sprintf(buf, "%s%s", class_name, suffix);
+	snprintf(buf, sizeof(buf), "%s%s", class_name, suffix);
 	return buf;
 }
 

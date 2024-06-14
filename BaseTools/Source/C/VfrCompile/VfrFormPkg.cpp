@@ -1491,7 +1491,7 @@ CIfrRecordInfoDB::IfrRecordAdjust (
         //
         // report error; not found
         //
-        sprintf (ErrorMsg, "Inconsistent OpCode Record list invalid QuestionId is 0x%X", QuestionId);
+        snprintf (ErrorMsg, sizeof(ErrorMsg),  "Inconsistent OpCode Record list invalid QuestionId is 0x%X", QuestionId);
         gCVfrErrorHandle.PrintMsg (0, NULL, "Error", ErrorMsg);
         Status = VFR_RETURN_MISMATCHED;
         break;
@@ -1543,7 +1543,7 @@ CIfrRecordInfoDB::IfrRecordAdjust (
         //
         // not found matched question id, report error
         //
-        sprintf (ErrorMsg, "QuestionId required by Inconsistent OpCode is not found. QuestionId is 0x%X", QuestionId);
+        snprintf (ErrorMsg, sizeof(ErrorMsg), "QuestionId required by Inconsistent OpCode is not found. QuestionId is 0x%X", QuestionId);
         gCVfrErrorHandle.PrintMsg (0, NULL, "Error", ErrorMsg);
         Status = VFR_RETURN_MISMATCHED;
         break;
@@ -2201,7 +2201,7 @@ CIfrRecordInfoDB::IfrCheckAddDefaultRecord (
           // Generate an error for question which misses default.
           //
           MissingDefaultCount = mAllDefaultTypeCount - QuestionDefaultInfo.mDefaultNumber;
-          sprintf (Msg, "The question misses %d default, the question's opcode is %d", MissingDefaultCount, pOpHead->OpCode);
+          snprintf (Msg, sizeof(Msg), "The question misses %d default, the question's opcode is %d", MissingDefaultCount, pOpHead->OpCode);
           gCVfrErrorHandle.PrintMsg (pNode->mLineNo, NULL, "Error", Msg);
         }
       }

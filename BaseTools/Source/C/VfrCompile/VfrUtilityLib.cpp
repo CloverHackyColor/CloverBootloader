@@ -988,7 +988,7 @@ CVfrVarDataTypeDB::Pack (
   CHAR8             Msg[MAX_STRING_LEN] = {0, };
 
   if (Action & VFR_PACK_SHOW) {
-    sprintf (Msg, "value of pragma pack(show) == %d", mPackAlign);
+    snprintf (Msg, sizeof(Msg), "value of pragma pack(show) == %d", mPackAlign);
     gCVfrErrorHandle.PrintMsg (LineNum, NULL, "Warning", Msg);
   }
 
@@ -2457,7 +2457,7 @@ CVfrDefaultStore::BufferVarStoreAltConfigAdd (
 
   gCVfrBufferConfig.Open ();
 
-  sprintf (NewAltCfg, "%04x", pNode->mDefaultId);
+  snprintf (NewAltCfg, sizeof(NewAltCfg), "%04x", pNode->mDefaultId);
   if ((Returnvalue = gCVfrBufferConfig.Select(VarStoreName, VarStoreGuid)) == 0) {
     if ((Returnvalue = gCVfrBufferConfig.Write ('a', VarStoreName, VarStoreGuid, NewAltCfg, Type, Info.mInfo.mVarOffset, Info.mVarTotalSize, Value)) != 0) {
       goto WriteError;

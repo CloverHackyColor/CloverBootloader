@@ -437,7 +437,7 @@ void help()
 	while ( p->option!=NULL && *(p->option) != '*' )
 	{
 		buf[0]='\0';
-		if ( p->arg ) sprintf(buf, "%s ___", p->option);
+		if ( p->arg ) snprintf(buf, sizeof(buf), "%s ___", p->option);
 		else strcpy(buf, p->option);
 		fprintf(stderr, "\t%-16s   %s\n", buf, p->descr);
 		p++;
@@ -1058,6 +1058,6 @@ char *DIR()
 	static char buf[200+1];
 	
 	if ( strcmp(outdir,TopDirectory)==0 ) return "";
-	sprintf(buf, "%s%s", outdir, DirectorySymbol);
+	snprintf(buf, sizeof(buf), "%s%s", outdir, DirectorySymbol);
 	return buf;
 }

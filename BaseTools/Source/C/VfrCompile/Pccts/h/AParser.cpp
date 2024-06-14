@@ -251,7 +251,7 @@ LT(int i)
 	if ( i >= inputTokens->bufferSize() || inputTokens->minTokens() < LLk )     /* MR20 Was "<=" */
 	{
 		char buf[2000];                 /* MR20 Was "static" */
-        sprintf(buf, "The minimum number of tokens you requested that the\nANTLRTokenBuffer buffer is not enough to satisfy your\nLT(%d) request; increase 'k' argument to constructor for ANTLRTokenBuffer\n", i);
+        snprintf(buf, sizeof(buf), "The minimum number of tokens you requested that the\nANTLRTokenBuffer buffer is not enough to satisfy your\nLT(%d) request; increase 'k' argument to constructor for ANTLRTokenBuffer\n", i);
 		panic(buf);
 	}
 #endif
