@@ -132,8 +132,8 @@ public:
 	{
 		ctor++;
 		refcnt_ = 0;
-		if ( t==1 ) sprintf(object,"tok_EOF");
-		else sprintf(object,"tok_%s",s);
+		if ( t==1 ) snprintf(object, sizeof(object), "tok_EOF");
+		else snprintf(object, sizeof(object), "tok_%s",s);
 		/* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
 	}
 #endif
@@ -144,7 +144,7 @@ public:
 		{
 			ctor++;
 			refcnt_ = 0;
-			sprintf(object,"tok_blank");
+			snprintf(object, sizeof(object), "tok_blank");
 			/* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
 		}
 	virtual ~ANTLRRefCountToken()

@@ -650,21 +650,21 @@ _setmatch_wdfltsig(SetWordType *tokensWanted,
 char *ANTLRParser::
 eMsgd(char *err,int d)
 {
-	sprintf(eMsgBuffer, err, d);	// dangerous, but I don't care
+	snprintf(eMsgBuffer, 500, err, d);	// dangerous, but I don't care
 	return eMsgBuffer;
 }
 
 char *ANTLRParser::
 eMsg(char *err, char *s)
 {
-	sprintf(eMsgBuffer, err, s);
+	snprintf(eMsgBuffer, 500, err, s);
 	return eMsgBuffer;
 }
 
 char *ANTLRParser::
 eMsg2(char *err,char *s, char *t)
 {
-	sprintf(eMsgBuffer, err, s, t);
+	snprintf(eMsgBuffer, 500, err, s, t);
 	return eMsgBuffer;
 }
 

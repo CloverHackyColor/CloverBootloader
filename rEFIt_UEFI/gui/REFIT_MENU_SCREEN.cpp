@@ -75,6 +75,27 @@
 #include "../Platform/Settings.h"
 #include "../Platform/StartupSound.h" // for audioIo
 
+///0C483552-CAC3-4E72-B7DD-94F16C44C394
+constexpr const EFI_GUID PreGuid = { 0x0C483552, 0xCAC3, 0x4E72, { 0x87, 0xDD, 0x94, 0xF1, 0x6C, 0x44, 0xC3, 0x94 } };
+void testEfires()
+{
+//  EFI_STATUS          Status;
+//  UINTN               HandleCount = 0;
+//  EFI_HANDLE          *Handles;
+//  EFI_FILE*     dir;
+
+
+//  Status = gBS->LocateHandleBuffer(ByProtocol, &PreGuid, NULL, &HandleCount, &Handles);
+//  if (!EFI_ERROR(Status) && HandleCount > 0) {
+//    dir = EfiLibOpenRoot(Handles[0]);
+//      if (dir == NULL)
+//          Status = EFI_NOT_FOUND;
+//      FreePool(Handles);
+//  }
+
+
+}
+
 //
 const CHAR16 ArrowUp[2]   = { ARROW_UP, 0 }; //defined in  Simple Text Out protocol
 const CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
@@ -1000,9 +1021,8 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         break;
       case SCAN_F8:
  //       testSVG();
-        testBMP();
-//        SaveHdaDumpBin();
-//        SaveHdaDumpTxt();
+ //       testBMP();
+        testEfires();
         break;
 
       case SCAN_F9:
