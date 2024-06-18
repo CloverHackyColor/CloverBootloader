@@ -210,31 +210,31 @@ APPLE_IMAGE_CODEC_PROTOCOL gAppleImageCodec = {
 };
 
 /** Driver's entry point. Installs our StartImage to detect boot loader start. */
-EFI_STATUS
-EFIAPI
-AppleImageCodecEntrypoint (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_SYSTEM_TABLE     *SystemTable
-)
-{
-  EFI_STATUS              Status;
-//  EFI_HANDLE              NewHandle;
-  
-  //
-  // Install instance of Apple image codec protocol for
-  // PNG files
-  //
-//  NewHandle = NULL;  // install to a new handle
-//  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
-  Status      = gBS->InstallProtocolInterface (
-                                               &ImageHandle,
-                                               &gAppleImageCodecProtocolGuid,
-                                               EFI_NATIVE_INTERFACE,
-                                               (VOID *)&gAppleImageCodec
-                                               );
-
-  if (EFI_ERROR(Status)) {
-    DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
-  }
-  return Status;
-}
+//EFI_STATUS
+//EFIAPI
+//AppleImageCodecEntrypoint (
+//  IN EFI_HANDLE           ImageHandle,
+//  IN EFI_SYSTEM_TABLE     *SystemTable
+//)
+//{
+//  EFI_STATUS              Status;
+////  EFI_HANDLE              NewHandle;
+//
+//  //
+//  // Install instance of Apple image codec protocol for
+//  // PNG files
+//  //
+////  NewHandle = NULL;  // install to a new handle
+////  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
+//  Status      = gBS->InstallProtocolInterface (
+//                                               &ImageHandle,
+//                                               &gAppleImageCodecProtocolGuid,
+//                                               EFI_NATIVE_INTERFACE,
+//                                               (VOID *)&gAppleImageCodec
+//                                               );
+//
+//  if (EFI_ERROR(Status)) {
+//    DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
+//  }
+//  return Status;
+//}
