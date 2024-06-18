@@ -1225,7 +1225,7 @@ char *a3;
 {
 	static char buf[250];			/* DANGEROUS as hell !!!!!! */
 	
-	sprintf(buf, s, a1, a2, a3);
+	snprintf(buf, 250, s, a1, a2, a3);
 	return( buf );
 }
 
@@ -1306,7 +1306,7 @@ int token;
 	}
 
     if (1) {
-      sprintf(imag_name, 20, "UnknownToken#%d",token);           /* MR13 */
+      snprintf(imag_name, 20, "UnknownToken#%d",token);           /* MR13 */
       return imag_name;                                     /* MR13 */
     }
 

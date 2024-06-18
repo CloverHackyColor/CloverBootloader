@@ -929,7 +929,7 @@ int m;
 #endif
 {
    if(zzmdep == ZZMAXSTK - 1) {
-     sprintf(zzmbuf, "Mode stack overflow ");
+     snprintf(zzmbuf, 70, "Mode stack overflow ");
      zzerr(zzmbuf);
    } else {
      zzmstk[zzmdep++] = zzauto;
@@ -945,7 +945,7 @@ zzmpop( )
 #endif
 {
    if(zzmdep == 0)
-   {  sprintf(zzmbuf, "Mode stack underflow ");
+   {  snprintf(zzmbuf, 70, "Mode stack underflow ");
       zzerr(zzmbuf);
    }
    else

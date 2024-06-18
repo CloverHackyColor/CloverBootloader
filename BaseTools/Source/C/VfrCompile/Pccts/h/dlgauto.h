@@ -264,7 +264,7 @@ int m;
 		/* have to redo class since using different compression */
 		zzclass = ZZSHIFT(zzchar);
 	}else{
-		sprintf(zzebuf,"Invalid automaton mode = %d ",m);
+		snprintf(zzebuf, 70, "Invalid automaton mode = %d ",m);
 		zzerr(zzebuf);
 	}
 }

@@ -4365,9 +4365,9 @@ TokNode *p;
     n = DefErrSet( &a, 0, NULL );
     set_free(a);
     if ( GenCC )
-        sprintf(buf, 100, "err%d", n);
+        snprintf(buf, 100, "err%d", n);
     else
-        sprintf(buf, 100, "zzerr%d", n);
+        snprintf(buf, 100, "zzerr%d", n);
     return buf;
 }
 
