@@ -402,7 +402,8 @@ SetPrivateVarProto(void)
   EFI_STATUS  Status;
   //This must be independent install
   // optional protocols
-  Status = gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
+  EFI_HANDLE  NewHandle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (  &NewHandle,///&gImageHandle,
                                                        &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
 //                                                       &gEfiOSInfoProtocolGuid,
