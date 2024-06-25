@@ -2215,9 +2215,9 @@ char * MR_ruleNamePlusOffset(n)
 
     strncpy(ruleNameStatic1,n->rname,ruleNameMax);
     if (offset < 0) {
-      sprintf(ruleNameStatic2,"%s/?",ruleNameStatic1);
+      snprintf(ruleNameStatic2, sizeof(ruleNameStatic2), "%s/?",ruleNameStatic1);
     } else {
-      sprintf(ruleNameStatic2,"%s/%d",ruleNameStatic1,offset+1);
+      snprintf(ruleNameStatic2, sizeof(ruleNameStatic2), "%s/%d",ruleNameStatic1,offset+1);
     };
     return ruleNameStatic2;
 }

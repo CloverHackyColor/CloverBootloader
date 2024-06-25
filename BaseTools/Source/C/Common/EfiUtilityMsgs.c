@@ -459,7 +459,7 @@ Notes:
       strcpy (Line, ": ");
       strncat (Line, Cptr, MAX_LINE_LEN - strlen (Line) - 1);
       if (LineNumber != 0) {
-        sprintf (Line2, "(%u)", (unsigned) LineNumber);
+        snprintf (Line2, MAX_LINE_LEN, "(%u)", (unsigned) LineNumber);
         strncat (Line, Line2, MAX_LINE_LEN - strlen (Line) - 1);
       }
     }
@@ -474,7 +474,7 @@ Notes:
       strncpy (Line, Cptr, MAX_LINE_LEN - 1);
       Line[MAX_LINE_LEN - 1] = 0;
       if (LineNumber != 0) {
-        sprintf (Line2, "(%u)", (unsigned) LineNumber);
+        snprintf (Line2, MAX_LINE_LEN, "(%u)", (unsigned) LineNumber);
         strncat (Line, Line2, MAX_LINE_LEN - strlen (Line) - 1);
       }
     } else {
@@ -501,7 +501,7 @@ Notes:
   strncat (Line, ": ", MAX_LINE_LEN - strlen (Line) - 1);
   strncat (Line, Type, MAX_LINE_LEN - strlen (Line) - 1);
   if (MessageCode != 0) {
-    sprintf (Line2, " %04u", (unsigned) MessageCode);
+    snprintf (Line2, MAX_LINE_LEN, " %04u", (unsigned) MessageCode);
     strncat (Line, Line2, MAX_LINE_LEN - strlen (Line) - 1);
   }
   fprintf (stdout, "%s", Line);

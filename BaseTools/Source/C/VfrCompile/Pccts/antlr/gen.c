@@ -2302,8 +2302,8 @@ TokNode *p;
 				p->tclass->setnum = e;
 				p->tclass->setnumErrSet = eErrSet;					/* MR23 */
 			}
-			sprintf(buf, "%s_set", TokenString(p->token));
-			sprintf(bufErrSet, "%s_errset", TokenString(p->token));	/* MR23 */
+			snprintf(buf, sizeof(buf), "%s_set", TokenString(p->token));
+			snprintf(bufErrSet, sizeof(bufErrSet), "%s_errset", TokenString(p->token));	/* MR23 */
 			set_name = buf;
 			set_nameErrSet = bufErrSet;								/* MR23 */
 		}
@@ -2325,8 +2325,8 @@ TokNode *p;
 				p->tclass->setnumComplement = e;
 				p->tclass->setnumErrSetComplement = eErrSet;					/* MR23 */
 			}
-			sprintf(buf, "%s_setbar", TokenString(p->token));
-			sprintf(bufErrSet, "%s_errsetbar", TokenString(p->token));	/* MR23 */
+			snprintf(buf, sizeof(buf), "%s_setbar", TokenString(p->token));
+			snprintf(bufErrSet, sizeof(bufErrSet), "%s_errsetbar", TokenString(p->token));	/* MR23 */
 			set_name = buf;
 			set_nameErrSet = bufErrSet;								/* MR23 */
 		}
@@ -2335,10 +2335,10 @@ TokNode *p;
 			static char bufErrSet[sizeof("zzerr")+10];
 			int n = DefErrSet( &b, 0, NULL );
 			int nErrSet = DefErrSetWithSuffix(0, &bErrSet, 1, NULL, "_set");
-			if ( GenCC ) sprintf(buf, "err%d", n);
-			else sprintf(buf, "zzerr%d", n);
-			if ( GenCC ) sprintf(bufErrSet, "err%d", nErrSet);
-			else sprintf(bufErrSet, "zzerr%d", nErrSet);
+			if ( GenCC ) snprintf(buf, sizeof(buf), "err%d", n);
+			else snprintf(buf, sizeof(buf), "zzerr%d", n);
+			if ( GenCC ) snprintf(bufErrSet, sizeof(bufErrSet), "err%d", nErrSet);
+			else snprintf(bufErrSet, sizeof(bufErrSet), "zzerr%d", nErrSet);
 			set_name = buf;
 			set_nameErrSet = bufErrSet;
 		}
@@ -4365,9 +4365,9 @@ TokNode *p;
     n = DefErrSet( &a, 0, NULL );
     set_free(a);
     if ( GenCC )
-        sprintf(buf, "err%d", n);
+        snprintf(buf, 100, "err%d", n);
     else
-        sprintf(buf, "zzerr%d", n);
+        snprintf(buf, 100, "zzerr%d", n);
     return buf;
 }
 

@@ -402,7 +402,8 @@ SetPrivateVarProto(void)
   EFI_STATUS  Status;
   //This must be independent install
   // optional protocols
-  Status = gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
+  EFI_HANDLE  NewHandle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (  &NewHandle,///&gImageHandle,
                                                        &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
 //                                                       &gEfiOSInfoProtocolGuid,
@@ -419,23 +420,25 @@ SetPrivateVarProto(void)
 										               &SMCHelperProtocol,
 										               &gAppleSMCStateProtocolGuid,
 										               &SMCStateProtocol,
+										               &gAppleImageCodecProtocolGuid,
+										               &gAppleImageCodec,
                                                        NULL
                                                      );
   if (EFI_ERROR(Status)) {
     DBG("Error installing multiple protocol, Status = %s\n", efiStrError(Status));
   }
 
-
-  Status      = gBS->InstallProtocolInterface (
-                                               &gImageHandle,
-                                               &gAppleImageCodecProtocolGuid,
-                                               EFI_NATIVE_INTERFACE,
-                                               (VOID *)&gAppleImageCodec
-                                               );
-
-  if (EFI_ERROR(Status)) {
-    DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
-  }
+//
+//  Status      = gBS->InstallProtocolInterface (
+//                                               &gImageHandle,
+//                                               &gAppleImageCodecProtocolGuid,
+//                                               EFI_NATIVE_INTERFACE,
+//                                               (VOID *)&gAppleImageCodec
+//                                               );
+//
+//  if (EFI_ERROR(Status)) {
+//    DBG("AppleImageCodec: error installing protocol, Status = %s\n", efiStrError(Status));
+//  }
 
   Status = InstallAggregator();
   if (EFI_ERROR(Status)) {

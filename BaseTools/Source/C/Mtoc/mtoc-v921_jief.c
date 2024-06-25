@@ -887,7 +887,7 @@ struct arch *arch)
 					     IMAGE_SCN_MEM_WRITE |
 					     IMAGE_SCN_CNT_INITIALIZED_DATA;
 			if(strcmp(s->sectname, "__pointers") == 0){
-			    sprintf(scnhdrs[j].s_name, "/%d", strsize);
+			    snprintf(scnhdrs[j].s_name, 10, "/%d", strsize);
 			    strcat(section_name, ".pointers");
 			    len = strlen(section_name) + 1;
 			    strsize += len;
@@ -1208,7 +1208,7 @@ struct arch *arch)
 		s64 = (struct section_64 *)
 		      ((char *)sg64 + sizeof(struct segment_command_64));
 		for(i = 0; i < sg64->nsects; i++, s64++){
-		    sprintf(scnhdrs[j].s_name, "/%d", strsize);
+		    snprintf(scnhdrs[j].s_name, 10, "/%d", strsize);
 		    strcat(section_name, "LC_SEGMENT.");
 		    strcat(section_name, s64->segname);
 		    strcat(section_name, ".");

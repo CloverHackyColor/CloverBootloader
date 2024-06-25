@@ -526,8 +526,8 @@ Returns:
   }
 
   if (Uppercase) {
-    sprintf (
-      (CHAR8 *)Buffer,
+    snprintf (
+      (CHAR8 *)Buffer, PRINTED_GUID_BUFFER_SIZE,
       "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
       (unsigned) Guid->Data1,
       Guid->Data2,
@@ -542,8 +542,8 @@ Returns:
       Guid->Data4[7]
       );
   } else {
-    sprintf (
-      (CHAR8 *)Buffer,
+    snprintf (
+      (CHAR8 *)Buffer, PRINTED_GUID_BUFFER_SIZE,
       "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
       (unsigned) Guid->Data1,
       Guid->Data2,

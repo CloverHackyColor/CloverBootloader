@@ -73,7 +73,10 @@ int PrintError(char *buffer, const char *message)
 
 int PrintErrorNumber(char *buffer, SRes val)
 {
-  sprintf(buffer + strlen(buffer), "\nError code: %x\n", (unsigned)val);
+  char text[100];
+  snprintf(text, 100, "\nError code: %x\n", (unsigned)val);
+//  sprintf(buffer + strlen(buffer), "\nError code: %x\n", (unsigned)val);
+  strcat(buffer, text);
   return 1;
 }
 
@@ -84,7 +87,10 @@ int PrintUserError(char *buffer)
 
 void PrintVersion(char *buffer)
 {
-  sprintf (buffer, "%s Version %d.%d %s ", UTILITY_NAME, UTILITY_MAJOR_VERSION, UTILITY_MINOR_VERSION, __BUILD_VERSION);
+//  sprintf (buffer, "%s Version %d.%d %s ", UTILITY_NAME, UTILITY_MAJOR_VERSION, UTILITY_MINOR_VERSION, __BUILD_VERSION);
+  char text[500];
+  snprintf(text, 500, "%s Version %d.%d %s ", UTILITY_NAME, UTILITY_MAJOR_VERSION, UTILITY_MINOR_VERSION, __BUILD_VERSION);
+  strcat(buffer, text);
 }
 
 static SRes Encode(ISeqOutStream *outStream, ISeqInStream *inStream, UInt64 fileSize)

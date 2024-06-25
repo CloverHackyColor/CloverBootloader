@@ -1285,9 +1285,9 @@ static void act113()
       if ( strlen(zzbegexpr)>(size_t)85 )
       fatal("$i attrib ref too big");
       set_orel(atoi(zzbegexpr+1), &attribsRefdFromAction);
-      if ( !GenCC ) sprintf(buf,"zzaArg(zztasp%d,%s)",
+      if ( !GenCC ) snprintf(buf, 100, "zzaArg(zztasp%d,%s)",
       BlkLevel-1,zzbegexpr+1);
-      else sprintf(buf,"_t%d%s",
+      else snprintf(buf, 100, "_t%d%s",
       BlkLevel-1,zzbegexpr+1);
       zzreplstr(buf);
       zzmore();
@@ -1308,9 +1308,9 @@ static void act114()
       fatal("$i.field attrib ref too big");
       zzbegexpr[strlen(zzbegexpr)-1] = ' ';
       set_orel(atoi(zzbegexpr+1), &attribsRefdFromAction);
-      if ( !GenCC ) sprintf(buf,"zzaArg(zztasp%d,%s).",
+      if ( !GenCC ) snprintf(buf, 100, "zzaArg(zztasp%d,%s).",
       BlkLevel-1,zzbegexpr+1);
-      else sprintf(buf,"_t%d%s.",
+      else snprintf(buf, 100, "_t%d%s.",
       BlkLevel-1,zzbegexpr+1);
       zzreplstr(buf);
       zzmore();
@@ -1344,8 +1344,8 @@ static void act115()
         *q++ = *p;
       }
       *q = '\0';
-      if ( !GenCC ) sprintf(buf,"zzaArg(zztasp%s,%s)",i,j);
-      else sprintf(buf,"_t%s%s",i,j);
+      if ( !GenCC ) snprintf(buf, sizeof(buf), "zzaArg(zztasp%s,%s)",i,j);
+      else snprintf(buf, sizeof(buf), "_t%s%s",i,j);
       zzreplstr(buf);
       zzmore();
       UsedOldStyleAttrib = 1;
@@ -1369,7 +1369,7 @@ static void act116()
         if ( hasMultipleOperands( CurRetDef ) ) {
           require (strlen(zzbegexpr)<=(size_t)285,
           "$retval attrib ref too big");
-          sprintf(buf,"_retv.%s",&zzbegexpr[1]);
+          snprintf(buf, sizeof(buf), "_retv.%s",&zzbegexpr[1]);
           zzreplstr(buf);
         }
         else zzreplstr("_retv");
@@ -1439,8 +1439,8 @@ static void act120()
       static char buf[100];
       if ( strlen(zzbegexpr)>(size_t)85 )
       fatal("#i AST ref too big");
-      if ( GenCC ) sprintf(buf,"_ast%d%s",BlkLevel-1,zzbegexpr+1);
-      else sprintf(buf,"zzastArg(%s)",zzbegexpr+1);
+      if ( GenCC ) snprintf(buf, sizeof(buf), "_ast%d%s",BlkLevel-1,zzbegexpr+1);
+      else snprintf(buf, sizeof(buf), "zzastArg(%s)",zzbegexpr+1);
       zzreplstr(buf);
       zzmore();
       set_orel(atoi(zzbegexpr+1), &AST_nodes_refd_in_actions);
@@ -1484,7 +1484,7 @@ static void act123()
     strcmp(zzbegexpr, "#error")==0) )
     {
       static char buf[100];
-      sprintf(buf, "%s_ast", zzbegexpr+1);
+      snprintf(buf, sizeof(buf), "%s_ast", zzbegexpr+1);
       /* MR27 */						list_add(&CurAstLabelsInActions, mystrdup(zzbegexpr+1));
       zzreplstr(buf);
       chkGTFlag();

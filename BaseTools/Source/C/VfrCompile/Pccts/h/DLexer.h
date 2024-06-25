@@ -57,7 +57,7 @@ mode( int m )
 		/* have to redo class since using different compression */
 		cl = ZZSHIFT(ch);
 	}else{
-		sprintf((char *)ebuf,"Invalid automaton mode = %d ",m);
+		snprintf((char *)ebuf, 70, "Invalid automaton mode = %d ",m);
 		errstd(ebuf);
 	}
 }

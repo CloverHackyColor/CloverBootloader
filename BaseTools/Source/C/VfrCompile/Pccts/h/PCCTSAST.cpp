@@ -602,7 +602,7 @@ stringparser_parse_element(StringParser *parser)
 		p->label_num = label;
 		return p;
 	}
-	sprintf(ebuf, "mismatch token in scan(): %s", scan_token_str(parser->token));
+	snprintf(ebuf, sizeof(ebuf),  "mismatch token in scan(): %s", scan_token_str(parser->token));
 	panic(ebuf);
 	return NULL;
 }
@@ -659,7 +659,7 @@ stringscan_gettok(StringLexer *scanner)
 		case '\0' : return __StringScanEOF;
 		case __StringScanEOF : return __StringScanEOF;
 		default  :
-			sprintf(ebuf, "invalid char in scan: '%c'", scanner->c);
+			snprintf(ebuf, sizeof(ebuf), "invalid char in scan: '%c'", scanner->c);
 			panic(ebuf);
 	}
 	return __StringScanEOF;	// never reached
