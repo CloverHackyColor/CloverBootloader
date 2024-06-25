@@ -1,0 +1,22 @@
+1. Download Clover
+
+cd ~
+mkdir src
+cd src
+git clone --recurse-submodule https://github.com/CloverHackyColor/CloverBootloader.git
+cd CloverBootloader
+
+2. Download and install Python 5.12...
+3. Set a link for python
+
+cd /Library/Frameworks/Python.framework/Versions/3.12/bin/
+sudo ln -s python3.12 python
+cd -
+
+4. Install tools
+pip3 install setuptools
+
+5. make -C BaseTools
+
+6. ./buildme
+
