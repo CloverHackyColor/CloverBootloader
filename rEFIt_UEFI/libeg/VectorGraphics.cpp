@@ -132,16 +132,16 @@ EFI_STATUS XTheme::ParseSVGXIcon(NSVGparser* SVGParser, INTN Id, const XString8&
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
-  float ScaleY = Scale;
-  if (IconNameX.contains("sequoia") || IconNameX.contains("vent")) {
-	  DBG("[0]=%f [1]=%f [2]=%f [3]=%f\n", bounds[0], bounds[1], bounds[2], bounds[3]);
-	  //[0]=1330.129883 [1]=740.651855 [2]=1458.281494 [3]=886.530396
-//	  ScaleY = -Scale;
-  }
+//  float ScaleY = Scale;
+//  if (IconNameX.contains("sequoia") || IconNameX.contains("vent")) {
+//	  DBG("[0]=%f [1]=%f [2]=%f [3]=%f\n", bounds[0], bounds[1], bounds[2], bounds[3]);
+//	  //[0]=1330.129883 [1]=740.651855 [2]=1458.281494 [3]=886.530396
+////	  ScaleY = -Scale;
+//  }
 
 
   NSVGrasterizer* rast = nsvg__createRasterizer();
-  nsvgRasterize(rast, SVGimage, bounds, IconNameX.c_str(), tx, ty, Scale, ScaleY, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
+  nsvgRasterize(rast, SVGimage, bounds, IconNameX.c_str(), tx, ty, Scale, Scale, (UINT8*)NewImage.GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
   nsvg__deleteRasterizer(rast);
   *Image = NewImage; //copy array
   
@@ -525,7 +525,7 @@ void testSVG()
       float tx = 0; //-SVGimage->realBounds[0] * Scale;
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
 		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty); //the aim is measure duration
-      nsvgRasterize(rast, SVGimage, tx,ty,Scale, -Scale, (UINT8*)NewImage.GetPixelPtr(0,0), (int)Width, (int)Height, (int)Width*4);
+      nsvgRasterize(rast, SVGimage, tx,ty,Scale, Scale, (UINT8*)NewImage.GetPixelPtr(0,0), (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       NewImage.Draw((UGAWidth - Width) / 2,
                 (UGAHeight - Height) / 2);

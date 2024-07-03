@@ -1810,7 +1810,7 @@ void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
                    UINT8* dst, int w, int h, int stride)
 {
-  nsvgRasterize(r, image, &image->realBounds[0], NULL, tx, ty, scalex, fabsf(scaley), dst, w, h, stride);
+  nsvgRasterize(r, image, &image->realBounds[0], NULL, tx, ty, scalex, scaley, dst, w, h, stride);
 }
 
 void nsvgRasterize(NSVGrasterizer* r,

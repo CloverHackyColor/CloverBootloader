@@ -1136,8 +1136,8 @@ static void nsvg__addShape(NSVGparser* p)
   for (int i=0; i<shape->clip.count; i++) {
     shape->clip.index[i] = p->clipPathStack[i];
   }
-  bool dump = (strstr(shape->id, "path8seq") != NULL);
-  nsvg__getLocalBounds(shape->bounds, shape, dump);  //(dest, src)
+//  bool dump = (strstr(shape->id, "path8seq") != NULL);
+  nsvg__getLocalBounds(shape->bounds, shape, false);  //(dest, src)
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
