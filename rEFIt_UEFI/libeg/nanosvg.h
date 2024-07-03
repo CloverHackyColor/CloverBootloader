@@ -499,7 +499,7 @@ void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
 void nsvg__deleteFontChain(NSVGfontChain *fontChain);
 void nsvg__imageBounds(NSVGimage* image, float* bounds);
-void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName);
+void nsvg__imageBounds(NSVGimage* image, float* bounds,const XString8& name);
 float nsvg__addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
 void RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
 

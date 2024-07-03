@@ -29,11 +29,11 @@ then
     echo "You must restore the folder \'"$(dirname "$qemu_path")"\'"
     exit 1
   fi
-  if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
-  then
-    unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip -d "$SCRIPT_DIR"
-    rm -rf "$SCRIPT_DIR"/__MACOSX
-  fi
+ # if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
+ # then
+ #   unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip -d "$SCRIPT_DIR"
+ #   rm -rf "$SCRIPT_DIR"/__MACOSX
+ # fi
 
   if pgrep qemu
   then
@@ -44,7 +44,7 @@ then
   if ! [ -z "$clover_efi_file" ]
   then
 
-    hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+    hdiutil attach "$SCRIPT_DIR"/QEMU-test2.img || exit 1
 
     shopt -s nocasematch
 
@@ -81,7 +81,7 @@ diskutil eject disk5
     -bios "$bios_file" \
     -machine q35 \
     -device ahci,id=ahi \
-    -drive format=raw,id=hda,file=./disk_image_gpt.img \
+    -drive format=raw,id=hda,file=./QEMU-test2.img \
     -usb \
     -device usb-mouse,bus=usb-bus.0,port=2 \
     -device usb-kbd,bus=usb-bus.0,port=1 \
@@ -93,8 +93,8 @@ diskutil eject disk5
 #      -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
 #      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
-hdiutil attach ./disk_image_gpt.img
-diskutil mount disk5s1
+hdiutil attach ./QEMU-test2.img
+diskutil mount QEMU_EFI
 
 fi
 

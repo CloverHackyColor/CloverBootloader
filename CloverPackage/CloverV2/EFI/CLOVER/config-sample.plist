@@ -652,14 +652,14 @@
                 <key>Tool</key>
                 <true/>
             </dict>
-            <key>ScreenResolution?</key>
-            <string>1280x1024</string>
+            <key>ScreenResolution</key>
+            <string>1600x900</string>
             <key>ShowOptimus?</key>
             <false/>
             <key>TextOnly</key>
             <false/>
             <key>Theme</key>
-            <string>Clovy</string>
+            <string>cesium</string>
             <key>Timezone</key>
             <integer>3</integer>
         </dict>

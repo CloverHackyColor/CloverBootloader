@@ -47,7 +47,7 @@
 #include "../include/OneLinerMacros.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -952,7 +952,7 @@ static NSVGgradientLink* nsvg__createGradientLink(const char* id)
   return grad;
 }
 
-static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape); //, float* xform);
+static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, bool dump); //, float* xform);
 
 static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGgradientLink* link, char* paintType)
 {
@@ -996,7 +996,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   // The shape width and height.
   if (data->units == NSVG_OBJECT_SPACE) {
     float localBounds[4];
-    nsvg__getLocalBounds(localBounds, shape); //, inv); //before any transform
+    nsvg__getLocalBounds(localBounds, shape, false); //, inv); //before any transform
 
     ox = localBounds[0];
     oy = localBounds[1];
@@ -1063,7 +1063,7 @@ static float nsvg__getAverageScale(float* t)
   return (nsvg__vmag(t[0], t[2]) + nsvg__vmag(t[1], t[3])) * 0.5f;
 }
 
-static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atXform)
+static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, bool dump) //, float* atXform)
 {
   NSVGpath* path;
   float curve[8];
@@ -1093,6 +1093,9 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atX
       curve[0] = curve[6];
       curve[1] = curve[7];
     }
+//    if (dump) {
+//    	nsvg__dumpFloat("  local bounds ", bounds, 4);
+//    }
   }
 }
 
@@ -1133,8 +1136,8 @@ static void nsvg__addShape(NSVGparser* p)
   for (int i=0; i<shape->clip.count; i++) {
     shape->clip.index[i] = p->clipPathStack[i];
   }
-
-  nsvg__getLocalBounds(shape->bounds, shape);  //(dest, src)
+  bool dump = (strstr(shape->id, "path8seq") != NULL);
+  nsvg__getLocalBounds(shape->bounds, shape, dump);  //(dest, src)
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
@@ -4396,15 +4399,19 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds, co
       nsvg__takeXformBounds(shape, &xform2[0], bounds);
       shape = shape->next;
     }
-/*
-    if (shapeLink->isText) { //strstr(shapeLink->id, "shar")) {
-       DBG("take Bounds: shapeID=%s\n", shapeLink->id);
-       nsvg__dumpFloat("  transform", xform, 6);
-       nsvg__dumpFloat("  shape initial bounds", shapeLink->bounds, 4);
-     }
-*/
+
+//    if ((strstr(shapeLink->id, "seq") != NULL) || (strstr(shapeLink->id, "son") != NULL) ) {
+//       DBG("take Bounds: shapeID=%s\n", shapeLink->id);
+//       nsvg__dumpFloat("  transform", xform, 6);
+//       nsvg__dumpFloat("  shape initial bounds", &shapeLink->bounds[0], 4);
+//     }
+
     count++; //count visible
   }
+//  if ((strstr(groupName, "seq") != NULL) || (strstr(groupName, "ven") != NULL)) {
+//	  DBG("group Bounds: ID=%s\n", groupName);
+//	  nsvg__dumpFloat("  group bounds", &bounds[0], 4);
+//  }
   return count;
 }
 
@@ -4446,11 +4453,16 @@ NSVGclipPath* nsvg__getClipPathWithIndex(NSVGimage* image, NSVGclipPathIndex idx
 
 }
 
-void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName)
+void nsvg__imageBounds(NSVGimage* image, float* bounds, const XString8& IconNameX)
 {
   if (!bounds || !image) {
     return;
   }
+//  bool dump = (IconNameX.contains("sequoia") || IconNameX.contains("sonoma"));
+//  if (dump) {
+//	  DBG("dump %s\n", IconNameX.c_str());
+//  }
+  const char* groupName = IconNameX.c_str();
   bounds[0] = FLT_MAX;
   bounds[1] = FLT_MAX;
   bounds[2] = -FLT_MAX;
@@ -4463,16 +4475,33 @@ void nsvg__imageBounds(NSVGimage* image, float* bounds, const char* groupName)
     if ( groupName && !nsvg__isShapeInGroup(shape, groupName) ) {
       continue;
     }
-//    DBG("nsvg__imageBounds2 found shapes=%s shape->clip.count=%d\n", shape->id, shape->clip.count);
+//    if (dump) {
+//      DBG("nsvg__imageBounds2 found shapes=%s shape->clip.count=%d\n", shape->id, shape->clip.count);
+//    }
     for (int i = 0; i < shape->clip.count; i++) {
       NSVGclipPath* clipPath = nsvg__getClipPathWithIndex(image, shape->clip.index[i]);
+//      if (dump) {
+//    	  //DBG("clip-id=%s clip index=%d\n", image->clipPaths->id, shape->clip.index[i]);
+//    	  nsvg__dumpFloat("clip shape bounds", &shape->bounds[0], 4);
+//      }
       if ( clipPath ) {
-//        DBG("nsvg__imageBounds found clipPath %s\n", clipPath->id);
-        count += nsvg__shapesBound(clipPath->shapes, bounds, NULL);
+        count += nsvg__shapesBound(clipPath->shapes, bounds, NULL);  // why NULL);?
+//        if (dump) {
+//  		  DBG("nsvg__imageBounds found clipPath %s\n", clipPath->id);
+//
+//        }
+
       }
-    }
-  }
+
+     } //for clips
+//          if (dump) {
+//        	  nsvg__dumpFloat("clip image bounds", &shape->bounds[0], 4);
+//          }
+  } // for shapes
   count += nsvg__shapesBound(image->shapes, bounds, groupName);
+//  if (dump) {
+//	  nsvg__dumpFloat("final image real bounds", bounds, 4);
+//  }
   if (count == 0) {
     bounds[0] = bounds[1] = 0.0f;
     bounds[2] = bounds[3] = 1.0f;
@@ -4519,7 +4548,7 @@ NSVGparser* nsvg__parse(char* input, /* const char* units,*/ float dpi, float op
   p->image->width = bounds[2] - bounds[0];
   p->image->height = bounds[3] - bounds[1];
 #endif
-//   DBG("scaled width=%f height=%f\n", p->image->width, p->image->height);
+//  DBG("scaled width=%f height=%f\n", p->image->width, p->image->height);
   return p;
 }
 

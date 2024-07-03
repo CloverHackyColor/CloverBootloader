@@ -41,7 +41,7 @@
 #include "../Platform/Utils.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 1
+#define DEBUG_SVG 0
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -1634,9 +1634,11 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
                                   UINT8* dst, int w, int h, int stride,
                                   NSVGscanlineFunction fscanline)
 {
-#ifdef DEBUG_TRACE
- DBG("nsvg__rasterizeShapes %s %f %f %f %f\n", groupName ? groupName : "", tx, ty, scalex, scaley);
-#endif
+//	bool dump = (strstr(groupName, "seq") != NULL) || (strstr(groupName, "ven") != NULL) ; //XXX
+//  if (dump) {
+//    DBG("nsvg__rasterizeShapes %s %f %f %f %f\n", groupName ? groupName : shapes->id, tx, ty, scalex, scaley);
+//  }
+
   NSVGshape *shape = NULL, *shapeLink = NULL;
   float xform[6], xform2[6];
   float min_scale = fabsf(scalex) < fabsf(scaley) ? fabsf(scalex) : fabsf(scaley);
@@ -1676,7 +1678,11 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
     xform[3] *= scaley;
     xform[4] = xform[4] * scalex + tx;
     xform[5] = xform[5] * scaley + ty;
-
+//  if (dump) {
+//	  DBG("shape->id=%s\n", shape->id );
+//	  nsvg__dumpFloat("  shape->xform ", xform, 6);
+//	  nsvg__dumpFloat("  shape->bounds ", &shape->bounds[0], 4);
+//  }
     if (!shape->link) {
       renderShape(r, shape, &xform[0], min_scale);
     }
@@ -1702,19 +1708,23 @@ static void nsvg__rasterizeShapes(NSVGrasterizer* r,
 static void renderShape(NSVGrasterizer* r,
                         NSVGshape* shape, float *xform, float min_scale)
 {
-#ifdef DEBUG_TRACE
- DBG("render shape %s %f %f %f %f %f %f\n", shape->id, xform[0], xform[1], xform[2], xform[3], xform[4], xform[5]);
-#endif
+// bool dump = (strstr(shape->id, "seq") != NULL) || (strstr(shape->id, "ven") != NULL);
+// if (dump) {
+//   DBG("render shape %s %f %f %f %f %f %f\n", shape->id,
+//		   xform[0], xform[1], xform[2], xform[3], xform[4], xform[5]);
+// }
   NSVGedge *e = NULL;
   NSVGcachedPaint cache;
 
   SetMem(&cache, sizeof(NSVGcachedPaint), 0);
-//  NSVGclip& clip = shape->clip;
-//  DBG("renderShape %s with clips", shape->id);
-//  for (int i=0; i < clip.count; i++) {
-//    DBG(" %d", clip.index[i]);
+//  if (dump) {
+//	  NSVGclip& clip = shape->clip;
+//	  DBG("renderShape %s with clips", shape->id);
+//	  for (int i=0; i < clip.count; i++) {
+//		  DBG(" %d", clip.index[i]);
+//	  }
+//	  DBG("\n");
 //  }
-//  DBG("\n");
 
   if (shape->fill.type != NSVG_PAINT_NONE) {
     nsvg__resetPool(r);
@@ -1800,7 +1810,7 @@ void nsvgRasterize(NSVGrasterizer* r,
                    NSVGimage* image, float tx, float ty, float scalex, float scaley,
                    UINT8* dst, int w, int h, int stride)
 {
-  nsvgRasterize(r, image, &image->realBounds[0], NULL, tx, ty, scalex, scaley, dst, w, h, stride);
+  nsvgRasterize(r, image, &image->realBounds[0], NULL, tx, ty, scalex, fabsf(scaley), dst, w, h, stride);
 }
 
 void nsvgRasterize(NSVGrasterizer* r,
@@ -1810,8 +1820,14 @@ void nsvgRasterize(NSVGrasterizer* r,
 {
   tx -= bounds[0] * scalex;
   ty -= bounds[1] * scaley;
-//   DBG("  image %s will be scaled by [%f]\n", image->id, scalex);
-//   nsvg__dumpFloat("  image real bounds ", image->realBounds, 4);
+//  if (scaley < 0) {
+//    DBG("  image %s will be scaled by [%f]\n", image->id, scalex);
+//    nsvg__dumpFloat("  image real bounds ", image->realBounds, 4);
+//  }
+//  if (strstr(groupName, "seq") != NULL ||  strstr(groupName, "ven") != NULL) {
+//	  DBG("  image %s will be scaled by [%f]\n", groupName, scalex);
+//	  nsvg__dumpFloat("  image real bounds ", image->realBounds, 4);
+//  }
 
   nsvg__rasterizeClipPaths(r, image, w, h, tx, ty, scalex, scaley);
 
