@@ -1470,9 +1470,12 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         continue;
       }
       XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
+      XStringW FileS = SWPrintf("EFI\\%ls\\shimx64.efi", DirEntry->FileName);
       XStringW OSName = XStringW().takeValueFrom(DirEntry->FileName); // this is folder name, for example "ubuntu"
       OSName.lowerAscii(); // lowercase for icon name and title (first letter in title will be capitalized later)
-      if (FileExists(Volume->RootDir, File)) {
+      XBool F1 = FileExists(Volume->RootDir, File);
+      XBool F2 = FileExists(Volume->RootDir, FileS);
+      if (F1 || F2) {
         // check if nonstandard icon mapping is needed
         for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
           if (StrCmp(OSName.wc_str(),LinuxIconMapping[Index].DirectoryName) == 0) {
@@ -1485,7 +1488,8 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         }
         XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
         LoaderTitle.upperAscii();
-        LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
+        XStringW LoaderTitle1 = LoaderTitle + OSName.subString(1, OSName.length()) + L" Linux"_XSW;
+        XStringW LoaderTitle2 = LoaderTitle + OSName.subString(1, OSName.length()) + L" Secure"_XSW;
         // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
         XIcon ImageX = ThemeX->GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
         if (ImageX.isEmpty()) {
@@ -1500,9 +1504,20 @@ STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
           DirIterClose(&DirIter);
           return;
         } 
-        AddLoaderEntry(File, NullXString8Array, L""_XSW, LoaderTitle, Volume,
+        if (F1) {
+        	AddLoaderEntry(File, NullXString8Array, L""_XSW, LoaderTitle1, Volume,
                       (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+        }
+        if (F2) {
+        	AddLoaderEntry(FileS, NullXString8Array, L""_XSW, LoaderTitle2, Volume,
+                      (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+        }
       } //anyway continue search other entries
+      // for secure boot?
+
+      if (FileExists(Volume->RootDir, File)) {
+
+      }
     }
     DirIterClose(&DirIter);
 

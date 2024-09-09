@@ -138,6 +138,7 @@ float FloorF(float X)
 
 float ModF(float X, float Y)
 {
+  if (Y == 0.0f) return 0.0f;
   INT32 I = (INT32)(X / Y);
   return (X - (float)I * Y);
 }
@@ -219,15 +220,7 @@ float Atan2F(float Y, float X)  //result -pi..+pi
   return sign * (res - PP);
 }
 
-/*
-RETURN_STATUS
-EFIAPI
-AsciiStrDecimalToUintnS (
-                         IN  CONST CHAR8              *String,
-                         OUT       CHAR8              **EndPointer,  OPTIONAL
-                         OUT       UINTN              *Data
-                         );
-*/
+
 RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL
@@ -334,36 +327,9 @@ void QuickSort(void* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
   if (j > Low)    QuickSort(Array, Low, j, Size, compare);
   if (High > i)   QuickSort(Array, i, High, Size, compare);
 }
-//
-////S must be allocated before use
-//void AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
-//{
-//  INTN I, Fract;
-//  float D;
-//  if (!S) {
-//    return;
-//  }
-//  
-//  I = (INTN)X;
-//  D = (float)I;
-//  Fract = fabsf((X - D) * 1000000.0f);
-//  snprintf(S, N, "%D.%06D", I, (INTN)Fract);
-//}
+
 #endif
-//
-//CHAR16* P__oolPrintFloat(float X)
-//{
-//  INTN I, Fract;
-//  CHAR8 S = ' ';
-//  float D;
-//  I = (INTN)X;
-//  D = (float)I;
-//  if (I == 0 && X < 0) {
-//    S = '-';
-//  }
-//  Fract = (INTN)fabsf((X - D) * 1000000.0f);
-//  return P__oolPrint(L"%c%d.%06d", S, I, Fract);
-//}
+
 
 static UINT32 seed = 12345;
 float rndf() //expected 0..1

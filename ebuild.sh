@@ -519,14 +519,14 @@ MainBuildScript() {
 
     # Cleaning part of the script if we have told to do it
     if [[ "$TARGETRULE" == cleanpkg ]]; then
-        if [[ "$SYSNAME" != Linux ]]; then
-            # Make some house cleaning
-            echo "Cleaning CloverUpdater files..."
-            make -C "$CLOVERROOT"/CloverPackage/CloverUpdater clean
-
-            echo "Cleaning CloverPrefpane files..."
-            make -C "$CLOVERROOT"/CloverPackage/CloverPrefpane clean
-        fi
+ #       if [[ "$SYSNAME" != Linux ]]; then
+ #           # Make some house cleaning
+ #           echo "Cleaning CloverUpdater files..."
+ #           make -C "$CLOVERROOT"/CloverPackage/CloverUpdater clean
+#
+ #           echo "Cleaning CloverPrefpane files..."
+ #           make -C "$CLOVERROOT"/CloverPackage/CloverPrefpane clean
+ #       fi
 
         echo "Cleaning bootsector files..."
         local BOOTHFS="$CLOVERROOT"/BootHFS
