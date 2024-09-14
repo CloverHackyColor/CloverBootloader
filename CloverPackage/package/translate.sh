@@ -58,17 +58,17 @@ while [[ $# -gt 0 ]]; do
 done
 
 TEMPLATES_DIR="Resources/templates"
-#CLOVER_UPDATER_DIR="../CloverUpdater"
-#CLOVER_PREFPANE_DIR="../CloverPrefpane"
+CLOVER_UPDATER_DIR="../CloverUpdater"
+CLOVER_PREFPANE_DIR="../CloverPrefpane"
 PODIR="po"
 
 # Update CloverUpdater.strings
-#"$CLOVER_UPDATER_DIR"/translate_xib.sh --extract-only
+"$CLOVER_UPDATER_DIR"/translate_xib.sh --extract-only
 
 # Update CloverPrefpane.strings
-#"$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
+"$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
 # Update Localizable.strings
-#"$CLOVER_PREFPANE_DIR"/translate_source.sh --extract-only
+"$CLOVER_PREFPANE_DIR"/translate_source.sh --extract-only
 
 # Check if pot and po files need to be updated
 IFS=$'\n' # '
