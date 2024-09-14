@@ -39,7 +39,7 @@ jobs:
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Clover beta-${{ env.GIT_SHA }}
+          name: Clover-GCC-14.1.0-${{ env.GIT_SHA }}
           path: |
             *.7z
             CloverV2*.zip

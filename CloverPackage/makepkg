@@ -56,7 +56,7 @@ echo "${revision}" > revision
 #   Make the translation
 echo ""
 echo "========= Translating Resources ========"
-#./package/translate.sh || exit $?
+./package/translate.sh || exit $?
 
 # Check that XCode is install properly
 xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
