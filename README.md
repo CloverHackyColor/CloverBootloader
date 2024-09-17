@@ -20,6 +20,8 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Press **F4** to save original (OEM) ACPI tables into `/EFI/CLOVER/ACPI/origin`
 - Press **F5** to test DSDT patching
 - Press **F6** to save graphics firmware into `/EFI/CLOVER/misc`
+- Press **F7** to test HDA output
+- Press **F9** to switch screen resolution
 - Press **F10** to save screenshots from GUI
 - Press **F11** to reset NVRAM
 - Press **F12** to eject CD/DVD
@@ -29,7 +31,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 - Create custom boot entries for personalizing boot entries and add support for other operating systems
 - Create Clover boot entry in NVRAM with tool from GUI
 - Launch EFI command shell from GUI
-- Startup sound controlled by **F8** and checked by **F7**
+- Startup sound checked by **F7**
 
 ### Developers:
 
@@ -42,7 +44,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
     Chameleon team, crazybirdy, JrCs, chris1111.
     
     ### Clover is open source based on different projects :    
-*   Clover, rEFIt, XNU, VirtualBox. [The main is EDK2 latest revision](https://github.com/CloverHackyColor/CloverBootloader)
+*   Chameleon, rEFIt, XNU, VirtualBox. [The main is EDK2 latest revision](https://github.com/CloverHackyColor/CloverBootloader)
 *   Recent developments and changes in details at [Clover Change Explanations](https://www.insanelymac.com/forum/topic/304530-clover-change-explanations/)
 *   Support forum discussion [AppleLife](https://applelife.ru/threads/clover.42089/) (Russian) [Insanelymac](https://www.insanelymac.com/forum/topic/284656-clover-general-discussion/) (English) [macos86.it](https://www.macos86.it/forum/46-clover/) (Italian)
 ---------------------------------------------------------
