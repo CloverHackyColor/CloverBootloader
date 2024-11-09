@@ -1141,6 +1141,9 @@ void AboutRefit(void)
     AboutMenu.AddMenuInfo_f("  stinga11, TheRacerMaster, solstice, SoThOr, DF");
     AboutMenu.AddMenuInfo_f("  cecekpawon, Micky1979, Needy, joevt, ErmaC, vit9696");
     AboutMenu.AddMenuInfo_f("  ath, savvas, syscl, goodwin_c, clovy, jief_machak");
+    AboutMenu.AddMenuInfo_f("  chris1111, vector_sigma, LAbyOne, Florin9doi");
+    AboutMenu.AddMenuInfo_f("Package credits:");
+    AboutMenu.AddMenuInfo_f("  Chameleon team, crazybirdy, JrCs, chris1111");
     AboutMenu.AddMenuInfo_f("Credits also:");
     AboutMenu.AddMenuInfo_f("  projectosx.com, applelife.ru, insanelymac.com");
     AboutMenu.AddMenuInfo_f(" ");
