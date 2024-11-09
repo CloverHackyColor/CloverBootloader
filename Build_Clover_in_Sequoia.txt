@@ -6,7 +6,7 @@ cd src
 git clone --recurse-submodule https://github.com/CloverHackyColor/CloverBootloader.git
 cd CloverBootloader
 
-2. Download and install Python 5.12...
+2. Download and install Python 3.12...
 3. Set a link for python
 
 cd /Library/Frameworks/Python.framework/Versions/3.12/bin/

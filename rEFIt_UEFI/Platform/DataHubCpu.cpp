@@ -468,6 +468,9 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   //sudo nvram wake-failure=%00%00%00%00%00
   LangLen = 0;
   AddNvramVariable(L"wake-failure", gEfiAppleBootGuid, Attributes, 5, &LangLen);
+  // for a bluetooth
+  AddNvramVariable(L"bluetoothInternalControllerInfo", gEfiAppleBootGuid, Attributes, 14, &LangLen);
+  AddNvramVariable(L"bluetoothExternalDongleFailed", gEfiAppleBootGuid, Attributes, 1, &LangLen);
 
   //clear OC garbage
   DeleteNvramVariable(L"opencore-version", gEfiAppleBootGuid);
