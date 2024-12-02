@@ -336,6 +336,7 @@ void GetCPUProperties (void)
       case CPU_MODEL_ALDERLAKE_ULT:
       case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_METEORLAKE:
+      case CPU_MODEL_ARROWLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
@@ -391,6 +392,9 @@ void GetCPUProperties (void)
     } else if ( gCPUStructure.BrandString.contains("W36") ) {
       gCPUStructure.Cores   = 6;
       gCPUStructure.Threads = 6;
+    } else if ( gCPUStructure.BrandString.contains("285K") ) {
+      gCPUStructure.Cores   = 24;
+      gCPUStructure.Threads = 24;
     } else { //other Penryn and Wolfdale
       gCPUStructure.Cores   = 0;
       gCPUStructure.Threads = 0;
@@ -535,6 +539,7 @@ void GetCPUProperties (void)
            case CPU_MODEL_RAPTORLAKE_B:
            case CPU_MODEL_RAPTORLAKE:
            case CPU_MODEL_METEORLAKE:
+           case CPU_MODEL_ARROWLAKE:
 
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -1422,6 +1427,7 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_ROCKETLAKE:
           case CPU_MODEL_RAPTORLAKE:
           case CPU_MODEL_METEORLAKE:
+          case CPU_MODEL_ARROWLAKE:
             if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
             if ( gCPUStructure.BrandString.contains("Core(TM) i5-1") )
@@ -1446,6 +1452,8 @@ UINT16 GetAdvancedCpuType()
               return 0xE05;
             if ( gCPUStructure.BrandString.contains("Xeon") )
               return 0xF01;
+            if ( gCPUStructure.BrandString.contains("Core(TM) Ultra") )
+              return 0x1009; // Core Ultra 9
             if (gCPUStructure.Cores <= 2) {
               return 0x605;
             }
@@ -1676,6 +1684,7 @@ MacModel GetDefaultModel()
       case CPU_MODEL_ROCKETLAKE:
       case CPU_MODEL_RAPTORLAKE:
       case CPU_MODEL_METEORLAKE:
+      case CPU_MODEL_ARROWLAKE:
         DefaultType = MacPro71;
         break;
       default:

@@ -82,7 +82,7 @@
 #define CPU_MODEL_METEORLAKE    0xAA  /* 14h Meteor Lake */
 #define CPU_MODEL_RAPTORLAKE    0xB7  /* 13h Raptor Lake */
 #define CPU_MODEL_RAPTORLAKE_B  0xBF  /* 13h Raptor Lake, i5-13400h */
-
+#define CPU_MODEL_ARROWLAKE		0xC6
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541

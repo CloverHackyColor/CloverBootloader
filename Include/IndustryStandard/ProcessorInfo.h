@@ -204,6 +204,7 @@ enum {
 #define CPU_MODEL_RAPTORLAKE     0xB7  /* 13h Raptor Lake */
 #define CPU_MODEL_RAPTORLAKE_B   0xBF  /* 13h Raptor Lake, i5-13400h */
 #define CPU_MODEL_METEORLAKE     0xAA  /* 14h Meteor Lake */
+#define CPU_MODEL_ARROWLAKE		 0xC6
 
 #define CPU_SOCKET_UNKNOWN  0x02
 #define CPU_SOCKET_PGA478   0x0F
