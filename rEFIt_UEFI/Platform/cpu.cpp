@@ -336,11 +336,18 @@ void GetCPUProperties (void)
       case CPU_MODEL_ALDERLAKE_ULT:
       case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_METEORLAKE:
-      case CPU_MODEL_ARROWLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
+        break;
+      case CPU_MODEL_ARROWLAKE:
+      case CPU_MODEL_ARROWLAKE_X:
+      case CPU_MODEL_ARROWLAKE_U:
+        msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
+        DBG("MSR 0x35    %16llX\n", msr);
+        gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
+        gCPUStructure.Threads = gCPUStructure.Cores; // no hyperthreading
         break;
         
       case CPU_MODEL_DALES:
@@ -421,7 +428,7 @@ void GetCPUProperties (void)
     gCPUStructure.Threads = 4;
   }
   
-  //New for SkyLake 0x4E, 0x5E
+  //New for SkyLake 0x4E, 0x5E and up
   if(gCPUStructure.CPUID[CPUID_0][EAX] >= 0x15) {
     UINT32 Num, Denom;
     DoCpuid(0x15, gCPUStructure.CPUID[CPUID_15]);
@@ -540,6 +547,8 @@ void GetCPUProperties (void)
            case CPU_MODEL_RAPTORLAKE:
            case CPU_MODEL_METEORLAKE:
            case CPU_MODEL_ARROWLAKE:
+           case CPU_MODEL_ARROWLAKE_X:
+           case CPU_MODEL_ARROWLAKE_U:
 
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -1428,6 +1437,8 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_RAPTORLAKE:
           case CPU_MODEL_METEORLAKE:
           case CPU_MODEL_ARROWLAKE:
+          case CPU_MODEL_ARROWLAKE_X:
+          case CPU_MODEL_ARROWLAKE_U:
             if ( gCPUStructure.BrandString.contains("Core(TM) i3") )
               return 0x905; // Core i3 - Apple doesn't use it
             if ( gCPUStructure.BrandString.contains("Core(TM) i5-1") )
@@ -1566,6 +1577,8 @@ MacModel GetDefaultModel()
       case CPU_MODEL_ICELAKE_A:
       case CPU_MODEL_ICELAKE_C:
       case CPU_MODEL_ICELAKE_D:
+      case CPU_MODEL_ALDERLAKE_ULT:  //???
+      case CPU_MODEL_ARROWLAKE_U:
         DefaultType = MacBookPro161;
         break;
      default:
@@ -1678,13 +1691,15 @@ MacModel GetDefaultModel()
         DefaultType = MacPro61;
         break;
       case CPU_MODEL_ALDERLAKE:
-      case CPU_MODEL_ALDERLAKE_ULT:  //???
+
       case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_COMETLAKE_S:
       case CPU_MODEL_ROCKETLAKE:
       case CPU_MODEL_RAPTORLAKE:
       case CPU_MODEL_METEORLAKE:
       case CPU_MODEL_ARROWLAKE:
+      case CPU_MODEL_ARROWLAKE_X:
+
         DefaultType = MacPro71;
         break;
       default:
