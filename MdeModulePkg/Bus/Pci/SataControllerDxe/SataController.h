@@ -15,6 +15,7 @@
 #include <IndustryStandard/Pci.h>
 
 #include <Protocol/ComponentName.h>
+#include <Protocol/DevicePath.h>
 #include <Protocol/DriverBinding.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/IdeControllerInit.h>

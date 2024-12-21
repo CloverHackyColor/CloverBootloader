@@ -979,7 +979,7 @@ Returns:
 {
   EFI_STATUS  Status;
   FAT_ODIR    *ODir;
-  FAT_DIRENT  *TempDirEnt;
+  FAT_DIRENT  *TempDirEnt = NULL;
   UINT32      NewEndPos;
 
   ODir = OFile->ODir;

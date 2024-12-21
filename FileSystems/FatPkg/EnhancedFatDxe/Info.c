@@ -312,7 +312,7 @@ Returns:
   CHAR16        NewFileName[EFI_PATH_STRING_LENGTH];
   EFI_TIME      ZeroTime;
   FAT_DIRENT    *DirEnt;
-  FAT_DIRENT    *TempDirEnt;
+  FAT_DIRENT    *TempDirEnt = NULL;
   UINT8         NewAttribute;
   BOOLEAN       ReadOnly;
 

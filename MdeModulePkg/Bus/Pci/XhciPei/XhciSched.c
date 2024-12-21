@@ -1708,7 +1708,7 @@ XhcPeiSetConfigCmd (
 
   MaxDci = 0;
 
-  IfDesc = (USB_INTERFACE_DESCRIPTOR *) (ConfigDesc + 1);
+  IfDesc = (USB_INTERFACE_DESCRIPTOR *) ((UINTN)ConfigDesc + ConfigDesc->Length);
   for (Index = 0; Index < ConfigDesc->NumInterfaces; Index++) {
     while ((IfDesc->DescriptorType != USB_DESC_TYPE_INTERFACE) || (IfDesc->AlternateSetting != 0)) {
       IfDesc = (USB_INTERFACE_DESCRIPTOR *) ((UINTN) IfDesc + IfDesc->Length);
@@ -1716,7 +1716,7 @@ XhcPeiSetConfigCmd (
 
     NumEp = IfDesc->NumEndpoints;
 
-    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) (IfDesc + 1);
+    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) ((UINTN)IfDesc + IfDesc->Length);
     for (EpIndex = 0; EpIndex < NumEp; EpIndex++) {
       while (EpDesc->DescriptorType != USB_DESC_TYPE_ENDPOINT) {
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *) ((UINTN) EpDesc + EpDesc->Length);
@@ -1924,7 +1924,7 @@ XhcPeiSetConfigCmd64 (
 
   MaxDci = 0;
 
-  IfDesc = (USB_INTERFACE_DESCRIPTOR *) (ConfigDesc + 1);
+  IfDesc = (USB_INTERFACE_DESCRIPTOR *) ((UINTN)ConfigDesc + ConfigDesc->Length);
   for (Index = 0; Index < ConfigDesc->NumInterfaces; Index++) {
     while ((IfDesc->DescriptorType != USB_DESC_TYPE_INTERFACE) || (IfDesc->AlternateSetting != 0)) {
       IfDesc = (USB_INTERFACE_DESCRIPTOR *) ((UINTN) IfDesc + IfDesc->Length);
@@ -1932,7 +1932,7 @@ XhcPeiSetConfigCmd64 (
 
     NumEp = IfDesc->NumEndpoints;
 
-    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) (IfDesc + 1);
+    EpDesc = (USB_ENDPOINT_DESCRIPTOR *) ((UINTN)IfDesc + IfDesc->Length);
     for (EpIndex = 0; EpIndex < NumEp; EpIndex++) {
       while (EpDesc->DescriptorType != USB_DESC_TYPE_ENDPOINT) {
         EpDesc = (USB_ENDPOINT_DESCRIPTOR *) ((UINTN) EpDesc + EpDesc->Length);

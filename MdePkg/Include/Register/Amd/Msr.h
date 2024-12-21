@@ -18,6 +18,7 @@
 #define __AMD_MSR_H__
 
 #include <Register/Intel/ArchitecturalMsr.h>
+#include <Register/Amd/ArchitecturalMsr.h>
 #include <Register/Amd/Fam17Msr.h>
 
 #endif

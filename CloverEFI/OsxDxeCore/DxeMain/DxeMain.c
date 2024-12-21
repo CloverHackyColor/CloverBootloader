@@ -207,6 +207,7 @@ EFI_SYSTEM_TABLE      *gDxeCoreST = NULL;
 EFI_RUNTIME_SERVICES  *gDxeCoreRT = &mEfiRuntimeServicesTableTemplate;
 EFI_HANDLE            gDxeCoreImageHandle = NULL;
 
+static BOOLEAN  mExitBootServicesCalled = FALSE;
 
 //
 // EFI Decompress Protocol
@@ -778,9 +779,13 @@ CoreExitBootServices (
   Status = CoreTerminateMemoryMap (MapKey);
   if (EFI_ERROR(Status)) {
     //
-    // Notify other drivers that ExitBootServices fail 
+    // Notify other drivers that ExitBootServices fail. Do this ones
     //
-    CoreNotifySignalList (&gEventExitBootServicesFailedGuid);
+    //CoreNotifySignalList (&gEventExitBootServicesFailedGuid);
+    if (!mExitBootServicesCalled) {
+       CoreNotifySignalList (&gEventExitBootServicesFailedGuid);
+       mExitBootServicesCalled = TRUE;
+     }
     return Status;
   }
 

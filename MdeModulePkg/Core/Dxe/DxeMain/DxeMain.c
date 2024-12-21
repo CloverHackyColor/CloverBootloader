@@ -202,6 +202,7 @@ EFI_RUNTIME_SERVICES  *gDxeCoreRT = &mEfiRuntimeServicesTableTemplate;
 EFI_HANDLE            gDxeCoreImageHandle = NULL;
 
 BOOLEAN               gMemoryMapTerminated = FALSE;
+static BOOLEAN  mExitBootServicesCalled = FALSE;
 
 //
 // EFI Decompress Protocol
@@ -755,6 +756,10 @@ CoreExitBootServices (
     // Notify other drivers that ExitBootServices fail
     //
     CoreNotifySignalList (&gEventExitBootServicesFailedGuid);
+    if (!mExitBootServicesCalled) {
+       CoreNotifySignalList (&gEventExitBootServicesFailedGuid);
+       mExitBootServicesCalled = TRUE;
+     }
     return Status;
   }
 

@@ -48,4 +48,5 @@
 [Protocols]
   gEfiPciIoProtocolGuid  
   gEfiIdeControllerInitProtocolGuid
+  gEfiDevicePathProtocolGuid
   
