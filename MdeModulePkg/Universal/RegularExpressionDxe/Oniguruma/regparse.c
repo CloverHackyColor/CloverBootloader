@@ -4200,7 +4200,7 @@ fetch_interval_quantifier(UChar** src, UChar* end, PToken* tok, ScanEnv* env)
   if (PEND) goto invalid;
   PFETCH(c);
   if (IS_SYNTAX_OP(env->syntax, ONIG_SYN_OP_ESC_BRACE_INTERVAL)) {
-    if (c != MC_ESC(env->syntax)) goto invalid;
+    if (c != MC_ESC(env->syntax) || PEND) goto invalid;
     PFETCH(c);
   }
   if (c != '}') goto invalid;
