@@ -27,12 +27,12 @@ set -u # exit with error if unbound variables
 # GCC toolchain source version
 # here we can change source versions of tools
 # 
-export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.42} #2.42
-export GCC_VERSION=${GCC_VERSION:-14.1.0}
+export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.44} #2.42
+export GCC_VERSION=${GCC_VERSION:-14.2.0}
 
 # Version of libraries are from ./contrib/download_prerequisites in gcc source directory
 export GMP_VERSION=${GMP_VERSION:-gmp-6.3.0}  #6.2.1
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.2.1}
+export MPFR_VERSION=${MPFR_VERSION:-mpfr-4.2.2}
 export MPC_VERSION=${MPC_VERSION:-mpc-1.3.1}
 
 # isl-0.25 compatibility requirement is set to 10.14
@@ -419,7 +419,7 @@ GCC_native () {
         export LDFLAGS="-L$PREFIX/lib -L$PREFIX/sdk/lib -dead_strip -Wl,-dead_strip_dylibs"
 
 
-        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++ --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check"
+        local cmd="${GCC_DIR}/configure --prefix='$PREFIX' --with-sysroot='$TOOLCHAIN_SDK_DIR' --enable-languages=c,c++,ada --libdir='$PREFIX/lib/gcc$GCC_MAJOR_VERSION' --includedir='$PREFIX/include/gcc$GCC_MAJOR_VERSION' --datarootdir='$PREFIX/share/gcc$GCC_MAJOR_VERSION' --with-included-gettext --with-system-zlib --disable-nls --enable-plugin --with-gxx-include-dir='$PREFIX/include/gcc$GCC_MAJOR_VERSION/c++/' --with-gmp='$PREFIX' --with-mpfr='$PREFIX' --with-mpc='$PREFIX' --with-isl='$PREFIX' --disable-bootstrap  --disable-isl-version-check"
         local logfile="$DIR_LOGS/gcc-native.$ARCH.configure.log.txt"
         echo "$cmd" > "$logfile"
         echo "- gcc-${GCC_VERSION} (native) configure..."

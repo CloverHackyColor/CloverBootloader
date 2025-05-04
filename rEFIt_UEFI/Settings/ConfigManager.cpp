@@ -606,10 +606,11 @@ void ConfigManager::ReloadSmbios(XStringW& str)
         break;
       }
     }
-    FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
-    DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+ //   FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+ //   DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
   }
-
+  FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+  DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
 }
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
