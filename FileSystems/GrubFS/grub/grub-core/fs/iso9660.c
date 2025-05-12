@@ -242,7 +242,7 @@ read_node (grub_fshelp_node_t node, grub_off_t off, grub_size_t len, char *buf)
       toread = grub_le_to_cpu32 (node->dirents[i].size);
       if (toread > len)
 	toread = len;
-      err = grub_disk_read (node->data->disk,
+      err = grub_disk_read_z (node->data->disk,
 			    ((grub_disk_addr_t) grub_le_to_cpu32 (node->dirents[i].first_sector)) << GRUB_ISO9660_LOG2_BLKSZ,
 			    off, toread, buf);
       if (err)
@@ -305,7 +305,7 @@ grub_iso9660_susp_iterate (grub_fshelp_node_t node, grub_off_t off,
 	    return grub_errno;
 
 	  /* Load a part of the System Usage Area.  */
-	  err = grub_disk_read (node->data->disk, ce_block, off,
+	  err = grub_disk_read_z (node->data->disk, ce_block, off,
 				sua_size, sua);
 	  if (err)
 	    return err;
@@ -371,7 +371,7 @@ set_rockridge (struct grub_iso9660_data *data)
 
   /* Read the system use area and test it to see if SUSP is
      supported.  */
-  if (grub_disk_read (data->disk,
+  if (grub_disk_read_z (data->disk,
 		      (grub_le_to_cpu32 (data->voldesc.rootdir.first_sector)
 		       << GRUB_ISO9660_LOG2_BLKSZ), 0,
 		      sizeof (rootdir), (char *) &rootdir))
@@ -388,7 +388,7 @@ set_rockridge (struct grub_iso9660_data *data)
   if (! sua)
     return grub_errno;
 
-  if (grub_disk_read (data->disk,
+  if (grub_disk_read_z (data->disk,
 		      (grub_le_to_cpu32 (data->voldesc.rootdir.first_sector)
 		       << GRUB_ISO9660_LOG2_BLKSZ), sua_pos,
 		      sua_size, sua))
@@ -449,7 +449,7 @@ grub_iso9660_mount (grub_disk_t disk)
       int copy_voldesc = 0;
 
       /* Read the superblock.  */
-      if (grub_disk_read (disk, block << GRUB_ISO9660_LOG2_BLKSZ, 0,
+      if (grub_disk_read_z (disk, block << GRUB_ISO9660_LOG2_BLKSZ, 0,
 			  sizeof (struct grub_iso9660_primary_voldesc),
 			  (char *) &voldesc))
         {

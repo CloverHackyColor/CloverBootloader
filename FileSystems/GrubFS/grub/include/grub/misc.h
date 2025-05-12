@@ -55,10 +55,10 @@
 #define strlen(a) AsciiStrLen(a)
 
 #define ALIGN_UP(addr, align) \
-	((addr + (typeof (addr)) align - 1) & ~((typeof (addr)) align - 1))
-#define ALIGN_UP_OVERHEAD(addr, align) ((-(addr)) & ((typeof (addr)) (align) - 1))
+	((addr + (__typeof__(addr)) align - 1) & ~((__typeof__(addr)) align - 1))
+#define ALIGN_UP_OVERHEAD(addr, align) ((-(addr)) & ((__typeof__(addr)) (align) - 1))
 #define ALIGN_DOWN(addr, align) \
-	((addr) & ~((typeof (addr)) align - 1))
+	((addr) & ~((__typeof__(addr)) align - 1))
 //#define ARRAY_SIZE(array) (sizeof (array) / sizeof (array[0]))  //defined in edk2
 #define COMPILE_TIME_ASSERT(cond) switch (0) { case 1: case !(cond): ; }
 

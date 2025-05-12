@@ -27,6 +27,7 @@
 	utf8.c
         ../grub/grub-core/io/gzio.c
 		../grub/grub-core/kern/device.c
+		../grub/grub-core/kern/disk.c
 		../grub/grub-core/kern/err.c
 		../grub/grub-core/kern/misc.c
 		../grub/grub-core/kern/list.c

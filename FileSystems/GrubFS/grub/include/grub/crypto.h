@@ -116,12 +116,13 @@ typedef void (*gcry_cipher_stdecrypt_t) (void *c,
 					 unsigned char *outbuf,
 					 const unsigned char *inbuf,
 					 unsigned int n);
-
+#ifndef gcry_cipher_oid_spec
 typedef struct gcry_cipher_oid_spec
 {
   const char *oid;
   int mode;
 } gcry_cipher_oid_spec_t;
+#endif
 
 /* Module specification structure for ciphers.  */
 typedef struct gcry_cipher_spec

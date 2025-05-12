@@ -70,28 +70,29 @@ typedef void (*gcry_cipher_stdecrypt_t) (void *c,
 					 unsigned char *outbuf,
 					 const unsigned char *inbuf,
 					 unsigned int n);
-
-typedef struct gcry_cipher_oid_spec
-{
-  const char *oid;
-  int mode;
-} gcry_cipher_oid_spec_t;
+//#ifndef gcry_cipher_oid_spec_t
+//typedef struct gcry_cipher_oid_spec
+//{
+//  const char *oid;
+//  int mode;
+//} gcry_cipher_oid_spec_t;
+//#endif
 
 /* Module specification structure for ciphers.  */
-typedef struct gcry_cipher_spec
-{
-  const char *name;
-  const char **aliases;
-  gcry_cipher_oid_spec_t *oids;
-  size_t blocksize;
-  size_t keylen;
-  size_t contextsize;
-  gcry_cipher_setkey_t setkey;
-  gcry_cipher_encrypt_t encrypt;
-  gcry_cipher_decrypt_t decrypt;
-  gcry_cipher_stencrypt_t stencrypt;
-  gcry_cipher_stdecrypt_t stdecrypt;
-} gcry_cipher_spec_t;
+//typedef struct gcry_cipher_spec
+//{
+//  const char *name;
+//  const char **aliases;
+//  gcry_cipher_oid_spec_t *oids;
+//  size_t blocksize;
+//  size_t keylen;
+//  size_t contextsize;
+//  gcry_cipher_setkey_t setkey;
+//  gcry_cipher_encrypt_t encrypt;
+//  gcry_cipher_decrypt_t decrypt;
+//  gcry_cipher_stencrypt_t stencrypt;
+//  gcry_cipher_stdecrypt_t stdecrypt;
+//} gcry_cipher_spec_t;
 
 /* Register a new cipher module whose specification can be found in
    CIPHER.  On success, a new algorithm ID is stored in ALGORITHM_ID
@@ -152,24 +153,24 @@ typedef gcry_err_code_t (*gcry_pk_verify_t) (int algo,
 typedef unsigned (*gcry_pk_get_nbits_t) (int algo, gcry_mpi_t *pkey);
 
 /* Module specification structure for message digests.  */
-typedef struct gcry_pk_spec
-{
-  const char *name;
-  const char **aliases;
-  const char *elements_pkey;
-  const char *elements_skey;
-  const char *elements_enc;
-  const char *elements_sig;
-  const char *elements_grip;
-  int use;
-  gcry_pk_generate_t generate;
-  gcry_pk_check_secret_key_t check_secret_key;
-  gcry_pk_encrypt_t encrypt;
-  gcry_pk_decrypt_t decrypt;
-  gcry_pk_sign_t sign;
-  gcry_pk_verify_t verify;
-  gcry_pk_get_nbits_t get_nbits;
-} gcry_pk_spec_t;
+//typedef struct gcry_pk_spec
+//{
+//  const char *name;
+//  const char **aliases;
+//  const char *elements_pkey;
+//  const char *elements_skey;
+//  const char *elements_enc;
+//  const char *elements_sig;
+//  const char *elements_grip;
+//  int use;
+//  gcry_pk_generate_t generate;
+//  gcry_pk_check_secret_key_t check_secret_key;
+//  gcry_pk_encrypt_t encrypt;
+//  gcry_pk_decrypt_t decrypt;
+//  gcry_pk_sign_t sign;
+//  gcry_pk_verify_t verify;
+//  gcry_pk_get_nbits_t get_nbits;
+//} gcry_pk_spec_t;
 
 /* Register a new pubkey module whose specification can be found in
    PUBKEY.  On success, a new algorithm ID is stored in ALGORITHM_ID
@@ -198,25 +199,25 @@ typedef void (*gcry_md_final_t) (void *c);
 /* Type for the md_read function.  */
 typedef unsigned char *(*gcry_md_read_t) (void *c);
 
-typedef struct gcry_md_oid_spec
-{
-  const char *oidstring;
-} gcry_md_oid_spec_t;
+//typedef struct gcry_md_oid_spec
+//{
+//  const char *oidstring;
+//} gcry_md_oid_spec_t;
 
 /* Module specification structure for message digests.  */
-typedef struct gcry_md_spec
-{
-  const char *name;
-  unsigned char *asnoid;
-  int asnlen;
-  gcry_md_oid_spec_t *oids;
-  int mdlen;
-  gcry_md_init_t init;
-  gcry_md_write_t write;
-  gcry_md_final_t final;
-  gcry_md_read_t read;
-  size_t contextsize; /* allocate this amount of context */
-} gcry_md_spec_t;
+//typedef struct gcry_md_spec
+//{
+//  const char *name;
+//  unsigned char *asnoid;
+//  int asnlen;
+//  gcry_md_oid_spec_t *oids;
+//  int mdlen;
+//  gcry_md_init_t init;
+//  gcry_md_write_t write;
+//  gcry_md_final_t final;
+//  gcry_md_read_t read;
+//  size_t contextsize; /* allocate this amount of context */
+//} gcry_md_spec_t;
 
 /* Register a new digest module whose specification can be found in
    DIGEST.  On success, a new algorithm ID is stored in ALGORITHM_ID

@@ -716,7 +716,7 @@
   FileSystems/GrubFS/src/ISO9660.inf
   FileSystems/GrubFS/src/NTFS.inf
   FileSystems/GrubFS/src/UDF.inf
-  #FileSystems/GrubFS/src/ZFS.inf
+  FileSystems/GrubFS/src/ZFS.inf
   #FileSystems/GrubFS/src/UFS.inf
   #FileSystems/GrubFS/src/UFS2.inf
   #FileSystems/GrubFS/src/XFS.inf

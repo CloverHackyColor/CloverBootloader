@@ -30,7 +30,7 @@ decomp_nextvcn (struct grub_ntfs_comp *cc)
 {
   if (cc->comp_head >= cc->comp_tail)
     return grub_error (GRUB_ERR_BAD_FS, "compression block overflown");
-  if (grub_disk_read
+  if (grub_disk_read_z
       (cc->disk,
        (cc->comp_table[cc->comp_head].next_lcn -
 	(cc->comp_table[cc->comp_head].next_vcn - cc->cbuf_vcn)) << cc->log_spc,
@@ -261,7 +261,7 @@ read_block (struct grub_ntfs_rlst *ctx, grub_uint8_t *buf, grub_size_t num)
 	      ctx->target_vcn += tt;
 	      if (buf)
 		{
-		  if (grub_disk_read
+		  if (grub_disk_read_z
 		      (ctx->comp.disk,
 		       (ctx->comp.comp_table[ctx->comp.comp_head].next_lcn -
 			(ctx->comp.comp_table[ctx->comp.comp_head].next_vcn -
@@ -284,7 +284,7 @@ read_block (struct grub_ntfs_rlst *ctx, grub_uint8_t *buf, grub_size_t num)
 	    {
 	      if (buf)
 		{
-		  if (grub_disk_read
+		  if (grub_disk_read_z
 		      (ctx->comp.disk,
 		       (ctx->target_vcn - ctx->curr_vcn +
 			ctx->curr_lcn) << ctx->comp.log_spc, 0,

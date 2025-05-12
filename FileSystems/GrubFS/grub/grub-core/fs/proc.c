@@ -23,7 +23,7 @@
 #include <grub/mm.h>
 #include <grub/dl.h>
 
-GRUB_MOD_LICENSE ("GPLv3+");
+//GRUB_MOD_LICENSE ("GPLv3+");
 
 grub_disk_dev_t grub_disk_dev_list;
 

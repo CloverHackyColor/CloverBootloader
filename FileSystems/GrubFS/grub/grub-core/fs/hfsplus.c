@@ -236,7 +236,7 @@ grub_hfsplus_mount (grub_disk_t disk)
   data->disk = disk;
 
   /* Read the bootblock.  */
-  grub_disk_read (disk, GRUB_HFSPLUS_SBLOCK, 0, sizeof (volheader),
+  grub_disk_read_z (disk, GRUB_HFSPLUS_SBLOCK, 0, sizeof (volheader),
                   &volheader);
   if (grub_errno)
     goto fail;
@@ -261,7 +261,7 @@ grub_hfsplus_mount (grub_disk_t disk)
                              + extent_start
                              * (ablk_size >> GRUB_DISK_SECTOR_BITS));
 
-    grub_disk_read (disk, data->embedded_offset + GRUB_HFSPLUS_SBLOCK, 0,
+    grub_disk_read_z (disk, data->embedded_offset + GRUB_HFSPLUS_SBLOCK, 0,
                     sizeof (volheader), &volheader);
     if (grub_errno) {
       goto fail;

@@ -283,7 +283,7 @@ grub_fshelp_read_file (grub_disk_t disk, grub_fshelp_node_t node,
       disk->read_hook = read_hook;
       disk->read_hook_data = read_hook_data;
 
-      grub_disk_read (disk, blknr + blocks_start, skipfirst,
+      grub_disk_read_z (disk, blknr + blocks_start, skipfirst,
                       blockend, buf);
       disk->read_hook = 0;
       if (grub_errno) {

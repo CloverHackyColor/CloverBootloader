@@ -5,7 +5,7 @@
 
 [Defines]
         INF_VERSION                = 0x00010005
-        BASE_NAME                  = GrubFS
+        BASE_NAME                  = GrubZFS
         FILE_GUID                  = 0F6A96E7-0F76-4947-90DB-D4FD7A7E6147
         MODULE_TYPE                = UEFI_DRIVER
         VERSION_STRING             = 1.0
@@ -26,16 +26,19 @@
 	path.c
 	utf8.c
 	../grub/grub-core/io/gzio.c
-  ../grub/grub-core/kern/command.c
+  	../grub/grub-core/kern/command.c
 	../grub/grub-core/kern/device.c
+	../grub/grub-core/kern/disk.c
 	../grub/grub-core/kern/err.c
-  ../grub/grub-core/kern/env.c
-  ../grub/grub-core/kern/file.c
+  	../grub/grub-core/kern/env.c
+  	../grub/grub-core/kern/file.c
 	../grub/grub-core/kern/misc.c
 	../grub/grub-core/kern/list.c
-  ../grub/grub-core/lib/crypto.c
-  ../grub/grub-core/lib/libgcrypt/cipher/rijndael.c
+	../grub/grub-core/kern/time.c
+  	../grub/grub-core/lib/crypto.c
+  	../grub/grub-core/lib/libgcrypt/cipher/rijndael.c
 	../grub/grub-core/fs/fshelp.c
+#	../grub/grub-core/fs/proc.c
 	../grub/grub-core/fs/zfs/zfs.c
 	../grub/grub-core/fs/zfs/zfs_fletcher.c
 	../grub/grub-core/fs/zfs/zfs_lz4.c

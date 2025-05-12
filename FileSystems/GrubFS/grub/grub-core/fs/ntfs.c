@@ -132,11 +132,11 @@ find_attr (struct grub_ntfs_attr *at, grub_uint8_t attr)
 
 	      if (at->flags & GRUB_NTFS_AF_MMFT)
 		{
-		  if ((grub_disk_read
+		  if ((grub_disk_read_z
 		       (at->mft->data->disk, u32at (at->attr_cur, 0x10), 0,
 			512, at->emft_buf))
 		      ||
-		      (grub_disk_read
+		      (grub_disk_read_z
 		       (at->mft->data->disk, u32at (at->attr_cur, 0x14), 0,
 			512, at->emft_buf + 512)))
 		    return NULL;
@@ -893,7 +893,7 @@ grub_ntfs_mount (grub_disk_t disk)
   data->disk = disk;
 
   /* Read the BPB.  */
-  if (grub_disk_read (disk, 0, 0, sizeof (bpb), &bpb))
+  if (grub_disk_read_z (disk, 0, 0, sizeof (bpb), &bpb))
     goto fail;
 
   if (grub_memcmp ((char *) &bpb.oem_name, "NTFS", 4) != 0
@@ -934,7 +934,7 @@ grub_ntfs_mount (grub_disk_t disk)
   if (!data->mmft.buf)
     goto fail;
 
-  if (grub_disk_read
+  if (grub_disk_read_z
       (disk, data->mft_start, 0, data->mft_size << GRUB_NTFS_BLK_SHR, data->mmft.buf))
     goto fail;
 

@@ -400,7 +400,7 @@ grub_disk_read_small (grub_disk_t disk, grub_disk_addr_t sector,
 
 /* Read data from the disk.  */
 grub_err_t
-grub_disk_read (grub_disk_t disk, grub_disk_addr_t sector,
+grub_disk_read_z (grub_disk_t disk, grub_disk_addr_t sector,
                 grub_off_t offset, grub_size_t size, void *buf)
 {
   /* First of all, check if the region is within the disk.  */
@@ -519,7 +519,7 @@ grub_disk_read (grub_disk_t disk, grub_disk_addr_t sector,
 }
 
 grub_uint64_t
-grub_disk_get_size (grub_disk_t disk)
+grub_disk_get_size_z (grub_disk_t disk)
 {
   if (disk->partition)
     return grub_partition_get_len (disk->partition);

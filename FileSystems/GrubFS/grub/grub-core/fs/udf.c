@@ -408,7 +408,7 @@ grub_udf_read_icb (struct grub_udf_data *data,
   if (grub_errno)
     return grub_errno;
 
-  if (grub_disk_read (data->disk, block << data->lbshift, 0,
+  if (grub_disk_read_z (data->disk, block << data->lbshift, 0,
 		      1 << (GRUB_DISK_SECTOR_BITS
 			    + data->lbshift),
 		      &node->block))
@@ -470,7 +470,7 @@ grub_udf_read_block (grub_fshelp_node_t node, grub_disk_addr_t fileblock)
 		  if (!buf)
 		    return 0;
 		}
-	      if (grub_disk_read (node->data->disk, sec << node->data->lbshift,
+	      if (grub_disk_read_z (node->data->disk, sec << node->data->lbshift,
 				  0, adlen, buf))
 		goto fail;
 
@@ -523,7 +523,7 @@ grub_udf_read_block (grub_fshelp_node_t node, grub_disk_addr_t fileblock)
 		  if (!buf)
 		    return 0;
 		}
-	      if (grub_disk_read (node->data->disk, sec << node->data->lbshift,
+	      if (grub_disk_read_z (node->data->disk, sec << node->data->lbshift,
 				  0, adlen, buf))
 		goto fail;
 
@@ -622,7 +622,7 @@ grub_udf_mount (grub_disk_t disk)
     for (sblklist = sblocklist; *sblklist; sblklist++) {
       struct grub_udf_avdp avdp;
       
-      if (grub_disk_read (disk, *sblklist << lbshift, 0,
+      if (grub_disk_read_z (disk, *sblklist << lbshift, 0,
                           sizeof (struct grub_udf_avdp), &avdp)) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
 	      goto fail;
@@ -650,7 +650,7 @@ grub_udf_mount (grub_disk_t disk)
        vblock += (2047 >> (lbshift + GRUB_DISK_SECTOR_BITS)) + 1) {
     struct grub_udf_vrs vrs;
     
-    if (grub_disk_read (disk, vblock << lbshift, 0,
+    if (grub_disk_read_z (disk, vblock << lbshift, 0,
                         sizeof (struct grub_udf_vrs), &vrs)) {
       grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
       goto fail;
@@ -675,7 +675,7 @@ grub_udf_mount (grub_disk_t disk)
   while (1) {
     struct grub_udf_tag tag;
     
-    if (grub_disk_read (disk, block << lbshift, 0,
+    if (grub_disk_read_z (disk, block << lbshift, 0,
                         sizeof (struct grub_udf_tag), &tag)) {
       grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
       goto fail;
@@ -688,7 +688,7 @@ grub_udf_mount (grub_disk_t disk)
 	      goto fail;
 	    }
       
-      if (grub_disk_read (disk, block << lbshift, 0,
+      if (grub_disk_read_z (disk, block << lbshift, 0,
                           sizeof (struct grub_udf_pd),
                           &data->pds[data->npd])) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
@@ -702,7 +702,7 @@ grub_udf_mount (grub_disk_t disk)
       
       struct grub_udf_partmap *ppm;
       
-      if (grub_disk_read (disk, block << lbshift, 0,
+      if (grub_disk_read_z (disk, block << lbshift, 0,
                           sizeof (struct grub_udf_lvd),
                           &data->lvd)) {
 	      grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
@@ -758,7 +758,7 @@ grub_udf_mount (grub_disk_t disk)
   if (grub_errno)
     goto fail;
   
-  if (grub_disk_read (disk, block << lbshift, 0,
+  if (grub_disk_read_z (disk, block << lbshift, 0,
                       sizeof (struct grub_udf_fileset), &root_fs)) {
     grub_error (GRUB_ERR_BAD_FS, "not an UDF filesystem");
     goto fail;

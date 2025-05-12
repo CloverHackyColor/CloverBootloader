@@ -90,13 +90,14 @@ public:
   SmbiosPlistClass::SmbiosDictClass SMBIOS_ventura = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_sonoma = SmbiosPlistClass::SmbiosDictClass();
   SmbiosPlistClass::SmbiosDictClass SMBIOS_sequoia = SmbiosPlistClass::SmbiosDictClass();
+  SmbiosPlistClass::SmbiosDictClass SMBIOS_redwood = SmbiosPlistClass::SmbiosDictClass();
 //  SmbiosPlistClass::SmbiosDictClass SMBIOS_lion = SmbiosPlistClass::SmbiosDictClass();
 public:
   SystemParameters_Class SystemParameters = SystemParameters_Class();
   RtVariables_Class RtVariables = RtVariables_Class();
   Quirks_Class Quirks = Quirks_Class();
 
-  XmlDictField m_fields[27] = {
+  XmlDictField m_fields[28] = {
     {"ACPI", ACPI},
     {"Boot", Boot},
     {"BootGraphics", BootGraphics},
@@ -121,6 +122,7 @@ public:
     {"SMBIOS_ventura", SMBIOS_ventura},
     {"SMBIOS_sonoma", SMBIOS_sonoma},
     {"SMBIOS_sequoia", SMBIOS_sequoia},
+	{"SMBIOS_redwood", SMBIOS_redwood},
     {"SystemParameters", SystemParameters},
     {"RtVariables", RtVariables},
     {"Quirks", Quirks},

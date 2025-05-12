@@ -38,7 +38,11 @@
 #endif
 
 
-#include <sys/types.h>
+//#include <sys/types.h>
+
+#ifndef FILE
+#define FILE VOID
+#endif
 
 
 #ifndef HAVE_BYTE_TYPEDEF

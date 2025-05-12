@@ -44,7 +44,7 @@
 
 #include "../src/types.h"  /* for byte and u32 typedefs */
 #include "../src/g10lib.h"
-#include "cipher.h"
+#include "../src/cipher.h"
 
 #define MAXKC			(256/32)
 #define MAXROUNDS		14

@@ -227,7 +227,7 @@ grub_fat_mount (grub_disk_t disk)
     goto fail;
   
   /* Read the BPB.  */
-  if (grub_disk_read (disk, 0, 0, sizeof (bpb), &bpb))
+  if (grub_disk_read_z (disk, 0, 0, sizeof (bpb), &bpb))
     goto fail;
   
 #ifdef MODE_EXFAT
@@ -381,7 +381,7 @@ grub_fat_mount (grub_disk_t disk)
   if (data->num_sectors <= data->fat_sector)
     goto fail;
   
-  if (grub_disk_read (disk,
+  if (grub_disk_read_z (disk,
                       data->fat_sector,
                       0,
                       sizeof (first_fat),
@@ -463,7 +463,7 @@ grub_fat_read_data (grub_disk_t disk, struct grub_fat_data *data,
     if (size > len)
       size = len;
     
-    if (grub_disk_read (disk, data->root_sector, offset, size, buf))
+    if (grub_disk_read_z (disk, data->root_sector, offset, size, buf))
       return -1;
     
     return size;
@@ -480,7 +480,7 @@ grub_fat_read_data (grub_disk_t disk, struct grub_fat_data *data,
     
     disk->read_hook = read_hook;
     disk->read_hook_data = read_hook_data;
-    grub_disk_read (disk, sector + (offset >> GRUB_DISK_SECTOR_BITS),
+    grub_disk_read_z (disk, sector + (offset >> GRUB_DISK_SECTOR_BITS),
                     offset & (GRUB_DISK_SECTOR_SIZE - 1), len, buf);
     disk->read_hook = 0;
     if (grub_errno)
@@ -525,7 +525,7 @@ grub_fat_read_data (grub_disk_t disk, struct grub_fat_data *data,
 	    }
       
       /* Read the FAT.  */
-      if (grub_disk_read (disk, data->fat_sector, fat_offset,
+      if (grub_disk_read_z (disk, data->fat_sector, fat_offset,
                           (data->fat_size + 7) >> 3,
                           (char *) &next_cluster))
         return -1;
@@ -572,7 +572,7 @@ grub_fat_read_data (grub_disk_t disk, struct grub_fat_data *data,
     
     disk->read_hook = read_hook;
     disk->read_hook_data = read_hook_data;
-    grub_disk_read (disk, sector, offset, size, buf);
+    grub_disk_read_z (disk, sector, offset, size, buf);
     disk->read_hook = 0;
     if (grub_errno)
       return -1;

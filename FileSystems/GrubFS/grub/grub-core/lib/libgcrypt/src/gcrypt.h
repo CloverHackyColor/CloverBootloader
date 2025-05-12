@@ -30,7 +30,7 @@
 
 #include "gpg-error.h"
 
-#include <sys/types.h>
+//#include <sys/types.h>
 
 #if defined _WIN32 || defined __WIN32__
 # include <winsock2.h>
@@ -41,8 +41,8 @@
   typedef int  pid_t;
 # endif /*!__GNUC__*/
 #else
-# include <sys/socket.h>
-# include <sys/time.h>
+//# include <sys/socket.h>
+//# include <sys/time.h>
 //#@INSERT_SYS_SELECT_H@
 #endif /*!_WIN32*/
 

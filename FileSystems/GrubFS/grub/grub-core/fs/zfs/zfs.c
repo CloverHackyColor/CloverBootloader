@@ -611,7 +611,7 @@ zfs_fetch_nvlist (struct grub_zfs_device_desc *diskdesc, char **nvlist)
   *nvlist = grub_malloc (VDEV_PHYS_SIZE);
 
   /* Read in the vdev name-value pair list (112K). */
-  err = grub_disk_read (diskdesc->dev->disk, diskdesc->vdev_phys_sector, 0,
+  err = grub_disk_read_z (diskdesc->dev->disk, diskdesc->vdev_phys_sector, 0,
 			VDEV_PHYS_SIZE, *nvlist);
   if (err)
     {
@@ -1168,7 +1168,7 @@ scan_disk (grub_device_t dev, struct grub_zfs_data *data,
   desc.original = original;
 
   /* Don't check back labels on CDROM.  */
-  if (grub_disk_get_size (dev->disk) == GRUB_DISK_SIZE_UNKNOWN)
+  if (grub_disk_get_size_z (dev->disk) == GRUB_DISK_SIZE_UNKNOWN)
     vdevnum = VDEV_LABELS / 2;
 
   for (label = 0; ubbest == NULL && label < vdevnum; label++)
@@ -1177,11 +1177,11 @@ scan_disk (grub_device_t dev, struct grub_zfs_data *data,
 	= label * (sizeof (vdev_label_t) >> SPA_MINBLOCKSHIFT)
 	+ ((VDEV_SKIP_SIZE + VDEV_BOOT_HEADER_SIZE) >> SPA_MINBLOCKSHIFT)
 	+ (label < VDEV_LABELS / 2 ? 0 : 
-	   ALIGN_DOWN (grub_disk_get_size (dev->disk), sizeof (vdev_label_t))
+	   ALIGN_DOWN (grub_disk_get_size_z (dev->disk), sizeof (vdev_label_t))
 	   - VDEV_LABELS * (sizeof (vdev_label_t) >> SPA_MINBLOCKSHIFT));
 
       /* Read in the uberblock ring (128K). */
-      err = grub_disk_read (dev->disk, desc.vdev_phys_sector
+      err = grub_disk_read_z (dev->disk, desc.vdev_phys_sector
 			    + (VDEV_PHYS_SIZE >> SPA_MINBLOCKSHIFT),
 			    0, VDEV_UBERBLOCK_RING, (char *) ub_array);
       if (err)
@@ -1466,7 +1466,7 @@ read_device (grub_uint64_t offset, struct grub_zfs_device_desc *desc,
 				  "of multi-device filesystem"));
 	  }
 	/* read in a data block */
-	return grub_disk_read (desc->dev->disk, sector, 0, len, buf);
+	return grub_disk_read_z (desc->dev->disk, sector, 0, len, buf);
       }
     case DEVICE_MIRROR:
       {

@@ -842,7 +842,7 @@ MainPostBuildScript() {
 #    done
 
     if [[ $M_NOGRUB -eq 0 ]]; then
-      binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF )
+      binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF GrubZFS)
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
