@@ -138,17 +138,19 @@ fi
 
 # Clone OR Update OpenCorePkg
 function clone_OpenCorePkg() {
-cd "${CLOVERROOT}"
-if [ ! -d OpenCorePkg/AppleModels ]; then
-  echo "Cloning OpenCorePkg...."
-  git clone https://github.com/CloverHackyColor/OpenCorePkg.git > /dev/null
-  cd "${OpenCorePkg}"
-  git submodule update --init
-else
-  echo "Updating OpenCorePkg...."
-  cd "${OpenCorePkg}"
-  git pull > /dev/null
-fi	
+  pushd . >/dev/null
+  cd "${CLOVERROOT}"
+  if [ ! -d OpenCorePkg/AppleModels ]; then
+    echo "Cloning OpenCorePkg...."
+    git clone https://github.com/CloverHackyColor/OpenCorePkg.git > /dev/null
+    cd "${OpenCorePkg}"
+    git submodule update --init
+  else
+    echo "Updating OpenCorePkg...."
+    cd "${OpenCorePkg}"
+    git pull > /dev/null
+  fi
+  popd >/dev/null
 }
 
 updateClover() {
