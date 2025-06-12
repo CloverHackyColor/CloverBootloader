@@ -1587,7 +1587,9 @@ void LOADER_ENTRY::StartLoader()
               strncmp(InstallerVersion, "12.", 3) &&
               strncmp(InstallerVersion, "13.", 3) &&
               strncmp(InstallerVersion, "14.", 3) &&
-              strncmp(InstallerVersion, "15.", 3)
+			  strncmp(InstallerVersion, "15.", 3) &&
+			  strncmp(InstallerVersion, "16.", 3) &&
+              strncmp(InstallerVersion, "26.", 3)
               ) {
             InstallerVersion = NULL; // flag known version was not found
           }

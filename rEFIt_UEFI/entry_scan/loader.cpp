@@ -589,8 +589,9 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID& APFSTargetUUID, const 
                 OSVersion = "14"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sequoia") || Prop->getString()->stringValue().contains("Install%20macOS%2015")) {
                 OSVersion = "15"_XS8;
-              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Redwood") || Prop->getString()->stringValue().contains("Install%20macOS%2016")) {
-                OSVersion = "16"_XS8;
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Tahoe") || Prop->getString()->stringValue().contains("Install%20macOS%2016") ||
+            		  Prop->getString()->stringValue().contains("Install%20macOS%2026")) {
+                OSVersion = "26"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
               } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
@@ -843,9 +844,9 @@ GetOSIconName (const MacOsVersion& OSVersion)
   XStringW OSIconName;
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
-  } else if (OSVersion.elementAt(0) == 16 ){
-    // Redwood
-    OSIconName = L"redwood,mac"_XSW;
+  } else if (OSVersion.elementAt(0) == 16 || OSVersion.elementAt(0) == 26){
+    // Tahoe
+    OSIconName = L"tahoe,mac"_XSW;
   } else if (OSVersion.elementAt(0) == 15 ){
     // Sequoia
     OSIconName = L"sequoia,mac"_XSW;

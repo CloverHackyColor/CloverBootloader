@@ -353,7 +353,7 @@ do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
   else
     {
 #define W (ctx->keyschenc)
-      for (i = 0; i < keylen; i++)
+      for (i = 0; i < (int)keylen; i++)
         {
           k[i >> 2][i & 3] = key[i];
         }
@@ -1857,7 +1857,7 @@ selftest_fips_128_38a (int requested_mode)
   gcry_assert (sizeof tv[0].data[0].input == sizeof scratch);
   gcry_assert (sizeof tv[0].data[0].output == sizeof scratch);
 
-  for (tvi=0; tvi < DIM (tv); tvi++)
+  for (tvi=0; tvi < (int)(DIM (tv)); tvi++)
     if (tv[tvi].mode == requested_mode)
       break;
   if (tvi == DIM (tv))
@@ -1879,7 +1879,7 @@ selftest_fips_128_38a (int requested_mode)
     err = _gcry_cipher_setiv (hddec, tv[tvi].iv, sizeof tv[tvi].iv);
   if (err)
     Fail ("set IV");
-  for (idx=0; idx < DIM (tv[tvi].data); idx++)
+  for (idx=0; idx < (int)(DIM (tv[tvi].data)); idx++)
     {
       err = _gcry_cipher_encrypt (hdenc, scratch, sizeof scratch,
                                   tv[tvi].data[idx].input,
@@ -2027,17 +2027,17 @@ static gcry_cipher_oid_spec_t rijndael_oids[] =
     { "2.16.840.1.101.3.4.1.2", GCRY_CIPHER_MODE_CBC },
     { "2.16.840.1.101.3.4.1.3", GCRY_CIPHER_MODE_OFB },
     { "2.16.840.1.101.3.4.1.4", GCRY_CIPHER_MODE_CFB },
-    { NULL }
+    { NULL, 0 }
   };
 
 gcry_cipher_spec_t _gcry_cipher_spec_aes =
   {
     "AES", rijndael_names, rijndael_oids, 16, 128, sizeof (RIJNDAEL_context),
-    rijndael_setkey, rijndael_encrypt, rijndael_decrypt
+    rijndael_setkey, rijndael_encrypt, rijndael_decrypt, 0, 0, NULL, NULL
   };
 cipher_extra_spec_t _gcry_cipher_extraspec_aes =
   {
-    run_selftests
+    run_selftests, NULL
   };
 
 static const char *rijndael192_names[] =

@@ -365,7 +365,7 @@ void DebugPause(void);
 #define ICON_VENTURA                           (55)
 #define ICON_SONOMA                            (56)
 #define ICON_SEQUOIA                           (57)
-#define ICON_REDWOOD                           (58)
+#define ICON_TAHOE		                       (58)
 #define BUILTIN_ICON_BACKGROUND                (100)
 #define BUILTIN_ICON_SELECTION                 (101)
 #define BUILTIN_ICON_ANIME                     (102)
