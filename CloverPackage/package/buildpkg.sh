@@ -265,7 +265,7 @@ addTemplateScripts () {
             echo "Error addTemplateScripts: template '$templateName' doesn't exists" >&2; exit 1; }
 
         # Copy files to destination
-        rsync -pr --exclude=.svn --exclude="*~" "$templateRootDir/" "$pkgRootDir/Scripts/"
+        rsync -pr --exclude=.svn --exclude="*~" --exclude=".DS_Store" "$templateRootDir/" "$pkgRootDir/Scripts/"
     done
 
     files=$( find "$pkgRootDir/Scripts/" -type f )
@@ -524,7 +524,7 @@ main ()
     choiceId="UEFI.only"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
-    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
+    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*' --exclude='.empty' --exclude='.DS_Store'   \
      ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
@@ -630,9 +630,9 @@ fi
                        --subst="CLOVER_DRIVERS_LEGACY=$DRIVERS_LEGACY" \
                        --subst="CLOVER_DRIVERS_UEFI=$DRIVERS_UEFI" \
                        ${choiceId}
-    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
+    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*' --exclude='.empty' --exclude='.DS_Store'   \
      ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
-    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
+    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*' --exclude='.empty' --exclude='.DS_Store'   \
      ${SRCROOT}/CloverV2/EFI/CLOVER ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
 
     # config.plist
@@ -1352,7 +1352,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
         local themeName=${themes[$i]##*/}
         [[ -n $(inArray "$themeName" ${specialThemes[@]}) ]] && continue # it is a special theme
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
-        rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
+        rsync -r --exclude=.svn --exclude="*~" --exclude=".DS_Store" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
                            --subst="themeName=$themeName"                \
@@ -1378,7 +1378,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
         # Don't add christmas and newyear themes if month < 11
         [[ $currentMonth -lt 11 ]] && [[ "$themeName" == christmas ]] && continue
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
-        rsync -r --exclude=.svn --exclude="*~" "$artwork/${specialThemes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
+        rsync -r --exclude=.svn --exclude="*~" --exclude=".DS_Store" "$artwork/${specialThemes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
                            --subst="themeName=$themeName"                \
