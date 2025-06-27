@@ -171,6 +171,7 @@ rm -rf ${IMGROOT}/*/.s*
 rm -rf ${IMGROOT}/*/*/.s*
 rm -rf ${IMGROOT}/*/*/*/.s*
 rm -rf ${IMGROOT}/*/*/*/*/.s*
+find "${IMGROOT}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
 echo "[HDIUTIL] ${ISOIMAGE}"
 mkdir -p ${SYMROOT}/CloverISO-${REVISION}
 
