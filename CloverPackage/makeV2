@@ -7,7 +7,8 @@ ROOT="$PWD"
 SYMROOT="${ROOT}"/sym
 REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
 
-zip -qr CloverV2-${REVISION}.zip CloverV2
+# zip CloverV2, excluding all .empty and all .DS_Store
+zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
 mv CloverV2-${REVISION}.zip $SYMROOT
 
 open sym
