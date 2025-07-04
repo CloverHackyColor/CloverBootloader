@@ -93,10 +93,10 @@ static int fsw_ext4_group_sparse(fsw_u32 group)
 }
 
 /* calculate the first block number of the group */
-static __inline fsw_u32
+static __inline fsw_u64
 fsw_ext4_group_first_block_no(struct ext4_super_block *sb, fsw_u32 group_no)
 {
-        return group_no * (fsw_u32)EXT4_BLOCKS_PER_GROUP(sb) +
+        return group_no * (fsw_u64)EXT4_BLOCKS_PER_GROUP(sb) +
                 sb->s_first_data_block;
 }
 
@@ -110,13 +110,14 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
     fsw_status_t    status;
     void            *buffer;
     fsw_u32         blocksize;
-    fsw_u32         groupcnt, groupno, gdesc_per_block, gdesc_bno, gdesc_index, metabg_of_gdesc;
+    fsw_u32         groupcnt, groupno, gdesc_per_block, gdesc_index, metabg_of_gdesc;
+    fsw_u64         gdesc_bno;
     struct ext4_group_desc *gdesc;
     int             i;
     struct fsw_string s;
 
     // allocate memory to keep the superblock around
-    status = fsw_alloc(sizeof(struct ext4_super_block), &vol->sb);
+    status = fsw_alloc(sizeof (struct ext4_super_block), &vol->sb);
     if (status)
         return status;
 
@@ -140,7 +141,8 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
     if (vol->sb->s_rev_level == EXT4_DYNAMIC_REV &&
         (vol->sb->s_feature_incompat & ~(EXT4_FEATURE_INCOMPAT_FILETYPE | EXT4_FEATURE_INCOMPAT_RECOVER |
                                          EXT4_FEATURE_INCOMPAT_EXTENTS | EXT4_FEATURE_INCOMPAT_FLEX_BG |
-                                         EXT4_FEATURE_INCOMPAT_META_BG)))
+                                         EXT4_FEATURE_INCOMPAT_64BIT | EXT4_FEATURE_INCOMPAT_META_BG |
+                                         EXT4_FEATURE_INCOMPAT_ENCRYPT | EXT4_FEATURE_INCOMPAT_BG_USE_META_CSUM)))
         return FSW_UNSUPPORTED;
 
 
@@ -188,7 +190,7 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
     gdesc_per_block = EXT4_DESC_PER_BLOCK(vol->sb);
     
     // Read the group descriptors to get inode table offsets
-    status = fsw_alloc(sizeof(fsw_u32) * groupcnt, &vol->inotab_bno);
+    status = fsw_alloc(sizeof (fsw_u64) * groupcnt, &vol->inotab_bno);
     if (status)
         return status;
 
@@ -201,7 +203,7 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
             // If option meta_bg is set, the block group descriptor is in meta block group...
             metabg_of_gdesc = (fsw_u32)(groupno / gdesc_per_block) * gdesc_per_block;
             gdesc_bno = fsw_ext4_group_first_block_no(vol->sb, metabg_of_gdesc);
-            // We need to know if the block group in questition has a super block, if yes, the 
+            // We need to know if the block group in question has a super block, if yes, the
             // block group descriptors are in the next block number
             if(!(vol->sb->s_feature_ro_compat & EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER) || fsw_ext4_group_sparse(metabg_of_gdesc))
                 gdesc_bno += 1;
@@ -221,6 +223,8 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
         // Get group descriptor table and block number of inode table...
         gdesc = (struct ext4_group_desc *)((char *)buffer + gdesc_index * vol->sb->s_desc_size);
         vol->inotab_bno[groupno] = gdesc->bg_inode_table_lo;
+        if (vol->sb->s_desc_size >= EXT4_MIN_DESC_SIZE_64BIT)
+            vol->inotab_bno[groupno] |= (fsw_u64)gdesc->bg_inode_table_hi << 32;
 
         fsw_block_release(vol, gdesc_bno, buffer);
     }
@@ -255,8 +259,18 @@ static void fsw_ext4_volume_free(struct fsw_ext4_volume *vol)
 
 static fsw_status_t fsw_ext4_volume_stat(struct fsw_ext4_volume *vol, struct fsw_volume_stat *sb)
 {
-    sb->total_bytes = (fsw_u64)vol->sb->s_blocks_count_lo * vol->g.log_blocksize;
-    sb->free_bytes  = (fsw_u64)vol->sb->s_free_blocks_count_lo * vol->g.log_blocksize;
+    fsw_u64         count;
+
+    count = vol->sb->s_blocks_count_lo;
+    if (vol->sb->s_desc_size >= EXT4_MIN_DESC_SIZE_64BIT)
+        count |= (fsw_u64)vol->sb->s_blocks_count_hi << 32;
+    sb->total_bytes = count * vol->g.log_blocksize;
+
+    count = vol->sb->s_free_blocks_count_lo;
+    if (vol->sb->s_desc_size >= EXT4_MIN_DESC_SIZE_64BIT)
+        count |= (fsw_u64)vol->sb->s_free_blocks_count_hi << 32;
+    sb->free_bytes  = count * vol->g.log_blocksize;
+
     return FSW_SUCCESS;
 }
 
@@ -271,31 +285,32 @@ static fsw_status_t fsw_ext4_volume_stat(struct fsw_ext4_volume *vol, struct fsw
 static fsw_status_t fsw_ext4_dnode_fill(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno)
 {
     fsw_status_t    status;
-    fsw_u32         groupno, ino_in_group, ino_bno, ino_index;
+    fsw_u32         groupno, ino_in_group, ino_index;
+    fsw_u64         ino_bno;
     fsw_u8          *buffer;
 
     if (dno->raw)
         return FSW_SUCCESS;
 
 
-    // read the inode block
-    groupno = (dno->g.dnode_id - 1) / vol->sb->s_inodes_per_group;
-    ino_in_group = (dno->g.dnode_id - 1) % vol->sb->s_inodes_per_group;
+    // Read the inode block
+    groupno = (fsw_u32) (dno->g.dnode_id - 1) / vol->sb->s_inodes_per_group;
+    ino_in_group = (fsw_u32) (dno->g.dnode_id - 1) % vol->sb->s_inodes_per_group;
     ino_bno = vol->inotab_bno[groupno] +
         ino_in_group / (vol->g.phys_blocksize / vol->inode_size);
     ino_index = ino_in_group % (vol->g.phys_blocksize / vol->inode_size);
-    status = fsw_block_get(vol, ino_bno, 2, (void **)&buffer);
+    status = fsw_block_get(vol, ino_bno, 2, (void **) &buffer);
 
     if (status)
         return status;
 
-    // keep our inode around
-    status = fsw_memdup((void **)&dno->raw, buffer + ino_index * vol->inode_size, vol->inode_size);
+    // Keep our inode around
+    status = fsw_memdup((void **) &dno->raw, buffer + ino_index * vol->inode_size, vol->inode_size);
     fsw_block_release(vol, ino_bno, buffer);
     if (status)
         return status;
 
-    // get info from the inode
+    // Get info from the inode
     dno->g.size = dno->raw->i_size_lo; // TODO: check docs for 64-bit sized files
 
     if (S_ISREG(dno->raw->i_mode))
@@ -331,14 +346,17 @@ static void fsw_ext4_dnode_free(struct fsw_ext4_volume *vol, struct fsw_ext4_dno
  * callback that converts it to the host-specific format.
  */
 
-static fsw_status_t fsw_ext4_dnode_stat(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
-                                        struct fsw_dnode_stat_str *sb)
-{
-    sb->used_bytes = dno->raw->i_blocks_lo * EXT4_BLOCK_SIZE(vol->sb);   // very, very strange...
-    sb->store_time_posix(sb, FSW_DNODE_STAT_CTIME, dno->raw->i_ctime);
-    sb->store_time_posix(sb, FSW_DNODE_STAT_ATIME, dno->raw->i_atime);
-    sb->store_time_posix(sb, FSW_DNODE_STAT_MTIME, dno->raw->i_mtime);
-    sb->store_attr_posix(sb, dno->raw->i_mode);
+static
+fsw_status_t fsw_ext4_dnode_stat (
+    struct fsw_ext4_volume *vol,
+    struct fsw_ext4_dnode  *dno,
+    struct fsw_dnode_stat_str  *sb
+) {
+    sb->used_bytes = ((fsw_u64)dno->raw->i_blocks_lo) * EXT4_BLOCK_SIZE(vol->sb);   // very, very strange...
+    fsw_store_time_posix(sb, FSW_DNODE_STAT_CTIME, dno->raw->i_ctime);
+    fsw_store_time_posix(sb, FSW_DNODE_STAT_ATIME, dno->raw->i_atime);
+    fsw_store_time_posix(sb, FSW_DNODE_STAT_MTIME, dno->raw->i_mtime);
+    fsw_store_attr_posix(sb, dno->raw->i_mode);
 
     return FSW_SUCCESS;
 }
@@ -384,72 +402,71 @@ static fsw_status_t fsw_ext4_get_extent(struct fsw_ext4_volume *vol, struct fsw_
 static fsw_status_t fsw_ext4_get_by_extent(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
                                         struct fsw_extent *extent)
 {
-  fsw_status_t  status;
-  fsw_u32       bno;
-  //, release_bno,
-  fsw_u32       buf_offset;
-  //, file_bcnt;
-  int           ext_cnt;
-  void          *buffer;
-  
-  struct ext4_extent_header  *ext4_extent_header;
-  struct ext4_extent_idx     *ext4_extent_idx;
-  struct ext4_extent         *ext4_extent;
-  
-  // Logical block requested by core...
-  bno = extent->log_start;
-  
-  // First buffer is the i_block field from inode...
-  buffer = (void *)dno->raw->i_block;
-  buf_offset = 0;
-  while(1) {
-    ext4_extent_header = (struct ext4_extent_header *)((char *)buffer + buf_offset);
-    buf_offset += sizeof(struct ext4_extent_header);
- //   FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent header with %d entries\n"),
- //                  ext4_extent_header->eh_entries));
-    if(ext4_extent_header->eh_magic != EXT4_EXT_MAGIC)
-      return FSW_VOLUME_CORRUPTED;
-    
-    for(ext_cnt = 0;ext_cnt < ext4_extent_header->eh_entries;ext_cnt++)
-    {
-      if(ext4_extent_header->eh_depth == 0)
-      {
-        // Leaf node, the header follows actual extents
-        ext4_extent = (struct ext4_extent *)((char *)buffer + buf_offset);
-        buf_offset += sizeof(struct ext4_extent);
- //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent node cover %d...\n"), ext4_extent->ee_block));
-        
-        // Is the requested block in this extent?
-        if(bno >= ext4_extent->ee_block && bno < ext4_extent->ee_block + ext4_extent->ee_len)
+    fsw_status_t  status;
+    fsw_u32       bno, buf_offset;
+    int           ext_cnt;
+    void          *buffer;
+
+    struct ext4_extent_header  *ext4_extent_header;
+    struct ext4_extent_idx     *ext4_extent_idx;
+    struct ext4_extent         *ext4_extent;
+
+    // Logical block requested by core...
+    bno = extent->log_start;
+
+    // First buffer is the i_block field from inode...
+    buffer = (void *)dno->raw->i_block;
+    buf_offset = 0;
+    while(1) {
+        ext4_extent_header = (struct ext4_extent_header *)((char *)buffer + buf_offset);
+        buf_offset += sizeof (struct ext4_extent_header);
+        FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent header with %d entries\n"),
+                      ext4_extent_header->eh_entries));
+        if(ext4_extent_header->eh_magic != EXT4_EXT_MAGIC)
+            return FSW_VOLUME_CORRUPTED;
+
+        for(ext_cnt = 0;ext_cnt < ext4_extent_header->eh_entries;ext_cnt++)
         {
-          extent->phys_start = ext4_extent->ee_start_lo + (bno - ext4_extent->ee_block);
-          extent->log_count = ext4_extent->ee_len - (bno - ext4_extent->ee_block);
-          return FSW_SUCCESS;
+            if(ext4_extent_header->eh_depth == 0)
+            {
+                // Leaf node, the header follows actual extents
+                ext4_extent = (struct ext4_extent *)((char *)buffer + buf_offset);
+                buf_offset += sizeof (struct ext4_extent);
+                FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent node cover %d...\n"), ext4_extent->ee_block));
+
+                // Is the requested block in this extent?
+                if(bno >= ext4_extent->ee_block && bno < ext4_extent->ee_block + ext4_extent->ee_len)
+                {
+                    extent->phys_start = ((fsw_u64)ext4_extent->ee_start_hi << 32) | ext4_extent->ee_start_lo;
+                    extent->phys_start += (bno - ext4_extent->ee_block);
+                    extent->log_count = ext4_extent->ee_len - (bno - ext4_extent->ee_block);
+                    return FSW_SUCCESS;
+                }
+            }
+            else
+            {
+                FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index extents, depth %d\n"),
+                          ext4_extent_header->eh_depth));
+                ext4_extent_idx = (struct ext4_extent_idx *)((char *)buffer + buf_offset);
+                buf_offset += sizeof (struct ext4_extent_idx);
+
+                FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index node covers block %d...\n"),
+                          ext4_extent_idx->ei_block));
+                if(bno >= ext4_extent_idx->ei_block)
+                {
+                    // Follow extent tree...
+                    fsw_u64 phys_bno = ((fsw_u64)ext4_extent_idx->ei_leaf_hi << 32) | ext4_extent_idx->ei_leaf_lo;
+                    status = fsw_block_get(vol, phys_bno, 1, (void **) &buffer);
+                    if (status)
+                        return status;
+                    buf_offset = 0;
+                    break;
+                }
+            }
         }
-      }
-      else
-      {
-  //      FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index extents, depth %d\n"),
-  //                     ext4_extent_header->eh_depth));
-        ext4_extent_idx = (struct ext4_extent_idx *)((char *)buffer + buf_offset);
-        buf_offset += sizeof(struct ext4_extent_idx);
-        
- //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index node covers block %d...\n"),
- //                      ext4_extent_idx->ei_block));
-        if(bno >= ext4_extent_idx->ei_block)
-        {
-          // Follow extent tree...
-          status = fsw_block_get(vol, ext4_extent_idx->ei_leaf_lo, 1, (void **)&buffer);
-          if (status)
-            return status;
-          buf_offset = 0;
-          break;
-        }
-      }
     }
-  }
-  
-  return FSW_NOT_FOUND;
+
+    return FSW_NOT_FOUND;
 }
 
 /**
@@ -461,84 +478,84 @@ static fsw_status_t fsw_ext4_get_by_extent(struct fsw_ext4_volume *vol, struct f
 static fsw_status_t fsw_ext4_get_by_blkaddr(struct fsw_ext4_volume *vol, struct fsw_ext4_dnode *dno,
                                         struct fsw_extent *extent)
 {
-  fsw_status_t    status;
-  fsw_u32         bno, release_bno, buf_bcnt, file_bcnt;
-  int             path[5], i;
-  fsw_u32         *buffer;
-  bno = extent->log_start;
-  
-  // try direct block pointers in the inode
-  if (bno < EXT4_NDIR_BLOCKS) {
-    path[0] = bno;
-    path[1] = -1;
-  } else {
-    bno -= EXT4_NDIR_BLOCKS;
-    
-    // try indirect block
-    if (bno < vol->ind_bcnt) {
-      path[0] = EXT4_IND_BLOCK;
-      path[1] = bno;
-      path[2] = -1;
+    fsw_status_t    status;
+    fsw_u32         bno, release_bno, buf_bcnt, file_bcnt;
+    int             path[5], i;
+    fsw_u32         *buffer;
+    bno = extent->log_start;
+
+    // try direct block pointers in the inode
+    if (bno < EXT4_NDIR_BLOCKS) {
+        path[0] = bno;
+        path[1] = -1;
     } else {
-      bno -= vol->ind_bcnt;
-      
-      // try double-indirect block
-      if (bno < vol->dind_bcnt) {
-        path[0] = EXT4_DIND_BLOCK;
-        path[1] = bno / vol->ind_bcnt;
-        path[2] = bno % vol->ind_bcnt;
-        path[3] = -1;
-      } else {
-        bno -= vol->dind_bcnt;
-        
-        // use the triple-indirect block
-        path[0] = EXT4_TIND_BLOCK;
-        path[1] = bno / vol->dind_bcnt;
-        path[2] = (bno / vol->ind_bcnt) % vol->ind_bcnt;
-        path[3] = bno % vol->ind_bcnt;
-        path[4] = -1;
-      }
+        bno -= EXT4_NDIR_BLOCKS;
+
+        // try indirect block
+        if (bno < vol->ind_bcnt) {
+            path[0] = EXT4_IND_BLOCK;
+            path[1] = bno;
+            path[2] = -1;
+        } else {
+            bno -= vol->ind_bcnt;
+
+            // try double-indirect block
+            if (bno < vol->dind_bcnt) {
+                path[0] = EXT4_DIND_BLOCK;
+                path[1] = bno / vol->ind_bcnt;
+                path[2] = bno % vol->ind_bcnt;
+                path[3] = -1;
+            } else {
+                bno -= vol->dind_bcnt;
+
+                // use the triple-indirect block
+                path[0] = EXT4_TIND_BLOCK;
+                path[1] = bno / vol->dind_bcnt;
+                path[2] = (bno / vol->ind_bcnt) % vol->ind_bcnt;
+                path[3] = bno % vol->ind_bcnt;
+                path[4] = -1;
+            }
+        }
     }
-  }
-  
-  // follow the indirection path
-  buffer = dno->raw->i_block;
-  buf_bcnt = EXT4_NDIR_BLOCKS;
-  release_bno = 0;
-  for (i = 0; ; i++) {
-    bno = buffer[path[i]];
-    if (bno == 0) {
-      extent->type = FSW_EXTENT_TYPE_SPARSE;
-      if (release_bno)
-        fsw_block_release(vol, release_bno, buffer);
-      return FSW_SUCCESS;
+
+    // follow the indirection path
+    buffer = dno->raw->i_block;
+    buf_bcnt = EXT4_NDIR_BLOCKS;
+    release_bno = 0;
+    for (i = 0; ; i++) {
+        bno = buffer[path[i]];
+        if (bno == 0) {
+            extent->type = FSW_EXTENT_TYPE_SPARSE;
+            if (release_bno)
+                fsw_block_release(vol, release_bno, buffer);
+            return FSW_SUCCESS;
+        }
+        if (path[i+1] < 0)
+            break;
+
+        if (release_bno)
+            fsw_block_release(vol, release_bno, buffer);
+        status = fsw_block_get(vol, bno, 1, (void **) &buffer);
+        if (status)
+            return status;
+        release_bno = bno;
+        buf_bcnt = vol->ind_bcnt;
     }
-    if (path[i+1] < 0)
-      break;
-    
+    extent->phys_start = bno;
+
+    // check if the following blocks can be aggregated into one extent
+    file_bcnt = (fsw_u32)((dno->g.size + vol->g.log_blocksize - 1) & (vol->g.log_blocksize - 1));
+    while (path[i]           + extent->log_count < buf_bcnt &&    // indirect block has more block pointers
+           extent->log_start + extent->log_count < file_bcnt) {   // file has more blocks
+        if (buffer[path[i] + extent->log_count] == buffer[path[i] + extent->log_count - 1] + 1)
+            extent->log_count++;
+        else
+            break;
+    }
+
     if (release_bno)
-      fsw_block_release(vol, release_bno, buffer);
-    status = fsw_block_get(vol, bno, 1, (void **)&buffer);
-    if (status)
-      return status;
-    release_bno = bno;
-    buf_bcnt = vol->ind_bcnt;
-  }
-  extent->phys_start = bno;
-  
-  // check if the following blocks can be aggregated into one extent
-  file_bcnt = (fsw_u32)((dno->g.size + vol->g.log_blocksize - 1) & (vol->g.log_blocksize - 1));
-  while (path[i]           + extent->log_count < buf_bcnt &&    // indirect block has more block pointers
-         extent->log_start + extent->log_count < file_bcnt) {   // file has more blocks
-    if (buffer[path[i] + extent->log_count] == buffer[path[i] + extent->log_count - 1] + 1)
-      extent->log_count++;
-    else
-      break;
-  }
-  
-  if (release_bno)
-    fsw_block_release(vol, release_bno, buffer);
-  return FSW_SUCCESS;
+        fsw_block_release(vol, release_bno, buffer);
+    return FSW_SUCCESS;
 }
 
 /**
@@ -614,7 +631,9 @@ static fsw_status_t fsw_ext4_dir_read(struct fsw_ext4_volume *vol, struct fsw_ex
     // Preconditions: The caller has checked that dno is a directory node. The caller
     //  has opened a storage handle to the directory's storage and keeps it around between
     //  calls.
-//    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_dir_read: started reading dir\n")));
+    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_dir_read: started reading dir\n")));
+    entry.name_len  = 0;
+    entry.inode     = 0;
 
     while (1) {
         // read next entry
@@ -711,13 +730,18 @@ static fsw_status_t fsw_ext4_readlink(struct fsw_ext4_volume *vol, struct fsw_ex
     int             ea_blocks;
     struct fsw_string s;
 
-    if (dno->g.size > FSW_PATH_MAX)
+    if (dno->g.size > FSW_PATH_MAX)  {
         return FSW_VOLUME_CORRUPTED;
+    }
 
     /* Linux kernels ext4_inode_is_fast_symlink... */
     ea_blocks = dno->raw->i_file_acl_lo ? (vol->g.log_blocksize >> 9) : 0;
 
     if (dno->raw->i_blocks_lo - ea_blocks == 0) {
+        if (dno->g.size > sizeof (dno->raw->i_block)) {
+            return FSW_VOLUME_CORRUPTED;
+        }
+
         // "fast" symlink, path is stored inside the inode
         s.type = FSW_STRING_TYPE_ISO88591;
         s.size = s.len = (int)dno->g.size;

@@ -46,7 +46,7 @@ struct fsw_ext4_volume {
     struct fsw_volume g;            //!< Generic volume structure
     
     struct ext4_super_block *sb;    //!< Full raw ext2 superblock structure
-    fsw_u32     *inotab_bno;        //!< Block numbers of the inode tables
+    fsw_u64     *inotab_bno;        //!< Block numbers of the inode tables
     fsw_u32     ind_bcnt;           //!< Number of blocks addressable through an indirect block
     fsw_u32     dind_bcnt;          //!< Number of blocks addressable through a double-indirect block
     fsw_u32     inode_size;         //!< Size of inode structure in bytes

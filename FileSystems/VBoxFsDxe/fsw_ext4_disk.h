@@ -394,12 +394,13 @@ struct ext4_super_block {
 #define EXT4_FEATURE_INCOMPAT_EXTENTS		0x0040 /* extents support */
 #define EXT4_FEATURE_INCOMPAT_64BIT		0x0080
 #define EXT4_FEATURE_INCOMPAT_MMP               0x0100
-#define EXT4_FEATURE_INCOMPAT_FLEX_BG		0x0200
-#define EXT4_FEATURE_INCOMPAT_EA_INODE		0x0400 /* EA in inode */
-#define EXT4_FEATURE_INCOMPAT_DIRDATA		0x1000 /* data in dirent */
-#define EXT4_FEATURE_INCOMPAT_BG_USE_META_CSUM	0x2000 /* use crc32c for bg */
-#define EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3-lvl htree */
-#define EXT4_FEATURE_INCOMPAT_INLINEDATA	0x8000 /* data in inode */
+#define EXT4_FEATURE_INCOMPAT_FLEX_BG           0x0200
+#define EXT4_FEATURE_INCOMPAT_EA_INODE          0x0400  /* EA in inode */
+#define EXT4_FEATURE_INCOMPAT_DIRDATA           0x1000  /* data in dirent */
+#define EXT4_FEATURE_INCOMPAT_BG_USE_META_CSUM  0x2000  /* use crc32c for bg */
+#define EXT4_FEATURE_INCOMPAT_LARGEDIR          0x4000  /* >2GB or 3-lvl htree */
+#define EXT4_FEATURE_INCOMPAT_INLINEDATA        0x8000  /* data in inode */
+#define EXT4_FEATURE_INCOMPAT_ENCRYPT           0x10000 /* BK ext4 fscrypt encryption */
 
 #define EXT4_FEATURE_INCOMPAT_SUPP	(EXT4_FEATURE_INCOMPAT_FILETYPE| \
 					 EXT4_FEATURE_INCOMPAT_RECOVER| \
@@ -425,8 +426,9 @@ struct ext4_dir_entry {
 //  layout and ext4_dir_entry_2 with the revised layout. We simply use the revised one.
 
 /*
- * Ext2 directory file types.  Only the low 3 bits are used.  The
- * other bits are reserved for now.
+ * Ext2 directory file types.
+ * Only the lower 3 bits are used.
+ * The other bits are reserved for now.
  */
 enum {
     EXT4_FT_UNKNOWN,

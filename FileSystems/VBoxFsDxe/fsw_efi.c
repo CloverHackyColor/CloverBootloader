@@ -103,7 +103,7 @@ EFI_STATUS EFIAPI fsw_efi_ComponentName_GetControllerName(IN  EFI_COMPONENT_NAME
 void fsw_efi_change_blocksize(struct fsw_volume *vol,
                               fsw_u32 old_phys_blocksize, fsw_u32 old_log_blocksize,
                               fsw_u32 new_phys_blocksize, fsw_u32 new_log_blocksize);
-fsw_status_t fsw_efi_read_block(struct fsw_volume *vol, fsw_u32 phys_bno, void *buffer);
+fsw_status_t fsw_efi_read_block(struct fsw_volume *vol, fsw_u64 phys_bno, void *buffer);
 
 EFI_STATUS fsw_efi_map_status(fsw_status_t fsw_status, FSW_VOLUME_DATA *Volume);
 
@@ -562,7 +562,7 @@ void fsw_efi_change_blocksize(struct fsw_volume *vol,
  * to read a block of data from the device. The buffer is allocated by the core code.
  */
 
-fsw_status_t fsw_efi_read_block(struct fsw_volume *vol, fsw_u32 phys_bno, void *buffer)
+fsw_status_t fsw_efi_read_block(struct fsw_volume *vol, fsw_u64 phys_bno, void *buffer)
 {
     EFI_STATUS          Status;
     FSW_VOLUME_DATA     *Volume = (FSW_VOLUME_DATA *)vol->host_data;
@@ -1136,6 +1136,52 @@ static void fsw_efi_store_time_posix(struct fsw_dnode_stat_str *sb, int which, f
         fsw_efi_decode_time(&FileInfo->ModificationTime, posix_time);
     else if (which == FSW_DNODE_STAT_ATIME)
         fsw_efi_decode_time(&FileInfo->LastAccessTime,   posix_time);
+}
+
+/**
+ * Time mapping callback for the fsw_dnode_stat call. This function converts
+ * a Posix style timestamp into an EFI_TIME structure and writes it to the
+ * appropriate member of the EFI_FILE_INFO structure that we are filling.
+ */
+
+void fsw_store_time_posix(
+    struct fsw_dnode_stat_str *sb,
+    int                    which,
+    fsw_u32                posix_time
+) {
+    EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
+
+    if (which == FSW_DNODE_STAT_CTIME)
+        fsw_efi_decode_time(&FileInfo->CreateTime,       posix_time);
+    else if (which == FSW_DNODE_STAT_MTIME)
+        fsw_efi_decode_time(&FileInfo->ModificationTime, posix_time);
+    else if (which == FSW_DNODE_STAT_ATIME)
+        fsw_efi_decode_time(&FileInfo->LastAccessTime,   posix_time);
+}
+
+/**
+ * Mode mapping callback for the fsw_dnode_stat call. This function looks at
+ * the Posix mode passed by the file system driver and makes appropriate
+ * adjustments to the EFI_FILE_INFO structure that we are filling.
+ */
+
+void fsw_store_attr_posix(
+    struct fsw_dnode_stat_str *sb,
+    fsw_u16                posix_mode
+) {
+    EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
+
+    if ((posix_mode & S_IWUSR) == 0)
+        FileInfo->Attribute |= EFI_FILE_READ_ONLY;
+}
+
+void fsw_store_attr_efi(
+    struct fsw_dnode_stat_str *sb,
+    fsw_u16                attr
+) {
+    EFI_FILE_INFO       *FileInfo = (EFI_FILE_INFO *)sb->host_data;
+
+    FileInfo->Attribute |= attr;
 }
 
 /**
