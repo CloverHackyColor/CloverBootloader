@@ -517,6 +517,20 @@
                 <key>Entries</key>
                 <array>
                     <dict>
+                        <key>Arguments</key>
+                        <string>initrd=\initramfs-linux.img root=/dev/sda6 rw add_efi_memmap</string>
+                        <key>Path</key>
+                        <string>\vmlinuz-linux</string>
+                        <key>Title</key>
+                        <string>Arch Linux</string>
+                        <key>Type</key>
+                        <string>Linux</string>
+                        <key>Volume</key>
+                        <string>EFI</string>
+                        <key>VolumeType</key>
+                        <string>Internal</string>
+                    </dict>
+                    <dict>
                         <key>Disabled</key>
                         <false/>
                         <key>Hidden</key>
@@ -524,9 +538,9 @@
                         <key>Image</key>
                         <string>os_mageia</string>
                         <key>Path</key>
-                        <string>\EFI\MAGEIA\GRUBX64.efi</string>
+                        <string>\EFI\Gentoo\grub.efi</string>
                         <key>Title</key>
-                        <string>Mageia Linux</string>
+                        <string>Gentoo Linux</string>
                         <key>Type</key>
                         <string>Linux</string>
                     </dict>
