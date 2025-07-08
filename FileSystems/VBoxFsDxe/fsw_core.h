@@ -254,7 +254,7 @@ struct fsw_fstype_table;
 struct fsw_blockcache {
     fsw_u32     refcount;           //!< Reference count
     fsw_u32     cache_level;        //!< Level of importance of this block
-    fsw_u32     phys_bno;           //!< Physical block number
+    fsw_u64     phys_bno;           //!< Physical block number
     void        *data;              //!< Block data buffer
 };
 
@@ -291,7 +291,8 @@ struct fsw_dnode {
     struct DNODESTRUCTNAME *parent; //!< Parent directory dnode
     struct fsw_string name;         //!< Name of this item in the parent directory
 
-    fsw_u32     dnode_id;           //!< Unique id number (usually the inode number)
+    fsw_u64     tree_id;            //!< Unique id number (usually the btrfs subvolume)
+    fsw_u64     dnode_id;           //!< Unique id number (usually the inode number)
     int         type;               //!< Type of the dnode - file, dir, symlink, special
     fsw_u64     size;               //!< Data size in bytes
 
@@ -321,10 +322,10 @@ enum {
  */
 
 struct fsw_extent {
-    int         type;               //!< Type of extent specification
-    fsw_u32     log_start;          //!< Starting logical block number
+    fsw_u32     type;               //!< Type of extent specification
+    fsw_u64     log_start;          //!< Starting logical block number
     fsw_u32     log_count;          //!< Logical block count
-    fsw_u32     phys_start;         //!< Starting physical block number (for FSW_EXTENT_TYPE_PHYSBLOCK only)
+    fsw_u64     phys_start;         //!< Starting physical block number (for FSW_EXTENT_TYPE_PHYSBLOCK only)
     void        *buffer;            //!< Allocated buffer pointer (for FSW_EXTENT_TYPE_BUFFER only)
 };
 
@@ -388,10 +389,10 @@ struct fsw_host_table
 {
     int         native_string_type; //!< String type used by the host environment
 
-    void         (*change_blocksize)(struct fsw_volume *vol,
+    void         EFIAPI (*change_blocksize)(struct fsw_volume *vol,
                                      fsw_u32 old_phys_blocksize, fsw_u32 old_log_blocksize,
                                      fsw_u32 new_phys_blocksize, fsw_u32 new_log_blocksize);
-    fsw_status_t (*read_block)(struct fsw_volume *vol, fsw_u32 phys_bno, void *buffer);
+    fsw_status_t EFIAPI (*read_block)(struct fsw_volume *vol, fsw_u64 phys_bno, void *buffer);
 };
 
 /**
@@ -485,6 +486,9 @@ fsw_status_t fsw_dnode_readlink(struct fsw_dnode *dno, struct fsw_string *link_t
 #define      fsw_dnode_readlink_data(x, y) fsw_dnode_readlink_data_(SafeCast2(x), (y))
 fsw_status_t fsw_dnode_readlink_data_(struct fsw_dnode *dno, struct fsw_string *link_target);
 fsw_status_t fsw_dnode_resolve(struct fsw_dnode *dno, struct fsw_dnode **target_dno_out);
+void fsw_store_time_posix(struct fsw_dnode_stat_str *sb, int which, fsw_u32 posix_time);
+void fsw_store_attr_posix(struct fsw_dnode_stat_str *sb, fsw_u16 posix_mode);
+void fsw_store_attr_efi(struct fsw_dnode_stat_str *sb, fsw_u16 attr);
 
 /*@}*/
 

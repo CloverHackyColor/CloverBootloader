@@ -4479,10 +4479,73 @@ d="M503 939l-34 -741q0 -1 -3 -1h-88q-3 0 -3 1l-37 741l-6 664q0 1 3 1h170q3 0 3 -
 			c0.1,0.2,0.1,0.5,0.1,0.8c-0.1,1.8,0.9,4.3,2.8,5.2l0.3,0.1c0.7,0.3,2.5,1.2,2.5,1.6C635.3,200.1,635.3,200.1,635.2,200.2z"/>
 		</g>
 </g>
+  <g id="os_arch" transform="translate(915, 385)">
+      <rect visibility="hidden" id="BoundingRect_ol" width="134.466" height="136.083" x="1.616" y="-4.85"/>
+      <g transform="scale(0.8)">
+        <use xlink:href="#OsPlace"  width="145" height="145" transform="matrix(1.0299999713897705, 0, 0, -1.0299999713897705, 524.8250020742416, 251.67499792575836)" style="overflow:visible;" xlink:href="#OsPlace"/>
+          
+     <linearGradient
+       x1="112.49854"
+       y1="6.1372099"
+       x2="112.49853"
+       y2="129.3468"
+       id="path1082_2_"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(287,-83)">
+       <stop id="stop193"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="0" />
+         <stop id="stop195"
+         style="stop-color:#ffffff;stop-opacity:0.27450982"
+         offset="1" />
+         <midPointStop 
+         offset="0"
+         style="stop-color:#FFFFFF"
+         id="midPointStop197" />
+         <midPointStop
+         offset="0.5"
+         style="stop-color:#FFFFFF"
+         id="midPointStop199" />
+         <midPointStop
+         offset="1"
+         style="stop-color:#000000"
+         id="midPointStop201" />
+       </linearGradient>
+       <linearGradient
+       x1="541.33502"
+       y1="104.50665"
+       x2="606.91248"
+       y2="303.14029"
+       id="linearGradient2544"
+       xlink:href="#path1082_2_"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.3937741,0,0,0.393752,357.51969,122.00151)" />
+       <linearGradient id="linearGradient3388">
+       <stop id="stop3390" style="stop-color:#000000;stop-opacity:0" offset="0" />
+       <stop id="stop3392" style="stop-color:#000000;stop-opacity:0.37113401" offset="1" />
+       </linearGradient>
+       <linearGradient
+       x1="490.72305"
+       y1="237.72447"
+       x2="490.72305"
+       y2="183.9644"
+       id="linearGradient4416"
+       xlink:href="#linearGradient3388"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.749107,0,0,0.749107,-35.459862,91.44108)" />
+       <g transform="translate(-34.777313,-40)" id="layer1">
+       <path
+         d="m 105.8125,16.625 c -7.39687,18.135158 -11.858304,29.997682 -20.09375,47.59375 5.04936,5.35232 11.247211,11.585364 21.3125,18.625 C 96.210077,78.390904 88.828713,73.920352 83.3125,69.28125 72.7727,91.274163 56.259864,122.60209 22.75,182.8125 49.087628,167.60733 69.504089,158.23318 88.53125,154.65625 87.714216,151.1422 87.2497,147.34107 87.28125,143.375 l 0.03125,-0.84375 c 0.417917,-16.87382 9.195665,-29.84979 19.59375,-28.96875 10.39809,0.88104 18.48041,15.28242 18.0625,32.15625 -0.0786,3.17512 -0.43674,6.22955 -1.0625,9.0625 18.82058,3.68164 39.01873,13.03179 65,28.03125 -5.123,-9.4318 -9.69572,-17.93388 -14.0625,-26.03125 -6.87839,-5.33121 -14.05289,-12.2698 -28.6875,-19.78125 10.05899,2.61375 17.2611,5.62932 22.875,9 C 124.63297,63.338161 121.03766,52.354109 105.8125,16.625 z"
+         transform="matrix(0.60,0,0,0.60,570.0,150.0)"
+         id="path2518"
+         style="fill:#1793d1;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+      </g>
+       </g>
+    </g>
   <g id="os_ubuntu" transform="translate(750, 385)">
       <rect visibility="hidden" id="BoundingRect_ol" width="134.466" height="136.083" x="1.616" y="-4.85"/>
       <g transform="scale(0.8)">
-        <use width="145" height="145" transform="matrix(1.0299999713897705, 0, 0, -1.0299999713897705, 524.8250020742416, 251.67499792575836)" style="overflow:visible;" xlink:href="#OsPlace"/>
+        <use xlink:href="#OsPlace"  width="145" height="145" transform="matrix(1.0299999713897705, 0, 0, -1.0299999713897705, 524.8250020742416, 251.67499792575836)" style="overflow:visible;" xlink:href="#OsPlace"/>
         <linearGradient id="ubuntu-grad" x1="49.93" y1="124.6" x2="49.93" y2="39.4" gradientTransform="matrix(0.849542, 0, 0, -0.796797, 527.745332, 241.958019)" gradientUnits="userSpaceOnUse">
           <stop offset="0" stop-color="#ff0"/>
           <stop offset="1" stop-color="#dd4814"/>

@@ -70,7 +70,7 @@
  VMM-x86_64
  */
 
-// for HWTarget recommended values for T2 models (by Gradou)
+// for HWTarget recommended values for T2 models (by Gradou) (Monterey)
 /*
 MacBookPro 15,1 (J680AP) 15,2 (J132AP) 15,3 (J780AP) & 15,4 (J213AP)
 MacBookPro16,1 (J152fAP) 16,3 (J223AP) & 16,4 (J215AP
