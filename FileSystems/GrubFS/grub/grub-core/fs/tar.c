@@ -81,7 +81,7 @@ grub_cpio_find_file (struct grub_archelp_data *data, char **name,
 
   for (reread = 0; reread < 3; reread++)
     {
-      if (grub_disk_read (data->disk, 0, data->hofs, sizeof (hd), &hd))
+      if (grub_disk_read_z (data->disk, 0, data->hofs, sizeof (hd), &hd))
 	return grub_errno;
 
       if (!hd.name[0] && !hd.prefix[0])
@@ -100,7 +100,7 @@ grub_cpio_find_file (struct grub_archelp_data *data, char **name,
 	  *name = grub_malloc (namesize + 1);
 	  if (*name == NULL)
 	    return grub_errno;
-	  err = grub_disk_read (data->disk, 0,
+	  err = grub_disk_read_z (data->disk, 0,
 				data->hofs + GRUB_DISK_SECTOR_SIZE, namesize,
 				*name);
 	  (*name)[namesize] = 0;
@@ -128,7 +128,7 @@ grub_cpio_find_file (struct grub_archelp_data *data, char **name,
 	      data->linkname_alloc = 2 * (linksize + 1);
 	    }
 
-	  err = grub_disk_read (data->disk, 0,
+	  err = grub_disk_read_z (data->disk, 0,
 				data->hofs + GRUB_DISK_SECTOR_SIZE, linksize,
 				data->linkname);
 	  if (err)
@@ -230,7 +230,7 @@ grub_cpio_mount (grub_disk_t disk)
   struct head hd;
   struct grub_archelp_data *data;
 
-  if (grub_disk_read (disk, 0, 0, sizeof (hd), &hd))
+  if (grub_disk_read_z (disk, 0, 0, sizeof (hd), &hd))
     goto fail;
 
   if (grub_memcmp (hd.magic, MAGIC, sizeof (MAGIC) - 1))
@@ -303,7 +303,7 @@ grub_cpio_read (grub_file_t file, char *buf, grub_size_t len)
 
   data->disk->read_hook = file->read_hook;
   data->disk->read_hook_data = file->read_hook_data;
-  ret = (grub_disk_read (data->disk, 0, data->dofs + file->offset,
+  ret = (grub_disk_read_z (data->disk, 0, data->dofs + file->offset,
 			 len, buf)) ? -1 : (grub_ssize_t) len;
   data->disk->read_hook = 0;
 

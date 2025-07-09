@@ -297,7 +297,7 @@ getblk (struct grub_jfs_treehead *treehead,
       if (!tree)
 	return -1;
 
-      if (!grub_disk_read (data->disk,
+      if (!grub_disk_read_z (data->disk,
 			   ((grub_disk_addr_t) grub_le_to_cpu32 (extents[found].extent.blk2))
 			   << (grub_le_to_cpu16 (data->sblock.log2_blksz)
 			       - GRUB_DISK_SECTOR_BITS), 0,
@@ -336,7 +336,7 @@ grub_jfs_read_inode (struct grub_jfs_data *data, grub_uint32_t ino,
     return grub_errno;
 
   /* Read in the IAG.  */
-  if (grub_disk_read (data->disk,
+  if (grub_disk_read_z (data->disk,
 		      iagblk << (grub_le_to_cpu16 (data->sblock.log2_blksz)
 				 - GRUB_DISK_SECTOR_BITS),
 		      GRUB_JFS_IAG_INODES_OFFSET,
@@ -348,7 +348,7 @@ grub_jfs_read_inode (struct grub_jfs_data *data, grub_uint32_t ino,
 	      - GRUB_DISK_SECTOR_BITS);
   inoblk += inonum;
 
-  if (grub_disk_read (data->disk, inoblk, 0,
+  if (grub_disk_read_z (data->disk, inoblk, 0,
 		      sizeof (struct grub_jfs_inode), inode))
     return grub_errno;
 
@@ -366,7 +366,7 @@ grub_jfs_mount (grub_disk_t disk)
     return 0;
 
   /* Read the superblock.  */
-  if (grub_disk_read (disk, GRUB_JFS_SBLOCK, 0,
+  if (grub_disk_read_z (disk, GRUB_JFS_SBLOCK, 0,
 		      sizeof (struct grub_jfs_sblock), &data->sblock))
     goto fail;
 
@@ -390,7 +390,7 @@ grub_jfs_mount (grub_disk_t disk)
   data->linknest = 0;
 
   /* Read the inode of the first fileset.  */
-  if (grub_disk_read (data->disk, GRUB_JFS_FS1_INODE_BLK, 0,
+  if (grub_disk_read_z (data->disk, GRUB_JFS_FS1_INODE_BLK, 0,
 		      sizeof (struct grub_jfs_inode), &data->fileset))
     goto fail;
 
@@ -464,7 +464,7 @@ grub_jfs_opendir (struct grub_jfs_data *data, struct grub_jfs_inode *inode)
   do
     {
       int index;
-      if (grub_disk_read (data->disk, blk, 0,
+      if (grub_disk_read_z (data->disk, blk, 0,
 			  grub_le_to_cpu32 (data->sblock.blksz),
 			  diro->dirpage->sorted))
 	{
@@ -532,7 +532,7 @@ grub_jfs_getent (struct grub_jfs_diropen *diro)
       next <<= (grub_le_to_cpu16 (diro->data->sblock.log2_blksz)
 		- GRUB_DISK_SECTOR_BITS);
 
-      if (grub_disk_read (diro->data->disk, next, 0,
+      if (grub_disk_read_z (diro->data->disk, next, 0,
 			  grub_le_to_cpu32 (diro->data->sblock.blksz),
 			  diro->dirpage->sorted))
 	return grub_errno;
@@ -626,7 +626,7 @@ grub_jfs_read_file (struct grub_jfs_data *data,
 
       data->disk->read_hook = read_hook;
       data->disk->read_hook_data = read_hook_data;
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      blknr << (grub_le_to_cpu16 (data->sblock.log2_blksz)
 				- GRUB_DISK_SECTOR_BITS),
 		      skipfirst, blockend, buf);

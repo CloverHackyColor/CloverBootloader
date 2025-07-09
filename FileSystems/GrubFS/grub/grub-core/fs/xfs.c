@@ -264,7 +264,7 @@ grub_xfs_read_inode (struct grub_xfs_data *data, grub_uint64_t ino,
   int offset = grub_xfs_inode_offset (data, ino);
 
   /* Read the inode.  */
-  if (grub_disk_read (data->disk, block, offset,
+  if (grub_disk_read_z (data->disk, block, offset,
 		      1 << data->sblock.log2_inode, inode))
     return grub_errno;
 
@@ -317,7 +317,7 @@ grub_xfs_read_block (grub_fshelp_node_t node, grub_disk_addr_t fileblock)
               grub_free (leaf);
               return 0;
             }
-          if (grub_disk_read (node->data->disk,
+          if (grub_disk_read_z (node->data->disk,
                               GRUB_XFS_FSB_TO_BLOCK (node->data, grub_be_to_cpu64 (keys[i - 1 + recoffset])) << (node->data->sblock.log2_bsize - GRUB_DISK_SECTOR_BITS),
                               0, node->data->bsize, leaf))
             return 0;
@@ -668,7 +668,7 @@ grub_xfs_mount (grub_disk_t disk)
     return 0;
 
   /* Read the superblock.  */
-  if (grub_disk_read (disk, 0, 0,
+  if (grub_disk_read_z (disk, 0, 0,
 		      sizeof (struct grub_xfs_sblock), &data->sblock))
     goto fail;
 

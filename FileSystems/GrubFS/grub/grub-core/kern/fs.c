@@ -224,7 +224,7 @@ grub_fs_blocklist_read (grub_file_t file, char *buf, grub_size_t len)
 	       >> GRUB_DISK_SECTOR_BITS) > p->length - sector)
 	    size = ((p->length - sector) << GRUB_DISK_SECTOR_BITS) - offset;
 
-	  if (grub_disk_read (file->device->disk, p->offset + sector, offset,
+	  if (grub_disk_read_z (file->device->disk, p->offset + sector, offset,
 			      size, buf) != GRUB_ERR_NONE)
 	    return -1;
 
