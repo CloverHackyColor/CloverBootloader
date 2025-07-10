@@ -275,7 +275,7 @@ grub_ufs_get_file_block (struct grub_ufs_data *data, grub_disk_addr_t blk)
   if (blk < indirsz)
     {
       grub_ufs_blk_t indir;
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      ((grub_disk_addr_t) INODE_INDIRBLOCKS (data, 0))
 		      << log2_blksz,
 		      blk * sizeof (indir), sizeof (indir), &indir);
@@ -288,12 +288,12 @@ grub_ufs_get_file_block (struct grub_ufs_data *data, grub_disk_addr_t blk)
     {
       grub_ufs_blk_t indir;
 
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      ((grub_disk_addr_t) INODE_INDIRBLOCKS (data, 1))
 		      << log2_blksz,
 		      (blk >> log_indirsz) * sizeof (indir),
 		      sizeof (indir), &indir);
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      grub_ufs_to_cpu_blk (indir) << log2_blksz,
 		      (blk & ((1 << log_indirsz) - 1)) * sizeof (indir),
 		      sizeof (indir), &indir);
@@ -308,18 +308,18 @@ grub_ufs_get_file_block (struct grub_ufs_data *data, grub_disk_addr_t blk)
     {
       grub_ufs_blk_t indir;
 
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      ((grub_disk_addr_t) INODE_INDIRBLOCKS (data, 2))
 		      << log2_blksz,
 		      (blk >> (2 * log_indirsz)) * sizeof (indir),
 		      sizeof (indir), &indir);
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      grub_ufs_to_cpu_blk (indir) << log2_blksz,
 		      ((blk >> log_indirsz)
 		       & ((1 << log_indirsz) - 1)) * sizeof (indir),
 		      sizeof (indir), &indir);
 
-      grub_disk_read (data->disk,
+      grub_disk_read_z (data->disk,
 		      grub_ufs_to_cpu_blk (indir) << log2_blksz,
 		      (blk & ((1 << log_indirsz) - 1)) * sizeof (indir),
 		      sizeof (indir), &indir);
@@ -337,7 +337,7 @@ grub_ufs_get_file_block (struct grub_ufs_data *data, grub_disk_addr_t blk)
    POS.  Return the amount of read bytes in READ.  */
 static grub_ssize_t
 grub_ufs_read_file (struct grub_ufs_data *data,
-		    grub_disk_read_hook_t read_hook, void *read_hook_data,
+		grub_disk_read_hook_t read_hook, void *read_hook_data,
 		    grub_off_t pos, grub_size_t len, char *buf)
 {
   struct grub_ufs_sblock *sblock = &data->sblock;
@@ -386,7 +386,7 @@ grub_ufs_read_file (struct grub_ufs_data *data,
 	{
 	  data->disk->read_hook = read_hook;
 	  data->disk->read_hook_data = read_hook_data;
-	  grub_disk_read (data->disk,
+	  grub_disk_read_z (data->disk,
 			  blknr << grub_ufs_to_cpu32 (data->sblock.log2_blksz),
 			  skipfirst, blockend, buf);
 	  data->disk->read_hook = 0;
@@ -429,12 +429,12 @@ grub_ufs_read_inode (struct grub_ufs_data *data, int ino, char *inode)
       data->ino = ino;
     }
 
-  grub_disk_read (data->disk,
+  grub_disk_read_z (data->disk,
 		  ((grub_ufs_to_cpu32 (sblock->inoblk_offs) + grpblk)
 		   << grub_ufs_to_cpu32 (data->sblock.log2_blksz))
 		  + grpino / UFS_INODE_PER_BLOCK,
-		  (grpino % UFS_INODE_PER_BLOCK)
-		  * sizeof (struct grub_ufs_inode),
+		  (grub_off_t)((grpino % UFS_INODE_PER_BLOCK)
+		  * sizeof (struct grub_ufs_inode)),
 		  sizeof (struct grub_ufs_inode),
 		  inode);
 
@@ -601,7 +601,7 @@ grub_ufs_mount (grub_disk_t disk)
   /* Find a UFS sblock.  */
   while (*sblklist != -1)
     {
-      grub_disk_read (disk, *sblklist, 0, sizeof (struct grub_ufs_sblock),
+	  grub_disk_read_z (disk, *sblklist, 0, sizeof (struct grub_ufs_sblock),
 		      &data->sblock);
       if (grub_errno)
 	goto fail;

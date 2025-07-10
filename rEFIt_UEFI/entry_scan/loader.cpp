@@ -1120,6 +1120,11 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
         DBG("%slinux image not found\n", indent);
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
       }
+      if (StrStr(Entry->Title.wc_str(), L"Arch")) {
+    	  	  OSIconName = L"arch"_XSW;
+      } else if (StrStr(Entry->Title.wc_str(), L"Ubuntu")){
+    	  	  OSIconName = L"ubuntu"_XSW;
+      }
       ShortcutLetter = L'L';
       break;
     //case OSTYPE_OTHER: 
@@ -2700,7 +2705,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
         MainMenu.AddMenuEntry(Entry, true);
 
         Entry->Hidden = Custom.settings.Hidden;
-        if ( Custom.settings.Hidden ) DBG("     hiding entry because Custom.settings.Hidden\n");
+        if ( Custom.settings.Hidden )  { DBG("     hiding entry because Custom.settings.Hidden\n"); }
       }
     } while (FindCustomPath && Custom.settings.Type == OSTYPE_LINEFI && Custom.settings.KernelScan == KERNEL_SCAN_ALL); // repeat loop only for kernel scanning
 

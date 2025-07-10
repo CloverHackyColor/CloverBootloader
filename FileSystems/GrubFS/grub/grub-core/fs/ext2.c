@@ -43,11 +43,13 @@
 #include <grub/mm.h>
 #include <grub/misc.h>
 #include <grub/disk.h>
+#include <grub/partition.h>
 #include <grub/dl.h>
 #include <grub/types.h>
 #include <grub/fshelp.h>
 
-GRUB_MOD_LICENSE ("GPLv3+");
+
+//GRUB_MOD_LICENSE ("GPLv3+");
 
 /* Log2 size of ext2 block in 512 blocks.  */
 #define LOG2_EXT2_BLOCK_SIZE(data)			\
@@ -337,10 +339,10 @@ inline static grub_err_t
 grub_ext2_blockgroup (struct grub_ext2_data *data, int group,
 		      struct grub_ext2_block_group *blkgrp)
 {
-  return grub_disk_read (data->disk,
+  return grub_disk_read_z (data->disk,
                          ((grub_le_to_cpu32 (data->sblock.first_data_block) + 1)
                           << LOG2_EXT2_BLOCK_SIZE (data)),
-			 group << data->log_group_desc_size,
+			 (grub_off_t)(group << data->log_group_desc_size),
 			 sizeof (struct grub_ext2_block_group), blkgrp);
 }
 
@@ -380,7 +382,7 @@ grub_ext4_find_leaf (struct grub_ext2_data *data,
 	buf = grub_malloc (EXT2_BLOCK_SIZE(data));
       if (!buf)
 	goto fail;
-      if (grub_disk_read (data->disk,
+      if (grub_disk_read_z (data->disk,
                           block << LOG2_EXT2_BLOCK_SIZE (data),
                           0, EXT2_BLOCK_SIZE(data), buf))
 	goto fail;
@@ -484,7 +486,7 @@ grub_ext2_read_block (grub_fshelp_node_t node, grub_disk_addr_t fileblock)
 
 indirect:
   do {
-    if (grub_disk_read (data->disk,
+    if (grub_disk_read_z (data->disk,
 			((grub_disk_addr_t) grub_le_to_cpu32 (indir))
 			<< log2_blksz,
 			((fileblock >> (log_perblock * shift))
@@ -547,7 +549,7 @@ grub_ext2_read_inode (struct grub_ext2_data *data,
 	     << 32);
 
   /* Read the inode.  */
-  if (grub_disk_read (data->disk,
+  if (grub_disk_read_z (data->disk,
 		      ((base + blkno) << LOG2_EXT2_BLOCK_SIZE (data)),
 		      EXT2_INODE_SIZE (data) * blkoff,
 		      sizeof (struct grub_ext2_inode), inode))
@@ -566,7 +568,7 @@ grub_ext2_mount (grub_disk_t disk)
     return 0;
 
   /* Read the superblock.  */
-  grub_disk_read (disk, 1 * 2, 0, sizeof (struct grub_ext2_sblock),
+  grub_disk_read_z (disk, 1 * 2, 0, sizeof (struct grub_ext2_sblock),
                   &data->sblock);
   if (grub_errno)
     goto fail;

@@ -5,7 +5,7 @@
 
 [Defines]
         INF_VERSION                = 0x00010005
-        BASE_NAME                  = GrubEXT2
+        BASE_NAME                  = GrubEXT4
         FILE_GUID                  = 7DDA7772-B8F5-4859-9DBA-0D6F2DBA4AF1
         MODULE_TYPE                = UEFI_DRIVER
         VERSION_STRING             = 1.0
@@ -16,6 +16,7 @@
 
 [Sources.common]
         driver.c
+        driver.h
         file.c
         grub_driver.c
         grub_file.c
@@ -25,6 +26,7 @@
 	path.c
 	utf8.c
 	../grub/grub-core/kern/device.c
+	../grub/grub-core/kern/disk.c
 	../grub/grub-core/kern/err.c
 	../grub/grub-core/kern/misc.c
 	../grub/grub-core/kern/list.c
@@ -36,7 +38,7 @@
         ShellPkg/ShellPkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
         CloverPkg.dec
-	FileSystems/GrubFS/efifs.dec
+		FileSystems/GrubFS/efifs.dec
 
 [LibraryClasses]
    UefiRuntimeServicesTableLib

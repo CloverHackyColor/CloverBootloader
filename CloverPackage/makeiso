@@ -134,6 +134,8 @@ cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/VBo
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Fat.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Ext4Dxe.efi \
+      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # Memory fix UEFI
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OpenRuntime.efi \

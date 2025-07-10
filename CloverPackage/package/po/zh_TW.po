@@ -845,7 +845,7 @@ msgstr "64位，USB 滑鼠 驅動。"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "64位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1503,8 +1503,8 @@ msgstr "未知"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "32位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
-#~ msgstr "32位，來自 Virtualbox 的 ext4 檔案系統驅動。"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
+#~ msgstr "32位，來自 tianocore 的 ext4 檔案系統驅動。"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "32位，XHCI USB 3.0 驅動。"

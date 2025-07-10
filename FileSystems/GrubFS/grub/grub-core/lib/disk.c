@@ -83,7 +83,7 @@ grub_disk_write (grub_disk_t disk, grub_disk_addr_t sector,
 
 	  part = disk->partition;
 	  disk->partition = 0;
-	  if (grub_disk_read (disk, sector,
+	  if (grub_disk_read_z (disk, sector,
 			      0, (1U << disk->log_sector_size), tmp_buf)
 	      != GRUB_ERR_NONE)
 	    {

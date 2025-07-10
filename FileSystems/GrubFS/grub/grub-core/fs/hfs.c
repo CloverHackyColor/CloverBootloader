@@ -290,7 +290,7 @@ grub_hfs_read_file (struct grub_hfs_data *data,
 	{
 	  data->disk->read_hook = read_hook;
 	  data->disk->read_hook_data = read_hook_data;
-	  grub_disk_read (data->disk, blknr, skipfirst,
+	  grub_disk_read_z (data->disk, blknr, skipfirst,
 			  blockend, buf);
 	  data->disk->read_hook = 0;
 	  if (grub_errno)
@@ -324,7 +324,7 @@ grub_hfs_mount (grub_disk_t disk)
     return 0;
 
   /* Read the superblock.  */
-  if (grub_disk_read (disk, GRUB_HFS_SBLOCK, 0,
+  if (grub_disk_read_z (disk, GRUB_HFS_SBLOCK, 0,
 		      sizeof (struct grub_hfs_sblock), &data->sblock))
     goto fail;
 
@@ -351,7 +351,7 @@ grub_hfs_mount (grub_disk_t disk)
 		  * GRUB_HFS_BLKS)
 		 + grub_be_to_cpu16 (data->sblock.first_block));
 
-  if (grub_disk_read (data->disk, first_block, 0,
+  if (grub_disk_read_z (data->disk, first_block, 0,
 		      sizeof (treehead), &treehead))
     goto fail;
   data->ext_root = grub_be_to_cpu32 (treehead.head.root_node);
@@ -361,7 +361,7 @@ grub_hfs_mount (grub_disk_t disk)
   first_block = ((grub_be_to_cpu16 (data->sblock.catalog_recs[0].first_block)
 		  * GRUB_HFS_BLKS)
 		 + grub_be_to_cpu16 (data->sblock.first_block));
-  if (grub_disk_read (data->disk, first_block, 0,
+  if (grub_disk_read_z (data->disk, first_block, 0,
 		      sizeof (treehead), &treehead))
     goto fail;
   data->cat_root = grub_be_to_cpu32 (treehead.head.root_node);
@@ -697,7 +697,7 @@ grub_hfs_iterate_records (struct grub_hfs_data *data, int type, int idx,
 			    idx / (data->blksz / nodesize), 0);
       blk += (idx % (data->blksz / nodesize));
 
-      if (grub_errno || grub_disk_read (data->disk, blk, 0,
+      if (grub_errno || grub_disk_read_z (data->disk, blk, 0,
 					nodesize, node))
 	{
 	  grub_free (node);

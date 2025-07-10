@@ -5,7 +5,7 @@
 	<key>#DisableDrivers</key>
 	<array>
 		<string>CsmVideoDxe</string>
-		<string>VBoxExt4</string>
+		<string>VBoxExt2</string>
 	</array>
 	<key>ACPI</key>
 	<dict>

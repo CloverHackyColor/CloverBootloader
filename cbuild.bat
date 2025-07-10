@@ -254,14 +254,14 @@ rem # setup build
   set "TARGETARCH=X64"
   set UEFI_DRV_LIST=(FSInject OsxFatBinaryDrv VBoxHfs)
   set UEFI_OFF_DRV_LIST=(CsmVideoDxe EmuVariableUefi OsxAptioFixDrv OsxAptioFix2Drv OsxLowMemFixDrv PartitionDxe)
-  set DRV_LIST=(NvmExpressDxe Ps2MouseDxe UsbMouseDxe VBoxIso9600 VBoxExt2 VBoxExt4 XhciDxe)
+  set DRV_LIST=(NvmExpressDxe Ps2MouseDxe UsbMouseDxe VBoxIso9600 VBoxExt2 Ext4Dxe XhciDxe)
   goto startbuild
 
 :build32
   set "TARGETARCH=IA32"
   set UEFI_DRV_LIST=(FSInject OsxFatBinaryDrv VBoxHfs)
   set UEFI_OFF_DRV_LIST=(CsmVideoDxe)
-  set DRV_LIST=(Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe Ps2MouseDxe UsbMouseDxe VBoxExt2 VBoxExt4 XhciDxe)
+  set DRV_LIST=(Ps2KeyboardDxe Ps2MouseAbsolutePointerDxe Ps2MouseDxe UsbMouseDxe VBoxExt2 Ext4Dxe XhciDxe)
 
 :startbuild
   set "CMD_BUILD=build -a %TARGETARCH% -t %TOOLCHAIN% -b %BUILDTARGET% -n %THREADNUMBER% %CLEANING%"

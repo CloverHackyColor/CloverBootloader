@@ -843,7 +843,7 @@ msgstr "USB upravljački program za miša, 64 bitna verzija"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "ext2/3 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1504,9 +1504,9 @@ msgstr "Nepoznat"
 #~ msgstr ""
 #~ "ext2/3 filesystem upravljački program iz virtualbox-a , 32 bitna verzija"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
 #~ msgstr ""
-#~ "ext4 filesystem upravljački program iz virtualbox-a , 32 bitna verzija"
+#~ "ext4 filesystem upravljački program iz tianocore-a , 32 bitna verzija"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "USB upravljački program za miša, 32 bitna verzija"

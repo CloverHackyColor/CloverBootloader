@@ -819,7 +819,7 @@ MainPostBuildScript() {
 #    done
 
     if [[ $M_NOGRUB -eq 0 ]]; then
-      binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF GrubZFS)
+      binArray=( GrubEXFAT GrubISO9660 GrubNTFS GrubUDF GrubZFS GrubUFS GrubUFS2 )
       for efi in "${binArray[@]}"
       do
         copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
@@ -841,7 +841,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/$efi.efi
     done
 
-    binArray=( ApfsDriverLoader Fat VBoxExt2 VBoxExt4 VBoxIso9600 VBoxHfs )
+    binArray=( ApfsDriverLoader Fat VBoxExt2 Ext4Dxe VBoxIso9600 VBoxHfs )
 
     for efi in "${binArray[@]}"
     do

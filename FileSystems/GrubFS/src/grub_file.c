@@ -138,7 +138,7 @@ grub_device_iterate(grub_device_iterate_hook_t hook, void *hook_data)
 grub_disk_read_hook_t grub_file_progress_hook = NULL;
 
 grub_err_t
-grub_disk_read(grub_disk_t disk, grub_disk_addr_t sector,
+grub_disk_read(grub_disk_t disk, grub_disk_addr_t sector,   //SL - here grub_disk_read
 		grub_off_t offset, grub_size_t size, void *buf)
 {
 	EFI_STATUS Status;

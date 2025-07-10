@@ -844,7 +844,7 @@ msgstr "Driver para Mouse USB, 64bit"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "driver para sistema de arquivos ext2/3 do virtualbox, 64bit"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1504,8 +1504,8 @@ msgstr "Desconhecido"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "driver para sistema de arquivos ext2/3 do virtualbox, 32bit"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
-#~ msgstr "driver para sistema de arquivos ext4 do virtualbox, 32bit"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
+#~ msgstr "driver para sistema de arquivos ext4 do tianocore, 32bit"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "Driver para USB 3.0, 32bit"
