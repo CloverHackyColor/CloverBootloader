@@ -852,7 +852,7 @@ msgstr "USB 마우스 드라이버, 64비트"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Virtualbox 용 Ext2/3 파일 시스템 드라이버, 64비트"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1505,8 +1505,8 @@ msgstr "알 수 없음"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "Virtualbox 용 Ext2/3 파일 시스템 드라이버, 32비트"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
-#~ msgstr "Virtualbox 용 Ext4 파일 시스템 드라이버, 32비트"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
+#~ msgstr "tianocore 용 Ext4 파일 시스템 드라이버, 32비트"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "USB 3.0 드라이버, 32비트"

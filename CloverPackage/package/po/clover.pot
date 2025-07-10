@@ -789,10 +789,10 @@ msgstr ""
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr ""
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgid "ext4 filesystem driver from tianocore, 64bit"
 msgstr ""
 
 #. type: "VBoxHfs.UEFI_description"

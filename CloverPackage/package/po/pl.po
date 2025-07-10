@@ -853,7 +853,7 @@ msgstr "Sterownik (64-ro bitowy) myszy na USB."
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Sterownik (64-ro bitowy) dla formatu ext2/3 z VirtualBox'a."
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1513,8 +1513,8 @@ msgstr "Nieznany"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "Sterownik (32 bitowy) dla formatu ext2/3 z VirtualBox'a."
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
-#~ msgstr "Sterownik (32 bitowy) dla formatu ext4 z VirtualBox'a."
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
+#~ msgstr "Sterownik (32 bitowy) dla formatu ext4 z tianocore'a."
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "Sterownik (32 bitowy) USB 3.0"

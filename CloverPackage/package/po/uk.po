@@ -857,7 +857,7 @@ msgstr "64-бітний драйвер для USB миші"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "64-бітний драйвер для Linux EXT2/3 - файлової системи"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1518,7 +1518,7 @@ msgstr "Невідомо"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "32-бітний драйвер для Linux EXT2/3 - файлової системи"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
 #~ msgstr "32-бітний драйвер для Linux EXT4 - файлової системи"
 
 #~ msgid "USB 3.0 driver, 32bit"

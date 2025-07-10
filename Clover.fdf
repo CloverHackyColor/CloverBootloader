@@ -131,7 +131,7 @@ INF  FileSystems/GrubFS/src/EXFAT.inf
 #INF  FileSystems/VBoxFsDxe/VBoxFsDxe.inf
 #INF  FileSystems/VBoxFsDxe/VBoxIso9660.inf
 #INF  FileSystems/VBoxFsDxe/VBoxExt2.inf
-#INF  FileSystems/VBoxFsDxe/VBoxExt4.inf
+#INF  FileSystems/VBoxFsDxe/Ext4Dxe.inf
 #INF  FileSystems/VBoxFsDxe/VBoxReiserFS.inf
 !if $(USE_APPLE_HFSPLUS_DRIVER) AND ( $(ARCH) == X64 )
 INF  RuleOverride=BINARY FileSystems/HFSPlus/HFSPlus.inf

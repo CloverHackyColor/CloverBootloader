@@ -113,7 +113,7 @@
 [Components]
     Clover/FatPkg/EnhancedFatDxe/Fat.inf
     Clover/VBoxFsDxe/VBoxExt2.inf
-    Clover/VBoxFsDxe/VBoxExt4.inf
+    Clover/VBoxFsDxe/Ext4Dxe.inf
     Clover/VBoxFsDxe/VBoxHfs.inf
     Clover/VBoxFsDxe/VBoxReiserFS.inf
     Clover/PartitionDxe/PartitionDxe.inf

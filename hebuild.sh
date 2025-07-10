@@ -841,7 +841,7 @@ MainPostBuildScript() {
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID/$efi.efi
     done
 
-    binArray=( ApfsDriverLoader Fat VBoxExt2 VBoxExt4 VBoxIso9600 VBoxHfs )
+    binArray=( ApfsDriverLoader Fat VBoxExt2 Ext4Dxe VBoxIso9600 VBoxHfs )
 
     for efi in "${binArray[@]}"
     do

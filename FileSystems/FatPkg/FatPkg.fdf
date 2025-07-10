@@ -31,7 +31,7 @@ READ_LOCK_STATUS   = TRUE
 # Dxe Module
 INF  Clover/FatPkg/EnhancedFatDxe/Fat.inf
 INF  Clover/VBoxFsDxe/VBoxExt2.inf
-INF  Clover/VBoxFsDxe/VBoxExt4.inf
+INF  Clover/VBoxFsDxe/Ext4Dxe.inf
 INF  Clover/VBoxFsDxe/VBoxHfs.inf
 INF  Clover/VBoxFsDxe/VBoxReiserFS.inf
 INF  Clover/PartitionDxe/PartitionDxe.inf

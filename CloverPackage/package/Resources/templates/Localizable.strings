@@ -168,8 +168,8 @@ Usually it is already present but sometime it may be missed. In this case you sh
 "SMCHelper.UEFI_description" = "Restore SMC keys left in nvram by FakeSMC";
 "UsbKbDxe.UEFI_description" = "Keyboard driver for boot UI support";
 "UsbMouseDxe.UEFI_description" = "USB mouse driver, 64bit";
-"VBoxExt2.UEFI_description" = "ext2/3 filesystem driver from virtualbox, 64bit";
-"VBoxExt4.UEFI_description" = "ext4 filesystem driver from virtualbox, 64bit";
+"VBoxExt2.UEFI_description" = "ext2/3 filesystem driver from tianocore, 64bit";
+"Ext4Dxe.UEFI_description" = "ext4 filesystem driver from EDK2-platform, 64bit";
 "VBoxHfs.UEFI_description" = "HFS+ filesystem driver.";
 "VBoxIso9600.UEFI_description" = "ISO 9600 filesystem driver.";
 

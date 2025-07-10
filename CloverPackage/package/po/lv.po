@@ -851,7 +851,7 @@ msgstr "USB peles draiveris, 64 biti"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Datņu sistēmas EXT2/3 (Linux) draiveris, 64 biti"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1511,7 +1511,7 @@ msgstr "Nav zinams"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "Datņu sistēmas EXT2/3 (Linux) draiveris, 32 biti"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
 #~ msgstr "Datņus sistēmas EXT4 (Linux) draiveris, 32 biti"
 
 #~ msgid "USB 3.0 driver, 32bit"

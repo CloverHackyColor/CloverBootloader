@@ -833,7 +833,7 @@ msgstr "64位版本, USB 鼠标 驱动"
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "64位版本, 来自 virtualbox 的 ext2/3 文件系统驱动"
 
-#. type: "VBoxExt4.UEFI_description"
+#. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
@@ -1476,8 +1476,8 @@ msgstr "未知"
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "32位版本, 来自 virtualbox 的 ext2/3 文件系统驱动。"
 
-#~ msgid "ext4 filesystem driver from virtualbox, 32bit"
-#~ msgstr "32位版本, 来自 virtualbox 的 ext4 文件系统驱动。"
+#~ msgid "ext4 filesystem driver from tianocore, 32bit"
+#~ msgstr "32位版本, 来自 tianocore 的 ext4 文件系统驱动。"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "32位版本, USB 3.0 驱动。"

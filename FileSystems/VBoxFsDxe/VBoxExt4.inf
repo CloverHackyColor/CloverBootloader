@@ -16,7 +16,7 @@
 
 [Defines]
         INF_VERSION                = 0x00010005
-        BASE_NAME                  = VBoxExt4
+        BASE_NAME                  = Ext4Dxe
         FILE_GUID                  = B34E5766-2E02-4DAF-867F-7F40BE6FC33D
         MODULE_TYPE                = UEFI_DRIVER
         VERSION_STRING             = 1.0
