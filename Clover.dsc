@@ -721,8 +721,8 @@
   FileSystems/GrubFS/src/UDF.inf
   FileSystems/GrubFS/src/ZFS.inf
   FileSystems/GrubFS/src/EXT2.inf
-  #FileSystems/GrubFS/src/UFS.inf
-  #FileSystems/GrubFS/src/UFS2.inf
+  FileSystems/GrubFS/src/UFS.inf
+  FileSystems/GrubFS/src/UFS2.inf
   #FileSystems/GrubFS/src/XFS.inf
 !endif
   Ext4Pkg/Ext4Dxe/Ext4Dxe.inf
