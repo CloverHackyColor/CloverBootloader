@@ -366,6 +366,7 @@ void DebugPause(void);
 #define ICON_SONOMA                            (56)
 #define ICON_SEQUOIA                           (57)
 #define ICON_TAHOE		                       (58)
+#define ICON_ARCH		                       (59)
 #define BUILTIN_ICON_BACKGROUND                (100)
 #define BUILTIN_ICON_SELECTION                 (101)
 #define BUILTIN_ICON_ANIME                     (102)

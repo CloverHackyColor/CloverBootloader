@@ -88,6 +88,7 @@ CONST LString8 IconsNames[] = {
    "os_sonoma",  //56 == ICON_SONOMA
    "os_sequoia",  //57 == ICON_SEQUOIA
    "os_tahoe",  //58 == ICON_TAHOE
+   "os_arch",   //59 == ICON_ARCH
   ""
 };
 const INTN IconsNamesSize = sizeof(IconsNames) / sizeof(IconsNames[0]);

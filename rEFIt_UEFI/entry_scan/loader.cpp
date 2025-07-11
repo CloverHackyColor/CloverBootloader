@@ -971,6 +971,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
           }
         }
       }
+
+      XString8 Title;
     // If this isn't a custom entry make sure it's not hidden by a custom entry
     for (size_t CustomIndex = 0 ; CustomIndex < GlobalConfig.CustomEntries.size() ; ++CustomIndex ) {
       CUSTOM_LOADER_ENTRY& Custom = GlobalConfig.CustomEntries[CustomIndex];
@@ -982,6 +984,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
         INTN volume_type_match=0;
         INTN path_match=0;
         INTN type_match=0;
+
+        if (Custom.settings.FullTitle.notEmpty()) {
+        	Title = Custom.settings.FullTitle;
+        }
+        Entry->Title = Custom.settings.FullTitle;
 
         // Check if volume match
         if (Custom.settings.Volume.notEmpty()) {
@@ -1117,14 +1124,17 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
       Entry->LoaderType = OSType;
       OSIconName = L"linux"_XSW;
       if (Image == nullptr) {
-        DBG("%slinux image not found\n", indent);
+        //DBG("%slinux image not found\n", indent);
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
       }
-      if (StrStr(Entry->Title.wc_str(), L"Arch")) {
+      //DBG("linux name icon from path= %ls\n", OSIconName.wc_str());
+      //DBG("LoaderTitle=%s Full Title=%s Title=%ls\n", LoaderTitle.c_str(), FullTitle.c_str(), Entry->Title.wc_str());
+      if (AsciiStrStr(LoaderTitle.c_str(), "Arch")) {
     	  	  OSIconName = L"arch"_XSW;
-      } else if (StrStr(Entry->Title.wc_str(), L"Ubuntu")){
+      } else if (AsciiStrStr(LoaderTitle.c_str(), "Ubuntu")){
     	  	  OSIconName = L"ubuntu"_XSW;
       }
+      DBG("assigned linux name icon %ls\n", OSIconName.wc_str());
       ShortcutLetter = L'L';
       break;
     //case OSTYPE_OTHER: 

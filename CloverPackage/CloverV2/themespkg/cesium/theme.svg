@@ -4482,7 +4482,7 @@ d="M503 939l-34 -741q0 -1 -3 -1h-88q-3 0 -3 1l-37 741l-6 664q0 1 3 1h170q3 0 3 -
   <g id="os_arch" transform="translate(915, 385)">
       <rect visibility="hidden" id="BoundingRect_ol" width="134.466" height="136.083" x="1.616" y="-4.85"/>
       <g transform="scale(0.8)">
-        <use xlink:href="#OsPlace"  width="145" height="145" transform="matrix(1.0299999713897705, 0, 0, -1.0299999713897705, 524.8250020742416, 251.67499792575836)" style="overflow:visible;" xlink:href="#OsPlace"/>
+        <use xlink:href="#OsPlace"  width="145" height="145" transform="matrix(1.0299999713897705, 0, 0, -1.0299999713897705, 524.8250020742416, 251.67499792575836)" style="overflow:visible;" />
           
      <linearGradient
        x1="112.49854"
