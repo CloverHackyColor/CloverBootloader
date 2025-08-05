@@ -1746,7 +1746,7 @@ Returns:
           return EFI_OUT_OF_RESOURCES;
         }
         snprintf (
-          SystemCommand, sizeof(SystemCommand),
+          SystemCommand, strlen(SystemCommand)+1,
           OPENSSL_COMMAND_FORMAT_STRING,
           OpenSslPath,
           ToolOutputFileName,
@@ -1988,7 +1988,7 @@ Returns:
           return EFI_OUT_OF_RESOURCES;
         }
         snprintf (
-          SystemCommand, sizeof(SystemCommand),
+          SystemCommand, strlen(SystemCommand)+1,
           EXTRACT_COMMAND_FORMAT_STRING,
           ExtractionTool,
           ToolOutputFile,
@@ -2424,4 +2424,5 @@ Returns:
   fprintf (stdout, "  --sfo\n\
             Reserved for future use\n");
 }
+
 
