@@ -1132,9 +1132,9 @@ static void PrintOFVariable(const void *key, const void *value, void *context)
     else valueString = "false";
   } else if (typeID == CFNumberGetTypeID()) {
     CFNumberGetValue(value, kCFNumberSInt32Type, &number);
-    if (number == 0xFFFFFFFF) sprintf(numberBuffer, "-1");
+    if (number == 0xFFFFFFFF) snprintf(numberBuffer,10, "-1");
     else if (!gPrintInHex && number < 1000) sprintf(numberBuffer, "%d", number);
-    else sprintf(numberBuffer, "0x%x", number);
+    else snprintf(numberBuffer,10, "0x%x", number);
     valueString = numberBuffer;
   } else if (typeID == CFStringGetTypeID()) {
     valueLen = CFStringGetMaximumSizeForEncoding(CFStringGetLength(value),
@@ -1155,18 +1155,18 @@ static void PrintOFVariable(const void *key, const void *value, void *context)
         dataPtr = CFDataGetBytePtr(value);
         cnt = cnt2 = 0;
         if (gPrintInHex) {
-            sprintf(dataBuffer, "0x");
+            snprintf(dataBuffer,length * 3 + 3, "0x");
             cnt2 += 2;
         }
         for (; cnt < length; cnt++) {
           dataChar = dataPtr[cnt];
           if (gPrintInHex) {
-              sprintf(dataBuffer + cnt2, "%02x", dataChar);
+              snprintf(dataBuffer + cnt2, length * 3 + 3, "%02x", dataChar);
               cnt2 += 2;
           } else if (!gPrintInHex && isprint(dataChar) && dataChar != '%') {
             dataBuffer[cnt2++] = dataChar;
           } else {
-            sprintf(dataBuffer + cnt2, "%%%02x", dataChar);
+            snprintf(dataBuffer + cnt2, length * 3 + 3,"%%%02x", dataChar);
             cnt2 += 3;
           }
         }

@@ -5107,7 +5107,7 @@ EfiVfrParser::_U32TOS (
 {
   CHAR8 *Str;
   Str = new CHAR8[20];
-  sprintf (Str, "%d", Value);
+  snprintf (Str,20, "%d", Value);
   return Str;
 }
 
@@ -5140,7 +5140,7 @@ EfiVfrParser::_STOU8 (
       Value += (c - '0');
     }
     if((IsHex && ((Value/16) != PreviousValue)) || (!IsHex && ((Value/10) != PreviousValue))) {
-      sprintf(ErrorMsg, "Overflow: Value %s is too large to store in a UINT8", OrigString);
+      snprintf(ErrorMsg,100, "Overflow: Value %s is too large to store in a UINT8", OrigString);
       mParserStatus = mParserStatus + gCVfrErrorHandle.HandleError (VFR_RETURN_STRING_TO_UINT_OVERFLOW, LineNum, ErrorMsg);
     }
   }
@@ -5177,7 +5177,7 @@ EfiVfrParser::_STOU16 (
       Value += (c - '0');
     }
     if((IsHex && ((Value/16) != PreviousValue)) || (!IsHex && ((Value/10) != PreviousValue))) {
-      sprintf(ErrorMsg, "Overflow: Value %s is too large to store in a UINT16", OrigString);
+      snprintf(ErrorMsg,100, "Overflow: Value %s is too large to store in a UINT16", OrigString);
       mParserStatus = mParserStatus + gCVfrErrorHandle.HandleError (VFR_RETURN_STRING_TO_UINT_OVERFLOW, LineNum, ErrorMsg);
     }
   }
@@ -5214,7 +5214,7 @@ EfiVfrParser::_STOU32 (
       Value += (c - '0');
     }
     if((IsHex && ((Value/16) != PreviousValue)) || (!IsHex && ((Value/10) != PreviousValue ))) {
-      sprintf(ErrorMsg, "Overflow: Value %s is too large to store in a UINT32", OrigString);
+      snprintf(ErrorMsg, 100,"Overflow: Value %s is too large to store in a UINT32", OrigString);
       mParserStatus = mParserStatus + gCVfrErrorHandle.HandleError (VFR_RETURN_STRING_TO_UINT_OVERFLOW, LineNum, ErrorMsg);
     }
   }
@@ -5250,7 +5250,7 @@ EfiVfrParser::_STOU64 (
       Value += (c - '0');
     }
     if((IsHex && ((Value/16) != PreviousValue)) || ((!IsHex && (Value/10) != PreviousValue))) {
-      sprintf(ErrorMsg, "Overflow: Value %s is too large to store in a UINT64", OrigString);
+      snprintf(ErrorMsg, 100,"Overflow: Value %s is too large to store in a UINT64", OrigString);
       mParserStatus = mParserStatus + gCVfrErrorHandle.HandleError (VFR_RETURN_STRING_TO_UINT_OVERFLOW, LineNum, ErrorMsg);
     }
   }

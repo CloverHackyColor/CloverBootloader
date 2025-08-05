@@ -70,9 +70,9 @@ then
 
   bios_file=("$(dirname "$qemu_path")"/bios*)
   
-diskutil umount /dev/disk9s1
-diskutil umount /dev/disk9s2
-diskutil eject disk9
+diskutil umount /dev/disk8s1
+diskutil umount /dev/disk8s2
+diskutil eject disk8
 
   "$qemu_path" \
     -L "$(dirname "$qemu_path")" \
