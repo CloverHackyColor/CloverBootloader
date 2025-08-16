@@ -32,7 +32,7 @@ XRBuffer<T>::XRBuffer(const XRBuffer &aXRBuffer, size_t pos, size_t count) : _RD
 	if ( pos < aXRBuffer.size() ) {
     m_size = count;
 		if ( m_size > aXRBuffer.size()-pos ) m_size = aXRBuffer.size()-pos;
-		_RData = (unsigned char*)aXRBuffer.Data(pos);
+		_RData = (unsigned char*)aXRBuffer.CData(pos);
 	}
 }
 /*

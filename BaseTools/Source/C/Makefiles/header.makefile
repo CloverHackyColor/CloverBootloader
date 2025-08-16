@@ -74,7 +74,7 @@ BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -Wall -Werror \
 else
 BUILD_CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fwrapv \
 -fno-delete-null-pointer-checks -Wall -Werror \
--Wno-deprecated-declarations -Wno-stringop-truncation -Wno-restrict \
+-Wno-deprecated-declarations \
 -Wno-unused-result -nostdlib -g
 endif
 BUILD_LFLAGS =

@@ -14,3 +14,7 @@ to
 [code]CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Werror -c -g -Wno-tautological-compare -Wno-self-assign -Wno-deprecated-declarations[/code]
 
 PS: Thanks pene for the support. :P
+
+To compile under linux we have to do
+make -C BaseTools "BUILD_CC=clang"
+because gcc is not able to compile such shit

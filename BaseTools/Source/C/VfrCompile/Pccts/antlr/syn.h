@@ -60,6 +60,7 @@ typedef int NodeType;
 #define RRefBlockAllocSize		100
 #define TokenBlockAllocSize		100
 
+
 #ifdef __cplusplus
 class ActionNode;
 class Junction;
@@ -387,4 +388,5 @@ typedef struct _junct {
 #endif
 
 typedef struct { Node *left, *right;} Graph;
+
 

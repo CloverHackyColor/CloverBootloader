@@ -113,8 +113,9 @@ ActionNode *a;
 			if ( !a->frmwarned )
 			{
 				a->frmwarned = 1;
+                            char* LLL = (char* )(GenCC?"LT(i)":"LATEXT(i)");
 				warnFL(eMsg1("predicate: %s missing, bad, or with i=0; assuming i=1",
-							 GenCC?"LT(i)":"LATEXT(i)"),
+							 LLL),
 					   FileStr[a->file], a->line);
 			}
 		}
@@ -818,4 +819,5 @@ Predicate * predicate_dup(p)
 {
   return predicate_dup_xxx(p,1);
 }
+
 
