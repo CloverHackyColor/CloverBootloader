@@ -420,7 +420,7 @@ checkCmdlineArguments() {
 ## Check tools for the toolchain
 checkToolchain() {
     case "$TOOLCHAIN" in
-        XCLANG|XCODE*) checkXcode ;;
+        XCODE*) checkXcode ;;
         *) ;;
     esac
 
