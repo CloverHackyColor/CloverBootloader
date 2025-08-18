@@ -16,7 +16,7 @@ cd -
 4. Install tools
 pip3 install setuptools
 
-5. make -C BaseTools
+5. make -C BaseTools "BUILD_CC=clang"
 
 6. ./buildme
 

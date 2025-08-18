@@ -31,7 +31,6 @@
 	../grub/grub-core/kern/disk.c
 	../grub/grub-core/kern/err.c
   	../grub/grub-core/kern/env.c
-  	../grub/grub-core/kern/file.c
 	../grub/grub-core/kern/misc.c
 	../grub/grub-core/kern/list.c
 	../grub/grub-core/kern/time.c
