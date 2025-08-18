@@ -2910,7 +2910,7 @@ RELEASEMACOS_XCODE14_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 *_XCODE14_*_APP_FLAGS        = DEF(GCC_PP_FLAGS)
 
 #
-# XCODE15 support
+# xcode15 support
 #
 
 *_XCODE15_*_*_FAMILY            = GCC
@@ -2985,6 +2985,82 @@ RELEASEMACOS_XCODE15_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMA
 *_XCODE15_*_ASL_OUTFLAGS     = DEF(IASL_OUTFLAGS)
 *_XCODE15_*_DTCPP_FLAGS      = DEF(GCC_DTCPP_FLAGS)
 *_XCODE15_*_APP_FLAGS        = DEF(GCC_PP_FLAGS)
+
+# XCODE16
+
+
+*_XCODE16_*_*_FAMILY            = GCC
+*_XCODE16_*_*_BUILDRULEFAMILY   = XCODE
+*_XCODE16_*_*_BUILDRULEORDER    = nasm S s
+
+*_XCODE16_*_MTOC_PATH         = ENV(MTOC_PREFIX)mtoc.NEW_jief
+
+*_XCODE16_*_MAKE_PATH        = make
+*_XCODE16_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
+
+  DEBUG_XCODE16_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
+  NOOPT_XCODE16_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
+RELEASE_XCODE16_*_MTOC_FLAGS = -align 0x20
+
+#
+# use xcode-select to change Xcode version of command line tools
+#
+*_XCODE16_*_CC_PATH      = clang
+*_XCODE16_*_SLINK_PATH   = libtool
+*_XCODE16_*_DLINK_PATH   = clang
+*_XCODE16_*_ASM_PATH     = clang
+*_XCODE16_*_PP_PATH      = clang
+*_XCODE16_*_VFRPP_PATH   = clang
+*_XCODE16_*_ASL_PATH     = DEF(UNIX_IASL_BIN)
+*_XCODE16_*_ASLCC_PATH   = clang
+*_XCODE16_*_ASLPP_PATH   = clang
+*_XCODE16_*_ASLDLINK_PATH  = clang
+*_XCODE16_*_NASM_PATH     = ENV(NASM_PREFIX)nasm
+
+##################
+# X64 definitions
+##################
+       DEBUG_XCODE16_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-object_path_lto,$(DEST_DIR_DEBUG)/$(BASE_NAME).o,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUGMACOS_XCODE16_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x800,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+     RELEASE_XCODE16_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASEMACOS_XCODE16_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x800,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+
+           *_XCODE16_X64_SLINK_FLAGS      = -static -no_warning_for_no_symbols -o 
+           
+         DEBUG_XCODE16_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
+    DEBUGMACOS_XCODE16_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
+       RELEASE_XCODE16_X64_ASM_FLAGS      = -c -x assembler -arch x86_64
+  RELEASEMACOS_XCODE16_X64_ASM_FLAGS      = -c -x assembler -arch x86_64
+       
+            *_XCODE16_X64_NASM_FLAGS      = -f macho64
+                *_XCODE16_*_PP_FLAGS      = DEF(GCC_PP_FLAGS)
+             *_XCODE16_*_VFRPP_FLAGS      = -x c -E -P -DVFRCOMPILE -include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h
+
+
+# -mno-implicit-float 
+# -Wno-varargs
+# -Wno-unused-const-variable
+
+         DEFINE XCODE16_COMMON_FLAGS      =  -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-deprecated-non-prototype -Wno-unused-command-line-argument -Wno-cast-function-type-mismatch -Wno-missing-field-initializers
+ 
+
+
+          DEBUG_XCODE16_X64_CC_FLAGS      = -g3 -gdwarf -O0 DEF(XCODE16_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
+     DEBUGMACOS_XCODE16_X64_CC_FLAGS      = -g3 -gdwarf -O0 DEF(XCODE16_COMMON_FLAGS)
+        RELEASE_XCODE16_X64_CC_FLAGS      =            -Os DEF(XCODE16_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
+   RELEASEMACOS_XCODE16_X64_CC_FLAGS      =            -Os DEF(XCODE16_COMMON_FLAGS)
+         DEBUG_XCODE16_X64_CXX_FLAGS      = -g3 -gdwarf -O0 DEF(XCODE16_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
+    DEBUGMACOS_XCODE16_X64_CXX_FLAGS      = -g3 -gdwarf -O0 DEF(XCODE16_COMMON_FLAGS)
+       RELEASE_XCODE16_X64_CXX_FLAGS      =            -Os DEF(XCODE16_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
+  RELEASEMACOS_XCODE16_X64_CXX_FLAGS      =            -Os DEF(XCODE16_COMMON_FLAGS)
+
+*_XCODE16_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -c -include AutoGen.h
+*_XCODE16_*_ASLDLINK_FLAGS   = -nostdlib -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x260,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+*_XCODE16_*_ASLPP_FLAGS      = DEF(GCC_ASLPP_FLAGS)
+*_XCODE16_*_ASL_FLAGS        =
+*_XCODE16_*_ASL_OUTFLAGS     = DEF(IASL_OUTFLAGS)
+*_XCODE16_*_DTCPP_FLAGS      = DEF(GCC_DTCPP_FLAGS)
+*_XCODE16_*_APP_FLAGS        = DEF(GCC_PP_FLAGS)
 
 ####################################################################################
 #
