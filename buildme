@@ -885,7 +885,7 @@ options=( 'build Clover (Default Toolchain)	 '
 		  'build Clover with HFSPlus'
 		  'Extra Options'
           'Exit')
-# 'build Clover with HFSPlus	'
+
 select opt in "${options[@]}"
 do
   case $opt in
