@@ -173,6 +173,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\neon\\grub.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
   { L"\\EFI\\MX19\\grub.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
   { L"\\EFI\\parrot\\grub.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
+  { L"\\EFI\\altlinux\\grub.efi", L"Altlinux EFI boot menu", L"alt,linux" },
 #endif
   { L"\\EFI\\SuSe\\elilo.efi"_XSW, L"OpenSuse EFI boot menu"_XSW, L"suse,linux"_XSW, ""_XS8 },
 };
@@ -1133,6 +1134,8 @@ if ( Entry->APFSTargetUUID.Data1 == 0x99999999 ) {
     	  	  OSIconName = L"arch"_XSW;
       } else if (AsciiStrStr(LoaderTitle.c_str(), "Ubuntu")){
     	  	  OSIconName = L"ubuntu"_XSW;
+      } else if (AsciiStrStr(LoaderTitle.c_str(), "Alt")){
+    	  	  OSIconName = L"alt"_XSW;
       }
       DBG("assigned linux name icon %ls\n", OSIconName.wc_str());
       ShortcutLetter = L'L';
