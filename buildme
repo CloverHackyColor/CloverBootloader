@@ -35,7 +35,7 @@ tell application "Terminal"
 #	set font name of window 1 to "Monaco"
 #	set font size of window 1 to "11"
 #	set normal text color of window 1 to {3341, 35186, 50092}
-#	set position of first window to {650, 420}
+#	set position of first window to {915, 474}
 end tell
 EOF
 fi
@@ -319,7 +319,6 @@ buildClover() {
 
 buildCloverXC() {
   checkTools
-
   # to force recreation of the Conf folder. You can still use a custom CONF_PATH if you don't want recreation.
   rm -rf "$CLOVERROOT"/Conf
   mkdir "$CLOVERROOT"/Conf
@@ -341,7 +340,7 @@ buildCloverXC() {
     echo "Running custom build script"
     "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
   else
-	local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
+  local xrel="$(defaults read ~/Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
     if [[ "$xrel" < "14.*" ]]; then
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE8
     elif [[ "$xrel" == "14.*" ]]; then
@@ -350,7 +349,7 @@ buildCloverXC() {
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE15
     elif [[ "$xrel" == "16.*" ]]; then
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE16
-  	fi
+    fi
   fi
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
@@ -411,10 +410,12 @@ echo "[BUILD CLOVER TEST]"
 buildPkg() {
 if [[ "$SYSNAME" == Darwin ]]; then
   cd "${CLOVERROOT}"/CloverPackage
-  echo "[BUILD PKG]"
   checkXCODE
   checkGETTEXT
-  make pkg
+  echo "[BUILD PKG]"
+  echo "The log will be created in the CloverPackage folder."
+  rm -f mpkg.log
+  make pkg >mpkg.log
 else
   echo && echo "can't build pkg on a non Darwin OS!"
 fi
@@ -485,6 +486,11 @@ showdiff() {
 cleanBaseTools() {
 cd "${CLOVERROOT}"/BaseTools
 make clean
+}
+
+makeBaseTools() {
+cd $HOME/src/CloverBootloader
+make -C BaseTools "BUILD_CC=clang"
 }
 
 ## Utilities
@@ -788,6 +794,7 @@ options=( 'Cloverbuilds		'
           'open CloverV2 directory'
           'update Clover (reset changes)'
           'clean BaseTools'
+          'make BaseTools'
           'Utilities'
           'Exit')
 
@@ -835,6 +842,10 @@ do
       fi
       break
     ;;
+      "make BaseTools")
+       makeBaseTools
+      break
+	;;
     "Utilities")
       Utilities
       break
@@ -898,7 +909,7 @@ do
       BLC
       buildPkg
       buildIso
-      makeV2  
+      makeV2 
       break
 	;;
     "make Release (Default Toolchain)	")
@@ -909,51 +920,51 @@ do
       makeV2
       break
     ;;
-    "update Clover	")
+      "update Clover	")
       updateClover
       break
     ;;
-    "make pkg	")
+      "make pkg	")
       BLC
       buildPkg
       break
     ;;
-    "make iso	")
+      "make iso	")
       buildIso
       break
     ;;
-    "make Clover_V2")
+      "make Clover_V2")
       makeV2
       break
     ;;
-    "build Clover (with XCode)")
+      "build Clover (with XCode)")
       buildCloverXC
       break
     ;;
-	"build all (with XCode)")
-	  buildCloverXC
+      "build all (with XCode)")
+      buildCloverXC
       BLC
-	  buildPkg
-	  buildIso
-	  makeV2
-	  break
-	;;
-	"make Release (with XCode)")
-	 makeReleaseXC
-	 BLC
-	 buildPkg
-	 buildIso
-	 makeV2
-	 break
-	;;
-	"build Clover with HFSPlus	")
-	  buildCloverHFSPlus
-	  break
-	;;
-	"Extra Options")
-	 Extra
-	 break	
-	;;
+      buildPkg
+      buildIso
+      makeV2
+      break
+    ;;
+      "make Release (with XCode)")
+      makeReleaseXC
+      BLC
+      buildPkg
+      buildIso
+      makeV2
+      break
+    ;;
+      "build Clover with HFSPlus")
+      buildCloverHFSPlus
+      break
+    ;;
+      "Extra Options")
+      Extra
+      break	
+    ;;
     "Exit")
       exit 0
     ;;
