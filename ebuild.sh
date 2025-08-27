@@ -308,6 +308,7 @@ checkCmdlineArguments() {
             -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
             -xcode14  | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
             -xcode15  | --xcode15 )  TOOLCHAIN=XCODE15 ; CLANG=1 ;;
+            -xcode16  | --xcode16 )  TOOLCHAIN=XCODE16 ; CLANG=1 ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
@@ -420,7 +421,7 @@ checkCmdlineArguments() {
 ## Check tools for the toolchain
 checkToolchain() {
     case "$TOOLCHAIN" in
-        XCLANG|XCODE*) checkXcode ;;
+        XCODE*) checkXcode ;;
         *) ;;
     esac
 
