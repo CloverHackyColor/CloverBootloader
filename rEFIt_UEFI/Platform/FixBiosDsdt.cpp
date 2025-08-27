@@ -1783,7 +1783,6 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
   INT32 sizeoffset = 0; // Initialization just to silence warning.
   INT32 adr;
 //  UINT32 i;
-  XBool found = false;
   if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
     DBG(" invalid patches!\n");
     return len;
@@ -1808,39 +1807,42 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
     sizeoffset = (INT32)(ToFind.size() - ToReplace.size()); // Safe cast because of earlier check
     sizeoffset = -sizeoffset;
   }
+  XBool found = false;
+  UINT32 nb_replaced = 0;
   for (UINT32 i = 20; i < len; ) {
     adr = FindBin(dsdt + i, len - i, ToFind);
     if (adr < 0) {
-      if (found) {
-        MsgLog(" ]\n");
-      } else {
-        MsgLog(" bin not found / already patched!\n");
-      }
-      return len;
+      break;
     }
 
     if (!found) {
       MsgLog(" patched at: [");
-      MsgLog(" (%X)", adr); //print once because whole duration is 26 seconds!!!
+    }else{
+      MsgLog(", ");
     }
 
-//    MsgLog(" (%X)", adr);
     found = true;
     if ( Skip == 0 )
     {
+      MsgLog("%X", adr);
       len = move_data(adr + i, dsdt, len, sizeoffset);
       CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
       len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
       len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
       i += (UINT32)(adr + ToReplace.size()); // if there is no bug before, it should be safe cast.
+      nb_replaced += 1;
       if (--count == 0) break;
     }else{
-      MsgLog("Skip i=%d ",i);
+      MsgLog("Skip %X", adr);
       i += (UINT32)(adr + ToFind.size()); // if there is no bug before, it should be safe cast.
       Skip--;
     }
   }
-  MsgLog(" ]\n"); //should not be here
+  if ( nb_replaced > 0 ) {
+    MsgLog("]\n");
+  } else {
+    MsgLog(" bin not found / already patched!\n");
+  }
   return len;
 }
 
@@ -1848,7 +1850,6 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
 UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace, uint64_t Skip, int count)
 {
   INT32 adr;
-  XBool found = false;
   UINT32 BrdADR = 0, BridgeSize;
 
   if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
@@ -1868,9 +1869,12 @@ UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgN
     MsgLog(", ");
   }
   if ((ToFind.size() + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
-    DBG(" the patch is too large!\n");
+    MsgLog(" the patch is too large!\n");
     return len;
   }
+
+  XBool found = false;
+  UINT32 nb_replaced = 0;
 
   DBG("Start ByBridge Rename Fix\n");
   for (UINT32 i=0x20; len >= 10 && i < len - 10; i++) {
@@ -1883,39 +1887,40 @@ UINT32 FixRenameByBridge2(UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgN
       if(!BridgeSize) continue;
       if(BridgeSize <= ToFind.size()) continue;
 
-      UINT32 k = 0;
       found = false;
-      while (k <= 100) {
+      for ( UINT32 k = 0 ; k <= 100 ; ++k ) {
         adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind);
         if (adr < 0) {
-          if (found) {
-            DBG(" ]\n");
-          } else {
-            DBG(" bin not found / already patched!\n");
-          }
-          return len;
+          break;
         }
 
         if (!found) {
-          DBG(" patched at: [");
+          MsgLog(" patched at: [");
+        }else{
+          MsgLog(", ");
         }
 
-        DBG(" (%X)", adr);
         found = true;
         if ( ToReplace.notEmpty() ) {
           if ( Skip == 0 ) {
             CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
+            MsgLog("%X", adr);
+            nb_replaced += 1;
             if (--count == 0) break;
           } else {
-            MsgLog("Skip adr=%d ",adr);
+            MsgLog("Skip %X",adr);
             Skip--;
           }
         }
-        k++;
       }
     }
   }
-  DBG(" ]\n");
+  DBG("End ByBridge Rename Fix\n");
+  if ( nb_replaced > 0 ) {
+    MsgLog("]\n");
+  } else {
+    MsgLog(" bin not found / already patched!\n");
+  }
   return len;
 }
 
