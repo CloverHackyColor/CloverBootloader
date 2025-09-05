@@ -1621,7 +1621,7 @@ void LOADER_ENTRY::StartLoader()
     if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
-    gConf.ReloadSmbios(OSName);
+    //gConf.ReloadSmbios(OSName);
     DelegateKernelPatches();
 
     // Set boot argument for kernel if no caches, this should force kernel loading

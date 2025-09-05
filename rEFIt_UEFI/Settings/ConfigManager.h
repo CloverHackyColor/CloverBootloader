@@ -128,7 +128,7 @@ public:
 
 class ConfigManager
 {
-protected:
+public:
   /* this is for internal usage */
   ConfigPlistClass configPlist = ConfigPlistClass(); // current config.plist. Values are "transfered" into SETTINGS_DATA
   SmbiosPlistClass smbiosPlist = SmbiosPlistClass();

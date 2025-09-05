@@ -596,7 +596,7 @@ EFI_STATUS ConfigManager::LoadSMBIOSPlist(const XStringW& ConfName)
   return Status;
 }
 
-void ConfigManager::ReloadSmbios(XStringW& str)
+void ConfigManager::ReloadSmbios(XStringW& str)  // ищет смбиос по имени системы
 {
   size_t N = SmbiosList.size();
   if (OldChosenSmbios == 0) {  // this is auto fill by OSName
@@ -606,11 +606,15 @@ void ConfigManager::ReloadSmbios(XStringW& str)
         break;
       }
     }
- //   FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
- //   DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+    FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
+    DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
   }
-  FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
-  DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+  DBG("boardID from config: %s\n", configPlist.getSMBIOS().getBoardID().getKey().c_str());
+  DBG("boardID from gSettings: %s\n", gSettings.Smbios.BoardNumber.c_str());
+  DBG("chosen SMBIOS %ls\n", SmbiosList[OldChosenSmbios].wc_str());
+  //FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS()); //getSMBIOS() depends on global OldChosenSmbios
+  //DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
+  //configPlist.getSMBIOS().getBoardID().value();
 }
 
 void ConfigManager::FillSmbiosWithDefaultValue(MacModel Model, const SmbiosPlistClass::SmbiosDictClass& smbiosDictClass)
