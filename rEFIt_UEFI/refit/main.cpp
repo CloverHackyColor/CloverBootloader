@@ -119,6 +119,22 @@
 #define PCAT_RTC_ADDRESS_REGISTER 0x70
 #define PCAT_RTC_DATA_REGISTER    0x71
 
+#ifdef JIEF_DEBUG
+  /*
+   * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
+   * The boot should work.
+   * Next, comment out the next lines one by one. Once the boot failed, we got the section that
+   * holds the setting that makes a difference.
+   */
+  //#define USE_OC_SECTION_Acpi
+  //#define USE_OC_SECTION_Booter
+  //#define USE_OC_SECTION_DeviceProperties
+  //#define USE_OC_SECTION_Kernel
+  //#define USE_OC_SECTION_Misc
+  //#define USE_OC_SECTION_Nvram
+  //#define USE_OC_SECTION_PlatformInfo
+  //#define USE_OC_SECTION_Uefi
+#endif
 
 // variables
 
@@ -291,13 +307,14 @@ OcMain (
   EFI_STATUS            Status;
 //  OC_PRIVILEGE_CONTEXT  *Privilege;
 
-  DEBUG ((DEBUG_INFO, "OC: OcMiscEarlyInit...\n"));
+  DBG("OC: OcMiscEarlyInit...\n");
   Status = OcMiscEarlyInit (
              Storage,
              &mOpenCoreConfiguration,
              mOpenCoreVaultKey
              );
 
+  DBG("OC: OcMiscEarlyInit=%s\n", efiStrError(Status));
   if (EFI_ERROR (Status)) {
     return;
   }
@@ -306,7 +323,7 @@ OcMain (
 
 //  DEBUG ((DEBUG_INFO, "OC: OcLoadNvramSupport...\n"));
 //  OcLoadNvramSupport (Storage, &mOpenCoreConfiguration);
-  DEBUG ((DEBUG_INFO, "OC: OcMiscMiddleInit...\n"));
+  DBG("OC: OcMiscMiddleInit...\n");
   OcMiscMiddleInit (
     Storage,
     &mOpenCoreConfiguration,
@@ -315,21 +332,19 @@ OcMain (
     mStorageHandle,
     mOpenCoreConfiguration.Booter.Quirks.ForceBooterSignature ? mOpenCoreBooterHash : NULL
     );
-  DEBUG ((DEBUG_INFO, "OC: OcLoadUefiSupport...\n"));
+  DBG("OC: OcLoadUefiSupport...\n");
   OcLoadUefiSupport (Storage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo, mOpenCoreBooterHash);
-//  DEBUG_CODE_BEGIN ();
-//  DEBUG ((DEBUG_INFO, "OC: OcMiscLoadSystemReport...\n"));
-//  OcMiscLoadSystemReport (&mOpenCoreConfiguration, mStorageHandle);
-//  DEBUG_CODE_END ();
-//  DEBUG ((DEBUG_INFO, "OC: OcLoadAcpiSupport...\n"));
-//  OcLoadAcpiSupport (&mOpenCoreStorage, &mOpenCoreConfiguration);
-//  DEBUG ((DEBUG_INFO, "OC: OcLoadPlatformSupport...\n"));
+#ifdef USE_OC_SECTION_Acpi
+  DBG("OC: OcLoadAcpiSupport...\n");
+  OcLoadAcpiSupport (&mOpenCoreStorage, &mOpenCoreConfiguration);
+#endif
+//  DBG("OC: OcLoadPlatformSupport...\n"));
 //  OcLoadPlatformSupport (&mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-//  DEBUG ((DEBUG_INFO, "OC: OcLoadDevPropsSupport...\n"));
+//  DBG("OC: OcLoadDevPropsSupport...\n"));
 //  OcLoadDevPropsSupport (&mOpenCoreConfiguration);
-  DEBUG ((DEBUG_INFO, "OC: OcMiscLateInit...\n"));
+  DBG("OC: OcMiscLateInit...\n");
   OcMiscLateInit (Storage, &mOpenCoreConfiguration);
-  DEBUG ((DEBUG_INFO, "OC: OcLoadKernelSupport...\n"));
+  DBG("OC: OcLoadKernelSupport...\n");
   OcLoadKernelSupport (&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
 
   if (mOpenCoreConfiguration.Misc.Security.EnablePassword) {
@@ -343,7 +358,7 @@ OcMain (
 //    Privilege = NULL;
   }
 
-  DEBUG ((DEBUG_INFO, "OC: All green, starting boot management...\n"));
+  DBG("OC: All green, starting boot management...\n");
 
 //  OcMiscBoot (
 //    &mOpenCoreStorage,
@@ -964,20 +979,6 @@ void LOADER_ENTRY::StartLoader()
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = OcLocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
     Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, NULL, NULL, self.getCloverDirFullPath().wc_str(), NULL);
 
-  /*
-   * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
-   * The boot should work.
-   * Next, comment out the next lines one by one. Once the boot failed, we got the section that
-   * holds the setting that makes a difference.
-   */
-  //#define USE_OC_SECTION_Acpi
-  //#define USE_OC_SECTION_Booter
-  //#define USE_OC_SECTION_DeviceProperties
-  //#define USE_OC_SECTION_Kernel
-  //#define USE_OC_SECTION_Misc
-  //#define USE_OC_SECTION_Nvram
-  //#define USE_OC_SECTION_PlatformInfo
-  //#define USE_OC_SECTION_Uefi
 
   #if !defined(USE_OC_SECTION_Acpi) && !defined(USE_OC_SECTION_Booter) && !defined(USE_OC_SECTION_DeviceProperties) && !defined(USE_OC_SECTION_Kernel) && !defined(USE_OC_SECTION_Misc) && \
       !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
@@ -1012,18 +1013,6 @@ void LOADER_ENTRY::StartLoader()
       DBG("Erase mOpenCoreConfiguration.Kernel\n");
     #else
       DBG("Keep mOpenCoreConfiguration.Kernel\n");
-      for ( size_t i = 0 ; i < mOpenCoreConfiguration.Kernel.Add.Count ; i ++ ) {
-        OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[i];
-        OC_STRING_ASSIGN(entry->BundlePath, S8Printf("Kexts\\%s", OC_BLOB_GET(&entry->BundlePath)).c_str());
-      }
-
-//      DBG("mOpenCoreConfiguration.Kernel.Add.Count=%d\n", mOpenCoreConfiguration.Kernel.Add.Count);
-//      for ( size_t i = 0 ; i < mOpenCoreConfiguration.Kernel.Add.Count ; i++ )
-//      {
-//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->Identifier=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->Identifier));
-//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->BundlePath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->BundlePath));
-//        DBG("mOpenCoreConfiguration.Kernel.Add.Values[%zd]->PlistPath=%s\n", i, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[i]->PlistPath));
-//      }
     #endif
     #ifndef USE_OC_SECTION_Misc
       memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
@@ -1048,15 +1037,6 @@ void LOADER_ENTRY::StartLoader()
       DBG("Erase mOpenCoreConfiguration.Uefi\n");
     #else
       DBG("Keep mOpenCoreConfiguration.Uefi\n");
-  //    memset(&mOpenCoreConfiguration.Uefi.Apfs, 0, sizeof(mOpenCoreConfiguration.Uefi.Apfs));
-  //    memset(&mOpenCoreConfiguration.Uefi.Audio, 0, sizeof(mOpenCoreConfiguration.Uefi.Audio));
-  //    memset(&mOpenCoreConfiguration.Uefi.ConnectDrivers, 0, sizeof(mOpenCoreConfiguration.Uefi.ConnectDrivers));
-  //    memset(&mOpenCoreConfiguration.Uefi.Drivers, 0, sizeof(mOpenCoreConfiguration.Uefi.Drivers));
-  //    memset(&mOpenCoreConfiguration.Uefi.Input, 0, sizeof(mOpenCoreConfiguration.Uefi.Input));
-  //    memset(&mOpenCoreConfiguration.Uefi.Output, 0, sizeof(mOpenCoreConfiguration.Uefi.Output));
-  //    memset(&mOpenCoreConfiguration.Uefi.ProtocolOverrides, 0, sizeof(mOpenCoreConfiguration.Uefi.ProtocolOverrides));
-  //    memset(&mOpenCoreConfiguration.Uefi.Quirks, 0, sizeof(mOpenCoreConfiguration.Uefi.Quirks));
-  //    memset(&mOpenCoreConfiguration.Uefi.ReservedMemory, 0, sizeof(mOpenCoreConfiguration.Uefi.ReservedMemory)); // doesn't matter
     #endif
 
   #endif
@@ -1066,6 +1046,9 @@ void LOADER_ENTRY::StartLoader()
     if ( gSettings.Boot.DebugLog ) {
       mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
       mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
+      #ifdef JIEF_DEBUG
+        mOpenCoreConfiguration.Misc.Debug.SysReport = true;
+      #endif
 
   #ifndef LESS_DEBUG
       mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80400042;
@@ -1078,7 +1061,7 @@ void LOADER_ENTRY::StartLoader()
       egSetGraphicsModeEnabled(false);
       mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
       mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80000042;
-      mOpenCoreConfiguration.Misc.Debug.Target = 0x3;
+      mOpenCoreConfiguration.Misc.Debug.Target = 0x41;
   #endif
     }
 
@@ -1409,8 +1392,13 @@ void LOADER_ENTRY::StartLoader()
     }
   #endif
 
+  #ifdef USE_OC_SECTION_Uefi
+    gSettings.Devices.USB.USBFixOwnership = false; // Use OC FixUsbOwnership
+    mOpenCoreConfiguration.Uefi.Quirks.ReleaseUsbOwnership = false; // Clover has it's own FixUsbOwnership
+  #else
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
+  #endif
 
     if ( OpenRuntimeEfiName.notEmpty() ) {
       XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), OpenRuntimeEfiName.wc_str());
@@ -1653,6 +1641,10 @@ void LOADER_ENTRY::StartLoader()
 
 #ifdef JIEF_DEBUG
     //SaveOemTables();
+    if ( mOpenCoreConfiguration.Misc.Debug.SysReport ) {
+      DBG("OC: OcMiscLoadSystemReport\n");
+      OcMiscLoadSystemReport (&mOpenCoreConfiguration, self.getSelfDeviceHandle());
+    }
 #endif
 //
 
@@ -1836,6 +1828,25 @@ void LOADER_ENTRY::StartLoader()
   XStringW LoadOptionsAsXStringW = SWPrintf("%ls %s ", Basename(LoaderPath.wc_str()), LoadOptions.ConcatAll(" "_XS8).c_str());
   LoadedImage->LoadOptions = (void*)LoadOptionsAsXStringW.wc_str();
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
+
+  DBG("UEFI Quirks\n");
+  DBG("EBSD %d  TST %d  AHS %d  DSP %d  EVA %d  EV %d  FUS %d  IIFR %d  RGB %d  RUPR %d  RUO %d  ROR %d  RBVR %d  SRP %d  UFC %d  FOWF %d",
+      mOpenCoreConfiguration.Uefi.Quirks.ExitBootServicesDelay,
+      mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout,
+      mOpenCoreConfiguration.Uefi.Quirks.ActivateHpetSupport,
+      mOpenCoreConfiguration.Uefi.Quirks.DisableSecurityPolicy,
+      mOpenCoreConfiguration.Uefi.Quirks.EnableVectorAcceleration,
+      mOpenCoreConfiguration.Uefi.Quirks.EnableVmx,
+      mOpenCoreConfiguration.Uefi.Quirks.ForgeUefiSupport,
+      mOpenCoreConfiguration.Uefi.Quirks.IgnoreInvalidFlexRatio,
+      mOpenCoreConfiguration.Uefi.Quirks.ResizeGpuBars,
+      mOpenCoreConfiguration.Uefi.Quirks.ResizeUsePciRbIo,
+      mOpenCoreConfiguration.Uefi.Quirks.ReleaseUsbOwnership,
+      mOpenCoreConfiguration.Uefi.Quirks.ReloadOptionRoms,
+      mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
+      mOpenCoreConfiguration.Uefi.Quirks.ShimRetainProtocol,
+      mOpenCoreConfiguration.Uefi.Quirks.UnblockFsConnect,
+      mOpenCoreConfiguration.Uefi.Quirks.ForceOcWriteFlash);
 
   DBG("Kernel quirks\n");
   DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EBTFF %d EDI %d FAI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d PCC %d\n",

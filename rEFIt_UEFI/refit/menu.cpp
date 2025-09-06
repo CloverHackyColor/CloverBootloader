@@ -271,8 +271,8 @@ void FillInputs(XBool New)
 
 
   // SMBIOS chooser
-  InputItems[InputItemsCount].ItemType = RadioSwitch;  //CheckBit; //65
-  InputItems[InputItemsCount++].IValue = 65;           //gSettings.RtVariables.BooterConfig;
+  InputItems[InputItemsCount].ItemType = RadioSwitch;  //65
+  InputItems[InputItemsCount++].IValue = 65;           //choose SMBIOS
 
   // CSR - aka System Integrity Protection configuration
   InputItems[InputItemsCount].ItemType = CheckBit; //66
@@ -713,7 +713,7 @@ void ApplyInputs(void)
   i++; //65
   if (InputItems[i].Valid) {
     XStringW& tmpStr = SmbiosList[OldChosenSmbios];
-    gConf.ReloadSmbios(tmpStr);
+    gConf.ReloadSmbios(tmpStr); // change gSettings.SMBIOS from config.plist
 //   gConf.FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
 
     DBG("chosen SMBIOS of %ls\n", tmpStr.wc_str());
@@ -2575,6 +2575,13 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
+            	  DBG("Title=%ls\n", TmpChosenEntry->Title.wc_str());
+            	if (TmpChosenEntry->SubScreen->ID == SCREEN_SMBIOS ) {
+            		DBG(".....we are in SMBIOS\n");
+            		// dynamically change menu
+            		gConf.FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, gConf.configPlist.getSMBIOS());
+            		FillInputs(false);
+            	}
                 NextMenuExit = TmpChosenEntry->SubScreen->RunGenericMenu(&NextEntryIndex, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
                   ApplyInputs();

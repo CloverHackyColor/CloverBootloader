@@ -10,7 +10,7 @@
 #include <Efi.h>
 
 #ifndef DEBUG_ALL
-#define DEBUG_USB 1
+#define DEBUG_USB 0
 #else
 #define DEBUG_USB DEBUG_ALL
 #endif
@@ -18,7 +18,7 @@
 #if DEBUG_USB == 0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_USB, __VA_ARGS__)
+#define DBG(...) AsciiPrint(__VA_ARGS__) // Jief: We can't use DebugLog or MsgLog. At best messages are lost, worst seems to be very long delay (stuck after +++++++++++++++++++ for 30 seconds)
 #endif
 
 #define PCI_IF_OHCI      0x10
@@ -60,7 +60,10 @@ DBG("FixOwnership() -> begin\n");
   UINT32            PortBase;
   volatile UINT32        opaddr;      
 //  UINT8            eecp;      
-  UINT32            usbcmd, usbsts, usbintr;      
+  UINT32            usbcmd;
+#if DEBUG_USB > 0
+  UINT32            usbsts, usbintr;
+#endif
   UINT32            usblegsup, usblegctlsts;    
   
   UINTN             isOSowned;
@@ -77,10 +80,11 @@ DBG("FixOwnership() -> begin\n");
                     &HandleArrayCount,
                     &HandleArray
                     );
-  DBG("PCI Io found %lld\n", HandleArrayCount);
+  DBG("FixOwnershipIndex: PCI Io found %lld\n", HandleArrayCount);
   if (HandleArrayCount > 50) HandleArrayCount = 50;
   if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleArrayCount; Index++) {
+      DBG("FixOwnership: Index %d\n", Index);
       Status = gBS->HandleProtocol (
                       HandleArray[Index],
                       &gEfiPciIoProtocolGuid,
@@ -103,6 +107,7 @@ DBG("FixOwnership() -> begin\n");
             (PCI_CLASS_SERIAL_USB == Pci.Hdr.ClassCode[1])) {
             switch (Pci.Hdr.ClassCode[0]) {
               case PCI_IF_UHCI:
+                DBG("FixOwnership: PCI_IF_UHCI\n", Index);
                 //
                 // Found the UHCI, then disable the legacy support
                 //
@@ -130,9 +135,10 @@ DBG("FixOwnership() -> begin\n");
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
                 *(UINT32 *)(UINTN)(Base + OHCI_CONTROL) = Command & OHCI_CTRL_MASK;
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
-                MsgLog("USB OHCI reset for device %04hhX control=0x%hhX\n", Pci.Hdr.DeviceId, Command);
+                DBG("USB OHCI reset for device %04hhX control=0x%hhX\n", Pci.Hdr.DeviceId, Command);
                 break;*/
               case PCI_IF_EHCI:
+                DBG("FixOwnership: PCI_IF_EHCI\n", Index);
                 //Slice - the algo is reworked from Chameleon
                 // it looks like redundant but it works so I will not reduce it
                 //
@@ -166,11 +172,12 @@ DBG("FixOwnership() -> begin\n");
                 DBG("Base=%X Oper=%X eecp=%X\n", Base, opaddr, ExtendCap);
                 
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
+#if DEBUG_USB > 0
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
                 
                 DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
-                
+#endif
                 // read PCI Config 32bit USBLEGSUP (eecp+0) 
                 Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &usblegsup);
                 
@@ -193,9 +200,11 @@ DBG("FixOwnership() -> begin\n");
                 // setting value to anything up to 65535 does not add the expected delay here.
                 gBS->Stall (500);                
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
+#if DEBUG_USB > 0
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
                 DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
+#endif
                 
                 // clear registers to default
                 usbcmd = (usbcmd & 0xffffff00);
@@ -207,9 +216,11 @@ DBG("FixOwnership() -> begin\n");
                 
                   // get the results
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
+#if DEBUG_USB > 0
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
-                MsgLog("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
+                DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
+#endif
                 
                 // read 32bit USBLEGSUP (eecp+0) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &usblegsup);
@@ -221,7 +232,7 @@ DBG("FixOwnership() -> begin\n");
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
                 
                 DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
-                MsgLog("Legacy USB Off Done\n");  
+                DBG("Legacy USB Off Done\n");
                 
                 
                 //
@@ -282,14 +293,15 @@ DBG("FixOwnership() -> begin\n");
                   PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
                 }                
                 if (Value & 0x00010000) {          
-                  MsgLog("EHCI controller unable to take control from BIOS\n");
+                  DBG("EHCI controller unable to take control from BIOS\n");
                   Status = EFI_NOT_FOUND; //Slice - why? :)
                   break;
                 }
-                MsgLog("USB EHCI Ownership for device %04hX value=%X\n", Pci.Hdr.DeviceId, Value);
+                DBG("USB EHCI Ownership for device %04hX value=%X\n", Pci.Hdr.DeviceId, Value);
                 
                 break;
              case PCI_IF_XHCI:
+               DBG("FixOwnership: PCI_IF_XHCI\n", Index);
                 //
                 // Found the XHCI, then disable the legacy support, if present
                 //
@@ -301,12 +313,12 @@ DBG("FixOwnership() -> begin\n");
                }
                 Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) 0x10 /* HCCPARAMS1 */, 1, &HcCapParams);
                 ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14) & 0x3FFFC);
-                MsgLog("ExtendCap=%08X\n", ExtendCap);
+                DBG("ExtendCap=%08X\n", ExtendCap);
                 while (ExtendCap) {
                   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                   if (EFI_ERROR(Status))
                     break;
-                  MsgLog("  Value=%08X\n", Value);
+                  DBG("  Value=%08X\n", Value);
                   if ((Value & 0xFF) == 1) {
                     //
                     // Do nothing if Bios Ownership clear
@@ -317,6 +329,7 @@ DBG("FixOwnership() -> begin\n");
                     (void) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     TimeOut = 40;
                     while (TimeOut--) {
+                      DBG("FixOwnership: TimeOut\n", TimeOut);
                       gBS->Stall(500);
                       Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                       if (EFI_ERROR(Status) || !(Value & (0x1 << 16)))

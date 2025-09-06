@@ -9,7 +9,7 @@
 #define CPP_LIB_MEMORYTRACKER_H_
 
 #ifdef JIEF_DEBUG
-#define MEMORY_TRACKER_ENABLED
+//#define MEMORY_TRACKER_ENABLED
 #endif
 
 
