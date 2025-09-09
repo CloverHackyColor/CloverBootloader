@@ -151,8 +151,8 @@ if [[ "$SYSNAME" == Linux ]]; then
   local TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
 elif [[ "$SYSNAME" == Darwin ]]; then
   pathmunge "$(xcode-select --print-path)/usr/bin"
-  if [[ -d "$BASE_DIR/opt/local" ]]; then
-    TOOLCHAIN_DIR="$BASE_DIR/opt/local"
+  if [[ -d "$BASE_DIR/../opt/local" ]]; then
+    TOOLCHAIN_DIR="$BASE_DIR/../opt/local"
   else
     TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT/toolchain"}
   fi
