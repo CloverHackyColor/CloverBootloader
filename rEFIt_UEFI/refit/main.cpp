@@ -3610,7 +3610,7 @@ displayFreeMemory("Before RunMainMenu"_XS8);
               }
               CopyMem(OptionalData, "Clvr", 4); //signature = 0x72766c43
               CopyMem(OptionalData + 4, &NameSize, 2);
-              CopyMem(OptionalData + 6, VolName.wc_str(), VolName.sizeInBytes());
+              CopyMem(OptionalData + 6, (void*)VolName.wc_str(), VolName.sizeInBytes());
               if (Name2Size != 0) {
                 CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
               }
@@ -3622,7 +3622,7 @@ displayFreeMemory("Before RunMainMenu"_XS8);
                                     Description.wc_str(),
                                     OptionalData,
                                     OptionalDataSize,
-                                    EntryIndex,
+                                    0, //EntryIndex,
                                     (UINT16*)&BootNum
                                     );
               if (!EFI_ERROR(Status)) {

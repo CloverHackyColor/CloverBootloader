@@ -391,9 +391,30 @@ AddToBootOrder (
 
   if (BootIndexNew > BootOrderLen) {
     BootIndexNew = BootOrderLen;
-	  DBG("AddToBootOrder: Index too big. Setting to: %llu\n", BootIndexNew);
+	DBG("AddToBootOrder: Index too big. Setting to: %llu\n", BootIndexNew);
   }
 
+  //
+  // shrink BootOrder array
+  //
+  for (Index = 0; Index < BootOrderLen; Index++) {
+	  BO_BOOT_OPTION  BootOption;
+	  EFI_STATUS status =  GetBootOption (Index, &BootOption);
+	  if (status == EFI_NOT_FOUND) {
+		    //
+		    // BootNum found at Index - copy the rest over it
+		    //
+		    if (Index < BootOrderLen - 1) {
+		        CopyMem(&BootOrder[Index],
+		                 &BootOrder[Index + 1],
+		                 (BootOrderLen - (Index + 1)) * sizeof(UINT16)
+		                 );
+		    }
+		    BootOrderLen -= 1;
+	  } else {
+		  FreePool(BootOption.Variable);
+	  }
+  }
   //
   // Make new order buffer with space for our option
   //
@@ -407,10 +428,6 @@ AddToBootOrder (
   }
   BootOrderLen += 1;
 
-
-  //
-  // Make BootOrderNew array
-  //
 
   // copy all before BootIndex first
   for (Index = 0; Index < BootIndexNew; Index++) {
@@ -443,7 +460,7 @@ AddToBootOrder (
   FreePool(BootOrderNew);
 
   // Debug: Get and print new BootOrder value
-  //GetBootOrder (&BootOrder, &BootOrderLen);
+  GetBootOrder (&BootOrder, &BootOrderLen);
 
   return Status;
 }
@@ -799,6 +816,7 @@ FindBootOptionForFile (
     if (EFI_ERROR(Status)) {
 		DBG("FindBootOptionForFile: Boot%04hX: %s\n", BootOrder[Index], efiStrError(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
+
       continue;
     }
 
@@ -1052,7 +1070,7 @@ AddBootOptionForFile (
     *BootNum = BootOption.BootNum;
   }
 
-  DBG("AddBootOptionForFile: done.\n");
+  DBG("AddBootOptionForFile: done at %d\n", *BootNum);
   //WaitForKeyPress(L"press a key to continue\n\n");
   return EFI_SUCCESS;
 }
