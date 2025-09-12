@@ -797,10 +797,10 @@ echo -e "\n\n\n\n\n\n\n\n\n"
 fi
 PS3='
 Please enter your choice: '
-options=( 'Cloverbuilds		'
-          'test Clover	'
-          'check status		'
-          'show diff	'
+options=( 'Cloverbuilds'
+          'test Clover'
+          'check status'
+          'show diff'
           'open CloverV2 directory'
           'update Clover (reset changes)'
           'clean BaseTools'
@@ -810,19 +810,19 @@ options=( 'Cloverbuilds		'
 select opt in "${options[@]}"
 do
   case $opt in
-    "Cloverbuilds		")
+    "Cloverbuilds")
       menu
       break
     ;;
-    "test Clover	")
+    "test Clover")
       testing
       break
     ;;
-    "check status	")
+    "check status")
       checkStatus
       break
     ;;
-    "show diff		")
+    "show diff")
       showdiff
       break
     ;;
