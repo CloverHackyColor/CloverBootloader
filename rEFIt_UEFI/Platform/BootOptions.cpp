@@ -410,7 +410,8 @@ AddToBootOrder (
 		                 (BootOrderLen - (Index + 1)) * sizeof(UINT16)
 		                 );
 		    }
-		    BootOrderLen -= 1;
+		    BootOrderLen--;
+		    if (BootIndexNew > Index) BootIndexNew--;
 	  } else {
 		  FreePool(BootOption.Variable);
 	  }
@@ -426,7 +427,7 @@ AddToBootOrder (
 	}
     return EFI_OUT_OF_RESOURCES;
   }
-  BootOrderLen += 1;
+  BootOrderLen++;
 
 
   // copy all before BootIndex first
@@ -952,7 +953,7 @@ AddBootOption (
 
   DBG("AddBootOption: %ls\n", BootOption->Description);
   DBG(" FilePath: %ls\n", FileDevicePathToXStringW(BootOption->FilePathList).wc_str());
-	DBG(" BootIndex: %llu\n", BootIndex);
+  DBG(" BootIndex: %llu\n", BootIndex);
 
   //
   // Find free BootXXXX var slot.
