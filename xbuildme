@@ -61,6 +61,9 @@ COL_BLUE_ITALIC=$(tput sitm; tput setaf 4)   # Italic Blue
 COL_PURPLE_ITALIC=$(tput sitm; tput setaf 5) # Italic Purple
 COL_CYAN_ITALIC=$(tput sitm; tput setaf 6)   # Italic Cyan
 COL_WHITE_ITALIC=$(tput sitm; tput setaf 7)  # Italic White
+COL_RESET="\x1b[39;49;00m" 
+
+revision=$(git describe --tags $(git rev-list --tags --max-count=1)) 
 
 # ====== Main Window SetUp ======
 if [[ "$2" != "ci" ]]; then
@@ -84,8 +87,7 @@ echo -e "${COL_GREEN}                           🍀 Clover r${revision} ${COL_W
 echo -e "${COL_WHITE}                              Default TOOLCHAIN: ${COL_CYAN}GCC151${COL_WHITE}"
 echo -e "${COL_WHITE}                     Switch to ${COL_CYAN}XCODE${COL_WHITE} select: ${COL_CYAN}build (with XCode)"
 echo -e "${COL_WHITE}     Depending on your ${COL_CYAN}XCODE version${COL_WHITE} the Toolset will be ${COL_CYAN}automatically chosen"
-echo -e "${COL_GREEN} ---------------------- ${COL_CYAN}Current Python version: ${COL_WHITE}Python 3.13.7${COL_GREEN} -------------------- $"$COL_RESET
-
+echo -e "${COL_GREEN} ---------------------- ${COL_CYAN}Current Python version: ${COL_WHITE}Python 3.13.7${COL_GREEN} --------------------${COL_RESET}"
 declare -r CLOVERROOT="$PWD"
 declare -r MYTOOLCHAIN=${1:-GCC151}
 
@@ -277,7 +279,7 @@ if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
 fi
 
-echo "buildme, Clover v5 r$(cat vers.txt) (SHA: $lsha1)"
+echo "buildme, Clover v5 r${revision} (SHA: $lsha1)"
 echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
 echo
 PS3='Please enter your choice: '
