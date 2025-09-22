@@ -15,7 +15,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
         curl -LO https://www.7-zip.org/a/7z2501-mac.tar.xz
         tar -xf 7z2501-mac.tar.xz
         xattr -d com.apple.quarantine 7zz 2>/dev/null || true
-        cp 7zz /usr/local/bin/7z
+        sudo cp 7zz /usr/local/bin/7z
         chmod +x /usr/local/bin/7z
         cd - >/dev/null || exit 1
         rm -rf "$TMPDIR"
