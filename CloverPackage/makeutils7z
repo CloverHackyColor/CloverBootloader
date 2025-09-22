@@ -1,0 +1,45 @@
+#!/bin/bash
+set -e
+SYSNAME=$(uname)
+
+# Ensure 7z is available on macOS
+if [[ "$SYSNAME" == Darwin ]]; then
+    if ! command -v 7z &>/dev/null; then
+        TMPDIR="/private/tmp/7ztemp"
+        mkdir -p "$TMPDIR"
+        cd "$TMPDIR" || exit 1
+        echo "[7Z] Downloading 7zz..."
+        curl -LO https://www.7-zip.org/a/7z2501-mac.tar.xz
+        tar -xf 7z2501-mac.tar.xz
+        xattr -d com.apple.quarantine 7zz 2>/dev/null || true
+        cp 7zz /usr/local/bin/7z
+        chmod +x /usr/local/bin/7z
+        cd - >/dev/null || exit 1
+        rm -rf "$TMPDIR"
+        echo "[7Z] Installed to /usr/local/bin/7z"
+    fi
+fi
+
+# Check again
+if ! command -v 7z &>/dev/null; then
+    echo "Error: 7z not found. Please install 7-Zip manually."
+    exit 1
+fi
+
+# Paths
+SRCROOT="$(dirname "$0")"
+SYMROOT=${SRCROOT}/sym
+
+[[ ! -d "${SYMROOT}/utils" ]] && { echo "No utils folder found."; exit 1; }
+
+echo "[7Z] Packing utils..."
+7z a -t7z "${SYMROOT}/utils.7z" "${SYMROOT}/utils" -mx=9
+echo "Done."
+
+# Open folder with archive
+if [[ "$SYSNAME" == "Darwin" ]]; then
+    open "${SYMROOT}"
+elif [[ "$SYSNAME" == "Linux" ]]; then
+    xdg-open "${SYMROOT}" >/dev/null 2>&1 &
+fi
+
