@@ -11,35 +11,111 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Manage Version
         run: |
-          git fetch --prune --unshallow --tags
+          git fetch --prune --tags
           echo "CUR_TAG=$(git tag -l | tail -1)" >> $GITHUB_ENV
           echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Install Dependencies
-        run: brew install p7zip
+      - name: Reinstall Dependencies
+        run: brew reinstall p7zip
         env:
           HOMEBREW_NO_INSTALL_CLEANUP: 1
           HOMEBREW_NO_AUTO_UPDATE: 1
+          
+      - name: Check Xcode version
+        run: |
+          XCODE_VER=$(xcodebuild -version | grep Xcode | awk '{print $2}' | tr -d '[:space:]')
+          echo "Detected Xcode version: $XCODE_VER"
+          if [[ -z "$XCODE_VER" ]]; then
+            echo "❌ Failed to detect Xcode version!"
+            exit 1
+          fi
+
+          MAJOR_VER=${XCODE_VER%%.*}
+          if [[ "$MAJOR_VER" -eq 26 ]]; then
+            CHECK_VER=16
+          else
+            CHECK_VER=$MAJOR_VER
+          fi
+
+          if [[ "$CHECK_VER" -lt 16 ]]; then
+            echo "❌ Xcode 16+ required!"
+            exit 1
+          fi
+
+          echo "✅ Using Xcode version $XCODE_VER (check $CHECK_VER)"
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Verify Python framework symlink
+        run: |
+          FRAMEWORK_PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13"
+          if [ ! -x "$FRAMEWORK_PATH" ]; then
+            echo "❌ Expected Python 3.13 at $FRAMEWORK_PATH not found!"
+            exit 1
+          fi
+          echo "✅ Python 3.13 found at $FRAMEWORK_PATH"
+
+      - name: Prepare Python env
+        run: |
+          python3.13 --version
+          pip3 install --upgrade pip
+          pip3 install setuptools
+          pip3 install --upgrade setuptools
+
+      - name: Download CloverGnuBuildTools
+        run: |
+          mkdir -p toolchain/tools/download
+          cd toolchain/tools/download
+          curl -L -o CloverBuildTools.zip https://github.com/YBronst/CloverBuildUtilities/releases/download/V.1.0/CloverBuildTools.zip
+          unzip CloverBuildTools.zip
+          cp -r CloverBuildTools/* .
+          rm -rf CloverBuildTools CloverBuildTools.zip
 
       - name: Build Clover Pack
         run: |
           chmod +x ./buildme
           ./buildme "" ci
+
       - name: Prepare Release Packs
         run: |
+          # Zip Clover EFI
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
-          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
-          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
-          for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
+
+          # 7z ISO
+          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a "Clover-${{ env.CUR_TAG }}-X64.iso.7z" *.iso || exit 1)
+
+          # 7z utils
+          (cd "CloverPackage/sym/" && 7z a utils.7z utils/* || exit 1)
+
+          # Сбор всех файлов для публикации
+          releaseItems=(
+            CloverPackage/sym/CloverISO*/*.7z
+            CloverPackage/sym/utils.7z
+            CloverPackage/sym/CloverV2*.zip
+            CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip
+            CloverPackage/sym/Clover_r*.pkg
+          )
+          for releaseItem in "${releaseItems[@]}"; do
+            cp -Rf "${releaseItem}" ./ || exit 1
+          done
+
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Clover-GCC-15.1.0-${{ env.GIT_SHA }}
           path: |
             *.7z
+            utils.7z
             CloverV2*.zip
             CLOVERX64.efi.zip
             Clover_r*.pkg
+
