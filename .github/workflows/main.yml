@@ -90,13 +90,13 @@ jobs:
           # Zip Clover EFI
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
 
-          # 7z ISO
-          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a "Clover-${{ env.CUR_TAG }}-X64.iso.7z" *.iso || exit 1)
+          # 7-Zip ISO
+          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7zz a "Clover-${{ env.CUR_TAG }}-X64.iso.7z" *.iso || exit 1)
 
-          # 7z utils
-          (cd "CloverPackage/sym/" && 7z a utils.7z utils/* || exit 1)
+          # 7-Zip utils
+          (cd "CloverPackage/sym/" && 7zz a utils.7z utils/* || exit 1)
 
-          # Сбор всех файлов для публикации
+          # Collecting all files for publication
           releaseItems=(
             CloverPackage/sym/CloverISO*/*.7z
             CloverPackage/sym/utils.7z
