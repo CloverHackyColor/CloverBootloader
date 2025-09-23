@@ -91,10 +91,10 @@ jobs:
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
 
           # 7-Zip ISO
-          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7zz a "Clover-${{ env.CUR_TAG }}-X64.iso.7z" *.iso || exit 1)
+          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a "Clover-${{ env.CUR_TAG }}-X64.iso.7z" *.iso || exit 1)
 
           # 7-Zip utils
-          (cd "CloverPackage/sym/" && 7zz a utils.7z utils/* || exit 1)
+          (cd "CloverPackage/sym/" && 7z a utils.7z utils/* || exit 1)
 
           # Collecting all files for publication
           releaseItems=(
