@@ -28,13 +28,6 @@ declare -r DRIVERS_LEGACY="BIOS"
 declare -r DRIVERS_UEFI="UEFI"
 declare -r DRIVERS_OFF="off"
 
-# Check that the caller is make
-caller=$(ps -p $PPID -o comm=)
-if [[ "$caller" != "make" ]]; then
-    echo "Error: don't call the '$0' script directly !" >&2
-    echo "Use the 'make iso' command instead" >&2
-fi
-
 set -u
 
 # Go to the script directory
