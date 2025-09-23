@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# alternate build for CloverV2
+# alternate build for CloverV2 (macOS/Linux)
 
 cd "$(dirname "$([ -L "$0" ] && readlink "$0" || echo "$0")")" || exit 1
 ROOT="$PWD"
@@ -14,7 +14,7 @@ REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/nul
 zip -qr "CloverV2-${REVISION}.zip" CloverV2 -x "*/.DS_Store" "*/.empty"
 mv "CloverV2-${REVISION}.zip" "$SYMROOT" || exit 1
 
-# ====== Архивация CLOVERX64.efi ======
+# ====== Archiving CLOVERX64.efi ======
 cd "$ROOT/CloverV2/EFI/CLOVER/" || exit 1
 if [ -f CLOVERX64.efi ]; then
     zip -q CLOVERX64.efi.zip CLOVERX64.efi
@@ -22,11 +22,9 @@ if [ -f CLOVERX64.efi ]; then
 fi
 cd "$ROOT" || exit 1
 
-# Открытие папки с результатами
+# open folder
 if command -v open &>/dev/null; then
-    open "$SYMROOT"
+    open "$SYMROOT"       # macOS
 elif command -v xdg-open &>/dev/null; then
-    xdg-open "$SYMROOT"
+    xdg-open "$SYMROOT"   # Linux
 fi
-
-# exit 0
