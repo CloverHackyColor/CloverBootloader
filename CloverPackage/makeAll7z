@@ -4,7 +4,7 @@ IFS=$'\n\t'
 
 SYSNAME="$(uname)"
 
-# Найти доступный 7-Zip
+# Find an available 7-Zip
 if command -v 7zz >/dev/null 2>&1; then
   Z7=7zz
 elif command -v 7z >/dev/null 2>&1; then
@@ -27,7 +27,7 @@ fi
 
 ARCHIVE_LIST=()
 
-# --- Проверка utils ---
+# --- Checking utils ---
 if [[ -d "${SYMROOT}/utils" ]]; then
   ARCHIVE_NAME="${SYMROOT}/utils.7z"
   echo "[7-Zip] Packing 'utils'..."
@@ -38,7 +38,7 @@ else
   echo "No utils folder found."
 fi
 
-# --- Проверка CloverISO-* (только директории) ---
+# --- Checking CloverISO-* (directories only) ---
 shopt -s nullglob
 CLOVERS=( "${SYMROOT}"/CloverISO-* )
 shopt -u nullglob
@@ -57,7 +57,7 @@ else
   echo "No CloverISO-* directories found."
 fi
 
-# --- Открыть папку с архивами и вывести итог ---
+# --- Open the folder with archives and display the results ---
 if (( ${#ARCHIVE_LIST[@]} )); then
   echo
   echo "All done. Archives created in: ${SYMROOT}"
