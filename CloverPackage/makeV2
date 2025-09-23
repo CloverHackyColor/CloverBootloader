@@ -4,12 +4,19 @@
 
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 ROOT="$PWD"
+
 SYMROOT="${ROOT}"/sym
 REVISION=$(git describe --tags $(git rev-list --tags --max-count=1))
 
 # zip CloverV2, excluding all .empty and all .DS_Store
 zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
 mv CloverV2-${REVISION}.zip $SYMROOT
+
+# ====== Архивация CLOVERX64.efi ======
+cd "$ROOT"/CloverV2/EFI/CLOVER/ || exit 1
+zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi"
+mv CLOVERX64.efi.zip "$SYMROOT" || exit 1
+cd - > /dev/null || exit 1
 
 open sym
 
