@@ -1,28 +1,44 @@
 #!/bin/bash
 #
-# alternate build for CloverV2 (macOS/Linux)
+# Alternate build for CloverV2 (macOS/Linux)
 
-cd "$(dirname "$([ -L "$0" ] && readlink "$0" || echo "$0")")" || exit 1
+# --- Go to script directory ---
+SCRIPT_PATH="$0"
+[[ -L "$SCRIPT_PATH" ]] && SCRIPT_PATH=$(readlink "$SCRIPT_PATH")
+cd "$(dirname "$SCRIPT_PATH")" || exit 1
 ROOT="$PWD"
 
+# --- Prepare output directory ---
 SYMROOT="${ROOT}/sym"
 mkdir -p "$SYMROOT"
 
-REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo "untagged")
+# --- Determine revision ---
+if command -v git &>/dev/null && git rev-parse --git-dir &>/dev/null; then
+    REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo "untagged")
+else
+    REVISION="untagged"
+fi
 
-# zip CloverV2, excluding .empty and .DS_Store
-zip -qr "CloverV2-${REVISION}.zip" CloverV2 -x "*/.DS_Store" "*/.empty"
+# --- Archive CloverV2 ---
+zip -qrX "CloverV2-${REVISION}.zip" CloverV2 -x "*/.DS_Store" "*/.empty"
 mv "CloverV2-${REVISION}.zip" "$SYMROOT" || exit 1
 
-# ====== Archiving CLOVERX64.efi ======
-cd "$ROOT/CloverV2/EFI/CLOVER/" || exit 1
-if [ -f CLOVERX64.efi ]; then
-    zip -q CLOVERX64.efi.zip CLOVERX64.efi
-    mv CLOVERX64.efi.zip "$SYMROOT" || exit 1
+# --- Archive CLOVERX64.efi if exists ---
+CLOVER_DIR="$ROOT/CloverV2/EFI/CLOVER"
+if [[ -f "$CLOVER_DIR/CLOVERX64.efi" ]]; then
+    (
+      cd "$CLOVER_DIR" || exit 1
+      zip -qX CLOVERX64.efi.zip CLOVERX64.efi
+      mv CLOVERX64.efi.zip "$SYMROOT" || exit 1
+    )
 fi
-cd "$ROOT" || exit 1
 
-# open folder
+# --- Show results ---
+echo
+echo "========= Build Artifacts in $SYMROOT ========="
+ls -lh "$SYMROOT"
+
+# --- Open result folder ---
 if command -v open &>/dev/null; then
     open "$SYMROOT"       # macOS
 elif command -v xdg-open &>/dev/null; then
