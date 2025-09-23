@@ -1,23 +1,32 @@
 #!/bin/bash
 #
-#  alternate build for CloverV2
+# alternate build for CloverV2
 
-cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
+cd "$(dirname "$([ -L "$0" ] && readlink "$0" || echo "$0")")" || exit 1
 ROOT="$PWD"
 
-SYMROOT="${ROOT}"/sym
-REVISION=$(git describe --tags $(git rev-list --tags --max-count=1))
+SYMROOT="${ROOT}/sym"
+mkdir -p "$SYMROOT"
 
-# zip CloverV2, excluding all .empty and all .DS_Store
-zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
-mv CloverV2-${REVISION}.zip $SYMROOT
+REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)" 2>/dev/null || echo "untagged")
+
+# zip CloverV2, excluding .empty and .DS_Store
+zip -qr "CloverV2-${REVISION}.zip" CloverV2 -x "*/.DS_Store" "*/.empty"
+mv "CloverV2-${REVISION}.zip" "$SYMROOT" || exit 1
 
 # ====== Архивация CLOVERX64.efi ======
-cd "$ROOT"/CloverV2/EFI/CLOVER/ || exit 1
-zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi"
-mv CLOVERX64.efi.zip "$SYMROOT" || exit 1
-cd - > /dev/null || exit 1
+cd "$ROOT/CloverV2/EFI/CLOVER/" || exit 1
+if [ -f CLOVERX64.efi ]; then
+    zip -q CLOVERX64.efi.zip CLOVERX64.efi
+    mv CLOVERX64.efi.zip "$SYMROOT" || exit 1
+fi
+cd "$ROOT" || exit 1
 
-open sym
+# Открытие папки с результатами
+if command -v open &>/dev/null; then
+    open "$SYMROOT"
+elif command -v xdg-open &>/dev/null; then
+    xdg-open "$SYMROOT"
+fi
 
-#exit 0
+# exit 0
