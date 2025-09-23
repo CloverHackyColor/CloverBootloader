@@ -5,21 +5,21 @@ export LC_ALL=C
 
 declare -r SYSNAME="$(uname)"
 
-# === Ensure 7z is available on macOS ===
+# === Ensure 7-Zip is available on macOS ===
 if [[ "$SYSNAME" == Darwin ]]; then
-    if ! command -v 7z &>/dev/null; then
+    if ! command -v 7zz &>/dev/null; then
         TMPDIR="/private/tmp/7ztemp"
         mkdir -p "$TMPDIR"
         cd "$TMPDIR" || exit 1
-        echo "[7Z] Downloading 7zz..."
+        echo "[7Zip] Downloading 7zz..."
         curl -LO https://www.7-zip.org/a/7z2501-mac.tar.xz
         tar -xf 7z2501-mac.tar.xz
         xattr -d com.apple.quarantine 7zz 2>/dev/null || true
-        sudo cp 7zz /usr/local/bin/7z
-        chmod +x /usr/local/bin/7z
+        sudo cp 7zz /usr/local/bin/7zz
+        chmod +x /usr/local/bin/7zz
         cd - >/dev/null || exit 1
         rm -rf "$TMPDIR"
-        echo "[7Z] Installed to /usr/local/bin/7z"
+        echo "[7zz] Installed to /usr/local/bin/7zz"
     fi
 fi
 
@@ -67,7 +67,7 @@ stat "$STAT_PARAM" ${CLOVERROOT}/Bootloaders/x64/boot6 \
  | perl -ane "print pack('V',@F[0]);" \
  | dd of=${SYMROOT}/i386/cdboot bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
 
-echo "======================= Creating ISO/7z ======================="
+echo "======================= Creating ISO/7-Zip ======================="
 rm -rf ${IMGROOT}
 mkdir -p ${IMGROOT}/usr/standalone/i386/x64
 mkdir -p ${IMGROOT}/EFI/BOOT
@@ -131,13 +131,13 @@ hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL} \
 
 mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION}/
 
-# ====== 7z упаковка с отдельной папкой ======
+# ====== 7zip упаковка с отдельной папкой ======
 TMPDIR="${SYMROOT}/CloverISO-${REVISION}-tmp"
 mkdir -p "${TMPDIR}/${CDLABEL}"
 cp "${SYMROOT}/CloverISO-${REVISION}/${CDLABEL}.iso" "${TMPDIR}/${CDLABEL}/"
 
-echo "[7Z] Packing ${CDLABEL}.7z"
-7z a -t7z "${SYMROOT}/CloverISO-${REVISION}.7z" "${TMPDIR}/${CDLABEL}" -mx=9
+echo "[7-Zip] Packing ${CDLABEL}.7z"
+7zz a -t7z "${SYMROOT}/CloverISO-${REVISION}.7z" "${TMPDIR}/${CDLABEL}" -mx=9
 
 rm -rf "${TMPDIR}"
 
