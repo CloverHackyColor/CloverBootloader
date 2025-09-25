@@ -61,33 +61,29 @@ COL_BLUE_ITALIC=$(tput sitm; tput setaf 4)   # Italic Blue
 COL_PURPLE_ITALIC=$(tput sitm; tput setaf 5) # Italic Purple
 COL_CYAN_ITALIC=$(tput sitm; tput setaf 6)   # Italic Cyan
 COL_WHITE_ITALIC=$(tput sitm; tput setaf 7)  # Italic White
-COL_RESET="\x1b[39;49;00m" 
 
-revision=$(git describe --tags $(git rev-list --tags --max-count=1)) 
+#Set background color
+BG_BLUE=$(tput setab 4)
+# Reset all attributes
+COL_RESET=$(tput sgr0)
 
 # ====== Main Window SetUp ======
-if [[ "$2" != "ci" ]]; then
-    osascript <<EOF
-        tell application "System Events"
-            tell application "Terminal"
-                try
-                    activate
-                    set bounds of front window to {0, 23, 615, 420}
-                on error errMsg
-                    display dialog "Error setting Terminal window: " & errMsg buttons {"OK"} default button "OK" with icon caution
-                end try
-            end tell
-        end tell
+if [[ "$2" != ci ]]; then
+osascript <<EOF
+tell application "Terminal"
+	activate
+	set bounds of window 1 to {30, 54, 650, 420} # my custom
+#	set bounds of window 1 to {0, 23, 615, 420} # default
+#	set current settings of window 1 to settings set "Pro"
+#	set font name of window 1 to "Monaco"
+#	set font size of window 1 to "11"
+#	set normal text color of window 1 to {3341, 35186, 50092}
+#	set position of first window to {650, 420}
+	set background color of window 1 to {1028, 12593, 63993}
+end tell
 EOF
 fi
 
-# ====== Display Menu ======
-echo -e "${COL_GREEN} ---------------------------------------------------------------------------------"
-echo -e "${COL_GREEN}                           🍀 Clover r${revision} ${COL_WHITE}(SHA: 64d434947)"
-echo -e "${COL_WHITE}                              Default TOOLCHAIN: ${COL_CYAN}GCC151${COL_WHITE}"
-echo -e "${COL_WHITE}                     Switch to ${COL_CYAN}XCODE${COL_WHITE} select: ${COL_CYAN}build (with XCode)"
-echo -e "${COL_WHITE}     Depending on your ${COL_CYAN}XCODE version${COL_WHITE} the Toolset will be ${COL_CYAN}automatically chosen"
-echo -e "${COL_GREEN} ---------------------- ${COL_CYAN}Current Python version: ${COL_WHITE}Python 3.13.7${COL_GREEN} --------------------${COL_RESET}"
 declare -r CLOVERROOT="$PWD"
 declare -r MYTOOLCHAIN=${1:-GCC151}
 
@@ -270,7 +266,7 @@ make clean
 
 menu() {
 echo
-echo '------------------------------------------------------------------------'
+echo "${COL_GREEN} ---------------------------------------------------------------------------------${COL_RESET}"
 cd "${CLOVERROOT}"
 
 local lsha1="not a git repo"
@@ -279,8 +275,8 @@ if [[ -d .git ]]; then
   lsha1=$(git rev-parse --short HEAD)
 fi
 
-echo "buildme, Clover v5 r${revision} (SHA: $lsha1)"
-echo "TOOLCHAIN: $MYTOOLCHAIN (override example: './buildme GCC53')"
+echo "${COL_YELLOW}              TOOLCHAIN: ${COL_CYAN}$MYTOOLCHAIN ${COL_YELLOW}(override example: ${COL_CYAN}'./buildme GCC53')${COL_RESET}"
+echo "${COL_GREEN} ---------------------------------------------------------------------------------${COL_RESET}"
 echo
 PS3='Please enter your choice: '
 options=( 'build Clover'
