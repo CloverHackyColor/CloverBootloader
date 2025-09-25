@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+SYSNAME="$(uname)"
+
+# Find an available 7-Zip
+if command -v 7zz >/dev/null 2>&1; then
+  Z7=7zz
+elif command -v 7z >/dev/null 2>&1; then
+  Z7=7z
+elif command -v 7za >/dev/null 2>&1; then
+  Z7=7za
+else
+  echo "Error: 7-Zip (7zz/7z/7za) not found. Please install 7-Zip."
+  exit 1
+fi
+
+# Пути
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SYMROOT="${SCRIPT_DIR}/sym"
+
+if [[ ! -d "${SYMROOT}" ]]; then
+  echo "Error: sym folder not found at ${SYMROOT}"
+  exit 1
+fi
+
+ARCHIVE_LIST=()
+
+# --- Checking utils ---
+if [[ -d "${SYMROOT}/utils" ]]; then
+  ARCHIVE_NAME="${SYMROOT}/utils.7z"
+  echo "[7-Zip] Packing 'utils'..."
+  [[ -f "${ARCHIVE_NAME}" ]] && rm -f "${ARCHIVE_NAME}"
+  "$Z7" a -t7z "${ARCHIVE_NAME}" "${SYMROOT}/utils" -mx=9
+  ARCHIVE_LIST+=("${ARCHIVE_NAME}")
+else
+  echo "No utils folder found."
+fi
+
+# --- Checking CloverISO-* (directories only) ---
+shopt -s nullglob
+CLOVERS=( "${SYMROOT}"/CloverISO-* )
+shopt -u nullglob
+
+if (( ${#CLOVERS[@]} )); then
+  for TARGET in "${CLOVERS[@]}"; do
+    if [[ -d "$TARGET" ]]; then
+      ARCHIVE_NAME="${SYMROOT}/$(basename "${TARGET}").7z"
+      echo "[7-Zip] Packing '$(basename "${TARGET}")'..."
+      [[ -f "${ARCHIVE_NAME}" ]] && rm -f "${ARCHIVE_NAME}"
+      "$Z7" a -t7z "${ARCHIVE_NAME}" "${TARGET}" -mx=9
+      ARCHIVE_LIST+=("${ARCHIVE_NAME}")
+    fi
+  done
+else
+  echo "No CloverISO-* directories found."
+fi
+
+# --- Open the folder with archives and display the results ---
+if (( ${#ARCHIVE_LIST[@]} )); then
+  echo
+  echo "All done. Archives created in: ${SYMROOT}"
+  for ARCH in "${ARCHIVE_LIST[@]}"; do
+    echo " - $(basename "$ARCH")"
+  done
+
+  if [[ "${SYSNAME}" == "Darwin" ]]; then
+    open "${SYMROOT}"
+  elif [[ "${SYSNAME}" == "Linux" ]]; then
+    xdg-open "${SYMROOT}" >/dev/null 2>&1 || true
+  fi
+else
+  echo "No archives were created."
+fi

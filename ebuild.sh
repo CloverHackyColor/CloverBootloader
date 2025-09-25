@@ -468,7 +468,7 @@ MainBuildScript() {
     checkCmdlineArguments $@
     checkToolchain
 
- #   local repoRev=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+ #   local repoRev=$(git describe --tags $(git rev-list --tags --max-count=1))
 	local repoRev=$(git describe --tags --abbrev=0)
 
     #

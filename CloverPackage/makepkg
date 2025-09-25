@@ -1,98 +1,74 @@
 #!/bin/bash
 #
-# Reset default charset for GNUsed problems...
-#set -x
+# Reset default charset to avoid GNUsed issues
 export LC_ALL=C
 
+# --- Define paths ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"        # Script folder
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"         # Repository root
+
+# Add toolchain/bin to PATH
+export PATH="$REPO_ROOT/toolchain/bin:$PATH"
+
+# --- Buildpkg.sh options ---
 usage () {
-printf "\n\e[1m%s\e[0m\n" "Usage: $0 [flag1 flag2...]"
-printf "\n%s" "The (optional) exclude flags are being passed to the buildpkg.sh script, when specified."
-printf "\n%s\n" "Possible flag values:"
-printf "\n\e[1m%s\e[0m\t%s" "--nothemes" "Excludes the Themes subpackage."
-# printf "\n\e[1m%s\e[0m\t%s" "--noprefpane" "Excludes the Clover Prefpane / Clover Updater subpackage."
-printf "\n\e[1m%s\e[0m\t\t%s" "--norc" "Excludes the RC scripts subpackage."
-printf "\n\e[1m%s\e[0m\t%s" "--nolegacy" "Excludes the CloverEFI subpackages."
-echo
+  printf "\n\e[1m%s\e[0m\n" "Usage: $0 [flag1 flag2...]"
+  printf "\n%s\n" "Optional flags passed to buildpkg.sh:"
+  printf "\n\e[1m%s\e[0m\t%s" "--nothemes" "Excludes the Themes subpackage."
+  printf "\n\e[1m%s\e[0m\t%s" "--norc" "Excludes the RC scripts subpackage."
+  printf "\n\e[1m%s\e[0m\t%s" "--nolegacy" "Excludes the CloverEFI subpackages."
+  echo
 }
 
+NOEXTRAS=""
+
 while [[ $# -gt 0 ]]; do
-	case "${1}" in
-		--nothemes ) NOEXTRAS+=" --nothemes";;
-		# --noprefpane ) NOEXTRAS+=" --noprefpane";;
-		--norc ) NOEXTRAS+=" --norc";;
-		--nolegacy ) NOEXTRAS+=" --nolegacy";;
-		* ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !"; usage; exit 1;;
-	esac
-	shift
+  case "${1}" in
+    --nothemes ) NOEXTRAS+=" --nothemes";;
+    --norc ) NOEXTRAS+=" --norc";;
+    --nolegacy ) NOEXTRAS+=" --nolegacy";;
+    * ) echo "Invalid option: ${1}!"; usage; exit 1;;
+  esac
+  shift
 done
 
-# Workspace = edk2/Clover/CloverPackage
+# --- Change to script directory ---
+cd "$SCRIPT_DIR" || exit 1
 
-# Go to the script directory to create the package
-cd "$(dirname $0)"
-
-revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
-
-SRCROOT="${PWD}"
-SYMROOT="${SRCROOT}"/sym
-PKG_BUILD_DIR="${SYMROOT}"/package
+revision=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "unknown")
+SRCROOT="${SCRIPT_DIR}"
+SYMROOT="${SRCROOT}/sym"
+PKG_BUILD_DIR="${SYMROOT}/package"
 
 echo "${revision}" > revision
 
-# Workspace = edk2/Clover/CloverPackage
-
-
-# Workspace = Clover/CloverPackage
-# Prepare i386 for building package installer.
-
-# if [[ -d "$PKG_BUILD_DIR" && $(stat -f '%u' "$PKG_BUILD_DIR") -eq 0 ]]; then
-#     sudo rm -rf sym
-# fi
-# rm -rf sym
-#
-# # Create a new sym directory
-# mkdir sym
-
-#   Make the translation
+# --- Translate resources ---
 echo ""
 echo "========= Translating Resources ========"
 ./package/translate.sh || exit $?
 
-# Check that XCode is install properly
-xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
-if [[ -n "$xcode_path" ]]; then
-  # # Make CloverUpdater
-  # "${SRCROOT}"/CloverUpdater/translate_xib.sh # workaround for a bug in Xcode 10 Beta
-  # make -C "${SRCROOT}"/CloverUpdater || exit $?
-  # # Make CloverPrefpane
-  # "${SRCROOT}"/CloverPrefpane/translate_xib.sh # workaround for a bug in Xcode 10 Beta
-  # "${SRCROOT}"/CloverPrefpane/translate_source.sh # workaround for a bug in Xcode 10 Beta
-  # make -C "${SRCROOT}"/CloverPrefpane || exit $?
-  # Make utils
-  make -C "${SRCROOT}"/utils || exit $?
-# temporary use ready-to-use binaries
-#  mkdir -p "${SYMROOT}"/utils
-#  cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
+# --- Build utils if Xcode exists (macOS only) ---
+if command -v xcode-select &>/dev/null; then
+  xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
+  if [[ -n "$xcode_path" ]]; then
+    make -C "${SRCROOT}/utils" || exit $?
+  fi
 fi
 
-# Start to build installer.
+# --- Build the package ---
+package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_DIR" $NOEXTRAS || exit $?
 
-package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_DIR" ${NOEXTRAS:1} || exit $?
+# --- Clean temporary files ---
+rm -f version revision
 
-#(cd sym ; zip Clover_r${revision}.zip \
-# Clover_r${revision}.pkg              \
-# Clover_r${revision}.pkg.md5 )
-
-# Workspace = edk2/Clover/CloverPackage/
-# Remove temp files.
-
-rm -f  version # take this to clean old sources
-rm -f  revision
-
-# Workspace = edk2/Clover/CloverPackage
-# Open the final folder.
-ls -la sym
-open sym
-# Finish building installer.
+# --- Open the output folder ---
+if [[ -d sym ]]; then
+  ls -la sym
+  if [[ "$OSTYPE" == darwin* ]]; then
+    open sym
+  else
+    command -v xdg-open &>/dev/null && xdg-open sym
+  fi
+fi
 
 #exit 0

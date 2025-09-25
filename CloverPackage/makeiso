@@ -8,14 +8,6 @@ declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/ebuild.sh
 declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/ebuild.sh
 declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/ebuild.sh
 
-# Check that the caller is make
-caller=$(ps -p $PPID -o comm=)
-if [[ "$caller" != "make" ]]; then
-    echo "Error: don't call the '$0' script directly !" >&2
-    echo "Use the 'make iso' command instead" >&2
-#    exit 1
-fi
-
 set -u
 
 # Go to the script directory to create the package
@@ -32,7 +24,7 @@ CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
 EFIROOT=${SRCROOT}/CloverV2/EFI
 BASETOOLS_DIR=${SRCROOT}/../BaseTools/Source/C/bin
 
-REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+REVISION=$(git describe --tags $(git rev-list --tags --max-count=1))
 PRODUCT=Clover-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
@@ -196,10 +188,14 @@ else
 fi
 rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar
 
-# Open the final folder.
+# --- Open the output folder if no argument ---
 if [[ "${1:-}" == "" ]]; then
     ls -la sym
-    [[ "$SYSNAME" != Linux ]] && open sym
+  if [[ "$OSTYPE" == darwin* ]]; then
+    open sym
+  else
+    command -v xdg-open &>/dev/null && xdg-open sym
+  fi
 fi
 
 #exit 0
