@@ -27,59 +27,6 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP: 1
           HOMEBREW_NO_AUTO_UPDATE: 1
           
-      - name: Check Xcode version
-        run: |
-          XCODE_VER=$(xcodebuild -version | grep Xcode | awk '{print $2}' | tr -d '[:space:]')
-          echo "Detected Xcode version: $XCODE_VER"
-          if [[ -z "$XCODE_VER" ]]; then
-            echo "❌ Failed to detect Xcode version!"
-            exit 1
-          fi
-
-          MAJOR_VER=${XCODE_VER%%.*}
-          if [[ "$MAJOR_VER" -eq 26 ]]; then
-            CHECK_VER=16
-          else
-            CHECK_VER=$MAJOR_VER
-          fi
-
-          if [[ "$CHECK_VER" -lt 16 ]]; then
-            echo "❌ Xcode 16+ required!"
-            exit 1
-          fi
-
-          echo "✅ Using Xcode version $XCODE_VER (check $CHECK_VER)"
-
-      - name: Setup Python 3.13
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - name: Verify Python framework symlink
-        run: |
-          FRAMEWORK_PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13"
-          if [ ! -x "$FRAMEWORK_PATH" ]; then
-            echo "❌ Expected Python 3.13 at $FRAMEWORK_PATH not found!"
-            exit 1
-          fi
-          echo "✅ Python 3.13 found at $FRAMEWORK_PATH"
-
-      - name: Prepare Python env
-        run: |
-          python3.13 --version
-          pip3 install --upgrade pip
-          pip3 install setuptools
-          pip3 install --upgrade setuptools
-
-      - name: Download CloverGnuBuildTools
-        run: |
-          mkdir -p toolchain/tools/download
-          cd toolchain/tools/download
-          curl -L -o CloverBuildTools.zip https://github.com/YBronst/CloverBuildUtilities/releases/download/V.1.0/CloverBuildTools.zip
-          unzip CloverBuildTools.zip
-          cp -r CloverBuildTools/* .
-          rm -rf CloverBuildTools CloverBuildTools.zip
-
       - name: Build Clover Pack
         run: |
           chmod +x ./buildme
