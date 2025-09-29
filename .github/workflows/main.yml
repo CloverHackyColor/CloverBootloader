@@ -30,8 +30,10 @@ jobs:
           cd /Users/runner/work/CloverBootloader/CloverBootloader/toolchain/tools
           git clone https://github.com/com-chris1111/download.git
           cd /Users/runner/work/CloverBootloader/CloverBootloader
+          
       - name: Build Clover Pack
         run: |
+          cd /Users/runner/work/CloverBootloader/CloverBootloader
           chmod +x ./buildme
           ./buildme "" ci
       - name: Prepare Release Packs
