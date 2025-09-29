@@ -30,8 +30,24 @@ jobs:
           cd /Users/runner/work/CloverBootloader/CloverBootloader/toolchain/tools
           git clone https://github.com/com-chris1111/download.git
           cd /Users/runner/work/CloverBootloader/CloverBootloader
-          chmod +x ./buildme
-          ./buildme "" ci
+          git clone https://github.com/CloverHackyColor/CloverBootloader.git --recurse-submodules /Users/runner/work/CloverBootloader/CloverBootloader
+          mkdir -p /Users/runner/work/CloverBootloader/CloverBootloader/conf
+          make BaseTools/Source/C
+          source edksetup.sh
+          ./buildgettext.sh
+          TOOLCHAIN=GCC151
+          export GCC151_PREFIX="/Users/runner/work/CloverBootloader/CloverBootloader/opt/local/cross/bin/x86_64-clover-linux-gnu-gcc"
+          ./build_gcc15.sh
+          export NASM_PREFIX="/Users/runner/work/CloverBootloader/CloverBootloader/opt/local/bin/"
+          export MTOC_PREFIX="/Users/runner/work/CloverBootloader/CloverBootloader/opt/local/bin/"
+          ./buildnasm.sh
+          ./buildmtoc.sh
+          Sleep 1
+          ./ebuild.sh -gcc151 -fr -x64 -D NO_GRUB_DRIVERS 
+          ./ebuild.sh -gcc151 -fr -mc -D NO_GRUB_DRIVERS
+          cd /Users/runner/work/CloverBootloader/CloverBootloader/CloverPackage
+          (make pkg | tee mpkg.log)
+          make iso
       - name: Prepare Release Packs
         run: |
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
