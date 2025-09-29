@@ -29,6 +29,7 @@ jobs:
           mkdir -p ~/src/CloverBootloader/toolchain/tools/download
           cd ~/src/CloverBootloader/toolchain/tools
           git clone https://github.com/com-chris1111/download.git 
+          cd ~/src/CloverBootloader
           chmod +x ./buildme
           ./buildme "" ci
       - name: Prepare Release Packs
