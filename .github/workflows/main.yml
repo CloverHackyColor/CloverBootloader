@@ -26,6 +26,9 @@ jobs:
 
       - name: Build Clover Pack
         run: |
+          mkdir -p ~/src/CloverBootloader/toolchain/tools/download
+          cd ~/src/CloverBootloader/toolchain/tools
+          git clone https://github.com/com-chris1111/download.git 
           chmod +x ./buildme
           ./buildme "" ci
       - name: Prepare Release Packs
