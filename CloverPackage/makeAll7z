@@ -73,3 +73,5 @@ if (( ${#ARCHIVE_LIST[@]} )); then
 else
   echo "No archives were created."
 fi
+
+exit 0
