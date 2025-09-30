@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir -p /Users/runner/work/CloverBootloader/CloverBootloader/toolchain/tools/download
           cd /Users/runner/work/CloverBootloader/CloverBootloader/toolchain/tools
-          git clone https://github.com/com-chris1111/download.git
+          git clone https://github.com/CloverHackyColor/download.git
           cd /Users/runner/work/CloverBootloader/CloverBootloader
           
       - name: Build Clover Pack
