@@ -415,7 +415,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   echo "[BUILD PKG]"
   echo "The log will be created in the CloverPackage folder."
   rm -f mpkg.log
-  make pkg >mpkg.log
+  make pkg | tee mpkg.log
 else
   echo && echo "can't build pkg on a non Darwin OS!"
 fi
