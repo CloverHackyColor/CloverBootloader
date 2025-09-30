@@ -194,7 +194,7 @@ DownloadSource () {
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
         # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
-        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/gcc-15.1.0.tar.xz || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
