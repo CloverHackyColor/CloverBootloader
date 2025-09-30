@@ -26,8 +26,8 @@ jobs:
 
       - name: Prepare CloverBuildTool
         run: |
-          mkdir -p CloverBootloader/CloverBootloader/toolchain/tools/download
-          cd CloverBootloader/CloverBootloader/toolchain/tools
+          mkdir -p (CloverBootloader/toolchain/tools/download)
+          cd (CloverBootloader/toolchain/tools)            
           
       - name: Check out CloverBuildTools repo
         uses: actions/checkout@master
@@ -36,7 +36,7 @@ jobs:
           
       - name: Build Clover Pack
         run: |
-          cd CloverBootloader/CloverBootloader
+          cd (CloverBootloader)
           chmod +x ./buildme
           ./buildme "" ci
       - name: Prepare Release Packs
