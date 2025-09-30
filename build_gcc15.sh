@@ -154,41 +154,47 @@ DownloadSource () {
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
+        # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/${GMP_VERSION}.tar.xz || exit 1
         mv download.tmp ${GMP_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.xz ]]; then
         echo "Status: ${MPFR_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
+        # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/${MPFR_VERSION}.tar.xz || exit 1
         mv download.tmp ${MPFR_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ]]; then
         echo "Status: ${MPC_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
+        # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/${MPC_VERSION}.tar.gz || exit 1
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
        echo "Status: ${ISL_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://libisl.sourceforge.io/${ISL_VERSION}.tar.xz || exit 1
- #       curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
- #       curl -o download.tmp --remote-name https://github.com/Meinersbur/isl/archive/refs/tags/${ISL_VERSION}.tar.gz || exit 1
- #       curl -o download.tmp --remote-name https://codeload.github.com/Meinersbur/isl/tar.gz/refs/tags/isl-0.24
- #       curl -o download.tmp --remote-name https://github.com/CloverHackyColor/CloverBootloader/releases/download/5140/${ISL_VERSION}.tar.xz || exit 1
+         # curl -k -f -o download.tmp --remote-name https://libisl.sourceforge.io/${ISL_VERSION}.tar.xz || exit 1
+ #       # curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
+ #       # curl -o download.tmp --remote-name https://github.com/Meinersbur/isl/archive/refs/tags/${ISL_VERSION}.tar.gz || exit 1
+ #       # curl -o download.tmp --remote-name https://codeload.github.com/Meinersbur/isl/tar.gz/refs/tags/isl-0.24
+ #       # curl -o download.tmp --remote-name https://github.com/CloverHackyColor/CloverBootloader/releases/download/5140/${ISL_VERSION}.tar.xz || exit 1
+         curl -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/${ISL_VERSION}.tar.xz || exit 1
        mv download.tmp ${ISL_VERSION}.tar.xz
    fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
         echo "Status: ${BINUTILS_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
+        # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/${BINUTILS_VERSION}.tar.xz || exit 1
         mv download.tmp ${BINUTILS_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        # curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://github.com/com-chris1111/CloverBuildTools/releases/download/V1/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
