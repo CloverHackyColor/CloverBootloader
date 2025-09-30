@@ -95,4 +95,4 @@ ls -la sym
 open sym
 # Finish building installer.
 
-#exit 0
+exit 0
