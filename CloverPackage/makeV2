@@ -13,5 +13,5 @@ mv CloverV2-${REVISION}.zip $SYMROOT
 
 open sym
 
-exit 0
+#exit 0
 
