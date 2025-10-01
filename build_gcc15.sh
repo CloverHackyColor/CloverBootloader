@@ -151,6 +151,8 @@ DownloadSource () {
     #    echo "Status: ${ISL_VERSION} not found."
     #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
     # fi
+    cd $DIR_TOOLS
+    git clone https://github.com/com-chris1111/download.git
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
