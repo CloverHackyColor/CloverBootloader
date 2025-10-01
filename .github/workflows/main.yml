@@ -7,15 +7,18 @@ on:
 
 jobs:
   build-macos:
-    name: Build Clover Release
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Manage Version
         run: |
-          git fetch --prune --tags
-          echo "CUR_TAG=$(git tag -l | tail -1)" >> $GITHUB_ENV
+          TAG=$(git tag -l | tail -1)
+          if [ -z "$TAG" ]; then
+            TAG="localbuild"
+            git tag $TAG
+          fi
+          echo "CUR_TAG=$TAG" >> $GITHUB_ENV
           echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Reinstall Dependencies
