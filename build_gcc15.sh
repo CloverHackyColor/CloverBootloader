@@ -151,6 +151,10 @@ DownloadSource () {
     #    echo "Status: ${ISL_VERSION} not found."
     #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
     # fi
+    # Faster Downloads !
+    cd $DIR_TOOLS
+    echo "Cloning: CloverBuildTools."
+    git clone https://github.com/CloverHackyColor/download.git
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
