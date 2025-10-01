@@ -42,10 +42,10 @@ if [[ ${OSXVER} < 10.14 ]]; then
 else
 	export ISL_VERSION=${ISL_VERSION:-isl-0.27}
 fi
-#https://github.com/Meinersbur/isl/archive/refs/tags/isl-0.24.tar.gz
-#https://netbsd.pkgs.org/9/netbsd-amd64/isl-0.24.tgz.html
-#https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/9.1/All/isl-0.24.tgz
-#https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/isl/0.22.1-1/isl_0.22.1.orig.tar.xz
+# https://github.com/Meinersbur/isl/archive/refs/tags/isl-0.24.tar.gz
+# https://netbsd.pkgs.org/9/netbsd-amd64/isl-0.24.tgz.html
+# https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/9.1/All/isl-0.24.tgz
+# https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/isl/0.22.1-1/isl_0.22.1.orig.tar.xz
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
