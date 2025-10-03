@@ -152,7 +152,8 @@ DownloadSource () {
     #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
     # fi
     # Faster Downloads !
-    cd $DIR_TOOLS
+	rm -rf $DIR_TOOLS/download
+	cd $DIR_TOOLS
     echo "Cloning: CloverBuildTools."
     git clone https://github.com/CloverHackyColor/download.git
     cd $DIR_DOWNLOADS
