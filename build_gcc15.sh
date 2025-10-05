@@ -151,11 +151,6 @@ DownloadSource () {
     #    echo "Status: ${ISL_VERSION} not found."
     #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
     # fi
-    # Faster Downloads !
-	rm -rf $DIR_TOOLS/download
-	cd $DIR_TOOLS
-    echo "Cloning: CloverBuildTools."
-    git clone https://github.com/CloverHackyColor/download.git
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
@@ -185,15 +180,15 @@ DownloadSource () {
        mv download.tmp ${ISL_VERSION}.tar.xz
    fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
-        echo "Status: ${BINUTILS_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.xz || exit 1
-        mv download.tmp ${BINUTILS_VERSION}.tar.xz
+    if [[ ! -f ${DIR_DOWNLOADS}/$BINUTILS_VERSION.tar.xz ]]; then
+        echo "Status: $BINUTILS_VERSION not found."
+        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/binutils/releases/$BINUTILS_VERSION.tar.xz || exit 1
+        mv download.tmp $BINUTILS_VERSION.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
