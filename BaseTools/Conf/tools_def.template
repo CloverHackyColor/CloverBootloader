@@ -133,6 +133,7 @@ DEFINE GCC53_IA32_PREFIX       = ENV(GCC53_BIN)
 DEFINE GCC53_X64_PREFIX        = ENV(GCC53_BIN)
 DEFINE GCC131_X64_PREFIX		= ENV(GCC131_BIN)
 DEFINE GCC151_X64_PREFIX		= ENV(GCC151_BIN)
+DEFINE GCC152_X64_PREFIX		= ENV(GCC152_BIN)
 
 DEFINE UNIX_IASL_BIN           = ENV(IASL_PREFIX)iasl
 DEFINE WIN_IASL_BIN            = ENV(IASL_PREFIX)iasl.exe
@@ -2124,6 +2125,13 @@ DEFINE GCC151_IA32_X64_DLINK_FLAGS    = DEF(GCC151_IA32_X64_DLINK_COMMON),--entr
 DEFINE GCC151_X64_DLINK_FLAGS         = DEF(GCC151_IA32_X64_DLINK_FLAGS),-melf_x86_64,-znoexecstack,--oformat=elf64-x86-64,-pie
 DEFINE GCC151_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
+DEFINE GCC152_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC152_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
+DEFINE GCC152_IA32_X64_ASLDLINK_FLAGS = DEF(GCC152_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
+DEFINE GCC152_IA32_X64_DLINK_FLAGS    = DEF(GCC152_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+DEFINE GCC152_X64_DLINK_FLAGS         = DEF(GCC152_IA32_X64_DLINK_FLAGS),-melf_x86_64,-znoexecstack,--oformat=elf64-x86-64,-pie
+DEFINE GCC152_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
+
 
 
 ####################################################################################
@@ -2640,6 +2648,63 @@ RELEASE_GCC131_AARCH64_DLINK_XIPFLAGS = -z common-page-size=0x20
 RELEASE_GCC151_X64_CC_FLAGS       = DEF(GCC151_X64_CC_FLAGS) -Os -Werror
   DEBUG_GCC151_X64_CXX_FLAGS      = DEF(GCC151_X64_CC_FLAGS) -g3 -O0
 RELEASE_GCC151_X64_CXX_FLAGS      = DEF(GCC151_X64_CC_FLAGS) -Os -Werror
+
+
+####################################################################################
+#
+# GCC 15.2 - This configuration is used to compile under Linux/MacOSX to produce
+#           PE/COFF binaries using GCC 15.2.
+#
+####################################################################################
+*_GCC152_*_*_FAMILY               = GCC
+*_GCC152_*_*_BUILDRULEORDER       = nasm S s
+
+*_GCC152_*_MAKE_PATH                    = make
+
+*_GCC152_*_*_DLL                        = ENV(GCC152_DLL)
+
+*_GCC152_X64_GCCLINK_PREFIX             = -Wl,
+
+*_GCC152_*_ASL_PATH                     = DEF(UNIX_IASL_BIN)
+
+*_GCC152_*_NASM_PATH   		         = ENV(NASM_PREFIX)nasm
+
+*_GCC152_*_PP_FLAGS                     = DEF(GCC_PP_FLAGS)
+*_GCC152_*_ASLPP_FLAGS                  = DEF(GCC_ASLPP_FLAGS)
+*_GCC152_*_ASLCC_FLAGS                  = DEF(GCC_ASLCC_FLAGS)
+*_GCC152_*_VFRPP_FLAGS                  = DEF(GCC_VFRPP_FLAGS)
+*_GCC152_*_APP_FLAGS                    =
+*_GCC152_*_ASL_FLAGS                    = DEF(IASL_FLAGS)
+*_GCC152_*_ASL_OUTFLAGS                 = DEF(IASL_OUTFLAGS)
+
+##################
+# GCC152 X64 definitions
+##################
+*_GCC152_X64_OBJCOPY_PATH         = DEF(GCC152_X64_PREFIX)objcopy
+*_GCC152_X64_CC_PATH              = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_CXX_PATH             = DEF(GCC152_X64_PREFIX)g++
+*_GCC152_X64_SLINK_PATH           = DEF(GCC152_X64_PREFIX)gcc-ar
+*_GCC152_X64_DLINK_PATH           = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_ASLDLINK_PATH        = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_ASM_PATH             = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_PP_PATH              = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_VFRPP_PATH           = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_ASLCC_PATH           = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_ASLPP_PATH           = DEF(GCC152_X64_PREFIX)gcc
+*_GCC152_X64_RC_PATH              = DEF(GCC152_X64_PREFIX)objcopy
+
+*_GCC152_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64
+*_GCC152_X64_ASLDLINK_FLAGS       = DEF(GCC48_IA32_X64_ASLDLINK_FLAGS),-m,elf_x86_64
+*_GCC152_X64_ASM_FLAGS            = DEF(GCC152_ASM_FLAGS) -m64
+*_GCC152_X64_DLINK_FLAGS          = DEF(GCC152_X64_DLINK_FLAGS) DEF(GCC152_X64_CC_FLAGS) ENV(GCC152_X64_EXTRA_CC_FLAGS)
+*_GCC152_X64_RC_FLAGS             = DEF(GCC_X64_RC_FLAGS)
+*_GCC152_X64_OBJCOPY_FLAGS        =
+*_GCC152_X64_NASM_FLAGS           = -f elf64
+
+  DEBUG_GCC152_X64_CC_FLAGS       = DEF(GCC152_X64_CC_FLAGS) -g3 -O0
+RELEASE_GCC152_X64_CC_FLAGS       = DEF(GCC152_X64_CC_FLAGS) -Os -Werror
+  DEBUG_GCC152_X64_CXX_FLAGS      = DEF(GCC152_X64_CC_FLAGS) -g3 -O0
+RELEASE_GCC152_X64_CXX_FLAGS      = DEF(GCC152_X64_CC_FLAGS) -Os -Werror
 
 #
 #
