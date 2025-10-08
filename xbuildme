@@ -89,7 +89,7 @@ echo -e "${COL_WHITE}                     Switch to ${COL_CYAN}XCODE${COL_WHITE}
 echo -e "${COL_WHITE}     Depending on your ${COL_CYAN}XCODE version${COL_WHITE} the Toolset will be ${COL_CYAN}automatically chosen"
 echo -e "${COL_GREEN} ---------------------- ${COL_CYAN}Current Python version: ${COL_WHITE}Python 3.13.7${COL_GREEN} --------------------${COL_RESET}"
 declare -r CLOVERROOT="$PWD"
-declare -r MYTOOLCHAIN=${1:-GCC151}
+declare -r MYTOOLCHAIN=${1:-GCC152}
 
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT/toolchain"}
 
