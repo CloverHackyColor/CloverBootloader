@@ -43,7 +43,7 @@ M_NOGRUB=0
 M_APPLEHFS=0
 
 # Default values
-export TOOLCHAIN=GCC151
+export TOOLCHAIN=GCC152
 export TARGETARCH=X64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
@@ -55,7 +55,7 @@ export PYTHON_COMMAND=python3
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
 if [[ "$SYSNAME" == Linux ]]; then
-  export TOOLCHAIN=GCC151
+  export TOOLCHAIN=GCC152
   TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
 else
   if [[ -d ~/src/opt/local ]]; then
@@ -251,6 +251,7 @@ usage() {
     print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-11"
     print_option_help "-gcc131"    "use GCC 13.1 toolchain, including gcc-14.2"
     print_option_help "-gcc151"    "use GCC 15.1 toolchain"
+    print_option_help "-gcc152"    "use GCC 15.2 toolchain"
 #    print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
 #    print_option_help "-xcode"     "use XCode 3.2 toolchain"
     print_option_help "-xcode5"     "use XCode 5 toolchain, "
@@ -319,6 +320,7 @@ checkCmdlineArguments() {
             -gcc53  | --gcc53)   TOOLCHAIN=GCC53   ;;
             -gcc131  | --gcc131)   TOOLCHAIN=GCC131   ;;
             -gcc151  | --gcc151)   TOOLCHAIN=GCC151   ;;
+            -gcc152  | --gcc152)   TOOLCHAIN=GCC152   ;;
             -x64 | --x64)
 #                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
 #                sleep 4
@@ -429,15 +431,15 @@ checkToolchain() {
     esac
 
   if [[ "$SYSNAME" == Linux ]]; then
-    export GCC151_BIN="$TOOLCHAIN_DIR/bin/"
-    if [[ ! -x "${GCC151_BIN}gcc" ]]; then
+    export GCC152_BIN="$TOOLCHAIN_DIR/bin/"
+    if [[ ! -x "${GCC152_BIN}gcc" ]]; then
         echo "No clover toolchain for Linux found !" >&2
         echo "Install on your system or define the TOOLCHAIN_DIR variable." >&2
         exit 1
     fi
   else
-    export GCC151_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
-    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC151_BIN}gcc" ]]; then
+    export GCC152_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
+    if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC152_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
       echo "Build it with the build_gcc15.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1
