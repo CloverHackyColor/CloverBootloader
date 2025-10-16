@@ -11,6 +11,18 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set proxy
+        run: |
+          echo "HTTP_PROXY=http://10.10.10.10:3128" >> $GITHUB_ENV
+          echo "HTTPS_PROXY=http://10.10.10.10:3128" >> $GITHUB_ENV
+      - uses: actions/setup-php@v2
+      - name: Install curl
+        run: |
+          apt-get update
+          apt-get install -y curl
+      - name: Run test
+        run: |
+          curl -v https://www.google.com
 
       - name: Manage Version
         run: |
