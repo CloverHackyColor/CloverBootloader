@@ -183,13 +183,13 @@ Usually it is already present but sometime it may be missed. In this case you sh
 "BGM_description" = "BGM (Black Green and Moody) theme from Blackosx,
 Install to /EFI/CLOVER/themes/BGM";
 
+"Glass_title" = "Glass";
+"Glass_description" = "Glass (A macOS Classic theme) from chris1111,
+Install to /EFI/CLOVER/themes/Glass";
+
 "embedded_title" = "embedded";
 "embedded_description" = "embedded theme from Clovy,
 Install to /EFI/CLOVER/themes/embedded";
-
-"metal_title" = "metal";
-"metal_description" = "The original metal theme from Slice,
-Install to /EFI/CLOVER/themes/metal";
 
 "cesium_title" = "cesium";
 "cesium_description" = "Vector SVG theme from Slice,
@@ -203,9 +203,6 @@ Install to /EFI/CLOVER/themes/Clovy";
 "random_description" = "random theme,
 Install to /EFI/CLOVER/themes/random choose a theme from others";
 
-"steampunkblack_title" = "steampunkblack";
-"steampunkblack_description" = "steampunkblack theme from medik,
-Install to /EFI/CLOVER/themes/steampunkblack";
 
 //"CloverThemeManager_title" = "CloverThemeManager.app";
 //"CloverThemeManager_description" = "CloverThemeManager.app by blackosx,
