@@ -15,7 +15,6 @@ jobs:
         run: |
           echo "HTTP_PROXY=http://10.10.10.10:3128" >> $GITHUB_ENV
           echo "HTTPS_PROXY=http://10.10.10.10:3128" >> $GITHUB_ENV
-      - uses: actions/checkout@v4
       - name: Install curl
         run: |
           apt-get update
