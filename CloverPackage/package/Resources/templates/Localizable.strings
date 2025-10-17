@@ -187,9 +187,9 @@ Install to /EFI/CLOVER/themes/BGM";
 "Glass_description" = "Glass (A macOS Classic theme) from chris1111,
 Install to /EFI/CLOVER/themes/Glass";
 
-"embedded_title" = "embedded";
-"embedded_description" = "embedded theme from Clovy,
-Install to /EFI/CLOVER/themes/embedded";
+"Purple_Swirl_title" = "Purple_Swirl";
+"Purple_Swirl_description" = "Purple_Swirl theme from pkdesign,
+Install to /EFI/CLOVER/themes/Purple_Swirl";
 
 "cesium_title" = "cesium";
 "cesium_description" = "Vector SVG theme from Slice,
