@@ -195,8 +195,8 @@ Install to /EFI/CLOVER/themes/embedded";
 "cesium_description" = "Vector SVG theme from Slice,
 Install to /EFI/CLOVER/themes/cesium";
 
-"clovy_title" = "Clovy";
-"clovy_description" = "Vector SVG theme from Clovy,
+"Clovy_title" = "Clovy";
+"Clovy_description" = "Vector SVG theme from Clovy,
 Install to /EFI/CLOVER/themes/Clovy";
 
 "random_title" = "random";
