@@ -43,7 +43,7 @@ fi
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 declare -r CLOVERROOT="$PWD"
 declare -r SYSNAME="$(uname)"
-MYTOOLCHAIN=${1:-GCC151}
+MYTOOLCHAIN=${1:-GCC152}
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 lsha1="not a git repo"
 pyversion=$(echo $COL_CYAN"Current Python version: "$COL_WHITE$($(which python3) --version))
@@ -122,9 +122,9 @@ checkTools() {
 if [[ "$SYSNAME" == Darwin ]]; then
   checkXCODE
   exportPaths
-  local GCC151_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
-  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC151_BIN}" ]]; then
-    if [[ $MYTOOLCHAIN == GCC151 ]]; then
+  local GCC152_BIN="$PREFIX/cross/bin/x86_64-clover-linux-gnu-gcc"
+  if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC152_BIN}" ]]; then
+    if [[ $MYTOOLCHAIN == GCC152 ]]; then
       cd "${CLOVERROOT}"
       ./build_gcc15.sh
     else

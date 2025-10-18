@@ -84,12 +84,12 @@ fi
 # ====== Display Menu ======
 echo -e "${COL_GREEN} ---------------------------------------------------------------------------------"
 echo -e "${COL_GREEN}                           🍀 Clover r${revision} ${COL_WHITE}(SHA: 64d434947)"
-echo -e "${COL_WHITE}                              Default TOOLCHAIN: ${COL_CYAN}GCC151${COL_WHITE}"
+echo -e "${COL_WHITE}                              Default TOOLCHAIN: ${COL_CYAN}GCC152${COL_WHITE}"
 echo -e "${COL_WHITE}                     Switch to ${COL_CYAN}XCODE${COL_WHITE} select: ${COL_CYAN}build (with XCode)"
 echo -e "${COL_WHITE}     Depending on your ${COL_CYAN}XCODE version${COL_WHITE} the Toolset will be ${COL_CYAN}automatically chosen"
 echo -e "${COL_GREEN} ---------------------- ${COL_CYAN}Current Python version: ${COL_WHITE}Python 3.13.7${COL_GREEN} --------------------${COL_RESET}"
 declare -r CLOVERROOT="$PWD"
-declare -r MYTOOLCHAIN=${1:-GCC151}
+declare -r MYTOOLCHAIN=${1:-GCC152}
 
 TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT/toolchain"}
 
