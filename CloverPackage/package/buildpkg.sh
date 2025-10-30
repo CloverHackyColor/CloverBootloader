@@ -1436,7 +1436,6 @@ if [[ -d "${SRCROOT}"/BootLoaderChooser && ${NOEXTRAS} != *"BootLoaderChooser"* 
       if [ -d "$BLC_Dir" ]; then
         addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
                   --pkg-refs="$packageRefId" "${choiceId}"
-                  echo "   **** Option usable with buildme only ****"
       else
 
         addChoice --start-visible="false" --start-selected="false"  \
