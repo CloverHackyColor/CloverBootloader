@@ -2,7 +2,7 @@
 
 # created by vector sigma on July 15 2019
 # modified by LAbyOne on My 2021
-# github version
+# github version CloverHackyColor
 
 # Linux users should be able to use this wrapper, although the following are needed:
 # (Ubuntu alike)
@@ -237,17 +237,20 @@ makeReleaseXC() {
   echo "[BUILD CLOVER RELEASE WITH XCODE]"
   local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
   if [[ "$xrel" < "14.*" ]]; then
-	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE8
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE8
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE8
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE8
   elif [[ "$xrel" == "14.*" ]]; then
-	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE14
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE14
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE14
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE14
   elif [[ "$xrel" == "15.*" ]]; then
-	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE15
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE15
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE15
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE15
   elif [[ "$xrel" == "16.*" ]]; then
-	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE16
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D -t XCODE16
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
+  elif [[ "$xrel" > "16.*" ]]; then
+	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
   fi
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
@@ -257,11 +260,6 @@ makeReleaseXC() {
   fi
 }
 
-
-buildCCPV() {
-  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-  make
-}
 
 BLC() {
 if [[ ! -d "${CLOVERROOT}"/CloverPackage/BootLoaderChooser ]]; then
@@ -340,7 +338,7 @@ buildCloverXC() {
     echo "Running custom build script"
     "${DIR_TOOLS}"/Scripts/build.sh "${CLOVERROOT}" $MYTOOLCHAIN
   else
-  local xrel="$(defaults read ~/Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
+  local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
     if [[ "$xrel" < "14.*" ]]; then
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE8
     elif [[ "$xrel" == "14.*" ]]; then
@@ -348,6 +346,8 @@ buildCloverXC() {
     elif [[ "$xrel" == "15.*" ]]; then
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE15
     elif [[ "$xrel" == "16.*" ]]; then
+  	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE16
+    elif [[ "$xrel" > "16.*" ]]; then
   	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D USE_APPLE_HFSPLUS_DRIVER -t XCODE16
     fi
   fi
@@ -414,8 +414,8 @@ if [[ "$SYSNAME" == Darwin ]]; then
   checkGETTEXT
   echo "[BUILD PKG]"
   echo "The log will be created in the CloverPackage folder."
-  rm -f mpkg.log
-  make pkg | tee mpkg.log
+  rm -f ~/Desktop/mpkg.log
+  make pkg | tee ~/Desktop/mpkg.log
 else
   echo && echo "can't build pkg on a non Darwin OS!"
 fi
@@ -494,28 +494,14 @@ make -C BaseTools "BUILD_CC=clang"
 }
 
 ## Utilities
-buildCPV() {
-  revision=r$(git describe --tags $(git rev-list --tags --max-count=1))
-  if [[ -d "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator ]]; then
-    rm -Rf "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-  fi
-  mkdir -p "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-  cd "${CLOVERROOT}"/Xcode/CloverConfigPlistValidator
-  checkXCODE
-  xcodebuild -project ./CloverConfigPlistValidator.xcodeproj -quiet CONFIGURATION_BUILD_DIR="${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-  mv -f "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/CloverConfigPlistValidator_${revision}
-  rm -r "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator/*.dSYM
-  open "${CLOVERROOT}"/CloverPackage/CloverConfigPlistValidator
-}
-
-PlistEDPlus() {
+Xplist() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils
   fi
-  cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/PlistEDPlus/releases/download/1.2.35/PlistEDPlus_Mac.dmg > PlistEDPlus_Mac.dmg
-  hdiutil attach -quiet -noverify -nobrowse PlistEDPlus_Mac.dmg && cp -Rf /Volumes/bin\:release\:PlistEDPlus/PlistEDPlus.app $HOME/Desktop/ClovUtils
-  hdiutil detach -force /Volumes/bin\:release\:PlistEDPlus
-  rm -r $HOME/Desktop/ClovUtils/PlistEDPlus_Mac.dmg && open $HOME/Desktop/ClovUtils
+  cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/Xplist/releases/download/1.2.47/Xplist_Mac.dmg > Xplist_Mac.dmg
+  hdiutil attach -quiet -noverify -nobrowse Xplist_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xplist/Xplist.app $HOME/Desktop/ClovUtils
+  hdiutil detach -force /Volumes/bin\:release\:Xplist
+  rm -r $HOME/Desktop/ClovUtils/Xplist_Mac.dmg && open $HOME/Desktop/ClovUtils
 }
 
 Hackintool() {
@@ -558,15 +544,6 @@ Get-IOReg-Devices() {
   cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/LAbyOne/Get-IOReg-Devices
   mv -f Get-IOReg-Devices/Get\ IOReg\ Devices $HOME/Desktop/ClovUtils/Get\ IOReg-Devices && chmod a+x $HOME/Desktop/ClovUtils/Get\ IOReg-Devices/*.command
   rm -rf Get-IOReg-Devices && open $HOME/Desktop/ClovUtils
-}
-
-NDBrightness () {
-  if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-    mkdir -p $HOME/Desktop/ClovUtils
-  fi
-  cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/KAMIKAZEUA/NativeDisplayBrightness NDBrightness
-  xcodebuild -project ./NDBrightness/NativeDisplayBrightness.xcodeproj -quiet -configuration Release clean build ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES CONFIGURATION_BUILD_DIR=$HOME/Desktop/ClovUtils
-  rm -Rf $HOME/Desktop/ClovUtils/NDBrightness && rm -r $HOME/Desktop/ClovUtils/*.dSYM && open $HOME/Desktop/ClovUtils
 }
 
 SSDTTime() {
@@ -624,7 +601,7 @@ echo -e $COL_GREEN" ------------------------------------------------------------
 echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e $COL_CYAN"                                     Test Builds"
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 
 PS3='
 Please enter your choice: '
@@ -672,18 +649,16 @@ echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsh
 echo -e $COL_CYAN"                                  External Utilities "
 echo -e $COL_WHITE"                     All Files will be put on Desktop/ClovUtils"
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n"
+echo -e "\n"
 
 PS3='
 Please enter your choice: '
-options=( 'Get CloverConfigPlistValidator		  '
-          'Get PlistEDPlus		'
-          'Get Hackintool		'
-          'Get BitmaskDecode		'
-          'Get MaciASL			'
-          'Get dmidecode		'
-          'Get IOReg-Devices		'
-          'Get NativeDisplayBrightness			  '
+options=( 'Get Xplist'
+          'Get Hackintool'
+          'Get BitmaskDecode'
+          'Get MaciASL'
+          'Get dmidecode'
+          'Get IOReg-Devices'
           'Get SSDTTime'
           'Get USBMap'
           'Get Xiasl'
@@ -695,36 +670,28 @@ options=( 'Get CloverConfigPlistValidator		  '
 select opt in "${options[@]}"
  do
     case $opt in
-    "Get CloverConfigPlistValidator		  ")
-      buildCPV
+    "Get Xplist")
+      Xplist
       break
     ;;
-    "Get PlistEDPlus		")
-      PlistEDPlus
-      break
-    ;;
-    "Get Hackintool		")
+    "Get Hackintool")
       Hackintool
       break
     ;;
-    "Get BitmaskDecode		")
+    "Get BitmaskDecode")
       BitmaskDecode
       break
     ;;
-    "Get MaciASL			")
+    "Get MaciASL")
       MaciASL
       break
     ;;
-    "Get dmidecode		")
+    "Get dmidecode")
       dmidecode
       break
     ;;
-    "Get IOReg-Devices		")
+    "Get IOReg-Devices")
       Get-IOReg-Devices
-      break
-    ;;
-    "Get NativeDisplayBrightness			  ")
-      NDBrightness
       break
     ;;
     "Get SSDTTime")
@@ -780,17 +747,17 @@ echo -e "$COL_WHITE                              Default TOOLCHAIN:$COL_CYAN $MY
 echo -e "${COL_WHITE}                     Switch to${COL_CYAN} XCODE${COL_WHITE} can be done on${COL_CYAN} Cloverbuilds"
 if [[ -x "$(which python3)" ]]; then
 	echo -e $COL_GREEN" ---------------------- ${pyversion}$COL_GREEN -------------------- "$COL_RESET
-	echo -e "\n\n\n\n\n\n\n\n\n\n"
+	echo -e "\n"
 else
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n\n\n"
+echo -e "\n"
 fi
 PS3='
 Please enter your choice: '
-options=( 'Cloverbuilds		'
-          'test Clover	'
-          'check status		'
-          'show diff	'
+options=( 'Cloverbuilds'
+          'test Clover'
+          'check status'
+          'show diff'
           'open CloverV2 directory'
           'update Clover (reset changes)'
           'clean BaseTools'
@@ -801,19 +768,19 @@ options=( 'Cloverbuilds		'
 select opt in "${options[@]}"
 do
   case $opt in
-    "Cloverbuilds		")
+    "Cloverbuilds")
       menu
       break
     ;;
-    "test Clover	")
+    "test Clover")
       testing
       break
     ;;
-    "check status	")
+    "check status")
       checkStatus
       break
     ;;
-    "show diff		")
+    "show diff")
       showdiff
       break
     ;;
@@ -876,19 +843,19 @@ echo -e "${COL_WHITE}     Depending on your${COL_CYAN} XCODE version${COL_WHITE}
 # echo -e "${COL_WHITE}    Toolset${COL_CYAN} is automatically chosen${COL_WHITE} depending on the${COL_CYAN} XCODE installed version"
 if [[ -x "$(which python3)" ]]; then
 	echo -e $COL_GREEN" ---------------------- ${pyversion}$COL_GREEN -------------------- "$COL_RESET
-	echo -e "\n\n\n\n\n\n\n"
+	echo -e "\n"
 else
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
-echo -e "\n\n\n\n\n\n\n"
+echo -e "\n"
 fi
 PS3='
 Please enter your choice: '
-options=( 'build Clover (Default Toolchain)	 '
-          'build all (Default Toolchain)	'
-		  'make Release (Default Toolchain)	'
-          'update Clover	'
-          'make pkg	'
-          'make iso	'
+options=( 'build Clover (Default Toolchain)'
+          'build all (Default Toolchain)'
+		  'make Release (Default Toolchain)'
+          'update Clover'
+          'make pkg'
+          'make iso'
 		  'make Clover_V2'
           'build Clover (with XCode)'
           'build all (with XCode)'
@@ -900,11 +867,11 @@ options=( 'build Clover (Default Toolchain)	 '
 select opt in "${options[@]}"
 do
   case $opt in
-    "build Clover (Default Toolchain)	 ")
+    "build Clover (Default Toolchain)")
       buildClover
       break
     ;;
-	"build all (Default Toolchain)	")
+	"build all (Default Toolchain)")
       buildClover
       BLC
       buildPkg
@@ -912,7 +879,7 @@ do
       makeV2 
       break
 	;;
-    "make Release (Default Toolchain)	")
+    "make Release (Default Toolchain)")
       makeRelease
       BLC
       buildPkg
@@ -920,16 +887,16 @@ do
       makeV2
       break
     ;;
-      "update Clover	")
+      "update Clover")
       updateClover
       break
     ;;
-      "make pkg	")
+      "make pkg")
       BLC
       buildPkg
       break
     ;;
-      "make iso	")
+      "make iso")
       buildIso
       break
     ;;
