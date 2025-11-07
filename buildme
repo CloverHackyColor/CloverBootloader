@@ -238,19 +238,19 @@ makeReleaseXC() {
   local xrel="$(defaults read /Applications/Xcode.app/Contents/version.plist CFBundleShortVersionString)"
   if [[ "$xrel" < "14.*" ]]; then
 	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE8
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE8
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t XCODE8
   elif [[ "$xrel" == "14.*" ]]; then
 	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE14
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE14
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t XCODE14
   elif [[ "$xrel" == "15.*" ]]; then
 	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE15
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE15
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t XCODE15
   elif [[ "$xrel" == "16.*" ]]; then
 	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t XCODE16
   elif [[ "$xrel" > "16.*" ]]; then
 	  ./ebuild.sh -fr -mc --no-usb -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
-	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -t XCODE16
+	  ./ebuild.sh -fr -D NO_GRUB_DRIVERS_EMBEDDED -D LESS_DEBUG -t XCODE16
   fi
   # Run a post build script if exist (${DIR_TOOLS}/CloverScripts/postbuild.sh)
   if [[ -x "${DIR_TOOLS}"/CloverScripts/postbuild.sh ]]; then
@@ -498,10 +498,11 @@ Xplist() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils
   fi
-  cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/Xplist/releases/download/1.2.47/Xplist_Mac.dmg > Xplist_Mac.dmg
-  hdiutil attach -quiet -noverify -nobrowse Xplist_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xplist/Xplist.app $HOME/Desktop/ClovUtils
-  hdiutil detach -force /Volumes/bin\:release\:Xplist
-  rm -r $HOME/Desktop/ClovUtils/Xplist_Mac.dmg && open $HOME/Desktop/ClovUtils
+#  cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/ic005k/Xplist/releases/download/1.2.47/Xplist_Mac.dmg > Xplist_Mac.dmg
+#  hdiutil attach -quiet -noverify -nobrowse Xplist_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xplist/Xplist.app $HOME/Desktop/ClovUtils
+#  hdiutil detach -force /Volumes/bin\:release\:Xplist
+  cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/CloverHackyColor/Xplist/releases/download/1.3.1/Xplist.zip > Xplist.zip
+  unzip -q Xplist.zip && rm -r Xplist.zip && open $HOME/Desktop/ClovUtils
 }
 
 Hackintool() {
@@ -565,10 +566,11 @@ Xiasl() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils
   fi
-  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/Xiasl/releases/download/1.1.66/Xiasl_Mac.dmg > Xiasl_Mac.dmg
-  hdiutil attach -quiet -noverify -nobrowse Xiasl_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xiasl/Xiasl.app $HOME/Desktop/ClovUtils
-  hdiutil detach -force /Volumes/bin\:release\:Xiasl
-  rm -r $HOME/Desktop/ClovUtils/Xiasl_Mac.dmg && open $HOME/Desktop/ClovUtils
+#  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/Xiasl/releases/download/1.1.66/Xiasl_Mac.dmg > Xiasl_Mac.dmg
+#  hdiutil attach -quiet -noverify -nobrowse Xiasl_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xiasl/Xiasl.app $HOME/Desktop/ClovUtils
+#  hdiutil detach -force /Volumes/bin\:release\:Xiasl
+  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/CloverHackyColor/Xiasl/releases/download/1.1.8/Xiasl.zip > Xiasl.zip
+  unzip -q Xiasl.zip && rm -r Xiasl.zip && open $HOME/Desktop/ClovUtils
 }
 
 CsrDecode() {
@@ -852,16 +854,16 @@ PS3='
 Please enter your choice: '
 options=( 'build Clover (Default Toolchain)'
           'build all (Default Toolchain)'
-		  'make Release (Default Toolchain)'
+    		  'make Release (Default Toolchain)'
           'update Clover'
           'make pkg'
           'make iso'
-		  'make Clover_V2'
+    		  'make Clover_V2'
           'build Clover (with XCode)'
           'build all (with XCode)'
-		  'make Release (with XCode)'
-		  'build Clover with HFSPlus'
-		  'Extra Options'
+    		  'make Release (with XCode)'
+    		  'build Clover with HFSPlus'
+    		  'Extra Options'
           'Exit')
 
 select opt in "${options[@]}"
