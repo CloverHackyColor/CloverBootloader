@@ -569,7 +569,7 @@ Xiasl() {
 #  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/ic005k/Xiasl/releases/download/1.1.66/Xiasl_Mac.dmg > Xiasl_Mac.dmg
 #  hdiutil attach -quiet -noverify -nobrowse Xiasl_Mac.dmg && cp -Rf /Volumes/bin\:release\:Xiasl/Xiasl.app $HOME/Desktop/ClovUtils
 #  hdiutil detach -force /Volumes/bin\:release\:Xiasl
-  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/CloverHackyColor/Xiasl/releases/download/1.1.8/Xiasl.zip > Xiasl.zip
+  cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/CloverHackyColor/Xiasl/releases/download/1.1.67/Xiasl.zip > Xiasl.zip
   unzip -q Xiasl.zip && rm -r Xiasl.zip && open $HOME/Desktop/ClovUtils
 }
 
