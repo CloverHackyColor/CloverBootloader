@@ -532,10 +532,9 @@ MaciASL() {
 
 dmidecode() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
-    mkdir -p $HOME/Desktop/ClovUtils/dmidecode
+    mkdir -p $HOME/Desktop/ClovUtils
   fi
-  cd $HOME/Desktop/ClovUtils && curl -sLq  https://github.com/CloverHackyColor/dmidecode/releases/download/3.6/dmidecode.zip > dmidecode.zip
- unzip -q dmidecode.zip && rm -r dmidecode.zip && && open $HOME/Desktop/ClovUtils
+    cd $HOME/Desktop/ClovUtils && curl -sLq  https://github.com/CloverHackyColor/dmidecode/releases/download/3.6/dmidecode.zip > dmidecode.zip && unzip -q $HOME/Desktop/ClovUtils/dmidecode.zip && rm -r $HOME/Desktop/ClovUtils/dmidecode.zip && open $HOME/Desktop/ClovUtils
 }
 
 Get-IOReg-Devices() {
