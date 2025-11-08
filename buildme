@@ -534,8 +534,8 @@ dmidecode() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils/dmidecode
   fi
-  cd $HOME/Desktop/ClovUtils && git clone -q https://github.com/acidanthera/dmidecode dmi-decode && xcodebuild -project ./dmi-decode/dmidecode.xcodeproj -quiet
-  cp -r dmi-decode/dmidecode $HOME/Desktop/ClovUtils/dmidecode && rm -Rf $HOME/Desktop/ClovUtils/dmi-decode && open $HOME/Desktop/ClovUtils
+  cd $HOME/Desktop/ClovUtils && curl -sLq  https://github.com/CloverHackyColor/dmidecode/releases/download/3.6/dmidecode.zip > dmidecode.zip
+ unzip -q dmidecode.zip && rm -r dmidecode.zip && && open $HOME/Desktop/ClovUtils
 }
 
 Get-IOReg-Devices() {
