@@ -503,6 +503,7 @@ Xplist() {
 #  hdiutil detach -force /Volumes/bin\:release\:Xplist
   cd $HOME/Desktop/ClovUtils && curl -qsSLk https://github.com/CloverHackyColor/Xplist/releases/download/1.3.1/Xplist.zip > Xplist.zip
   unzip -q Xplist.zip && rm -r Xplist.zip && open $HOME/Desktop/ClovUtils
+  rm -rf $HOME/Desktop/ClovUtils/__MACOSX
 }
 
 Hackintool() {
@@ -534,7 +535,11 @@ dmidecode() {
   if [[ ! -d $HOME/Desktop/ClovUtils ]]; then
     mkdir -p $HOME/Desktop/ClovUtils
   fi
-    cd $HOME/Desktop/ClovUtils && mkdir -p $HOME/Desktop/ClovUtils/dmidecode && cd $HOME/Desktop/ClovUtils/dmidecode && curl -sLq  https://github.com/CloverHackyColor/dmidecode/releases/download/3.6/dmidecode.zip > dmidecode.zip && unzip -q $HOME/Desktop/ClovUtils/dmidecode/dmidecode.zip && rm -r $HOME/Desktop/ClovUtils/dmidecode/dmidecode.zip && open $HOME/Desktop/ClovUtils/dmidecode
+  cd $HOME/Desktop/ClovUtils && mkdir -p $HOME/Desktop/ClovUtils/dmidecode 
+  cd $HOME/Desktop/ClovUtils/dmidecode && curl -sLq  https://github.com/CloverHackyColor/dmidecode/releases/download/3.6/dmidecode.zip > dmidecode.zip 
+  unzip -q $HOME/Desktop/ClovUtils/dmidecode/dmidecode.zip 
+  rm -r $HOME/Desktop/ClovUtils/dmidecode/dmidecode.zip 
+  open $HOME/Desktop/ClovUtils/dmidecode
 }
 
 Get-IOReg-Devices() {
@@ -570,6 +575,7 @@ Xiasl() {
 #  hdiutil detach -force /Volumes/bin\:release\:Xiasl
   cd $HOME/Desktop/ClovUtils && curl -sLq https://github.com/CloverHackyColor/Xiasl/releases/download/1.1.67/Xiasl.zip > Xiasl.zip
   unzip -q Xiasl.zip && rm -r Xiasl.zip && open $HOME/Desktop/ClovUtils
+  rm -rf $HOME/Desktop/ClovUtils/__MACOSX
 }
 
 CsrDecode() {
