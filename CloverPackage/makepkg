@@ -1,9 +1,22 @@
 #!/bin/bash
 #
-# Reset default charset for GNUsed problems...
-#set -x
+# Clover package build script
+# created by vector sigma, refined version
+#
+
+# --- Reset locale to avoid GNU sed issues ---
 export LC_ALL=C
 
+# --- Define important paths ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SYMROOT="$SCRIPT_DIR/sym"
+PKG_BUILD_DIR="$SYMROOT/package"
+
+# --- Add local toolchain and gettext to PATH ---
+export PATH="$REPO_ROOT/toolchain/bin:$REPO_ROOT/toolchain/bin/gettext/bin:$PATH"
+
+# --- Usage help function ---
 usage () {
 printf "\n\e[1m%s\e[0m\n" "Usage: $0 [flag1 flag2...]"
 printf "\n%s" "The (optional) exclude flags are being passed to the buildpkg.sh script, when specified."
@@ -31,7 +44,7 @@ done
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
