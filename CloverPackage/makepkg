@@ -4,6 +4,21 @@
 #set -x
 export LC_ALL=C
 
+# Check that the caller is make
+caller=$(ps -p $PPID -o comm=)
+if [[ "$caller" != "make" ]]; then
+    echo "Warning: don't call the '$0' script directly !" >&2
+    echo "Use the 'make pkg' command instead" >&2
+#    exit 1
+fi
+
+# --- Define script and repo paths ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# --- Add local toolchain and gettext to PATH ---
+export PATH="$REPO_ROOT/toolchain/bin:$REPO_ROOT/toolchain/bin/gettext/bin:$PATH"
+
 usage () {
 printf "\n\e[1m%s\e[0m\n" "Usage: $0 [flag1 flag2...]"
 printf "\n%s" "The (optional) exclude flags are being passed to the buildpkg.sh script, when specified."
@@ -31,11 +46,13 @@ done
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+revision=$(git describe --tags $(git rev-list --tags --max-count=1))
 
-SRCROOT="${PWD}"
+#SRCROOT="${PWD}"
+SRCROOT="$SCRIPT_DIR"
 SYMROOT="${SRCROOT}"/sym
 PKG_BUILD_DIR="${SYMROOT}"/package
+cd "$SCRIPT_DIR" || { echo "Failed to enter script directory"; exit 1; }
 
 echo "${revision}" > revision
 
