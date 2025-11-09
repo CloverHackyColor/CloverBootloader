@@ -8,14 +8,6 @@ declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/ebuild.sh
 declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/ebuild.sh
 declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/ebuild.sh
 
-# Check that the caller is make
-caller=$(ps -p $PPID -o comm=)
-if [[ "$caller" != "make" ]]; then
-    echo "Warning: don't call the '$0' script directly !" >&2
-    echo "Use the 'make iso' command instead" >&2
-#    exit 1
-fi
-
 set -u
 
 # Go to the script directory to create the package
@@ -61,7 +53,6 @@ stat "$STAT_PARAM" ${CLOVERROOT}/Bootloaders/x64/boot6 \
  | perl -ane "print pack('V',@F[0]);" \
  | dd of=${SYMROOT}/i386/cdboot bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
 
-
 echo "======================= Creating ISO ======================="
 echo "[RM] ${IMGROOT}"
 rm -rf ${IMGROOT}
@@ -77,20 +68,12 @@ mkdir -p ${IMGROOT}/usr/bin
 echo "[MKDIR] ${IMGROOT}/usr/local/bin"
 mkdir -p "${IMGROOT}"/usr/local/bin
 cp -p "${SYMROOT}"/utils/* "${IMGROOT}"/usr/local/bin
-#echo "[MKDIR] ${IMGROOT}/Library/Application Support/Clover"
-#mkdir -p "${IMGROOT}/Library/Application Support/Clover"
-#cp -p "${SRCROOT}"/CloverUpdater/CloverUpdaterUtility "${IMGROOT}/Library/Application Support/Clover/"
-#cp -pr "${SRCROOT}"/CloverUpdater/build/CloverUpdater.app "${IMGROOT}/Library/Application Support/Clover/"
-#echo "[MKDIR] ${IMGROOT}/Library/PreferencePanes"
-#mkdir -p "${IMGROOT}/Library/PreferencePanes"
-#cp -pr "${SRCROOT}"/CloverPrefpane/Build/Clover.prefPane "${IMGROOT}/Library/PreferencePanes/"
 echo "[CP] cdboot"
 cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 echo "[CP] $THEME"
 if [[ -d "${CLOVERROOT}/themespkg/$THEME" ]]; then
 cp -r -f ${CLOVERROOT}/themespkg/$THEME ${IMGROOT}/EFI/CLOVER/themes/
 fi
-
 
 echo "[CP] BOOTX64"
 cp -f ${CLOVERROOT}/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
@@ -112,8 +95,6 @@ echo "[CP] kexts and OEM"
 cp -r -f ${CLOVERROOT}/ThirdParty/* ${IMGROOT}/EFI/CLOVER/
 echo "[CP] tools"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
-# echo "[CP] doc"
-# cp -r -f ${CLOVERROOT}/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
 echo "[CP] drivers-off"
 
 # Regroup off drivers
