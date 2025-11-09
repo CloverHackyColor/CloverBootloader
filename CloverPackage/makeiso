@@ -11,7 +11,7 @@ declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/ebuild.sh
 # Check that the caller is make
 caller=$(ps -p $PPID -o comm=)
 if [[ "$caller" != "make" ]]; then
-    echo "Error: don't call the '$0' script directly !" >&2
+    echo "Warning: don't call the '$0' script directly !" >&2
     echo "Use the 'make iso' command instead" >&2
 #    exit 1
 fi
@@ -32,7 +32,7 @@ CDBOOT=${IMGROOT}/usr/standalone/i386/cdboot
 EFIROOT=${SRCROOT}/CloverV2/EFI
 BASETOOLS_DIR=${SRCROOT}/../BaseTools/Source/C/bin
 
-REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+REVISION=$(git describe --tags $(git rev-list --tags --max-count=1))
 PRODUCT=Clover-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
