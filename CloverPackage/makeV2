@@ -5,7 +5,7 @@
 cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 ROOT="$PWD"
 SYMROOT="${ROOT}"/sym
-REVISION=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
 
 # zip CloverV2, excluding all .empty and all .DS_Store
 zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
