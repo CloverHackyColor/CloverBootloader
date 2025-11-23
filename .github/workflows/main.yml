@@ -10,7 +10,7 @@ jobs:
     name: Build Clover Release
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Manage Version
         run: |
