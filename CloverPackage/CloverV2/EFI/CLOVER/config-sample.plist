@@ -889,6 +889,26 @@
             <key>KextsToPatch</key>
             <array>
                 <dict>
+                    <key>Comment</key>
+                    <string>Disable FileVault</string>
+                    <key>Disabled</key>
+                    <false/>
+                    <key>Find</key>
+                    <data>AAAAAAAA</data>
+                    <key>InfoPlistPatch</key>
+                    <false/>
+                    <key>MaskFind</key>
+                    <data>AAAAAAAA</data>
+                    <key>MatchOS</key>
+                    <string>26.x</string>
+                    <key>Name</key>
+                    <string>com.apple.filesystems.apfs</string>
+                    <key>Procedure</key>
+                    <string>_apfs_filevault_allowed</string>
+                    <key>Replace</key>
+                    <data>uAAAAADD</data>
+                </dict>
+                <dict>
                     <key>Disabled</key>
                     <true/>
                     <key>Find</key>
