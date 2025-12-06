@@ -1699,6 +1699,7 @@ void  findPciRoot (UINT8 *dsdt, UINT32 len)
    08 5F 55 49 44 00                    Name (_UID, Zero)
    14 16 5F 50 52 54 00                 Method (_PRT, 0, NotSerialized)
    */
+
   if (PCISIZE > 0) {
     // find PCIRootUID
     for (j=PCIADR; j<PCIADR+64; j++) {
@@ -5464,7 +5465,8 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   }
 
 //  gSettings.PCIRootUID = 0;
-  findPciRoot(temp, DsdtLen);
+//  findPciRoot(temp, DsdtLen); // Slice - this is the old patch not needed in modern system
+
 
   // Fix RTC
   if ((gSettings.ACPI.DSDT.FixDsdt & FIX_RTC)) {
