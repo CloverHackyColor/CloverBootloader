@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-30 12:26+0300\n"
+"POT-Creation-Date: 2025-11-07 20:08+0300\n"
 "PO-Revision-Date: 2018-10-02 11:46+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: \n"
@@ -840,14 +840,16 @@ msgstr "USB fare sürücüsü, 64bit"
 
 #. type: "VBoxExt2.UEFI_description"
 #: Resources/templates/Localizable.strings:171
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 64bit"
+#, fuzzy, no-wrap
+#| msgid "ext4 filesystem driver from tianocore, 32bit"
+msgid "ext2/3 filesystem driver from tianocore, 64bit"
+msgstr "tianocore'tan ext4 dosya sistemi sürücüsü, 32bit"
 
 #. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
-#, no-wrap
-msgid "ext4 filesystem driver from virtualbox, 64bit"
+#, fuzzy, no-wrap
+#| msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgid "ext4 filesystem driver from EDK2-platform, 64bit"
 msgstr "Virtualbox'tan ext4 dosya sistemi sürücüsü, 64bit"
 
 #. type: "VBoxHfs.UEFI_description"
@@ -890,37 +892,40 @@ msgstr ""
 "Black Green and Moody theme from Blackosx'ten Siyah Yeşil Karamsar teması,\n"
 "/EFI/CLOVER/themes/BGM konumuna yüklenir"
 
-#. type: "embedded_title"
+#. type: "Glass_title"
 #: Resources/templates/Localizable.strings:186
 #, no-wrap
-msgid "embedded"
-msgstr "Embedded"
+msgid "Glass"
+msgstr ""
 
-#. type: "embedded_description"
+#. type: "Glass_description"
 #: Resources/templates/Localizable.strings:187
 #, fuzzy, no-wrap
 #| msgid ""
-#| "embedded theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/embedded"
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
 msgid ""
-"embedded theme from Clovy,\n"
-"Install to /EFI/CLOVER/themes/embedded"
+"Glass (A macOS Classic theme) from chris1111,\n"
+"Install to /EFI/CLOVER/themes/Glass"
 msgstr ""
-"Blackosx'ten varsayılan siyah_yeşil teması\n"
-"/EFI/CLOVER/themes/black_green konumuna yüklenir"
+"Slice'tan orijinal metal teması,\n"
+"/EFI/CLOVER/themes/metal konumuna yüklenir"
 
-#. type: "metal_title"
+#. type: "Purple_Swirl_title"
 #: Resources/templates/Localizable.strings:190
 #, no-wrap
-msgid "metal"
-msgstr "metal"
+msgid "Purple_Swirl"
+msgstr ""
 
-#. type: "metal_description"
+#. type: "Purple_Swirl_description"
 #: Resources/templates/Localizable.strings:191
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
 msgid ""
-"The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/metal"
+"Purple_Swirl theme from pkdesign,\n"
+"Install to /EFI/CLOVER/themes/Purple_Swirl"
 msgstr ""
 "Slice'tan orijinal metal teması,\n"
 "/EFI/CLOVER/themes/metal konumuna yüklenir"
@@ -944,14 +949,14 @@ msgstr ""
 "Slice'tan orijinal metal teması,\n"
 "/EFI/CLOVER/themes/metal konumuna yüklenir"
 
-#. type: "clovy_title"
+#. type: "Clovy_title"
 #: Resources/templates/Localizable.strings:198
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "Clovy"
 msgstr "Clover"
 
-#. type: "clovy_description"
+#. type: "Clovy_description"
 #: Resources/templates/Localizable.strings:199
 #, fuzzy, no-wrap
 #| msgid ""
@@ -983,30 +988,14 @@ msgstr ""
 "dwm'den Turuncu teması,\n"
 "/EFI/CLOVER/themes/orange konumuna yüklenir"
 
-#. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:206
-#, no-wrap
-msgid "steampunkblack"
-msgstr "SteamPunk Black"
-
-#. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:207
-#, no-wrap
-msgid ""
-"steampunkblack theme from medik,\n"
-"Install to /EFI/CLOVER/themes/steampunkblack"
-msgstr ""
-"Bijo'dan Bootcamp  teması\n"
-"/EFI/CLOVER/themes/bootcamp konumuna yüklenir"
-
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:210
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover Teması"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:208
 #, fuzzy, no-wrap
 #| msgid ""
 #| "CloverThemeManager.app by blackosx,\n"
@@ -1021,14 +1010,14 @@ msgstr ""
 "Install to /Applications"
 
 #. type: "BootLoaderChooser_title"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:215
 #, fuzzy, no-wrap
 #| msgid "Bootloader"
 msgid "BootLoaderChooser"
 msgstr "Önyükleyici"
 
 #. type: "BootLoaderChooser_description"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:216
 #, no-wrap
 msgid ""
 "BootLoaderChooser by jief,\n"
@@ -1043,13 +1032,13 @@ msgid ""
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_title"
-#: Resources/templates/Localizable.strings:232
+#: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "CloverConfigPlistValidator"
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_description"
-#: Resources/templates/Localizable.strings:233
+#: Resources/templates/Localizable.strings:230
 #, no-wrap
 msgid ""
 "CloverConfigPlistValidator by jief,\n"
@@ -1058,13 +1047,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:237
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Hedef bölüme RC scriptlerini yükle"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:241
+#: Resources/templates/Localizable.strings:238
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1074,43 +1063,43 @@ msgstr ""
 "Hedef bölüm önyüklenebilir bir OS X sistem bölümü olmalıdır."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:243
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RC scriptlerini bütün diğer OS X bölümlerine yükle"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:244
+#: Resources/templates/Localizable.strings:241
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RC scriptlerini hedef bölüm hariç diğer bütün dahili önyüklenebilir OS X bölümlerine yükle."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:245
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "İsteğe bağlı RC scriptleri"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:246
+#: Resources/templates/Localizable.strings:243
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:247
+#: Resources/templates/Localizable.strings:244
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder vekil uyku istemcisi servisini devre dışı bırak. Bu, sistemin her saat uykudan uyanmasını engelleyecektir."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:252
+#: Resources/templates/Localizable.strings:249
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover Tercih Panosunu yükle"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:253
+#: Resources/templates/Localizable.strings:250
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1457,6 +1446,41 @@ msgstr "EFI dizinini belirle"
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
+#, no-wrap
+#~ msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+#~ msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 64bit"
+
+#, no-wrap
+#~ msgid "embedded"
+#~ msgstr "Embedded"
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "embedded theme from Blackosx,\n"
+#~| "Install to /EFI/CLOVER/themes/embedded"
+#~ msgid ""
+#~ "embedded theme from Clovy,\n"
+#~ "Install to /EFI/CLOVER/themes/embedded"
+#~ msgstr ""
+#~ "Blackosx'ten varsayılan siyah_yeşil teması\n"
+#~ "/EFI/CLOVER/themes/black_green konumuna yüklenir"
+
+#, no-wrap
+#~ msgid "metal"
+#~ msgstr "metal"
+
+#, no-wrap
+#~ msgid "steampunkblack"
+#~ msgstr "SteamPunk Black"
+
+#, no-wrap
+#~ msgid ""
+#~ "steampunkblack theme from medik,\n"
+#~ "Install to /EFI/CLOVER/themes/steampunkblack"
+#~ msgstr ""
+#~ "Bijo'dan Bootcamp  teması\n"
+#~ "/EFI/CLOVER/themes/bootcamp konumuna yüklenir"
+
 #~ msgid ""
 #~ "Preferred 64bit driver to fix Memory problems on UEFI firmware such as "
 #~ "AMI Aptio"
@@ -1504,9 +1528,6 @@ msgstr "Bilinmeyen"
 
 #~ msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 #~ msgstr "Virtualbox'tan ext2/3 dosya sistemi sürücüsü, 32bit"
-
-#~ msgid "ext4 filesystem driver from tianocore, 32bit"
-#~ msgstr "tianocore'tan ext4 dosya sistemi sürücüsü, 32bit"
 
 #~ msgid "USB 3.0 driver, 32bit"
 #~ msgstr "USB 3.0 sürücüsü, 32bit"

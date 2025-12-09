@@ -70,9 +70,9 @@ then
 
   bios_file=("$(dirname "$qemu_path")"/bios*)
   
-diskutil umount /dev/disk8s1
-diskutil umount /dev/disk8s2
-diskutil eject disk8
+diskutil umount /dev/disk6s1
+diskutil umount /dev/disk6s2
+diskutil eject disk6
 
   "$qemu_path" \
     -L "$(dirname "$qemu_path")" \
@@ -94,7 +94,7 @@ diskutil eject disk8
 #      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
 hdiutil attach ./QEMU-test2.img
-diskutil mount QEMU_EFI
+diskutil mount /dev/disk6s1
 
 fi
 

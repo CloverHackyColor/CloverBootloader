@@ -1018,6 +1018,40 @@ void GetCPUProperties (void)
       }
         break;
         
+      case 0x1A: // and 1Ah Ryzen
+      {
+
+        UINT64 cofvid = 0 , msr_min = 0;
+        UINT64 cpuMult;
+        UINT64 CpuFid;
+
+        msr_min = AsmReadMsr64(K10_COFVID_LIMIT);
+        msr_min = AsmReadMsr64(K10_PSTATE_STATUS + (RShiftU64(msr_min, 4) & 0x7));
+        gCPUStructure.MinRatio = ((UINT32)DivU64x32(((msr_min & 0xFF)), (RShiftU64(msr_min, 8) & 0x3f)))*20;
+
+        cofvid = AsmReadMsr64(K10_PSTATE_STATUS);
+        CpuFid = bitfield(cofvid, 11, 0);
+
+        // On AMD Family 1Ah and later, if the Frequency ID (FID) exceeds 0x0f,
+        // the core frequency is scaled by a factor of 5. This scaling behavior
+        // is based on Linux kernel logic for handling higher frequency multipliers
+        // in newer AMD CPUs, where the FID no longer directly correlates to the
+        // bus ratio.
+        if (CpuFid > 0x0f) {
+        	CpuFid *= 5;
+        }
+
+        cpuMult = (UINT8)(CpuFid);
+        currcoef = (INTN)cpuMult;
+        gCPUStructure.MaxRatio = (UINT32)cpuMult;
+
+        cpuMultN2 = (cofvid & (UINT64)bit(0));
+        currdiv = cpuMultN2;
+        cpudid_zen = (UINT32)(RShiftU64(cofvid, 8) & 0xff); //for mult
+
+      }
+        break;
+
       default:
       {
         gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, (200 * Mega));//hz / (200 * Mega);

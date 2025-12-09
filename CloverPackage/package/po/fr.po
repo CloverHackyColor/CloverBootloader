@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 5.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-30 12:26+0300\n"
+"POT-Creation-Date: 2025-11-07 20:08+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: en <en@li.org>\n"
@@ -850,14 +850,16 @@ msgstr "Pilote 64 bit pour souris USB."
 
 #. type: "VBoxExt2.UEFI_description"
 #: Resources/templates/Localizable.strings:171
-#, no-wrap
-msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Pilote 64 bit pour lire les partitions formatées en ext2/3."
+#, fuzzy, no-wrap
+#| msgid "ext4 filesystem driver from tianocore, 64bit"
+msgid "ext2/3 filesystem driver from tianocore, 64bit"
+msgstr "Pilote 64 bit pour lire les partitions formatées en ext4."
 
 #. type: "Ext4Dxe.UEFI_description"
 #: Resources/templates/Localizable.strings:172
-#, no-wrap
-msgid "ext4 filesystem driver from tianocore, 64bit"
+#, fuzzy, no-wrap
+#| msgid "ext4 filesystem driver from tianocore, 64bit"
+msgid "ext4 filesystem driver from EDK2-platform, 64bit"
 msgstr "Pilote 64 bit pour lire les partitions formatées en ext4."
 
 #. type: "VBoxHfs.UEFI_description"
@@ -900,37 +902,43 @@ msgstr ""
 "BGM (thème Black Green and Moody) par Blackosx,\n"
 "Sera installé dans /EFI/CLOVER/themes/BGM"
 
-#. type: "embedded_title"
+#. type: "Glass_title"
 #: Resources/templates/Localizable.strings:186
 #, no-wrap
-msgid "embedded"
-msgstr "Embedded"
-
-#. type: "embedded_description"
-#: Resources/templates/Localizable.strings:187
-#, no-wrap
-msgid ""
-"embedded theme from Clovy,\n"
-"Install to /EFI/CLOVER/themes/embedded"
+msgid "Glass"
 msgstr ""
-"Thème par défaut de Clover.\n"
-"Sera installé dans /EFI/CLOVER/themes/embedded"
 
-#. type: "metal_title"
-#: Resources/templates/Localizable.strings:190
-#, no-wrap
-msgid "metal"
-msgstr "Metal"
-
-#. type: "metal_description"
-#: Resources/templates/Localizable.strings:191
-#, no-wrap
+#. type: "Glass_description"
+#: Resources/templates/Localizable.strings:187
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal"
 msgid ""
-"The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/metal"
+"Glass (A macOS Classic theme) from chris1111,\n"
+"Install to /EFI/CLOVER/themes/Glass"
 msgstr ""
 "Le thème original Metal par Slice,\n"
 "Sera installé dans /EFI/CLOVER/themes/metal"
+
+#. type: "Purple_Swirl_title"
+#: Resources/templates/Localizable.strings:190
+#, no-wrap
+msgid "Purple_Swirl"
+msgstr ""
+
+#. type: "Purple_Swirl_description"
+#: Resources/templates/Localizable.strings:191
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Vector SVG theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/cesium"
+msgid ""
+"Purple_Swirl theme from pkdesign,\n"
+"Install to /EFI/CLOVER/themes/Purple_Swirl"
+msgstr ""
+"Thème SVG par Slice.\n"
+"Sera installé dans /EFI/CLOVER/themes/cesium"
 
 #. type: "cesium_title"
 #: Resources/templates/Localizable.strings:194
@@ -948,13 +956,13 @@ msgstr ""
 "Thème SVG par Slice.\n"
 "Sera installé dans /EFI/CLOVER/themes/cesium"
 
-#. type: "clovy_title"
+#. type: "Clovy_title"
 #: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid "Clovy"
 msgstr "Clovy"
 
-#. type: "clovy_description"
+#. type: "Clovy_description"
 #: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid ""
@@ -980,30 +988,14 @@ msgstr ""
 "Thème Random par Slice,\n"
 "Choisit un thème au hasard et sera installé dans /EFI/CLOVER/themes/"
 
-#. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:206
-#, no-wrap
-msgid "steampunkblack"
-msgstr "SteamPunk Black"
-
-#. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:207
-#, no-wrap
-msgid ""
-"steampunkblack theme from medik,\n"
-"Install to /EFI/CLOVER/themes/steampunkblack"
-msgstr ""
-"Thème steampunkblack par medik.\n"
-"Sera installé dans /EFI/CLOVER/themes/steampunkblack"
-
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:210
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Gestionnaire de thèmes pour Clover"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:211
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
@@ -1015,14 +1007,14 @@ msgstr ""
 "S’installe dans le dossier /Applications"
 
 #. type: "BootLoaderChooser_title"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:215
 #, fuzzy, no-wrap
 #| msgid "Bootloader"
 msgid "BootLoaderChooser"
 msgstr "Secteurs de boot"
 
 #. type: "BootLoaderChooser_description"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:216
 #, no-wrap
 msgid ""
 "BootLoaderChooser by jief,\n"
@@ -1037,13 +1029,13 @@ msgid ""
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_title"
-#: Resources/templates/Localizable.strings:232
+#: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "CloverConfigPlistValidator"
 msgstr ""
 
 #. type: "CloverConfigPlistValidator_description"
-#: Resources/templates/Localizable.strings:233
+#: Resources/templates/Localizable.strings:230
 #, no-wrap
 msgid ""
 "CloverConfigPlistValidator by jief,\n"
@@ -1052,13 +1044,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:237
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RC scripts sur le volume de destination"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:241
+#: Resources/templates/Localizable.strings:238
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1069,43 +1061,43 @@ msgstr ""
 "Le volume de destination doit être un volume macOS bootable."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:243
+#: Resources/templates/Localizable.strings:240
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RC scripts sur tous les autres volumes macOS bootables"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:244
+#: Resources/templates/Localizable.strings:241
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Installation de tous les RC scripts sur tous les volumes internes macOS bootables autre que le volume de destination."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:245
+#: Resources/templates/Localizable.strings:242
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "RC Scripts optionnels"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:246
+#: Resources/templates/Localizable.strings:243
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Désactive le client proxy de mise en veille."
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:247
+#: Resources/templates/Localizable.strings:244
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Script pour désactiver le service Bonjour 'sleep proxy client' afin d’éviter que le système ne se réveille toutes les heures."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:252
+#: Resources/templates/Localizable.strings:249
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Installe le panneau de préférence de Clover"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:253
+#: Resources/templates/Localizable.strings:250
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1451,6 +1443,38 @@ msgstr "Définir le répertoire EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Inconnu"
+
+#, no-wrap
+#~ msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+#~ msgstr "Pilote 64 bit pour lire les partitions formatées en ext2/3."
+
+#, no-wrap
+#~ msgid "embedded"
+#~ msgstr "Embedded"
+
+#, no-wrap
+#~ msgid ""
+#~ "embedded theme from Clovy,\n"
+#~ "Install to /EFI/CLOVER/themes/embedded"
+#~ msgstr ""
+#~ "Thème par défaut de Clover.\n"
+#~ "Sera installé dans /EFI/CLOVER/themes/embedded"
+
+#, no-wrap
+#~ msgid "metal"
+#~ msgstr "Metal"
+
+#, no-wrap
+#~ msgid "steampunkblack"
+#~ msgstr "SteamPunk Black"
+
+#, no-wrap
+#~ msgid ""
+#~ "steampunkblack theme from medik,\n"
+#~ "Install to /EFI/CLOVER/themes/steampunkblack"
+#~ msgstr ""
+#~ "Thème steampunkblack par medik.\n"
+#~ "Sera installé dans /EFI/CLOVER/themes/steampunkblack"
 
 #~ msgid ""
 #~ "Preferred 64bit driver to fix Memory problems on UEFI firmware such as "

@@ -202,6 +202,7 @@ INF   LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   INF  Drivers/DVDDisk/ScsiDiskDxe.inf
   #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+  INF  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
 !endif  
 !endif
 
