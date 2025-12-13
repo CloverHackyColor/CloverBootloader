@@ -435,6 +435,8 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount].ItemType = Hex;  //131
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Smbios.SFakeCPU);
 
+  InputItems[InputItemsCount].ItemType = BoolValue; //132
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.XhciPortLimit;
 
   //menu for drop table
   if (GlobalConfig.ACPIDropTables.notEmpty()) {
@@ -1110,6 +1112,11 @@ void ApplyInputs(void)
     gSettings.Smbios.SFakeCPU = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
     DBG("set FakeCPUID=%X\n", gSettings.Smbios.SFakeCPU);
   }
+  i++; //132
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.XhciPortLimit = InputItems[i].BValue != 0;
+     DBG("applied XhciPortLimit=%s\n", gSettings.Quirks.OcKernelQuirks.XhciPortLimit ? "Y" : "N" );
+   }
 
   if (NeedSave) {
     ApplySettings();
@@ -1960,6 +1967,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
 //  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", false);
   SubScreen->AddMenuItemInput(115,  "Block SkywalkFamily", false);
+  SubScreen->AddMenuItemInput(132,  "Unlimit Xhci Ports", false);
 //  SubScreen->AddMenuItemInput(115, "No Caches", false);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", false);
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
