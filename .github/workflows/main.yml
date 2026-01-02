@@ -35,7 +35,7 @@ jobs:
           releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
       - name: Upload to Artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Clover-GCC-15.2.0-${{ env.GIT_SHA }}
           path: |
