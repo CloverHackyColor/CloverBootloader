@@ -2,6 +2,10 @@ name: CI
 
 on:
   push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
   pull_request:
   workflow_dispatch:
 
@@ -9,6 +13,8 @@ jobs:
   build-macos:
     name: Build Clover Release
     runs-on: macos-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
 
@@ -34,11 +40,22 @@ jobs:
           (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
           releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
+      
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v6
         with:
           name: Clover-GCC-15.2.0-${{ env.GIT_SHA }}
           path: |
+            *.7z
+            CloverV2*.zip
+            CLOVERX64.efi.zip
+            Clover_r*.pkg
+
+      - name: Publish Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
             *.7z
             CloverV2*.zip
             CLOVERX64.efi.zip

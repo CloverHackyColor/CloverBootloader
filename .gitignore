@@ -63,3 +63,7 @@ RELEASE_*/
 
 #work in progress
 *_wip
+
+# Local debug files
+bin/
+DEBUG_REPORT.md
