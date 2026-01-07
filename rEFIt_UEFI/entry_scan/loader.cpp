@@ -1941,6 +1941,11 @@ void ScanLoader(void)
     // check for Mac OS X Recovery Boot
     AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi"_XSW, NullXString8Array, L""_XSW, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
 
+    // Support for OpenCore-style Recovery (BaseSystem.dmg in com.apple.recovery.boot)
+    if (FileExists(Volume->RootDir, L"\\com.apple.recovery.boot\\BaseSystem.dmg")) {
+        AddLoaderEntry(L"\\com.apple.recovery.boot\\BaseSystem.dmg"_XSW, NullXString8Array, L""_XSW, L"Recovery DMG"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+    }
+
     // Sometimes, on some systems (HP UEFI, if Win is installed first)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
