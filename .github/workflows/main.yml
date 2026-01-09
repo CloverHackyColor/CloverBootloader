@@ -60,3 +60,4 @@ jobs:
             CloverV2*.zip
             CLOVERX64.efi.zip
             Clover_r*.pkg
+          generate_release_notes: true
