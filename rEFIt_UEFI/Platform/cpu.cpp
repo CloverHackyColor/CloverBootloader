@@ -337,7 +337,7 @@ void GetCPUProperties (void)
       case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_METEORLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
-        DBG("MSR 0x35    %16llX\n", msr);
+        DBG("MSR 0x35    %16llX\n", msr);  //Raptor 0000-0000-0014-001C
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
@@ -569,6 +569,7 @@ void GetCPUProperties (void)
              //   MsgLog("MSR 0xE4              %08X\n", msr);
              //------------
              msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE
+             // Raptor 0808-0838-F081-1500 Max = 0x15 Min = 0x08
              MsgLog("MSR 0xCE              %08llX_%08llX\n", (msr>>32), msr & 0xFFFFFFFFull);
              gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
              gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);

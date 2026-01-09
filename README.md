@@ -35,7 +35,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 
 ### Developers:
 
-*   Slice, with help of Kabyl, usr-sse2, jadran, Blackosx, dmazar, STLVNUB, pcj, apianti, JrCs, pene, FrodoKenny, skoczy, ycr.ru, Oscar09, xsmile, SoThOr, rehabman, Download-Fritz, nms42, Sherlocks, Zenit432, cecekpawon, stinga11, TheRacerMaster, solstice, Micky1979, Needy, joevt, ErmaC, vit9696, ath, savvas, syscl, goodwin\_c, clovy, jief\_machak, chris1111, vector\_sigma, LAbyOne, Florin9doi.
+*   Slice, with help of Kabyl, usr-sse2, jadran, Blackosx, dmazar, STLVNUB, pcj, apianti, JrCs, pene, FrodoKenny, skoczy, ycr.ru, Oscar09, xsmile, SoThOr, rehabman, Download-Fritz, nms42, Sherlocks, Zenit432, cecekpawon, stinga11, TheRacerMaster, solstice, Micky1979, Needy, joevt, ErmaC, vit9696, ath, savvas, syscl, goodwin\_c, clovy, jief\_machak, chris1111, vector\_sigma, LAbyOne, Florin9doi, Hnanoto.
     
     ### Source code credits to:
     Intel, Apple, Oracle, Chameleon, rEFIt and Xom, nanosvg.

@@ -1176,6 +1176,7 @@ void LOADER_ENTRY::StartLoader()
 //    pos = setKextAtPos(&kextArray, "AppleMCEReporterDisabler.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "AppleIntelI210Ethernet.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "USBWakeFixup.kext"_XS8, pos);
+	pos = setKextAtPos(&kextArray, "USBInjectAll.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "FeatureUnlock.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "vecLib.kext"_XS8, pos);
 //    pos = setKextAtPos(&kextArray, "IOAudioFamily.kext"_XS8, pos);
