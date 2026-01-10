@@ -281,7 +281,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[] = {
+  XmlDictField m_fields[38] = {
       {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
       {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
       {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
