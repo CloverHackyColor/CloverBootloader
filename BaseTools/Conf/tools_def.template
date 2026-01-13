@@ -2088,7 +2088,7 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
 DEFINE GCC5_ASLCC_FLAGS              = DEF(GCC49_ASLCC_FLAGS) -fno-lto
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
-DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
 DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
@@ -2099,7 +2099,7 @@ DEFINE GCC53_X64_DLINK_FLAGS         = DEF(GCC53_IA32_X64_DLINK_FLAGS),-melf_x86
 
 DEFINE GCC53_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
-DEFINE GCC131_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC131_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
 DEFINE GCC131_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 DEFINE GCC131_IA32_X64_ASLDLINK_FLAGS = DEF(GCC131_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
 DEFINE GCC131_IA32_X64_DLINK_FLAGS    = DEF(GCC131_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
@@ -2118,14 +2118,14 @@ DEFINE GCC131_AARCH64_DLINK2_FLAGS     = DEF(GCC49_AARCH64_DLINK2_FLAGS) -Wno-er
 DEFINE GCC131_ARM_ASLDLINK_FLAGS       = DEF(GCC49_ARM_ASLDLINK_FLAGS)
 DEFINE GCC131_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
 
-DEFINE GCC151_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC151_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
 DEFINE GCC151_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 DEFINE GCC151_IA32_X64_ASLDLINK_FLAGS = DEF(GCC151_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
 DEFINE GCC151_IA32_X64_DLINK_FLAGS    = DEF(GCC151_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 DEFINE GCC151_X64_DLINK_FLAGS         = DEF(GCC151_IA32_X64_DLINK_FLAGS),-melf_x86_64,-znoexecstack,--oformat=elf64-x86-64,-pie
 DEFINE GCC151_ASM_FLAGS               = DEF(GCC49_ASM_FLAGS)
 
-DEFINE GCC152_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
+DEFINE GCC152_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-misleading-indentation -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions
 DEFINE GCC152_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,--no-warn-rwx-segments,--gc-sections,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 DEFINE GCC152_IA32_X64_ASLDLINK_FLAGS = DEF(GCC152_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
 DEFINE GCC152_IA32_X64_DLINK_FLAGS    = DEF(GCC152_IA32_X64_DLINK_COMMON),--entry,$(IMAGE_ENTRY_POINT),-u,$(IMAGE_ENTRY_POINT),-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
