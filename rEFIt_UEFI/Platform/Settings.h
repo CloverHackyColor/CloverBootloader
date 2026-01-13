@@ -2380,6 +2380,7 @@ public:
       //  XBool AppleXcpmCfgLock = false;
       XBool AppleXcpmExtraMsrs = false;
       XBool AppleXcpmForceBoost = false;
+      XBool ClearTaskSwitchBit = false;
       //  XBool CustomSmbiosGuid = false;
       XBool DisableIoMapper = false;
       XBool DisableIoMapperMapping = false;

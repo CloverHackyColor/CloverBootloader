@@ -65,6 +65,7 @@ public:
   public:
     XmlBool AppleXcpmExtraMsrs = XmlBool();
     XmlBool AppleXcpmForceBoost = XmlBool();
+    XmlBool ClearTaskSwitchBit = XmlBool();
     XmlBool DisableIoMapper = XmlBool();
     XmlBool DisableIoMapperMapping = XmlBool();
     XmlBool DisableLinkeditJettison = XmlBool();
@@ -85,6 +86,10 @@ public:
     XBool dgetAppleXcpmForceBoost() const {
       return AppleXcpmForceBoost.isDefined() ? AppleXcpmForceBoost.value()
                                              : AppleXcpmForceBoost.nullValue;
+    };
+    XBool dgetClearTaskSwitchBit() const {
+      return ClearTaskSwitchBit.isDefined() ? ClearTaskSwitchBit.value()
+                                            : ClearTaskSwitchBit.nullValue;
     };
     XBool dgetDisableIoMapper() const {
       return DisableIoMapper.isDefined() ? DisableIoMapper.value()
@@ -281,7 +286,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[38] = {
+  XmlDictField m_fields[39] = {
       {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
       {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
       {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -308,6 +313,7 @@ public:
       {"KernelCache", KernelCache},
       {"AppleXcpmExtraMsrs", OcKernelQuirks.AppleXcpmExtraMsrs},
       {"AppleXcpmForceBoost", OcKernelQuirks.AppleXcpmForceBoost},
+      {"ClearTaskSwitchBit", OcKernelQuirks.ClearTaskSwitchBit},
       {"DisableIoMapper", OcKernelQuirks.DisableIoMapper},
       {"DisableIoMapperMapping", OcKernelQuirks.DisableIoMapperMapping},
       {"DisableLinkeditJettison", OcKernelQuirks.DisableLinkeditJettison},

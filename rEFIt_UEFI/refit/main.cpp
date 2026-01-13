@@ -833,10 +833,10 @@ void debugStartImageWithOC() {
   XStringW devicePathToLookFor;
   //  devicePathToLookFor.takeValueFrom("PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0x0,0x0)/HD(4,GPT,CA224585-830E-4274-5826-1ACB6DA08A4E,0x299F000,0x4AE6310)/VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,1ABE434C8D0357398516CFDF0A9DD7EF)");
   //  // Jief High Sierra DevicePath
-  devicePathToLookFor
-      .takeValueFrom("PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0x0,0x0)/"
-                     "HD(2,GPT,D8C7DA82-1E4C-4579-BA7C-6737A5D43464,0x64028,"
-                     "0x1BF08E8)"); // Jief Big Sur Install device path
+  devicePathToLookFor.takeValueFrom(
+      "PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0x0,0x0)/"
+      "HD(2,GPT,D8C7DA82-1E4C-4579-BA7C-6737A5D43464,0x64028,"
+      "0x1BF08E8)"); // Jief Big Sur Install device path
   UINTN HandleCount = 0;
   EFI_HANDLE *Handles = NULL;
   Status =
@@ -1303,6 +1303,8 @@ void LOADER_ENTRY::StartLoader() {
         gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
     mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmForceBoost =
         gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost;
+    mOpenCoreConfiguration.Kernel.Quirks.ClearTaskSwitchBit =
+        gSettings.Quirks.OcKernelQuirks.ClearTaskSwitchBit;
 #ifndef USE_OC_SECTION_PlatformInfo
     mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid =
         gSettings.KernelAndKextPatches.KPDELLSMBIOS;
