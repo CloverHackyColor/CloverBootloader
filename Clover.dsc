@@ -558,11 +558,11 @@
   }
   OpenCorePkg/Library/OcVariableLib/OcVariableLib.inf {
     <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG) -Wno-error
   }
   OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf {
     <BuildOptions>
-      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG)
+      *_*_*_CC_FLAGS   = $(OC_INCLUDE_FLAG) -Wno-error
   }
 
 
@@ -1050,7 +1050,7 @@ DEFINE BUILD_OPTIONS=-DIS_UEFI_MODULE -DMDEPKG_NDEBUG -DCLOVER_BUILD -DLESS_DEBU
 
   XCODE:*_*_*_CC_FLAGS = -std=c11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
   XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
-  GCC:*_*_*_CC_FLAGS   = -std=c11 $(BUILD_OPTIONS) $(LTO_FLAG)
-  GCC:*_*_*_CXX_FLAGS  =  -std=c++11 $(BUILD_OPTIONS) $(LTO_FLAG)
+  GCC:*_*_*_CC_FLAGS   = -std=c11 $(BUILD_OPTIONS) $(LTO_FLAG) -Wno-error
+  GCC:*_*_*_CXX_FLAGS  =  -std=c++11 $(BUILD_OPTIONS) $(LTO_FLAG) -Wno-error
   #-fanalyzer -Wmismatched-tags 
   #-Weffc++
