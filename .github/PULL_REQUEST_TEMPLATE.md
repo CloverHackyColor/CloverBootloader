@@ -1,20 +1,20 @@
-# Descrição
+# Description
 
-Descreva detalhadamente o que foi alterado.
+Describe in detail what was changed.
 
-## Tipo de mudança
+## Type of change
 
 - [ ] Bugfix
-- [ ] Nova funcionalidade
-- [ ] Melhorias no código
-- [ ] Atualização de documentação
+- [ ] New functionality
+- [ ] Code improvements
+- [ ] Documentation update
 
 ## Checklist
 
-- [ ] Testei minhas alterações localmente
-- [ ] Adicionei comentários relevantes no código
-- [ ] Atualizei a documentação relevante
+- [ ] Tested my changes locally
+- [ ] Added relevant comments to the code
+- [ ] Updated the relevant documentation
 
-## Informações adicionais
+## Additional information
 
-Inclua qualquer detalhe extra relevante ao seu PR.
+Include any extra details relevant to your PR.

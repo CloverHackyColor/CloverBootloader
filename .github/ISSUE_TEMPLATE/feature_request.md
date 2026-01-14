@@ -1,19 +1,23 @@
 ---
 name: Feature Request
-about: Sugerir uma ideia para o projeto
+about: Suggest an idea for the project
 title: "[FEATURE] "
 labels: enhancement
-assignees: ''
+signatures: ''
 ---
 
-**Sua sugestão de melhoria**
-Descreva a funcionalidade que gostaria de ver.
 
-**Motivação**
-Por que essa melhoria é importante para você ou para a comunidade?
+**Your Improvement Suggestion**
+Describe the functionality you would like to see.
 
-**Implementação**
-Tem alguma ideia de como implementar? Sinta-se à vontade para sugerir.
 
-**Informações adicionais**
-Inclua qualquer outra informação relevante.
+**Motivation**
+Why is this improvement important to you or the community?
+
+
+**Implementation**
+Do you have any ideas on how to implement it? Feel free to suggest them.
+
+
+**Additional Information**
+Include any other relevant information.
