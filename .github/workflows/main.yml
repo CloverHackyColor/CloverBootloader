@@ -17,10 +17,12 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
       - name: Manage Version
         run: |
-          git fetch --prune --unshallow --tags
+          git fetch --prune --unshallow --tags --no-recurse-submodules
           echo "CUR_TAG=$(git tag -l | tail -1)" >> $GITHUB_ENV
           echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
@@ -29,6 +31,10 @@ jobs:
         env:
           HOMEBREW_NO_INSTALL_CLEANUP: 1
           HOMEBREW_NO_AUTO_UPDATE: 1
+
+      - name: Fix OpenCorePkg Macro
+        run: |
+          sed -i '' 's|///#define OC_PLATFORM_NVRAM_CONFIG_FIELDS|#define OC_PLATFORM_NVRAM_CONFIG_FIELDS|g' OpenCorePkg/Include/Acidanthera/Library/OcConfigurationLib.h
 
       - name: Build Clover Pack
         run: |

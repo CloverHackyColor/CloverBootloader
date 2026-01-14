@@ -67,3 +67,9 @@ RELEASE_*/
 # Local debug files
 bin/
 DEBUG_REPORT.md
+
+# Build logs
+*.log
+CloverPackage/*.log
+build_failure.log
+buildme_run.log
