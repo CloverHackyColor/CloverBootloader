@@ -1002,6 +1002,8 @@
             <false/>
             <key>AvoidRuntimeDefrag</key>
             <true/>
+            <key>ClearTaskSwitchBit</key>
+            <false/>
             <key>DevirtualiseMmio</key>
             <false/>
             <key>DisableIoMapper</key>
