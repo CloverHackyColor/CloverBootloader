@@ -1,31 +1,32 @@
 ---
 name: Bug Report
-about: Relatar um bug para ajudar a melhorar o projeto
+about: Report a bug to help improve the project
 title: "[BUG] "
 labels: bug
-assignees: ''
+signatures: ''
 ---
 
-**Descreva o bug**
-Uma descrição clara e concisa do que é o bug.
+**Describe the bug**
+A clear and concise description of what the bug is.
 
-**Como reproduzir**
-Passos para reproduzir o comportamento:
-1. Vá para '...'
-2. Clique em '...'
-3. Role até '...'
-4. Veja o erro
+**How ​​to reproduce**
+Steps to reproduce the behavior:
 
-**Comportamento esperado**
-Descreva o que você esperava que acontecesse.
+1. Go to '...'
+2. Click on '...'
+3. Scroll to '...'
+4. View the error
 
-**Capturas de tela**
-Se aplicável, adicione capturas de tela para ajudar a explicar seu problema.
+**Expected behavior**
+Describe what you expected to happen.
 
-**Ambiente:**
- - SO: [ex: macOS Ventura]
- - Versão do Clover: [ex: r5146]
- - Hardware: [ex: Intel i7, Z490, RX 580]
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
 
-**Informações adicionais**
-Adicione qualquer outra informação relevante sobre o problema.
+**Environment:**
+- OS: [e.g., macOS Ventura]
+- Clover version: [e.g., r5146]
+- Hardware: [e.g., Intel i7, Z490, RX 580]
+
+**Additional information**
+Add any other relevant information about the problem.

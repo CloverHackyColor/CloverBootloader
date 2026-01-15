@@ -1,31 +1,33 @@
-# Como contribuir
+# How to Contribute
 
-Obrigado pelo interesse em contribuir com este projeto!
+Thank you for your interest in contributing to this project!
 
-## Como começar
+## How to get started
 
-1. Faça um fork deste repositório.
-2. Crie uma branch para sua modificação:  
-   `git checkout -b minha-mudanca`
-3. Faça suas modificações.
-4. Envie um pull request detalhando suas mudanças.
+1. Fork this repository.
+2. Create a branch for your modification:
+  ```sh
+  git checkout -b my-change
+  ```
+4. Make your modifications.
+5. Submit a pull request detailing your changes.
 
-## Abrindo issues
+## Opening Issues
 
-- Relate bugs, melhorias ou sugestões de forma clara.
-- Inclua logs, prints ou passos para reproduzir quando possível.
+- Report bugs, improvements, or suggestions clearly.
+- Include logs, screenshots, or steps to reproduce them when possible.
 
-## Padrão de código
+## Code Standards
 
-- Prefira código C/C++ moderno e limpo.
-- Evite macros obsoletas, casts desnecessários e código não documentado.
-- Comente partes complexas.
+- Prefer modern and clean C/C++ code.
+- Avoid obsolete macros, unnecessary casts, and undocumented code.
+- Comment out complex parts.
 
-## Revisão de Pull Requests
+## Reviewing Pull Requests
 
-- PRs são bem-vindos! Aguarde revisão, sugestões e discussões.
-- Use o template de Pull Request ao abrir.
+- PRs are welcome! Expect review, suggestions, and discussions.
+- Use the Pull Request template when opening.
 
-## Dúvidas?
+## Questions?
 
-Abra uma issue ou discuta no PR.
+Open an issue or discuss in the PR.
