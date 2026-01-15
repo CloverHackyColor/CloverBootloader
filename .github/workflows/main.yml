@@ -5,7 +5,7 @@ on:
     branches:
       - '**'
     tags:
-      - 'v*'
+      - '*'
   pull_request:
   workflow_dispatch:
 
