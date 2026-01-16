@@ -5,6 +5,7 @@
 cd CloverPackage
 ./makepkg >log.txt
 ./makeiso
+./makeV2
 #make iso
 cd ..
 echo "done!"
