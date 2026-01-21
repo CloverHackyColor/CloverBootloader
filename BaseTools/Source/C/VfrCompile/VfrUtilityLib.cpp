@@ -80,6 +80,12 @@ SConfigInfo::SConfigInfo (
     return;
   }
 
+  memset (mValue, 0, mWidth);
+
+  if (mWidth > sizeof(EFI_IFR_TYPE_VALUE)) {
+    mWidth = sizeof(EFI_IFR_TYPE_VALUE);
+  }
+
   switch (Type) {
   case EFI_IFR_TYPE_NUM_SIZE_8 :
     memcpy (mValue, &Value.u8, mWidth);
@@ -1480,6 +1486,7 @@ CVfrVarDataTypeDB::Dump (
 {
   SVfrDataType  *pTNode;
   SVfrDataField *pFNode;
+  CHAR8         *FieldTypeName;
 
   fprintf (File, "\n\n***************************************************************\n");
   fprintf (File, "\t\tmPackAlign = %x\n", mPackAlign);
@@ -1487,12 +1494,13 @@ CVfrVarDataTypeDB::Dump (
     fprintf (File, "\t\tstruct %s : mAlign [%d] mTotalSize [0x%x]\n\n", pTNode->mTypeName, pTNode->mAlign, pTNode->mTotalSize);
     fprintf (File, "\t\tstruct %s {\n", pTNode->mTypeName);
     for (pFNode = pTNode->mMembers; pFNode != NULL; pFNode = pFNode->mNext) {
+      FieldTypeName = (pFNode->mFieldType == NULL) ? NULL : pFNode->mFieldType->mTypeName;
       if (pFNode->mArrayNum > 0) {
         fprintf (File, "\t\t\t+%08d[%08x] %s[%d] <%s>\n", pFNode->mOffset, pFNode->mOffset,
-                  pFNode->mFieldName, pFNode->mArrayNum, pFNode->mFieldType->mTypeName);
+                  pFNode->mFieldName, pFNode->mArrayNum, FieldTypeName);
       } else {
         fprintf (File, "\t\t\t+%08d[%08x] %s <%s>\n", pFNode->mOffset, pFNode->mOffset,
-                  pFNode->mFieldName, pFNode->mFieldType->mTypeName);
+                  pFNode->mFieldName, FieldTypeName);
       }
     }
     fprintf (File, "\t\t};\n");
@@ -2378,7 +2386,7 @@ CVfrDefaultStore::ReRegisterDefaultStoreById (
     }
 
     if (RefName != NULL) {
-      delete pNode->mRefName;
+      delete [] pNode->mRefName;
       pNode->mRefName = new CHAR8[strlen (RefName) + 1];
       if (pNode->mRefName != NULL) {
         strcpy (pNode->mRefName, RefName);
