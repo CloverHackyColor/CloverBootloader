@@ -51,6 +51,11 @@
 #include "../Platform/DataHubCpu.h"
 #include "../Platform/Edid.h"
 #include "../Platform/Events.h"
+
+// Experimental: Modern CPU Quirks auto-detection
+#ifdef ENABLE_MODERN_CPU_QUIRKS
+#include "../Platform/Experimental/ModernCPUQuirks.h"
+#endif
 #include "../Platform/Hibernate.h"
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
@@ -1339,6 +1344,61 @@ void LOADER_ENTRY::StartLoader() {
         gSettings.Quirks.OcKernelQuirks.XhciPortLimit;
     mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo =
         gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo;
+
+    // Experimental: Auto-detect and apply quirks for modern CPUs
+#ifdef ENABLE_MODERN_CPU_QUIRKS
+    if (gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks) {
+      MODERN_CPU_INFO ModernInfo;
+      QUIRK_RECOMMENDATION QuirkRec;
+
+      DBG("ModernCPUQuirks: Auto-detection enabled, detecting CPU...\n");
+
+      EFI_STATUS Status = ModernCpuDetect(&mOpenCoreCpuInfo, &ModernInfo);
+      if (!EFI_ERROR(Status)) {
+        DBG("ModernCPUQuirks: Detected CPU Family=0x%X Model=0x%X Gen=%d\n",
+            ModernInfo.CpuFamily, ModernInfo.CpuModel, ModernInfo.Generation);
+
+        Status = ModernCpuGetQuirkRecommendation(&ModernInfo, &QuirkRec);
+        if (!EFI_ERROR(Status) && QuirkRec.ConfidenceLevel > 50) {
+          DBG("ModernCPUQuirks: Applying recommended quirks "
+              "(confidence=%d%%)\n",
+              QuirkRec.ConfidenceLevel);
+
+          // Apply quirks only if not already set by user
+          if (!mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo &&
+              QuirkRec.ProvideCurrentCpuInfo) {
+            mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo = TRUE;
+            DBG("ModernCPUQuirks: Enabled ProvideCurrentCpuInfo\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapperMapping &&
+              QuirkRec.DisableIoMapperMapping) {
+            mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapperMapping = TRUE;
+            DBG("ModernCPUQuirks: Enabled DisableIoMapperMapping\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic &&
+              QuirkRec.PowerTimeoutKernelPanic) {
+            mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic = TRUE;
+            DBG("ModernCPUQuirks: Enabled PowerTimeoutKernelPanic\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock &&
+              QuirkRec.AppleXcpmCfgLock) {
+            mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = TRUE;
+            DBG("ModernCPUQuirks: Enabled AppleXcpmCfgLock\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock &&
+              QuirkRec.AppleCpuPmCfgLock) {
+            mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = TRUE;
+            DBG("ModernCPUQuirks: Enabled AppleCpuPmCfgLock\n");
+          }
+        } else {
+          DBG("ModernCPUQuirks: Low confidence (%d%%), skipping auto-quirks\n",
+              QuirkRec.ConfidenceLevel);
+        }
+      } else {
+        DBG("ModernCPUQuirks: CPU detection failed, status=%r\n", Status);
+      }
+    }
+#endif
 
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount =
