@@ -922,6 +922,10 @@ void PatchTableType4(const SmbiosInjectedSettings& smbiosSettings)
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI5;
       if ( smbiosSettings.BrandString.contains("i7") )
         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI7;
+      if ( smbiosSettings.BrandString.contains("i9") )
+        newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI9;
+      if ( smbiosSettings.BrandString.contains("Xeon") )
+        newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelXeon;
     }
     //spec 2.7 page 48 note 3
     if ((newSmbiosTable.Type4->ProcessorFamily == ProcessorFamilyIntelCore2)
