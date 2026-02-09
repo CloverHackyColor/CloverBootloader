@@ -1298,7 +1298,7 @@ void PatchTableType16(const SmbiosInjectedSettings& smbiosSettings)
   newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
   UINT16 DeviceCount = smbiosSettings.RamSlotCount; // RamSlotCount is <= MAX_RAM_SLOTS), see GetTableType16()
   if (Model == MacPro71)
-  newSmbiosTable.Type16->NumberOfMemoryDevices = DeviceCount;
+    newSmbiosTable.Type16->NumberOfMemoryDevices = DeviceCount;
   DBG("NumberOfMemoryDevices = %d\n", DeviceCount);
   LogSmbiosTable(newSmbiosTable);
 }
