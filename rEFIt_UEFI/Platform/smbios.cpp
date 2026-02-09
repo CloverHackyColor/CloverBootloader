@@ -2314,7 +2314,6 @@ void PatchSmbios(const SmbiosInjectedSettings& smbiosSettings) //continue
   }
   PatchTableTypeSome();
   auto SlotCounts = smbiosSettings.RamSlotCount;
-  MacModel Model = GetModelFromString(smbiosSettings.ProductName);
   if ( SlotCounts > MAX_RAM_SLOTS ) {
 //    log_technical_bug("GetTableType16() assign smbiosSettings.RamSlotCount a value bigger than MAX_RAM_SLOTS");
     SlotCounts = MAX_RAM_SLOTS;

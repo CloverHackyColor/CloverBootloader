@@ -472,10 +472,10 @@ void afterGetUserSettings(SETTINGS_DATA& settingsData)
 
   if ( settingsData.RtVariables.RtROMAsString.isEqualIC("UseMacAddr0") ) {
     if ( gConf.LanCardArray.size() > 0 ) GlobalConfig.RtROM.ncpy(&gConf.LanCardArray[0].MacAddress[0], 6);
-    else GlobalConfig.RtROM.setEmpty(0, 6);
+    else GlobalConfig.RtROM.memset(0, 6);
   } else if ( settingsData.RtVariables.RtROMAsString.isEqualIC("UseMacAddr1") ) {
     if ( gConf.LanCardArray.size() > 1 ) GlobalConfig.RtROM.ncpy(&gConf.LanCardArray[1].MacAddress[0], 6);
-    else GlobalConfig.RtROM.setEmpty(0, 6);
+    else GlobalConfig.RtROM.memset(0, 6);
   }else{
     GlobalConfig.RtROM = settingsData.RtVariables.RtROMAsData;
   }
