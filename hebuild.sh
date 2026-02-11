@@ -77,6 +77,7 @@ GENPAGE=0
 
 FORCEREBUILD=0
 NOBOOTFILES=0
+ENABLE_MODERN_CPU=0
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
@@ -381,6 +382,9 @@ checkCmdlineArguments() {
             --genpage)
                 GENPAGE=1
                 ;;
+            --mcpu)
+                ENABLE_MODERN_CPU=1
+                ;;   
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
                 ;;
@@ -567,7 +571,12 @@ MainBuildScript() {
     # Create edk tools if necessary
     if  [[ ! -x "$EDK_TOOLS_PATH/Source/C/bin/GenFv" ]]; then
         echo "Building tools as they are not found"
+      if [[ "$SYSNAME" == Linux ]]; then
+        echo "Linux"   
+        make -C "$WORKSPACE"/BaseTools "BUILD_CC=clang"
+      else     
         make -C "$WORKSPACE"/BaseTools CC="gcc -Wno-deprecated-declarations"
+      fi
     fi
 
     # Apply options
@@ -577,6 +586,7 @@ MainBuildScript() {
     [[ "$USE_LOW_EBDA" -ne 0 ]] && addEdk2BuildMacro 'USE_LOW_EBDA'
     [[ -d "$WORKSPACE/MdeModulePkg/Universal/Variable/EmuRuntimeDxe" ]] && addEdk2BuildMacro 'HAVE_LEGACY_EMURUNTIMEDXE'
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
+    [[ "$ENABLE_MODERN_CPU" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_MODERN_CPU_QUIRKS'
 
     local cmd="${EDK2_BUILD_OPTIONS[@]}"
 
