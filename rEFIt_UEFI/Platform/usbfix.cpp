@@ -307,7 +307,7 @@ DBG("FixOwnership() -> begin\n");
                 //
                DBG("USB XHCI reset for device %04hX\n", Pci.Hdr.DeviceId);
                if (Pci.Hdr.VendorId != 0x8086) {
-                 //ну ее нах эту ВИА, да и прочих, кроме Интел
+                 // forget about VIA and others, except Intel
                  DBG("skip XHCI controller Vendor=%04X\n", Pci.Hdr.VendorId);
                  break;
                }
