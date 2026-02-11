@@ -184,6 +184,42 @@ public:
   }
 };
 
+class KEXT_TO_BLOCK
+{
+public:
+  XString8 Comment = XString8();
+  XBool Disabled = XBool();
+  XString8 MatchOS = XString8();
+  XString8 Name = XString8();
+  INPUT_ITEM MenuItem = INPUT_ITEM();
+  XString8 Label = XString8();
+
+	#if __cplusplus > 201703L
+		XBool operator == (const KEXT_TO_BLOCK&) const = default;
+	#endif
+  XBool isEqual(const KEXT_TO_BLOCK& other) const
+  {
+    if ( !(Comment == other.Comment ) ) return false;
+    if ( !(Disabled == other.Disabled ) ) return false;
+    if ( !(MatchOS == other.MatchOS ) ) return false;
+    if ( !(Name == other.Name ) ) return false;
+    if ( MenuItem != other.MenuItem ) return false;
+    if ( !(Label == other.Label ) ) return false;
+    return true;
+  }
+  void takeValueFrom(const ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KextsToBlock_Class& other)
+  {
+    Comment = other.dgetComment();
+    Disabled = other.dgetDisabled();
+    MatchOS = other.dgetMatchOS();
+    Name = other.dgetName();
+    MenuItem.BValue = !other.dgetDisabled();
+    Label = Comment.notEmpty() ? Comment : Name;
+  }
+
+  XBool ShouldBlock(const MacOsVersion& CurrOS) const;
+};
+
 class KERNEL_AND_KEXT_PATCHES
 {
 public:
@@ -194,7 +230,6 @@ public:
   XBool KPPanicNoKextDump = XBool();
   XBool _KPAppleIntelCPUPM = XBool();
   XBool KPAppleRTC = XBool();
-  XBool BlockSkywalk = XBool();
   XBool EightApple = XBool();
   XBool KPDELLSMBIOS = XBool();  // Dell SMBIOS patch
   UINT32  FakeCPUID = UINT32();
@@ -202,11 +237,12 @@ public:
   XBuffer<UINT8> KPATIConnectorsData = XBuffer<UINT8>();
   XBuffer<UINT8> KPATIConnectorsPatch = XBuffer<UINT8>();
   XStringWArray ForceKextsToLoad/* = XStringWArray()*/;
+  XObjArrayWithTakeValueFromXmlArray<KEXT_TO_BLOCK, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KextsToBlock_Class> KextsToBlock/* = XObjArrayWithTakeValueFromXmlArray<KEXT_TO_BLOCK>()*/;
   XObjArrayWithTakeValueFromXmlArray<KEXT_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KextsToPatch_Class> KextPatches/* = XObjArrayWithTakeValueFromXmlArray<KEXT_PATCH>()*/;
   XObjArrayWithTakeValueFromXmlArray<KERNEL_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_KernelToPatch_Class> KernelPatches/* = XObjArrayWithTakeValueFromXmlArray<KERNEL_PATCH>()*/;
   XObjArrayWithTakeValueFromXmlArray<BOOT_PATCH, ConfigPlistClass::KernelAndKextPatches_Class::KernelAndKextPatches_BootPatch_Class> BootPatches/* = XObjArrayWithTakeValueFromXmlArray<BOOT_PATCH>()*/;
   
-  KERNEL_AND_KEXT_PATCHES() : ForceKextsToLoad(), KextPatches(), KernelPatches(), BootPatches() {}
+  KERNEL_AND_KEXT_PATCHES() : ForceKextsToLoad(), KextsToBlock(), KextPatches(), KernelPatches(), BootPatches() {}
   
 	#if __cplusplus > 201703L
 		XBool operator == (const KERNEL_AND_KEXT_PATCHES&) const = default;
@@ -221,13 +257,13 @@ public:
     if ( !(_KPAppleIntelCPUPM == other._KPAppleIntelCPUPM ) ) return false;
     if ( !(KPAppleRTC == other.KPAppleRTC ) ) return false;
     if ( !(EightApple == other.EightApple ) ) return false;
-    if ( !(BlockSkywalk == other.BlockSkywalk ) ) return false;
     if ( !(KPDELLSMBIOS == other.KPDELLSMBIOS ) ) return false;
     if ( !(FakeCPUID == other.FakeCPUID ) ) return false;
     if ( !(KPATIConnectorsController == other.KPATIConnectorsController ) ) return false;
     if ( !(KPATIConnectorsData == other.KPATIConnectorsData ) ) return false;
     if ( !(KPATIConnectorsPatch == other.KPATIConnectorsPatch ) ) return false;
     if ( !(ForceKextsToLoad == other.ForceKextsToLoad ) ) return false;
+    if ( !KextsToBlock.isEqual(other.KextsToBlock) ) return false;
     if ( !KextPatches.isEqual(other.KextPatches) ) return false;
     if ( !KernelPatches.isEqual(other.KernelPatches) ) return false;
     if ( !BootPatches.isEqual(other.BootPatches) ) return false;
@@ -242,7 +278,6 @@ public:
     KPPanicNoKextDump = other.dgetKPPanicNoKextDump();
     _KPAppleIntelCPUPM = other.dget_KPAppleIntelCPUPM();
     KPAppleRTC = other.dgetKPAppleRTC();
-    BlockSkywalk = other.dgetBlockSkywalk();
     EightApple = other.dgetEightApple();
     KPDELLSMBIOS = other.dgetKPDELLSMBIOS();
     FakeCPUID = other.dgetFakeCPUID();
@@ -250,6 +285,7 @@ public:
     KPATIConnectorsData = other.dgetKPATIConnectorsData();
     KPATIConnectorsPatch = other.dgetKPATIConnectorsPatch();
     ForceKextsToLoad = other.dgetForceKextsToLoad();
+    KextsToBlock.takeValueFrom(other.KextsToBlock);
     KextPatches.takeValueFrom(other.KextsToPatch);
     KernelPatches.takeValueFrom(other.KernelToPatch);
     BootPatches.takeValueFrom(other.BootPatches);
