@@ -19,10 +19,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Manage Version
         run: |
-          git fetch --tags --force
+          git fetch --tags --force --no-recurse-submodules
           CUR_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "Detected version: $CUR_TAG"
           echo "CUR_TAG=$CUR_TAG" >> $GITHUB_ENV
