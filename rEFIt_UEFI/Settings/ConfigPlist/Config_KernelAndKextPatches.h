@@ -223,6 +223,40 @@ public:
         XString8 dgetLabel() const override { return Comment.isDefined() ? Comment.value() : "NoLabel"_XS8; };
     };
     
+    class KernelAndKextPatches_KextsToBlock_Class : public XmlDict
+    {
+        using super = XmlDict;
+      public:
+        XmlString8AllowEmpty Comment = XmlString8AllowEmpty();
+        XmlBool Disabled = XmlBool();
+        XmlString8AllowEmpty MatchOS = XmlString8AllowEmpty();
+        XmlString8AllowEmpty Name = XmlString8AllowEmpty();
+
+        XmlDictField m_fields[4] = {
+          {"Comment", Comment},
+          {"Disabled", Disabled},
+          {"MatchOS", MatchOS},
+          {"Name", Name},
+        };
+
+      public:
+        virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
+
+        virtual XBool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, XBool generateErrors) override {
+          XBool b = true;
+          b = super::validate(xmlLiteParser, xmlPath, keyPos, generateErrors);
+          if ( !Name.isDefined() || Name.value().isEmpty() ) {
+            b = xmlLiteParser->addWarning(generateErrors, S8Printf("Kext block entry is ignored because 'Name' is not defined in dict '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+          }
+          return b;
+        }
+
+        const XString8& dgetComment() const { return Comment.isDefined() ? Comment.value() : NullXString8; };
+        XBool dgetDisabled() const { return Disabled.isDefined() ? Disabled.value() : XBool(false); };
+        const XString8& dgetMatchOS() const { return MatchOS.isDefined() ? MatchOS.value() : NullXString8; };
+        const XString8& dgetName() const { return Name.isDefined() ? Name.value() : NullXString8; };
+    };
+    
     
     
     class ForceKextsToLoadClass : public XmlStringWArray
@@ -244,7 +278,6 @@ public:
     XmlBool PanicNoKextDump = XmlBool();
     XmlBool AppleIntelCPUPM = XmlBool();
     XmlBool AppleRTC = XmlBool();
-    XmlBool BlockSkywalk = XmlBool();
     XmlBool EightApple = XmlBool();
     XmlBool DellSMBIOSPatch = XmlBool();
     XmlUInt32 FakeCPUID = XmlUInt32();
@@ -252,6 +285,7 @@ public:
     XmlData ATIConnectorsData = XmlData();
     XmlData ATIConnectorsPatch = XmlData();
     ForceKextsToLoadClass ForceKextsToLoad = ForceKextsToLoadClass();
+    XmlArray<KernelAndKextPatches_KextsToBlock_Class> KextsToBlock = XmlArray<KernelAndKextPatches_KextsToBlock_Class>();
     XmlArray<KernelAndKextPatches_KextsToPatch_Class> KextsToPatch = XmlArray<KernelAndKextPatches_KextsToPatch_Class>();
     XmlArray<KernelAndKextPatches_KernelToPatch_Class> KernelToPatch = XmlArray<KernelAndKextPatches_KernelToPatch_Class>();
     XmlArray<KernelAndKextPatches_BootPatch_Class> BootPatches = XmlArray<KernelAndKextPatches_BootPatch_Class>();
@@ -264,7 +298,6 @@ public:
       {"PanicNoKextDump", PanicNoKextDump},
       {"AppleIntelCPUPM", AppleIntelCPUPM},
       {"AppleRTC", AppleRTC},
-      {"BlockSkywalk", BlockSkywalk},
       {"EightApple", EightApple},
       {"DellSMBIOSPatch", DellSMBIOSPatch},
       {"FakeCPUID", FakeCPUID},
@@ -272,6 +305,7 @@ public:
       {"ATIConnectorsData", ATIConnectorsData},
       {"ATIConnectorsPatch", ATIConnectorsPatch},
       {"ForceKextsToLoad", ForceKextsToLoad},
+      {"KextsToBlock", KextsToBlock},
       {"KextsToPatch", KextsToPatch},
       {"KernelToPatch", KernelToPatch},
       {"BootPatches", BootPatches},
@@ -316,7 +350,6 @@ public:
     XBool dgetKPPanicNoKextDump() const { return PanicNoKextDump.isDefined() ? PanicNoKextDump.value() : XBool(false); };
     XBool dget_KPAppleIntelCPUPM() const { return AppleIntelCPUPM.isDefined() ? AppleIntelCPUPM.value() : XBool(false); };
     XBool dgetKPAppleRTC() const { return AppleRTC.isDefined() ? AppleRTC.value() : XBool(true); };
-    XBool dgetBlockSkywalk() const { return BlockSkywalk.isDefined() ? BlockSkywalk.value() : XBool(false); };
     XBool dgetEightApple() const { return EightApple.isDefined() ? EightApple.value() : XBool(false); };
     XBool dgetKPDELLSMBIOS() const { return DellSMBIOSPatch.isDefined() ? DellSMBIOSPatch.value() : XBool(false); };
     uint32_t dgetFakeCPUID() const { return FakeCPUID.isDefined() ? FakeCPUID.value() : 0; };
