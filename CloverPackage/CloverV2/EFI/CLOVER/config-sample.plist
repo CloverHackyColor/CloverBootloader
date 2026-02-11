@@ -1069,6 +1069,11 @@
             <false/>
             <key>ProvideCurrentCpuInfo</key>
             <false/>
+            <!-- AutoModernCPUQuirks: Auto-detect and apply quirks for modern CPUs -->
+            <!-- Supports Intel 12th-14th Gen and AMD Zen3-Zen5 processors -->
+            <!-- Requires ENABLE_MODERN_CPU_QUIRKS build flag -->
+            <key>AutoModernCPUQuirks</key>
+            <false/>
             <key>ProvideCustomSlide</key>
             <false/>
             <key>ProvideMaxSlide</key>

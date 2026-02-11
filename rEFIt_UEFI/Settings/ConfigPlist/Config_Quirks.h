@@ -78,6 +78,8 @@ public:
     XmlBool ThirdPartyDrives = XmlBool();
     XmlBool XhciPortLimit = XmlBool();
     XmlBool ProvideCurrentCpuInfo = XmlBool();
+    XmlBool AutoModernCPUQuirks =
+        XmlBool(); // Auto-detect quirks for modern CPUs
 
     XBool dgetAppleXcpmExtraMsrs() const {
       return AppleXcpmExtraMsrs.isDefined() ? AppleXcpmExtraMsrs.value()
@@ -143,6 +145,10 @@ public:
       return ProvideCurrentCpuInfo.isDefined()
                  ? ProvideCurrentCpuInfo.value()
                  : ProvideCurrentCpuInfo.nullValue;
+    };
+    XBool dgetAutoModernCPUQuirks() const {
+      return AutoModernCPUQuirks.isDefined() ? AutoModernCPUQuirks.value()
+                                             : AutoModernCPUQuirks.nullValue;
     };
 
     OcKernelQuirks_Class(const Quirks_Class &_parent) /*: parent(_parent)*/ {}
@@ -286,7 +292,7 @@ public:
   OcKernelQuirks_Class OcKernelQuirks;
   OcBooterQuirks_Class OcBooterQuirks;
 
-  XmlDictField m_fields[39] = {
+  XmlDictField m_fields[40] = {
       {"AvoidRuntimeDefrag", OcBooterQuirks.AvoidRuntimeDefrag},
       {"DevirtualiseMmio", OcBooterQuirks.DevirtualiseMmio},
       {"DisableSingleUser", OcBooterQuirks.DisableSingleUser},
@@ -326,6 +332,7 @@ public:
       {"ThirdPartyDrives", OcKernelQuirks.ThirdPartyDrives},
       {"XhciPortLimit", OcKernelQuirks.XhciPortLimit},
       {"ProvideCurrentCpuInfo", OcKernelQuirks.ProvideCurrentCpuInfo},
+      {"AutoModernCPUQuirks", OcKernelQuirks.AutoModernCPUQuirks},
   };
 
   Quirks_Class() : OcKernelQuirks(*this), OcBooterQuirks(*this) {}
