@@ -51,6 +51,11 @@
 #include "../Platform/DataHubCpu.h"
 #include "../Platform/Edid.h"
 #include "../Platform/Events.h"
+
+// Experimental: Modern CPU Quirks auto-detection
+#ifdef ENABLE_MODERN_CPU_QUIRKS
+#include "../Platform/Experimental/ModernCPUQuirks.h"
+#endif
 #include "../Platform/Hibernate.h"
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
@@ -733,6 +738,21 @@ void LOADER_ENTRY::FilterBootPatches() {
   }
 }
 
+void LOADER_ENTRY::FilterKextsToBlock() {
+  if (KernelAndKextPatches.KextsToBlock.isEmpty()) {
+    return;
+  }
+
+  size_t settingsCount = gSettings.KernelAndKextPatches.KextsToBlock.size();
+  size_t entryCount = KernelAndKextPatches.KextsToBlock.size();
+  size_t count = (settingsCount < entryCount) ? settingsCount : entryCount;
+
+  for (size_t i = 0; i < count; ++i) {
+    KernelAndKextPatches.KextsToBlock[i].MenuItem.BValue =
+        gSettings.KernelAndKextPatches.KextsToBlock[i].MenuItem.BValue;
+  }
+}
+
 //
 // Null ConOut OutputString() implementation - for blocking
 // text output from boot.efi when booting in graphics mode
@@ -1340,6 +1360,61 @@ void LOADER_ENTRY::StartLoader() {
     mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo =
         gSettings.Quirks.OcKernelQuirks.ProvideCurrentCpuInfo;
 
+    // Experimental: Auto-detect and apply quirks for modern CPUs
+#ifdef ENABLE_MODERN_CPU_QUIRKS
+    if (gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks) {
+      MODERN_CPU_INFO ModernInfo;
+      QUIRK_RECOMMENDATION QuirkRec;
+
+      DBG("ModernCPUQuirks: Auto-detection enabled, detecting CPU...\n");
+
+      EFI_STATUS Status = ModernCpuDetect(&mOpenCoreCpuInfo, &ModernInfo);
+      if (!EFI_ERROR(Status)) {
+        DBG("ModernCPUQuirks: Detected CPU Family=0x%X Model=0x%X Gen=%d\n",
+            ModernInfo.CpuFamily, ModernInfo.CpuModel, ModernInfo.Generation);
+
+        Status = ModernCpuGetQuirkRecommendation(&ModernInfo, &QuirkRec);
+        if (!EFI_ERROR(Status) && QuirkRec.ConfidenceLevel > 50) {
+          DBG("ModernCPUQuirks: Applying recommended quirks "
+              "(confidence=%d%%)\n",
+              QuirkRec.ConfidenceLevel);
+
+          // Apply quirks only if not already set by user
+          if (!mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo &&
+              QuirkRec.ProvideCurrentCpuInfo) {
+            mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo = TRUE;
+            DBG("ModernCPUQuirks: Enabled ProvideCurrentCpuInfo\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapperMapping &&
+              QuirkRec.DisableIoMapperMapping) {
+            mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapperMapping = TRUE;
+            DBG("ModernCPUQuirks: Enabled DisableIoMapperMapping\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic &&
+              QuirkRec.PowerTimeoutKernelPanic) {
+            mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic = TRUE;
+            DBG("ModernCPUQuirks: Enabled PowerTimeoutKernelPanic\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock &&
+              QuirkRec.AppleXcpmCfgLock) {
+            mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = TRUE;
+            DBG("ModernCPUQuirks: Enabled AppleXcpmCfgLock\n");
+          }
+          if (!mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock &&
+              QuirkRec.AppleCpuPmCfgLock) {
+            mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = TRUE;
+            DBG("ModernCPUQuirks: Enabled AppleCpuPmCfgLock\n");
+          }
+        } else {
+          DBG("ModernCPUQuirks: Low confidence (%d%%), skipping auto-quirks\n",
+              QuirkRec.ConfidenceLevel);
+        }
+      } else {
+        DBG("ModernCPUQuirks: CPU detection failed, status=%r\n", Status);
+      }
+    }
+#endif
+
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount =
         mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1633,9 +1708,19 @@ void LOADER_ENTRY::StartLoader() {
           mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]
               ->ExecutablePath.Value);
     }
-    if (gSettings.KernelAndKextPatches.BlockSkywalk) {
-      mOpenCoreConfiguration.Kernel.Block.Count = 1;
-      mOpenCoreConfiguration.Kernel.Block.AllocCount = 1;
+    FilterKextsToBlock();
+    size_t blockCount = 0;
+    for (size_t blockIdx = 0;
+         blockIdx < KernelAndKextPatches.KextsToBlock.size(); blockIdx++) {
+      if (KernelAndKextPatches.KextsToBlock[blockIdx].ShouldBlock(macOSVersion)) {
+        blockCount++;
+      }
+    }
+
+    if (blockCount > 0) {
+      mOpenCoreConfiguration.Kernel.Block.Count = (UINT32)blockCount;
+      mOpenCoreConfiguration.Kernel.Block.AllocCount =
+          mOpenCoreConfiguration.Kernel.Block.Count;
       mOpenCoreConfiguration.Kernel.Block.ValueSize =
           sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Block.Values));
       valuesSize = mOpenCoreConfiguration.Kernel.Block.AllocCount *
@@ -1645,44 +1730,41 @@ void LOADER_ENTRY::StartLoader() {
 
       memset(mOpenCoreConfiguration.Kernel.Block.Values, 0, valuesSize);
 
-      mOpenCoreConfiguration.Kernel.Block.Values[0] =
-          (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(
-              mOpenCoreConfiguration.Kernel.Block.ValueSize);
-      memset(mOpenCoreConfiguration.Kernel.Block.Values[0], 0,
-             mOpenCoreConfiguration.Kernel.Block.ValueSize);
-      mOpenCoreConfiguration.Kernel.Block.Values[0]->Enabled = 1;
-      OC_STRING_ASSIGN(
-          mOpenCoreConfiguration.Kernel.Block.Values[0]->Arch,
-          OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Comment,
-                       "Allow IOSkywalk Downgrade");
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MaxKernel,
-                       "");
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->MinKernel,
-                       "23");
-      OC_STRING_ASSIGN(
-          mOpenCoreConfiguration.Kernel.Block.Values[0]->Identifier,
-          "com.apple.iokit.IOSkywalkFamily");
-      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[0]->Strategy,
-                       "Exclude");
+      size_t blockValueIdx = 0;
+      for (size_t blockIdx = 0;
+           blockIdx < KernelAndKextPatches.KextsToBlock.size(); blockIdx++) {
+        const auto& blockEntry = KernelAndKextPatches.KextsToBlock[blockIdx];
+        if (!blockEntry.ShouldBlock(macOSVersion)) {
+          continue;
+        }
 
-      //        mOpenCoreConfiguration.Kernel.Block.Values[1] =
-      //        (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(mOpenCoreConfiguration.Kernel.Block.ValueSize);
-      //        memset(mOpenCoreConfiguration.Kernel.Block.Values[1], 0,
-      //        mOpenCoreConfiguration.Kernel.Block.ValueSize);
-      //        mOpenCoreConfiguration.Kernel.Block.Values[1]->Enabled = 1;
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Arch,
-      //        OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Comment,
-      //        "");
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->MaxKernel,
-      //        "");
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->MinKernel,
-      //        "23");
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Identifier,
-      //        "com.apple.driver.mDNSOffloadUserClient");
-      //        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Block.Values[1]->Strategy,
-      //        "Exclude");
+        mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx] =
+            (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(
+                mOpenCoreConfiguration.Kernel.Block.ValueSize);
+        memset(mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx], 0,
+               mOpenCoreConfiguration.Kernel.Block.ValueSize);
+        mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Enabled = 1;
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Arch,
+            OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Comment,
+            blockEntry.Comment.c_str());
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->MaxKernel,
+            "");
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->MinKernel,
+            "");
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]
+                ->Identifier,
+            blockEntry.Name.c_str());
+        OC_STRING_ASSIGN(
+            mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Strategy,
+            "Exclude");
+        blockValueIdx++;
+      }
     }
 #endif
 

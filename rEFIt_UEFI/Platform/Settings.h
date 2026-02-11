@@ -2397,6 +2397,7 @@ public:
       XBool ThirdPartyDrives = false;
       XBool XhciPortLimit = false;
       XBool ProvideCurrentCpuInfo = false;
+      XBool AutoModernCPUQuirks = false; // Auto-detect quirks for modern CPUs
 
 #if __cplusplus > 201703L
       XBool operator==(const OcKernelQuirksClass &) const = default;
@@ -2430,6 +2431,8 @@ public:
           return false;
         if (!(ProvideCurrentCpuInfo == other.ProvideCurrentCpuInfo))
           return false;
+        if (!(AutoModernCPUQuirks == other.AutoModernCPUQuirks))
+          return false;
 
         return true;
       }
@@ -2449,6 +2452,7 @@ public:
         ThirdPartyDrives = other.dgetThirdPartyDrives();
         XhciPortLimit = other.dgetXhciPortLimit();
         ProvideCurrentCpuInfo = other.dgetProvideCurrentCpuInfo();
+        AutoModernCPUQuirks = other.dgetAutoModernCPUQuirks();
       }
     };
 

@@ -1159,12 +1159,13 @@ void GetCPUProperties (void)
   tmpU = gCPUStructure.FSBFrequency;
 	DBG("Corrected FSBFrequency = %llu MHz\n", DivU64x32(tmpU, Mega));
   
-  if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) && (gCPUStructure.Model == CPU_MODEL_NEHALEM)) {
+  if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) &&
+      ((gCPUStructure.Model == CPU_MODEL_NEHALEM) || (gCPUStructure.Model == CPU_MODEL_NEHALEM_EX) ||
+       (gCPUStructure.Model == CPU_MODEL_WESTMERE) || (gCPUStructure.Model == CPU_MODEL_WESTMERE_EX))) {
     //Slice - for Nehalem we can do more calculation as in Cham
     // but this algo almost always wrong
     //
     // thanks to dgobe for i3/i5/i7 bus speed detection
-    // TODO: consider more Nehalem based CPU(?) ex. CPU_MODEL_NEHALEM_EX, CPU_MODEL_WESTMERE, CPU_MODEL_WESTMERE_EX
     // info: https://en.wikipedia.org/wiki/List_of_Intel_Xeon_microprocessors#Nehalem-based_Xeons
     qpimult = 2; //init
     /* Scan PCI BUS For QPI Frequency */
@@ -1612,7 +1613,11 @@ MacModel GetDefaultModel()
       case CPU_MODEL_ICELAKE_A:
       case CPU_MODEL_ICELAKE_C:
       case CPU_MODEL_ICELAKE_D:
-      case CPU_MODEL_ALDERLAKE_ULT:  //???
+      case CPU_MODEL_TIGERLAKE_C:
+      case CPU_MODEL_TIGERLAKE_D:
+      case CPU_MODEL_ALDERLAKE_ULT:
+      case CPU_MODEL_RAPTORLAKE_B:
+      case CPU_MODEL_METEORLAKE:
       case CPU_MODEL_ARROWLAKE_U:
         DefaultType = MacBookPro161;
         break;
@@ -1725,16 +1730,22 @@ MacModel GetDefaultModel()
       case CPU_MODEL_BROADWELL_E5:
         DefaultType = MacPro61;
         break;
-      case CPU_MODEL_ALDERLAKE:
-
-      case CPU_MODEL_RAPTORLAKE_B:
       case CPU_MODEL_COMETLAKE_S:
+        if ( gCPUStructure.BrandString.contains("i9") ) {
+          DefaultType = iMac202;
+          break;
+        }
+        DefaultType = iMac201;
+        break;
       case CPU_MODEL_ROCKETLAKE:
+        DefaultType = iMac201;
+        break;
+      case CPU_MODEL_ALDERLAKE:
       case CPU_MODEL_RAPTORLAKE:
       case CPU_MODEL_METEORLAKE:
       case CPU_MODEL_ARROWLAKE:
       case CPU_MODEL_ARROWLAKE_X:
-
+      case CPU_MODEL_RAPTORLAKE_B:
         DefaultType = MacPro71;
         break;
       default:

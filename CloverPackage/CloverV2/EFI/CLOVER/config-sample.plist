@@ -751,8 +751,6 @@
             <true/>
             <key>AppleRTC</key>
             <false/>
-            <key>BlockSkywalk</key>
-            <false/>
             <key>BootPatches</key>
             <array>
                 <dict>
@@ -785,6 +783,29 @@
             <false/>
             <key>KernelPm</key>
             <false/>
+            <key>KextsToBlock</key>
+            <array>
+                <dict>
+                    <key>Comment</key>
+                    <string>Allow IOSkywalk Downgrade</string>
+                    <key>Disabled</key>
+                    <false/>
+                    <key>MatchOS</key>
+                    <string>14.x,15.x,26.x</string>
+                    <key>Name</key>
+                    <string>com.apple.iokit.IOSkywalkFamily</string>
+                </dict>
+                <dict>
+                    <key>Comment</key>
+                    <string>Allow Block AppleEthernetRL</string>
+                    <key>Disabled</key>
+                    <true/>
+                    <key>MatchOS</key>
+                    <string>25.x,26.x</string>
+                    <key>Name</key>
+                    <string>com.apple.driver.AppleEthernetRL</string>
+                </dict>
+            </array>
             <key>KernelToPatch</key>
             <array>
                 <dict>
@@ -1056,6 +1077,11 @@
             <key>ProtectUefiServices</key>
             <false/>
             <key>ProvideCurrentCpuInfo</key>
+            <false/>
+            <!-- AutoModernCPUQuirks: Auto-detect and apply quirks for modern CPUs -->
+            <!-- Supports Intel 12th-14th Gen and AMD Zen3-Zen5 processors -->
+            <!-- Requires ENABLE_MODERN_CPU_QUIRKS build flag -->
+            <key>AutoModernCPUQuirks</key>
             <false/>
             <key>ProvideCustomSlide</key>
             <false/>
