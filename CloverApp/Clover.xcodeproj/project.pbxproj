@@ -19,16 +19,16 @@
 		9534B7A0242CDC9B003F323E /* add.png in Resources */ = {isa = PBXBuildFile; fileRef = 9534B79E242CDC9B003F323E /* add.png */; };
 		953596692422A77E00DE2D5B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 953596682422A77D00DE2D5B /* QuartzCore.framework */; };
 		953BC20323720C0A0039755D /* FixedWidthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BC20223720C0A0039755D /* FixedWidthViews.swift */; };
-		9542ABC02373783400DC03E6 /* boot1-install in Copy tools */ = {isa = PBXBuildFile; fileRef = 9542ABBD2373780C00DC03E6 /* boot1-install */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9542ABC02373783400DC03E6 /* boot1-install in Copy tools */ = {isa = PBXBuildFile; fileRef = 9542ABBD2373780C00DC03E6 /* boot1-install */; };
 		9542ABC22373786700DC03E6 /* CloverV2 in Copy CloverV2 */ = {isa = PBXBuildFile; fileRef = 9542ABC12373786700DC03E6 /* CloverV2 */; };
-		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		9546AE1B23806299007155A6 /* CloverLogOut in Copy tools */ = {isa = PBXBuildFile; fileRef = 95524B88238051F4005F6425 /* CloverLogOut */; };
 		954B0385243EB0AB001E719A /* update.png in Resources */ = {isa = PBXBuildFile; fileRef = 954B0384243EB0AB001E719A /* update.png */; };
 		954BBE99238196EE0032425F /* Locale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954BBE98238196EE0032425F /* Locale.swift */; };
 		954DECD523899F5F006A9876 /* Bootmanager.png in Resources */ = {isa = PBXBuildFile; fileRef = 954DECD423899F5F006A9876 /* Bootmanager.png */; };
 		954FCFD92391818300C9273C /* NSWindowFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FCFD82391818300C9273C /* NSWindowFix.m */; };
 		955005ED242531E300AB3979 /* PE_Undo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955005EC242531E300AB3979 /* PE_Undo.swift */; };
-		95509171238B1E3A00933A7E /* daemonInstaller in Copy tools */ = {isa = PBXBuildFile; fileRef = 9550916E238B1DFA00933A7E /* daemonInstaller */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		95509171238B1E3A00933A7E /* daemonInstaller in Copy tools */ = {isa = PBXBuildFile; fileRef = 9550916E238B1DFA00933A7E /* daemonInstaller */; };
+		9552D748236F33CA00C93377 /* CloverDaemonNew in Copy tools */ = {isa = PBXBuildFile; fileRef = 9552D745236F33A700C93377 /* CloverDaemonNew */; };
 		955500E1241ACCCA00618F57 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955500E0241ACCCA00618F57 /* Document.swift */; };
 		955500E7241AD12800618F57 /* PEFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955500E6241AD12800618F57 /* PEFormatters.swift */; };
 		955500E9241AD1E700618F57 /* PlistParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955500E8241AD1E700618F57 /* PlistParser.swift */; };
@@ -109,32 +109,11 @@
 			remoteGlobalIDString = 12F2E5471A30F7E70058A333;
 			remoteInfo = "boot1-install";
 		};
-		9542ABBE2373781300DC03E6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9542ABB82373780C00DC03E6 /* boot1-inst.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 12F2E5461A30F7E70058A333;
-			remoteInfo = "boot1-install";
-		};
-		9546AE1823806286007155A6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 95524B83238051F3005F6425 /* CloverLogOut.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 95524B78238051AC005F6425;
-			remoteInfo = CloverLogOut;
-		};
 		9550916D238B1DFA00933A7E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 9550915F238B132100933A7E;
-			remoteInfo = daemonInstaller;
-		};
-		9550916F238B1E1C00933A7E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 95509169238B1DFA00933A7E /* daemonInstaller.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9550915E238B132100933A7E;
 			remoteInfo = daemonInstaller;
 		};
 		95524B87238051F4005F6425 /* PBXContainerItemProxy */ = {
@@ -151,25 +130,11 @@
 			remoteGlobalIDString = 953DBFDB236F037400B0C4FB;
 			remoteInfo = CloverDaemonNew;
 		};
-		9552D746236F33B900C93377 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9552D740236F33A700C93377 /* CloverDaemonNew.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 953DBFDA236F037400B0C4FB;
-			remoteInfo = CloverDaemonNew;
-		};
 		95C5157B236B21AF00E4A3A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 95C51560236B211200E4A3A8;
-			remoteInfo = CloverRunAtLogin;
-		};
-		95C5157D236B21D400E4A3A8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 95C51577236B21AE00E4A3A8 /* CloverRunAtLogin.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 956A7AAE238DAD700012F6B0;
 			remoteInfo = CloverRunAtLogin;
 		};
 /* End PBXContainerItemProxy section */
@@ -722,11 +687,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				95509170238B1E1C00933A7E /* PBXTargetDependency */,
-				9546AE1923806286007155A6 /* PBXTargetDependency */,
-				9552D747236F33B900C93377 /* PBXTargetDependency */,
-				9542ABBF2373781300DC03E6 /* PBXTargetDependency */,
-				95C5157E236B21D400E4A3A8 /* PBXTargetDependency */,
 			);
 			name = Clover;
 			productName = Clover;
@@ -1004,34 +964,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		9542ABBF2373781300DC03E6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "boot1-install";
-			targetProxy = 9542ABBE2373781300DC03E6 /* PBXContainerItemProxy */;
-		};
-		9546AE1923806286007155A6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CloverLogOut;
-			targetProxy = 9546AE1823806286007155A6 /* PBXContainerItemProxy */;
-		};
-		95509170238B1E1C00933A7E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = daemonInstaller;
-			targetProxy = 9550916F238B1E1C00933A7E /* PBXContainerItemProxy */;
-		};
-		9552D747236F33B900C93377 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CloverDaemonNew;
-			targetProxy = 9552D746236F33B900C93377 /* PBXContainerItemProxy */;
-		};
-		95C5157E236B21D400E4A3A8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CloverRunAtLogin;
-			targetProxy = 95C5157D236B21D400E4A3A8 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		9556CAF3238DF75600082671 /* InstallerOutline.xib */ = {
 			isa = PBXVariantGroup;
@@ -1234,7 +1166,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1292,7 +1224,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_WARNINGS = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "";
@@ -1313,7 +1245,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.24;
+				CURRENT_PROJECT_VERSION = 1.25;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1340,7 +1272,8 @@
 					"$(PROJECT_DIR)/Clover/Library",
 					"$(PROJECT_DIR)",
 				);
-				MARKETING_VERSION = 1.24;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.25;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1361,7 +1294,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.24;
+				CURRENT_PROJECT_VERSION = 1.25;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1387,7 +1320,8 @@
 					"$(PROJECT_DIR)/Clover/Library",
 					"$(PROJECT_DIR)",
 				);
-				MARKETING_VERSION = 1.24;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.25;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";

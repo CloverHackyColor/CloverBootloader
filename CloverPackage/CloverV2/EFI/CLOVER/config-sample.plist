@@ -909,18 +909,6 @@
                     <data>uAAAAADD</data>
                 </dict>
                 <dict>
-                    <key>Disabled</key>
-                    <true/>
-                    <key>Find</key>
-                    <data>SGVhZHBob25lcwA=</data>
-                    <key>MaskReplace</key>
-                    <data>/////wAAAAAAAAA=</data>
-                    <key>Name</key>
-                    <string>VoodooHDA</string>
-                    <key>Replace</key>
-                    <data>VGVsZXBob25lcwA=</data>
-                </dict>
-                <dict>
                     <key>Comment</key>
                     <string>Make all drives to be internal</string>
                     <key>Disabled</key>
