@@ -21,7 +21,10 @@ declare -r DRIVERS_LEGACY="BIOS" # same in buildpkg.sh/makeiso
 declare -r DRIVERS_UEFI="UEFI"   # same in buildpkg.sh/makeiso
 declare -r DRIVERS_OFF="off"     # same in buildpkg.sh/makeiso
 
+startBuildEpoch=$(date -u "+%s")
+
 if [[ "$SYSNAME" == Linux ]]; then
+  echo "Linux"
   declare -r NUMBER_OF_CPUS=$(nproc)
 else
   declare -r NUMBER_OF_CPUS=$(sysctl -n hw.logicalcpu)
@@ -74,6 +77,7 @@ GENPAGE=0
 
 FORCEREBUILD=0
 NOBOOTFILES=0
+ENABLE_MODERN_CPU=0
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
@@ -377,6 +381,9 @@ checkCmdlineArguments() {
             --genpage)
                 GENPAGE=1
                 ;;
+            --mcpu)
+                ENABLE_MODERN_CPU=1
+                ;;   
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
                 ;;
@@ -568,7 +575,12 @@ MainBuildScript() {
     # Create edk tools if necessary
     if  [[ ! -x "$EDK_TOOLS_PATH/Source/C/bin/GenFv" ]]; then
         echo "Building tools as they are not found"
+      if [[ "$SYSNAME" == Linux ]]; then
+        echo "Linux"   
+        make -C "$WORKSPACE"/BaseTools "BUILD_CC=clang"
+      else     
         make -C "$WORKSPACE"/BaseTools CC="gcc -Wno-deprecated-declarations"
+      fi
     fi
 
     # Apply options
@@ -578,6 +590,7 @@ MainBuildScript() {
     [[ "$USE_LOW_EBDA" -ne 0 ]] && addEdk2BuildMacro 'USE_LOW_EBDA'
     [[ -d "$WORKSPACE/MdeModulePkg/Universal/Variable/EmuRuntimeDxe" ]] && addEdk2BuildMacro 'HAVE_LEGACY_EMURUNTIMEDXE'
     [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
+    [[ "$ENABLE_MODERN_CPU" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_MODERN_CPU_QUIRKS'
 
     local cmd="${EDK2_BUILD_OPTIONS[@]}"
 
@@ -917,16 +930,6 @@ MainPostBuildScript() {
   echo "Generating BootSectors"
   local BOOTHFS="$CLOVERROOT"/BootHFS
   DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
-  echo "Done!"
-  stopBuildEpoch=$(date -u "+%s")
-buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
-if [[ $buildTime -gt 59 ]]; then
-    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
-else
-    timeToBuild=$(printf "%ds" $((buildTime)))
-fi
-
-printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
 
 }
 
@@ -971,3 +974,17 @@ fi
 # End:                  #
 #
 # vi: set expandtab ts=4 sw=4 sts=4: #
+
+echo "Done!"
+stopBuildEpoch=$(date -u "+%s")
+buildTime=$(expr $stopBuildEpoch - $startBuildEpoch)
+if [[ $buildTime -ge 3600 ]]; then
+	timeToBuild=$(printf "%dh%dm%ds" $((buildTime/3600)) $((buildTime/60%60)) $((buildTime%60)))
+elif [[ $buildTime -gt 59 ]]; then
+    timeToBuild=$(printf "%dm%ds" $((buildTime/60%60)) $((buildTime%60)))
+else
+    timeToBuild=$(printf "%ds" $((buildTime)))
+fi
+
+printf -- "\n* %s %s %s\n" "Clover build process took " "$timeToBuild" " to complete..."
+
