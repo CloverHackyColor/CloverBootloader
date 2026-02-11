@@ -559,7 +559,7 @@ UINT64 GetPlatformFeature(MacModel Model)
     case MacBookAir82:
     case MacBookAir91:
       return 0x1A; //3A;
-      // It is nonsense, ASCII code сharacter "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
+      // It is nonsense, ASCII code character "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
     default:
       return 0xFFFF; // disabled
     }

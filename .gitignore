@@ -73,3 +73,10 @@ DEBUG_REPORT.md
 CloverPackage/*.log
 build_failure.log
 buildme_run.log
+
+# Local directories - DO NOT COMMIT
+Analysis_CloverV2/
+.bin/
+
+# Build logs
+my_build_log*.txt
