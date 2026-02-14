@@ -77,7 +77,7 @@ GENPAGE=0
 
 FORCEREBUILD=0
 NOBOOTFILES=0
-ENABLE_MODERN_CPU=0
+ENABLE_MODERN_CPU=1
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
@@ -246,7 +246,7 @@ usage() {
     print_option_help "-v, --version" "print the version information and exit"
     echo
     echo "Toolchain:"
-#    print_option_help "-clang"     "use XCode Clang toolchain"
+    print_option_help "-clang"     "use llvm Clang toolchain"
 #    print_option_help "-llvm"      "use LLVM toolchain"
 #    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
     print_option_help "-gcc53"     "use GCC 5.3 toolchain"
@@ -275,9 +275,7 @@ usage() {
  #   print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
- #   print_option_help "--ext-pre" "deprecated option"
- #   print_option_help "--ext-co" "deprecated option"
- #   print_option_help "--ext-build" "deprecated option"
+    print_option_help "--no-mcpu" "disable AutoModernCPUQuirks" 
  #   print_option_help "--edk2shell <MinimumShell|FullShell>" "copy edk2 Shell to EFI tools dir"
     echo
     echo "build options:"
@@ -307,7 +305,7 @@ checkCmdlineArguments() {
         local option=$1
         shift
         case "$option" in
-            -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
+            -clang  | --clang)   TOOLCHAIN=CLANG ; CLANG=1 ;;
             -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
             -xcode14  | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
@@ -381,8 +379,8 @@ checkCmdlineArguments() {
             --genpage)
                 GENPAGE=1
                 ;;
-            --mcpu)
-                ENABLE_MODERN_CPU=1
+            --no-mcpu)
+                ENABLE_MODERN_CPU=0
                 ;;   
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT

@@ -77,7 +77,7 @@ GENPAGE=0
 
 FORCEREBUILD=0
 NOBOOTFILES=0
-ENABLE_MODERN_CPU=0
+ENABLE_MODERN_CPU=1
 
 declare -r GIT=`which git`
 #declare -r GITDIR=`git status 2> /dev/null`        # unsafe as git repository may exist in parent directory
@@ -382,8 +382,8 @@ checkCmdlineArguments() {
             --genpage)
                 GENPAGE=1
                 ;;
-            --mcpu)
-                ENABLE_MODERN_CPU=1
+            --no-mcpu)
+                ENABLE_MODERN_CPU=0
                 ;;   
             --no-usb)
                 addEdk2BuildMacro DISABLE_USB_SUPPORT
@@ -609,7 +609,7 @@ MainBuildScript() {
 
  #     local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")     
  #     local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
-	  local clover_revision=$(git describe --tags --abbrev=0)
+	    local clover_revision=$(git describe --tags --abbrev=0)
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
 

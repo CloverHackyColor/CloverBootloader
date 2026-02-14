@@ -46,6 +46,7 @@ fi
 # https://netbsd.pkgs.org/9/netbsd-amd64/isl-0.24.tgz.html
 # https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/9.1/All/isl-0.24.tgz
 # https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/isl/0.22.1-1/isl_0.22.1.orig.tar.xz
+# https://sourceforge.net/projects/libisl/files/isl-0.27.tar.xz/download
 
 # Change PREFIX if you want gcc and binutils
 # installed on different place
@@ -147,10 +148,18 @@ function mountRamDisk() {
 
 # Download #
 DownloadSource () {
-    # if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
-    #    echo "Status: ${ISL_VERSION} not found."
-    #    cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
-    # fi
+    if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+       echo "Status: ${ISL_VERSION} not found."
+       cp -v ${ISL_VERSION}.tar.xz ${DIR_DOWNLOADS}/
+    fi
+    if [[ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.xz ]]; then
+       echo "Status: ${BINUTILS_VERSION} not found."
+       cp -v ${BINUTILS_VERSION}.tar.xz ${DIR_DOWNLOADS}/
+    fi
+ #   if [[ ! -f ${DIR_DOWNLOADS}/${GCC_VERSION}.tar.xz ]]; then
+ #      echo "Status: ${GCC_VERSION} not found."
+ #      cp -v ${GCC_VERSION}.tar.xz ${DIR_DOWNLOADS}/
+ #   fi
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
@@ -170,25 +179,27 @@ DownloadSource () {
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
 
-   if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
-       echo "Status: ${ISL_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://libisl.sourceforge.io/${ISL_VERSION}.tar.xz || exit 1
+ #  if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
+ #      echo "Status: ${ISL_VERSION} not found."
+ #       curl -k -f -o download.tmp --remote-name https://libisl.sourceforge.io/${ISL_VERSION}.tar.xz || exit 1
+ #       https://sourceforge.net/projects/libisl/files/isl-0.27.tar.xz/
  #       curl -o download.tmp --remote-name http://isl.gforge.inria.fr/${ISL_VERSION}.tar.xz || exit 1
  #       curl -o download.tmp --remote-name https://github.com/Meinersbur/isl/archive/refs/tags/${ISL_VERSION}.tar.gz || exit 1
  #       curl -o download.tmp --remote-name https://codeload.github.com/Meinersbur/isl/tar.gz/refs/tags/isl-0.24
  #       curl -o download.tmp --remote-name https://github.com/CloverHackyColor/CloverBootloader/releases/download/5140/${ISL_VERSION}.tar.xz || exit 1
-       mv download.tmp ${ISL_VERSION}.tar.xz
-   fi
+ #      mv download.tmp ${ISL_VERSION}.tar.xz
+ #  fi
 
-    if [[ ! -f ${DIR_DOWNLOADS}/$BINUTILS_VERSION.tar.xz ]]; then
-        echo "Status: $BINUTILS_VERSION not found."
-        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/binutils/releases/$BINUTILS_VERSION.tar.xz || exit 1
-        mv download.tmp $BINUTILS_VERSION.tar.xz
-    fi
+#    if [[ ! -f ${DIR_DOWNLOADS}/$BINUTILS_VERSION.tar.xz ]]; then
+#        echo "Status: $BINUTILS_VERSION not found."
+#        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/binutils/releases/$BINUTILS_VERSION.tar.xz || exit 1
+#        mv download.tmp $BINUTILS_VERSION.tar.xz
+#    fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.xz ]]; then
         echo "Status: gcc-${GCC_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+#        curl -k -f -o download.tmp --remote-name https://sourceware.org/pub/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz || exit 1
+        curl -k -f -o download.tmp --remote-name https://ftp.fu-berlin.de/unix/languages/gcc/releases/gcc-15.2.0/gcc-15.2.0.tar.xz || exit 1
         mv download.tmp gcc-${GCC_VERSION}.tar.xz
     fi
 }
