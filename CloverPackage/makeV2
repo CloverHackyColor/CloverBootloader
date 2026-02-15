@@ -9,6 +9,8 @@ SYMROOT="${ROOT}"/sym
 mkdir -p "$SYMROOT"
 REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
 
+# Remove previous revision zip
+rm -rf $SYMROOT/CloverV2-*.zip
 # zip CloverV2, excluding all .empty and all .DS_Store
 zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
 mv CloverV2-${REVISION}.zip $SYMROOT
@@ -16,4 +18,3 @@ mv CloverV2-${REVISION}.zip $SYMROOT
 open "$SYMROOT"
 
 exit 0
-
