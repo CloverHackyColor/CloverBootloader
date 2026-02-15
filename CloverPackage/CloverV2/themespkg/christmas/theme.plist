@@ -3,24 +3,24 @@
 <plist version="1.0">
 <dict>
 	<key>Author</key>
-	<string>blackosx</string>
+	<string>chris1111</string>
 	<key>Description</key>
-	<string>A fun, simply animated, theme for Christmas.</string>
+	<string>Christmas Themes for Clover</string>
 	<key>Theme</key>
 	<dict>
 		<key>Anime</key>
 		<array>
 			<dict>
 				<key>FrameTime</key>
-				<integer>60</integer>
+				<integer>175</integer>
 				<key>Frames</key>
-				<integer>26</integer>
+				<integer>9</integer>
 				<key>ID</key>
 				<integer>1</integer>
 				<key>Once</key>
 				<false/>
 				<key>Path</key>
-				<string>Anim_1_Logo</string>
+				<string>Merry_Christmas_Logo</string>
 			</dict>
 		</array>
 		<key>Background</key>
@@ -61,7 +61,7 @@
 			<key>CharWidth</key>
 			<integer>9</integer>
 			<key>Path</key>
-			<string>WoR_NovaMono_9W_A.png</string>
+			<string>Font.png</string>
 			<key>Type</key>
 			<string>Load</string>
 		</dict>
@@ -78,6 +78,6 @@
 		</dict>
 	</dict>
 	<key>Year</key>
-	<string>2013</string>
+	<string>2026</string>
 </dict>
 </plist>
