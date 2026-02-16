@@ -2244,7 +2244,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.SWPrintf("%ls_%s", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device]);
     InputBootArgs->Row = i;
-    InputBootArgs->Item = &InputItems[119];
+    InputBootArgs->Item = &InputItems[118];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);
