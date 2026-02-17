@@ -237,12 +237,14 @@ msgid ""
 "Clover wants to make the root file system read-write.\n"
 "The change is temporary until the next reboot"
 msgstr ""
+"O Clover quer tornar o sistema de arquivos raiz leitura-gravação.\n"
+"A mudança é temporária até a próxima reinicialização"
 
 #. type: "GoToFailRootRW"
 #: Resources/templates/Localizable.strings:6
 #, no-wrap
 msgid "Cannot install without ensuring the file system is read-write"
-msgstr ""
+msgstr "Não é possível instalar sem garantir que o sistema de arquivos seja leitura-gravação"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:10
@@ -458,7 +460,7 @@ msgstr "CloverEFI 64-bits usando Bios Block I/O para acessar os discos"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Drivers off"
-msgstr ""
+msgstr "Drivers desativados"
 
 #. type: "off_description"
 #: Resources/templates/Localizable.strings:80
@@ -467,6 +469,8 @@ msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
 "off directory isn't loaded by Clover any how and this is only helpfull if you have to use the EFI shell to copy a missing driver or replace a bad one during the boot if a need be."
 msgstr ""
+"Instala todos os drivers disponíveis em EFI/CLOVER/drivers/off/\n"
+"o diretório off não é carregado pelo Clover de forma alguma e isso só é útil se você tiver que usar o shell EFI para copiar um driver ausente ou substituir um ruim durante a inicialização, se necessário."
 
 #. type: "Drivers64_title"
 #: Resources/templates/Localizable.strings:83
@@ -485,14 +489,14 @@ msgstr "Select drivers for BIOS-booting."
 #: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "Recommended drivers"
-msgstr ""
+msgstr "Drivers recomendados"
 
 #. type: "Recommended64UEFI_description"
 #: Resources/templates/Localizable.strings:87
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
-msgstr ""
+msgstr "Drivers recomendados, principalmente obrigatórios."
 
 #. type: "FileSystem64UEFI_title"
 #: Resources/templates/Localizable.strings:89
@@ -500,7 +504,7 @@ msgstr ""
 #, fuzzy, no-wrap
 #| msgid "FAT filesystem driver."
 msgid "File System drivers"
-msgstr "FAT filesystem driver."
+msgstr "Drivers de Sistema de Arquivos"
 
 #. type: "FileSystem64UEFI_description"
 #: Resources/templates/Localizable.strings:90
@@ -508,7 +512,7 @@ msgstr "FAT filesystem driver."
 #, fuzzy, no-wrap
 #| msgid "Alternate HFS+ filesystem driver."
 msgid "A collection of file system drivers."
-msgstr "Alternate HFS+ filesystem driver."
+msgstr "Uma coleção de drivers de sistema de arquivos."
 
 #. type: "Drivers64FV2_title"
 #: Resources/templates/Localizable.strings:92
@@ -590,7 +594,7 @@ msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI A
 #: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "HDA driver to play Startup Sound"
-msgstr ""
+msgstr "Driver HDA para tocar o Som de Inicialização"
 
 #. type: "FirmwareVolume.UEFI_description"
 #: Resources/templates/Localizable.strings:105
@@ -659,25 +663,25 @@ msgstr "Select drivers for UEFI-booting."
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "Human Interface Devices"
-msgstr ""
+msgstr "Dispositivos de Interface Humana"
 
 #. type: "HID64UEFI_description"
 #: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
-msgstr ""
+msgstr "Drivers PS2/USB para mouses e teclados."
 
 #. type: "MemoryFix64UEFI_title"
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Memory fix drivers"
-msgstr ""
+msgstr "Drivers de correção de memória"
 
 #. type: "MemoryFix64UEFI_description"
 #: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "A collection of memory fix drivers."
-msgstr ""
+msgstr "Uma coleção de drivers de correção de memória."
 
 #. type: "Drivers64UEFIFV2_title"
 #: Resources/templates/Localizable.strings:129
@@ -695,13 +699,13 @@ msgstr "Select drivers for UEFI-booting with FileVault 2."
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "Additional drivers"
-msgstr ""
+msgstr "Drivers adicionais"
 
 #. type: "Other64UEFI_description"
 #: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
-msgstr ""
+msgstr "Às vezes, uma BIOS UEFI pode não ter suporte para um protocolo específico ou funcionalidade."
 
 #. type: "AppleEvent.UEFI_description"
 #: Resources/templates/Localizable.strings:136
@@ -719,13 +723,13 @@ msgstr "Create optional AppleGraphicsConfig protocol."
 #: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "No more needed. Install OpenRuntime.efi only."
-msgstr ""
+msgstr "Não é mais necessário. Instale apenas o OpenRuntime.efi."
 
 #. type: "AudioDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
-msgstr ""
+msgstr "Driver HDA para tocar o Som de Inicialização no boot"
 
 #. type: "CsmVideoDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:148
@@ -896,7 +900,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "Glass"
-msgstr ""
+msgstr "Glass"
 
 #. type: "Glass_description"
 #: Resources/templates/Localizable.strings:187
@@ -908,6 +912,8 @@ msgid ""
 "Glass (A macOS Classic theme) from chris1111,\n"
 "Install to /EFI/CLOVER/themes/Glass"
 msgstr ""
+"Glass (Um tema clássico do macOS) por chris1111,\n"
+"Instalar em /EFI/CLOVER/themes/Glass"
 "O tema metal original by Slice,\n"
 "Será instalado em /EFI/CLOVER/themes/metal"
 
@@ -915,7 +921,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "Purple_Swirl"
-msgstr ""
+msgstr "Purple_Swirl"
 
 #. type: "Purple_Swirl_description"
 #: Resources/templates/Localizable.strings:191
@@ -927,6 +933,8 @@ msgid ""
 "Purple_Swirl theme from pkdesign,\n"
 "Install to /EFI/CLOVER/themes/Purple_Swirl"
 msgstr ""
+"Tema Purple_Swirl por pkdesign,\n"
+"Instalar em /EFI/CLOVER/themes/Purple_Swirl"
 "O tema metal original by Slice,\n"
 "Será instalado em /EFI/CLOVER/themes/metal"
 
@@ -934,7 +942,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:194
 #, no-wrap
 msgid "cesium"
-msgstr ""
+msgstr "Cesium"
 
 #. type: "cesium_description"
 #: Resources/templates/Localizable.strings:195
@@ -946,6 +954,8 @@ msgid ""
 "Vector SVG theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/cesium"
 msgstr ""
+"Tema vetorial SVG por Slice,\n"
+"Instalar em /EFI/CLOVER/themes/cesium"
 "O tema metal original by Slice,\n"
 "Será instalado em /EFI/CLOVER/themes/metal"
 
@@ -954,7 +964,7 @@ msgstr ""
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "Clovy"
-msgstr "Clover"
+msgstr "Clovy"
 
 #. type: "Clovy_description"
 #: Resources/templates/Localizable.strings:199
@@ -966,6 +976,8 @@ msgid ""
 "Vector SVG theme from Clovy,\n"
 "Install to /EFI/CLOVER/themes/Clovy"
 msgstr ""
+"Tema vetorial SVG por Clovy,\n"
+"Instalar em /EFI/CLOVER/themes/Clovy"
 "O tema metal original by Slice,\n"
 "Será instalado em /EFI/CLOVER/themes/metal"
 
@@ -985,6 +997,8 @@ msgid ""
 "random theme,\n"
 "Install to /EFI/CLOVER/themes/random choose a theme from others"
 msgstr ""
+"Tema aleatório,\n"
+"Instalar em /EFI/CLOVER/themes/random escolhe um tema entre os outros"
 "Tema Orange by dwm,\n"
 "Será instalado em /EFI/CLOVER/themes/orange"
 
@@ -1006,6 +1020,9 @@ msgid ""
 "//keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "//Install to /Applications"
 msgstr ""
+"CloverThemeManager.app por blackosx,\n"
+"//mantém seus temas atualizados, remove ou instala escolhendo de uma ampla seleção.\n"
+"//Instala em /Applications"
 "CloverThemeManager.app by blackosx keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
 "Install to /Applications"
 
@@ -1014,7 +1031,7 @@ msgstr ""
 #, fuzzy, no-wrap
 #| msgid "Bootloader"
 msgid "BootLoaderChooser"
-msgstr "Bootloader"
+msgstr "BootLoaderChooser"
 
 #. type: "BootLoaderChooser_description"
 #: Resources/templates/Localizable.strings:216
@@ -1030,12 +1047,21 @@ msgid ""
 "INSTALL ONLY IF YOU KNOW WHAT YOU ARE DOING !!!\n"
 "More infos https://github.com/jief666/BootloaderChooser. "
 msgstr ""
+"BootLoaderChooser por jief,\n"
+"Esta ferramenta é um menu que permite escolher qual bootloader você deseja carregar.\n"
+"Substituirá seu BOOTX64.efi, você pode escolher entre várias versões de bootloader.\n"
+"Na primeira vez, você verá o menu. Escolha um bootloader.\n"
+"Nas próximas vezes, ele carregará imediatamente o bootloader que você escolheu antes.\n"
+"Quando precisar do menu de volta, basta iniciar o computador com uma tecla pressionada.\n"
+"INSTALE APENAS PELO BUILDME !!!\n"
+"INSTALE APENAS SE VOCÊ SOUBER O QUE ESTÁ FAZENDO !!!\n"
+"Mais informações https://github.com/jief666/BootloaderChooser. "
 
 #. type: "CloverConfigPlistValidator_title"
 #: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "CloverConfigPlistValidator"
-msgstr ""
+msgstr "Validador de config.plist do Clover"
 
 #. type: "CloverConfigPlistValidator_description"
 #: Resources/templates/Localizable.strings:230
@@ -1045,6 +1071,9 @@ msgid ""
 "//Verify sanity of your config.plist keeps it clean and up to date.\n"
 "//Installs to /usr/local/bin and will be available as 'ccpv' "
 msgstr ""
+"CloverConfigPlistValidator por jief,\n"
+"//Verifica a sanidade do seu config.plist mantendo-o limpo e atualizado.\n"
+"//Instala em /usr/local/bin e estará disponível como 'ccpv' "
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:237
@@ -1426,7 +1455,7 @@ msgstr "ESP no [%1$@] %2$@"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "No description available"
-msgstr "Nenhuma des"
+msgstr "Nenhuma descrição disponível"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
