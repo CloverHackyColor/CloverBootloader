@@ -68,7 +68,7 @@ CONST XString8 ArgOptional[NUM_OPT] = {
 };
 CONST CHAR16 *VBIOS_BIN = L"misc\\c0000.bin";
 
-INPUT_ITEM InputItems[135]; // INPUT_ITEM is a class, therefore default initialization is taking place.
+INPUT_ITEM InputItems[200]; // INPUT_ITEM is a class, therefore default initialization is taking place.
 INTN TextStyle; //why global? It will be class SCREEN member
 
 UINT32 EncodeOptions(const XString8Array& Options)

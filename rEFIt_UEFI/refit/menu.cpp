@@ -436,6 +436,43 @@ void FillInputs(XBool New)
   InputItems[InputItemsCount].ItemType = BoolValue; //131
   InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.XhciPortLimit;
 
+  InputItems[InputItemsCount].ItemType = BoolValue; //132
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcBooterQuirks.ForceOcWriteFlash;
+  InputItems[InputItemsCount].ItemType = BoolValue; //133
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
+  InputItems[InputItemsCount].ItemType = BoolValue; //134
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost;
+  InputItems[InputItemsCount].ItemType = BoolValue; //135
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ClearTaskSwitchBit;
+  InputItems[InputItemsCount].ItemType = BoolValue; //136
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.DisableIoMapper;
+  InputItems[InputItemsCount].ItemType = BoolValue; //137
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.DisableIoMapperMapping;
+  InputItems[InputItemsCount].ItemType = BoolValue; //138
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison;
+  InputItems[InputItemsCount].ItemType = BoolValue; //139
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
+  InputItems[InputItemsCount].ItemType = BoolValue; //140
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ExtendBTFeatureFlags;
+  InputItems[InputItemsCount].ItemType = BoolValue; //141
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons;
+  InputItems[InputItemsCount].ItemType = BoolValue; //142
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize;
+  InputItems[InputItemsCount].ItemType = BoolValue; //143
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ForceAquantiaEthernet;
+  InputItems[InputItemsCount].ItemType = BoolValue; //144
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic;
+  InputItems[InputItemsCount].ItemType = BoolValue; //145
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.ThirdPartyDrives;
+  InputItems[InputItemsCount].ItemType = BoolValue; //146
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks;
+  InputItems[InputItemsCount].ItemType = Decimal; //147
+  InputItems[InputItemsCount++].SValue.SWPrintf("%04d", gSettings.Quirks.OcBooterQuirks.ResizeGpuBars);
+  InputItems[InputItemsCount].ItemType = BoolValue; //148
+  InputItems[InputItemsCount++].BValue = gSettings.Quirks.FuzzyMatch;
+  InputItems[InputItemsCount].ItemType = ASString; //149
+  InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Quirks.OcKernelCache.c_str());
+
   //menu for drop table
   if (GlobalConfig.ACPIDropTables.notEmpty()) {
     for ( size_t idx = 0 ; idx < GlobalConfig.ACPIDropTables.length() ; ++idx ) {
@@ -1111,6 +1148,85 @@ void ApplyInputs(void)
     gSettings.Quirks.OcKernelQuirks.XhciPortLimit = InputItems[i].BValue != 0;
      DBG("applied XhciPortLimit=%s\n", gSettings.Quirks.OcKernelQuirks.XhciPortLimit ? "Y" : "N" );
    }
+  i++; //132
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcBooterQuirks.ForceOcWriteFlash = InputItems[i].BValue != 0;
+  }
+  i++; //133
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs = InputItems[i].BValue != 0;
+  }
+  i++; //134
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost = InputItems[i].BValue != 0;
+  }
+  i++; //135
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ClearTaskSwitchBit = InputItems[i].BValue != 0;
+  }
+  i++; //136
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.DisableIoMapper = InputItems[i].BValue != 0;
+  }
+  i++; //137
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.DisableIoMapperMapping = InputItems[i].BValue != 0;
+  }
+  i++; //138
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison = InputItems[i].BValue != 0;
+  }
+  i++; //139
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.DummyPowerManagement = InputItems[i].BValue != 0;
+  }
+  i++; //140
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ExtendBTFeatureFlags = InputItems[i].BValue != 0;
+  }
+  i++; //141
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons = InputItems[i].BValue != 0;
+  }
+  i++; //142
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize = InputItems[i].BValue != 0;
+  }
+  i++; //143
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ForceAquantiaEthernet = InputItems[i].BValue != 0;
+  }
+  i++; //144
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic = InputItems[i].BValue != 0;
+  }
+  i++; //145
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.ThirdPartyDrives = InputItems[i].BValue != 0;
+  }
+  i++; //146
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks = InputItems[i].BValue != 0;
+  }
+  i++; //147
+  if (InputItems[i].Valid) {
+    INTN Minus = 0;
+    if (InputItems[i].SValue[0] == '-') {
+      Minus = 1;
+    }
+    gSettings.Quirks.OcBooterQuirks.ResizeGpuBars = (int8_t)StrDecimalToUintn(InputItems[i].SValue.data(Minus));
+    if (Minus) {
+      gSettings.Quirks.OcBooterQuirks.ResizeGpuBars = -gSettings.Quirks.OcBooterQuirks.ResizeGpuBars;
+    }
+  }
+  i++; //148
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.FuzzyMatch = InputItems[i].BValue != 0;
+  }
+  i++; //149
+  if (InputItems[i].Valid) {
+    gSettings.Quirks.OcKernelCache = InputItems[i].SValue;
+  }
 
   if (NeedSave) {
     ApplySettings();
@@ -1981,7 +2097,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuItemInput(105, "Kernel XCPM", false);
   SubScreen->AddMenuItemInput(48,  "Kernel PM", false);
   SubScreen->AddMenuItemInput(120, "Panic No Kext Dump", false);
-  SubScreen->AddMenuItemInput(127, "Provide CPU Info", false);
   SubScreen->AddMenuEntry(SubMenuKernelPatches(), true);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", false);
@@ -1989,7 +2104,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
 //  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", false);
   SubScreen->AddMenuEntry(SubMenuKextsToBlock(), true);
-  SubScreen->AddMenuItemInput(131,  "Unlimit Xhci Ports", false);
 //  SubScreen->AddMenuItemInput(115, "No Caches", false);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", false);
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
@@ -2244,7 +2358,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
     InputBootArgs = new REFIT_MENU_SWITCH;
     InputBootArgs->Title.SWPrintf("%ls_%s", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device]);
     InputBootArgs->Row = i;
-    InputBootArgs->Item = &InputItems[119];
+    InputBootArgs->Item = &InputItems[118];
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);
@@ -2509,27 +2623,46 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to fix memory");
   
+  SubScreen->AddMenuItemInput(133, "AppleXcpmExtraMsrs", false);
+  SubScreen->AddMenuItemInput(134, "AppleXcpmForceBoost", false);
   SubScreen->AddMenuCheck("AvoidRuntimeDefrag",     QUIRK_DEFRAG, 101);
+  SubScreen->AddMenuItemInput(135, "ClearTaskSwitchBit", false);
   SubScreen->AddMenuCheck("DevirtualiseMmio",       QUIRK_MMIO, 101);
+  SubScreen->AddMenuItemInput(136, "DisableIoMapper", false);
+  SubScreen->AddMenuItemInput(137, "DisableIoMapperMapping", false);
+  SubScreen->AddMenuItemInput(138, "DisableLinkeditJettison", false);
   SubScreen->AddMenuCheck("DisableSingleUser",      QUIRK_SU, 101);
   SubScreen->AddMenuCheck("DisableVariableWrite",   QUIRK_VAR, 101);
   SubScreen->AddMenuCheck("DiscardHibernateMap",    QUIRK_HIBER, 101);
+  SubScreen->AddMenuItemInput(139, "DummyPowerManagement", false);
   SubScreen->AddMenuCheck("EnableSafeModeSlide",    QUIRK_SAFE, 101);
   SubScreen->AddMenuCheck("EnableWriteUnprotector", QUIRK_UNPROT, 101);
+  SubScreen->AddMenuItemInput(140, "ExtendBTFeatureFlags", false);
+  SubScreen->AddMenuItemInput(141, "ExternalDiskIcons", false);
+  SubScreen->AddMenuItemInput(143, "ForceAquantiaEthernet", false);
   SubScreen->AddMenuCheck("ForceExitBootServices",  QUIRK_EXIT, 101);
+  SubScreen->AddMenuItemInput(132, "ForceOcWriteFlash", false);
+  SubScreen->AddMenuItemInput(148, "FuzzyMatch", false);
+  SubScreen->AddMenuItemInput(142, "IncreasePciBarSize", false);
+  SubScreen->AddMenuItemInput(149, "KernelCache:", true);
+  SubScreen->AddMenuItemInput(144, "PowerTimeoutKernelPanic", false);
   SubScreen->AddMenuCheck("ProtectMemoryRegions",   QUIRK_REGION, 101);
   SubScreen->AddMenuCheck("ProtectSecureBoot",      QUIRK_SECURE, 101);
   SubScreen->AddMenuCheck("ProtectUefiServices",    QUIRK_UEFI, 101);
+  SubScreen->AddMenuItemInput(127, "ProvideCurrentCpuInfo", false);
+  SubScreen->AddMenuItemInput(146, "AutoModernCPUQuirks", false);
   SubScreen->AddMenuCheck("ProvideCustomSlide",     QUIRK_CUSTOM, 101);
-//decimal
   SubScreen->AddMenuItemInput(121, "ProvideMaxSlide:", true);
   SubScreen->AddMenuCheck("RebuildAppleMemoryMap",  QUIRK_MAP, 101);
   SubScreen->AddMenuItemInput(126, "ResizeAppleGpuBars:", true);
+  SubScreen->AddMenuItemInput(147, "ResizeGpuBars:", true);
   SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
+  SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
   SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);
-
+  SubScreen->AddMenuItemInput(145, "ThirdPartyDrives", false);
   SubScreen->AddMenuItemInput(129, "TscSyncTimeout:", true);
-  
+  SubScreen->AddMenuItemInput(131, "XhciPortLimit", false);
+
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   ModifyTitles(Entry);
   
