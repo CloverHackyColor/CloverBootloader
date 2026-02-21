@@ -1769,7 +1769,7 @@ void FillOCCpuInfo(OC_CPU_INFO* CpuInfo)
   CpuInfo->Hypervisor = gSettings.CPU.QEMU;
   CpuInfo->Type = (UINT8)gCPUStructure.Type;
   CpuInfo->Family = (UINT8)gCPUStructure.Family;
-  CpuInfo->Model = (UINT8)gCPUStructure.Model - (gCPUStructure.Extmodel << 4);
+  CpuInfo->Model = (UINT8)gCPUStructure.Model;  // - (gCPUStructure.Extmodel << 4);  :)
   CpuInfo->ExtModel = (UINT8)gCPUStructure.Extmodel;
   CpuInfo->ExtFamily = (UINT8)gCPUStructure.Extfamily;
   CpuInfo->Stepping = (UINT8)gCPUStructure.Stepping;
