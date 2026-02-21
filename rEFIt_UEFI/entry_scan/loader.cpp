@@ -525,6 +525,11 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
     return NullXString8;
   }
 
+//  if (BuildVersion.isEmpty()) {
+//
+//	DBG("BuildVersion is empty\n");
+//  }
+
   if (OSTYPE_IS_OSX(LoaderType)) {
     XString8 uuidPrefix;
     if (APFSTargetUUID.notNull())
@@ -565,6 +570,9 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
               BuildVersion = Prop->getString()->stringValue();
             }
           }
+//  if (!BuildVersion.isEmpty()) {
+//	DBG("BuildVersion =%s from %ls\n", BuildVersion.c_str(), plist.wc_str());
+//  }
         }
         Dict->ReleaseTag();
       }
@@ -828,7 +836,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
     // Implemented by Sherlocks
     if (OSVersion.isEmpty()) {
       CONST CHAR8 *s;
-      UINT8 *fileBuffer;
+      UINT8 *fileBuffer = NULL;
       //      CHAR8  *Res5 = (__typeof__(Res5))AllocateZeroPool(5);
       //      CHAR8  *Res6 = (__typeof__(Res6))AllocateZeroPool(6);
       //      CHAR8  *Res7 = (__typeof__(Res7))AllocateZeroPool(7);
@@ -993,6 +1001,13 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
   if (PlistBuffer != NULL) {
     FreePool(PlistBuffer);
   }
+
+//  if (BuildVersion.isEmpty()) {
+//	DBG("BuildVersion is empty at return\n");
+//  } else {
+//	DBG("BuildVersion =%s at end\n", BuildVersion.c_str());
+//  }
+
   (*BuildVersionPtr).stealValueFrom(&BuildVersion);
   return OSVersion;
 }
@@ -1260,8 +1275,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     DBG("%s", "");
   }
 #endif
-  Entry->macOSVersion = GetOSVersion(Entry);
-  DBG("%sOSVersion=%s \n", indent, Entry->macOSVersion.asString().c_str());
+  XString8 BuildVersion;
+//  Entry->macOSVersion = GetOSVersion(Entry);
+  Entry->macOSVersion = GetOSVersion(OSType, Entry->APFSTargetUUID, Volume, &BuildVersion);
+  Entry->BuildVersion = BuildVersion;
+  DBG("%sOSVersion=%s Build=%s\n", indent, Entry->macOSVersion.asString().c_str(),
+	 Entry->BuildVersion.c_str());
   // detect specific loaders
   XStringW OSIconName;
   ShortcutLetter = 0;

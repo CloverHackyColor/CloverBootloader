@@ -81,6 +81,7 @@
 #define CPU_MODEL_ROCKETLAKE    0xA7  /* 11h Rocket Lake */
 #define CPU_MODEL_METEORLAKE    0xAA  /* 14h Meteor Lake */
 #define CPU_MODEL_RAPTORLAKE    0xB7  /* 13h Raptor Lake */
+#define CPU_MODEL_RAPTORLAKE_M  0xBA    // Raptor Lake Mobile
 #define CPU_MODEL_RAPTORLAKE_B  0xBF  /* 13h Raptor Lake, i5-13400h */
 #define CPU_MODEL_ARROWLAKE		0xC6
 #define CPU_MODEL_ARROWLAKE_X	0xC5  /* 15h Arrow Lake */

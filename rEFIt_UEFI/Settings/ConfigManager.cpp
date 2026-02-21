@@ -609,7 +609,7 @@ void ConfigManager::ReloadSmbios(XStringW& str)  // searches for SMBIOS by syste
     FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS());
     DBG("SMBIOS reloaded with model %s\n", gSettings.Smbios.ProductName.c_str());
   }
-  DBG("boardID from config: %s\n", configPlist.getSMBIOS().getBoardID().getKey().c_str());
+  //DBG("boardID from config: %s\n", configPlist.getSMBIOS().getBoardID().getKey().c_str());
   DBG("boardID from gSettings: %s\n", gSettings.Smbios.BoardNumber.c_str());
   DBG("chosen SMBIOS %ls\n", SmbiosList[OldChosenSmbios].wc_str());
   //FillSmbiosWithDefaultValue(GlobalConfig.CurrentModel, configPlist.getSMBIOS()); //getSMBIOS() depends on global OldChosenSmbios

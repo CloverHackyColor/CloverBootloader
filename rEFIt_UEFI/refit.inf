@@ -235,6 +235,8 @@
   Platform/Edid.h
   Platform/Events.cpp
   Platform/Events.h
+  Platform/Experimental/ModernCPUQuirks.cpp
+  Platform/Experimental/ModernCPUQuirks.h
   Platform/FixBiosDsdt.cpp
   Platform/FixBiosDsdt.h
   Platform/gma.cpp

@@ -335,6 +335,7 @@ void GetCPUProperties (void)
       case CPU_MODEL_RAPTORLAKE:
       case CPU_MODEL_ALDERLAKE_ULT:
       case CPU_MODEL_RAPTORLAKE_B:
+	  case CPU_MODEL_RAPTORLAKE_M:
       case CPU_MODEL_METEORLAKE:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         DBG("MSR 0x35    %16llX\n", msr);  //Raptor 0000-0000-0014-001C
@@ -544,6 +545,7 @@ void GetCPUProperties (void)
            case CPU_MODEL_ROCKETLAKE:
            case CPU_MODEL_ALDERLAKE_ULT:
            case CPU_MODEL_RAPTORLAKE_B:
+		   case CPU_MODEL_RAPTORLAKE_M:
            case CPU_MODEL_RAPTORLAKE:
            case CPU_MODEL_METEORLAKE:
            case CPU_MODEL_ARROWLAKE:
@@ -1471,6 +1473,7 @@ UINT16 GetAdvancedCpuType()
           case CPU_MODEL_RAPTORLAKE_B:
           case CPU_MODEL_ROCKETLAKE:
           case CPU_MODEL_RAPTORLAKE:
+		  case CPU_MODEL_RAPTORLAKE_M:
           case CPU_MODEL_METEORLAKE:
           case CPU_MODEL_ARROWLAKE:
           case CPU_MODEL_ARROWLAKE_X:
@@ -1617,6 +1620,7 @@ MacModel GetDefaultModel()
       case CPU_MODEL_TIGERLAKE_D:
       case CPU_MODEL_ALDERLAKE_ULT:
       case CPU_MODEL_RAPTORLAKE_B:
+	  case CPU_MODEL_RAPTORLAKE_M:
       case CPU_MODEL_METEORLAKE:
       case CPU_MODEL_ARROWLAKE_U:
         DefaultType = MacBookPro161;

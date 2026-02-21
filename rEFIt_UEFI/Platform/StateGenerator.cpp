@@ -280,6 +280,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
           case CPU_MODEL_ALDERLAKE:
           case CPU_MODEL_ALDERLAKE_ULT:
           case CPU_MODEL_RAPTORLAKE_B:
+		  case CPU_MODEL_RAPTORLAKE_M:
           case CPU_MODEL_RAPTORLAKE:
           case CPU_MODEL_METEORLAKE:
           case CPU_MODEL_ARROWLAKE:
@@ -358,6 +359,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_RAPTORLAKE) ||
                     (gCPUStructure.Model == CPU_MODEL_ALDERLAKE_ULT)  ||
                     (gCPUStructure.Model == CPU_MODEL_RAPTORLAKE_B) ||
+					(gCPUStructure.Model == CPU_MODEL_RAPTORLAKE_M) ||
                     (gCPUStructure.Model == CPU_MODEL_METEORLAKE) ||
 					(gCPUStructure.Model == CPU_MODEL_ARROWLAKE  ) ||
 					(gCPUStructure.Model == CPU_MODEL_ARROWLAKE_X  ) ||

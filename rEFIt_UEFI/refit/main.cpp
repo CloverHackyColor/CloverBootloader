@@ -94,7 +94,7 @@
 #include "../include/OC.h"
 
 #ifndef DEBUG_ALL
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
 #define DEBUG_MAIN 2
 #else
 #define DEBUG_MAIN 1
@@ -199,7 +199,7 @@ void PrintMemoryMap() {
 #endif
 }
 
-void AllocSmallBlocks(UINTN NumberOfPagesMax) {
+void AllocSmallBlocks(UINT32 NumberOfPagesMax) {
   EFI_MEMORY_DESCRIPTOR *MemMap;
   UINTN MemMapSize;
   UINTN MapKey, DescriptorSize;
@@ -233,7 +233,7 @@ void AllocSmallBlocks(UINTN NumberOfPagesMax) {
       continue;
     }
 
-    if ((UINTN)EntryWalker->NumberOfPages < NumberOfPagesMax) {
+    if (EntryWalker->NumberOfPages < NumberOfPagesMax) {
       gBS->AllocatePages(AllocateAddress, EfiBootServicesData,
                          EntryWalker->NumberOfPages,
                          &EntryWalker->PhysicalStart);
@@ -249,12 +249,14 @@ void AllocSmallBlocks() {
   // PrintMemoryMap();
 
   UINTN size = 64;
-  UINTN nb = 0;
+  UINT32 nb = 0;
 
   AllocSmallBlocks(size); // 252KB
 
   MemoryAttributesTable = OcGetMemoryAttributes(NULL);
-  nb = MemoryAttributesTable->NumberOfEntries;
+  if (MemoryAttributesTable) {
+ 	nb = MemoryAttributesTable->NumberOfEntries;
+  }
 
   // PrintMemoryMap();
   while (size <= 2048 && nb > 100) { // XNU seems to handle max 128 entries. So
@@ -262,11 +264,13 @@ void AllocSmallBlocks() {
     size *= 2;
     AllocSmallBlocks(size);
     MemoryAttributesTable = OcGetMemoryAttributes(NULL);
-    nb = MemoryAttributesTable->NumberOfEntries;
+	if (MemoryAttributesTable) {
+      nb = MemoryAttributesTable->NumberOfEntries;
+    } else break;
     // PrintMemoryMap();
   }
   if (size > 2048) {
-    DBG("Cannot shrink memory map enough. Nb entries = %lld\n", nb);
+    DBG("Cannot shrink memory map enough. Nb entries = %d\n", nb);
   }
 }
 
@@ -1371,19 +1375,19 @@ void LOADER_ENTRY::StartLoader() {
       EFI_STATUS Status = ModernCpuDetect(&mOpenCoreCpuInfo, &ModernInfo);
       if (!EFI_ERROR(Status)) {
         DBG("ModernCPUQuirks: Detected CPU Family=0x%X Model=0x%X Gen=%d\n",
-            ModernInfo.CpuFamily, ModernInfo.CpuModel, ModernInfo.Generation);
+            ModernInfo.Family, ModernInfo.Model, ModernInfo.Generation);
 
         Status = ModernCpuGetQuirkRecommendation(&ModernInfo, &QuirkRec);
         if (!EFI_ERROR(Status) && QuirkRec.ConfidenceLevel > 50) {
           DBG("ModernCPUQuirks: Applying recommended quirks "
-              "(confidence=%d%%)\n",
-              QuirkRec.ConfidenceLevel);
+              "(confidence=%d%c)\n",
+             QuirkRec.ConfidenceLevel, '%');
 
           // Apply quirks only if not already set by user
           if (!mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo &&
               QuirkRec.ProvideCurrentCpuInfo) {
             mOpenCoreConfiguration.Kernel.Quirks.ProvideCurrentCpuInfo = TRUE;
-            DBG("ModernCPUQuirks: Enabled ProvideCurrentCpuInfo\n");
+           DBG("ModernCPUQuirks: Enabled ProvideCurrentCpuInfo\n");
           }
           if (!mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapperMapping &&
               QuirkRec.DisableIoMapperMapping) {
@@ -1406,11 +1410,11 @@ void LOADER_ENTRY::StartLoader() {
             DBG("ModernCPUQuirks: Enabled AppleCpuPmCfgLock\n");
           }
         } else {
-          DBG("ModernCPUQuirks: Low confidence (%d%%), skipping auto-quirks\n",
-              QuirkRec.ConfidenceLevel);
+          DBG("ModernCPUQuirks: Low confidence (%d%c), skipping auto-quirks\n",
+              QuirkRec.ConfidenceLevel, '%');
         }
       } else {
-        DBG("ModernCPUQuirks: CPU detection failed, status=%r\n", Status);
+        DBG("ModernCPUQuirks: CPU detection failed, status=%s\n", efiStrError(Status));
       }
     }
 #endif
@@ -1769,10 +1773,11 @@ void LOADER_ENTRY::StartLoader() {
 #endif
 
 #ifdef USE_OC_SECTION_Uefi
-    gSettings.Devices.USB.USBFixOwnership = false; // Use OC FixUsbOwnership
     mOpenCoreConfiguration.Uefi.Quirks.ReleaseUsbOwnership =
-        false; // Clover has it's own FixUsbOwnership
-#else
+        gSettings.Devices.USB.USBFixOwnership; // Use OC FixUsbOwnership
+    gSettings.Devices.USB.USBFixOwnership = false;  
+
+#else // Clover has it's own FixUsbOwnership
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop =
         gSettings.GUI.ProvideConsoleGop;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution,
@@ -2236,7 +2241,7 @@ void LOADER_ENTRY::StartLoader() {
 
     DBG("UEFI Quirks\n");
     DBG("EBSD %d  TST %d  AHS %d  DSP %d  EVA %d  EV %d  FUS %d  IIFR %d  RGB "
-        "%d  RUPR %d  RUO %d  ROR %d  RBVR %d  SRP %d  UFC %d  FOWF %d",
+        "%d  RUPR %d  RUO %d  ROR %d  RBVR %d  SRP %d  UFC %d  FOWF %d\n",
         mOpenCoreConfiguration.Uefi.Quirks.ExitBootServicesDelay,
         mOpenCoreConfiguration.Uefi.Quirks.TscSyncTimeout,
         mOpenCoreConfiguration.Uefi.Quirks.ActivateHpetSupport,
@@ -3324,8 +3329,8 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
 
 //  ConsoleInHandle = SystemTable->ConsoleInHandle;
 
-// #define DEBUG_ERALY_CRASH
-#ifdef DEBUG_ERALY_CRASH
+// #define DEBUG_EARLY_CRASH
+#ifdef DEBUG_EARLY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step1");
 //  PauseForKey();
 #endif
@@ -3339,7 +3344,7 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid,
                                  (void **)&LoadedImage);
 
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
     SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step2");
 //  PauseForKey();
 #endif
@@ -3355,7 +3360,7 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
           (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by
                                               // grep to feed the debugger
       DBG("Clover ImageHandle = %llx\n", (uintptr_t)ImageHandle);
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
       SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step3");
 //  PauseForKey();
 #endif
@@ -3366,7 +3371,7 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
 #endif
   }
 
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step4");
 //  PauseForKey();
 #endif
@@ -3383,7 +3388,7 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
 
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); // ticks for 1second
 
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step5");
   PauseForKey();
 #endif
@@ -3401,7 +3406,7 @@ RefitMainMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable) {
   if (EFI_ERROR(Status))
     return Status;
 
-#ifdef DEBUG_ERALY_CRASH
+#ifdef DEBUG_EARLY_CRASH
   SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step6");
   PauseForKey();
 #endif

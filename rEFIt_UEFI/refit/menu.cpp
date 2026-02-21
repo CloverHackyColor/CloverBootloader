@@ -1207,6 +1207,8 @@ void ApplyInputs(void)
   i++; //146
   if (InputItems[i].Valid) {
     gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks = InputItems[i].BValue != 0;
+     DBG("applied AutoModernCPUQuirks=%s\n", gSettings.Quirks.OcKernelQuirks.AutoModernCPUQuirks ? "Y" : "N" );
+
   }
   i++; //147
   if (InputItems[i].Valid) {

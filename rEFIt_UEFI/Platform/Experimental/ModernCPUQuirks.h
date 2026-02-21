@@ -17,6 +17,8 @@
 #ifndef MODERN_CPU_QUIRKS_H
 #define MODERN_CPU_QUIRKS_H
 
+#include "../../include/OC.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
