@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 
+#include <Library/PrintLib.h>
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcCpuLib.h>
 #include <Uefi.h>
