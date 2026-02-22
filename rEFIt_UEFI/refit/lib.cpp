@@ -1556,7 +1556,6 @@ XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
   // "\\\\" into '\\'
   Char = (CHAR16*)StrStr(FilePath, L"\\\\"); // cast is ok because FilePath is not const, and we know that StrStr returns a pointer in FilePath. Will disappear when using a string object instead of CHAR16*
   while (Char != NULL) {
-//    StrCpyS(Char, 4, Char + 1);  //can't overlap
     Tail = Char + 1;
     while (*Char != 0) {
       *(Char++) = *(Tail++);
