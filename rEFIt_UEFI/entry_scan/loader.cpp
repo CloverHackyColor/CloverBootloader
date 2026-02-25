@@ -1468,6 +1468,7 @@ void LOADER_ENTRY::AddDefaultMenu() {
   UINT64 VolumeSize;
   EFI_GUID Guid;
   XBool KernelIs64BitOnly;
+  XStringW OldOSName{OSName};
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
   constexpr LString8 splashLitteral = "splash"_XS8;
@@ -1669,6 +1670,7 @@ void LOADER_ENTRY::AddDefaultMenu() {
     SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
     SubScreen->AddMenuEntry(SubEntry, true);
   }
+  OSName = OldOSName;
 }
 
 LOADER_ENTRY *AddLoaderEntry(IN CONST XStringW &LoaderPath,
