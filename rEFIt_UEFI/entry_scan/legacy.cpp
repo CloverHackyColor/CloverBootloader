@@ -121,7 +121,7 @@ DBG("      Volume->LegacyOS.Name=%ls\n", Volume->LegacyOS.Name.wc_str());
         Entry->Title.SWPrintf("Boot %ls from %ls", LoaderTitle.wc_str(), VolDesc.wc_str());
     }
   }
-//  DBG("      Entry->Title=%ls\n", Entry->Title.wc_str());
+  DBG("      Entry->Title=%ls\n", Entry->Title.wc_str());
 
   Entry->Row          = 0;
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
