@@ -477,31 +477,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry) {
     Status = egLoadFile(Entry->Volume->RootDir, targetNameFile,
                         (UINT8 **)&fileBuffer, &fileLen);
     if (!EFI_ERROR(Status)) {
-      //      CHAR16  *tmpName;
-      // Create null terminated string
-      //      targetString = (CHAR8*) A_llocateZeroPool(fileLen+1);
-      //      CopyMem( (void*)targetString, (void*)fileBuffer, fileLen);
-      //      DBG("found disk_label with contents:%s\n", targetString);
-
-      //      NOTE: Sothor - This was never run. If we need this correct it and
-      //      uncomment it. if (Entry->LoaderType == OSTYPE_OSX) {
-      //        INTN i;
-      //        //remove occurence number. eg: "vol_name 2" --> "vol_name"
-      //        i=fileLen-1;
-      //        while ((i>0) && (targetString[i]>='0') &&
-      //        (targetString[i]<='9')) {
-      //          i--;
-      //        }
-      //        if (targetString[i] == ' ') {
-      //          targetString[i] = 0;
-      //        }
-      //      }
-
-      //      //Convert to Unicode
-      //      tmpName = (CHAR16*)A_llocateZeroPool((fileLen+1)*2);
-      //      AsciiStrToUnicodeStrS(targetString, tmpName, fileLen);
-
-      if (Entry->DisplayedVolName.isEmpty()) {	  
+      if (Entry->DisplayedVolName.isEmpty()) {
         Entry->DisplayedVolName.strncpy(fileBuffer, fileLen);
       }
       Entry->Volume->osxVolumeName.strncpy(fileBuffer, fileLen);
@@ -640,17 +616,6 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
         Dict->ReleaseTag();
       }
     }
-
-    //    if ( OSVersion.isEmpty() )
-    //    {
-    //      if ( FileExists(Volume->RootDir,
-    //      SWPrintf("\\%ls\\com.apple.installer\\BridgeVersion.plist",
-    //      APFSTargetUUID.wc_str()).wc_str()) ) {
-    //        OSVersion = "11.0"_XS8;
-    //        // TODO so far, is there is a BridgeVersion.plist, it's
-    //        version 11.0. Has to be improved with next releases.
-    //      }
-    //    }
 
     // 1st stage - 2
     // Check for plist - createinstallmedia/NetInstall
@@ -833,10 +798,6 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
     if (OSVersion.isEmpty()) {
       CONST CHAR8 *s;
       UINT8 *fileBuffer = NULL;
-      //      CHAR8  *Res5 = (__typeof__(Res5))AllocateZeroPool(5);
-      //      CHAR8  *Res6 = (__typeof__(Res6))AllocateZeroPool(6);
-      //      CHAR8  *Res7 = (__typeof__(Res7))AllocateZeroPool(7);
-      //      CHAR8  *Res8 = (__typeof__(Res8))AllocateZeroPool(8);
       UINTN fileLen = 0;
       XStringW InstallerLog;
       InstallerLog = L"\\Mac OS X Install Data\\ia.log"_XSW; // 10.7
@@ -852,8 +813,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
         if (!EFI_ERROR(Status)) {
           XString8 targetString;
           targetString.strncpy((CHAR8 *)fileBuffer, fileLen);
-          //    s = SearchString(targetString, fileLen, "Running OS Build: Mac
-          //    OS X ", 27);
+
           s = AsciiStrStr(targetString.c_str(), "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
             OSVersion.S8Printf("%c%c.%c\n", s[27], s[28], s[30]);
@@ -1336,7 +1296,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
   }
   // DBG("OSIconName=%ls \n", OSIconName.wc_str());
   Entry->OSName = OSIconName.subString(0, OSIconName.indexOf(',')); // TODO
-  //  SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
+  // SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
 
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty() && Volume->VolLabel.notEmpty()) {
@@ -1468,7 +1428,6 @@ void LOADER_ENTRY::AddDefaultMenu() {
   UINT64 VolumeSize;
   EFI_GUID Guid;
   XBool KernelIs64BitOnly;
-  XStringW OldOSName{OSName};
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
   constexpr LString8 splashLitteral = "splash"_XS8;
@@ -1577,11 +1536,9 @@ void LOADER_ENTRY::AddDefaultMenu() {
     SubScreen->AddMenuCheck("Don't reboot on panic (debug=0x100)", OPT_DEBUG,
                             68);
     SubScreen->AddMenuCheck("Debug kexts (kextlog=0xffff)", OPT_KEXTLOG, 68);
-
     if (gSettings.RtVariables.CsrActiveConfig == 0) {
       SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
     }
-
   } else if (LoaderType == OSTYPE_LINEFI) {
     XBool Quiet = LoadOptions.contains(quietLitteral);
     XBool WithSplash = LoadOptions.contains(splashLitteral);
@@ -1670,7 +1627,6 @@ void LOADER_ENTRY::AddDefaultMenu() {
     SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
     SubScreen->AddMenuEntry(SubEntry, true);
   }
-  OSName = OldOSName;
 }
 
 LOADER_ENTRY *AddLoaderEntry(IN CONST XStringW &LoaderPath,
@@ -2134,7 +2090,6 @@ MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE &dir,
 
 void ScanLoader(void) 
 {
-  // DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
 
   for (UINTN VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
@@ -2417,8 +2372,6 @@ void ScanLoader(void)
       }
     }
 
-    // DBG("Volume->ApfsTargetUUIDArray.size()=%zd\n",
-    // Volume->ApfsTargetUUIDArray.size());
     if (Volume->ApfsTargetUUIDArray.size() > 0) {
 
       for (UINTN i = 0; i < Volume->ApfsTargetUUIDArray.size(); i++) {
@@ -2442,9 +2395,7 @@ void ScanLoader(void)
             for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size();
                  VolumeIndex2++) {
               REFIT_VOLUME *Volume2 = &Volumes[VolumeIndex2];
-              // DBG("idx=%zu  name %ls  uuid=%s \n", VolumeIndex2,
-              // Volume2->VolName.wc_str(),
-              // Volume2->ApfsFileSystemUUID.c_str());
+
               if (Volume2->ApfsContainerUUID ==
                   targetVolume->ApfsContainerUUID) {
                 if ((Volume2->ApfsRole & APPLE_APFS_VOLUME_ROLE_SYSTEM) != 0) {
@@ -2471,9 +2422,7 @@ void ScanLoader(void)
             for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size();
                  VolumeIndex2++) {
               REFIT_VOLUME *Volume2 = &Volumes[VolumeIndex2];
-              // DBG("idx=%zu  name %ls  uuid=%s \n", VolumeIndex2,
-              // Volume2->VolName.wc_str(),
-              // Volume2->ApfsFileSystemUUID.c_str());
+
               if ((Volume2->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0) {
                 if (Volume2->ApfsContainerUUID == Volume->ApfsContainerUUID) {
                   bootVolume = Volume2;
@@ -2526,11 +2475,7 @@ void ScanLoader(void)
             FullTitleInstaller.SWPrintf("Mac OS Install");
           }
         }
-        /*MacOsVersion macOSVersion =
-        GetMacOSVersionFromFolder(*Volume->RootDir,
-        SWPrintf("\\%s\\System\\Library\\CoreServices",
-        ApfsTargetUUID.c_str())); if ( macOSVersion.notEmpty() && macOSVersion <
-        MacOsVersion("11"_XS8) )*/
+
         FullTitle.SWCatf(
             " via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
         AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi",
@@ -2538,10 +2483,6 @@ void ScanLoader(void)
                        NullXString8Array, FullTitle, LoaderTitle, Volume, NULL,
                        OSTYPE_OSX, 0);
 
-        // Try to add Recovery APFS entry
-        /*macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir,
-        SWPrintf("\\%s", ApfsTargetUUID.c_str())); if ( macOSVersion.notEmpty()
-        && macOSVersion < MacOsVersion("11"_XS8) )*/
         FullTitleRecovery.SWCatf(
             " via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
         if (!AddLoaderEntry(
@@ -2557,9 +2498,6 @@ void ScanLoader(void)
               OSTYPE_RECOVERY, 0);
         }
         // Try to add macOS install entry
-        /*macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir,
-        SWPrintf("\\%s\\com.apple.installer", ApfsTargetUUID.c_str())); if (
-        macOSVersion.notEmpty() && macOSVersion < MacOsVersion("11"_XS8) )*/
         FullTitleInstaller.SWCatf(
             " via %ls", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
 
@@ -2569,8 +2507,6 @@ void ScanLoader(void)
         if (FileExists(Volume->RootDir, installerPath)) {
           XString8 rootDmg = GetAuthRootDmg(*Volume->RootDir, installerPath);
           rootDmg.replaceAll("%20"_XS8, " "_XS8);
-          //          while ( rootDmg.notEmpty()  &&  rootDmg.startWith('/') )
-          //          rootDmg.deleteCharsAtPos(0, 1);
           rootDmg.replaceAll('/', '\\');
           REFIT_VOLUME *targetInstallVolume =
               Volumes.getVolumeWithApfsContainerUUIDAndFileSystemUUID(
@@ -2660,9 +2596,6 @@ void ScanLoader(void)
       if (MainMenu.Entries.ElementAt(idx)
               .getLOADER_ENTRY()
               ->APFSTargetUUID.notNull()) {
-        //        DBG("Add in EntriesArrayTmp at index %zd  Entry %zd : %ls\n",
-        //        EntriesArrayTmp.size(), idx,
-        //        MainMenu.Entries.ElementAt(idx).Title.wc_str());
         EntriesArrayTmp.AddReference(
             new EntryIdx(idx, &MainMenu.Entries.ElementAt(idx)), true);
       }
@@ -2822,15 +2755,9 @@ void ScanLoader(void)
 
   DBG("Entries list after ordering\n");
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
-    //   if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY() ) {
-    //     DBG("  Entry %zd : %ls%s\n", idx,
-    //     MainMenu.Entries.ElementAt(idx).Title.wc_str(),
-    //     MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
-    //   }else{
     DBG("  Entry %zd : %ls%s\n", idx,
         MainMenu.Entries.ElementAt(idx).Title.wc_str(),
         MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
-    //   }
   }
 }
 
