@@ -1448,7 +1448,7 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "IOSkywalkFamily.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
-    pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8,
+    pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement.kext"_XS8,
                        pos);
     pos = setKextAtPos(&kextArray, "SMCAMDProcessor.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
