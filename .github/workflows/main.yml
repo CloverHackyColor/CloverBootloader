@@ -51,7 +51,7 @@ jobs:
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
       
       - name: Upload to Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Clover-GCC-15.2.0-${{ env.GIT_SHA }}
           path: |
