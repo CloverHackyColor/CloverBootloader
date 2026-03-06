@@ -194,6 +194,7 @@ XBool setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const Mac
       DBG("Additional HDMI properties injected, continue\n");
       //return true;
     } else {
+// it was for very old macOS, not sure if actual
       if (gSettings.Devices.UseIntelHDMI) {
         DBG(" HDMI Audio, used with HDA setting hda-gfx=onboard-2\n");
         devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
@@ -217,7 +218,7 @@ XBool setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const Mac
     if (gSettings.Devices.Audio.HDALayoutId > 0) {
       // layoutId is specified - use it
       layoutId = (UINT32)gSettings.Devices.Audio.HDALayoutId;
-      DBG(" setting specified layout-id=%d (0x%X)\n", layoutId, layoutId);
+      DBG(" setting specified voodoo-layout-id=%d (0x%X)\n", layoutId, layoutId);
     } else {
       layoutId = 12;
     }
@@ -237,8 +238,8 @@ XBool setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const Mac
       }
     }
     if (!Injected) {
-      if ( (OSVersion.notEmpty()  &&  OSVersion < MacOsVersion("10.8"_XS8)) || gSettings.Devices.Audio.HDALayoutId > 0 ) {
-        devprop_add_value(device, "layout-id", (UINT8 *)&layoutId, 4);
+      if ( gSettings.Devices.Audio.HDALayoutId > 0 ) {
+        devprop_add_value(device, "voodoo-layout-id", (UINT8 *)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
       if (gSettings.Devices.UseIntelHDMI) {

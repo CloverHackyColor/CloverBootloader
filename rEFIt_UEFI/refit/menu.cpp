@@ -1821,10 +1821,10 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
       );
   }
 
-  //SubScreen->AddMenuItemInput(59, "HDAInjection", false);
-  if (gSettings.Devices.Audio.HDAInjection) {
-    SubScreen->AddMenuItemInput(60, "HDALayoutId:", true);
-  }
+  SubScreen->AddMenuItemInput(59, "HDAInjection", false);
+ // if (gSettings.Devices.Audio.HDAInjection) {
+  SubScreen->AddMenuItemInput(60, "HDALayoutId:", true);
+ // }
 
   // avaiable configuration
   SubScreen->AddMenuItemInput(57, "ResetHDA", false);
