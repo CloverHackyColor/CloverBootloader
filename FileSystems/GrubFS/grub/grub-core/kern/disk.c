@@ -80,7 +80,7 @@ grub_disk_cache_fetch (unsigned long dev_id, unsigned long disk_id,
   cache_index = grub_disk_cache_get_index (dev_id, disk_id, sector);
   cache = grub_disk_cache_table + cache_index;
 
-  if (cache->dev_id == dev_id && cache->disk_id == disk_id
+  if ((unsigned long)cache->dev_id == dev_id && (unsigned long)cache->disk_id == disk_id
       && cache->sector == sector) {
     cache->lock = 1;
 #if DISK_CACHE_STATS
@@ -106,7 +106,7 @@ grub_disk_cache_unlock (unsigned long dev_id, unsigned long disk_id,
   cache_index = grub_disk_cache_get_index (dev_id, disk_id, sector);
   cache = grub_disk_cache_table + cache_index;
 
-  if (cache->dev_id == dev_id && cache->disk_id == disk_id
+  if ((unsigned long)cache->dev_id == dev_id && (unsigned long)cache->disk_id == disk_id
       && cache->sector == sector) {
     cache->lock = 0;
   }

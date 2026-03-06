@@ -424,7 +424,7 @@ EfiBootManagerUpdateConsoleVariable (
   EFI_DEVICE_PATH_PROTOCOL  *NewDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *TempNewDevicePath;
 
-  if (ConsoleType >= ARRAY_SIZE (mConVarName)) {
+  if ((UINTN)ConsoleType >= ARRAY_SIZE (mConVarName)) {
     return EFI_INVALID_PARAMETER;
   }
 

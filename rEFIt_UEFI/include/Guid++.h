@@ -27,7 +27,7 @@ extern "C" {
 #include "../cpp_foundation/XString.h"
 
 
-constexpr EFI_GUID operator "" _guid(const char *str, size_t N);
+constexpr EFI_GUID operator ""_guid(const char *str, size_t N);
 
 /*
  * Class to replace struct EFI_GUID to bring some syntaxic sugar : initialisation at construction, assignment, == operator, etc.
@@ -166,7 +166,7 @@ private:
       };
   }
   
-  friend constexpr GUID operator "" _guid(const char *str, size_t N);
+  friend constexpr GUID operator ""_guid(const char *str, size_t N);
 
 public:
   
@@ -389,7 +389,7 @@ public:
 };
 
 
-constexpr GUID operator "" _guid(const char *str, size_t N)
+constexpr GUID operator ""_guid(const char *str, size_t N)
 {
   return (!(N == GUID::long_guid_form_length || N == GUID::short_guid_form_length))
     ? GUID::parse_guid_error2()

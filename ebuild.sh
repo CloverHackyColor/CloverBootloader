@@ -36,7 +36,7 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
-SCRIPT_VERS="2019-11-09"
+SCRIPT_VERS="2026-03-01"
 
 # Macro
 M_NOGRUB=0
@@ -54,26 +54,28 @@ export PYTHON_COMMAND=python3
 
 # if building through Xcode, then TOOLCHAIN_DIR is not defined
 # checking if it is where CloverGrowerPro put it
-if [[ "$SYSNAME" == Linux ]]; then
-  export TOOLCHAIN=GCC152
-  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
-else
-  if [[ -d ~/src/opt/local ]]; then
-    TOOLCHAIN_DIR=~/src/opt/local
-  else
-    TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
-  fi
-  export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
-fi
-export TOOLCHAIN_DIR
-echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
-
+#if [[ "$SYSNAME" == Linux ]]; then
+#  export TOOLCHAIN=GCC152
+#  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
+#else
+#  if [[ "$TOOLCHAIN" == XCLANG ]]; then
+#    TOOLCHAIN_DIR=/opt/local
+#  elif [[ -d ~/src/opt/local ]]; then
+#    TOOLCHAIN_DIR=~/src/opt/local
+#  else
+#    TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
+#  fi
+#  export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
+#fi
+#export TOOLCHAIN_DIR
+#echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
 VBIOSPATCHCLOVEREFI=0
 ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
 USE_LOW_EBDA=1
 CLANG=0
 GENPAGE=0
+LLVM=0
 
 FORCEREBUILD=0
 NOBOOTFILES=0
@@ -246,16 +248,19 @@ usage() {
     print_option_help "-v, --version" "print the version information and exit"
     echo
     echo "Toolchain:"
-    print_option_help "-clang"     "use llvm Clang toolchain"
-#    print_option_help "-llvm"      "use LLVM toolchain"
+    print_option_help "-clang"     "use Clang toolchain"
+    print_option_help "-llvm"      "use LLVM toolchain"
 #    print_option_help "-gcc49"     "use GCC 4.9 toolchain"
-    print_option_help "-gcc53"     "use GCC 5.3 toolchain"
-#    print_option_help "-unixgcc"   "use UNIXGCC toolchain"
-    print_option_help "-xcode"     "use XCode 3.2 toolchain"
-    print_option_help "-xcode5"     "use XCode 5-7 toolchain "
+    print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-11"
+    print_option_help "-gcc131"    "use GCC 13.1 toolchain, including gcc-14.2"
+    print_option_help "-gcc151"    "use GCC 15.1 toolchain"
+    print_option_help "-gcc152"    "use GCC 15.2 toolchain"
+#    print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
+#    print_option_help "-xcode"     "use XCode 3.2 toolchain"
+    print_option_help "-xcode5"     "use XCode 5 toolchain, "
     print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
-    print_option_help "-xcode14"    "use XCode 14 toolchain"
-    print_option_help "-xcode15"    "use XCode 15 toolchain"
+    print_option_help "-xcode14"     "use XCode 14 toolchain"
+    print_option_help "-xcode16"     "use XCode 16-26 toolchain"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
     echo "Target:"
@@ -272,7 +277,7 @@ usage() {
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
     print_option_help "--only-sata0" "activate only SATA0 patch"
     print_option_help "--std-ebda" "ebda offset dont shift to 0x88000"
- #   print_option_help "--genpage" "dynamically generate page table under ebda"
+    print_option_help "--genpage" "dynamically generate page table under ebda"
     print_option_help "--no-usb" "disable USB support"
     print_option_help "--no-lto" "disable Link Time Optimisation"
     print_option_help "--no-mcpu" "disable AutoModernCPUQuirks" 
@@ -305,12 +310,13 @@ checkCmdlineArguments() {
         local option=$1
         shift
         case "$option" in
-            -clang  | --clang)   TOOLCHAIN=CLANG ; CLANG=1 ;;
+            -llvm  | --llvm)   TOOLCHAIN=LLVM ; CLANG=1 ;;
+            -clang  | --clang)   TOOLCHAIN=XCLANG ; CLANG=1 ;;
             -xcode5  | --xcode5 )  TOOLCHAIN=XCODE5 ; CLANG=1 ;;
             -xcode8  | --xcode8 )  TOOLCHAIN=XCODE8 ; CLANG=1 ;;
-            -xcode14  | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
-            -xcode15  | --xcode15 )  TOOLCHAIN=XCODE15 ; CLANG=1 ;;
-            -xcode16  | --xcode16 )  TOOLCHAIN=XCODE16 ; CLANG=1 ;;
+            -xcode14 | --xcode14 )  TOOLCHAIN=XCODE14 ; CLANG=1 ;;
+            -xcode15 | --xcode15 )  TOOLCHAIN=XCODE15 ; CLANG=1 ;;
+            -xcode16 | --xcode16 )  TOOLCHAIN=XCODE16 ; CLANG=1 ;;
             -GCC49  | --GCC49)   TOOLCHAIN=GCC49   ;;
             -gcc49  | --gcc49)   TOOLCHAIN=GCC49   ;;
             -GCC53  | --GCC53)   TOOLCHAIN=GCC53   ;;
@@ -320,8 +326,8 @@ checkCmdlineArguments() {
             -gcc152  | --gcc152)   TOOLCHAIN=GCC152   ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
             -x64 | --x64)
-                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
-                sleep 4
+#                printf "\`%s' is deprecated because Clover is 64 bit only. This message will be removed soon\n" "$option" 1>&2
+#                sleep 4
                 ;;
             -mc | --x64-mcp)   USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
@@ -427,8 +433,8 @@ checkCmdlineArguments() {
 ## Check tools for the toolchain
 checkToolchain() {
     case "$TOOLCHAIN" in
-        XCODE*) checkXcode ;;
-        *) ;;
+        XCLANG|XCODE*) checkXcode ;;
+                *) export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/" ;;
     esac
 
   if [[ "$SYSNAME" == Linux ]]; then
@@ -458,6 +464,11 @@ checkToolchain() {
     ./buildnasm.sh
   fi
 
+  if [[ $TOOLCHAIN == XCLANG ]]; then
+    export XCLANG_PREFIX="/opt/local/bin/"
+    export XCLANG_BIN="/opt/local/libexec/llvm-22/bin/"
+  fi
+
   echo "NASM_PREFIX: $NASM_PREFIX"
 
   #NASM_VER=`nasm -v | awk '/version/ {print $3}'`
@@ -471,25 +482,8 @@ checkToolchain() {
 
 # Main build script
 MainBuildScript() {
-    checkCmdlineArguments $@
-    checkToolchain
-
- #   local repoRev=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
-	local repoRev=$(git describe --tags --abbrev=0)
-
-    #
-    # we are building the same rev as before?
-    local SkipAutoGen=0
-    #
-    if [[ -f "$CLOVERROOT"/Version.h ]]; then
-        local builtedRev=$(cat "$CLOVERROOT"/Version.h  \
-                           | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
-#    echo "old revision ${builtedRev}" >echo.txt
-#    echo "new revision ${repoRev}" >>echo.txt
-
-        if [ "${repoRev}" = "${builtedRev}" ]; then SkipAutoGen=1; fi
-    fi
-
+ #   checkCmdlineArguments $@
+ 
     #
     # Setup workspace if it is not set
     #
@@ -523,7 +517,34 @@ MainBuildScript() {
  #       echo "Building from: $WORKSPACE"
  #   fi
 
+    checkToolchain
+echo "Toolchain=$TOOLCHAIN at $TOOLCHAIN_DIR "
+
+
+export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
+export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
+echo "BUILD_DIR: $BUILD_DIR"
+echo "BUILD_DIR_ARCH: $BUILD_DIR_ARCH"
+
+ #   local repoRev=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+	local repoRev=$(git describe --tags --abbrev=0)
+
+    #
+    # we are building the same rev as before?
+    local SkipAutoGen=0
+    #
+    if [[ -f "$CLOVERROOT"/Version.h ]]; then
+        local builtedRev=$(cat "$CLOVERROOT"/Version.h  \
+                           | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
+#    echo "old revision ${builtedRev}" >echo.txt
+#    echo "new revision ${repoRev}" >>echo.txt
+
+        if [ "${repoRev}" = "${builtedRev}" ]; then SkipAutoGen=1; fi
+    fi
+
+
     export CLOVER_PKG_DIR="$CLOVERROOT"/CloverPackage/CloverV2
+    echo "CLOVER_PKG_DIR: $CLOVER_PKG_DIR"
 
     # Cleaning part of the script if we have told to do it
     if [[ "$TARGETRULE" == cleanpkg ]]; then
@@ -587,7 +608,7 @@ MainBuildScript() {
     [[ "$ONLYSATA0PATCH" -ne 0 ]] && addEdk2BuildMacro 'ONLY_SATA_0'
     [[ "$USE_LOW_EBDA" -ne 0 ]] && addEdk2BuildMacro 'USE_LOW_EBDA'
     [[ -d "$WORKSPACE/MdeModulePkg/Universal/Variable/EmuRuntimeDxe" ]] && addEdk2BuildMacro 'HAVE_LEGACY_EMURUNTIMEDXE'
-    [[ "$CLANG" -ne 0 ]] && addEdk2BuildMacro 'CLANG'
+    [[ "$LLVM" -ne 0 ]] && addEdk2BuildMacro 'LLVM'
     [[ "$ENABLE_MODERN_CPU" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_MODERN_CPU_QUIRKS'
 
     local cmd="${EDK2_BUILD_OPTIONS[@]}"
@@ -831,7 +852,7 @@ MainPostBuildScript() {
 #      copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2/$efi.efi
 #    done
 
-    binArray=( ApfsDriverLoader FSInject )
+    binArray=( ApfsDriverLoader )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem/$efi.efi
@@ -843,7 +864,7 @@ MainPostBuildScript() {
 #    fi
 
 
-    binArray=( EnglishDxe )
+    binArray=( FSInject AudioDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi
@@ -864,7 +885,7 @@ MainPostBuildScript() {
     fi
 
     # drivers64UEFI
-    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe AudioDxe )
+    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe )
 
     for efi in "${binArray[@]}"
     do
@@ -937,6 +958,24 @@ MainPostBuildScript() {
 export LC_ALL=POSIX
 
 startBuildEpoch=$(date -u "+%s")
+
+checkCmdlineArguments $@
+
+if [[ "$SYSNAME" == Linux ]]; then
+  export TOOLCHAIN=GCC152
+  TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-/usr}
+else
+  if [[ "$TOOLCHAIN" == XCLANG ]]; then
+    TOOLCHAIN_DIR=/opt/local
+  elif [[ -d ~/src/opt/local ]]; then
+    TOOLCHAIN_DIR=~/src/opt/local
+  else
+    TOOLCHAIN_DIR=${TOOLCHAIN_DIR:-"$CLOVERROOT"/toolchain}
+  fi
+  export DIR_MAIN=${DIR_MAIN:-"$CLOVERROOT"/toolchain}
+fi
+export TOOLCHAIN_DIR
+echo "TOOLCHAIN_DIR: $TOOLCHAIN_DIR"
 
 # Add toolchain bin directory to the PATH
 if [[ "$SYSNAME" != Linux ]]; then
