@@ -1,6 +1,6 @@
 
 # CloverBootloader 
-[![CI](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg)](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml)
+[![CI](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg)](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml) [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/CloverHackyColor/CloverBootloader/blob/master/LICENSE) 
 
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 ### Read the DOC [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover-Documentation Site](https://cloverhackycolor.github.io/Clover-Documentation/)

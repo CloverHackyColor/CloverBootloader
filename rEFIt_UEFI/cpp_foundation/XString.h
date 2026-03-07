@@ -34,7 +34,7 @@ class LString8 : public LString<char, XString8, LString8>
 
 	// no assignement, no destructor
 
-	friend constexpr LString8 operator "" _XS8 ( const char* s, size_t size) { return LString8(s, size); }
+	friend constexpr LString8 operator ""_XS8 ( const char* s, size_t size) { return LString8(s, size); }
 
   const char* c_str() const { return data(); }
 
@@ -101,7 +101,7 @@ class LString16 : public LString<char16_t, XString16, LString16>
     constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16, LString16>(s) {};
   #endif
 	
-	friend constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t size) { return LString16(s, size); }
+	friend constexpr LString16 operator ""_XS16 ( const char16_t* s, size_t size) { return LString16(s, size); }
 };
 
 class XString16 : public XStringAbstract<char16_t, XString16, LString16>
@@ -132,7 +132,7 @@ class LString32 : public LString<char32_t, XString32 ,LString32>
     constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32 ,LString32>(s) {};
   #endif
 	
-	friend constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t size) { return LString32(s, size); }
+	friend constexpr LString32 operator ""_XS32 ( const char32_t* s, size_t size) { return LString32(s, size); }
 };
 
 class XString32 : public XStringAbstract<char32_t, XString32, LString32>
@@ -167,7 +167,7 @@ class LStringW : public LString<wchar_t, XStringW, LStringW>
     constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW, LStringW>(s) {};
   #endif
 
-	friend constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t size) { return LStringW(s, size); }
+	friend constexpr LStringW operator ""_XSW ( const wchar_t* s, size_t size) { return LStringW(s, size); }
 
   const wchar_t* wc_str() const { return data(); }
 };
@@ -226,10 +226,10 @@ public:
 };
 
 
-constexpr LString8 operator "" _XS8 ( const char* s, size_t len);
-constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t len);
-constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t len);
-constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t len);
+constexpr LString8 operator ""_XS8 ( const char* s, size_t len);
+constexpr LString16 operator ""_XS16 ( const char16_t* s, size_t len);
+constexpr LString32 operator ""_XS32 ( const char32_t* s, size_t len);
+constexpr LStringW operator ""_XSW ( const wchar_t* s, size_t len);
 
 
 #ifdef _MSC_VER

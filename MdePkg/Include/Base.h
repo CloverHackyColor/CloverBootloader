@@ -635,7 +635,7 @@ typedef char* VA_LIST;
 #define VA_END(Marker)                  (Marker = (VA_LIST) 0)
 #define VA_COPY(Dest, Start)            ((void)((Dest) = (Start)))
 
-#elif defined(__GNUC__) || defined(__clang__)
+#elif defined(__GNUC__) || defined(__clang__)    //SI?
 
 #if defined(MDE_CPU_X64) && !defined(NO_MSABI_VA_FUNCS)
 //
