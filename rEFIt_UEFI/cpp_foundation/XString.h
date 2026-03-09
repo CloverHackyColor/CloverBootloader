@@ -34,7 +34,7 @@ class LString8 : public LString<char, XString8, LString8>
 
 	// no assignement, no destructor
 
-	friend constexpr LString8 operator "" _XS8 ( const char* s, size_t size) { return LString8(s, size); }
+	friend constexpr LString8 operator ""_XS8 ( const char* s, size_t size) { return LString8(s, size); }
 
   const char* c_str() const { return data(); }
 
@@ -226,10 +226,10 @@ public:
 };
 
 
-constexpr LString8 operator "" _XS8 ( const char* s, size_t len);
-constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t len);
-constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t len);
-constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t len);
+constexpr LString8 operator ""_XS8 ( const char* s, size_t len);
+constexpr LString16 operator ""_XS16 ( const char16_t* s, size_t len);
+constexpr LString32 operator ""_XS32 ( const char32_t* s, size_t len);
+constexpr LStringW operator ""_XSW ( const wchar_t* s, size_t len);
 
 
 #ifdef _MSC_VER
