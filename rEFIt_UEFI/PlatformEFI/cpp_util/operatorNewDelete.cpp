@@ -51,11 +51,6 @@ void operator delete  ( void* ptr ) noexcept
   FreePool(ptr);
 }
 
-void operator delete[](void* ptr) noexcept
-{
-  FreePool(ptr);
-}
-
 #ifdef _MSC_VER
 void _cdecl operator delete (void * ptr, unsigned __int64 count)
 #else

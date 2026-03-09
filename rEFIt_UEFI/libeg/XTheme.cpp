@@ -867,17 +867,17 @@ const XIcon& XTheme::LoadOSIcon(const XString8& Full)
     DBG("      first=%s\n", First.c_str());
     if (!ReturnIcon->isEmpty()) return *ReturnIcon;
     //else search second name
-    Second = "os_"_XS8 + Full.subString(Comma + 1, MAX_XSIZE);
+    Second = "os_"_XS8 + Full.subString(Comma + 1, Size - Comma - 1);
     //moreover names can be triple L"chrome,grub,linux"
     UINTN SecondComma = Second.indexOf(',');
-    if (SecondComma == MAX_XSIZE) {
+    if (Comma == MAX_XSIZE) {
       ReturnIcon = &GetIcon(Second);
       if (!ReturnIcon->isEmpty()) return *ReturnIcon;
     } else {
       First = Second.subString(0, SecondComma);
       ReturnIcon = &GetIcon(First);
       if (!ReturnIcon->isEmpty()) return *ReturnIcon;
-      Third = "os_"_XS8 + Second.subString(SecondComma + 1, MAX_XSIZE);
+      Third = "os_"_XS8 + Second.subString(SecondComma + 1, Size - SecondComma - 1);
       ReturnIcon = &GetIcon(Third);
       if (!ReturnIcon->isEmpty()) return *ReturnIcon;
     }

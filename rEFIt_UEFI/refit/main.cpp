@@ -1686,14 +1686,8 @@ void LOADER_ENTRY::StartLoader()
           (UINT8 *)SysRoot;
 
       size_t i1 = forceKext.rindexOf("\\") + 1;
-      if (i1 == MAX_XSIZE) i1 = 0;
       size_t i2 = forceKext.rindexOf(".");
-      XStringW identifier;
-      if (i2 != MAX_XSIZE && i2 > i1) {
-        identifier = forceKext.subString(i1, i2 - i1);
-      } else {
-        identifier = forceKext.subString(i1, MAX_XSIZE);
-      }
+      XStringW identifier = forceKext.subString(i1, i2 - i1);
       OC_STRING_ASSIGN(
           mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier,
           S8Printf("%ls", identifier.wc_str()).c_str());
