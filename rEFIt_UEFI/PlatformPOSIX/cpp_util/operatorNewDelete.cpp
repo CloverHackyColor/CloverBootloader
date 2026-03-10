@@ -48,12 +48,7 @@ void operator delete  ( void* ptr ) noexcept
 {
 //  ++operator_delete_count1;
 //  MemLogf(false, 0, "operator delete(%llx) %lld\n", uintptr_t(ptr), operator_delete_count1);
-	FreePool(ptr);
-}
-
-void operator delete[](void* ptr) noexcept
-{
-  FreePool(ptr);
+	return FreePool(ptr);
 }
 
 #ifdef _MSC_VER
@@ -64,7 +59,7 @@ void operator delete (void * ptr, UINTN count)
 {
 //  ++operator_delete_count2;
 //  MemLogf(false, 0, "operator delete(%llx, %lld) %lld\n", uintptr_t(ptr), count, operator_delete_count2);
-  FreePool(ptr);
+  return FreePool(ptr);
 }
 
 

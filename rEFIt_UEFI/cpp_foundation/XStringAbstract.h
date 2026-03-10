@@ -501,9 +501,8 @@ public:
   }
 
   ThisXStringClass subString(size_t pos, size_t count) const {
-    size_t len = length();
-    if (pos >= len || count == 0) return ThisXStringClass();
-    if (count > len - pos) count = len - pos;
+    //		if ( pos > length() ) return ThisXStringClass();
+    //		if ( count > length()-pos ) count = length()-pos;
 
     ThisXStringClass ret;
 
@@ -1015,11 +1014,11 @@ public:
     *this = S;
   }
 
-  ~XStringAbstract() {
-    // DBG_XSTRING("Destructor :%ls\n", data());
-    if (m_allocatedSize > 0)
-      delete[] super::__m_data;
-  }
+    ~XStringAbstract() {
+        // DBG_XSTRING("Destructor :%ls\n", data());
+        if (m_allocatedSize > 0)
+            delete super::__m_data;
+    }
 
 #ifdef XSTRING_CACHING_OF_SIZE
   /* ctor */
@@ -1086,13 +1085,10 @@ public:
 #endif
   /* Copy Assign */
   XStringAbstract &operator=(const XStringAbstract &S) {
-    if (this == &S) {
-      return *this;
-    }
     if (S.data() && S.m_allocatedSize == 0) {
       // S points to a litteral
       if (m_allocatedSize > 0) {
-        delete[] super::__m_data;
+        delete super::__m_data;
         m_allocatedSize = 0;
       }
       super::__m_data =
@@ -1110,7 +1106,7 @@ public:
   /* Copy Assign */
   XStringAbstract &operator=(const ls_t &S) {
     if (m_allocatedSize > 0) {
-      delete[] super::__m_data;
+      delete super::__m_data;
       m_allocatedSize = 0;
     }
     super::__m_data = (T *)S.data(); // because it's a litteral, we don't copy.
@@ -1635,7 +1631,7 @@ public:
   /* size is in number of technical chars, NOT in bytes */
   ThisXStringClass &stealValueFrom(T *S, size_t allocatedSize) {
     if (m_allocatedSize > 0)
-      delete[] super::__m_data;
+      delete super::__m_data;
     super::__m_data = S;
 #ifdef XSTRING_CACHING_OF_SIZE
     super::__m_size = utf_size_of_utf_string(super::__m_data, super::__m_data);
@@ -1648,7 +1644,7 @@ public:
   // a future realloc may fail as EDK want the old size.
   ThisXStringClass &stealValueFrom(T *S) {
     if (m_allocatedSize > 0)
-      delete[] super::__m_data;
+      delete super::__m_data;
     super::__m_data = S;
 #ifdef XSTRING_CACHING_OF_SIZE
     super::__m_size = utf_size_of_utf_string(super::__m_data, super::__m_data);
@@ -1661,7 +1657,7 @@ public:
 
   ThisXStringClass &stealValueFrom(ThisXStringClass *S) {
     if (m_allocatedSize > 0)
-      delete[] super::__m_data;
+      delete super::__m_data;
 #ifdef XSTRING_CACHING_OF_SIZE
     super::__m_size = S->size();
 #endif
