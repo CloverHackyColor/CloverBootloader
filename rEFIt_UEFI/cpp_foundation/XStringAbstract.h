@@ -1014,11 +1014,11 @@ public:
     *this = S;
   }
 
-  ~XStringAbstract() {
-    // DBG_XSTRING("Destructor :%ls\n", data());
-    if (m_allocatedSize > 0)
-      free((void *)super::__m_data);
-  }
+    ~XStringAbstract() {
+        // DBG_XSTRING("Destructor :%ls\n", data());
+        if (m_allocatedSize > 0)
+            delete super::__m_data;
+    }
 
 #ifdef XSTRING_CACHING_OF_SIZE
   /* ctor */
