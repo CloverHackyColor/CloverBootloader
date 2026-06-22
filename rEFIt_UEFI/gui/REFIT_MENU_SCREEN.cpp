@@ -1022,7 +1022,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
       case SCAN_F8:
         testSVG();
  //       testBMP();
-        testEfires();
+ //       testEfires();
         break;
 
       case SCAN_F9:

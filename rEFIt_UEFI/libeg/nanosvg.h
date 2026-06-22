@@ -108,6 +108,15 @@ enum NSVGflags {
   NSVG_FLAGS_VISIBLE = 0x01
 };
 */
+
+typedef unsigned short NSVGclipPathIndex;
+
+// Структура для хранения списка clipPath для каждого shape
+typedef struct NSVGclipNode {
+    NSVGclipPathIndex index;           // Индекс clipPath
+    struct NSVGclipNode* next;         // Следующий clipPath в списке
+} NSVGclipNode;
+
 typedef struct NSVGgradientLink {
   char id[kMaxIDLength];
   float xform[6];
@@ -148,7 +157,7 @@ typedef struct NSVGpath
   struct NSVGpath* next;    // Pointer to next path, or NULL if last element.
 } NSVGpath;
 
-typedef unsigned short NSVGclipPathIndex;
+
 
 typedef struct NSVGclip
 {
@@ -200,7 +209,8 @@ typedef struct NSVGshape
   float xform[6];
   NSVGpath* paths;      // Linked list of paths in the image. One shape - one path.
   NSVGgroup* group;      // Pointer to parent group or NULL
-  NSVGclip clip;
+//  NSVGclip clip;
+  NSVGclipNode* clipList;            // Список clipPath для этого shape
   struct NSVGshape* next;    // Pointer to next shape, or NULL if last element.
   struct NSVGshape* link;    // pointer for reference shape
   struct NSVGfont* fontFace; //one letter - one shape
@@ -317,8 +327,9 @@ typedef struct NSVGattrib
   char hasFill;
   char hasStroke;
   char visible;
-  NSVGclipPathIndex clipPathCount;
-  NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
+//  NSVGclipPathIndex clipPathCount;
+//  NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
+  NSVGclipNode* clipList;            // Список clipPath для атрибута
   NSVGgroup* group;
 //  NSVGpattern* pattern;
 } NSVGattrib;
@@ -450,6 +461,7 @@ typedef struct NSVGparser
   NSVGpattern *patterns;
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
+  int clipPathStackCount;  // текущая глубина стека
 } NSVGparser;
 
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE
@@ -531,7 +543,7 @@ void nsvgRasterize(NSVGrasterizer* r,
 void nsvg__deleteRasterizer(NSVGrasterizer*);
 
 
-#define NSVG__SUBSAMPLES  5
+#define NSVG__SUBSAMPLES  8
 #define NSVG__FIXSHIFT    14
 #define NSVG__FIX      (1 << NSVG__FIXSHIFT)
 #define NSVG__FIXMASK    (NSVG__FIX-1)
@@ -624,6 +636,7 @@ struct NSVGrasterizer
   int width, height, stride;
 
   NSVGstencil* stencilList;
+  int stencilCount;  // количество clipPath
 };
 
 #endif
