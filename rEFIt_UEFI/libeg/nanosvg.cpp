@@ -227,10 +227,12 @@ void nsvg__dumpFloat(CONST char* s, float* t, int N)
   DBG("%s: ", s);
   for(int i=0; i<N;i++)
   {
+#if DEBUG_SVG != 0
     float a = t[i];
     int b = (int)a;
     int sign = (a < 0.f);
     DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
+#endif
   }
   DBG("\n");
 }
