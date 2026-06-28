@@ -1505,88 +1505,111 @@ UINT8* nsvg__findStencil(NSVGrasterizer *r, int index)
 static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r, NSVGcachedPaint* cache, 
                                        char fillRule, NSVGclipNode* clipList)
 {
-  NSVGactiveEdge *active = NULL;
-  int e = 0;
-  int maxWeight = (255 / NSVG__SUBSAMPLES);
-  int xmin = 0, xmax = 0;
+    NSVGactiveEdge *active = NULL;
+    int e = 0;
+    int maxWeight = (255 / NSVG__SUBSAMPLES);
+    int xmin = 0, xmax = 0;
 
-  for (int y = 0; y < r->height; y++) {
-    SetMem(r->scanline, r->width, 0);
-    xmin = r->width;
-    xmax = 0;
-    for (int s = 0; s < NSVG__SUBSAMPLES; ++s) {
-      float scany = (float)(y*NSVG__SUBSAMPLES + s) + 0.5f;
-      NSVGactiveEdge **step = &active;
+    for (int y = 0; y < r->height; y++) {
+        SetMem(r->scanline, r->width, 0);
+        xmin = r->width;
+        xmax = 0;
 
-      while (*step) {
-        NSVGactiveEdge *z = *step;
-        if (z->ey <= scany) {
-          *step = z->next;
-          nsvg__freeActive(r, z);
-        } else {
-          z->x += z->dx;
-          step = &((*step)->next);
-        }
-      }
+        for (int s = 0; s < NSVG__SUBSAMPLES; ++s) {
+            float scany = (float)(y*NSVG__SUBSAMPLES + s) + 0.5f;
+            NSVGactiveEdge **step = &active;
 
-      while (e < r->nedges && r->edges[e].y0 <= scany) {
-        if (r->edges[e].y1 > scany) {
-          NSVGactiveEdge* z = nsvg__addActive(r, &r->edges[e], scany);
-          if (z == NULL) break;
-          if (active == NULL) {
-            active = z;
-          } else if (z->x < active->x) {
-            z->next = active;
-            active = z;
-          } else {
-            NSVGactiveEdge* p = active;
-            while (p->next && p->next->x < z->x)
-              p = p->next;
-            z->next = p->next;
-            p->next = z;
-          }
-        }
-        e++;
-      }
-
-      if (active != NULL)
-        nsvg__fillActiveEdges(r->scanline, r->width, active, maxWeight, &xmin, &xmax, fillRule);
-    }
-
-    if (xmin < 0) xmin = 0;
-    if (xmax > r->width-1) xmax = r->width-1;
-
-    if (xmin <= xmax) {
-      if (clipList && r->stencil != NULL) {
-        UINT8 *tempScanline = (UINT8 *)AllocateZeroPool(r->width);
-        if (!tempScanline) {
-          r->fscanline(&r->bitmap[y * r->stride], xmax - xmin + 1,
-                       &r->scanline[xmin], xmin, y, cache);
-          continue;
-        }
-        memcpy(tempScanline, r->scanline, r->width);
-        NSVGclipNode *node = clipList;
-        while (node) {
-          if (node->index < r->stencilCount) {
-            UINT8 *stencil = &r->stencil[r->stencilSize * node->index + y * r->stencilStride];
-            if (stencil) {
-              for (int j = xmin; j <= xmax; j++) {
-                if (tempScanline[j] == 0) continue;
-                if ((stencil[j / 8] & (1 << (j % 8))) == 0) {
-                  tempScanline[j] = 0;
+            while (*step) {
+                NSVGactiveEdge *z = *step;
+                if (z->ey <= scany) {
+                    *step = z->next;
+                    nsvg__freeActive(r, z);
+                } else {
+                    z->x += z->dx;
+                    step = &((*step)->next);
                 }
-              }
             }
-          }
-          node = node->next;
+
+            while (e < r->nedges && r->edges[e].y0 <= scany) {
+                if (r->edges[e].y1 > scany) {
+                    NSVGactiveEdge* z = nsvg__addActive(r, &r->edges[e], scany);
+                    if (z == NULL) break;
+                    if (active == NULL) {
+                        active = z;
+                    } else if (z->x < active->x) {
+                        z->next = active;
+                        active = z;
+                    } else {
+                        NSVGactiveEdge* p = active;
+                        while (p->next && p->next->x < z->x)
+                            p = p->next;
+                        z->next = p->next;
+                        p->next = z;
+                    }
+                }
+                e++;
+            }
+
+            // --- ПУЗЫРЬКОВАЯ СОРТИРОВКА С УЧЕТОМ НАПРАВЛЕНИЯ ---
+            if (active) {
+                for (;;) {
+                    int changed = 0;
+                    step = &active;
+                    while (*step && (*step)->next) {
+                        if ((*step)->x > (*step)->next->x ||
+                            ((*step)->x == (*step)->next->x && (*step)->dir > (*step)->next->dir)) {
+                            NSVGactiveEdge* t = *step;
+                            NSVGactiveEdge* q = t->next;
+                            t->next = q->next;
+                            q->next = t;
+                            *step = q;
+                            changed = 1;
+                        }
+                        step = &(*step)->next;
+                    }
+                    if (!changed) break;
+                }
+            }
+
+            if (active != NULL) {
+                nsvg__fillActiveEdges(r->scanline, r->width, active, maxWeight, &xmin, &xmax, fillRule);
+            }
         }
-        memcpy(r->scanline, tempScanline, r->width);
-        FreePool(tempScanline);
-      }
-      r->fscanline(&r->bitmap[y * r->stride], xmax - xmin + 1,
-                   &r->scanline[xmin], xmin, y, cache);
+
+        if (xmin < 0) xmin = 0;
+        if (xmax > r->width-1) xmax = r->width-1;
+
+        if (xmin <= xmax) {
+            if (clipList && r->stencil != NULL) {
+                UINT8 *tempScanline = (UINT8 *)AllocateZeroPool(r->width);
+                if (!tempScanline) {
+                    r->fscanline(&r->bitmap[y * r->stride], xmax - xmin + 1,
+                                 &r->scanline[xmin], xmin, y, cache);
+                    continue;
+                }
+                memcpy(tempScanline, r->scanline, r->width);
+                NSVGclipNode *node = clipList;
+                while (node) {
+                    if (node->index < r->stencilCount) {
+                        UINT8 *stencil = &r->stencil[r->stencilSize * node->index + y * r->stencilStride];
+                        if (stencil) {
+                            for (int j = xmin; j <= xmax; j++) {
+                                if (tempScanline[j] == 0) continue;
+                                if ((stencil[j / 8] & (1 << (j % 8))) == 0) {
+                                    tempScanline[j] = 0;
+                                }
+                            }
+                        }
+                    }
+                    node = node->next;
+                }
+                memcpy(r->scanline, tempScanline, r->width);
+                FreePool(tempScanline);
+            }
+            r->fscanline(&r->bitmap[y * r->stride], xmax - xmin + 1,
+                         &r->scanline[xmin], xmin, y, cache);
+        }
     }
-  }
 }
 #else
 static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r, NSVGcachedPaint* cache, 
