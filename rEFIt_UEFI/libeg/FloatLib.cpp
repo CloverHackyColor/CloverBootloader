@@ -289,46 +289,48 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
   return RETURN_SUCCESS;
 }
 
-/*
- //Slice - this is my replacement for standard
- nsvg_qsort(void* Array, int Num, size_t Size,
-       int (*compare)(void* a, void* b))
- usage qsort(Array, Num, sizeof(*Array), compare);
- where for example
- int compare(void *a, void* b)
- {
-   if (*(float*)a > *(float*)b) return 1;
-   if (*(float*)a < *(float*)b) return -1;
-   return -0;
- }
- */
-#if 0
-void QuickSort(void* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONST void* a, CONST void* b)) {
+
+//Slice my qsort implementation.
+void QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, 
+                    int(*compare)(CONST void* a, CONST void* b), void* Temp)
+{
   INTN i = Low, j = High;
-  void *Med, *Temp;
-  Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
-  Temp = (__typeof__(Temp))AllocatePool(Size);
+
+  // СОЗДАЕМ ОТДЕЛЬНЫЙ БУФЕР ДЛЯ МЕДИАНЫ
+  UINT8* medBuffer = (UINT8*)AllocatePool(Size);
+  if (!medBuffer) return;
+  UINT8* MedPtr = Array + ((Low + High) / 2) * Size; // Central element, just pointer
+
+  // КОПИРУЕМ ЗНАЧЕНИЕ центрального элемента
+  CopyMem(medBuffer, MedPtr, Size);
+
   // Sort around center
   while (i <= j)
   {
-    while (compare((const void*)(Array+i*Size), (const void*)Med) == -1) i++;
-    while (compare((const void*)(Array+j*Size), (const void*)Med) == 1) j--;
+    while (compare((const void*)(Array + i * Size), medBuffer) == -1) ++i;
+    while (compare((const void*)(Array + j * Size), medBuffer) == 1) --j;
     // Change
     if (i <= j) {
-      memcpy(Temp, Array+i*Size, Size);
-      memcpy(Array+i*Size, Array+j*Size, Size);
-      memcpy(Array+j*Size, Temp, Size);
+      CopyMem(Temp, Array + i * Size, Size);
+      CopyMem(Array + i * Size, Array + j * Size, Size);
+      CopyMem(Array + j * Size, Temp, Size);
       i++;
       j--;
     }
   }
-  FreePool(Temp);
-  // Recursion
-  if (j > Low)    QuickSort(Array, Low, j, Size, compare);
-  if (High > i)   QuickSort(Array, i, High, Size, compare);
+
+  FreePool(medBuffer);
+
+  if (j > Low)    QuickSortWorker(Array, Low, j, Size, compare, Temp);
+  if (High > i)   QuickSortWorker(Array, i, High, Size, compare, Temp);
 }
 
-#endif
+void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a, CONST void* b))
+{
+  void* Buffer = (__typeof__(Buffer))AllocatePool(Size);
+  QuickSortWorker((UINT8*)Array, 0, Number - 1, Size, compare, Buffer);
+  FreePool(Buffer);
+}
 
 
 static UINT32 seed = 12345;

@@ -47,7 +47,7 @@
 #include "../include/OneLinerMacros.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SVG 0
+#define DEBUG_SVG 1
 #else
 #define DEBUG_SVG DEBUG_ALL
 #endif
@@ -224,6 +224,7 @@ void nsvg__deleteShapes(NSVGshape* shape);
 
 void nsvg__dumpFloat(CONST char* s, float* t, int N)
 {
+#if DEBUG_SVG
   DBG("%s: ", s);
   for(int i=0; i<N;i++)
   {
@@ -233,6 +234,7 @@ void nsvg__dumpFloat(CONST char* s, float* t, int N)
     DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
   }
   DBG("\n");
+#endif
 }
 
 static int nsvg__getIntegerDict(const char* s)
@@ -622,7 +624,7 @@ NSVGparser* nsvg__createParser()
   p->attr[0].strokeLineJoin = NSVG_JOIN_MITER;
   p->attr[0].strokeLineCap = NSVG_CAP_BUTT;
   p->attr[0].miterLimit = 4;
-  p->attr[0].fillRule = NSVG_FILLRULE_NONZERO;
+  p->attr[0].fillRule = NSVG_FILLRULE_EVENODD;
   p->attr[0].hasFill = 1;
   p->attr[0].visible = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
   p->isText = false;
@@ -834,7 +836,7 @@ static void nsvg__lineTo(NSVGparser* p, float x, float y)
     dy = y - py;
 
         // ===== ОТЛАДКА =====
-        DBG("LINE_TO: from (%f,%f) to (%f,%f), dx=%f, dy=%f\n", px, py, x, y, dx, dy);
+ //       DBG("LINE_TO: from (%f,%f) to (%f,%f), dx=%f, dy=%f\n", px, py, x, y, dx, dy);
         // ===== КОНЕЦ ОТЛАДКИ =====
 
     nsvg__addPoint(p, px + dx/3.0f, py + dy/3.0f);
@@ -847,8 +849,8 @@ static void nsvg__cubicBezTo(NSVGparser* p, float cpx1, float cpy1, float cpx2, 
 {
   if (p->npts > 0) {
         // ===== ОТЛАДКА =====
-        DBG("CUBIC_TO: cp1=(%f,%f), cp2=(%f,%f), end=(%f,%f)\n", 
-            cpx1, cpy1, cpx2, cpy2, x, y);
+        // DBG("CUBIC_TO: cp1=(%f,%f), cp2=(%f,%f), end=(%f,%f)\n", 
+        //     cpx1, cpy1, cpx2, cpy2, x, y);
         // ===== КОНЕЦ ОТЛАДКИ =====
     nsvg__addPoint(p, cpx1, cpy1);
     nsvg__addPoint(p, cpx2, cpy2);
@@ -1014,7 +1016,23 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   // The shape width and height.
   if (data->units == NSVG_OBJECT_SPACE) {
     float localBounds[4];
-    nsvg__getLocalBounds(localBounds, shape, false); //, inv); //before any transform
+    // Если у shape есть clipList, берем bounds первого clipPath
+    if (shape->clipList)
+    {
+      NSVGclipPath *clipPath = nsvg__getClipPathWithIndex(p->image, shape->clipList->index);
+      if (clipPath && clipPath->shapes)
+      {
+        nsvg__getLocalBounds(localBounds, clipPath->shapes, false);
+      }
+      else
+      {
+        nsvg__getLocalBounds(localBounds, shape, false);
+      }
+    }
+    else
+    {
+      nsvg__getLocalBounds(localBounds, shape, false);
+    }
 
     ox = localBounds[0];
     oy = localBounds[1];
@@ -1287,6 +1305,11 @@ static void nsvg__addPath(NSVGparser* p, char closed, const char* fromWhere)
     nsvg__delete(path, "nsvg__addPath3"_XS8);
     return;
   }
+
+    NSVGattrib* attr = nsvg__getAttr(p);
+    DBG("nsvg__addPath: shape=%s, added path with %d points, closed=%d\n", 
+        attr->id, p->npts, closed);
+
   path->closed = closed;
   path->npts = p->npts;
 
@@ -1308,8 +1331,17 @@ static void nsvg__addPath(NSVGparser* p, char closed, const char* fromWhere)
       path->bounds[3] = nsvg__maxf(path->bounds[3], bounds[3]);
     }
   }
-  path->next = p->pathList;
-  p->pathList = path;
+ // path->next = p->pathList;
+ // p->pathList = path;
+if (p->pathList == NULL) {
+    p->pathList = path;
+} else {
+    NSVGpath* last = p->pathList;
+    while (last->next) last = last->next;
+    last->next = path;
+}
+
+  DBG("nsvg__addPath: added path with %d points, closed=%d\n", p->npts, closed);
   return;
 }
 
@@ -2025,7 +2057,7 @@ static char nsvg__parseFillRule(const char* str)
   else if (strcmp(str, "evenodd") == 0)
     return NSVG_FILLRULE_EVENODD;
   // TODO: handle inherit.
-  return NSVG_FILLRULE_NONZERO;
+  return NSVG_FILLRULE_EVENODD;
 }
 
 static const char* nsvg__getNextDashItem(const char* s, char* it)
@@ -3017,9 +3049,12 @@ static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
         cmd = item[0];
 //        rargs = nsvg__getArgsPerElement(cmd);
         if (cmd == 'M' || cmd == 'm') {
-          if (p->npts > 0)
+          if (p->npts > 0) {
+            DBG("nsvg__parsePath: closing subpath with %d points\n", p->npts);
             nsvg__addPath(p, closedFlag, "nsvg__parsePath");
+          }
           // Start new subpath.
+          DBG("nsvg__parsePath: starting new subpath\n");
           nsvg__resetPath(p);
           closedFlag = 0;
           nargs = 0;
@@ -3831,6 +3866,7 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   if (!curAttr) {
     return;
   }
+
   //  DBG("parse group\n");
   NSVGgroup* group = (NSVGgroup*)nsvg__alloczero(sizeof(NSVGgroup), "nsvg__parseGroup"_XS8);
   group->next = p->image->groups;
@@ -4347,20 +4383,20 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
                         newNode->next = curAttr->clipList;
                         curAttr->clipList = newNode;
                     }
-                    DBG("ENTER CLIPPATH: id=%s, index=%d\n", dict[i+1], p->clipPath->index);
+//                    DBG("ENTER CLIPPATH: id=%s, index=%d\n", dict[i+1], p->clipPath->index);
                 }
                 break;
             }
         }
 
           // Отладочный вывод
-        DBG("ENTER CLIPPATH: stack list=[");
-        NSVGclipNode* node = curAttr->clipList;
-        while (node) {
-            DBG("%d ", node->index);
-            node = node->next;
-        }
-        DBG("]\n");
+        // DBG("ENTER CLIPPATH: stack list=[");
+        // NSVGclipNode* node = curAttr->clipList;
+        // while (node) {
+        //     DBG("%d ", node->index);
+        //     node = node->next;
+        // }
+        // DBG("]\n");
  
   } else if (strcmp(el, "image") == 0) {
     nsvg__parseEmbeddedPNG(p, dict);

@@ -637,6 +637,8 @@ struct NSVGrasterizer
 
   NSVGstencil* stencilList;
   int stencilCount;  // количество clipPath
+
+  char currentShapeId[64];  // Идентификатор текущего shape для отладки
 };
 
 #endif

@@ -48,6 +48,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 void QuickSort(void* Array, INTN Low, INTN High, INTN Size,
                INTN (*compare)(CONST void* a, CONST void* b));
 #endif
+void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a, CONST void* b));
 
 
 #endif /* FloatLib_h */

@@ -33,6 +33,7 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 #endif
 
 #include "libegint.h"
+#include "FloatLib.h"
 #include "lodepng.h"
 //#include "../cpp_util/panic.h"
 
@@ -71,6 +72,7 @@ with the "LODEPNG_COMPILE_" #defines divide this up further in an intermixed way
 //#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 
 //Slice my qsort implementation.It can be moved into common library
+#if 0
 void QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int(*compare)(CONST void* a, CONST void* b), void* Temp)
 {
   INTN i = Low, j = High;
@@ -103,7 +105,7 @@ void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a,
   QuickSortWorker((UINT8*)Array, 0, Number - 1, Size, compare, Buffer);
   FreePool(Buffer);
 }
-
+#endif
 
 /*The malloc, realloc and free functions defined here with "lodepng_" in front
 of the name, so that you can easily change them to others related to your
