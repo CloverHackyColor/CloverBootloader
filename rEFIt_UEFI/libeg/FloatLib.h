@@ -28,7 +28,7 @@ float Atan2F(float Y, float X); //y=sin(A), x=cos(A), atan2(y,x) == A
 float FabsF(float X);
 float rndf(void);  //random number from 0 to 1.0f
 int dither(float x, int level);
-float nsvg__vmag(float x, float y); //sqrt(x*x+y*y)
+//float nsvg__vmag(float x, float y); //sqrt(x*x+y*y)
 
 inline float FabsF(float x) {
   if (x < 0.f) return -x;
@@ -42,13 +42,10 @@ RETURN_STATUS
 AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL
                 OUT       float              *Data);
-#if 0
-//void AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X);
 
-void QuickSort(void* Array, INTN Low, INTN High, INTN Size,
-               INTN (*compare)(CONST void* a, CONST void* b));
-#endif
 void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a, CONST void* b));
 
+
+float hypot(float x, float y);
 
 #endif /* FloatLib_h */

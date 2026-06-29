@@ -332,6 +332,8 @@ void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a,
   FreePool(Buffer);
 }
 
+float hypot(float x, float y) { return SqrtF(x*x + y*y); }
+
 
 static UINT32 seed = 12345;
 float rndf() //expected 0..1
