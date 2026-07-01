@@ -5,7 +5,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
-#if 0
+#define DEBUG_CTOR 0
+#if DEBUG_CTOR
 #define DBG(...) DebugLog(2, __VA_ARGS__)
 #else
 #define DBG(...)
@@ -108,13 +109,16 @@ void construct_globals_objects(EFI_HANDLE ImageHandle)
 #else
     DBG("CTORS %llX(%lld), size %ld\n", (UINTN)p, (UINTN)p, pend-p );
 #endif
-    size_t ctor_idx = 0;
+
+//#if DEBUG_CTOR
+ //   size_t ctor_idx = 0;
     while ( p < pend ) {
-      DBG("CTOR %zu adr=%llX(%lld)\n", ctor_idx, (UINTN)p[0], (UINTN)p[0]);
+  //    DBG("CTOR %zu adr=%llX(%lld)\n", ctor_idx, (UINTN)p[0], (UINTN)p[0]);
       (*p)();
       p++;
-      ctor_idx++;
+ //     ctor_idx++;
     }
+//#endif
 //    DBG("CTOR %X %d\n", (UINTN)__CTOR_LIST__, (UINTN)__CTOR_LIST__);
 //   __do_init();
 //  const size_t n = __CTOR_LIST_END__ - __CTOR_LIST__ - 1;

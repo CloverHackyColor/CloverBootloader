@@ -1037,7 +1037,9 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
   }
   else if (fillRule == NSVG_FILLRULE_EVENODD) {
     // Even-odd
+#if DEBUG_SVG
     int pair_count = 0;
+#endif
     while (e != NULL && iteration++ < MAX_ITERATIONS) {
       if (w == 0) {
         x0 = e->x;
@@ -1046,7 +1048,9 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
       else {
         int x1 = e->x;
         w = 0;
+#if DEBUG_SVG
         pair_count++;
+#endif
         // Всегда заполняем, но с проверкой на корректную пару
         if (x0 < x1 && (x1 - x0) > 16) {
           nsvg__fillScanline(scanline, len, x0, x1, maxWeight, xmin, xmax);
@@ -1054,7 +1058,7 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
       }
       e = e->next;
     }
-//    DBG("EVENODD: total %d pairs for this scanline\n", pair_count);
+    DBG("EVENODD: total %d pairs for this scanline\n", pair_count);
     if (iteration >= MAX_ITERATIONS) {
         DBG("WARNING: nsvg__fillActiveEdges exceeded MAX_ITERATIONS!\n");
     }
