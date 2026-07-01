@@ -201,7 +201,7 @@ typedef struct NSVGshape
   char strokeLineCap;      // Stroke cap type.
   char fillRule;        // Fill rule, see NSVGfillRule.
   UINT8 flags;    // Logical or of NSVG_FLAGS_* flags
-  XBool isText;
+  int isText;
   XBool debug;
   XBool isSymbol;
   float miterLimit;      // Miter limit
@@ -452,7 +452,7 @@ typedef struct NSVGparser
   char styleFlag;
   char patternFlag;
   char symbolFlag;
-  XBool isText;
+  int isText;
   char unknown[64];
   NSVGtext* text;
   textFaces textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
@@ -462,6 +462,8 @@ typedef struct NSVGparser
   NSVGclipPath* clipPath;
   NSVGclipPathIndex clipPathStack[NSVG_MAX_CLIP_PATHS];
   int clipPathStackCount;  // текущая глубина стека
+  int useQuadraticOnly;  // Если TRUE, преобразуем C→Q
+  float quadraticTolerance; // Допуск для аппроксимации
 } NSVGparser;
 
 #ifdef NANOSVG_MEMORY_ALLOCATION_TRACE

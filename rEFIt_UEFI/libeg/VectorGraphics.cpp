@@ -388,7 +388,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, const textFac
   Scale = sy;
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
-  p->isText = true;
+  p->isText = 1;
   size_t len = string.length();
   for (size_t i=0; i < len; i++) {
     CHAR16 letter = string.char16At(i);

@@ -620,7 +620,7 @@ NSVGparser* nsvg__createParser()
   p->attr[0].fillRule = NSVG_FILLRULE_EVENODD;
   p->attr[0].hasFill = 1;
   p->attr[0].visible = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-  p->isText = false;
+  p->isText = 0;
   p->clipPathStackCount = 0;
   return p;
 }
@@ -849,6 +849,39 @@ static void nsvg__cubicBezTo(NSVGparser* p, float cpx1, float cpy1, float cpx2, 
     nsvg__addPoint(p, cpx2, cpy2);
     nsvg__addPoint(p, x, y);
   }
+}
+
+// Рисует квадратичный сплайн через две точки
+static void nsvg__quadBezTo(NSVGparser* p, float* cpx, float* cpy,
+                            float* cpx2, float* cpy2,
+                            float cx, float cy, float x, float y,
+                            int rel)
+{
+    float x1, y1;
+
+    if (!cpx) {
+        // Если нет указателей, используем текущую позицию
+        x1 = 0;
+        y1 = 0;
+    } else {
+        x1 = *cpx;
+        y1 = *cpy;
+    }
+
+    // Конвертируем квадратичный сплайн в кубический
+    float cx1 = x1 + 2.0f/3.0f * (cx - x1);
+    float cy1 = y1 + 2.0f/3.0f * (cy - y1);
+    float cx2 = x + 2.0f/3.0f * (cx - x);
+    float cy2 = y + 2.0f/3.0f * (cy - y);
+
+    nsvg__cubicBezTo(p, cx1, cy1, cx2, cy2, x, y);
+
+    if (cpx) {
+        *cpx = x;
+        *cpy = y;
+        *cpx2 = cx;
+        *cpy2 = cy;
+    }
 }
 
 static NSVGattrib* nsvg__getAttr(NSVGparser* p)
@@ -2497,6 +2530,199 @@ static void nsvg__pathVLineTo(NSVGparser* p, float* cpx, float* cpy, float* args
   nsvg__lineTo(p, *cpx, *cpy);
 }
 
+// Преобразование кубического сплайна в N квадратичных сегментов
+static void nsvg__cubicToQuadraticSegments(NSVGparser* p,
+                                           float x1, float y1,
+                                           float x2, float y2,
+                                           float x3, float y3,
+                                           float x4, float y4,
+                                           int segments)
+{
+    if (segments < 2) segments = 2;
+    if (segments > 16) segments = 16;
+
+    float prevX = x1, prevY = y1;
+
+    for (int i = 1; i <= segments; i++) {
+        float t = (float)i / (float)segments;
+        float t_prev = (float)(i - 1) / (float)segments;
+
+        // Вычисляем точки на кривой
+        float mt = 1.0f - t;
+        float mt2 = mt * mt;
+        float t2 = t * t;
+        float mt3 = mt2 * mt;
+        float t3 = t2 * t;
+
+        float curX = mt3 * x1 + 3.0f * mt2 * t * x2 + 3.0f * mt * t2 * x3 + t3 * x4;
+        float curY = mt3 * y1 + 3.0f * mt2 * t * y2 + 3.0f * mt * t2 * y3 + t3 * y4;
+
+        // Вычисляем касательные в начальной и конечной точке сегмента
+        float mt_prev = 1.0f - t_prev;
+        float mt_prev2 = mt_prev * mt_prev;
+        float t_prev2 = t_prev * t_prev;
+
+        float dx_prev = 3.0f * mt_prev2 * (x2 - x1) + 6.0f * mt_prev * t_prev * (x3 - x2) + 3.0f * t_prev2 * (x4 - x3);
+        float dy_prev = 3.0f * mt_prev2 * (y2 - y1) + 6.0f * mt_prev * t_prev * (y3 - y2) + 3.0f * t_prev2 * (y4 - y3);
+
+        float dx_cur = 3.0f * mt2 * (x2 - x1) + 6.0f * mt * t * (x3 - x2) + 3.0f * t2 * (x4 - x3);
+        float dy_cur = 3.0f * mt2 * (y2 - y1) + 6.0f * mt * t * (y3 - y2) + 3.0f * t2 * (y4 - y3);
+
+        // Вычисляем контрольную точку квадратичного сплайна
+        // Q(t) = (1-t)^2 * P0 + 2*(1-t)*t * Pc + t^2 * P2
+        // где Pc - контрольная точка
+        // Из условий: Q'(0) = 2*(Pc - P0), Q'(1) = 2*(P2 - Pc)
+        float qx = prevX + dx_prev / 2.0f;
+        float qy = prevY + dy_prev / 2.0f;
+
+        // Корректируем контрольную точку для лучшего приближения
+        float qx2 = curX - dx_cur / 2.0f;
+        float qy2 = curY - dy_cur / 2.0f;
+
+        // Усредняем для более плавного перехода
+        qx = (qx + qx2) / 2.0f;
+        qy = (qy + qy2) / 2.0f;
+
+        // Рисуем квадратичный сегмент
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, qx, qy, curX, curY, 0);
+
+        prevX = curX;
+        prevY = curY;
+    }
+}
+
+// Использование в nsvg__parsePath
+// Замените вызов nsvg__cubicToQuadraticAdaptive на:
+//nsvg__cubicToQuadraticSegments(p, x1, y1, x2, y2, x3, y3, x4, y4, 4); // 4 сегмента
+
+// Преобразует один кубический сплайн в два квадратичных
+// Возвращает TRUE если преобразование удалось
+static int nsvg__cubicToQuadratic(float x1, float y1,  // Начальная точка
+                                    float x2, float y2,  // Первая контрольная
+                                    float x3, float y3,  // Вторая контрольная
+                                    float x4, float y4,  // Конечная точка
+                                    float* q1x, float* q1y,  // Контрольная точка 1-й Q
+                                    float* midX, float* midY, // Точка соединения
+                                    float* q2x, float* q2y)  // Контрольная точка 2-й Q
+{
+    // Метод: разбиваем кривую в точке t=0.5
+    // и аппроксимируем каждую половину квадратичным сплайном
+
+    float t = 0.5f;
+    float mt = 1.0f - t;
+//    float mt2 = mt * mt;
+//    float t2 = t * t;
+//    float mt3 = mt2 * mt;
+//    float t3 = t2 * t;
+
+    // Точки разбиения (алгоритм de Casteljau)
+    // Первый уровень
+    float x12 = mt * x1 + t * x2;
+    float y12 = mt * y1 + t * y2;
+    float x23 = mt * x2 + t * x3;
+    float y23 = mt * y2 + t * y3;
+    float x34 = mt * x3 + t * x4;
+    float y34 = mt * y3 + t * y4;
+
+    // Второй уровень
+    float x123 = mt * x12 + t * x23;
+    float y123 = mt * y12 + t * y23;
+    float x234 = mt * x23 + t * x34;
+    float y234 = mt * y23 + t * y34;
+
+    // Точка на кривой в t=0.5
+    *midX = mt * x123 + t * x234;
+    *midY = mt * y123 + t * y234;
+
+    // Контрольные точки для квадратичных сплайнов
+    // Используем формулу: Q = (C1 + C2)/2, где C1,C2 - контрольные точки кубического
+    // Для первой половины
+    *q1x = (x1 + x2) / 2.0f;
+    *q1y = (y1 + y2) / 2.0f;
+
+    // Для второй половины
+    *q2x = (x3 + x4) / 2.0f;
+    *q2y = (y3 + y4) / 2.0f;
+
+    return 1;
+}
+
+// Адаптивное преобразование с контролем качества
+static void nsvg__cubicToQuadraticAdaptive(NSVGparser* p,
+                                           float x1, float y1,
+                                           float x2, float y2,
+                                           float x3, float y3,
+                                           float x4, float y4,
+                                           int depth)
+{
+    // Ограничиваем глубину рекурсии
+    if (depth > 8) {
+        // Рисуем прямую линию
+        nsvg__lineTo(p, x4, y4);
+        return;
+    }
+
+    // Проверяем "плоскость" кривой
+    // Вычисляем площадь треугольника (x1,y1)-(x2,y2)-(x3,y3)
+    float area1 = fabsf((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
+    float area2 = fabsf((x3 - x2) * (y4 - y2) - (x4 - x2) * (y3 - y2));
+    float flatness = area1 + area2;
+
+    // Если кривая почти прямая - рисуем линию
+    if (flatness < 0.5f) {
+        nsvg__lineTo(p, x4, y4);
+        return;
+    }
+
+    // Если кривая достаточно мала - преобразуем в квадратичную
+    float dx = x4 - x1;
+    float dy = y4 - y1;
+    float length = hypot(dx, dy);
+
+    if (length < 2.0f || depth > 4) {
+        float q1x, q1y, midX, midY, q2x, q2y;
+        nsvg__cubicToQuadratic(x1, y1, x2, y2, x3, y3, x4, y4,
+                               &q1x, &q1y, &midX, &midY, &q2x, &q2y);
+
+        // Рисуем две квадратичные кривые
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q1x, q1y, midX, midY, 0);
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q2x, q2y, x4, y4, 0);
+        return;
+    }
+
+    // Иначе разбиваем дальше (рекурсия)
+    float t = 0.5f;
+    float mt = 1.0f - t;
+//    float mt2 = mt * mt;
+//    float t2 = t * t;
+//    float mt3 = mt2 * mt;
+//    float t3 = t2 * t;
+
+    // Точки разбиения (алгоритм de Casteljau)
+    float x12 = mt * x1 + t * x2;
+    float y12 = mt * y1 + t * y2;
+    float x23 = mt * x2 + t * x3;
+    float y23 = mt * y2 + t * y3;
+    float x34 = mt * x3 + t * x4;
+    float y34 = mt * y3 + t * y4;
+
+    float x123 = mt * x12 + t * x23;
+    float y123 = mt * y12 + t * y23;
+    float x234 = mt * x23 + t * x34;
+    float y234 = mt * y23 + t * y34;
+
+    float midX = mt * x123 + t * x234;
+    float midY = mt * y123 + t * y234;
+
+    // Рекурсивно обрабатываем первую половину
+//    nsvg__cubicToQuadraticAdaptive(p, x1, y1, x12, y12, x123, y123, midX, midY, depth + 1);
+    nsvg__cubicToQuadraticSegments(p, x1, y1, x12, y12, x123, y123, midX, midY, 4);
+    // Рекурсивно обрабатываем вторую половину
+//    nsvg__cubicToQuadraticAdaptive(p, midX, midY, x234, y234, x34, y34, x4, y4, depth + 1);
+    nsvg__cubicToQuadraticSegments(p, midX, midY, x234, y234, x34, y34, x4, y4, 4);
+}
+
+
 static void nsvg__pathCubicBezTo(NSVGparser* p, float* cpx, float* cpy,
                                  float* cpx2, float* cpy2, float* args, int rel)
 {
@@ -2525,6 +2751,7 @@ static void nsvg__pathCubicBezTo(NSVGparser* p, float* cpx, float* cpy,
   *cpx = x2;
   *cpy = y2;
 }
+
 
 static void nsvg__pathCubicBezShortTo(NSVGparser* p, float* cpx, float* cpy,
                                       float* cpx2, float* cpy2, float* args, int rel)
@@ -2776,7 +3003,7 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
 
 static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
 {
-  DBG("nsvg__parsePath\n");
+ // DBG("nsvg__parsePath\n");
   const char* s = NULL;
   char cmd = '\0';
   float args[30];
@@ -2846,11 +3073,77 @@ static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
               break;
             case 'C':
             case 'c':
-              nsvg__pathCubicBezTo(p, &cpx, &cpy, &cpx2, &cpy2, args, cmd == 'c' ? 1 : 0);
-              break;
+              // ===== НОВЫЙ КОД: ПРЕОБРАЗОВАНИЕ C→Q =====
+              if (p->useQuadraticOnly) {
+                  // Используем адаптивное преобразование
+                  float x1, y1, x2, y2, x3, y3, x4, y4;
+
+                  x1 = cpx;
+                  y1 = cpy;
+
+                  if (cmd == 'c') {
+                      x2 = cpx + args[0];
+                      y2 = cpy + args[1];
+                      x3 = cpx + args[2];
+                      y3 = cpy + args[3];
+                      x4 = cpx + args[4];
+                      y4 = cpy + args[5];
+                  } else {
+                      x2 = args[0];
+                      y2 = args[1];
+                      x3 = args[2];
+                      y3 = args[3];
+                      x4 = args[4];
+                      y4 = args[5];
+                  }
+
+                  nsvg__cubicToQuadraticAdaptive(p, x1, y1, x2, y2, x3, y3, x4, y4, 0);
+
+                  cpx = x4;
+                  cpy = y4;
+                  cpx2 = x3;
+                  cpy2 = y3;
+              } else {
+                  // Оригинальный код
+                  nsvg__pathCubicBezTo(p, &cpx, &cpy, &cpx2, &cpy2, args, cmd == 'c' ? 1 : 0);
+              }              break;
             case 'S':
             case 's':
-              nsvg__pathCubicBezShortTo(p, &cpx, &cpy, &cpx2, &cpy2, args, cmd == 's' ? 1 : 0);
+              if (p->useQuadraticOnly) {
+                  // Для S/s тоже преобразуем в Q
+                  float x1, y1, x2, y2, x3, y3, x4, y4;
+
+                  x1 = cpx;
+                  y1 = cpy;
+
+                  // Вычисляем отраженную контрольную точку
+                  float cx1 = 2 * cpx - cpx2;
+                  float cy1 = 2 * cpy - cpy2;
+
+                  if (cmd == 's') {
+                      x3 = cpx + args[0];
+                      y3 = cpy + args[1];
+                      x4 = cpx + args[2];
+                      y4 = cpy + args[3];
+                  } else {
+                      x3 = args[0];
+                      y3 = args[1];
+                      x4 = args[2];
+                      y4 = args[3];
+                  }
+
+                  x2 = cx1;
+                  y2 = cy1;
+
+                  nsvg__cubicToQuadraticAdaptive(p, x1, y1, x2, y2, x3, y3, x4, y4, 0);
+
+                  cpx = x4;
+                  cpy = y4;
+                  cpx2 = x3;
+                  cpy2 = y3;
+              } else {
+                  nsvg__pathCubicBezShortTo(p, &cpx, &cpy, &cpx2, &cpy2, args, cmd == 's' ? 1 : 0);
+              }
               break;
             case 'Q':
             case 'q':
@@ -3286,7 +3579,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
   //add to head
   text->next = p->text;
   p->text = text;
-  p->isText = true;
+  p->isText = 1;
 }
 
 static void nsvg__parseCircle(NSVGparser* p, char** attr)
@@ -4071,7 +4364,7 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
     nsvg__parseGroup(p, dict);
   } else if (strcmp(el, "text") == 0) {
     nsvg__pushAttr(p);
-    p->isText = true;
+    p->isText = 1;
     nsvg__parseText(p, dict);
   } else if (strcmp(el, "tspan") == 0) {
     nsvg__pushAttr(p);
@@ -4229,7 +4522,7 @@ static void nsvg__endElement(void* ud, const char* el)
     nsvg__popAttr(p);
   } else if (strcmp(el, "text") == 0) {
     nsvg__popAttr(p);
-    p->isText = false;
+    p->isText = 0;
     //  } else if (strcmp(el, "tspan") == 0) {
     //    nsvg__popAttr(p);
 
@@ -4314,7 +4607,7 @@ float nsvg__addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scal
   }
 
   shape->flags = NSVG_VIS_DISPLAY | NSVG_VIS_VISIBLE;
-  shape->isText = true;
+  shape->isText = 1;
   nsvg__xformIdentity(shape->xform);
   //scale convert shape from glyph size to user's font-size
   shape->xform[0] = scale; //1.f;
@@ -4662,6 +4955,10 @@ NSVGparser* nsvg__parse(char* input, float dpi, float opacity)
   }
   p->dpi = dpi;
   p->opacity = opacity;
+
+  // ===== НОВЫЙ КОД =====
+      p->useQuadraticOnly = 0;  // По умолчанию выключено
+      p->quadraticTolerance = 0.5f; // Допуск для аппроксимации
 
   nsvg__parseXML(input, nsvg__startElement, nsvg__endElement, nsvg__content, p);
 
