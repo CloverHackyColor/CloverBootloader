@@ -971,6 +971,7 @@ static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, bool dump); //
 static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGgradientLink* link, char* paintType)
 {
   //  NSVGattrib* attr = nsvg__getAttr(p);
+  DBG("createGradient: START for shape %s\n", shape->id);
   NSVGgradientData* data = NULL;
   NSVGgradientData* ref = NULL;
   NSVGgradientStop* stops = NULL;
@@ -1084,7 +1085,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   grad->nstops = nstops;
 
   *paintType = data->type;
-
+  DBG("createGradient: END\n");
   return grad;
 }
 
@@ -1143,6 +1144,27 @@ static void nsvg__addShape(NSVGparser* p)
 
   shape = (NSVGshape*)nsvg__alloczero(sizeof(NSVGshape), S8Printf("nsvg__addShape %s", attr->id));
   if (shape == NULL) return;
+
+  // Проверяем, есть ли реальные ссылки на clipPath
+//  if (attr->clipList) {
+//      // Проверяем, используется ли этот clipPath
+//      NSVGclipNode* node = attr->clipList;
+//      XBool hasValidClip = false;
+//      while (node) {
+//          NSVGclipPath* clipPath = nsvg__findClipPath(p, NULL); // нужна функция поиска по индексу
+//          if (clipPath && clipPath->shapes) {
+//              hasValidClip = true;
+//              break;
+//          }
+//          node = node->next;
+//      }
+//
+//      if (hasValidClip) {
+//          shape->clipList = attr->clipList;
+//      } else {
+//          DBG("Skipping unused clipPath for shape %s\n", shape->id);
+//      }
+//  }
 
   memcpy(shape->id, attr->id, sizeof shape->id);
   memcpy(shape->title, attr->title, sizeof shape->title);
@@ -2612,11 +2634,10 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
   float x, y, tanx, tany, a, px = 0, py = 0, ptanx = 0, ptany = 0, t[6];
   float sinrx, cosrx;
   int fa, fs;
-  int ndivs;
-  float hda, kappa;
 
   rx = fabsf(args[0]);        // y radius
   ry = fabsf(args[1]);        // x radius
+
   rotx = args[2] * NSVG_PI_DEG;    // x rotation angle
   fa = fabsf(args[3]) > 1e-6 ? 1 : 0;  // Large arc
   fs = fabsf(args[4]) > 1e-6 ? 1 : 0;  // Sweep direction
@@ -2642,6 +2663,11 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
     return;
   }
 
+  // Если радиусы слишком большие по сравнению с расстоянием, ограничиваем их
+  float maxRadius = hypot(x2 - x1, y2 - y1) * 10.0f;
+  if (rx > maxRadius) rx = maxRadius;
+  if (ry > maxRadius) ry = maxRadius;
+
   sinrx = sinf(rotx);
   cosrx = cosf(rotx);
 
@@ -2666,25 +2692,7 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
 // Вычисляем радикал более устойчивым способом
   float radicand = (rx2 * ry2 - rx2 * y1p2 - ry2 * x1p2)
       / (rx2 * y1p2 + ry2 * x1p2);
-
-// Защита от численных ошибок
-  if (radicand < 0.0f) {
-    // Если радикал отрицательный из-за ошибок округления, корректируем
-    if (radicand > -1e-6f) {
-      radicand = 0.0f;
-    }
-    else {
-      // Серьезная ошибка, корректируем радиусы
-      float scale = sqrtf((x1p2 / rx2 + y1p2 / ry2));
-      rx *= scale;
-      ry *= scale;
-      rx2 = rx * rx;
-      ry2 = ry * ry;
-      radicand = (rx2 * ry2 - rx2 * y1p2 - ry2 * x1p2)
-          / (rx2 * y1p2 + ry2 * x1p2);
-      if (radicand < 0.0f) radicand = 0.0f;
-    }
-  }
+  if (radicand < 0.0f) radicand = 0.0f;
 
   s = sqrtf(radicand);
 
@@ -2726,41 +2734,26 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
 // Для больших радиусов нужно больше сегментов
   float avgRadius = (rx + ry) * 0.5f;
 
-  ndivs = 4;
-
-// Увеличиваем для больших углов
-  if (fabsf(da) > NSVG_PI * 0.5f) {
-    ndivs = 8;
-  }
-  if (fabsf(da) > NSVG_PI) {
-    ndivs = 16;
+  // Если дуга почти прямая (очень большой радиус), просто рисуем линию
+  if (avgRadius > 1000.0f && fabsf(da) < 0.05f) {
+      nsvg__lineTo(p, x2, y2);
+      *cpx = x2;
+      *cpy = y2;
+      return;
   }
 
-// Для больших радиусов увеличиваем точность
-  if (avgRadius > 50.0f) {
-    ndivs = (int) (ndivs * (avgRadius / 50.0f));
-  }
-
-// Ограничиваем
+  int ndivs = (int)floorf(fabsf(da) / (NSVG_PI * 0.5f) + 0.5f);
   if (ndivs < 4) ndivs = 4;
-  if (ndivs > 32) ndivs = 32;
+
 
   // Вычисляем kappa - стандартная формула
-  hda = (da / (float) ndivs) * 0.5f;
-  if (fabsf(sinf(hda)) > 1e-10f) {
-    kappa = (4.0f / 3.0f) * (1.0f - cosf(hda)) / sinf(hda);
+  float hda = (da / (float) ndivs) * 0.5f;
+  float kappa = (4.0f / 3.0f) * (1.0f - cosf(hda)) / sinf(hda);
+  if (fabsf(kappa) > 1e-6f) {
+      // используем kappa
+  } else {
+      kappa = 0.0f;
   }
-  else {
-    kappa = 0.0f;
-  }
-
-  // ===== ОТЛАДКА ДУГ =====
-  // Выводим параметры дуги только для проблемных случаев
-  // (можно закомментировать после отладки)
-  if (fabsf(da) < 1.0f && avgRadius > 50.0f) {
-    DBG("ARC: rx=%f ry=%f rotx=%f fa=%d fs=%d\n", rx, ry, rotx, fa, fs); DBG("  x1=%f y1=%f x2=%f y2=%f\n", x1, y1, x2, y2); DBG("  cx=%f cy=%f da=%f ndivs=%d\n", cx, cy, da, ndivs); DBG("  a1=%f da=%f\n", a1, da);
-  }
-  // ===== КОНЕЦ ОТЛАДКИ =====
 
   for (int i = 0; i <= ndivs; i++) {
     a = a1 + da * ((float) i / (float) ndivs);
@@ -2776,11 +2769,6 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
     ptany = tany;
   }
 
-  // ... после вычисления x1p, y1p, cx, cy, da ...
-
-  DBG("  x1p=%f, y1p=%f\n", x1p, y1p); DBG("  cx=%f, cy=%f\n", cx, cy); DBG("  a1=%f, da=%f (degrees: %f)\n", a1, da, da * 180.0f / NSVG_PI); DBG("  ndivs=%d, kappa=%f\n", ndivs, kappa); DBG("  fa=%d, fs=%d\n", fa, fs);
-  // ===== КОНЕЦ ОТЛАДКИ =====
-
   *cpx = x2;
   *cpy = y2;
 }
@@ -2788,6 +2776,7 @@ static void nsvg__pathArcTo(NSVGparser *p, float *cpx, float *cpy, float *args,
 
 static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
 {
+  DBG("nsvg__parsePath\n");
   const char* s = NULL;
   char cmd = '\0';
   float args[30];
