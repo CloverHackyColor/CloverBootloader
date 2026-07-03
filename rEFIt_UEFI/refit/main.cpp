@@ -1833,7 +1833,6 @@ void LOADER_ENTRY::StartLoader()
     } else {
       DBG("No OpenRuntime driver. This is wrong, OpenRuntime is mandatory.\n");
     }
-
     OcMain(&mOpenCoreStorage, NULL);
 
     XStringW DevicePathAsString = DevicePathToXStringW(DevicePath);
@@ -1942,7 +1941,6 @@ void LOADER_ENTRY::StartLoader()
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
     if (macOSVersion.isEmpty()) {
-
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
         /*
@@ -2008,7 +2006,11 @@ void LOADER_ENTRY::StartLoader()
         !BooterPatch((UINT8 *)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
-    gConf.ReloadSmbios(OSName);
+    auto actualOSName_str = GetOSIconName(macOSVersion);
+    DBG("actualOS_icon=%ls\n", actualOSName_str.wc_str());
+    auto actualOSName =  actualOSName_str.subString(0, actualOSName_str.indexOf(L','));
+    DBG("actualOSName=%ls\n", actualOSName.wc_str());
+    gConf.ReloadSmbios(actualOSName);
     DelegateKernelPatches();
 
     // Set boot argument for kernel if no caches, this should force kernel

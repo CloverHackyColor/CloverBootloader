@@ -1288,12 +1288,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     Entry->LoaderType = OSTYPE_OTHER;
     break;
   }
-//  DBG("OSIconName=%ls \n", OSIconName.wc_str());
+  DBG("OSIconName=%ls \n", OSIconName.wc_str());
   Entry->OSName = OSIconName.subString(0, OSIconName.indexOf(',')); // TODO
   //  SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
 
   Entry->Title.SWPrintf("%ls", FullTitle.wc_str());
-
+  DBG("OSName=%ls Title=%ls\n", Entry->OSName.wc_str(), Entry->Title.wc_str());
   if (Entry->Title.isEmpty() && Volume->VolLabel.notEmpty()) {
     if (Volume->VolLabel[0] == L'#') {
       Entry->Title.SWPrintf("Boot %ls from %ls",
@@ -1344,7 +1344,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
         Entry->Title.takeValueFrom(Entry->DisplayedVolName);
       } else {
         if (!LoaderTitle.isEmpty()) {
-			Entry->Title.SWPrintf("%ls", LoaderTitle.wc_str());
+          Entry->Title.SWPrintf("%ls", LoaderTitle.wc_str());
         } else {
           Entry->Title = LoaderPath.basename();
         }
