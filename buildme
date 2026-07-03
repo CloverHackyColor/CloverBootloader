@@ -126,7 +126,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC152_BIN}" ]]; then
     if [[ $MYTOOLCHAIN == GCC152 ]]; then
       cd "${CLOVERROOT}"
-      ./build_gcc15.sh
+      ./build_gcc16.sh
     else
       MYTOOLCHAIN=XCODE16
     fi
