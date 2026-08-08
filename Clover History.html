@@ -56,37 +56,106 @@
             margin-bottom: 3rem;
         }
 
+        /* Wrapper handles the floating up and down motion */
+        .logo-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 2.5rem;
+            animation: float-pulse 5s ease-in-out infinite;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            overflow: visible;
+        }
+
+        .logo-wrapper:hover {
+            transform: scale(1.1);
+            animation-play-state: paused;
+        }
+
+        /* Boundary specifically for the canvas so it doesn't block the page */
+        .canvas-boundary {
+            position: absolute;
+            top: -150px; left: -150px;
+            width: 440px; height: 440px;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 4;
+        }
+
+        /* Logo image handles the vibrant glowing box-shadow pulse */
         .hero img.logo {
             width: 140px;
             height: 140px;
             border-radius: 20px;
             border: 2px solid var(--clover-green);
-            margin-bottom: 2.5rem;
+            margin-bottom: 0;
             background-color: var(--card-bg);
-            animation: float-pulse 4s ease-in-out infinite;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            animation: glow-pulse 5s ease-in-out infinite;
+            transition: box-shadow 0.3s ease;
         }
 
-        .hero img.logo:hover {
-            transform: scale(1.1);
-            animation-play-state: paused;
+        .logo-wrapper:hover img.logo {
             box-shadow: 0 0 40px 5px rgba(46, 160, 67, 0.8), 0 0 80px 10px rgba(46, 160, 67, 0.4);
         }
 
+        /* Up and down floating motion */
         @keyframes float-pulse {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Vibrant glowing box-shadow pulse */
+        @keyframes glow-pulse {
             0% {
-                transform: translateY(0);
                 box-shadow: 0 5px 15px rgba(46, 160, 67, 0.3), 0 0 20px rgba(46, 160, 67, 0.2);
             }
             50% {
-                transform: translateY(-10px);
                 box-shadow: 0 20px 30px rgba(46, 160, 67, 0.5), 0 0 40px 5px rgba(46, 160, 67, 0.6);
                 filter: brightness(1.2);
             }
             100% {
-                transform: translateY(0);
                 box-shadow: 0 5px 15px rgba(46, 160, 67, 0.3), 0 0 20px rgba(46, 160, 67, 0.2);
             }
+        }
+
+        /* ORBITING LIGHT FRAME ANIMATION (SVG) */
+        .orbit-light {
+            position: absolute;
+            top: 0; left: 0;
+            width: 140px;
+            height: 140px;
+            z-index: 2;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .orbit-light rect {
+            fill: none;
+            stroke: #00ff00;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 50 477;
+            animation: orbit-frame 4s linear infinite;
+            filter: drop-shadow(0 0 5px #00ff00) drop-shadow(0 0 10px #2ea043) drop-shadow(0 0 15px #2ea043);
+        }
+
+        @keyframes orbit-frame {
+            to {
+                stroke-dashoffset: -527;
+            }
+        }
+
+        /* Canvas for Explosion */
+        #fx-canvas {
+            display: block;
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
         }
 
         .hero h1 {
@@ -215,15 +284,77 @@
             font-size: 0.95rem;
         }
 
+        /* Spoiler Styling */
+        .dev-spoiler {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .dev-spoiler summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            list-style: none; /* Remove default arrow */
+            transition: color 0.2s;
+        }
+
+        .dev-spoiler summary::-webkit-details-marker {
+            display: none; /* Remove default arrow in Safari/Chrome */
+        }
+
+        .dev-spoiler summary:hover {
+            color: var(--accent-color);
+        }
+
+        .dev-spoiler summary .arrow {
+            margin-right: 0.75rem;
+            display: inline-block;
+            transition: transform 0.2s ease;
+            color: var(--clover-green);
+            font-size: 1.2rem;
+        }
+
+        .dev-spoiler[open] summary .arrow {
+            transform: rotate(90deg); /* Rotate arrow when open */
+        }
+
+        /* Green Rounded Square Button Style for the Spoiler Note */
+        .dev-spoiler .spoiler-note {
+            margin-left: auto;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 8px; /* Rounded square shape */
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(46, 160, 67, 0.4);
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .dev-spoiler summary:hover .spoiler-note {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
         /* Developers Grid */
         .devs-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 1rem;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
         }
 
         .dev-card {
-            background-color: var(--card-bg);
+            background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1rem 0.5rem;
@@ -418,7 +549,18 @@
     
     <!-- Hero Section -->
     <div class="hero">
-        <img src="https://raw.githubusercontent.com/CloverHackyColor/CloverBootloader/refs/heads/master/Logo/Clover-Logo-Default-256x256%401x.png" alt="Clover Bootloader Logo" class="logo">
+        <div class="logo-wrapper" id="logo-wrapper">
+            <!-- Boundary Box for Canvas -->
+            <div class="canvas-boundary">
+                <canvas id="fx-canvas"></canvas>
+            </div>
+            <!-- SVG Light Orbiting Exactly on the Frame -->
+            <svg class="orbit-light" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+                <!-- x=1, y=1, width=138, height=138 centers the 2.5px stroke exactly on the 2px border -->
+                <rect x="1" y="1" width="138" height="138" rx="19" ry="19" />
+            </svg>
+            <img src="https://raw.githubusercontent.com/CloverHackyColor/CloverBootloader/refs/heads/master/Logo/Clover-Logo-Default-256x256%401x.png" alt="Clover Bootloader Logo" class="logo">
+        </div>
         <h1>The Clover UEFI Bootloader</h1>
         <p class="subtitle">A legacy of macOS booting, firmware emulation, and Hackintosh innovation.</p>
         
@@ -492,9 +634,17 @@
         <h2 class="section-title">The Developers</h2>
         <p class="section-text">Clover was created by Slice, with help from a dedicated community of contributors over the years.</p>
         
-        <div class="devs-grid" id="devs-grid">
-            <!-- Developers injected here -->
-        </div>
+        <!-- Spoiler Wrapper (Closed by default) -->
+        <details class="dev-spoiler" id="dev-spoiler-container">
+            <summary>
+                <span class="arrow">&#9654;</span>
+                Click to view all contributors
+                <span class="spoiler-note">See Dev's names</span>
+            </summary>
+            <div class="devs-grid" id="devs-grid">
+                <!-- Developers injected here by JS -->
+            </div>
+        </details>
     </div>
 
     <!-- Credits Section -->
@@ -572,6 +722,136 @@
 <script>
     // Set current year
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- LOGO EXPLOSION LOGIC (SINGLE EXPLOSION) ---
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = 440;
+    canvas.height = 440;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    let particles = [];
+    let glow = 0;
+    let isAnimating = false;
+
+    class Particle {
+        constructor(type) {
+            this.x = cx;
+            this.y = cy;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 3 + 1; // Slower outward speed
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = 1;
+            this.decay = Math.random() * 0.008 + 0.004; // Slower decay (lasts longer)
+            this.type = type;
+            
+            // Different sizes and colors based on type (Removed pure white)
+            if (type === 'heart') {
+                this.size = Math.random() * 6 + 4;
+                this.color = ['#00ff00', '#2ea043', '#3fb950'][Math.floor(Math.random()*3)];
+            } else if (type === 'spark') {
+                this.size = Math.random() * 8 + 4;
+                this.color = ['#aaffd0', '#7affc0', '#00ff00'][Math.floor(Math.random()*3)];
+            } else { // 'dot'
+                this.size = Math.random() * 3 + 1;
+                this.color = '#3fb950';
+            }
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= 0.98; // Air resistance
+            this.vy *= 0.98;
+            this.vy += 0.03; // Very slow gravity
+            this.life -= this.decay;
+        }
+        draw() {
+            const s = this.size * Math.max(0, this.life);
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.color;
+            
+            if (this.type === 'heart') {
+                // Draw a heart shape centered at x, y
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y + s * 0.75);
+                ctx.bezierCurveTo(this.x - s, this.y + s * 0.25, this.x - s, this.y - s * 0.5, this.x, this.y - s * 0.25);
+                ctx.bezierCurveTo(this.x + s, this.y - s * 0.5, this.x + s, this.y + s * 0.25, this.x, this.y + s * 0.75);
+                ctx.closePath();
+                ctx.fill();
+            } else if (this.type === 'spark') {
+                // Draw a 4-point sparkle star centered at x, y
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y - s);
+                ctx.lineTo(this.x + s * 0.2, this.y - s * 0.2);
+                ctx.lineTo(this.x + s, this.y);
+                ctx.lineTo(this.x + s * 0.2, this.y + s * 0.2);
+                ctx.lineTo(this.x, this.y + s);
+                ctx.lineTo(this.x - s * 0.2, this.y + s * 0.2);
+                ctx.lineTo(this.x - s, this.y);
+                ctx.lineTo(this.x - s * 0.2, this.y - s * 0.2);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Draw a circle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, s, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    function triggerExplosion() {
+        glow = 1; // Trigger green glow
+        
+        // Spawn a beautiful mix of hearts, sparks, and dots (FULL COUNT RESTORED)
+        for(let i=0; i<60; i++) particles.push(new Particle('heart'));
+        for(let i=0; i<80; i++) particles.push(new Particle('spark'));
+        for(let i=0; i<40; i++) particles.push(new Particle('dot'));
+        
+        // Start the animation loop if it isn't already running
+        if (!isAnimating) {
+            isAnimating = true;
+            animate();
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'lighter'; // Additive glow blending
+
+        // Draw Soft Radial Green Glow
+        if (glow > 0) {
+            ctx.globalAlpha = glow;
+            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 150);
+            grad.addColorStop(0, 'rgba(0, 255, 0, 0.9)');
+            grad.addColorStop(0.4, 'rgba(46, 160, 67, 0.5)');
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            glow -= 0.04;
+        }
+
+        // Draw Particles
+        particles = particles.filter(p => p.life > 0);
+        particles.forEach(p => { p.update(); p.draw(); });
+
+        if (particles.length > 0 || glow > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            isAnimating = false; // Animation finished
+        }
+    }
+
+    // Trigger the single explosion after one full turn (4 seconds)
+    setTimeout(() => {
+        triggerExplosion();
+    }, 4000);
 
     // --- DATA ARRAYS ---
 
