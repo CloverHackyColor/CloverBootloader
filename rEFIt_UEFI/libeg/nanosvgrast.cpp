@@ -1052,7 +1052,7 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
         pair_count++;
 #endif
         // Всегда заполняем, но с проверкой на корректную пару
-        if (x0 < x1 && (x1 - x0) > 16) {
+        if (x0 < x1 /*&& (x1 - x0) > 16*/) {
           nsvg__fillScanline(scanline, len, x0, x1, maxWeight, xmin, xmax);
         }
       }
@@ -1112,7 +1112,11 @@ static void nsvg__scanlineBit(
     // called by       r->fscanline(&r->bitmap[y * r->stride], xmax-xmin+1, &r->scanline[xmin], xmin, y,/* tx,ty, scalex, scaley, */ cache);
   int x1 = x + count;
   for (; x < x1; x++) {
-    row[x / 8] |= 1 << (x % 8);
+    if (*cover++ > 0) {
+      row[x / 8] |= 1 << (x % 8);
+    } else {
+      row[x / 8] &= ~(1 << (x % 8));
+    }
   }
 }
 
@@ -1457,9 +1461,9 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
   int xmin = 0, xmax = 0;
 
   // СОРТИРУЕМ РЕБРА СПЕЦИАЛИЗИРОВАННОЙ ФУНКЦИЕЙ (БЕЗ ВЫДЕЛЕНИЯ ПАМЯТИ)
-  if (r->nedges > 1) {
-      nsvg__hybridSortEdges(r->edges, 0, r->nedges - 1);
-  }
+  // if (r->nedges > 1) {
+  //     nsvg__hybridSortEdges(r->edges, 0, r->nedges - 1);
+  // }
 
   for (int y = 0; y < r->height; y++) {
     SetMem(r->scanline, r->width, 0);
