@@ -630,15 +630,17 @@ struct NSVGrasterizer
   int cscanline;
   NSVGscanlineFunction fscanline;
 
-  UINT8* stencil;
-  int stencilSize;
-  int stencilStride;
+//  UINT8* stencil;
+  UINT8** stencilArray;     // Массив указателей на stencil-буферы
+  int stencilCount;         // Количество clipPath
+  int stencilSize;          // Размер одного буфера
+  int stencilStride;        // Ширина строки в байтах
 
   UINT8* bitmap;
   int width, height, stride;
 
-  NSVGstencil* stencilList;
-  int stencilCount;  // количество clipPath
+//  NSVGstencil* stencilList;
+//  int stencilCount;  // количество clipPath
 
   char currentShapeId[64];  // Идентификатор текущего shape для отладки
 };

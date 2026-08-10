@@ -95,7 +95,7 @@ NSVGrasterizer* nsvg__createRasterizer()
   if (r == NULL) return NULL;
   r->tessTol = 0.25f;
   r->distTol = 0.01f;
-  r->stencilList = NULL;
+
   return r;
 }
 
@@ -116,14 +116,16 @@ void nsvg__deleteRasterizer(NSVGrasterizer* r)
   if (r->points) FreePool(r->points);
   if (r->points2) FreePool(r->points2);
   if (r->scanline) FreePool(r->scanline);
-  if (r->stencil) FreePool(r->stencil);
 
-  NSVGstencil* s = r->stencilList;
-  while ( s != NULL) {
-    NSVGstencil* next = s->next;
-    if (s->square) FreePool(s->square);
-    FreePool(s);
-    s = next;
+  // Очищаем stencil-буферы
+  if (r->stencilArray != NULL) {
+      for (int i = 0; i < r->stencilCount; i++) {
+          if (r->stencilArray[i] != NULL) {
+              FreePool(r->stencilArray[i]);
+          }
+      }
+      FreePool(r->stencilArray);
+      r->stencilArray = NULL;
   }
 
   FreePool(r);
@@ -293,8 +295,6 @@ static void nsvg__addEdge(NSVGrasterizer* r, float x0, float y0, float x1, float
 
 static float nsvg__normalize(float *x, float* y)
 {
-//  float d = sqrtf((*x)*(*x) + (*y)*(*y));
-//  float d = SqrtF(SqrF(*x) + SqrF(*y));
   float d = hypot(*x, *y);
   if (d > 1e-6f) {
     float id = 1.0f / d;
@@ -305,7 +305,6 @@ static float nsvg__normalize(float *x, float* y)
 }
 
 #define nsvg__absf(x) FabsF(x)
-//#define nsvg__sqr(x) SqrF(x)
 
                     //                   0         1         2         3         4         5         6         7
 static float nsvg__controlPathLength(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
@@ -340,13 +339,13 @@ static void nsvg__flattenCubicBez2(NSVGrasterizer* r, float* x, float* t, int ty
   float control_path_len = nsvg__controlPathLength(x1, y1, x2, y2, x3, y3, x4, y4);
 
   // Безопасное вычисление N с защитой от переполнения
-  int N = (int)(control_path_len / 8.0f) + 4;  // было /1.0f + 16
-  if (N < 4) N = 4;
-  if (N > 256) N = 256;  // было 1024
+//  int N = (int)(control_path_len / 8.0f) + 4;  // было /1.0f + 16
+//  if (N < 4) N = 4;
+//  if (N > 256) N = 256;  // было 1024
 
   /* This is going to need tweaking, gives approximate same number of divisons
    as old code on the test image */
- // N = (int)(control_path_len / ( 32 * r->tessTol)) + 2;
+  int N = (int)(control_path_len / ( 32 * r->tessTol)) + 2;
 
 
   /* Compute polynomial coefficients from Bezier points */
@@ -891,17 +890,7 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float*
     }
   }
 }
-/*
- static int nsvg__cmpEdge(const void *p, const void *q)
- {
- const NSVGedge* a = (const NSVGedge*)p;
- const NSVGedge* b = (const NSVGedge*)q;
 
- if (a->y0 < b->y0) return -1;
- if (a->y0 > b->y0) return  1;
- return 0;
- }
- */
 
 static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float startPoint)
 {
@@ -939,6 +928,25 @@ static void nsvg__freeActive(NSVGrasterizer* r, NSVGactiveEdge* z)
   r->freelist = z;
 }
 
+// Доступ к stencil-буферу - O(1)!
+static UINT8* getStencil(NSVGrasterizer* r, NSVGclipPathIndex index, int y)
+{
+    // Проверяем, что индекс в пределах массива
+    if (index >= r->stencilCount) {
+        DBG("WARNING: clip index %d out of range (max %d)\n", index, r->stencilCount);
+        return NULL;
+    }
+
+    // Проверяем, что stencil-буфер существует
+    if (r->stencilArray[index] == NULL) {
+        DBG("WARNING: stencil buffer for index %d is NULL\n", index);
+        return NULL;
+    }
+
+    // Возвращаем указатель на строку y в stencil-буфере
+    return &r->stencilArray[index][y * r->stencilStride];
+}
+
 static void nsvg__fillScanline(UINT8* scanline, int len, int x0, int x1, int maxWeight, int* xmin, int* xmax)
 {
 //  DBG("nsvg__fillScanline\n");
@@ -968,35 +976,6 @@ static void nsvg__fillScanline(UINT8* scanline, int len, int x0, int x1, int max
   }
 }
 
-//static void nsvg__sortActiveEdges(NSVGactiveEdge **active)
-//{
-//    if (!active || !*active) return;
-//
-//    NSVGactiveEdge *result = NULL;
-//    NSVGactiveEdge *current = *active;
-//
-//    while (current != NULL) {
-//        NSVGactiveEdge *next = current->next;
-//        current->next = NULL;
-//
-//        // Вставляем current в result с сортировкой по x
-//        if (result == NULL || current->x < result->x) {
-//            current->next = result;
-//            result = current;
-//        } else {
-//            NSVGactiveEdge *p = result;
-//            while (p->next != NULL && p->next->x < current->x) {
-//                p = p->next;
-//            }
-//            current->next = p->next;
-//            p->next = current;
-//        }
-//        current = next;
-//    }
-//
-//    *active = result;
-//}
-
 // note: this routine clips fills that extend off the edges... ideally this
 // wouldn't happen, but it could happen if the truetype glyph bounding boxes
 // are wrong, or if the user supplies a too-small bitmap
@@ -1007,12 +986,12 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
   // non-zero winding fill
 //  DBG("nsvg__fillActiveEdges\n");
   int x0 = 0, w = 0;
-  int iteration = 0;
-  const int MAX_ITERATIONS = 5000;
+//  int iteration = 0;
+//  const int MAX_ITERATIONS = 5000;
 
   if (fillRule == NSVG_FILLRULE_NONZERO) {
     // Non-zero
-    while (e != NULL && iteration++ < MAX_ITERATIONS) {
+    while (e != NULL) {
       if (w == 0) {
         // if we're currently at zero, we need to record the edge start point
         x0 = e->x;
@@ -1040,7 +1019,7 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
 #if DEBUG_SVG
     int pair_count = 0;
 #endif
-    while (e != NULL && iteration++ < MAX_ITERATIONS) {
+    while (e != NULL) {
       if (w == 0) {
         x0 = e->x;
         w = 1;
@@ -1052,16 +1031,16 @@ static void nsvg__fillActiveEdges(UINT8 *scanline, int len, NSVGactiveEdge *e,
         pair_count++;
 #endif
         // Всегда заполняем, но с проверкой на корректную пару
-        if (x0 < x1 /*&& (x1 - x0) > 16*/) {
+        if (x0 < x1) {
           nsvg__fillScanline(scanline, len, x0, x1, maxWeight, xmin, xmax);
         }
       }
       e = e->next;
     }
-    DBG("EVENODD: total %d pairs for this scanline\n", pair_count);
-    if (iteration >= MAX_ITERATIONS) {
-        DBG("WARNING: nsvg__fillActiveEdges exceeded MAX_ITERATIONS!\n");
-    }
+//    DBG("EVENODD: total %d pairs for this scanline\n", pair_count);
+//    if (iteration >= MAX_ITERATIONS) {
+//        DBG("WARNING: nsvg__fillActiveEdges exceeded MAX_ITERATIONS!\n");
+//    }
   }
 }
 
@@ -1108,7 +1087,8 @@ static void nsvg__scanlineBit(
                               NSVGcachedPaint* cache)
 {
 
-    //xxx where is security check that x/8 and (x+count)/8 is inside row[] index?
+    // where is security check that x/8 and (x+count)/8 is inside row[] index?
+    // SI: row[] size is stride = width*4, x+count=xmax < width OK
     // called by       r->fscanline(&r->bitmap[y * r->stride], xmax-xmin+1, &r->scanline[xmin], xmin, y,/* tx,ty, scalex, scaley, */ cache);
   int x1 = x + count;
   for (; x < x1; x++) {
@@ -1359,15 +1339,15 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
   }
 }
 
-UINT8* nsvg__findStencil(NSVGrasterizer *r, int index)
-{
-  NSVGstencil* sl = r->stencilList;
-  while (sl != NULL) {
-    if (sl->index ==  index) return sl->square;
-    sl = sl->next;
-  }
-  return NULL;
-}
+//UINT8* nsvg__findStencil(NSVGrasterizer *r, int index)
+//{
+//  NSVGstencil* sl = r->stencilList;
+//  while (sl != NULL) {
+//    if (sl->index ==  index) return sl->square;
+//    sl = sl->next;
+//  }
+//  return NULL;
+//}
 
 // Сортировка вставками для малых массивов (быстрее для < 32 элементов)
 //static void nsvg__insertionSortEdges(NSVGedge* edges, int n)
@@ -1385,66 +1365,66 @@ UINT8* nsvg__findStencil(NSVGrasterizer *r, int index)
 //}
 
 // Гибридная сортировка: вставками для малых массивов, быстрая для больших
-static void nsvg__hybridSortEdges(NSVGedge* edges, int left, int right)
-{
-    const int INSERTION_THRESHOLD = 32;
-
-    if (right - left < INSERTION_THRESHOLD) {
-        // Сортируем вставками
-        for (int i = left + 1; i <= right; i++) {
-            NSVGedge key = edges[i];
-            int j = i - 1;
-
-            while (j >= left && edges[j].y0 > key.y0) {
-                edges[j + 1] = edges[j];
-                j--;
-            }
-            edges[j + 1] = key;
-        }
-        return;
-    }
-
-    // Быстрая сортировка для больших массивов
-    // Медиана из трех
-    int mid = (left + right) / 2;
-
-    if (edges[left].y0 > edges[mid].y0) {
-        NSVGedge tmp = edges[left];
-        edges[left] = edges[mid];
-        edges[mid] = tmp;
-    }
-    if (edges[left].y0 > edges[right].y0) {
-        NSVGedge tmp = edges[left];
-        edges[left] = edges[right];
-        edges[right] = tmp;
-    }
-    if (edges[mid].y0 > edges[right].y0) {
-        NSVGedge tmp = edges[mid];
-        edges[mid] = edges[right];
-        edges[right] = tmp;
-    }
-
-    NSVGedge pivot = edges[mid];
-
-    int i = left;
-    int j = right;
-
-    while (i <= j) {
-        while (i <= right && edges[i].y0 < pivot.y0) i++;
-        while (j >= left && edges[j].y0 > pivot.y0) j--;
-
-        if (i <= j) {
-            NSVGedge tmp = edges[i];
-            edges[i] = edges[j];
-            edges[j] = tmp;
-            i++;
-            j--;
-        }
-    }
-
-    if (left < j) nsvg__hybridSortEdges(edges, left, j);
-    if (i < right) nsvg__hybridSortEdges(edges, i, right);
-}
+//static void nsvg__hybridSortEdges(NSVGedge* edges, int left, int right)
+//{
+//    const int INSERTION_THRESHOLD = 32;
+//
+//    if (right - left < INSERTION_THRESHOLD) {
+//        // Сортируем вставками
+//        for (int i = left + 1; i <= right; i++) {
+//            NSVGedge key = edges[i];
+//            int j = i - 1;
+//
+//            while (j >= left && edges[j].y0 > key.y0) {
+//                edges[j + 1] = edges[j];
+//                j--;
+//            }
+//            edges[j + 1] = key;
+//        }
+//        return;
+//    }
+//
+//    // Быстрая сортировка для больших массивов
+//    // Медиана из трех
+//    int mid = (left + right) / 2;
+//
+//    if (edges[left].y0 > edges[mid].y0) {
+//        NSVGedge tmp = edges[left];
+//        edges[left] = edges[mid];
+//        edges[mid] = tmp;
+//    }
+//    if (edges[left].y0 > edges[right].y0) {
+//        NSVGedge tmp = edges[left];
+//        edges[left] = edges[right];
+//        edges[right] = tmp;
+//    }
+//    if (edges[mid].y0 > edges[right].y0) {
+//        NSVGedge tmp = edges[mid];
+//        edges[mid] = edges[right];
+//        edges[right] = tmp;
+//    }
+//
+//    NSVGedge pivot = edges[mid];
+//
+//    int i = left;
+//    int j = right;
+//
+//    while (i <= j) {
+//        while (i <= right && edges[i].y0 < pivot.y0) i++;
+//        while (j >= left && edges[j].y0 > pivot.y0) j--;
+//
+//        if (i <= j) {
+//            NSVGedge tmp = edges[i];
+//            edges[i] = edges[j];
+//            edges[j] = tmp;
+//            i++;
+//            j--;
+//        }
+//    }
+//
+//    if (left < j) nsvg__hybridSortEdges(edges, left, j);
+//    if (i < right) nsvg__hybridSortEdges(edges, i, right);
+//}
 
 static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
     NSVGcachedPaint *cache, char fillRule, NSVGclipNode *clipList)
@@ -1534,7 +1514,7 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
     if (xmax > r->width - 1) xmax = r->width - 1;
 
     if (xmin <= xmax) {
-      if (clipList && r->stencil != NULL) {
+      if (clipList) {
         UINT8 *tempScanline = (UINT8*) AllocateZeroPool(r->width);
         if (!tempScanline) {
           r->fscanline(&r->bitmap[y * r->stride], xmax - xmin + 1,
@@ -1545,8 +1525,8 @@ static void nsvg__rasterizeSortedEdges(NSVGrasterizer *r,
         NSVGclipNode *node = clipList;
         while (node) {
           if (node->index < r->stencilCount) {
-            UINT8 *stencil = &r->stencil[r->stencilSize * node->index
-                + y * r->stencilStride];
+
+            UINT8* stencil = getStencil(r, node->index, y);
             if (stencil) {
               for (int j = xmin; j <= xmax; j++) {
                 if (tempScanline[j] == 0) continue;
@@ -1829,81 +1809,6 @@ static void renderShape(NSVGrasterizer* r,
   }
 }
 
-// Специальная функция для рендеринга stencil-буфера
-// Использует EVENODD для правильного вырезания дырок
-static void renderShapeForStencil(NSVGrasterizer* r,
-                                  NSVGshape* shape, 
-                                  float tx, float ty, float scalex, float scaley,
-                                  UINT8* stencil, int w, int h, int stride)
-{
-  NSVGedge *e = NULL;
-  NSVGcachedPaint cache;
-  float xform[6];
-
-    // Сохраняем ID текущего shape
-    strncpy(r->currentShapeId, shape->id, 63);
-    r->currentShapeId[63] = '\0';
-  
-  // Устанавливаем трансформацию
-  nsvg__xformSetScale(&xform[0], scalex, scaley);
-  xform[4] = tx; 
-  xform[5] = ty;
-  
-  // Умножаем на трансформацию самого shape
-  nsvg__xformPremultiply(&xform[0], shape->xform);
-  
-  // Для stencil всегда используем EVENODD
-  char fillRule = shape->fillRule;
-
-  // Dummy clip - чтобы stencil не применялся рекурсивно
-  //  NSVGclip dummyClip = {0};
-  //  dummyClip.count = 0;
-  
-  // Настраиваем растеризатор для stencil-буфера
-  r->bitmap = stencil;
-  r->width = w;
-  r->height = h;
-  r->stride = stride;
-  r->fscanline = nsvg__scanlineBit;
-  
-  if (w > r->cscanline) {
-    int oldw = r->cscanline;
-    r->cscanline = w;
-    if (oldw == 0) {
-      r->scanline = (UINT8*)AllocatePool(w);
-    } else {
-      r->scanline = (UINT8*)ReallocatePool(oldw, w, r->scanline);
-    }
-    if (r->scanline == NULL) return;
-  }
-
-  SetMem(&cache, sizeof(NSVGcachedPaint), 0);
-
-  if (shape->fill.type != NSVG_PAINT_NONE) {
-    nsvg__resetPool(r);
-    r->freelist = NULL;
-    r->nedges = 0;
-
-    nsvg__flattenShape(r, shape, xform);
-
-    for (int i = 0; i < r->nedges; i++) {
-      e = &r->edges[i];
-      e->y0 *= NSVG__SUBSAMPLES;
-      e->y1 *= NSVG__SUBSAMPLES;
-    }
-
-    // Используем compare_edges для сортировки
-    if (r->nedges > 1) {
-        nsvg__hybridSortEdges(r->edges, 0, r->nedges - 1);
-    }
-
-    nsvg__initPaint(&cache, &shape->fill, shape, xform);
-    // Используем dummyClip - без применения stencil
-    nsvg__rasterizeSortedEdges(r, &cache, fillRule, NULL);
-
-  }
-}
-
 void nsvg__rasterizeClipPaths(
                               NSVGrasterizer* r, NSVGimage* image, int w, int h,
                               float tx, float ty, float scalex, float scaley)
@@ -1911,56 +1816,48 @@ void nsvg__rasterizeClipPaths(
   int clipPathCount = 0;
 
   NSVGclipPath* clipPath = image->clipPaths;
-  if (clipPath == NULL) {
-    r->stencil = NULL;
-    r->stencilCount = 0;
-    return;
-  }
-
   while (clipPath != NULL) {
     clipPathCount++;
     clipPath = clipPath->next;
   }
 
+  if (clipPathCount == 0) {
+      r->stencilArray = NULL;
+      r->stencilCount = 0;
+      return;
+  }
+
+  r->stencilCount = clipPathCount;
   r->stencilStride = w / 8 + (w % 8 != 0 ? 1 : 0);
   r->stencilSize = h * r->stencilStride;
 
-  UINTN totalSize = r->stencilSize * clipPathCount;
-
-  // Ограничиваем размер для дракона, но оставляем рабочим для клевера
-  if (totalSize > 2 * 1024 * 1024) {  // 2 МБ максимум
-    DBG("WARNING: Stencil buffer too large (%lld bytes), limiting\n", totalSize);
-    clipPathCount = (2 * 1024 * 1024) / r->stencilSize;
-    if (clipPathCount < 1) clipPathCount = 1;
-    totalSize = r->stencilSize * clipPathCount;
+  // Создаем массив указателей
+  UINTN arraySize = clipPathCount * sizeof(UINT8*);
+  if (r->stencilArray == NULL) {
+      r->stencilArray = (UINT8**)AllocatePool(arraySize);
+  } else {
+      r->stencilArray = (UINT8**)ReallocatePool(0, arraySize, r->stencilArray);
   }
+  SetMem(r->stencilArray, arraySize, 0);
 
-  //DBG("STENCIL: allocating %lld bytes for %d clipPaths\n", totalSize, clipPathCount);
-
-  r->stencil = (unsigned char*)AllocateZeroPool(totalSize);
-  if (r->stencil == NULL) {
-    DBG("ERROR: Failed to allocate stencil buffer!\n");
-    r->stencil = NULL;
-    r->stencilCount = 0;
-    return;
-  }
-  r->stencilCount = clipPathCount;
-
-  // Рендерим каждый clipPath в свой участок буфера
+  // Рендерим каждый clipPath в свой буфер
   clipPath = image->clipPaths;
-  int idx = 0;
-  while (clipPath != NULL && idx < clipPathCount) {
-    NSVGshape* shape = clipPath->shapes;
-    while (shape != NULL) {
-      renderShapeForStencil(r,
-                          shape,
-                          tx, ty, scalex, scaley,
-                          &r->stencil[r->stencilSize * idx],
-                          w, h, r->stencilStride);
-      shape = shape->next;
-    }
-    clipPath = clipPath->next;
-    idx++;
+  while (clipPath != NULL) {
+      // Выделяем память для stencil-буфера
+      r->stencilArray[clipPath->index] = (UINT8*)AllocateZeroPool(r->stencilSize);
+      if (r->stencilArray[clipPath->index] == NULL) {
+          DBG("ERROR: Failed to allocate stencil buffer for clipPath %d\n", clipPath->index);
+          clipPath = clipPath->next;
+          continue;
+      }
+
+      // Рендерим shapes clipPath в stencil-буфер
+      nsvg__rasterizeShapes(r, clipPath->shapes, NULL,
+                            tx, ty, scalex, scaley,
+                            r->stencilArray[clipPath->index],
+                            w, h, r->stencilStride, nsvg__scanlineBit);
+
+      clipPath = clipPath->next;
   }
 }
 
