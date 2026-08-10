@@ -1135,7 +1135,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
 
     for (int i = 0; i < count; i++) {
       int r,g,b;
-      int a = nsvg__div255((int)cover[0] * ca);
+      int a = nsvg__div255((int)*cover++ * ca);
       int ia = 255 - a;
       // Premultiply
       r = nsvg__div255(cr * a);
@@ -1153,7 +1153,6 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       dst[2] = (UINT8)b;
       dst[3] = (UINT8)a;
 
-      cover++;
       dst += 4;
     }
   } else if (cache->type == NSVG_PAINT_LINEAR_GRADIENT) {
@@ -1179,7 +1178,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       cg = (c >> 8) & 0xff;
       cb = (c >> 16) & 0xff;
       ca = (c >> 24) & 0xff;
-      a = nsvg__div255((int)cover[0] * ca);
+      a = nsvg__div255((int)*cover++ * ca);
       ia = 255 - a;
 
       // Premultiply
@@ -1196,7 +1195,6 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       dst[2] = (UINT8)b;
       dst[3] = (UINT8)a;
 
-      cover++;
       dst += 4;
       //      fx += dx;
       gy += t[1];
@@ -1227,7 +1225,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       cb = (c >> 16) & 0xff;
       ca = (c >> 24) & 0xff;
 
-      a = nsvg__div255((int)cover[0] * ca);
+      a = nsvg__div255((int)*cover++ * ca);
       ia = 255 - a;
 
       // Premultiply
@@ -1246,7 +1244,6 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       dst[2] = (UINT8)b;
       dst[3] = (UINT8)a;
 
-      cover++;
       dst += 4;
       //      fx += dx;
       gx += t[0];
@@ -1284,7 +1281,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
 //      cg = Pattern->PixelData[j].g;
 //      ca = Pattern->PixelData[j].a;
  //     cr = cp.Red;
-      a = nsvg__div255((int)cover[0] * cp.Reserved);
+      a = nsvg__div255((int)*cover++ * cp.Reserved);
       ia = 255 - a;
       // Premultiply
       r = nsvg__div255(cp.Red * a);
@@ -1302,7 +1299,6 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       dst[2] = (UINT8)b;
       dst[3] = (UINT8)a;
 
-      cover++;
       dst += 4;
       fx += dx;
     }
@@ -1336,7 +1332,7 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       cb = (c >> 16) & 0xff;
       ca = (c >> 24) & 0xff;
 
-      a = nsvg__div255((int)cover[0] * ca);
+      a = nsvg__div255((int)*cover++ * ca);
       ia = 255 - a;
 
       // Premultiply
@@ -1355,7 +1351,6 @@ static void nsvg__scanlineSolid(UINT8* row, int count, UINT8* cover, int x, int 
       dst[2] = (UINT8)b;
       dst[3] = (UINT8)a;
 
-      cover++;
       dst += 4;
       //        fx += dx;
       gx += t[0];
