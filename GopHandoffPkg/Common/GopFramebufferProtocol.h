@@ -49,9 +49,13 @@ extern "C" {
 #define GOPFB_FLAG_READY_TO_BOOT GOPFB_U32_C(0x00000002)
 #define GOPFB_FLAG_MODE_REAPPLIED GOPFB_U32_C(0x00000004)
 #define GOPFB_FLAG_MODE_REQUEST_APPLIED GOPFB_U32_C(0x00000008)
+#define GOPFB_FLAG_EARLY_CAPTURE GOPFB_U32_C(0x00000010)
+#define GOPFB_CAPTURE_PHASE_FLAGS                                           \
+    (GOPFB_FLAG_READY_TO_BOOT | GOPFB_FLAG_EARLY_CAPTURE)
 #define GOPFB_KNOWN_FLAGS                                                   \
     (GOPFB_FLAG_CONSOLE_OUT | GOPFB_FLAG_READY_TO_BOOT |                    \
-     GOPFB_FLAG_MODE_REAPPLIED | GOPFB_FLAG_MODE_REQUEST_APPLIED)
+     GOPFB_FLAG_MODE_REAPPLIED | GOPFB_FLAG_MODE_REQUEST_APPLIED |          \
+     GOPFB_FLAG_EARLY_CAPTURE)
 
 #define GOPFB_PIXEL_RED_GREEN_BLUE_RESERVED_8 GOPFB_U32_C(0)
 #define GOPFB_PIXEL_BLUE_GREEN_RED_RESERVED_8 GOPFB_U32_C(1)
@@ -82,6 +86,38 @@ typedef struct GopFramebufferHandoff {
     GopFbUint32 crc32;
 } GopFramebufferHandoff;
 
+#define GOPFB_PCI_INFO_MAGIC GOPFB_U32_C(0x47504349) /* GPCI */
+#define GOPFB_PCI_INFO_VERSION GOPFB_U16_C(1)
+#define GOPFB_PCI_FLAG_LOCATION_VALID GOPFB_U32_C(0x00000001)
+#define GOPFB_PCI_FLAG_IDENTITY_VALID GOPFB_U32_C(0x00000002)
+#define GOPFB_PCI_FLAG_CLASS_VALID GOPFB_U32_C(0x00000004)
+#define GOPFB_PCI_FLAG_BAR_VALID GOPFB_U32_C(0x00000008)
+#define GOPFB_PCI_KNOWN_FLAGS \
+    (GOPFB_PCI_FLAG_LOCATION_VALID | GOPFB_PCI_FLAG_IDENTITY_VALID | \
+     GOPFB_PCI_FLAG_CLASS_VALID | GOPFB_PCI_FLAG_BAR_VALID)
+#define GOPFB_PCI_INVALID_BAR_INDEX GOPFB_U32_C(0xFFFFFFFF)
+
+typedef struct GopFramebufferPciInfo {
+    GopFbUint32 magic;
+    GopFbUint16 version;
+    GopFbUint16 headerSize;
+    GopFbUint32 totalSize;
+    GopFbUint32 flags;
+    GopFbUint32 segment;
+    GopFbUint32 bus;
+    GopFbUint32 device;
+    GopFbUint32 function;
+    GopFbUint32 vendorId;
+    GopFbUint32 deviceId;
+    GopFbUint32 classCode;
+    GopFbUint32 barIndex;
+    GopFbUint64 barBase;
+    GopFbUint64 barSize;
+    GopFbUint64 framebufferOffset;
+    GopFbUint32 reserved[3];
+    GopFbUint32 crc32;
+} GopFramebufferPciInfo;
+
 #define GOPFB_DISPLAY_INFO_MAGIC GOPFB_U32_C(0x47444946) /* GDIF */
 #define GOPFB_DISPLAY_INFO_VERSION GOPFB_U16_C(1)
 #define GOPFB_DISPLAY_FLAG_EDID_ACTIVE GOPFB_U32_C(0x00000001)
@@ -90,6 +126,10 @@ typedef struct GopFramebufferHandoff {
     (GOPFB_DISPLAY_FLAG_EDID_ACTIVE | GOPFB_DISPLAY_FLAG_EDID_DISCOVERED)
 #define GOPFB_INVALID_MODE_INDEX GOPFB_U32_MAX
 #define GOPFB_EDID_BLOCK_SIZE GOPFB_U32_C(128)
+#define GOPFB_EDID_MAX_BLOCK_COUNT GOPFB_U32_C(256)
+#define GOPFB_EDID_MAX_SIZE \
+    (GOPFB_EDID_BLOCK_SIZE * GOPFB_EDID_MAX_BLOCK_COUNT)
+#define GOPFB_MODE_CATALOG_MAX_COUNT GOPFB_U32_C(4096)
 
 typedef struct GopFramebufferModeDescriptor {
     GopFbUint32 modeNumber;
@@ -143,6 +183,10 @@ STATIC_ASSERT(sizeof(GopFramebufferHandoff) == 96U,
               "GopFramebufferHandoff ABI size changed");
 STATIC_ASSERT(GOPFB_OFFSET_OF(GopFramebufferHandoff, crc32) == 92U,
               "GopFramebufferHandoff checksum offset changed");
+STATIC_ASSERT(sizeof(GopFramebufferPciInfo) == 88U,
+              "GopFramebufferPciInfo ABI size changed");
+STATIC_ASSERT(GOPFB_OFFSET_OF(GopFramebufferPciInfo, crc32) == 84U,
+              "GopFramebufferPciInfo checksum offset changed");
 STATIC_ASSERT(sizeof(GopFramebufferModeDescriptor) == 40U,
               "GopFramebufferModeDescriptor ABI size changed");
 STATIC_ASSERT(sizeof(GopFramebufferDisplayInfoHeader) == 64U,
@@ -158,6 +202,10 @@ static_assert(sizeof(GopFramebufferHandoff) == 96U,
               "GopFramebufferHandoff ABI size changed");
 static_assert(GOPFB_OFFSET_OF(GopFramebufferHandoff, crc32) == 92U,
               "GopFramebufferHandoff checksum offset changed");
+static_assert(sizeof(GopFramebufferPciInfo) == 88U,
+              "GopFramebufferPciInfo ABI size changed");
+static_assert(GOPFB_OFFSET_OF(GopFramebufferPciInfo, crc32) == 84U,
+              "GopFramebufferPciInfo checksum offset changed");
 static_assert(sizeof(GopFramebufferModeDescriptor) == 40U,
               "GopFramebufferModeDescriptor ABI size changed");
 static_assert(sizeof(GopFramebufferDisplayInfoHeader) == 64U,
@@ -173,6 +221,10 @@ _Static_assert(sizeof(GopFramebufferHandoff) == 96U,
                "GopFramebufferHandoff ABI size changed");
 _Static_assert(GOPFB_OFFSET_OF(GopFramebufferHandoff, crc32) == 92U,
                "GopFramebufferHandoff checksum offset changed");
+_Static_assert(sizeof(GopFramebufferPciInfo) == 88U,
+               "GopFramebufferPciInfo ABI size changed");
+_Static_assert(GOPFB_OFFSET_OF(GopFramebufferPciInfo, crc32) == 84U,
+               "GopFramebufferPciInfo checksum offset changed");
 _Static_assert(sizeof(GopFramebufferModeDescriptor) == 40U,
                "GopFramebufferModeDescriptor ABI size changed");
 _Static_assert(sizeof(GopFramebufferDisplayInfoHeader) == 64U,
@@ -204,6 +256,21 @@ typedef enum GopFramebufferStatus {
     GOPFB_STATUS_FRAMEBUFFER_TOO_SMALL
 } GopFramebufferStatus;
 
+typedef enum GopFramebufferPciInfoStatus {
+    GOPFB_PCI_STATUS_OK = 0,
+    GOPFB_PCI_STATUS_NULL,
+    GOPFB_PCI_STATUS_BAD_MAGIC,
+    GOPFB_PCI_STATUS_BAD_VERSION,
+    GOPFB_PCI_STATUS_BAD_STRUCTURE_SIZE,
+    GOPFB_PCI_STATUS_RESERVED_NOT_ZERO,
+    GOPFB_PCI_STATUS_BAD_CHECKSUM,
+    GOPFB_PCI_STATUS_BAD_FLAGS,
+    GOPFB_PCI_STATUS_BAD_LOCATION,
+    GOPFB_PCI_STATUS_BAD_IDENTITY,
+    GOPFB_PCI_STATUS_BAD_CLASS,
+    GOPFB_PCI_STATUS_BAD_BAR
+} GopFramebufferPciInfoStatus;
+
 typedef enum GopFramebufferEdidStatus {
     GOPFB_EDID_STATUS_OK = 0,
     GOPFB_EDID_STATUS_ABSENT,
@@ -223,8 +290,10 @@ typedef enum GopFramebufferDisplayInfoStatus {
     GOPFB_DISPLAY_STATUS_BAD_CHECKSUM,
     GOPFB_DISPLAY_STATUS_BAD_FLAGS,
     GOPFB_DISPLAY_STATUS_BAD_LAYOUT,
+    GOPFB_DISPLAY_STATUS_TOO_MANY_MODES,
     GOPFB_DISPLAY_STATUS_BAD_CURRENT_MODE,
     GOPFB_DISPLAY_STATUS_DUPLICATE_MODE_NUMBER,
+    GOPFB_DISPLAY_STATUS_NON_CANONICAL_MODE_ORDER,
     GOPFB_DISPLAY_STATUS_INVALID_MODE,
     GOPFB_DISPLAY_STATUS_INVALID_EDID
 } GopFramebufferDisplayInfoStatus;
@@ -256,6 +325,12 @@ int gopfb_build_pixel_encoding(
     char *encoding,
     GopFbSize encodingSize);
 const char *gopfb_status_string(GopFramebufferStatus status);
+
+void gopfb_initialize_pci_info(GopFramebufferPciInfo *pciInfo);
+void gopfb_finalize_pci_info(GopFramebufferPciInfo *pciInfo);
+GopFramebufferPciInfoStatus gopfb_validate_pci_info(
+    const GopFramebufferPciInfo *pciInfo);
+const char *gopfb_pci_status_string(GopFramebufferPciInfoStatus status);
 
 GopFramebufferEdidStatus gopfb_validate_edid(const GopFbUint8 *edid,
                                              GopFbSize edidSize);

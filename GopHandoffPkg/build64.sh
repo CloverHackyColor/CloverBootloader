@@ -42,7 +42,7 @@ PROCESSOR=X64
 #
 # Pick a default tool type for a given OS
 #
-BUILDTARGET=RELEASE
+BUILDTARGET=DEBUG
 TARGET_TOOLS=MYTOOLS
 case `uname` in
   CYGWIN*) echo Cygwin not fully supported yet. ;;

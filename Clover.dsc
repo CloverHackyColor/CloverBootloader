@@ -738,6 +738,7 @@
   #BiosVideoAuto/BiosVideo.inf
   LegacyBios/VideoDxe/VideoDxe.inf
   LegacyBios/VideoDxe/VideoDxe2.inf
+  GopHandoffPkg/GopHandoff.inf
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO

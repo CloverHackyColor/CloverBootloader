@@ -3,7 +3,7 @@
   BASE_NAME                      = GopHandoff
   FILE_GUID                      = 0C877756-6693-4A04-9BA8-77BFB02BD8BE
   MODULE_TYPE                    = UEFI_DRIVER
-  VERSION_STRING                 = 0.2.3
+  VERSION_STRING                 = 0.2.15
   ENTRY_POINT                    = GopHandoffEntryPoint
   UNLOAD_IMAGE                   = GopHandoffUnload
 
@@ -21,6 +21,7 @@
   CommonMemoryAllocationLib
   MemoryProfileLib
   DebugLib
+  DevicePathLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
   UefiLib
@@ -28,6 +29,7 @@
 
 [Protocols]
   gEfiGraphicsOutputProtocolGuid
+  gEfiPciIoProtocolGuid
   gEfiEdidActiveProtocolGuid
   gEfiEdidDiscoveredProtocolGuid
 
@@ -35,6 +37,6 @@
   TRUE
 
 [BuildOptions]
-  GCC:*_*_*_CC_FLAGS             = -Wall -Wextra -Werror -Wformat=2 -Wshadow -Wconversion -Wsign-conversion -DGOPFB_EDK2=1
+  GCC:*_*_*_CC_FLAGS             = -Wall -Wextra -Werror -Wformat=2 -Wshadow -Wconversion -Wsign-conversion -DGOPFB_EDK2=1 -Wno-unused-parameter
   XCODE:*_*_*_CC_FLAGS       = -Wall -Wextra -Werror -Wformat=2 -Wshadow -Wconversion -Wsign-conversion -DGOPFB_EDK2=1 -Wno-unused-parameter
   XCODE:*_*_*_CXX_FLAGS     = -Wall -Wextra -Werror -Wformat=2 -Wshadow -Wconversion -Wsign-conversion -DGOPFB_EDK2=1 -Wno-unused-parameter

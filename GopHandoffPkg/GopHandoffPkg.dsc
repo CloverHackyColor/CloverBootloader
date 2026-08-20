@@ -1,7 +1,7 @@
 [Defines]
   PLATFORM_NAME                  = GopHandoffPkg
   PLATFORM_GUID                  = 404D4D5D-1A68-4B95-96C0-D614F1C01DE1
-  PLATFORM_VERSION               = 0.2.3
+  PLATFORM_VERSION               = 0.2.15
   DSC_SPECIFICATION              = 0x0001001B
   OUTPUT_DIRECTORY               = Build/GopHandoffPkg
   SUPPORTED_ARCHITECTURES        = X64

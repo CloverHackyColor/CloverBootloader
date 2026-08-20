@@ -323,7 +323,9 @@ GopFramebufferStatus gopfb_validate(
     }
 
     if (((handoff->flags & ~GOPFB_KNOWN_FLAGS) != GOPFB_U32_C(0)) ||
-        ((handoff->flags & GOPFB_FLAG_READY_TO_BOOT) == GOPFB_U32_C(0)) ||
+        ((handoff->flags & GOPFB_CAPTURE_PHASE_FLAGS) == GOPFB_U32_C(0)) ||
+        ((handoff->flags & GOPFB_CAPTURE_PHASE_FLAGS) ==
+         GOPFB_CAPTURE_PHASE_FLAGS) ||
         ((handoff->flags & GOPFB_FLAG_MODE_REAPPLIED) == GOPFB_U32_C(0))) {
         return GOPFB_STATUS_BAD_FLAGS;
     }
@@ -411,6 +413,157 @@ const char *gopfb_status_string(GopFramebufferStatus status) {
     }
 }
 
+void gopfb_initialize_pci_info(GopFramebufferPciInfo *pciInfo) {
+    GopFbSize index;
+    GopFbUint8 *bytes;
+
+    if (pciInfo == NULL) {
+        return;
+    }
+
+    bytes = (GopFbUint8 *)pciInfo;
+    for (index = 0U; index < sizeof(*pciInfo); ++index) {
+        bytes[index] = GOPFB_U8_C(0);
+    }
+
+    pciInfo->magic = GOPFB_PCI_INFO_MAGIC;
+    pciInfo->version = GOPFB_PCI_INFO_VERSION;
+    pciInfo->headerSize =
+        (GopFbUint16)GOPFB_OFFSET_OF(GopFramebufferPciInfo, reserved);
+    pciInfo->totalSize = (GopFbUint32)sizeof(*pciInfo);
+    pciInfo->barIndex = GOPFB_PCI_INVALID_BAR_INDEX;
+}
+
+void gopfb_finalize_pci_info(GopFramebufferPciInfo *pciInfo) {
+    if (pciInfo == NULL) {
+        return;
+    }
+
+    pciInfo->crc32 = gopfb_crc32(
+        pciInfo,
+        GOPFB_OFFSET_OF(GopFramebufferPciInfo, crc32));
+}
+
+GopFramebufferPciInfoStatus gopfb_validate_pci_info(
+    const GopFramebufferPciInfo *pciInfo) {
+    GopFbSize index;
+
+    if (pciInfo == NULL) {
+        return GOPFB_PCI_STATUS_NULL;
+    }
+    if (pciInfo->magic != GOPFB_PCI_INFO_MAGIC) {
+        return GOPFB_PCI_STATUS_BAD_MAGIC;
+    }
+    if (pciInfo->version != GOPFB_PCI_INFO_VERSION) {
+        return GOPFB_PCI_STATUS_BAD_VERSION;
+    }
+    if ((pciInfo->headerSize !=
+         (GopFbUint16)GOPFB_OFFSET_OF(GopFramebufferPciInfo, reserved)) ||
+        (pciInfo->totalSize != (GopFbUint32)sizeof(*pciInfo))) {
+        return GOPFB_PCI_STATUS_BAD_STRUCTURE_SIZE;
+    }
+    for (index = 0U;
+         index < (sizeof(pciInfo->reserved) / sizeof(pciInfo->reserved[0]));
+         ++index) {
+        if (pciInfo->reserved[index] != GOPFB_U32_C(0)) {
+            return GOPFB_PCI_STATUS_RESERVED_NOT_ZERO;
+        }
+    }
+    if (pciInfo->crc32 !=
+        gopfb_crc32(
+            pciInfo,
+            GOPFB_OFFSET_OF(GopFramebufferPciInfo, crc32))) {
+        return GOPFB_PCI_STATUS_BAD_CHECKSUM;
+    }
+    if ((pciInfo->flags & ~GOPFB_PCI_KNOWN_FLAGS) != GOPFB_U32_C(0)) {
+        return GOPFB_PCI_STATUS_BAD_FLAGS;
+    }
+
+    if ((pciInfo->flags & GOPFB_PCI_FLAG_LOCATION_VALID) != GOPFB_U32_C(0)) {
+        if ((pciInfo->segment > GOPFB_U32_C(0xFFFF)) ||
+            (pciInfo->bus > GOPFB_U32_C(0xFF)) ||
+            (pciInfo->device > GOPFB_U32_C(0x1F)) ||
+            (pciInfo->function > GOPFB_U32_C(0x07))) {
+            return GOPFB_PCI_STATUS_BAD_LOCATION;
+        }
+    } else if ((pciInfo->segment != GOPFB_U32_C(0)) ||
+               (pciInfo->bus != GOPFB_U32_C(0)) ||
+               (pciInfo->device != GOPFB_U32_C(0)) ||
+               (pciInfo->function != GOPFB_U32_C(0))) {
+        return GOPFB_PCI_STATUS_BAD_LOCATION;
+    }
+
+    if ((pciInfo->flags & GOPFB_PCI_FLAG_IDENTITY_VALID) != GOPFB_U32_C(0)) {
+        if ((pciInfo->vendorId == GOPFB_U32_C(0)) ||
+            (pciInfo->vendorId > GOPFB_U32_C(0xFFFF)) ||
+            (pciInfo->vendorId == GOPFB_U32_C(0xFFFF)) ||
+            (pciInfo->deviceId > GOPFB_U32_C(0xFFFF)) ||
+            (pciInfo->deviceId == GOPFB_U32_C(0xFFFF))) {
+            return GOPFB_PCI_STATUS_BAD_IDENTITY;
+        }
+    } else if ((pciInfo->vendorId != GOPFB_U32_C(0)) ||
+               (pciInfo->deviceId != GOPFB_U32_C(0))) {
+        return GOPFB_PCI_STATUS_BAD_IDENTITY;
+    }
+
+    if ((pciInfo->flags & GOPFB_PCI_FLAG_CLASS_VALID) != GOPFB_U32_C(0)) {
+        if ((pciInfo->classCode == GOPFB_U32_C(0)) ||
+            (pciInfo->classCode > GOPFB_U32_C(0x00FFFFFF))) {
+            return GOPFB_PCI_STATUS_BAD_CLASS;
+        }
+    } else if (pciInfo->classCode != GOPFB_U32_C(0)) {
+        return GOPFB_PCI_STATUS_BAD_CLASS;
+    }
+
+    if ((pciInfo->flags & GOPFB_PCI_FLAG_BAR_VALID) != GOPFB_U32_C(0)) {
+        if ((pciInfo->barIndex > GOPFB_U32_C(5)) ||
+            (pciInfo->barBase == GOPFB_U64_C(0)) ||
+            (pciInfo->barSize == GOPFB_U64_C(0)) ||
+            (pciInfo->barBase > (GOPFB_U64_MAX - pciInfo->barSize)) ||
+            (pciInfo->framebufferOffset >= pciInfo->barSize)) {
+            return GOPFB_PCI_STATUS_BAD_BAR;
+        }
+    } else if ((pciInfo->barIndex != GOPFB_PCI_INVALID_BAR_INDEX) ||
+               (pciInfo->barBase != GOPFB_U64_C(0)) ||
+               (pciInfo->barSize != GOPFB_U64_C(0)) ||
+               (pciInfo->framebufferOffset != GOPFB_U64_C(0))) {
+        return GOPFB_PCI_STATUS_BAD_BAR;
+    }
+
+    return GOPFB_PCI_STATUS_OK;
+}
+
+const char *gopfb_pci_status_string(GopFramebufferPciInfoStatus status) {
+    switch (status) {
+        case GOPFB_PCI_STATUS_OK:
+            return "ok";
+        case GOPFB_PCI_STATUS_NULL:
+            return "null input";
+        case GOPFB_PCI_STATUS_BAD_MAGIC:
+            return "bad magic";
+        case GOPFB_PCI_STATUS_BAD_VERSION:
+            return "unsupported version";
+        case GOPFB_PCI_STATUS_BAD_STRUCTURE_SIZE:
+            return "bad structure size";
+        case GOPFB_PCI_STATUS_RESERVED_NOT_ZERO:
+            return "reserved field is not zero";
+        case GOPFB_PCI_STATUS_BAD_CHECKSUM:
+            return "bad checksum";
+        case GOPFB_PCI_STATUS_BAD_FLAGS:
+            return "bad flags";
+        case GOPFB_PCI_STATUS_BAD_LOCATION:
+            return "bad PCI location";
+        case GOPFB_PCI_STATUS_BAD_IDENTITY:
+            return "bad PCI identity";
+        case GOPFB_PCI_STATUS_BAD_CLASS:
+            return "bad PCI class code";
+        case GOPFB_PCI_STATUS_BAD_BAR:
+            return "bad PCI BAR metadata";
+        default:
+            return "unknown PCI info status";
+    }
+}
+
 GopFramebufferEdidStatus gopfb_validate_edid(
     const GopFbUint8 *edid,
     GopFbSize edidSize) {
@@ -429,6 +582,7 @@ GopFramebufferEdidStatus gopfb_validate_edid(
 
     if ((edid == NULL) ||
         (edidSize < (GopFbSize)GOPFB_EDID_BLOCK_SIZE) ||
+        (edidSize > (GopFbSize)GOPFB_EDID_MAX_SIZE) ||
         ((edidSize % (GopFbSize)GOPFB_EDID_BLOCK_SIZE) != 0U)) {
         return GOPFB_EDID_STATUS_BAD_SIZE;
     }
@@ -537,7 +691,6 @@ GopFramebufferDisplayInfoStatus gopfb_validate_display_info(
     GopFbSize expectedEdidOffset;
     GopFbSize expectedTotalSize;
     GopFbSize index;
-    GopFbSize otherIndex;
     GopFramebufferEdidStatus edidStatus;
 
     if (modes != NULL) {
@@ -592,6 +745,10 @@ GopFramebufferDisplayInfoStatus gopfb_validate_display_info(
         return GOPFB_DISPLAY_STATUS_BAD_FLAGS;
     }
 
+    if (header->modeCount > GOPFB_MODE_CATALOG_MAX_COUNT) {
+        return GOPFB_DISPLAY_STATUS_TOO_MANY_MODES;
+    }
+
     if ((header->modeCount == GOPFB_U32_C(0)) ||
         !gopfb_size_multiply(
             (GopFbSize)header->modeCount,
@@ -626,12 +783,15 @@ GopFramebufferDisplayInfoStatus gopfb_validate_display_info(
             return GOPFB_DISPLAY_STATUS_INVALID_MODE;
         }
 
-        for (otherIndex = index + 1U;
-             otherIndex < (GopFbSize)header->modeCount;
-             ++otherIndex) {
-            if (modeArray[index].modeNumber ==
-                modeArray[otherIndex].modeNumber) {
+        if (index != 0U) {
+            const GopFbUint32 previousModeNumber =
+                modeArray[index - 1U].modeNumber;
+
+            if (previousModeNumber == modeArray[index].modeNumber) {
                 return GOPFB_DISPLAY_STATUS_DUPLICATE_MODE_NUMBER;
+            }
+            if (previousModeNumber > modeArray[index].modeNumber) {
+                return GOPFB_DISPLAY_STATUS_NON_CANONICAL_MODE_ORDER;
             }
         }
     }
@@ -682,10 +842,14 @@ const char *gopfb_display_status_string(
             return "bad flags";
         case GOPFB_DISPLAY_STATUS_BAD_LAYOUT:
             return "bad variable layout";
+        case GOPFB_DISPLAY_STATUS_TOO_MANY_MODES:
+            return "mode catalog exceeds defensive limit";
         case GOPFB_DISPLAY_STATUS_BAD_CURRENT_MODE:
             return "bad current mode index";
         case GOPFB_DISPLAY_STATUS_DUPLICATE_MODE_NUMBER:
             return "duplicate mode number";
+        case GOPFB_DISPLAY_STATUS_NON_CANONICAL_MODE_ORDER:
+            return "mode numbers are not strictly increasing";
         case GOPFB_DISPLAY_STATUS_INVALID_MODE:
             return "invalid mode descriptor";
         case GOPFB_DISPLAY_STATUS_INVALID_EDID:
