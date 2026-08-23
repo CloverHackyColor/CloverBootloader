@@ -5,7 +5,7 @@
 <img width="200" alt="CloverLogo" src="Logo/Clover-Logo-Default-256x256@1x.png">
 
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
-### Read the DOC [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover-Documentation Site](https://cloverhackycolor.github.io/Clover-Documentation/)
+### Read the DOC [Clover-Wiki](https://github.com/CloverHackyColor/CloverBootloader/wiki) / [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover History](https://htmlpreview.github.io/?https://github.com/CloverHackyColor/CloverBootloader/blob/master/Clover%20History.html)
 
 # Features
 
