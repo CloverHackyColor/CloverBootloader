@@ -3,7 +3,7 @@
 #
 # Mount ESP script for Clover
 #
-# © JrCs 2013
+# © JrCs 2013, chris1111 2026
 
 #
 # Mount ESP (EFI System Partition)
@@ -32,6 +32,15 @@ declare -r plistbuddy='/usr/libexec/PlistBuddy'
 # Turn on a case-insensitive matching
 shopt -s nocasematch
 
+function getPhysicalDiskForAPFSContainer {
+    local device="$1"
+    local physicalDisk=
+    [[ -z "$device" ]] && return
+    physicalDisk=$(diskutil list | grep -F "Apple_APFS Container ${device} " | head -1 | \
+     awk '{ print $NF}' | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+    [[ -n "$physicalDisk" ]] && echo "$physicalDisk" || echo "$device"
+}
+
 function mountESP {
     local arg="$1"
     local exitcode=1
@@ -47,11 +56,10 @@ function mountESP {
             ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
              sed -n 's/.*Part [Oo]f Whole: *//p')
         fi
-		# When ${ESPDevice} is an "Apple_APFS Container" on expected "Boot Volume" (ie. "Volume de démarrage")
+        # When ${ESPDevice} is an "Apple_APFS Container" on expected "Boot Volume" (ie. "Volume de démarrage")
         # at "Force mount selected ESP at startup:"(ie. "Forcer le montage de l'ESP sélectionné au démarrage")
         if [[ $(diskutil info / | sed -n 's/.*File System Personality: *//p' | tr "[:upper:]" "[:lower:]") = "apfs" ]] ; then
-            ESPDevice=$(diskutil list | grep "Apple_APFS Container ${ESPDevice}" | \
-             awk '{ print $NF}' | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+            ESPDevice=$(getPhysicalDiskForAPFSContainer "$ESPDevice")
         fi
     elif [[ "$arg" =~ $guidRegExp ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
@@ -60,6 +68,7 @@ function mountESP {
             echo "Can't find partition with UUID $arg"
             return 1
         fi
+        ESPDevice=$(getPhysicalDiskForAPFSContainer "$ESPDevice")
     elif [[ ! "$arg" =~ ^(/dev/)?disk[0-9]+ ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
          sed -n 's/.*Part [Oo]f Whole: *//p')
@@ -67,6 +76,7 @@ function mountESP {
             echo "Can't find volume with the name $arg"
             return 1
         fi
+        ESPDevice=$(getPhysicalDiskForAPFSContainer "$ESPDevice")
     else
         ESPDevice="$arg"
     fi
@@ -116,9 +126,10 @@ fi
 #
 # 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks
 #
-gScriptVersion=1.16.2
+gScriptVersion=1.16.4
 gEmuVariableName=emuvariable
 gLogoutHookf="/Library/Application Support/Clover/CloverDaemon-stopservice"
+gFallbackLogoutHookf="/etc/rc.shutdown.d/80.save_nvram_plist.local"
 gNVRAMbuf=$(nvram -x -p)
 
 gEfiEmuVariableIsPresent="false"
@@ -139,14 +150,20 @@ fi
 # set LogoutHook
 if [[ "${gLegacyEmuVariableIsPresent}" == "true" || "${gEfiEmuVariableIsPresent}" == "true" ]]; 
 then
-    if [ -f "${gLogoutHookf}" ]; 
-    then
+    gSelectedLogoutHookf="${gLogoutHookf}"
+    if [[ ! -f "${gSelectedLogoutHookf}" && -f "${gFallbackLogoutHookf}" ]]; then
+        gSelectedLogoutHookf="${gFallbackLogoutHookf}"
+    fi
     #
-    # file exist, need to logoutHook
+    # Register LogoutHook needed by rc.shutdown.d/80.save_nvram_plist.local.
+    # Prefer CloverDaemon-stopservice when present, fallback to direct rc.shutdown script.
     #
+    if [[ -f "${gSelectedLogoutHookf}" ]]; then
         echo "v${gScriptVersion} (c) 2017 syscl/lighting/Yating Zhou, tluck, Sherlocks"
-        echo "Registering LogoutHook as ${gLogoutHookf}"
-        defaults write com.apple.loginwindow LogoutHook "${gLogoutHookf}"
+        echo "Registering LogoutHook as ${gSelectedLogoutHookf}"
+        defaults write com.apple.loginwindow LogoutHook "${gSelectedLogoutHookf}"
+    else
+        echo "Skip registering LogoutHook: missing ${gLogoutHookf} and ${gFallbackLogoutHookf}"
     fi
 fi
 
