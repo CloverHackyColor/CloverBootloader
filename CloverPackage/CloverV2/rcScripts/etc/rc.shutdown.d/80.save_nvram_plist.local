@@ -1,10 +1,11 @@
 #!/bin/bash
 #
+# 2026 (c) chris1111/syscl/lighting/Yating Zhou, tluck, Sherlocks, lvs1974
 # 2017 (c) syscl/lighting/Yating Zhou, tluck, Sherlocks, lvs1974
 # dump NVRAM for UEFI Clover with EmuVariable or Legacy Clover
 #
 # Script version info
-gScriptVersion=1.16.7
+gScriptVersion=1.16.8
 #================================= GLOBAL VARS ==================================
 #
 # The script expects '0.5' but non-US localizations use '0,5' so we export
@@ -321,6 +322,63 @@ function _mountESP()
 #--------------------------------------------------------------------------------
 #
 
+function _countPlistKeys()
+{
+    #
+    # Count top-level <key> occurrences in a plist buffer/file.
+    # Used as a crude but effective proxy for "how many NVRAM vars are in this dump".
+    #
+    local gSrc="$1"
+    local gCount=0
+    if [[ -f "$gSrc" ]]; then
+        gCount=$(grep -c '<key>' "$gSrc" 2>/dev/null)
+    else
+        gCount=$(printf '%s' "$gSrc" | grep -c '<key>')
+    fi
+    [[ -z "$gCount" ]] && gCount=0
+    printf '%s' "$gCount"
+}
+
+#
+#--------------------------------------------------------------------------------
+#
+
+function _dumpLooksSafe()
+{
+    #
+    # Sanity-check a new NVRAM dump against the previous one before overwriting.
+    # Protects against a truncated/incomplete dump (e.g. caused by a shutdown
+    # timing race where the EmuVariable/NVRAM backing store is already torn
+    # down before this script runs) silently wiping out previously saved keys.
+    #
+    local gOldPath="$1"
+    local gNewBuf="$2"
+    local gOldCount gNewCount
+
+    # If there's no previous file, any dump is accepted (first run / fresh ESP).
+    [[ ! -f "$gOldPath" ]] && return 0
+
+    gOldCount=$(_countPlistKeys "$gOldPath")
+    gNewCount=$(_countPlistKeys "$gNewBuf")
+
+    # Empty/near-empty new dump: always reject.
+    if [[ "$gNewCount" -eq 0 ]]; then
+        return 1
+    fi
+
+    # Reject if the new dump has noticeably fewer keys than the old one.
+    # Allow a small tolerance (1 key) for normal churn (e.g. boot-args toggling).
+    if [[ "$gNewCount" -lt $((gOldCount - 1)) ]]; then
+        return 1
+    fi
+
+    return 0
+}
+
+#
+#--------------------------------------------------------------------------------
+#
+
 function _dumpNVRAM()
 {
     #
@@ -333,6 +391,20 @@ function _dumpNVRAM()
     gUtcTimeStamp=$(date -u +%Y%m%d%H%M.%S)
     if [[ "${gOldNVRAM}" != "${gNVRAMbuf}" ]];
     then
+        #
+        # Guard against overwriting a good nvram.plist with a truncated/incomplete
+        # dump. This can happen if nvram2 -x -p is called after the NVRAM backing
+        # store (EmuVariable or native) has already been partially torn down
+        # during the shutdown/logout sequence.
+        #
+        if ! _dumpLooksSafe "${gTarPath}/${gNVRAMf}" "${gNVRAMbuf}"; then
+            gOldKeyCount=$(_countPlistKeys "${gTarPath}/${gNVRAMf}")
+            gNewKeyCount=$(_countPlistKeys "${gNVRAMbuf}")
+            printf "${gLogTimeStamp}  NVRAM: REFUSED to overwrite ${gTarPath}/${gNVRAMf} - new dump has ${gNewKeyCount} keys vs ${gOldKeyCount} previously. Possible incomplete NVRAM dump at shutdown, keeping existing file.\n"
+            RETURN_VAL=${kBASHReturnFailure}
+            return
+        fi
+
         #
         # Need to refresh
         #
