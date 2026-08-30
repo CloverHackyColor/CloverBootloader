@@ -232,6 +232,15 @@ More infos https://github.com/jief666/BootloaderChooser. ";
 //Installs to /usr/local/bin and will be available as 'ccpv' ";
 
 // ============================================================================
+// CloverLogoutHook
+// ----------------------------------------------------------------------------
+//"CloverLogoutHook_title" = "CloverLogoutHook";
+//"CloverLogoutHook_description" = "Persistent NVRAM for Clover Legacy Boot,
+Installs to /Library/Application Support/CloverLogoutHook
+Check EmuVariableUefi.efi exists in → /EFI/CLOVER/drivers/BIOS/ — Legacy boots never load drivers/UEFI/,
+Read the Usage.txt.";
+
+// ============================================================================
 // RC Scripts
 // ----------------------------------------------------------------------------
 "rc.scripts.on.target_title" = "Install RC scripts on target volume";

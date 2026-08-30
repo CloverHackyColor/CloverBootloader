@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloverLogoutHook — Developer Documentation</title>
+<style>
+    :root {
+        --bg: #0d1117;
+        --bg-card: #161b22;
+        --bg-code: #0a0e14;
+        --border: #30363d;
+        --text: #e6edf3;
+        --text-muted: #8b949e;
+        --accent: #4ade80;
+        --accent-dim: #22c55e;
+        --accent-glow: rgba(74, 222, 128, 0.15);
+        --warn: #fbbf24;
+        --err: #f87171;
+        --link: #58a6ff;
+        --mono: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+        --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.7;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+        background: linear-gradient(180deg, #10161f 0%, var(--bg) 100%);
+        border-bottom: 1px solid var(--border);
+        padding: 3rem 2rem 2.5rem;
+        text-align: center;
+    }
+    .logo {
+        width: 128px; height: 128px;
+        border-radius: 24px;
+        box-shadow: 0 0 60px var(--accent-glow),
+                    0 8px 32px rgba(0,0,0,0.6);
+        margin-bottom: 1.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+    }
+    h1 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent) 0%, #86efac 50%, var(--link) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+    .badges {
+        display: flex;
+        gap: 0.6rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1.4rem;
+    }
+    .badge {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.35rem 1rem;
+        font-size: 0.82rem;
+        font-family: var(--mono);
+        color: var(--accent);
+    }
+    .badge.warn { color: var(--warn); }
+    .badge.info { color: var(--link); }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2.5rem 2rem 4rem;
+    }
+
+    section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 2rem 2.2rem;
+        margin-bottom: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        color: var(--accent);
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--accent-glow);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    h2 .icon { font-size: 1.3rem; }
+
+    h3 {
+        color: var(--link);
+        font-size: 1.1rem;
+        margin: 1.5rem 0 0.7rem;
+    }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+    p.muted { color: var(--text-muted); font-size: 0.95rem; }
+
+    ul, ol { margin: 0.8rem 0 1rem 1.4rem; }
+    li { margin-bottom: 0.4rem; }
+    li::marker { color: var(--accent); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { color: var(--accent); }
+    em { color: var(--text-muted); }
+
+    /* ── Code ───────────────────────────────────────────── */
+    code {
+        font-family: var(--mono);
+        font-size: 0.88em;
+        background: var(--bg-code);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        padding: 0.15em 0.45em;
+        color: #7ee787;
+    }
+
+    pre {
+        background: var(--bg-code);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.2rem 1.4rem;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin: 1.2rem 0;
+        color: #c9d1d9;
+    }
+    pre .k { color: #ff7b72; }      /* keyword */
+    pre .s { color: #a5d6ff; }      /* string */
+    pre .c { color: #8b949e; font-style: italic; }  /* comment */
+    pre .g { color: #7ee787; }      /* green */
+    pre .y { color: #f2cc60; }      /* yellow */
+
+    /* ── Tables ─────────────────────────────────────────── */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+    }
+    th {
+        text-align: left;
+        background: rgba(74, 222, 128, 0.08);
+        color: var(--accent);
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        font-weight: 600;
+    }
+    td {
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--border);
+        color: var(--text);
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    td.ok   { color: var(--accent); font-weight: 600; }
+    td.warn { color: var(--warn); }
+    td.err  { color: var(--err); }
+
+    /* ── Architecture Diagram ───────────────────────────── */
+    .diagram {
+        background: var(--bg-code);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.5rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre;
+        color: #79c0ff;
+    }
+    .diagram .box   { color: #7ee787; font-weight: bold; }
+    .diagram .label { color: #f2cc60; }
+    .diagram .arrow { color: #8b949e; }
+
+    /* ── Callouts ───────────────────────────────────────── */
+    .callout {
+        border-left: 4px solid var(--accent);
+        background: var(--accent-glow);
+        border-radius: 0 8px 8px 0;
+        padding: 1rem 1.3rem;
+        margin: 1.2rem 0;
+    }
+    .callout.warn { border-color: var(--warn); background: rgba(251, 191, 36, 0.1); }
+    .callout.warn strong { color: var(--warn); }
+
+    /* ── TOC ────────────────────────────────────────────── */
+    nav {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.6rem 2rem;
+        margin-bottom: 2.5rem;
+    }
+    nav h2 { font-size: 1.15rem; border: none; margin-bottom: 0.8rem; }
+    nav ol { columns: 2; column-gap: 2.5rem; }
+    nav a { color: var(--text); font-size: 0.94rem; }
+    nav a:hover { color: var(--accent); }
+
+    /* ── Copy Button (Performance card) ─────────────────── */
+    .copy-btn {
+        margin-left: auto;
+        background: var(--bg-code);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+    .copy-btn:hover {
+        background: var(--accent);
+        color: var(--bg);
+    }
+    .copy-feedback {
+        color: var(--accent);
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+        margin-left: 8px;
+        font-family: var(--mono);
+    }
+
+    /* ── Scroll-to-top Arrow ────────────────────────────── */
+    .to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 2px solid var(--accent);
+        color: var(--accent);
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-decoration: none;
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(12px);
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        box-shadow: 0 0 20px var(--accent-glow),
+                    0 4px 16px rgba(0,0,0,0.5);
+    }
+    .to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .to-top:hover {
+        background: var(--accent);
+        color: var(--bg);
+        transform: translateY(-3px) scale(1.08);
+        animation: none;
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px var(--accent-glow),
+                               0 4px 16px rgba(0,0,0,0.5); }
+        50%      { box-shadow: 0 0 35px rgba(74,222,128,0.45),
+                               0 4px 20px rgba(0,0,0,0.6); }
+    }
+
+    footer {
+        text-align: center;
+        padding: 2.5rem 2rem 3.5rem;
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        border-top: 1px solid var(--border);
+    }
+    footer .heart { color: var(--err); }
+
+    @media (max-width: 640px) {
+        nav ol { columns: 1; }
+        section { padding: 1.4rem 1.2rem; }
+        h1 { font-size: 1.7rem; }
+    }
+</style>
+</head>
+<body>
+<a href="#" class="to-top" id="toTop" aria-label="Back to top" title="Back to top">↑</a>
+
+<header>
+    <img class="logo"
+         src="https://github.com/user-attachments/assets/0997ffe1-bcb3-4f21-b838-1da601274ad8"
+         alt="Clover Logo">
+    <h1>CloverLogoutHook</h1>
+    <p class="subtitle">
+        Persistent NVRAM for Clover Legacy Boot.
+    </p>
+    <p class="subtitle">
+        Replacement for the classic Clover RC scripts.
+        Keeps your Startup Disk choice alive across reboots, shutdowns, and bootloader overrides.
+    </p>
+    <a href="https://github.com/CloverHackyColor/CloverBootloader" style="text-decoration: none;">
+    <span class="badge">View on Github</span>
+    </a>
+    <div class="badges">
+        <span class="badge">🏷 v1.6</span>
+        <span class="badge info">Bash + PlistBuddy + perl</span>
+        <span class="badge info">Zero dependencies</span>
+        <span class="badge info">Validated 10.9 → 26</span>
+        <span class="badge warn">Legacy BIOS · APFS + HFS+ · Multi-disk</span>
+        <span class="badge">🏷 GPL-V3</span>
+    </div>
+</header>
+
+<main>
+
+<nav>
+    <h2>📑 Contents</h2>
+    <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#sticky">The Sticky-Anchor Pattern</a></li>
+        <li><a href="#mount">ESP Mount Strategy</a></li>
+        <li><a href="#resolve">Boot-Volume Resolution</a></li>
+        <li><a href="#heal">Self-Healing Pass</a></li>
+        <li><a href="#bootargs">Boot-Args Control</a></li>
+        <li><a href="#flush">Shutdown Flush</a></li>
+        <li><a href="#commands">Command Surface</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="#support">Support &amp; Troubleshooting</a></li>
+        <li><a href="#files">Filesystem Footprint</a></li>
+        <li><a href="#compat">macOS Compatibility</a></li>
+        <li><a href="#deps">Zero Dependencies</a></li>
+        <li><a href="#perf">Performance &amp; Impact</a></li>
+        <li><a href="#credits">Credits</a></li>
+    </ol>
+</nav>
+
+<!-- ══════════════════ OVERVIEW ══════════════════ -->
+<section id="overview">
+    <h2><span class="icon">🎯</span> Overview</h2>
+    <p>
+        <code>CloverLogoutHook</code> is a <strong>script + system-level LaunchDaemon </strong> used to emulate non-volatile random-access memory (NVRAM) on systems where native NVRAM is broken, non-functional, or loses its data upon shutdown. that keeps your **Startup Disk choice alive** across reboots, shutdowns, and bootloader overrides on Hackintosh systems running **Clover Legacy Boot**.
+    </p>
+    <ul>
+        <li><strong>Cold boot</strong> — shutdown ❄️ → power on</li>
+        <li><strong>Warm restart</strong> — menu  → Restart 🔄</li>
+        <li><strong>GUI override</strong> — picking a different volume in Clover's boot picker (one-shot, sticky choice resumes)</li>
+    </ul>
+    <div class="callout">
+        It replaces the <em>deprecated Clover RC scripts</em> (broken since macOS 13 Ventura)
+        with <strong>zero external dependencies</strong>.
+    </div>
+    <div class="callout">
+        🆕 <strong>v1.4 highlights:</strong> HFS+ boot support (the daemon now runs on
+        Mavericks-era systems), multi-disk internal discovery, full
+        <code>uninstall</code> cleanup, and its own state folder
+        <code>/Library/Logs/CloverHook</code>.
+    </div>
+    <div class="callout">
+        📎 <strong>What you need <code>(Mandatery)</code>: ⬇︎
+        <p>
+        <hr>
+        1. <p style="font-size: 12px;">Check <code>EmuVariableUefi.efi</code> exists in —> <code>/EFI/CLOVER/drivers/BIOS/</code> — Legacy boots never load <code>drivers/UEFI/</code></p>
+        <p>
+        <hr>
+        2. <p style="font-size: 12px;">For Big Sur 11 and above you will need in <code>/EFI/CLOVER/config.plist</code> Boot/Arguments —> <code>amfi=0x80</code></p>
+        <p>
+        <hr>
+        3. <p style="font-size: 12px;">Again for Big Sur 11 and above you will need in <code>/EFI/CLOVER/config.plist</code> RtVariables/CsrActiveConfig —> <code>0x803</code> RtVariables/BooterConfig -> <code>0x28</code></p>
+        <p>
+        <hr>
+        ⚠️ <p style="font-size: 12px;">Warning: Never use this key in <code>/EFI/CLOVER/config.plist</code> Boot/Arguments —> <code>DefaultVolume</code> <code>LastBootedVolume</code> because it will create an error in the native Startup Disk when you choose the boot disk.</p>
+        <p>
+        <p style="font-size: 12px;">Don't worry, <code>NVRAM</code> will emulate it natively.</p>
+    </div>
+</section>
+
+<!-- ══════════════════ ARCHITECTURE ══════════════════ -->
+<section id="architecture">
+    <h2><span class="icon">🏗️</span> Architecture</h2>
+    <div class="diagram">
+┌─────────────────────────────────────────────────────────────────────┐
+│                         macOS KERNEL SPACE                          │
+│                                                                     │
+│   <span class="label">NVRAM</span> (emulated by <span class="label">EmuVariableUefi.efi</span> — lives in RAM)          │
+│                                                                     │
+│   Key example:  <span class="box">efi-boot-device</span> = &lt;GUID path string&gt;              │
+│   Written by:   <span class="label">Startup Disk</span> prefpane / <span class="label">bless</span>                        │
+│   Consumed by:  macOS after each boot (keys vanish from live RAM)   │
+└────────────────────────────┬────────────────────────────────────────┘
+                             │
+                             │ every 2 seconds
+                             <span class="arrow">▼</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│                    <span class="box">CloverLogoutHook daemon</span>                            │
+│              (root LaunchDaemon — user space)                       │
+│                                                                     │
+│  <span class="label">1. DUMP</span>      : nvram -x -p → raw XML plist (tmp file)         │
+│  <span class="label">2. COMPARE</span>   : cmp vs last.xml baseline → no change? skip.  │
+│  <span class="label">3. MERGE</span>     : LIVE-WINS against sticky.xml anchor:          │
+│                 • copy anchor → final                               │
+│                 • PlistBuddy Delete every key present in live       │
+│                 • PlistBuddy Merge live → final                     │
+│                 Result: fresh values WIN; anchor re-adds only       │
+│                 keys that macOS consumed (efi-boot-device*, …).     │
+│  <span class="label">4. WRITE</span>     : mount Clover volume (hidden, transient)        │
+│                 → install → unmount                                 │
+│  <span class="label">5. ANCHOR</span>    : if final contains heal-keys → refresh sticky.xml│
+└────────────────────────────┬────────────────────────────────────────┘
+                             │
+                             │ at boot time
+                             <span class="arrow">▼</span>
+┌─────────────────────────────────────────────────────────────────────┐
+│                          <span class="box">CLOVER (firmware)</span>                          │
+│                                                                     │
+│  <span class="label">EmuVariableUefi.efi</span> reads <span class="box">/nvram.plist</span> on the volume        │
+│  → imports every key into emulated NVRAM RAM                        │
+│  → boot-manager honors <span class="box">efi-boot-device</span> → auto-selects volume   │
+└─────────────────────────────────────────────────────────────────────┘</div>
+</section>
+
+<!-- ══════════════════ STICKY ANCHOR ══════════════════ -->
+<section id="sticky">
+    <h2><span class="icon">🛠️</span> The Sticky-Anchor Pattern</h2>
+
+    <p>The core innovation. A naive NVRAM-to-file dump has a fatal flaw on Hackintosh:</p>
+
+    <div class="callout warn">
+        ⚠️ macOS <strong>consumes</strong> <code>efi-boot-device*</code> keys after reading them
+        at boot — they vanish from live NVRAM within seconds of the OS starting.
+        A pure mirror dump would progressively strip the file of exactly the keys
+        needed for boot selection.
+    </div>
+
+    <h3>Three-file model</h3>
+    <table>
+        <tr><th>File</th><th>Role</th><th>Update rule</th></tr>
+        <tr>
+            <td><code>last.xml</code></td>
+            <td>Raw live NVRAM snapshot</td>
+            <td>Refreshed every cycle (baseline for <code>cmp</code>)</td>
+        </tr>
+        <tr>
+            <td><code>sticky.xml</code></td>
+            <td><strong>Anchor</strong> — superset containing heal keys</td>
+            <td>Refreshed <strong>only</strong> when final output contains any heal key</td>
+        </tr>
+        <tr>
+            <td><code>nvram.plist</code><br><em>(on Clover volume)</em></td>
+            <td>What Clover imports</td>
+            <td>Result of live-wins merge against anchor</td>
+        </tr>
+    </table>
+
+    <h3>Live-wins merge algorithm</h3>
+<pre><span class="c"># PlistBuddy Merge does NOT overwrite existing keys.</span>
+<span class="c"># So: strip from anchor every key live provides, then merge live in.</span>
+<span class="k">cp</span> anchor → final
+<span class="k">for</span> key <span class="k">in</span> $(keys_in_live); <span class="k">do</span>
+    PlistBuddy -c <span class="s">"Delete :${key}"</span> final   <span class="c"># 2>/dev/null || true</span>
+<span class="k">done</span>
+PlistBuddy -c <span class="s">"Merge live.xml"</span> final</pre>
+
+    <div class="callout">
+        ✅ <strong>Property:</strong> <code>final</code> is always a <em>superset</em> —
+        fresh values from live overwrite old ones, and the anchor re-adds anything
+        live has lost. Selecting <strong>A→B→A→…</strong> works indefinitely because
+        the fresh live value always lands in the final file.
+    </div>
+</section>
+
+<!-- ══════════════════ MOUNT STRATEGY ══════════════════ -->
+<section id="mount">
+    <h2><span class="icon">🔒</span> ESP Mount Strategy</h2>
+    <p>
+        The daemon never keeps a persistent mount and never interferes with user tools.
+        The volume appears <strong>nowhere on the desktop</strong>, no Finder sidebar entry,
+        no residual state.
+    </p>
+    <table>
+        <tr><th>Situation</th><th>Behavior</th></tr>
+        <tr>
+            <td>NVRAM unchanged <em>(typical cycle)</em></td>
+            <td class="ok"><strong>No mount at all</strong> — zero disk activity</td>
+        </tr>
+        <tr>
+            <td>Change detected, volume unmounted</td>
+            <td><code>diskutil mount -nobrowse</code> → write → unmount (~1–2 s)</td>
+        </tr>
+        <tr>
+            <td>Change detected, user already has the volume mounted</td>
+            <td class="ok"><strong>Reuse user's mount</strong> — never steal or eject</td>
+        </tr>
+    </table>
+    <p class="muted">
+        Mount point used for transient operations:
+        <code>/private/var/.CloverEFI</code> (dot-prefixed → invisible to Finder).
+    </p>
+</section>
+
+<!-- ══════════════════ RESOLUTION ══════════════════ -->
+<section id="resolve">
+    <h2><span class="icon">🗺️</span> Boot-Volume Resolution</h2>
+    <p>
+        Two worlds, one resolver:
+    </p>
+    <ul>
+        <li>
+            <strong>APFS boots</strong> — <code>/</code> is a synthesized snapshot inside a
+            synthesized container, backed by a physical store on a real disk. The script
+            walks the whole chain to find the physical host disk.
+        </li>
+        <li>
+            <strong>HFS+ boots (v1.4)</strong> — no APFS layer exists; the boot disk
+            <em>is</em> the root disk. Handled automatically.
+        </li>
+    </ul>
+<pre>root slice       : disk3s5s1       ← mount /
+apfs container   : disk3           ← regex ^(disk[0-9]+)
+physical store   : disk1s2         ← awk '/Physical Store/' in diskutil list disk3
+host whole disk  : disk1           ← regex ^(disk[0-9]+)
+esp identifier   : disk1s1         ← awk '/EFI/' in diskutil list disk1</pre>
+    <p>
+        <strong>v1.3+ multi-disk:</strong> if the boot disk has no EFI-typed partition —
+        or the mounted one lacks <code>EFI/CLOVER</code> — <strong>all internal disks</strong>
+        are scanned (boot disk first) for an HFS+ volume hosting <code>EFI/CLOVER</code>
+        (MBR disks, <code>boot1h</code> installs, old rigs). External/USB drives are
+        never touched. On HFS+ Clover volumes, <code>nvram.plist</code> is written to
+        the volume root — exactly where Legacy Clover reads it.
+    </p>
+    <p class="muted">Only macOS built-ins: <code>mount</code>, <code>diskutil</code>, <code>awk</code>. No external interpreters.</p>
+</section>
+
+<!-- ══════════════════ SELF-HEALING ══════════════════ -->
+<section id="heal">
+    <h2><span class="icon">🩹</span> Self-Healing Pass</h2>
+    <p>Two safety nets run against file corruption or external amputation:</p>
+    <ol>
+        <li>
+            <strong>At daemon start</strong> (after every boot): a forced sync pass
+            (<code>force=1</code>) rebuilds <code>nvram.plist</code> from
+            <code>live ⊕ anchor</code>, bypassing the no-change fast path.
+        </li>
+        <li>
+            <strong>Every 60 s</strong> (<code>VERIFY_EVERY=30</code> cycles × 2 s):
+            if the on-volume file lacks any key present in the anchor, a forced rebuild
+            is triggered automatically.
+        </li>
+    </ol>
+</section>
+
+<!-- ══════════════════ SHUTDOWN FLUSH ══════════════════ -->
+<section id="flush">
+    <h2><span class="icon">💾</span> Shutdown Flush</h2>
+    <p>
+        <code>launchd</code> sends <code>SIGTERM</code> at shutdown/restart;
+        <code>Ctrl+C</code> sends <code>SIGINT</code>. The trap:
+    </p>
+<pre><span class="k">on_shutdown</span>() {
+    sync_once <span class="y">1</span> merge         <span class="c"># final flush; one retry if disks are being torn down</span>
+    heal_live_vars <span class="y">1</span>
+    exit <span class="y">0</span>
+}
+<span class="k">trap</span> on_shutdown TERM INT</pre>
+    <p>
+        This captures the <em>very last</em> NVRAM state — e.g. a Startup Disk click
+        made one second before shutdown — before the OS releases the disks.
+    </p>
+</section>
+
+<!-- ══════════════════ COMMANDS ══════════════════ -->
+<section id="commands">
+    <h2><span class="icon">⌨️</span> Command Surface</h2>
+    <table>
+        <tr><th>Command</th><th>sudo?</th><th>Purpose</th></tr>
+        <tr><td><code>dump</code> <em>(default)</em></td><td>✓</td><td>One-shot sync + heal</td></tr>
+        <tr><td><code>watch</code></td><td>✓</td><td>Continuous daemon loop (used by LaunchDaemon)</td></tr>
+        <tr><td><code>install</code></td><td>✓</td><td>Copy binary + install LaunchDaemon</td></tr>
+        <tr><td><code>uninstall</code></td><td>✓</td><td><strong>Full cleanup:</strong> daemon + binary + CloverHook folder</td></tr>
+        <tr><td><code>status</code></td><td>-</td><td>Daemon state + file overview</td></tr>
+        <tr><td><code>setargs</code></td><td>✓</td><td>boot-args can be managed</td></tr>
+        <tr><td><code>diagnose</code></td><td>–</td><td>Full resolver trace + anchor health</td></tr>
+        <tr><td><code>clean</code></td><td>✓</td><td>Wipe tmp files, snapshots, sticky anchor <em>(re-seed required after)</em></td></tr>
+        <tr><td><code>prune</code></td><td>✓</td><td>Rebuild file strictly from live (drops consumed keys)</td></tr>
+        <tr><td><code>version</code></td><td>–</td><td>Print version banner</td></tr>
+    </table>
+</section>
+
+<!-- ══════════════════ USAGE ══════════════════ -->
+<section id="usage">
+    <h2><span class="icon">🚀</span> Usage</h2>
+
+    <h3>1 — Install</h3>
+<pre><span class="k">git clone</span> https://github.com/chris1111/CloverLogoutHook.git
+<span class="k">cd</span> CloverLogoutHook
+
+<span class="k">chmod</span> +x CloverLogoutHook.command
+<span class="k">bash</span> -n CloverLogoutHook.command &amp;&amp; <span class="k">echo</span> <span class="s">"syntax OK"</span>
+
+<span class="k">sudo</span> ./CloverLogoutHook.command install</pre>
+
+    <h3>2 — Seed the anchor (once)</h3>
+    <p>
+        Open <strong>System Preferences → Startup Disk</strong>, select your volume,
+        close the window. One click is all it takes — the daemon captures it
+        within 2 seconds.
+    </p>
+
+    <h3>3 — Verify</h3>
+<pre>./CloverLogoutHook.command diagnose
+
+<span class="c"># expected:</span>
+esp identifier   : disk1s1
+anchor has       : efi-boot-device       ✓
+anchor has       : efi-boot-device-data  ✓</pre>
+
+    <h3>4 — Done. Forever.</h3>
+    <div class="callout">
+        The daemon now runs silently at every boot. No action is ever required again:
+        pick any volume in <strong>Startup Disk</strong> — from any of your macOS
+        installations — and the choice survives reboots, shutdowns, and Clover
+        GUI overrides.
+    </div>
+
+    <h3>Multi-OS rigs</h3>
+    <p>
+        Install the daemon on <strong>every modern macOS you boot from</strong> (v1.4
+        supports HFS+ boots — Mavericks and later each capture their own Startup Disk
+        clicks). Older systems without the daemon (Snow Leopard…) are covered for
+        <em>reading</em>: their boot choice is restored from the file written by the
+        other installations.
+    </p>
+
+    <h3>Manual operations (rare)</h3>
+<pre>./CloverLogoutHook.command status                  <span class="c"># quick state overview</span>
+./CloverLogoutHook.command diagnose                <span class="c"># resolver trace + anchor health</span>
+<span class="k">sudo</span> ./CloverLogoutHook.command dump               <span class="c"># force a sync now</span>
+<span class="k">sudo</span> ./CloverLogoutHook.command clean              <span class="c"># reset logs + anchor (re-seed after)</span>
+<span class="k">sudo</span> ./CloverLogoutHook.command uninstall          <span class="c"># full removal</span></pre>
+</section>
+
+<!-- ══════════════════ BOOT-ARGS CONTROL ══════════════════ -->
+<section id="bootargs">
+    <h2><span class="icon">🎛️</span> Boot-Args Control (v1.5+)</h2>
+
+    <p>
+        <code>boot-args</code> can be managed <strong>from the terminal, without
+        touching config.plist</strong> — using the <code>setargs</code> command.
+        The value is stored in the sticky anchor and the Clover file as
+        <strong>native EFI binary form</strong> (<code>&lt;data&gt;</code>).
+    </p>
+
+    <div class="callout">
+        🧪 <strong>Experiment-proven:</strong> Clover <strong>merges</strong> config.plist
+        arguments with the NVRAM-file arguments at boot (config without
+        <code>-v</code> + file with <code>-v</code> = verbose boot). The file injects
+        flags the config does not have.
+    </div>
+
+    <h3>Set boot-args</h3>
+     An example below ⇩
+<pre><span class="k">sudo</span> ./CloverLogoutHook.command setargs <span class="s">"-lilubetaall alcid=11 keepsyms=1 amfi=0x80 revpatch=sbvmm -v"</span></pre>
+
+    <ul>
+        <li>Stored as <code>&lt;data&gt;</code> (round-trip verified before writing)</li>
+        <li>Live NVRAM mirror attempted (allowed on older macOS, refused on modern — expected)</li>
+        <li>Applied at next boot — <strong>config.plist no longer needs to carry these flags</strong></li>
+    </ul>
+
+    <h3>Check the current sticky value</h3>
+<pre>./CloverLogoutHook.command diagnose
+
+<span class="c"># shows, with its storage type:</span>
+sticky boot-args : -lilubetaall alcid=11 ... -v  [data/Clover-compatible]</pre>
+
+    <h3>Three ways to manage your args</h3>
+    <table>
+        <tr><th>Method</th><th>How</th><th>Best for</th></tr>
+        <tr>
+            <td><strong>config.plist</strong></td>
+            <td>Edit <code>Boot → Arguments</code> in Clover Configurator</td>
+            <td>The classic way — args always applied</td>
+        </tr>
+        <tr>
+            <td><strong>setargs command</strong> 🆕</td>
+            <td><code>sudo ... setargs "..."</code></td>
+            <td>Terminal control, without touching config</td>
+        </tr>
+        <tr>
+            <td><strong>Both</strong></td>
+            <td>They <strong>merge</strong> at boot</td>
+            <td>config = base args · file = extra/experimental flags</td>
+        </tr>
+    </table>
+
+    <div class="callout warn">
+        ⚠️ <strong>ClearNVRAM (F11) semantics:</strong> if you F11 <em>while the daemon
+        anchor exists</em>, the sticky file will restore the args on the next cycle
+        (phoenix behavior). For a <strong>clean slate</strong>, uninstall the daemon
+        first, then F11, then reinstall — exactly like the OC LogoutHook semantics.
+    </div>
+
+    <p class="muted">
+        Note: on modern macOS the live NVRAM write is refused by the kernel
+        (expected) — persistence travels through the nvram.plist file, which
+        Clover imports at every boot.
+    </p>
+</section>
+
+<!-- ══════════════════ SUPPORT ══════════════════ -->
+<section id="support">
+    <h2><span class="icon">🛟</span> Support &amp; Troubleshooting</h2>
+
+    <h3>Quick health check (always start here)</h3>
+<pre>./CloverLogoutHook.command status
+./CloverLogoutHook.command diagnose
+tail -30 /Library/Logs/CloverHook/nvramhook.log</pre>
+
+    <h3>Choice not honored after cold boot</h3>
+    <ol>
+        <li>Check <code>EmuVariableUefi.efi</code> exists in
+            <code>/EFI/CLOVER/drivers/BIOS/</code> — Legacy boots never load
+            <code>drivers/UEFI/</code>.</li>
+        <li><code>diagnose</code> — the anchor keys must show ✓.</li>
+        <li>Mount your ESP/Clover volume and verify <code>nvram.plist</code>
+            contains <code>efi-boot-device</code>.</li>
+        <li>Some Clover builds read the file at the volume root, others inside
+            <code>EFI/CLOVER/</code> — this tool writes to the volume root.</li>
+    </ol>
+
+    <h3>Choice lost after restarting from an older OS</h3>
+    <p>
+        The daemon can only capture choices made <em>while it is running</em>.
+        If the restart was triggered from a system without the daemon, nothing
+        wrote the choice. Fix: install the daemon on that system too
+        (v1.4 runs on Mavericks+ HFS boots), or perform one Startup Disk click
+        from an OS that has it.
+    </p>
+
+    <h3>Conflicts with my EFI mounting tool</h3>
+    <p>
+        The daemon reuses an existing mount of the target volume — wherever it is
+        mounted (<code>/Volumes/EFI</code>, <code>/private/tmp/ESP</code>, …) — and only
+        mounts transiently (~1–2 s) when nothing exists. On a rare collision,
+        simply remount: <strong>your tool always has priority</strong>.
+    </p>
+
+    <h3>Multi-disk rigs</h3>
+    <p>
+        v1.3+ scans <strong>all internal disks</strong> (boot disk first) for a volume
+        hosting <code>EFI/CLOVER</code>. The first match wins; external and USB
+        drives are excluded by design. Note: with several Clover volumes present,
+        the daemon writes to the first discovered one — keep your Clover
+        installations at the same version to avoid drift.
+    </p>
+
+    <h3>Reset everything</h3>
+<pre><span class="k">sudo</span> ./CloverLogoutHook.command clean
+<span class="c"># then: ONE Startup Disk click to re-seed the anchor</span></pre>
+
+    <div class="callout warn">
+        ⚠️ After <code>clean</code> or <code>uninstall</code>, the sticky anchor is
+        <strong>gone</strong> — make ONE Startup Disk click to re-seed it before
+        relying on persistence again.
+    </div>
+
+    <h3>Filing an issue</h3>
+    <p>Always include the four musketeers:</p>
+    <ul>
+        <li>Full output of <code>./CloverLogoutHook.command diagnose</code></li>
+        <li>Output of <code>./CloverLogoutHook.command status</code></li>
+        <li>Last 30 lines of <code>/Library/Logs/CloverHook/nvramhook.log</code></li>
+        <li>Your macOS version(s), <code>diskutil list</code>, and Clover version</li>
+    </ul>
+</section>
+
+<!-- ══════════════════ FILES ══════════════════ -->
+<section id="files">
+    <h2><span class="icon">📁</span> Filesystem Footprint</h2>
+    <table>
+        <tr><th>Path</th><th>Purpose</th></tr>
+        <tr><td><code>/usr/local/bin/clover-logout-hook</code></td><td>Installed script (copy of the <code>.command</code>)</td></tr>
+        <tr><td><code>/Library/LaunchDaemons/com.clover.nvramhook.daemon.plist</code></td><td>LaunchDaemon descriptor</td></tr>
+        <tr><td><code>&lt;Clover-volume-root&gt;/nvram.plist</code></td><td>What Clover imports every boot</td></tr>
+        <tr><td><code>/Library/Logs/CloverHook/nvramhook.log</code></td><td>Event log (auto-rotated at 400 KB)</td></tr>
+        <tr><td><code>/Library/Logs/CloverHook/last.xml</code></td><td>Live NVRAM baseline</td></tr>
+        <tr><td><code>/Library/Logs/CloverHook/sticky.xml</code></td><td>Persistent anchor</td></tr>
+        <tr><td><code>/Library/Logs/CloverHook/last-esp.txt</code></td><td>Cached Clover-volume identifier</td></tr>
+        <tr><td><code>/private/var/.CloverEFI/</code></td><td>Transient hidden mount point (only during write)</td></tr>
+    </table>
+</section>
+
+<!-- ══════════════════ COMPATIBILITY ══════════════════ -->
+<section id="compat">
+    <h2><span class="icon">🍎</span> macOS Compatibility</h2>
+
+    <h3>Required by design</h3>
+    <ul>
+        <li><strong>APFS <em>or</em> HFS+ boot volume</strong> — the resolver handles both
+            worlds (v1.4): APFS synthesized chains and plain HFS+ disks. On APFS rigs
+            it walks the <code>Physical Store</code> markers; on HFS it takes the boot
+            disk directly.</li>
+        <li><strong><code>/usr/libexec/PlistBuddy</code></strong> — available since
+            <strong>10.5 Leopard</strong>, stable API.</li>
+        <li><strong><code>launchctl bootstrap system</code></strong> — modern LaunchDaemon
+            API introduced in <strong>10.11 El Capitan</strong>. Falls back to
+            <code>launchctl load -w</code> if bootstrap fails.</li>
+        <li><strong><code>perl -MMIME::Base64</code></strong> — bundled with every macOS,
+            unchanged for years.</li>
+    </ul>
+
+    <h3>Compatibility matrix</h3>
+    <table>
+        <tr><th>macOS</th><th>Version</th><th>Status</th></tr>
+        <tr><td>Snow Leopard</td><td>10.6</td><td class="ok">✅ Boots via this tool — daemon untested there (reading covered)</td></tr>
+        <tr><td>Lion</td><td>10.7</td><td class="warn">⚠️ Same mechanism as Mavericks — untested</td></tr>
+        <tr><td>Mountain Lion</td><td>10.8</td><td class="warn">⚠️ Same mechanism as Mavericks — untested</td></tr>
+        <tr><td><strong>Mavericks</strong></td><td><strong>10.9</strong></td><td class="ok">✅ <strong>Validated — v1.4 HFS boot support</strong></td></tr>
+        <tr><td><strong>Yosemite</strong></td><td><strong>10.10</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>El Capitan</strong></td><td><strong>10.11</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Sierra</strong></td><td><strong>10.12</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>High Sierra</strong></td><td><strong>10.13</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Mojave</strong></td><td><strong>10.14</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Catalina</strong></td><td><strong>10.15</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Big Sur</strong></td><td><strong>11</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Monterey</strong></td><td><strong>12</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Ventura</strong></td><td><strong>13</strong></td><td class="ok">✅ <strong>Primary target — tested &amp; validated</strong></td></tr>
+        <tr><td><strong>Sonoma</strong></td><td><strong>14</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Sequoia</strong></td><td><strong>15</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+        <tr><td><strong>Tahoe</strong></td><td><strong>26</strong></td><td class="ok">✅ <strong>Validated</strong></td></tr>
+    </table>
+
+    <div class="callout">
+        🍀 <strong>Multi-OS rigs:</strong> the daemon only needs to run on the modern
+        macOS installations you boot from. Older systems (Snow Leopard, Lion…) boot
+        through the same Clover + <code>nvram.plist</code> chain and are fully covered
+        by the persisted keys — no daemon required on them.
+        <strong>Validated in the field on the same machine.</strong> 🐅
+    </div>
+</section>
+
+<!-- ══════════════════ DEPENDENCIES ══════════════════ -->
+<section id="deps">
+    <h2><span class="icon">📦</span> Zero Dependencies Statement</h2>
+<pre><span class="g">bash</span>            ✓ built-in since macOS 1.0
+<span class="g">awk, sed</span>        ✓ built-in since macOS 1.0
+<span class="g">perl</span>            ✓ bundled since macOS 10.3 (MIME::Base64 included)
+<span class="g">PlistBuddy</span>      ✓ /usr/libexec since macOS 10.5
+<span class="g">plutil</span>          ✓ built-in since macOS 10.5
+<span class="g">diskutil</span>        ✓ built-in since macOS 10.0
+<span class="g">nvram</span>           ✓ built-in since macOS 10.0
+<span class="g">launchctl</span>       ✓ built-in since macOS 10.4</pre>
+    <div class="callout">
+        ✅ <strong>No Homebrew. No Xcode CLT. No Python. No Node. No git.</strong><br>
+        The script can be copied to any Hackintosh with Clover Legacy
+        and works immediately after <code>install</code>.
+    </div>
+</section>
+
+<!-- ══════════════════ PERFORMANCE ══════════════════ -->
+<section id="perf">
+    <h2>
+        <span class="icon">📊</span> Performance &amp; System Impact
+        <span style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+            
+        </span>
+    </h2>
+
+    <p><em>0.1% on average Measured on a  machine (Legacy BIOS) running the v1.6 daemon — real-world numbers from Activity Monitor and <strong>`ps aux`.</strong> This was validated on macOS.</em></p>
+
+    <h3>🧠 RAM Usage</h3>
+    <table>
+        <tr><th>Component</th><th>Footprint</th></tr>
+        <tr><td>Sleeping bash process</td><td class="ok"><strong>~2–4 MB</strong> RSS</td></tr>
+        <tr><td>Sub-processes (nvram, awk, grep — spawn then release)</td><td>~30 ms per cycle, then freed</td></tr>
+        <tr><td><strong>Total stable</strong></td><td class="ok"><strong>~3–5 MB constant</strong></td></tr>
+    </table>
+    <p class="muted">For comparison: a single Safari tab = 200–800 MB. The daemon is invisible in Activity Monitor.</p>
+
+    <h3>⚙️ CPU Usage</h3>
+    <table>
+        <tr><th>Phase</th><th>Frequency</th><th>CPU Cost</th></tr>
+        <tr><td><strong>Sleep loop</strong> (<code>sleep 2</code>)</td><td>Continuous</td><td class="ok"><strong>~0%</strong></td></tr>
+        <tr><td><strong>Cheap check</strong> (nvram dump + cmp)</td><td>Every 2 s</td><td>~15–30 ms</td></tr>
+        <tr><td><strong>Full sync</strong> (mount + merge + write)</td><td>Only on real change</td><td>~1–2 s one-shot</td></tr>
+        <tr><td><strong>Self-heal verify</strong></td><td>Every 60 s</td><td>Same as cheap check</td></tr>
+    </table>
+
+    <table>
+        <tr><th>State</th><th>CPU</th></tr>
+        <tr><td><strong>99% of the time</strong> (idle)</td><td class="ok"><strong>0.0%</strong> — daemon sleeps</td></tr>
+        <tr><td>Startup Disk click</td><td>One spike at 1–3% for ~200 ms</td></tr>
+        <tr><td><strong>Daily average</strong></td><td class="ok"><strong>&lt; 0.1%</strong></td></tr>
+    </table>
+
+    <h3>💾 Disk I/O</h3>
+    <table>
+        <tr><th>Situation</th><th>ESP Write</th></tr>
+        <tr><td>NVRAM unchanged (99% of the time)</td><td class="ok"><strong>ZERO</strong> — not even mounted</td></tr>
+        <tr><td>Real change detected</td><td>1 mount + 1 write (~2 KB) + unmount</td></tr>
+    </table>
+
+    <h3>🔋 Battery / Energy</h3>
+<pre>Energy impact   : NEGLIGIBLE
+- Daemon sleeps 99.9% of the time (sleep = zero CPU)
+- No network, no GPU, no high-precision timers
+- Estimated average draw: &lt; 0.01 W</pre>
+
+    <h3>🎯 Why this design matters (for the Clover PKG)</h3>
+    <table>
+        <tr><th>Production daemon criteria</th><th>CloverLogoutHook</th></tr>
+        <tr><td>Minimal RAM</td><td class="ok">✅ 3–5 MB</td></tr>
+        <tr><td>Invisible CPU</td><td class="ok">✅ fast-path + sleep loop</td></tr>
+        <tr><td>Zero unnecessary disk I/O</td><td class="ok">✅ change-detection only</td></tr>
+        <tr><td>No external dependencies</td><td class="ok">✅ macOS built-ins only</td></tr>
+        <tr><td>Clean, rotating logging</td><td class="ok">✅ 400 KB cap</td></tr>
+        <tr><td>Clean teardown</td><td class="ok">✅ transient mount</td></tr>
+    </table>
+
+    <h3>🧪 Verify it yourself</h3>
+<pre><span class="k">ps aux</span> | <span class="k">grep</span> clover-logout-hook | <span class="k">grep</span> -v grep
+<span class="c"># → %CPU and %MEM columns</span>
+
+<span class="c"># A/B proof:</span>
+<span class="k">sudo</span> launchctl bootout system/com.clover.nvramhook.daemon   <span class="c"># OFF</span>
+<span class="k">ps aux</span> | <span class="k">grep</span> clover-logout-hook | <span class="k">grep</span> -v grep             <span class="c"># → nothing</span>
+<span class="k">sudo</span> launchctl bootstrap system /Library/LaunchDaemons/com.clover.nvramhook.daemon.plist  <span class="c"># ON</span></pre>
+</section>
+
+<!-- ══════════════════ CREDITS ══════════════════ -->
+<section id="credits">
+    <h2><span class="icon">🏅</span> Credits</h2>
+    <p>
+        Built by <a href="https://github.com/chris1111" target="_blank">chris1111</a> and <a href="https://z.ai/model-api" target="_blank">AI GLM-5</a> during a live debugging session (August 2026).
+    </p>
+</section>
+
+</main>
+
+<footer>
+    <p>
+        <strong>CloverLogoutHook Copyright © 2026 CloverHackyColor, All Rights Reserved. </strong><br>
+        Made with <span class="heart">♥</span> for the Hackintosh Legacy community.<br>
+    </p>
+</footer>
+
+<script>
+function copyPerf() {
+    const md = `## 📊 Performance & System Impact
+
+*Measured on a Dell OptiPlex 790 (Legacy BIOS) running the v1.6 daemon — real-world numbers from Activity Monitor and ps aux.*
+
+### 🧠 RAM Usage
+
+| Component | Footprint |
+|---|---|
+| Sleeping bash process | **~2–4 MB** RSS |
+| Sub-processes (nvram, awk, grep — spawn then released) | ~30 ms per cycle, then freed |
+| **Total stable** | **~3–5 MB constant** |
+
+*For comparison: a single Safari tab = 200–800 MB. The daemon is invisible in Activity Monitor.*
+
+### ⚙️ CPU Usage
+
+The **live-wins + fast-path design** keeps the CPU near zero:
+
+| Phase | Frequency | CPU Cost |
+|---|---|---|
+| **Sleep loop** (sleep 2) | Continuous | **~0%** |
+| **Cheap check** (nvram dump + cmp) | Every 2 s | ~15–30 ms |
+| **Full sync** (mount + merge + write) | Only on real change | ~1–2 s one-shot |
+| **Self-heal verify** | Every 60 s | Same as cheap check |
+
+**Real-world average:** 99% of the time **0.0%** CPU · daily average **< 0.1%** · one 1–3% spike (~200ms) per Startup Disk click.
+
+### 💾 Disk I/O
+
+| Situation | ESP Write |
+|---|---|
+| NVRAM unchanged (99% of the time) | **ZERO** — not even mounted |
+| Real change detected | 1 mount + 1 write (~2 KB) + unmount |
+
+### 🔋 Energy
+
+NEGLIGIBLE — daemon sleeps 99.9% of the time. Estimated draw: < 0.01 W.
+
+### 🎯 Why this design matters (for the Clover PKG)
+
+| Criteria | CloverLogoutHook |
+|---|---|
+| Minimal RAM | ✅ 3–5 MB |
+| Invisible CPU | ✅ fast-path + sleep |
+| Zero unnecessary disk I/O | ✅ change-detection only |
+| No external dependencies | ✅ macOS built-ins only |
+| Clean rotating logging | ✅ 400 KB cap |
+| Clean teardown | ✅ transient mount |
+
+### 🧪 Verify it yourself
+
+    ps aux | grep clover-logout-hook | grep -v grep
+
+    # A/B proof:
+    sudo launchctl bootout system/com.clover.nvramhook.daemon
+    sudo launchctl bootstrap system /Library/LaunchDaemons/com.clover.nvramhook.daemon.plist
+
+*Measured on Dell OptiPlex 790 (Legacy BIOS), macOS Ventura 13, CloverLogoutHook v1.6.*`;
+
+    navigator.clipboard.writeText(md).then(() => {
+        const badge = document.getElementById('perf-copied');
+        badge.style.opacity = 1;
+        setTimeout(() => { badge.style.opacity = 0; }, 2000);
+    }).catch(() => {
+        // fallback pour Safari/anciens navigateurs
+        const ta = document.createElement('textarea');
+        ta.value = md;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        const badge = document.getElementById('perf-copied');
+        badge.style.opacity = 1;
+        setTimeout(() => { badge.style.opacity = 0; }, 2000);
+    });
+}
+
+// Scroll-to-top (déplacé ici pour propreté)
+(function() {
+    var btn = document.getElementById('toTop');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 400) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+
+</body>
+</html>
