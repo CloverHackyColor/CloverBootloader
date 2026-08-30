@@ -1,0 +1,36 @@
+
+### What you need before using this utility (Mandatery):
+
+1. Check `EmuVariableUefi.efi` exists in `/EFI/CLOVER/drivers/BIOS/` —> Legacy boots never load `drivers/UEFI/`
+
+---------------------------------------------
+USAGE: ⬇︎
+
+cd /Library/Application\ Support/CloverLogoutHook
+chmod +x ./CloverLogoutHook.command
+sudo ./CloverLogoutHook.command install
+---------------------------------------------
+
+VERIFYING:
+cd /Library/Application\ Support/CloverLogoutHook
+./CloverLogoutHook.command diagnose
+---------------------------------------------
+
+Quick health check (always start here)
+cd /Library/Application\ Support/CloverLogoutHook
+./CloverLogoutHook.command status
+./CloverLogoutHook.command diagnose
+tail -30 /Library/Logs/CloverHook/nvramhook.log
+
+Note if you use Boot-Args Control: Use sudo for diagnose
+sudo ./CloverLogoutHook.command diagnose
+---------------------------------------------
+
+Boot-Args Control: An example below ⬇︎
+sudo ./CloverLogoutHook.command setargs "-lilubetaall alcid=11 keepsyms=1 amfi=0x80 revpatch=sbvmm -v" 
+---------------------------------------------
+
+UNINSTALL:
+cd /Library/Application\ Support/CloverLogoutHook
+sudo ./CloverLogoutHook.command uninstall 
+---------------------------------------------
