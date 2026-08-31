@@ -19,33 +19,25 @@
 #      use; user mounts are reused, never stolen.
 #    • Housekeeping: log rotation, tmp cleanup, 'clean' command.
 #
-#  NEW IN v1.6.1
-#    • Fresh rig with no Startup Disk click yet -> create
-#      a minimal anchor; setargs itself provides the first heal key.
+#  NEW IN v1.6.2 — LEGACY macOS MOUNT SUPPORT (10.6 - 10.8)
+#    • mount_esp(): 4-method cascade — modern diskutil, diskutil
+#      simple, legacy mount_msdos/mount_hfs into the hidden folder,
+#      and a visible last-resort. Covers systems where
+#      "-mountPoint" does not exist (Snow Leopard, Lion, Mountain
+#      Lion). Verified on 10.6.8.
+#    • release_esp(): unmount by disk identifier (more reliable
+#      than mount point on legacy systems).
+#    • v1.6.1 fix re-included: setargs creates a minimal anchor on
+#      fresh rigs (no Startup Disk click ever required).
 #
-#  NEW IN v1.6
-#    • Native Foundation data codec for boot-args: every encode/decode
-#      is performed by macOS itself (no manual base64/hex chains,
-#      no PlistBuddy data quirks, no perl).
-#    • Round-trip verification before any Clover-file write of
-#      boot-args (encode -> store -> read back -> compare).
-#    • Clover-only: built by and for the Clover Legacy community.
-#
-#  FROM v1.4/v1.5
+#  FROM v1.6.1 / v1.6
+#    • Native Foundation data codec for boot-args (no manual
+#      base64/hex chains, no PlistBuddy data quirks, no perl).
+#    • Round-trip verification before any Clover-file write.
 #    • EXPERIMENT-PROVEN: Clover MERGES config arguments with the
-#      NVRAM-file arguments at boot — the file can carry flags the
-#      config does not have.
-#    • HFS+ boot support (daemon runs on Mavericks-era systems).
-#    • Multi-disk internal discovery (boot disk first).
-#    • /Library/Logs/CloverHook state folder, full uninstall cleanup.
-#
-#  FROM v1.3
-#    • Multi-disk internal discovery (boot disk first).
-#    • From v1.2: /Library/Logs/CloverHook · full uninstall cleanup.
-#
-#  FROM v1
-#    • Runs on APFS-only systems (Catalina to Ventura)
-# ═══════════════════════════════════════════════════════════════════════
+#      NVRAM-file arguments at boot.
+#    • HFS+ boot support, multi-disk internal discovery.
+#    • /Library/Logs/CloverHook, full uninstall cleanup.
 #
 #  LAYOUT OF THIS FILE
 #    §1  Configuration            §7  Core sync (sync_once)
@@ -56,7 +48,7 @@
 #    §6  Boot-args data codec     §12 Command dispatcher
 # =====================================================================
 
-VERSION="1.6.1"
+VERSION="1.6.2"
 set -uo pipefail
 
 
@@ -121,10 +113,10 @@ setup_log_dir() {
 
 log()  { echo "$(date '+%Y-%m-%d %H:%M:%S') [v${VERSION}] $*" >> "$LOG_FILE" 2>/dev/null; }
 dbg()  { log "DEBUG: $*"; }
-die()  { echo "--> ERROR: $*" >&2; log "ERROR: $*"; exit 1; }
-info() { echo "--> INFO:  $*"; }
-ok()   { echo "--> OK:    $*"; }
-warn() { echo "--> WARN:  $*"; }
+die()  { echo "ERROR: $*" >&2; log "ERROR: $*"; exit 1; }
+info() { echo "INFO:  $*"; }
+ok()   { echo "OK:    $*"; }
+warn() { echo "WARN:  $*"; }
 
 banner() {
     echo "CloverLogoutHook v${VERSION}"
@@ -608,6 +600,11 @@ heal_live_vars() {
 #      usage: sync_once [quiet] [merge|prune] [force]
 # ────────────────────────────────────────────────────────────────────────
 
+# v1.6.2 - mount_esp(): 4-method cascade for ALL macOS versions.
+#   1. diskutil mount -mountOptions nobrowse -mountPoint  (10.11+)
+#   2. diskutil mount -mountPoint                        (10.9+)
+#   3. legacy mount_msdos / mount_hfs into hidden folder (10.0+, Snow/Lion/ML)
+#   4. plain diskutil mount -> /Volumes/<Name>           (visible fallback)
 mount_esp() {
     OWN_MOUNT=0
 
@@ -617,11 +614,47 @@ mount_esp() {
     fi
 
     mkdir -p "$HIDDEN_MP" 2>/dev/null
+
+    # Methods 1-2: modern diskutil (10.11+ / 10.9+) with explicit mount point
     if diskutil mount -mountOptions nobrowse -mountPoint "$HIDDEN_MP" "$ESPID" >/dev/null 2>&1 \
        || diskutil mount -mountPoint "$HIDDEN_MP" "$ESPID" >/dev/null 2>&1; then
         MP="$HIDDEN_MP"
         OWN_MOUNT=1
-        dbg "mount: transient hidden mount at $MP"
+        dbg "mount: transient hidden mount at $MP (diskutil modern)"
+        return 0
+    fi
+
+    # Method 3: legacy mount directly into the hidden folder.
+    # Works since 10.0: detect the filesystem, call the right mounter.
+    local fstype
+    fstype=$(diskutil info -plist "$ESPID" 2>/dev/null \
+             | awk -F'<string>' '/FilesystemName|FilesystemType/ {gsub(/<\/string>.*/,"",$2); print $2; exit}')
+    dbg "mount: legacy path, filesystem detected = ${fstype:-unknown}"
+
+    local okm=0
+    case "$fstype" in
+        *MS-DOS*|*FAT*|*msdos*)
+            /sbin/mount_msdos /dev/${ESPID} "$HIDDEN_MP" 2>/dev/null && okm=1 ;;
+        *HFS*|*Journaled*)
+            /sbin/mount_hfs /dev/${ESPID} "$HIDDEN_MP" 2>/dev/null && okm=1 ;;
+        *)
+            /sbin/mount_msdos /dev/${ESPID} "$HIDDEN_MP" 2>/dev/null && okm=1 \
+                || /sbin/mount_hfs /dev/${ESPID} "$HIDDEN_MP" 2>/dev/null && okm=1 ;;
+    esac
+
+    if (( okm )); then
+        MP="$HIDDEN_MP"
+        OWN_MOUNT=1
+        dbg "mount: legacy mount at $MP (${fstype:-auto})"
+        return 0
+    fi
+
+    # Method 4: last resort on old macOS - plain diskutil mount.
+    # The volume lands in /Volumes/<Name> (visible, but at least it works).
+    if diskutil mount "$ESPID" >/dev/null 2>&1; then
+        MP="$(mounted_mp_of_espid)"
+        OWN_MOUNT=1
+        warn "mount: legacy fallback - mounted at $MP (visible, old macOS)"
         return 0
     fi
 
@@ -629,9 +662,12 @@ mount_esp() {
     return 1
 }
 
+# v1.6.2 - release_esp(): unmount by DISK IDENTIFIER first (reliable on
+# legacy systems where mount points may be odd), then by mount point.
 release_esp() {
     if (( OWN_MOUNT )); then
-        diskutil unmount "$MP"      >/dev/null 2>&1 \
+        diskutil unmount force /dev/${ESPID} >/dev/null 2>&1 \
+            || diskutil unmount "$MP"      >/dev/null 2>&1 \
             || diskutil unmount force "$MP" >/dev/null 2>&1
         dbg "mount: transient mount released"
     fi
@@ -653,11 +689,12 @@ seed_anchor_from_esp() {
     if [[ -z "$mp" ]]; then
         mkdir -p "$HIDDEN_MP" 2>/dev/null
         if ! diskutil mount -mountOptions nobrowse -mountPoint "$HIDDEN_MP" "$ESPID" >/dev/null 2>&1 \
-           && ! diskutil mount -mountPoint "$HIDDEN_MP" "$ESPID" >/dev/null 2>&1; then
+           && ! diskutil mount -mountPoint "$HIDDEN_MP" "$ESPID" >/dev/null 2>&1 \
+           && ! diskutil mount "$ESPID" >/dev/null 2>&1; then
             dbg "seed: cannot mount ${ESPID} for anchor recovery"
             return 1
         fi
-        mp="$HIDDEN_MP"
+        mp="$(mounted_mp_of_espid || true)"
         own=1
     fi
 
@@ -677,7 +714,8 @@ seed_anchor_from_esp() {
     fi
 
     if (( own )); then
-        diskutil unmount "$mp"      >/dev/null 2>&1 \
+        diskutil unmount force /dev/${ESPID} >/dev/null 2>&1 \
+            || diskutil unmount "$mp" >/dev/null 2>&1 \
             || diskutil unmount force "$mp" >/dev/null 2>&1
     fi
 
@@ -1099,7 +1137,7 @@ cmd_setargs() {
     [[ $# -ge 1 ]] || die "usage: sudo $0 setargs \"-v keepsyms=1 ...\""
     local new_args="$*"
 
-        if [[ ! -f "$STICKY_XML" ]]; then
+    if [[ ! -f "$STICKY_XML" ]]; then
         sync_once 1 merge 1
     fi
     if [[ ! -f "$STICKY_XML" ]]; then
