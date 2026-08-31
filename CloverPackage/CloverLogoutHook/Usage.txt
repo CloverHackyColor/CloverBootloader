@@ -3,6 +3,8 @@
 
 1. Check `EmuVariableUefi.efi` exists in `/EFI/CLOVER/drivers/BIOS/` —> Legacy boots never load `drivers/UEFI/`
 
+How to use Clover Package for Legacy Bios Hackintosh machine Important: —> (https://github.com/CloverHackyColor/CloverBootloader/wiki/Config-Legacy-to-Emulate-NVRAM#-usage)
+
 ---------------------------------------------
 USAGE: ⬇︎
 
