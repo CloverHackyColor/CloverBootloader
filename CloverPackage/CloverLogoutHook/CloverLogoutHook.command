@@ -2,6 +2,7 @@
 # =====================================================================
 #  CloverLogoutHook
 #  Persistent NVRAM for Clover Legacy Boot.
+#  Copyright © 2026 chris1111, All Rights Reserved.
 #
 #  WHAT IT DOES
 #    • Keeps <CloverVolume>/nvram.plist always in sync with live NVRAM.
