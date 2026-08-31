@@ -394,12 +394,11 @@
         2. <p style="font-size: 12px;">For Big Sur 11 and above you will need in <code>/EFI/CLOVER/config.plist</code> Boot/Arguments —> <code>amfi=0x80</code></p>
         <p>
         <hr>
-        3. <p style="font-size: 12px;">Again for Big Sur 11 and above you will need in <code>/EFI/CLOVER/config.plist</code> RtVariables/CsrActiveConfig —> <code>0x803</code> RtVariables/BooterConfig -> <code>0x28</code></p>
+        3. <p style="font-size: 12px;">For Big Sur 11 and above Check <code>EmuVariableUefi.efi, OpenRuntime.efi</code> exists in —> <code>/EFI/CLOVER/drivers/BIOS/</code> — Legacy boots never load <code>drivers/UEFI/</code></p>
         <p>
         <hr>
-        ⚠️ <p style="font-size: 12px;">Warning: Never use this key in <code>/EFI/CLOVER/config.plist</code> Boot/Arguments —> <code>DefaultVolume</code> <code>LastBootedVolume</code> because it will create an error in the native Startup Disk when you choose the boot disk.</p>
+        4. <p style="font-size: 12px;">Again for Big Sur 11 and above you will need in <code>/EFI/CLOVER/config.plist</code> RtVariables/CsrActiveConfig —> <code>0x803</code> RtVariables/BooterConfig -> <code>0x28</code></p>
         <p>
-        <p style="font-size: 12px;">Don't worry, <code>NVRAM</code> will emulate it natively.</p>
     </div>
 </section>
 
