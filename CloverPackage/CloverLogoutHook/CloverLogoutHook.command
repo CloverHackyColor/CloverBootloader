@@ -113,10 +113,10 @@ setup_log_dir() {
 
 log()  { echo "$(date '+%Y-%m-%d %H:%M:%S') [v${VERSION}] $*" >> "$LOG_FILE" 2>/dev/null; }
 dbg()  { log "DEBUG: $*"; }
-die()  { echo "ERROR: $*" >&2; log "ERROR: $*"; exit 1; }
-info() { echo "INFO:  $*"; }
-ok()   { echo "OK:    $*"; }
-warn() { echo "WARN:  $*"; }
+die()  { echo "--> ERROR: $*" >&2; log "ERROR: $*"; exit 1; }
+info() { echo "--> INFO:  $*"; }
+ok()   { echo "--> OK:    $*"; }
+warn() { echo "--> WARN:  $*"; }
 
 banner() {
     echo "CloverLogoutHook v${VERSION}"
