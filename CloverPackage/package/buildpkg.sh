@@ -1258,8 +1258,8 @@ fi
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}   
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice  --start-visible="true" --title="CloverLogoutHook" --description="CloverLogoutHook for Clover Legacy Boot" --start-selected="false"  --pkg-refs="$packageRefId" "${choiceId}"
-
+    addChoice --start-visible="true" --start-selected="false"  \
+              --pkg-refs="$packageRefId" "${choiceId}"
 # End build CloverLogoutHook package
 
 # build rc scripts package
