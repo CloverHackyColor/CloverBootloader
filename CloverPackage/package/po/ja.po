@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-07 20:08+0300\n"
+"POT-Creation-Date: 2026-08-31 07:24+0300\n"
 "PO-Revision-Date: 2018-10-02 11:41+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: \n"
@@ -1044,14 +1044,30 @@ msgid ""
 "//Installs to /usr/local/bin and will be available as 'ccpv' "
 msgstr ""
 
-#. type: "rc.scripts.on.target_title"
+#. type: "CloverLogoutHook_title"
 #: Resources/templates/Localizable.strings:237
+#, no-wrap
+msgid "CloverLogoutHook"
+msgstr ""
+
+#. type: "CloverLogoutHook_description"
+#: Resources/templates/Localizable.strings:238
+#, no-wrap
+msgid ""
+"Persistent NVRAM for Clover Legacy Boot,\n"
+"Installs to /Library/Application Support/CloverLogoutHook\n"
+"Check EmuVariableUefi.efi exists in → /EFI/CLOVER/drivers/BIOS/ — Legacy boots never load drivers/UEFI/,\n"
+"Read the Usage.txt."
+msgstr ""
+
+#. type: "rc.scripts.on.target_title"
+#: Resources/templates/Localizable.strings:246
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "RCスクリプトをターゲットボリュームにインストール"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:238
+#: Resources/templates/Localizable.strings:247
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1061,43 +1077,43 @@ msgstr ""
 "ターゲットボリュームは起動可能なOSXシステムボリュームであることが必要。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:240
+#: Resources/templates/Localizable.strings:249
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "RCスクリプトを他のすべてのOSXボリュームにインストール"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:241
+#: Resources/templates/Localizable.strings:250
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:242
+#: Resources/templates/Localizable.strings:251
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "オプションのRCスクリプト"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:243
+#: Resources/templates/Localizable.strings:252
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:244
+#: Resources/templates/Localizable.strings:253
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:249
+#: Resources/templates/Localizable.strings:258
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Clover環境設定をインストール"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:250
+#: Resources/templates/Localizable.strings:259
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

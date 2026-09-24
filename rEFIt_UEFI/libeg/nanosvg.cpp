@@ -854,8 +854,7 @@ static void nsvg__cubicBezTo(NSVGparser* p, float cpx1, float cpy1, float cpx2, 
 // Рисует квадратичный сплайн через две точки
 static void nsvg__quadBezTo(NSVGparser* p, float* cpx, float* cpy,
                             float* cpx2, float* cpy2,
-                            float cx, float cy, float x, float y,
-                            int rel)
+                            float cx, float cy, float x, float y)
 {
     float x1, y1;
 
@@ -889,14 +888,49 @@ static NSVGattrib* nsvg__getAttr(NSVGparser* p)
   return &p->attr[p->attrHead];
 }
 
+static NSVGclipNode* nsvg__cloneClipList(const NSVGclipNode* source)
+{
+  NSVGclipNode* result = nullptr;
+  NSVGclipNode** tail = &result;
+
+  while (source) {
+    NSVGclipNode* node =
+      (NSVGclipNode*)nsvg__alloczero(
+        sizeof(NSVGclipNode),
+        "nsvg__cloneClipList"_XS8);
+
+    if (!node) {
+      nsvg__deleteClipList(result);
+      return nullptr;
+    }
+
+    node->index = source->index;
+    *tail = node;
+    tail = &node->next;
+    source = source->next;
+  }
+
+  return result;
+}
+
 static void nsvg__pushAttr(NSVGparser* p)
 {
-  if (p->attrHead < NSVG_MAX_ATTR-1) {
-    p->attrHead++;
-    memcpy(&p->attr[p->attrHead], &p->attr[p->attrHead-1], sizeof(NSVGattrib));
-    memset(&p->attr[p->attrHead].id, 0, sizeof(p->attr[p->attrHead].id));
-    //    p->attr[p->attrHead].opacity = 1.0f; //let it be copy
-  }
+    if (p->attrHead >= NSVG_MAX_ATTR - 1)
+        return;
+
+    const NSVGattrib* parent = &p->attr[p->attrHead];
+
+    ++p->attrHead;
+    memcpy(&p->attr[p->attrHead],
+           parent,
+           sizeof(NSVGattrib));
+
+    NSVGattrib* current = &p->attr[p->attrHead];
+
+    memset(current->id, 0, sizeof(current->id));
+
+    // После memcpy список родителя нельзя использовать совместно.
+    current->clipList = nsvg__cloneClipList(parent->clipList);
 }
 
 static void nsvg__popAttr(NSVGparser* p)
@@ -999,7 +1033,7 @@ static NSVGgradientLink* nsvg__createGradientLink(const char* id)
   return grad;
 }
 
-static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, bool dump); //, float* xform);
+static void nsvg__getLocalBounds(float* bounds, NSVGshape* shape); // , bool dump); //, float* xform);
 
 static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGgradientLink* link, char* paintType)
 {
@@ -1050,16 +1084,16 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
       NSVGclipPath *clipPath = nsvg__getClipPathWithIndex(p->image, shape->clipList->index);
       if (clipPath && clipPath->shapes)
       {
-        nsvg__getLocalBounds(localBounds, clipPath->shapes, false);
+        nsvg__getLocalBounds(localBounds, clipPath->shapes);
       }
       else
       {
-        nsvg__getLocalBounds(localBounds, shape, false);
+        nsvg__getLocalBounds(localBounds, shape);
       }
     }
     else
     {
-      nsvg__getLocalBounds(localBounds, shape, false);
+      nsvg__getLocalBounds(localBounds, shape);
     }
 
     ox = localBounds[0];
@@ -1127,7 +1161,7 @@ static float nsvg__getAverageScale(float* t)
   return (hypot(t[0], t[2]) + hypot(t[1], t[3])) * 0.5f;
 }
 
-static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape, bool dump) //, float* atXform)
+static void nsvg__getLocalBounds(float* bounds, NSVGshape *shape) //, float* atXform)
 {
   NSVGpath* path;
   float curve[8];
@@ -1245,7 +1279,7 @@ static void nsvg__addShape(NSVGparser* p)
     // }
     // DBG("\n");
 
-  nsvg__getLocalBounds(shape->bounds, shape, false);  //(dest, src)
+  nsvg__getLocalBounds(shape->bounds, shape);  //(dest, src)
 
   // Set fill
   shape->fill.type = NSVG_PAINT_NONE;
@@ -1329,7 +1363,7 @@ static void nsvg__addShape(NSVGparser* p)
   return;
 }
 
-static void nsvg__addPath(NSVGparser* p, char closed, const char* fromWhere)
+static void nsvg__addPath(NSVGparser* p, char closed)
 {
   //  NSVGattrib* attr = nsvg__getAttr(p);
   NSVGpath* path = NULL;
@@ -1354,10 +1388,6 @@ static void nsvg__addPath(NSVGparser* p, char closed, const char* fromWhere)
     nsvg__delete(path, "nsvg__addPath3"_XS8);
     return;
   }
-
-//    NSVGattrib* attr = nsvg__getAttr(p);
-//    DBG("nsvg__addPath: shape=%s, added path with %d points, closed=%d\n",
-//        attr->id, p->npts, closed);
 
   path->closed = closed;
   path->npts = p->npts;
@@ -2584,7 +2614,7 @@ static void nsvg__cubicToQuadraticSegments(NSVGparser* p,
         qy = (qy + qy2) / 2.0f;
 
         // Рисуем квадратичный сегмент
-        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, qx, qy, curX, curY, 0);
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, qx, qy, curX, curY);
 
         prevX = curX;
         prevY = curY;
@@ -2685,8 +2715,8 @@ static void nsvg__cubicToQuadraticAdaptive(NSVGparser* p,
                                &q1x, &q1y, &midX, &midY, &q2x, &q2y);
 
         // Рисуем две квадратичные кривые
-        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q1x, q1y, midX, midY, 0);
-        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q2x, q2y, x4, y4, 0);
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q1x, q1y, midX, midY);
+        nsvg__quadBezTo(p, NULL, NULL, NULL, NULL, q2x, q2y, x4, y4);
         return;
     }
 
@@ -2804,10 +2834,10 @@ static void nsvg__pathQuadBezTo(NSVGparser* p, float* cpx, float* cpy,
   }
 
   // Convert to cubic bezier
-  cx1 = x1 + 2.0f/3.0f*(cx - x1);
-  cy1 = y1 + 2.0f/3.0f*(cy - y1);
-  cx2 = x2 + 2.0f/3.0f*(cx - x2);
-  cy2 = y2 + 2.0f/3.0f*(cy - y2);
+  cx1 = x1 + 2.0f/3.0f * (cx - x1);
+  cy1 = y1 + 2.0f/3.0f * (cy - y1);
+  cx2 = x2 + 2.0f/3.0f * (cx - x2);
+  cy2 = y2 + 2.0f/3.0f * (cy - y2);
 
   nsvg__cubicBezTo(p, cx1,cy1, cx2,cy2, x2,y2);
 
@@ -2837,10 +2867,10 @@ static void nsvg__pathQuadBezShortTo(NSVGparser* p, float* cpx, float* cpy,
   cy = 2*y1 - *cpy2;
 
   // Convert to cubix bezier
-  cx1 = x1 + 2.0f/3.0f*(cx - x1);
-  cy1 = y1 + 2.0f/3.0f*(cy - y1);
-  cx2 = x2 + 2.0f/3.0f*(cx - x2);
-  cy2 = y2 + 2.0f/3.0f*(cy - y2);
+  cx1 = x1 + 2.0f/3.0f * (cx - x1);
+  cy1 = y1 + 2.0f/3.0f * (cy - y1);
+  cx2 = x2 + 2.0f/3.0f * (cx - x2);
+  cy2 = y2 + 2.0f/3.0f * (cy - y2);
 
   nsvg__cubicBezTo(p, cx1,cy1, cx2,cy2, x2,y2);
 
@@ -3175,7 +3205,7 @@ static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
         if (cmd == 'M' || cmd == 'm') {
           if (p->npts > 0) {
             DBG("nsvg__parsePath: closing subpath with %d points\n", p->npts);
-            nsvg__addPath(p, closedFlag, "nsvg__parsePath");
+            nsvg__addPath(p, closedFlag);
           }
           // Start new subpath.
           DBG("nsvg__parsePath: starting new subpath\n");
@@ -3195,7 +3225,7 @@ static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
             cpx = p->pts[0];
             cpy = p->pts[1];
             cpx2 = cpx; cpy2 = cpy;
-            nsvg__addPath(p, closedFlag, "nsvg__parsePath");
+            nsvg__addPath(p, closedFlag);
           }
           // Start new subpath.
           nsvg__resetPath(p);
@@ -3213,7 +3243,7 @@ static void nsvg__parsePath(NSVGparser* p, char** attr, bool addShape)
     }
     // Commit path.
     if (p->npts) {
-      nsvg__addPath(p, closedFlag, "nsvg__parsePath");
+      nsvg__addPath(p, closedFlag);
       if (addShape) {
           nsvg__addShape(p);
       } 
@@ -3267,7 +3297,7 @@ static void nsvg__parseRect(NSVGparser* p, char** attr)
       nsvg__lineTo(p, x, y+ry);
       nsvg__cubicBezTo(p, x, y+ry*(1-NSVG_KAPPA90), x+rx*(1-NSVG_KAPPA90), y, x+rx, y);
     }
-    nsvg__addPath(p, 1, "parseRect");
+    nsvg__addPath(p, 1);
     nsvg__addShape(p);
   }
 }
@@ -3565,7 +3595,7 @@ static void nsvg__parseText(NSVGparser* p, char** dict)
           p->textFace[0].valid = true;
         }
         break;
-      } else if (!ThemeX->Daylight && strstr(group->id, "HelpRows_night") != NULL) {
+      } else if (!ThemeX->Daylight && strcmp(group->id, "HelpRows_night") == 0) {
           p->textFace[0].font = fontSVG;
           p->textFace[0].size = (INTN)text->fontSize;
           p->textFace[0].color = text->fontColor;
@@ -3603,7 +3633,7 @@ static void nsvg__parseCircle(NSVGparser* p, char** attr)
     nsvg__cubicBezTo(p, cx-r*NSVG_KAPPA90, cy+r, cx-r, cy+r*NSVG_KAPPA90, cx-r, cy);
     nsvg__cubicBezTo(p, cx-r, cy-r*NSVG_KAPPA90, cx-r*NSVG_KAPPA90, cy-r, cx, cy-r);
     nsvg__cubicBezTo(p, cx+r*NSVG_KAPPA90, cy-r, cx+r, cy-r*NSVG_KAPPA90, cx+r, cy);
-    nsvg__addPath(p, 1, "parseCircle");
+    nsvg__addPath(p, 1);
     nsvg__addShape(p);
   }
 }
@@ -3631,7 +3661,7 @@ static void nsvg__parseEllipse(NSVGparser* p, char** attr)
     nsvg__cubicBezTo(p, cx-rx*NSVG_KAPPA90, cy+ry, cx-rx, cy+ry*NSVG_KAPPA90, cx-rx, cy);
     nsvg__cubicBezTo(p, cx-rx, cy-ry*NSVG_KAPPA90, cx-rx*NSVG_KAPPA90, cy-ry, cx, cy-ry);
     nsvg__cubicBezTo(p, cx+rx*NSVG_KAPPA90, cy-ry, cx+rx, cy-ry*NSVG_KAPPA90, cx+rx, cy);
-    nsvg__addPath(p, 1, "nsvg__parseEllipse");
+    nsvg__addPath(p, 1);
     nsvg__addShape(p);
   }
 }
@@ -3654,7 +3684,7 @@ static void nsvg__parseLine(NSVGparser* p, char** attr)
   nsvg__resetPath(p);
   nsvg__moveTo(p, x1, y1);
   nsvg__lineTo(p, x2, y2);
-  nsvg__addPath(p, 0, "nsvg__parseLine");
+  nsvg__addPath(p, 0);
   nsvg__addShape(p);
 }
 
@@ -3688,7 +3718,7 @@ static void nsvg__parsePoly(NSVGparser* p, char** attr, int closeFlag)
     }
   }
 
-  nsvg__addPath(p, (char)closeFlag, "nsvg__parsePoly");
+  nsvg__addPath(p, (char)closeFlag);
 
   nsvg__addShape(p);
 }
@@ -3726,6 +3756,7 @@ static void nsvg__parseEmbeddedPNG(NSVGparser* p, char** dict)
   tmpData = (UINT8 *)Base64DecodeClover((char*)href, &len);
   if (len == 0) {
     DBG("image not decoded from base64\n");
+    return;
   }
   NewImage->FromPNG(tmpData, len);
   pt->image = (void *)NewImage;
@@ -3955,9 +3986,9 @@ static void nsvg__parseSymbol(NSVGparser* p, char** dict)
 
 static void nsvg__parseGroup(NSVGparser* p, char** dict)
 {
-  NSVGattrib* oldAttr = nsvg__getAttr(p);
-  nsvg__pushAttr(p);
-  NSVGattrib* curAttr = nsvg__getAttr(p);
+    nsvg__pushAttr(p);
+
+    NSVGattrib* curAttr = nsvg__getAttr(p);
 
   int visSet = 0;
   if (!curAttr) {
@@ -3966,6 +3997,9 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
 
   //  DBG("parse group\n");
   NSVGgroup* group = (NSVGgroup*)nsvg__alloczero(sizeof(NSVGgroup), "nsvg__parseGroup"_XS8);
+  if (!group) {
+    return;
+  }
   group->next = p->image->groups;
   p->image->groups = group;
 
@@ -3973,21 +4007,29 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   // NSVGclipPathIndex savedClipPathCount = curAttr->clipPathCount;
   // memcpy(curAttr->clipPathStack, p->clipPathStack, savedClipPathCount * sizeof(NSVGclipPathIndex));
 
-    // НАСЛЕДОВАНИЕ CLIPPATH ОТ РОДИТЕЛЯ
-    // Копируем список clipPath от родителя
-    if (oldAttr && oldAttr->clipList) {
-        NSVGclipNode* src = oldAttr->clipList;
-        NSVGclipNode** dest = &curAttr->clipList;
-        while (src) {
-            NSVGclipNode* node = (NSVGclipNode*)nsvg__alloczero(sizeof(NSVGclipNode), "nsvg__parseGroup clipNode"_XS8);
-            if (node) {
-                node->index = src->index;
-                *dest = node;
-                dest = &node->next;
-            }
-            src = src->next;
+    // НАСЛЕДУЕМ clipPath от родителя
+  if (p->attrHead > 0) {
+    NSVGattrib* parentAttr = &p->attr[p->attrHead - 1];
+    if (parentAttr->clipList) {
+      NSVGclipNode* src = parentAttr->clipList;
+      NSVGclipNode** dest = &curAttr->clipList;
+
+      while (src) {
+        NSVGclipNode* node =
+          (NSVGclipNode*)nsvg__alloczero(
+            sizeof(NSVGclipNode),
+            "nsvg__parseGroup clipNode"_XS8);
+
+        if (node) {
+          node->index = src->index;
+          *dest = node;
+          dest = &node->next;
         }
+
+        src = src->next;
+      }
     }
+  }
 
   for (int i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "visibility") == 0) {
@@ -4007,9 +4049,6 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   AsciiStrCpyS(group->id, 64, curAttr->id);
   //  DBG("parsed groupID=%s\n", group->id);
 
-  if (oldAttr != NULL) {
-    group->parent = oldAttr->group;
-  }
   curAttr->group = group;
 
   if (!visSet) {
@@ -4277,7 +4316,7 @@ static void nsvg__parseGlyph(NSVGparser* p, char** dict, XBool missing)
    } NSVGglyph;
    */
 
-  NSVGglyph *glyph;
+  NSVGglyph* glyph;
   if (!p) {
     return;
   }
@@ -4428,25 +4467,6 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
 
     nsvg__pushAttr(p);
     NSVGattrib *curAttr = nsvg__getAttr(p);
-
-    // НАСЛЕДУЕМ clipPath от родителя
-    if (p->attrHead > 0) {
-      NSVGattrib *parentAttr = &p->attr[p->attrHead - 1];
-      if (parentAttr->clipList) {
-        NSVGclipNode *src = parentAttr->clipList;
-        NSVGclipNode **dest = &curAttr->clipList;
-        while (src) {
-          NSVGclipNode *node = (NSVGclipNode*) nsvg__alloczero(
-              sizeof(NSVGclipNode), "nsvg__startElement clipNode"_XS8);
-          if (node) {
-            node->index = src->index;
-            *dest = node;
-            dest = &node->next;
-          }
-          src = src->next;
-        }
-      }
-    }
 
     // Ищем id clipPath и добавляем его в список
     for (int i = 0; dict[i]; i += 2) {
