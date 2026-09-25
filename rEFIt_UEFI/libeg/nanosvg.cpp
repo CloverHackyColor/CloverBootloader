@@ -3118,6 +3118,8 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
       nsvg__takeXformBounds(shapeInt, &xform2[0], shape->bounds);
       shapeInt = shapeInt->next;
     }
+  } else {
+    return;
   }
 
   shape->next = NULL;
@@ -3137,6 +3139,10 @@ static void nsvg__parseTextSpan(NSVGparser* p, char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   NSVGtext* text = p->text;
+  if (!text) {
+    DBG("nsvg__parseTextSpan: text is NULL\n");
+    return;
+  } 
   float x = 0.f, y = 0.f, r = 0.f;
 
 //    DBG("parse textSpan\n");
