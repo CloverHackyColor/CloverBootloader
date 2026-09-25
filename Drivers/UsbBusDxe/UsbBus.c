@@ -290,7 +290,7 @@ UsbIoBulkTransfer (
               Dev->Speed,
               EpDesc->Desc.MaxPacketSize,
               BufNum,
-              Data,
+              &Data,
               DataLength,
               &Toggle,
               Timeout,
