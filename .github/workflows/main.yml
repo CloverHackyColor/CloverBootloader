@@ -8,6 +8,12 @@ on:
       - '*'
   pull_request:
   workflow_dispatch:
+    inputs:
+      alpha_build:
+        description: 'Publish as Clover-Build-Alpha rolling release'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   build-macos:
@@ -60,7 +66,20 @@ jobs:
             CLOVERX64.efi.zip
             Clover_r*.pkg
 
-      - name: Publish Release
+      - name: Verify Release Assets
+        run: |
+          shopt -s nullglob
+          missing=()
+          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi.zip' 'Clover_r*.pkg'; do
+            files=($pattern)
+            if [ ${#files[@]} -eq 0 ]; then missing+=("$pattern"); fi
+          done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing expected release artifact(s): ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Publish Tagged Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v3
         with:
@@ -70,3 +89,22 @@ jobs:
             CLOVERX64.efi.zip
             Clover_r*.pkg
           generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+
+      - name: Publish Alpha Rolling Release
+        if: github.event_name == 'workflow_dispatch' && inputs.alpha_build == true
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: Clover-Build-Alpha
+          name: "Clover Build Alpha (${{ env.GIT_SHA }})"
+          body: |
+            Automated alpha build from commit `${{ env.GIT_SHA }}` on branch `${{ github.ref_name }}`.
+            This is a rolling pre-release and will be overwritten by future alpha builds.
+          files: |
+            *.7z
+            CloverV2*.zip
+            CLOVERX64.efi.zip
+            Clover_r*.pkg
+          generate_release_notes: false
+          prerelease: true
+          make_latest: false
