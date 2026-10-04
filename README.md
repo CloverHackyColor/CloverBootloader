@@ -7,6 +7,9 @@
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 ### Read the DOC [Clover-Wiki](https://github.com/CloverHackyColor/CloverBootloader/wiki) / [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover History](https://htmlpreview.github.io/?https://github.com/CloverHackyColor/CloverBootloader/blob/master/Clover%20History.html)
 
+###  Downloads ➡︎ [Automated-Alpha-Build from commit](https://github.com/CloverHackyColor/CloverBootloader/releases/tag/Clover-Build-Alpha) 
+###  Downloads ➡︎ [Latest Release](https://github.com/CloverHackyColor/CloverBootloader/releases)
+
 # Features
 
 - Boot macOS, Windows, and Linux in UEFI
