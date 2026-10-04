@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       alpha_build:
-        description: 'Publish as Clover-Build-Alpha rolling release'
+        description: 'Publish as Clover-Build-Alpha rolling_release'
         required: false
         default: true
         type: boolean
