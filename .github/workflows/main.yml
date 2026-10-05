@@ -21,6 +21,9 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
+    concurrency:
+      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}', github.run_id) }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
         with:
@@ -91,21 +94,6 @@ jobs:
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
 
-      - name: Remove Existing Alpha Release Assets
-        if: (github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if ! gh release view Clover-Build-Alpha >/dev/null 2>&1; then
-            echo "Clover-Build-Alpha release does not exist yet; skipping asset cleanup."
-            exit 0
-          fi
-
-          gh release view Clover-Build-Alpha --json assets --jq '.assets[].name' |
-            while IFS= read -r asset; do
-              gh release delete-asset Clover-Build-Alpha "$asset" --yes
-            done
-
       - name: Publish Alpha Rolling Release
         if: (github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')
         uses: softprops/action-gh-release@v3
@@ -123,3 +111,26 @@ jobs:
           generate_release_notes: false
           prerelease: true
           make_latest: false
+
+      - name: Remove Stale Alpha Release Assets
+        if: (github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh release view Clover-Build-Alpha >/dev/null 2>&1; then
+            echo "Clover-Build-Alpha release does not exist yet; skipping asset cleanup."
+            exit 0
+          fi
+
+          shopt -s nullglob
+          current=(*.7z CloverV2*.zip CLOVERX64.efi.zip Clover_r*.pkg)
+          gh release view Clover-Build-Alpha --json assets --jq '.assets[].name' |
+            while IFS= read -r asset; do
+              keep=false
+              for f in "${current[@]}"; do
+                if [ "$f" = "$asset" ]; then keep=true; break; fi
+              done
+              if [ "$keep" = false ]; then
+                gh release delete-asset Clover-Build-Alpha "$asset" --yes
+              fi
+            done
