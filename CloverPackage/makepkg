@@ -29,22 +29,29 @@ echo
 }
 
 while [[ $# -gt 0 ]]; do
-	case "${1}" in
-		--nothemes ) NOEXTRAS+=" --nothemes";;
-		# --noprefpane ) NOEXTRAS+=" --noprefpane";;
-		--norc ) NOEXTRAS+=" --norc";;
-		--nolegacy ) NOEXTRAS+=" --nolegacy";;
-		* ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !"; usage; exit 1;;
-	esac
-	shift
+    case "${1}" in
+        --nothemes ) NOEXTRAS+=" --nothemes";;
+        # --noprefpane ) NOEXTRAS+=" --noprefpane";;
+        --norc ) NOEXTRAS+=" --norc";;
+        --nolegacy ) NOEXTRAS+=" --nolegacy";;
+        * ) printf "\e[1m%s\e[0m\n" "Invalid option: ${1} !"; usage; exit 1;;
+    esac
+    shift
 done
 
 # Workspace = edk2/Clover/CloverPackage
 
 # Go to the script directory to create the package
-cd "$(dirname $0)"
+cd "$(dirname "$0")"
 
+# Get the latest Git tag.
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
+
+# Keep the traditional "r" prefix for numeric tags only.
+# Non-numeric tags are used exactly as they are.
+if [[ "$revision" =~ ^[0-9]+$ ]]; then
+    revision="r${revision}"
+fi
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
@@ -66,7 +73,7 @@ echo "${revision}" > revision
 # # Create a new sym directory
 # mkdir sym
 
-#   Make the translation
+# Make the translation
 echo ""
 echo "========= Translating Resources ========"
 ./package/translate.sh || exit $?
@@ -83,13 +90,12 @@ if [[ -n "$xcode_path" ]]; then
   # make -C "${SRCROOT}"/CloverPrefpane || exit $?
   # Make utils
   make -C "${SRCROOT}"/utils || exit $?
-# temporary use ready-to-use binaries
-#  mkdir -p "${SYMROOT}"/utils
-#  cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
+  # temporary use ready-to-use binaries
+  # mkdir -p "${SYMROOT}"/utils
+  # cp -v "${SRCROOT}"/utils/binaries/* "${SYMROOT}"/utils/
 fi
 
 # Start to build installer.
-
 package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_DIR" ${NOEXTRAS:1} || exit $?
 
 #(cd sym ; zip Clover_r${revision}.zip \
@@ -97,15 +103,16 @@ package/buildpkg.sh --srcroot "$SRCROOT" --symroot "sym" --builddir "$PKG_BUILD_
 # Clover_r${revision}.pkg.md5 )
 
 # Workspace = edk2/Clover/CloverPackage/
-# Remove temp files.
 
-rm -f  version # take this to clean old sources
-rm -f  revision
+# Remove temp files.
+rm -f version
+rm -f revision
 
 # Workspace = edk2/Clover/CloverPackage
+
 # Open the final folder.
 ls -la sym
 open sym
-# Finish building installer.
 
+# Finish building installer.
 exit 0

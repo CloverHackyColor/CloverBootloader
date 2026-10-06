@@ -1760,7 +1760,11 @@ generateChoices() {
 makedistribution ()
 {
     declare -r distributionDestDir="${SYMROOT}"
-    declare -r distributionFilename="${packagename// /}_r${CLOVER_REVISION}.pkg"
+    if [[ "$CLOVER_REVISION" =~ ^r[0-9]+$ ]]; then
+    declare -r distributionFilename="${packagename// /}_${CLOVER_REVISION}.pkg"
+else
+    declare -r distributionFilename="${CLOVER_REVISION}.pkg"
+fi
     declare -r distributionFilePath="${distributionDestDir}/${distributionFilename}"
 
     rm -f "${distributionDestDir}/${packagename// /}"*.pkg
