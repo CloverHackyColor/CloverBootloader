@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}', github.run_id) }}
+      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}', github.ref) }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
@@ -33,7 +33,7 @@ jobs:
       - name: Manage Version
         run: |
           git fetch --tags --force --no-recurse-submodules
-          CUR_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          CUR_TAG=$(git describe --tags --exclude 'Clover-Build-Alpha' --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "Detected version: $CUR_TAG"
           echo "CUR_TAG=$CUR_TAG" >> $GITHUB_ENV
           echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
