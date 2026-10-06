@@ -147,6 +147,22 @@ function mountRamDisk() {
 }
 
 # Download #
+DownloadGNU () {
+    local path="$1"
+    local url
+
+    rm -f download.tmp
+    for url in "https://ftp.gnu.org/gnu/${path}" "https://ftpmirror.gnu.org/${path}" "https://ftp.fu-berlin.de/unix/gnu/${path}"; do
+        if curl -k -f -L --connect-timeout 15 --retry 2 --retry-connrefused \
+            -o download.tmp "$url"; then
+            return 0
+        fi
+    done
+
+    rm -f download.tmp
+    return 1
+}
+
 DownloadSource () {
     if [[ ! -f ${DIR_DOWNLOADS}/${ISL_VERSION}.tar.xz ]]; then
        echo "Status: ${ISL_VERSION} not found."
@@ -163,19 +179,19 @@ DownloadSource () {
     cd $DIR_DOWNLOADS
     if [[ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.xz ]]; then
         echo "Status: ${GMP_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.xz || exit 1
+        DownloadGNU "gmp/${GMP_VERSION}.tar.xz" || exit 1
         mv download.tmp ${GMP_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.xz ]]; then
         echo "Status: ${MPFR_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.xz || exit 1
+        DownloadGNU "mpfr/${MPFR_VERSION}.tar.xz" || exit 1
         mv download.tmp ${MPFR_VERSION}.tar.xz
     fi
 
     if [[ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ]]; then
         echo "Status: ${MPC_VERSION} not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
+        DownloadGNU "mpc/${MPC_VERSION}.tar.gz" || exit 1
 #				curl -k -f -o download.tmp --remote-name https://ftp.fu-berlin.de/unix/gnu/mpc/${MPC_VERSION}.tar.gz || exit 1
         mv download.tmp ${MPC_VERSION}.tar.gz
     fi
@@ -193,7 +209,7 @@ DownloadSource () {
 
     if [[ ! -f ${DIR_DOWNLOADS}/$BINUTILS_VERSION.tar.xz ]]; then
         echo "Status: $BINUTILS_VERSION not found."
-        curl -k -f -o download.tmp --remote-name https://ftp.gnu.org/gnu/binutils/binutils-2.46.1.tar.xz || exit 1
+        DownloadGNU "binutils/binutils-2.46.1.tar.xz" || exit 1
         mv download.tmp $BINUTILS_VERSION.tar.xz
     fi
 
