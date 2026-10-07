@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 22:34+0300\n"
+"POT-Creation-Date: 2026-08-31 07:24+0300\n"
 "PO-Revision-Date: 2018-10-02 11:47+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -26,9 +26,7 @@ msgstr "Кловер EFI"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:31
-#, fuzzy
-#| msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
-msgid "%CLOVERREVISION% (%CLOVERSHA1%)"
+msgid "r%CLOVERREVISION% (%CLOVERSHA1%)"
 msgstr "r%CLOVERREVISION% (%CLOVERSHA1%)"
 
 #. type: Content of: <html><body><p>
@@ -231,9 +229,7 @@ msgstr ""
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:20
-#, fuzzy
-#| msgid "r%CLOVERREVISION%"
-msgid "%CLOVERREVISION%"
+msgid "r%CLOVERREVISION%"
 msgstr "r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><div><p>
