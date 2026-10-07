@@ -16,13 +16,16 @@ if [[ "$REVISION" =~ ^[0-9]+$ ]]; then
     REVISION="r${REVISION}"
 fi
 
+REVISION_SUFFIX="${REVISION#Clover}"
+REVISION_SUFFIX="${REVISION_SUFFIX#[-_]}"
+
 # Remove previous revision zip
 rm -rf $SYMROOT/CloverV2-*.zip
 
 # zip CloverV2, excluding all .empty and all .DS_Store
-zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
+zip -qr CloverV2-${REVISION_SUFFIX}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
 
-mv CloverV2-${REVISION}.zip $SYMROOT
+mv CloverV2-${REVISION_SUFFIX}.zip $SYMROOT
 
 open "$SYMROOT"
 
