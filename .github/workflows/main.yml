@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}-{1}', github.ref, github.sha) }}
+      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('b[...]
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
@@ -59,7 +59,28 @@ jobs:
           (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
           releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
-      
+
+      - name: Rename Release Assets with Commit SHA
+        run: |
+          shopt -s nullglob
+          echo "Renaming release assets to include commit SHA (${{ env.GIT_SHA }}) so filenames change on every build..."
+          for f in *.7z; do
+            base="${f%.7z}"
+            mv -v "$f" "${base}-${{ env.GIT_SHA }}.7z"
+          done
+          for f in CloverV2*.zip; do
+            base="${f%.zip}"
+            mv -v "$f" "${base}-${{ env.GIT_SHA }}.zip"
+          done
+          for f in CLOVERX64.efi.zip; do
+            base="${f%.zip}"
+            mv -v "$f" "${base}-${{ env.GIT_SHA }}.zip"
+          done
+          for f in Clover_r*.pkg; do
+            base="${f%.pkg}"
+            mv -v "$f" "${base}-${{ env.GIT_SHA }}.pkg"
+          done
+
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -67,14 +88,14 @@ jobs:
           path: |
             *.7z
             CloverV2*.zip
-            CLOVERX64.efi.zip
+            CLOVERX64.efi*.zip
             Clover_r*.pkg
 
       - name: Verify Release Assets
         run: |
           shopt -s nullglob
           missing=()
-          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi.zip' 'Clover_r*.pkg'; do
+          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi*.zip' 'Clover_r*.pkg'; do
             files=($pattern)
             if [ ${#files[@]} -eq 0 ]; then missing+=("$pattern"); fi
           done
@@ -90,7 +111,7 @@ jobs:
           files: |
             *.7z
             CloverV2*.zip
-            CLOVERX64.efi.zip
+            CLOVERX64.efi*.zip
             Clover_r*.pkg
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
@@ -107,7 +128,7 @@ jobs:
           files: |
             *.7z
             CloverV2*.zip
-            CLOVERX64.efi.zip
+            CLOVERX64.efi*.zip
             Clover_r*.pkg
           generate_release_notes: false
           prerelease: true
@@ -124,7 +145,7 @@ jobs:
           fi
 
           shopt -s nullglob
-          current=(*.7z CloverV2*.zip CLOVERX64.efi.zip Clover_r*.pkg)
+          current=(*.7z CloverV2*.zip CLOVERX64.efi*.zip Clover_r*.pkg)
           gh release view Clover-Build-Alpha --json assets --jq '.assets[].name' |
             while IFS= read -r asset; do
               keep=false
