@@ -45,6 +45,10 @@ declare -r CLOVERROOT="$PWD"
 declare -r SYSNAME="$(uname)"
 MYTOOLCHAIN=${1:-GCC161}
 revision=$(git describe --tags $(git rev-list --tags --max-count=1))
+
+if [[ "$revision" =~ ^[0-9]+$ ]]; then
+  revision="r${revision}"
+fi
 lsha1="not a git repo"
 pyversion=$(echo $COL_CYAN"Current Python version: "$COL_WHITE$($(which python3) --version))
 pynone=$(echo -e "$COL_RED    Python3 seems missing on this machine, it is required to build Clover ")
@@ -607,7 +611,7 @@ testing() {
 #clear
 echo
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
-echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "                          🍀 Clover: ${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e $COL_CYAN"                                     Test Builds"
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
 echo -e "\n"
@@ -654,7 +658,7 @@ testing
 Utilities() {
 echo
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"
-echo -e "                          🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "                          🍀 Clover: ${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e $COL_CYAN"                                  External Utilities "
 echo -e $COL_WHITE"                     All Files will be put on Desktop/ClovUtils"
 echo -e $COL_GREEN" ---------------------------------------------------------------------------------"$COL_RESET
@@ -751,7 +755,7 @@ echo -e $COL_GREEN" ------------------------------------------------------------
 if [[ ! -x "$(which python3)" ]]; then
 	echo -e " ${pynone}"
 fi
-echo -e "$COL_GREEN                           🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "$COL_GREEN                           🍀 Clover: ${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e "$COL_WHITE                              Default TOOLCHAIN:$COL_CYAN $MYTOOLCHAIN$COL_WHITE "
 echo -e "${COL_WHITE}                     Switch to${COL_CYAN} XCODE${COL_WHITE} can be done on${COL_CYAN} Cloverbuilds"
 if [[ -x "$(which python3)" ]]; then
@@ -845,7 +849,7 @@ echo -e $COL_GREEN" ------------------------------------------------------------
 if [[ ! -x "$(which python3)" ]]; then
 	echo -e " ${pynone}"
 fi
-echo -e "$COL_GREEN                           🍀 Clover r${revision}$COL_WHITE (SHA: $lsha1)"
+echo -e "$COL_GREEN                           🍀 Clover: ${revision}$COL_WHITE (SHA: $lsha1)"
 echo -e "$COL_WHITE                              Default TOOLCHAIN:$COL_CYAN $MYTOOLCHAIN$COL_WHITE "
 echo -e "${COL_WHITE}                     Switch to${COL_CYAN} XCODE${COL_WHITE} select:${COL_CYAN} build (with XCode)"
 echo -e "${COL_WHITE}     Depending on your${COL_CYAN} XCODE version${COL_WHITE} the Toolset will be${COL_CYAN} automatically chosen"
