@@ -56,8 +56,8 @@ jobs:
         run: |
           shopt -s nullglob
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
-          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
-          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
+          (cd CloverPackage/sym/CloverISO-*/ && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
+          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
 
       - name: Rename Release Assets with Commit SHA
@@ -76,7 +76,7 @@ jobs:
             base="${f%.zip}"
             mv -v "$f" "${base}-${{ env.GIT_SHA }}.zip"
           done
-          for f in Clover_r*.pkg; do
+          for f in Clover*.pkg; do
             base="${f%.pkg}"
             mv -v "$f" "${base}-${{ env.GIT_SHA }}.pkg"
           done
@@ -89,13 +89,13 @@ jobs:
             *.7z
             CloverV2*.zip
             CLOVERX64.efi*.zip
-            Clover_r*.pkg
+            Clover*.pkg
 
       - name: Verify Release Assets
         run: |
           shopt -s nullglob
           missing=()
-          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi*.zip' 'Clover_r*.pkg'; do
+          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi*.zip' 'Clover*.pkg'; do
             files=($pattern)
             if [ ${#files[@]} -eq 0 ]; then missing+=("$pattern"); fi
           done
@@ -112,7 +112,7 @@ jobs:
             *.7z
             CloverV2*.zip
             CLOVERX64.efi*.zip
-            Clover_r*.pkg
+            Clover*.pkg
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
 
@@ -129,7 +129,7 @@ jobs:
             *.7z
             CloverV2*.zip
             CLOVERX64.efi*.zip
-            Clover_r*.pkg
+            Clover*.pkg
           generate_release_notes: false
           prerelease: true
           make_latest: false
@@ -145,7 +145,7 @@ jobs:
           fi
 
           shopt -s nullglob
-          current=(*.7z CloverV2*.zip CLOVERX64.efi*.zip Clover_r*.pkg)
+          current=(*.7z CloverV2*.zip CLOVERX64.efi*.zip Clover*.pkg)
           gh release view Clover-Build-Alpha --json assets --jq '.assets[].name' |
             while IFS= read -r asset; do
               keep=false
