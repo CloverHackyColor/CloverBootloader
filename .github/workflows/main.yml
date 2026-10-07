@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('b[...]
+      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}-{1}', github.ref, github.sha) }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
