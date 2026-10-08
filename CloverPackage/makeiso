@@ -25,17 +25,7 @@ EFIROOT=${SRCROOT}/CloverV2/EFI
 BASETOOLS_DIR=${SRCROOT}/../BaseTools/Source/C/bin
 
 REVISION=$(git describe --tags $(git rev-list --tags --max-count=1))
-
-# Keep the traditional "r" prefix for numeric tags only.
-# Non-numeric tags are used exactly as they are.
-if [[ "$REVISION" =~ ^[0-9]+$ ]]; then
-    REVISION="r${REVISION}"
-fi
-
-REVISION_SUFFIX="${REVISION#Clover}"
-REVISION_SUFFIX="${REVISION_SUFFIX#[-_]}"
-
-PRODUCT=Clover-${REVISION_SUFFIX}
+PRODUCT=Clover-${REVISION}
 CDLABEL=${PRODUCT}-X64
 ISOIMAGE=${SYMROOT}/${CDLABEL}.iso
 
@@ -156,20 +146,17 @@ cp -f ${CLOVERROOT}/BootSectors/boot1f32 ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1f32alt ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1x    ${IMGROOT}/usr/standalone/i386
 cp -f ${CLOVERROOT}/BootSectors/boot1xalt ${IMGROOT}/usr/standalone/i386
-
 # #ifdef CONFIG_FDISK440
 # 	cp -f ${CLOVERROOT}/BootSectors/fdisk440 ${IMGROOT}/usr/bin
 # #endif
-
 rm -rf ${IMGROOT}/.s*
 rm -rf ${IMGROOT}/*/.s*
 rm -rf ${IMGROOT}/*/*/.s*
 rm -rf ${IMGROOT}/*/*/*/.s*
 rm -rf ${IMGROOT}/*/*/*/*/.s*
 find "${IMGROOT}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-
 echo "[HDIUTIL] ${ISOIMAGE}"
-mkdir -p ${SYMROOT}/CloverISO-${REVISION_SUFFIX}
+mkdir -p ${SYMROOT}/CloverISO-${REVISION}
 
 if [[ "$SYSNAME" == Linux ]]; then
 genisoimage -J -hfs -hfs-volid ${CDLABEL} -D -b usr/standalone/i386/cdboot -no-emul-boot -quiet -o "${ISOIMAGE}" ${IMGROOT}
@@ -178,21 +165,17 @@ hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name ${CDLABEL}  \
  -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o "${ISOIMAGE}"      \
  ${IMGROOT} -quiet
 fi
-
-mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION_SUFFIX}/
-
-echo "[TAR] CloverISO-${REVISION_SUFFIX}"
-tar -cv -f ${SYMROOT}/CloverISO-${REVISION_SUFFIX}.tar -C ${SYMROOT}/CloverISO-${REVISION_SUFFIX} .
-
-echo "[LZMA] CloverISO-${REVISION_SUFFIX}"
+mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO-${REVISION}/
+echo "[TAR] CloverISO-${REVISION}"
+tar -cv -f ${SYMROOT}/CloverISO-${REVISION}.tar -C ${SYMROOT}/CloverISO-${REVISION} .
+echo "[LZMA] CloverISO-${REVISION}"
 
 if [[ "$SYSNAME" == Linux ]]; then
-xz -f -S .lzma ${SYMROOT}/CloverISO-${REVISION_SUFFIX}.tar
+xz -f -S .lzma ${SYMROOT}/CloverISO-${REVISION}.tar
 else
-"$BASETOOLS_DIR"/LzmaCompress -e -o ${SYMROOT}/CloverISO-${REVISION_SUFFIX}.tar.lzma ${SYMROOT}/CloverISO-${REVISION_SUFFIX}.tar
+"$BASETOOLS_DIR"/LzmaCompress -e -o ${SYMROOT}/CloverISO-${REVISION}.tar.lzma ${SYMROOT}/CloverISO-${REVISION}.tar 
 fi
-
-rm -rf ${SYMROOT}/CloverISO-${REVISION_SUFFIX}.tar
+rm -rf ${SYMROOT}/CloverISO-${REVISION}.tar
 
 # Open the final folder.
 if [[ "${1:-}" == "" ]]; then

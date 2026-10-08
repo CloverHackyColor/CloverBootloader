@@ -1,7 +1,6 @@
 
 # CloverBootloader 
 [![CI](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg)](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml) [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/CloverHackyColor/CloverBootloader/blob/master/LICENSE) [![Latest Release](https://img.shields.io/github/v/release/CloverHackyColor/CloverBootloader?style=flat&label=Latest%20Release)](https://github.com/CloverHackyColor/CloverBootloader/releases/latest)
-[![Version](https://img.shields.io/github/v/tag/CloverHackyColor/CloverBootloader?filter=Clover-Build-Alpha*&style=flat&label=Version&cacheSeconds=60)](https://github.com/CloverHackyColor/CloverBootloader/releases/tag/Clover-Build-Alpha)
 
 <img width="200" alt="CloverLogo" src="Logo/Clover-Logo-Default-256x256@1x.png">
 

@@ -7,25 +7,13 @@ cd "$(dirname $([ -L $0 ] && readlink $0 || echo $0))"
 ROOT="$PWD"
 SYMROOT="${ROOT}"/sym
 mkdir -p "$SYMROOT"
-
 REVISION=$(git describe --tags "$(git rev-list --tags --max-count=1)")
-
-# Keep the traditional "r" prefix for numeric tags only.
-# Non-numeric tags are used exactly as they are.
-if [[ "$REVISION" =~ ^[0-9]+$ ]]; then
-    REVISION="r${REVISION}"
-fi
-
-REVISION_SUFFIX="${REVISION#Clover}"
-REVISION_SUFFIX="${REVISION_SUFFIX#[-_]}"
 
 # Remove previous revision zip
 rm -rf $SYMROOT/CloverV2-*.zip
-
 # zip CloverV2, excluding all .empty and all .DS_Store
-zip -qr CloverV2-${REVISION_SUFFIX}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
-
-mv CloverV2-${REVISION_SUFFIX}.zip $SYMROOT
+zip -qr CloverV2-${REVISION}.zip CloverV2 -x "*/.DS_Store" "*/.empty"
+mv CloverV2-${REVISION}.zip $SYMROOT
 
 open "$SYMROOT"
 

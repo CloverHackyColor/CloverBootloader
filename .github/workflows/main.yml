@@ -8,12 +8,6 @@ on:
       - '*'
   pull_request:
   workflow_dispatch:
-    inputs:
-      alpha_build:
-        description: 'Publish as Clover-Build-Alpha rolling_release'
-        required: false
-        default: true
-        type: boolean
 
 jobs:
   build-macos:
@@ -21,9 +15,6 @@ jobs:
     runs-on: macos-latest
     permissions:
       contents: write
-    concurrency:
-      group: ${{ ((github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')) && 'clover-alpha-release' || format('build-{0}-{1}', github.ref, github.sha) }}
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
         with:
@@ -54,33 +45,11 @@ jobs:
           ./buildme "" ci
       - name: Prepare Release Packs
         run: |
-          shopt -s nullglob
           (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
-          (cd CloverPackage/sym/CloverISO-*/ && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
-          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover*.pkg)
+          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
+          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
           for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
-
-      - name: Rename Release Assets with Commit SHA
-        run: |
-          shopt -s nullglob
-          echo "Renaming release assets to include commit SHA (${{ env.GIT_SHA }}) so filenames change on every build..."
-          for f in *.7z; do
-            base="${f%.7z}"
-            mv -v "$f" "${base}-${{ env.GIT_SHA }}.7z"
-          done
-          for f in CloverV2*.zip; do
-            base="${f%.zip}"
-            mv -v "$f" "${base}-${{ env.GIT_SHA }}.zip"
-          done
-          for f in CLOVERX64.efi.zip; do
-            base="${f%.zip}"
-            mv -v "$f" "${base}-${{ env.GIT_SHA }}.zip"
-          done
-          for f in Clover*.pkg; do
-            base="${f%.pkg}"
-            mv -v "$f" "${base}-${{ env.GIT_SHA }}.pkg"
-          done
-
+      
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -88,71 +57,16 @@ jobs:
           path: |
             *.7z
             CloverV2*.zip
-            CLOVERX64.efi*.zip
-            Clover*.pkg
+            CLOVERX64.efi.zip
+            Clover_r*.pkg
 
-      - name: Verify Release Assets
-        run: |
-          shopt -s nullglob
-          missing=()
-          for pattern in '*.7z' 'CloverV2*.zip' 'CLOVERX64.efi*.zip' 'Clover*.pkg'; do
-            files=($pattern)
-            if [ ${#files[@]} -eq 0 ]; then missing+=("$pattern"); fi
-          done
-          if [ ${#missing[@]} -gt 0 ]; then
-            echo "::error::Missing expected release artifact(s): ${missing[*]}"
-            exit 1
-          fi
-
-      - name: Publish Tagged Release
+      - name: Publish Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v3
         with:
           files: |
             *.7z
             CloverV2*.zip
-            CLOVERX64.efi*.zip
-            Clover*.pkg
+            CLOVERX64.efi.zip
+            Clover_r*.pkg
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
-
-      - name: Publish Alpha Rolling Release
-        if: (github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: Clover-Build-Alpha
-          name: "Clover Build Alpha (${{ env.GIT_SHA }})"
-          body: |
-            Automated alpha build from commit `${{ env.GIT_SHA }}` on branch `${{ github.ref_name }}`.
-            This is a rolling pre-release and will be overwritten by future alpha builds.
-          files: |
-            *.7z
-            CloverV2*.zip
-            CLOVERX64.efi*.zip
-            Clover*.pkg
-          generate_release_notes: false
-          prerelease: true
-          make_latest: false
-
-      - name: Remove Stale Alpha Release Assets
-        if: (github.event_name == 'workflow_dispatch' && inputs.alpha_build == true) || (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if ! gh release view Clover-Build-Alpha >/dev/null 2>&1; then
-            echo "Clover-Build-Alpha release does not exist yet; skipping asset cleanup."
-            exit 0
-          fi
-
-          shopt -s nullglob
-          current=(*.7z CloverV2*.zip CLOVERX64.efi*.zip Clover*.pkg)
-          gh release view Clover-Build-Alpha --json assets --jq '.assets[].name' |
-            while IFS= read -r asset; do
-              keep=false
-              for f in "${current[@]}"; do
-                if [ "$f" = "$asset" ]; then keep=true; break; fi
-              done
-              if [ "$keep" = false ]; then
-                gh release delete-asset Clover-Build-Alpha "$asset" --yes
-              fi
-            done
