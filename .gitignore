@@ -12,6 +12,7 @@
 /Conf
 /ConfJief
 /toolchain/
+*/Autogen
 
 
 # /FileSystems/HFSPlus/
@@ -80,3 +81,5 @@ Analysis_CloverV2/
 
 # Build logs
 my_build_log*.txt
+
+PosixEFICompilation/DebugLibs/Autogen/
