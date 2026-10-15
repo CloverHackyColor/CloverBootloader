@@ -13,6 +13,7 @@
 /ConfJief
 /toolchain/
 */Autogen
+PosixEFICompilation/
 
 
 # /FileSystems/HFSPlus/
