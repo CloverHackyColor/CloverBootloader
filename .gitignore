@@ -12,8 +12,19 @@
 /Conf
 /ConfJief
 /toolchain/
-*/Autogen
-PosixEFICompilation/
+# Игнорируем автогенерированные файлы
+PosixEFICompilation/DebugLibs/Autogen/
+PosixEFICompilation/ReleaseLibs/Autogen/
+*/Autogen/
+
+# Игнорируем библиотеки и промежуточные файлы сборки
+PosixEFICompilation/DebugLibs/*.lib
+PosixEFICompilation/ReleaseLibs/*.lib
+*.lib
+*.obj
+*.pdb
+*.exp
+*.map
 
 
 # /FileSystems/HFSPlus/
@@ -82,5 +93,3 @@ Analysis_CloverV2/
 
 # Build logs
 my_build_log*.txt
-
-PosixEFICompilation/DebugLibs/Autogen/
