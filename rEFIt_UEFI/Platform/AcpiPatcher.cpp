@@ -363,17 +363,17 @@ void DropTableFromRSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
     CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
-          (!TableId || OemTableId_NoSpace(Table->OemTableId) == TableId) &&
+          (!TableId || OemTableId_NoSpace(Table->OemTableId) == OemTableId_NoSpace(TableId)) &&
           (!Length || Table->Length == Length))) {
       continue;
     }
-    if (IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
-      DBG(" attempt to drop already merged table[%d]: %s  %s  %d ignored\n", IndexFromXsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
+    if (IsXsdtEntryMerged(IndexFromRsdtEntryPtr(Ptr))) {
+      DBG(" attempt to drop already merged table[%d]: %s  %s  %d ignored\n", IndexFromRsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
       continue;
     }
     // drop matching table by simply replacing entry with NULL
     *Ptr = 0;
-    DBG(" Table[%d]: %s  %s  %d dropped\n", IndexFromXsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
+    DBG(" Table[%d]: %s  %s  %d dropped\n", IndexFromRsdtEntryPtr(Ptr), sign, OTID, (INT32)Table->Length);
   }
 }
 
@@ -404,7 +404,7 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
     CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
-          (!TableId || OemTableId_NoSpace(Table->OemTableId) == TableId) &&
+          (!TableId || OemTableId_NoSpace(Table->OemTableId) == OemTableId_NoSpace(TableId)) &&
           (!Length || Table->Length == Length))) {
       continue;
     }
