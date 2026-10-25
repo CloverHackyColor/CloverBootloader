@@ -73,7 +73,8 @@ export LD=ld
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores we can use
 # faster compile !
-export MAKEFLAGS="-j $(( $(sysctl -n hw.ncpu) * 2 ))"
+export NUM_JOBS=$(( $(sysctl -n hw.ncpu) * 3 ))
+export MAKEFLAGS="-j $NUM_JOBS -l $(sysctl -n hw.ncpu)"
 
 # Default locale
 export LC_ALL=POSIX
@@ -280,7 +281,7 @@ CompileLibs () {
         echo "- ${GMP_VERSION} configure..."
         "${GMP_DIR}"/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.configure.log.txt 2>&1
         echo "- ${GMP_VERSION} make..."
-        make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
+        make -j $NUM_JOBS  1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-gmp" "$GMP_DIR"
 
@@ -305,7 +306,7 @@ CompileLibs () {
         echo "- ${MPFR_VERSION} configure..."
         "${MPFR_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.configure.log.txt 2>&1
         echo "- ${MPFR_VERSION} make..."
-        make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
+        make -j $NUM_JOBS  1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-mpfr" "$MPFR_DIR"
         echo "- ${MPFR_VERSION} installed in $PREFIX"
@@ -323,7 +324,7 @@ CompileLibs () {
         echo "- ${MPC_VERSION} configure..."
         "${MPC_DIR}"/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX > $DIR_LOGS/mpc.$ARCH.configure.log.txt 2>&1
         echo "- ${MPC_VERSION} make..."
-        make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
+        make -j $NUM_JOBS  1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-mpc" "$MPC_DIR"
         echo "- ${MPC_VERSION} installed in $PREFIX"
@@ -343,7 +344,7 @@ CompileLibs () {
         echo "- ${ISL_VERSION} configure..."
         "${ISL_DIR}"/configure --prefix=$PREFIX --with-gmp-prefix=$PREFIX --with-gcc-arch=$ARCH > $DIR_LOGS/isl.$ARCH.configure.log.txt 2>&1
         echo "- ${ISL_VERSION} make..."
-        make 1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
+        make -j $NUM_JOBS  1> /dev/null 2> $DIR_LOGS/isl.$ARCH.make.log.txt
         make install 1> $DIR_LOGS/isl.$ARCH.install.log.txt 2> /dev/null
         rm -rf "${DIR_BUILD}/$ARCH-isl" "$ISL_DIR"
         echo "- ${ISL_VERSION} installed in $PREFIX"
@@ -384,7 +385,7 @@ CompileBinutils () {
     echo "$cmd" > "$logfile"
     eval "$cmd" >> "$logfile" 2>&1
     echo "- ${BINUTILS_VERSION} make..."
-    cmd="make MAKEINFO=true"
+    cmd="make -j $NUM_JOBS MAKEINFO=true"
     logfile="$DIR_LOGS/binutils.$ARCH.make.log.txt"
     echo "$cmd" > "$logfile"
     eval "$cmd" >/dev/null 2>> "$logfile"
@@ -520,7 +521,7 @@ CompileCrossGCC () {
     "${GCC_DIR}"/configure --host=${BUILDARCH}-apple-darwin${BUILDREV} --build=${BUILDARCH}-apple-darwin${BUILDREV} --target=$TARGET --prefix="$PREFIX/cross" --with-gmp="$PREFIX" --with-mpfr="$PREFIX" --with-mpc="$PREFIX" --with-isl="$PREFIX" --with-system-zlib --with-gnu-as --with-gnu-ld --with-newlib --disable-libssp --disable-nls --disable-werror --enable-languages=c,c++ --enable-plugin --disable-isl-version-check > "$DIR_LOGS"/gcc.$ARCH.configure.log.txt 2>&1
 
     echo "- gcc-${GCC_VERSION} make..."
-    make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
+    make -j $NUM_JOBS all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
     make install-strip-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
 
     unset CFLAGS

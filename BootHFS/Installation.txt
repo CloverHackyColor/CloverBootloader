@@ -12,6 +12,11 @@ This utility resolves Windows sleep problem.
 Chameleon modded sources with explanations is here
 http://forge.voodooprojects.org/p/chameleonApplications/source/tree/HEAD/trunk/fdisk.tproj
 
+Took boot6 if you have standard hardware for use it with standard EFI drivers 
+cp boot6 BOOT
+or choose boot7 if you want to use BIOS drivers (IDE or SAT, USB)
+cp boot7 BOOT
+
   Files Install :
   --------------------
    - Install clover to the partition's root directory:
