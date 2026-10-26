@@ -854,7 +854,8 @@ static void nsvg__cubicBezTo(NSVGparser* p, float cpx1, float cpy1, float cpx2, 
 // Рисует квадратичный сплайн через две точки
 // static void nsvg__quadBezTo(NSVGparser* p, float* cpx, float* cpy,
 //                             float* cpx2, float* cpy2,
-//                             float cx, float cy, float x, float y)
+//                             float cx, float cy, float x, float y,
+//                             int rel)
 // {
 //     float x1, y1;
 // 
@@ -888,50 +889,14 @@ static NSVGattrib* nsvg__getAttr(NSVGparser* p)
   return &p->attr[p->attrHead];
 }
 
-static NSVGclipNode* nsvg__cloneClipList(const NSVGclipNode* source)
-{
-  NSVGclipNode* result = nullptr;
-  NSVGclipNode** tail = &result;
-
-  while (source) {
-    NSVGclipNode* node =
-      (NSVGclipNode*)nsvg__alloczero(
-        sizeof(NSVGclipNode),
-        "nsvg__cloneClipList"_XS8);
-
-    if (!node) {
-      nsvg__deleteClipList(result);
-      return nullptr;
-    }
-
-    node->index = source->index;
-    *tail = node;
-    tail = &node->next;
-    source = source->next;
-  }
-
-  return result;
-}
-
 static void nsvg__pushAttr(NSVGparser* p)
 {
-    if (p->attrHead >= NSVG_MAX_ATTR - 1)
-        return;
-
-    const NSVGattrib* parent = &p->attr[p->attrHead];
-
-    ++p->attrHead;
-    memcpy(&p->attr[p->attrHead],
-           parent,
-           sizeof(NSVGattrib));
-
-    NSVGattrib* current = &p->attr[p->attrHead];
-
-    memset(current->id, 0, sizeof(current->id));
-
-    // После memcpy список родителя нельзя использовать совместно.
-    current->clipList = nsvg__cloneClipList(parent->clipList);
-    current->fontFace = nullptr;
+  if (p->attrHead < NSVG_MAX_ATTR-1) {
+    p->attrHead++;
+    memcpy(&p->attr[p->attrHead], &p->attr[p->attrHead-1], sizeof(NSVGattrib));
+    memset(&p->attr[p->attrHead].id, 0, sizeof(p->attr[p->attrHead].id));
+    //    p->attr[p->attrHead].opacity = 1.0f; //let it be copy
+  }
 }
 
 static void nsvg__popAttr(NSVGparser* p)
@@ -3100,7 +3065,7 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     shape = (NSVGshape*)nsvg__alloccopy(sizeof(NSVGshape), ref, "nsvg__parseUse shape"_XS8);
     if (!shape) return;
     memcpy(shape->xform, &xform[0], sizeof(float)*6);
-    shape->clipList = nullptr;
+ //   shape->clipList = nullptr;
     shape->isSymbol = false;
     shape->link = ref;
     shape->group = attr->group;
@@ -3133,7 +3098,7 @@ static void nsvg__parseUse(NSVGparser* p, char** dict)
     shape = (NSVGshape*)nsvg__alloczero(sizeof(NSVGshape), "nsvg__parseUse shape2"_XS8);
     if (!shape) return;
     memcpy(shape->xform, xform, sizeof(float)*6);
-    shape->clipList = nullptr;
+//    shape->clipList = nullptr;
     shape->isSymbol = true;
     shape->link = refSym->shapes;
     shape->group = attr->group;
@@ -3760,9 +3725,9 @@ static void nsvg__parseSymbol(NSVGparser* p, char** dict)
 
 static void nsvg__parseGroup(NSVGparser* p, char** dict)
 {
-    nsvg__pushAttr(p);
-
-    NSVGattrib* curAttr = nsvg__getAttr(p);
+  NSVGattrib* oldAttr = nsvg__getAttr(p);
+  nsvg__pushAttr(p);
+  NSVGattrib* curAttr = nsvg__getAttr(p);
 
   int visSet = 0;
   if (!curAttr) {
@@ -3781,29 +3746,21 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   // NSVGclipPathIndex savedClipPathCount = curAttr->clipPathCount;
   // memcpy(curAttr->clipPathStack, p->clipPathStack, savedClipPathCount * sizeof(NSVGclipPathIndex));
 
-    // НАСЛЕДУЕМ clipPath от родителя
-  if (p->attrHead > 0) {
-    NSVGattrib* parentAttr = &p->attr[p->attrHead - 1];
-    if (parentAttr->clipList) {
-      NSVGclipNode* src = parentAttr->clipList;
-      NSVGclipNode** dest = &curAttr->clipList;
-
-      while (src) {
-        NSVGclipNode* node =
-          (NSVGclipNode*)nsvg__alloczero(
-            sizeof(NSVGclipNode),
-            "nsvg__parseGroup clipNode"_XS8);
-
-        if (node) {
-          node->index = src->index;
-          *dest = node;
-          dest = &node->next;
+    // НАСЛЕДОВАНИЕ CLIPPATH ОТ РОДИТЕЛЯ
+    // Копируем список clipPath от родителя
+    if (oldAttr && oldAttr->clipList) {
+        NSVGclipNode* src = oldAttr->clipList;
+        NSVGclipNode** dest = &curAttr->clipList;
+        while (src) {
+            NSVGclipNode* node = (NSVGclipNode*)nsvg__alloczero(sizeof(NSVGclipNode), "nsvg__parseGroup clipNode"_XS8);
+            if (node) {
+                node->index = src->index;
+                *dest = node;
+                dest = &node->next;
+            }
+            src = src->next;
         }
-
-        src = src->next;
-      }
-    }
-  }
+     }
 
   for (int i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "visibility") == 0) {
@@ -3823,6 +3780,9 @@ static void nsvg__parseGroup(NSVGparser* p, char** dict)
   AsciiStrCpyS(group->id, 64, curAttr->id);
   //  DBG("parsed groupID=%s\n", group->id);
 
+  if (oldAttr != NULL) {
+    group->parent = oldAttr->group;
+  }
   curAttr->group = group;
 
   if (!visSet) {
@@ -4242,6 +4202,25 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
 
     nsvg__pushAttr(p);
     NSVGattrib *curAttr = nsvg__getAttr(p);
+
+    // НАСЛЕДУЕМ clipPath от родителя
+    if (p->attrHead > 0) {
+      NSVGattrib *parentAttr = &p->attr[p->attrHead - 1];
+      if (parentAttr->clipList) {
+        NSVGclipNode *src = parentAttr->clipList;
+        NSVGclipNode **dest = &curAttr->clipList;
+        while (src) {
+          NSVGclipNode *node = (NSVGclipNode*) nsvg__alloczero(
+              sizeof(NSVGclipNode), "nsvg__startElement clipNode"_XS8);
+          if (node) {
+            node->index = src->index;
+            *dest = node;
+            dest = &node->next;
+          }
+          src = src->next;
+        }
+      }
+    }
 
     // Ищем id clipPath и добавляем его в список
     for (int i = 0; dict[i]; i += 2) {
@@ -4783,12 +4762,11 @@ NSVGparser* nsvg__parse(char* input, float dpi, float opacity)
 
 void nsvg__deleteShapes(NSVGshape* shape)
 {
+  NSVGshape *snext;
   while (shape != NULL) {
-    NSVGshape* next = shape->next;
-
+    snext = shape->next;
+    nsvg__deleteClipList(shape->clipList);
     if (!shape->link) { //don't touch fake shape!
-      nsvg__deleteClipList(shape->clipList);
-      shape->clipList = nullptr;
       nsvg__deleteFont(shape->fontFace);
       shape->fontFace = NULL;
       nsvg__deletePaint(&shape->fill);
@@ -4799,7 +4777,7 @@ void nsvg__deleteShapes(NSVGshape* shape)
     }
 
     nsvg__delete(shape, "nsvg__deleteShapes"_XS8);
-    shape = next;
+    shape = snext;
   }
 }
 
