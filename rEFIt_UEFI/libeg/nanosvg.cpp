@@ -760,9 +760,9 @@ void nsvg__deleteParser(NSVGparser* p)
         nsvg__delete(attr->fontFace, "nsvg__deleteParser3"_XS8);
         attr->fontFace = NULL;
       }
-      if ( attr->group ) {
-        attr->group = nullptr;
-      }
+//      if ( attr->group ) {
+//        attr->group = nullptr;
+//      }
       NSVGclipNode* list = attr->clipList;
       while (list) {
         NSVGclipNode* next = list->next;
