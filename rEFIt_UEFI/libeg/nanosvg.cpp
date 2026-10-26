@@ -760,9 +760,9 @@ void nsvg__deleteParser(NSVGparser* p)
         nsvg__delete(attr->fontFace, "nsvg__deleteParser3"_XS8);
         attr->fontFace = NULL;
       }
-//      if ( attr->group ) {
-//        attr->group = nullptr;
-//      }
+      if (attr->group) {
+        attr->group = nullptr;
+      }
       NSVGclipNode* list = attr->clipList;
       while (list) {
         NSVGclipNode* next = list->next;
@@ -850,6 +850,38 @@ static void nsvg__cubicBezTo(NSVGparser* p, float cpx1, float cpy1, float cpx2, 
     nsvg__addPoint(p, x, y);
   }
 }
+
+// Рисует квадратичный сплайн через две точки
+// static void nsvg__quadBezTo(NSVGparser* p, float* cpx, float* cpy,
+//                             float* cpx2, float* cpy2,
+//                             float cx, float cy, float x, float y)
+// {
+//     float x1, y1;
+// 
+//     if (!cpx) {
+//         // Если нет указателей, используем текущую позицию
+//         x1 = 0;
+//         y1 = 0;
+//     } else {
+//         x1 = *cpx;
+//         y1 = *cpy;
+//     }
+// 
+//     // Конвертируем квадратичный сплайн в кубический
+//     float cx1 = x1 + 2.0f/3.0f * (cx - x1);
+//     float cy1 = y1 + 2.0f/3.0f * (cy - y1);
+//     float cx2 = x + 2.0f/3.0f * (cx - x);
+//     float cy2 = y + 2.0f/3.0f * (cy - y);
+// 
+//     nsvg__cubicBezTo(p, cx1, cy1, cx2, cy2, x, y);
+// 
+//     if (cpx) {
+//         *cpx = x;
+//         *cpy = y;
+//         *cpx2 = cx;
+//         *cpy2 = cy;
+//     }
+// }
 
 static NSVGattrib* nsvg__getAttr(NSVGparser* p)
 {
@@ -3142,7 +3174,7 @@ static void nsvg__parseTextSpan(NSVGparser* p, char** dict)
   if (!text) {
     DBG("nsvg__parseTextSpan: text is NULL\n");
     return;
-  } 
+  }
   float x = 0.f, y = 0.f, r = 0.f;
 
 //    DBG("parse textSpan\n");
@@ -3210,6 +3242,7 @@ static bool nsvg__parseText(NSVGparser* p, char** dict)
     } else if (strcmp(dict[i], "y") == 0) {
       y = nsvg__parseCoordinate(p, dict[i+1], nsvg__actualOrigY(p), nsvg__actualHeight(p));
     } else {
+      DBG("analyze text attr %s=%s\n", dict[i], dict[i + 1]);
       nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
@@ -4148,7 +4181,8 @@ static void nsvg__startElement(void* ud, const char* el, char** dict)
       p->isText = 1;
   } else if (strcmp(el, "tspan") == 0) {
     nsvg__pushAttr(p);
-    nsvg__parseTextSpan(p, dict);
+    if (p->text != nullptr)
+      nsvg__parseTextSpan(p, dict);
     nsvg__popAttr(p);
   } else if (strcmp(el, "path") == 0) {
     if (p->pathFlag)  {  // Do not allow nested paths.
