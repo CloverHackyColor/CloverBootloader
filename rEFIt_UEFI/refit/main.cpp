@@ -1879,7 +1879,7 @@ void LOADER_ENTRY::StartLoader()
       INTERNAL_DMG_LOAD_CONTEXT DmgLoadContext = {0, 0, 0};
       DmgLoadContext.DevicePath = DevicePathToDmgDir;
       EFI_DEVICE_PATH_PROTOCOL *BootEfiFromDmgDevicePath =
-          InternalLoadDmg(&DmgLoadContext, OcDmgLoadingAnyImage);
+          InternalLoadDmg(&DmgLoadContext, OcDmgLoadingAnyImage, NULL);
       DBG("DevicePath of dmg = %ls\n",
           DevicePathToXStringW(BootEfiFromDmgDevicePath).wc_str());
 
